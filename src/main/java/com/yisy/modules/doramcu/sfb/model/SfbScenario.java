@@ -1,7 +1,9 @@
 package com.yisy.modules.doramcu.sfb.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a tactical battle scenario in SFB.
@@ -29,6 +31,8 @@ public class SfbScenario {
     private ScenarioPhase currentPhase;
     private List<SfbEvent> eventLog;
     private SfbBattleLocation battleLocation;
+    private Set<String> aiShipIds; // Ships controlled by AI
+    private List<SfbCharacterAssignment> characterAssignments; // Captain's Log character assignments
 
     public SfbScenario() {
         this.ships = new ArrayList<>();
@@ -36,6 +40,8 @@ public class SfbScenario {
         this.currentTurn = 0;
         this.currentImpulse = 0;
         this.currentPhase = ScenarioPhase.SETUP;
+        this.aiShipIds = new HashSet<>();
+        this.characterAssignments = new ArrayList<>();
     }
 
     public SfbScenario(String id) {
@@ -45,6 +51,8 @@ public class SfbScenario {
         this.currentTurn = 0;
         this.currentImpulse = 0;
         this.currentPhase = ScenarioPhase.SETUP;
+        this.aiShipIds = new HashSet<>();
+        this.characterAssignments = new ArrayList<>();
     }
 
     public String getId() { return id; }
@@ -68,6 +76,85 @@ public class SfbScenario {
 
     public SfbBattleLocation getBattleLocation() { return battleLocation; }
     public void setBattleLocation(SfbBattleLocation battleLocation) { this.battleLocation = battleLocation; }
+
+    public Set<String> getAiShipIds() { return aiShipIds; }
+    public void setAiShipIds(Set<String> aiShipIds) { this.aiShipIds = aiShipIds; }
+
+    public List<SfbCharacterAssignment> getCharacterAssignments() { return characterAssignments; }
+    public void setCharacterAssignments(List<SfbCharacterAssignment> characterAssignments) { 
+        this.characterAssignments = characterAssignments; 
+    }
+
+    /**
+     * Mark a ship as AI-controlled.
+     */
+    public void addAiShip(String shipId) {
+        aiShipIds.add(shipId);
+    }
+
+    /**
+     * Check if a ship is AI-controlled.
+     */
+    public boolean isAiShip(String shipId) {
+        return aiShipIds.contains(shipId);
+    }
+
+    /**
+     * Add a character assignment to this scenario.
+     */
+    public void addCharacterAssignment(SfbCharacterAssignment assignment) {
+        characterAssignments.add(assignment);
+    }
+
+    /**
+     * Get character assignments for a specific ship.
+     */
+    public List<SfbCharacterAssignment> getShipAssignments(String shipId) {
+        List<SfbCharacterAssignment> result = new ArrayList<>();
+        for (SfbCharacterAssignment assignment : characterAssignments) {
+            if (shipId.equals(assignment.getShipId())) {
+                result.add(assignment);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Get the Admiral assignment for a side.
+     */
+    public SfbCharacterAssignment getAdmiralAssignment(int side) {
+        for (SfbCharacterAssignment assignment : characterAssignments) {
+            if (assignment.getRole() == SfbRole.ADMIRAL && assignment.getSide() == side) {
+                return assignment;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the Captain assignment for a ship.
+     */
+    public SfbCharacterAssignment getCaptainAssignment(String shipId) {
+        for (SfbCharacterAssignment assignment : characterAssignments) {
+            if (assignment.getRole() == SfbRole.CAPTAIN && shipId.equals(assignment.getShipId())) {
+                return assignment;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get crew assignments for a ship.
+     */
+    public List<SfbCharacterAssignment> getCrewAssignments(String shipId) {
+        List<SfbCharacterAssignment> result = new ArrayList<>();
+        for (SfbCharacterAssignment assignment : characterAssignments) {
+            if (assignment.getRole() == SfbRole.CREW && shipId.equals(assignment.getShipId())) {
+                result.add(assignment);
+            }
+        }
+        return result;
+    }
 
     /**
      * Add a ship to the scenario.

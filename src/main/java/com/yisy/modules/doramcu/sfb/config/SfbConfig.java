@@ -11,8 +11,33 @@ import org.springframework.context.annotation.Configuration;
 public class SfbConfig {
 
     @Bean
-    public SfbCombatEngine sfbCombatEngine() {
-        return new SfbCombatEngine();
+    public SfbCombatEngine sfbCombatEngine(ImpulseManager impulseManager, 
+                                           EnergyAllocationService energyAllocationService,
+                                           MovementService movementService,
+                                           WeaponsFireService weaponsFireService,
+                                           DamageAllocationService damageAllocationService,
+                                           SpecialSystemsService specialSystemsService,
+                                           SfbAIService aiService,
+                                           SfbRoleSystem roleSystem,
+                                           SfbCharacterBridge characterBridge) {
+        return new SfbCombatEngine(impulseManager, energyAllocationService, movementService,
+                weaponsFireService, damageAllocationService, specialSystemsService,
+                aiService, roleSystem, characterBridge);
+    }
+
+    @Bean
+    public ImpulseManager impulseManager() {
+        return new ImpulseManager();
+    }
+
+    @Bean
+    public EnergyAllocationService energyAllocationService() {
+        return new EnergyAllocationService();
+    }
+
+    @Bean
+    public MovementService movementService() {
+        return new MovementService();
     }
 
     @Bean

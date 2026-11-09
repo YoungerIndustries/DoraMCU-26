@@ -19,6 +19,10 @@ public class SfbCombatEngine {
     private final MovementService movementService;
     private final WeaponsFireService weaponsFireService;
     private final DamageAllocationService damageAllocationService;
+    private final SpecialSystemsService specialSystemsService;
+    private final SfbAIService aiService;
+    private final SfbRoleSystem roleSystem;
+    private final SfbCharacterBridge characterBridge;
 
     public SfbCombatEngine() {
         this.impulseManager = new ImpulseManager();
@@ -26,6 +30,30 @@ public class SfbCombatEngine {
         this.movementService = new MovementService();
         this.weaponsFireService = new WeaponsFireService();
         this.damageAllocationService = new DamageAllocationService();
+        this.specialSystemsService = new SpecialSystemsService();
+        this.aiService = new SfbAIService();
+        this.characterBridge = new SfbCharacterBridge();
+        this.roleSystem = new SfbRoleSystem(characterBridge);
+    }
+
+    /**
+     * Constructor with injected dependencies (for Spring/SFB config).
+     */
+    public SfbCombatEngine(ImpulseManager impulseManager, EnergyAllocationService energyAllocationService,
+                           MovementService movementService, WeaponsFireService weaponsFireService,
+                           DamageAllocationService damageAllocationService,
+                           SpecialSystemsService specialSystemsService,
+                           SfbAIService aiService, SfbRoleSystem roleSystem,
+                           SfbCharacterBridge characterBridge) {
+        this.impulseManager = impulseManager;
+        this.energyAllocationService = energyAllocationService;
+        this.movementService = movementService;
+        this.weaponsFireService = weaponsFireService;
+        this.damageAllocationService = damageAllocationService;
+        this.specialSystemsService = specialSystemsService;
+        this.aiService = aiService;
+        this.roleSystem = roleSystem;
+        this.characterBridge = characterBridge;
     }
 
     public ImpulseManager getImpulseManager() { return impulseManager; }
@@ -33,6 +61,10 @@ public class SfbCombatEngine {
     public MovementService getMovementService() { return movementService; }
     public WeaponsFireService getWeaponsFireService() { return weaponsFireService; }
     public DamageAllocationService getDamageAllocationService() { return damageAllocationService; }
+    public SpecialSystemsService getSpecialSystemsService() { return specialSystemsService; }
+    public SfbAIService getAiService() { return aiService; }
+    public SfbRoleSystem getRoleSystem() { return roleSystem; }
+    public SfbCharacterBridge getCharacterBridge() { return characterBridge; }
 
     /**
      * Run a complete turn for the scenario.
@@ -64,11 +96,51 @@ public class SfbCombatEngine {
 
     /**
      * Process the energy allocation phase.
+     * Applies character modifiers (Admiral fleet bonuses, Captain/Crew bonuses) before allocation.
      */
     private void processEnergyAllocation(SfbScenario scenario) {
+        // Apply Admiral modifiers to each fleet
+        for (int side = 0; side < 2; side++) {
+            SfbCharacterAssignment admiral = scenario.getAdmiralAssignment(side);
+            if (admiral != null) {
+                List<SfbShip> fleet = scenario.getShipsBySide(side);
+                roleSystem.applyAdmiralModifiers(admiral, fleet);
+                scenario.logEvent(new SfbEvent(scenario.getCurrentTurn(), 0,
+                        SfbEvent.EventType.SPECIAL_SYSTEM,
+                        "Admiral " + admiral.getCharacterName() + " provides fleet bonuses to side " + side,
+                        null));
+            }
+        }
+
         for (SfbShip ship : scenario.getShips()) {
             if (ship.isInCombat()) {
+                // Apply Captain modifiers
+                SfbCharacterAssignment captain = scenario.getCaptainAssignment(ship.getId());
+                if (captain != null) {
+                    roleSystem.applyCaptainModifiers(captain, ship);
+                }
+
+                // Apply Crew modifiers
+                List<SfbCharacterAssignment> crew = scenario.getCrewAssignments(ship.getId());
+                if (!crew.isEmpty()) {
+                    roleSystem.applyCrewModifiers(crew, ship);
+                }
+
+                // Calculate energy allocation
                 SfbEnergyAllocation ea = energyAllocationService.calculateAvailablePower(ship);
+                
+                // Apply Admiral energy bonus if available
+                for (int side = 0; side < 2; side++) {
+                    SfbCharacterAssignment admiral = scenario.getAdmiralAssignment(side);
+                    if (admiral != null && ship.getSide() == side) {
+                        int energyBonus = admiral.getModifiers() != null ? 
+                                admiral.getModifiers().getOrDefault("FLEET_ENERGY_BONUS", 0) : 0;
+                        if (energyBonus > 0) {
+                            ea.setAuxiliaryPower(ea.getAuxiliaryPower() + energyBonus);
+                        }
+                    }
+                }
+
                 ship.allocateEnergy(ea);
             }
         }
@@ -78,20 +150,113 @@ public class SfbCombatEngine {
 
     /**
      * Process a single impulse.
+     * Includes special systems (sensors, EW, cloaking) before movement and weapons fire.
+     * AI-controlled ships get strategic decisions from SfbAIService.
      */
     private void processImpulse(SfbScenario scenario, int impulse) {
+        // Process special systems for all ships before movement/weapons
+        processSpecialSystems(scenario, impulse);
+
         List<SfbShip> movingShips = impulseManager.getShipsMovingOnImpulse(scenario.getShips(), impulse);
 
         for (SfbShip ship : movingShips) {
-            // Move the ship
-            processMovement(scenario, ship, impulse);
-
-            // Fire weapons
-            processWeaponsFire(scenario, ship, impulse);
+            // AI ships get strategic decisions
+            if (scenario.isAiShip(ship.getId())) {
+                processAiShipImpulse(scenario, ship, impulse);
+            } else {
+                // Player-controlled ships
+                processMovement(scenario, ship, impulse);
+                processWeaponsFire(scenario, ship, impulse);
+            }
         }
 
         // Update seeking weapons
         processSeekingWeapons(scenario, impulse);
+    }
+
+    /**
+     * Process special systems (sensors, EW, cloaking) for all ships.
+     */
+    private void processSpecialSystems(SfbScenario scenario, int impulse) {
+        for (SfbShip ship : scenario.getShips()) {
+            if (!ship.isInCombat()) continue;
+
+            List<SfbShip> targets = findTargets(scenario, ship);
+            if (targets.isEmpty()) continue;
+
+            // Process sensor detection for cloaked ships
+            for (SfbShip target : targets) {
+                if (target.isCloaked()) {
+                    SpecialSystemsService.SensorResult result = 
+                            specialSystemsService.detectCloakedShip(ship, target);
+                    if (result.isDetected()) {
+                        scenario.logEvent(new SfbEvent(scenario.getCurrentTurn(), impulse,
+                                SfbEvent.EventType.SPECIAL_SYSTEM,
+                                result.getMessage() + " by " + ship.getName(),
+                                ship.getId()));
+                    }
+                }
+            }
+
+            // Process EW (Electronic Warfare)
+            for (SfbShip target : targets) {
+                SpecialSystemsService.EWResult ewResult = specialSystemsService.resolveEW(ship, target);
+                if (ewResult.isEcmSuccess() || ewResult.isEccmSuccess()) {
+                    scenario.logEvent(new SfbEvent(scenario.getCurrentTurn(), impulse,
+                            SfbEvent.EventType.SPECIAL_SYSTEM,
+                            ewResult.getMessage() + " (" + ship.getName() + " vs " + target.getName() + ")",
+                            ship.getId()));
+                }
+            }
+        }
+    }
+
+    /**
+     * Process an impulse for an AI-controlled ship.
+     */
+    private void processAiShipImpulse(SfbScenario scenario, SfbShip ship, int impulse) {
+        if (!ship.isInCombat()) return;
+
+        List<SfbShip> targets = findTargets(scenario, ship);
+        if (targets.isEmpty()) return;
+
+        // AI decides movement
+        int movement = aiService.decideMovement(ship, targets);
+        if (movement > 0) {
+            movementService.moveOneHex(ship);
+        } else if (movement < 0) {
+            ship.turn(3);
+            movementService.moveOneHex(ship);
+        }
+
+        // AI decides special systems
+        if (aiService.decideCloak(ship, targets)) {
+            if (specialSystemsService.cloakShip(ship)) {
+                scenario.logEvent(new SfbEvent(scenario.getCurrentTurn(), impulse,
+                        SfbEvent.EventType.SPECIAL_SYSTEM,
+                        ship.getName() + " cloaks", ship.getId()));
+            }
+        }
+
+        // AI decides targeting and fires
+        SfbShip target = aiService.decideTarget(ship, targets);
+        if (target != null) {
+            // Set overload decisions for weapons
+            for (com.yisy.modules.doramcu.sfb.model.SfbWeaponBank weapon : ship.getWeaponBanks()) {
+                if (weapon.isOperational()) {
+                    boolean overload = aiService.decideOverload(ship, weapon);
+                    weapon.setOverloaded(overload);
+                }
+            }
+
+            // Fire weapons
+            List<WeaponsFireService.FireResult> results = weaponsFireService.resolveAllWeapons(ship, targets);
+            for (WeaponsFireService.FireResult result : results) {
+                scenario.logEvent(new SfbEvent(scenario.getCurrentTurn(), impulse,
+                        result.isHit() ? SfbEvent.EventType.WEAPON_HIT : SfbEvent.EventType.WEAPON_MISS,
+                        result.getMessage() + " (AI: " + ship.getName() + ")", ship.getId()));
+            }
+        }
     }
 
     /**
@@ -108,6 +273,7 @@ public class SfbCombatEngine {
 
     /**
      * Process weapons fire for a ship.
+     * Applies character modifiers (weapon damage bonus, hit probability bonus) and EW accuracy penalties.
      */
     private void processWeaponsFire(SfbScenario scenario, SfbShip ship, int impulse) {
         if (!ship.isInCombat()) return;
@@ -115,10 +281,36 @@ public class SfbCombatEngine {
         // Find targets (ships on the opposite side)
         List<SfbShip> targets = findTargets(scenario, ship);
         
+        // Apply character weapon modifiers
+        int weaponDamageBonus = 0;
+        int hitProbabilityBonus = 0;
+        
+        // Captain weapon damage bonus
+        SfbCharacterAssignment captain = scenario.getCaptainAssignment(ship.getId());
+        if (captain != null && captain.getModifiers() != null) {
+            weaponDamageBonus += captain.getModifiers().getOrDefault("WEAPON_DAMAGE", 0);
+        }
+        
+        // Crew tactical station hit probability bonus
+        List<SfbCharacterAssignment> crew = scenario.getCrewAssignments(ship.getId());
+        for (SfbCharacterAssignment assignment : crew) {
+            if (assignment.getStation() == SfbCrewStationType.TACTICAL && assignment.getModifiers() != null) {
+                hitProbabilityBonus += assignment.getModifiers().getOrDefault("HIT_PROBABILITY", 0);
+            }
+        }
+
         // Use WeaponsFireService for resolution
         List<WeaponsFireService.FireResult> results = weaponsFireService.resolveAllWeapons(ship, targets);
         
         for (WeaponsFireService.FireResult result : results) {
+            // Apply weapon damage bonus to hit results
+            if (result.isHit() && weaponDamageBonus > 0) {
+                int adjustedDamage = result.getDamageDealt() + weaponDamageBonus;
+                int adjustedPenetrated = result.getDamagePenetrated() + weaponDamageBonus;
+                result = new WeaponsFireService.FireResult(true, adjustedDamage, adjustedPenetrated,
+                        result.getMessage() + " (+" + weaponDamageBonus + " captain bonus)");
+            }
+            
             scenario.logEvent(new SfbEvent(scenario.getCurrentTurn(), impulse,
                     result.isHit() ? SfbEvent.EventType.WEAPON_HIT : SfbEvent.EventType.WEAPON_MISS,
                     result.getMessage(), ship.getId()));
