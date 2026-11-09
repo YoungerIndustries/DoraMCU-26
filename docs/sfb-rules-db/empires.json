@@ -164,50 +164,99 @@
       {
         "name": "Branthodon",
         "description": "Use controlled, cybernetically enhanced space dragons as ships. Living ship concept.",
-        "uniqueFeatures": "Space dragons as living vessels."
+        "uniqueFeatures": "Space dragons as living vessels. Cybernetic enhancement allows combat capability.",
+        "combatStyle": "Unconventional — living ships with biological weapons and unique movement patterns.",
+        "primaryWeapons": ["Biological weapons", "Space dragon attacks"],
+        "notableShips": ["Branthodon Space Dragon (SD)"]
       },
       {
         "name": "Jindarians",
-        "description": "Empire with warp-augmented rail guns in light, medium, and heavy variants.",
-        "uniqueFeatures": "Rail guns require two consecutive turns to arm."
+        "description": "Empire with warp-augmented rail guns in light, medium, and heavy variants. Known for their devastating heavy weapons.",
+        "uniqueFeatures": "Warp-Augmented Rail Guns require two consecutive turns to arm. Once armed, they deliver massive damage.",
+        "combatStyle": "Heavy weapon doctrine centered around rail guns. Ships are heavily armed but may be slower.",
+        "primaryWeapons": ["Warp-Augmented Rail Guns (Light/Medium/Heavy)", "Direct-fire weapons"],
+        "notableShips": ["Jindarian Heavy Cruiser", "Jindarian Dreadnought"]
       },
       {
         "name": "Eneen",
-        "description": "Empire with variable-focus neutron beams and Type-E plasma torpedoes.",
-        "uniqueFeatures": "Neutron beam can fire in narrow or wide aperture."
+        "description": "Empire with variable-focus neutron beams and Type-E plasma torpedoes. Masters of adaptive weapon systems.",
+        "uniqueFeatures": "Variable-Focus Neutron Beam can fire in narrow aperture (hit-or-miss, high damage) or wide aperture (spread damage across multiple targets).",
+        "combatStyle": "Adaptive weapon doctrine with neutron beams and plasma torpedoes.",
+        "primaryWeapons": ["Variable-Focus Neutron Beam", "Type-E Plasma Torpedoes"],
+        "notableShips": ["Eneen Heavy Cruiser"]
       },
       {
         "name": "LMC (Lyran Merchant Consortium)",
-        "description": "Uses warp-tuned lasers as phaser-equivalent weapons.",
-        "uniqueFeatures": "Lasers come in light, early, medium, and heavy variants."
+        "description": "Uses warp-tuned lasers as phaser-equivalent weapons. Merchant-based empire with strong trade networks.",
+        "uniqueFeatures": "Warp-tuned lasers come in light, medium, and heavy variants. Function as phaser equivalents.",
+        "combatStyle": "Merchant fleet doctrine with laser weapons. Strong economic base supports fleet operations.",
+        "primaryWeapons": ["Warp-tuned Lasers (Light/Medium/Heavy)"],
+        "notableShips": ["LMC Cruiser"]
       },
       {
         "name": "Nicozians",
-        "description": "Smaller empire with unique characteristics."
+        "description": "Smaller empire known for their unique ship designs and tactical flexibility.",
+        "combatStyle": "Flexible tactics with mixed weapon systems.",
+        "primaryWeapons": ["Phasers", "Torpedoes"],
+        "notableShips": ["Nicozian Cruiser"]
       },
       {
         "name": "Vudar",
-        "description": "Smaller empire with unique characteristics."
+        "description": "Smaller empire with strong defensive capabilities and unique technology.",
+        "combatStyle": "Defensive doctrine with strong shields and point-defense systems.",
+        "primaryWeapons": ["Direct-fire weapons", "Point-defense systems"],
+        "notableShips": ["Vudar Cruiser"]
       },
       {
         "name": "Borak",
-        "description": "Smaller empire with unique characteristics."
+        "description": "Smaller empire with aggressive combat style and unique ship designs.",
+        "combatStyle": "Aggressive close-range combat with heavy weapons.",
+        "primaryWeapons": ["Heavy direct-fire weapons"],
+        "notableShips": ["Borak Cruiser"]
       },
       {
         "name": "Carnivons",
-        "description": "Smaller empire with unique characteristics."
+        "description": "Extinct empire — xenocided by the Kzinti and Lyran alliance. Known for death bolt weapons. Rumors of exiles in the Sargasso Storm Zone.",
+        "combatStyle": "Death bolt doctrine — drone-like weapons unique to the Carnivons.",
+        "primaryWeapons": ["Death Bolts", "Direct-fire weapons"],
+        "uniqueFeatures": "Death bolts are drone-like weapons that ended with the Carnivon xenocide. Module C6 provides rules for how they would have evolved.",
+        "status": "Extinct (xenocided)",
+        "notableShips": ["Carnivon Cruiser (historical)"]
       },
       {
         "name": "Peladine",
-        "description": "Smaller empire with unique characteristics."
+        "description": "Smaller empire with unique characteristics and ship designs.",
+        "combatStyle": "Varies — smaller fleet with specialized ships.",
+        "primaryWeapons": ["Direct-fire weapons"],
+        "notableShips": ["Peladine Cruiser"]
       },
       {
         "name": "Jumokian",
-        "description": "Pirate faction."
+        "description": "Pirate faction operating in the Alpha Octant. Known for raiding and hit-and-run tactics.",
+        "combatStyle": "Pirate hit-and-run tactics with stolen and modified ships.",
+        "primaryWeapons": ["Varies — stolen technology"],
+        "notableShips": ["Jumokian Raider"]
       },
       {
         "name": "Zosman",
-        "description": "Pirate faction."
+        "description": "Pirate faction operating in the Alpha Octant. Similar to Jumokians but with different operational areas.",
+        "combatStyle": "Pirate hit-and-run tactics.",
+        "primaryWeapons": ["Varies — stolen technology"],
+        "notableShips": ["Zosman Raider"]
+      },
+      {
+        "name": "Seltorians",
+        "description": "Empire known for their unique technology and diplomatic approach.",
+        "combatStyle": "Balanced fleet with emphasis on diplomacy and scientific research.",
+        "primaryWeapons": ["Direct-fire weapons"],
+        "notableShips": ["Seltorian Cruiser"]
+      },
+      {
+        "name": "Paravians",
+        "description": "Empire from the Omega Sector with unique nest defense platforms and advanced technology.",
+        "combatStyle": "Defensive doctrine with nest-based operations.",
+        "primaryWeapons": ["Direct-fire weapons", "Nest defense systems"],
+        "notableShips": ["Paravian Nest Defense Platform"]
       }
     ]
   }

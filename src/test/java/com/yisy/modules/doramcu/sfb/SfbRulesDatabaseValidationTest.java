@@ -226,6 +226,60 @@ class SfbRulesDatabaseValidationTest {
         assertEquals("1 hex", separation.get("minimumSeparation").asText());
     }
 
+    @Test
+    @DisplayName("Movement chart should have speed to impulse mappings")
+    void testMovementChartImpulses() {
+        JsonNode chart = movement.path("movement").path("speedSystem").path("movementChart");
+        assertTrue(chart.has("speedToImpulses"), "Movement chart should have speed to impulse mappings");
+        JsonNode examples = chart.get("speedToImpulses").get("examples");
+        assertTrue(examples.size() > 0, "Should have speed examples");
+        // Verify speed 32 moves on 31 impulses
+        JsonNode speed32 = null;
+        for (JsonNode ex : examples) {
+            if (ex.get("speed").asInt() == 32) {
+                speed32 = ex;
+                break;
+            }
+        }
+        assertNotNull(speed32);
+        assertEquals(31, speed32.get("movesPerTurn").asInt());
+    }
+
+    @Test
+    @DisplayName("Movement should have energy cost table")
+    void testEnergyCostTable() {
+        JsonNode costTable = movement.path("movement").path("speedSystem").path("energyCost").path("costTable");
+        assertTrue(costTable.has("speed1"));
+        assertTrue(costTable.has("speed32"));
+        assertEquals(1, costTable.get("speed1").asInt());
+        assertEquals(14, costTable.get("speed32").asInt());
+    }
+
+    @Test
+    @DisplayName("Shuttles should have max speed of 6")
+    void testShuttleMaxSpeed() {
+        JsonNode shuttles = movement.path("movement").path("sublightMovement").path("shuttles");
+        assertEquals(6, shuttles.get("speed").get("maxSpeed").asInt());
+        assertTrue(shuttles.has("uses"));
+        assertTrue(shuttles.has("restrictions"));
+    }
+
+    @Test
+    @DisplayName("Fighters should have types defined")
+    void testFighterTypes() {
+        JsonNode fighters = movement.path("movement").path("sublightMovement").path("fighters");
+        JsonNode types = fighters.get("types");
+        assertTrue(types.size() >= 2, "Should have at least 2 fighter types");
+    }
+
+    @Test
+    @DisplayName("Acceleration rules should be defined")
+    void testAccelerationRules() {
+        JsonNode accel = movement.path("movement").path("acceleration");
+        assertTrue(accel.has("rules"));
+        assertTrue(accel.get("rules").size() > 0);
+    }
+
     // ==========================================
     // Shields Tests
     // ==========================================
@@ -320,7 +374,7 @@ class SfbRulesDatabaseValidationTest {
     }
 
     @Test
-    @DisplayName("Phasers should have 4 sizes")
+    @DisplayName("Phasers should have 4 sizes with fire charts")
     void testPhaserSizes() {
         JsonNode phasers = null;
         for (JsonNode weapon : weapons.path("weapons").path("categories").path("directFire").path("types")) {
@@ -331,10 +385,15 @@ class SfbRulesDatabaseValidationTest {
         }
         assertNotNull(phasers);
         assertEquals(4, phasers.get("sizes").size());
+        // Verify Phaser-1 has fire chart
+        JsonNode phaser1 = phasers.get("sizes").get(0);
+        assertEquals("Phaser-1", phaser1.get("size").asText());
+        assertTrue(phaser1.has("fireChart"), "Phaser-1 should have fire chart");
+        assertEquals(7, phaser1.get("fireChart").get("bands").size(), "Phaser-1 should have 7 range bands");
     }
 
     @Test
-    @DisplayName("Plasma torpedoes should have 5 variants")
+    @DisplayName("Plasma torpedoes should have 5 variants with warhead data")
     void testPlasmaTorpedoVariants() {
         JsonNode plasma = null;
         for (JsonNode weapon : weapons.path("weapons").path("categories").path("seeking").path("types")) {
@@ -345,6 +404,10 @@ class SfbRulesDatabaseValidationTest {
         }
         assertNotNull(plasma);
         assertEquals(5, plasma.get("variants").size());
+        // Verify Type-A has warhead data
+        JsonNode typeA = plasma.get("variants").get(0);
+        assertEquals(8, typeA.get("warheadStart").asInt());
+        assertEquals(0, typeA.get("warheadEnd").asInt());
     }
 
     @Test
@@ -808,5 +871,177 @@ class SfbRulesDatabaseValidationTest {
         assertTrue(fusion.get("overload").asText().contains("half-again") ||
                    fusion.get("overload").asText().contains("1.5x"),
                    "Fusion beams should have half-again overload damage");
+    }
+
+    @Test
+    @DisplayName("Disruptors should have fire chart with 6 range bands")
+    void testDisruptorFireChart() {
+        JsonNode disruptor = null;
+        for (JsonNode weapon : weapons.path("weapons").path("categories").path("directFire").path("types")) {
+            if ("Disruptors".equals(weapon.get("name").asText())) {
+                disruptor = weapon;
+                break;
+            }
+        }
+        assertNotNull(disruptor);
+        assertTrue(disruptor.has("fireChart"), "Disruptors should have fire chart");
+        assertEquals(6, disruptor.get("fireChart").get("bands").size());
+        assertEquals(2, disruptor.get("energyCost").asInt());
+    }
+
+    @Test
+    @DisplayName("Photon torpedoes should have dial-a-yield options")
+    void testPhotonDialAYield() {
+        JsonNode photon = null;
+        for (JsonNode weapon : weapons.path("weapons").path("categories").path("directFire").path("types")) {
+            if ("Photon Torpedoes".equals(weapon.get("name").asText())) {
+                photon = weapon;
+                break;
+            }
+        }
+        assertNotNull(photon);
+        assertTrue(photon.has("dialAYield"), "Photon torpedoes should have dial-a-yield");
+        assertEquals(3, photon.get("dialAYield").get("options").size());
+        // Standard damage should be 8
+        assertEquals(8, photon.get("dialAYield").get("options").get(0).get("damage").asInt());
+    }
+
+    @Test
+    @DisplayName("Photon torpedoes should have fire chart")
+    void testPhotonFireChart() {
+        JsonNode photon = null;
+        for (JsonNode weapon : weapons.path("weapons").path("categories").path("directFire").path("types")) {
+            if ("Photon Torpedoes".equals(weapon.get("name").asText())) {
+                photon = weapon;
+                break;
+            }
+        }
+        assertNotNull(photon);
+        assertTrue(photon.has("fireChart"), "Photon torpedoes should have fire chart");
+        assertEquals(7, photon.get("fireChart").get("bands").size());
+    }
+
+    @Test
+    @DisplayName("Plasma torpedoes should have interception rules")
+    void testPlasmaInterception() {
+        JsonNode plasma = null;
+        for (JsonNode weapon : weapons.path("weapons").path("categories").path("seeking").path("types")) {
+            if ("Plasma Torpedoes".equals(weapon.get("name").asText())) {
+                plasma = weapon;
+                break;
+            }
+        }
+        assertNotNull(plasma);
+        assertTrue(plasma.has("interception"), "Plasma torpedoes should have interception rules");
+    }
+
+    @Test
+    @DisplayName("Drones should have types defined")
+    void testDroneTypes() {
+        JsonNode drones = null;
+        for (JsonNode weapon : weapons.path("weapons").path("categories").path("seeking").path("types")) {
+            if ("Drones".equals(weapon.get("name").asText())) {
+                drones = weapon;
+                break;
+            }
+        }
+        assertNotNull(drones);
+        assertTrue(drones.has("types"), "Drones should have types");
+        assertTrue(drones.get("types").size() >= 2);
+    }
+
+    @Test
+    @DisplayName("Drones should have resupply rules")
+    void testDroneResupply() {
+        JsonNode drones = null;
+        for (JsonNode weapon : weapons.path("weapons").path("categories").path("seeking").path("types")) {
+            if ("Drones".equals(weapon.get("name").asText())) {
+                drones = weapon;
+                break;
+            }
+        }
+        assertNotNull(drones);
+        assertTrue(drones.has("resupply"), "Drones should have resupply rules");
+    }
+
+    @Test
+    @DisplayName("Sensors should have detection ranges")
+    void testSensorDetectionRanges() {
+        JsonNode systems = specialSystems.path("specialSystems").path("systems");
+        JsonNode sensors = null;
+        for (JsonNode system : systems) {
+            if ("Sensors".equals(system.get("name").asText())) {
+                sensors = system;
+                break;
+            }
+        }
+        assertNotNull(sensors);
+        assertTrue(sensors.has("detectionRanges"), "Sensors should have detection ranges");
+    }
+
+    @Test
+    @DisplayName("Scanners should have rating scale")
+    void testScannerRatings() {
+        JsonNode systems = specialSystems.path("specialSystems").path("systems");
+        JsonNode scanners = null;
+        for (JsonNode system : systems) {
+            if ("Scanners".equals(system.get("name").asText())) {
+                scanners = system;
+                break;
+            }
+        }
+        assertNotNull(scanners);
+        assertTrue(scanners.has("scannerRatings"), "Scanners should have rating scale");
+    }
+
+    @Test
+    @DisplayName("Other empires should have detailed data")
+    void testOtherEmpiresDetailed() {
+        JsonNode other = empires.path("empires").path("otherEmpires");
+        // Find Jindarians
+        JsonNode jindarian = null;
+        for (JsonNode empire : other) {
+            if ("Jindarians".equals(empire.get("name").asText())) {
+                jindarian = empire;
+                break;
+            }
+        }
+        assertNotNull(jindarian);
+        assertTrue(jindarian.has("combatStyle"));
+        assertTrue(jindarian.has("primaryWeapons"));
+        assertTrue(jindarian.has("notableShips"));
+    }
+
+    @Test
+    @DisplayName("Carnivons should be marked as extinct")
+    void testCarnivonsExtinct() {
+        JsonNode other = empires.path("empires").path("otherEmpires");
+        JsonNode carnivon = null;
+        for (JsonNode empire : other) {
+            if ("Carnivons".equals(empire.get("name").asText())) {
+                carnivon = empire;
+                break;
+            }
+        }
+        assertNotNull(carnivon);
+        assertEquals("Extinct (xenocided)", carnivon.get("status").asText());
+        assertTrue(carnivon.get("uniqueFeatures").asText().toLowerCase().contains("death bolt"),
+            "Carnivons should mention death bolts");
+    }
+
+    @Test
+    @DisplayName("Eneen should have variable-focus neutron beam")
+    void testEneenNeutronBeam() {
+        JsonNode other = empires.path("empires").path("otherEmpires");
+        JsonNode eneen = null;
+        for (JsonNode empire : other) {
+            if ("Eneen".equals(empire.get("name").asText())) {
+                eneen = empire;
+                break;
+            }
+        }
+        assertNotNull(eneen);
+        assertTrue(eneen.get("uniqueFeatures").asText().toLowerCase().contains("neutron"),
+            "Eneen should mention neutron beam");
     }
 }

@@ -7,26 +7,111 @@
         "types": [
           {
             "name": "Phasers",
-            "description": "Standard Federation energy weapon. Also used by Hydrans (gatling phasers) and others.",
-            "sizes": ["Phaser-1 (largest)", "Phaser-2", "Phaser-3", "Phaser-4 (smallest)"],
-            "rangeBands": ["Close", "Short", "Medium", "Long", "Extreme"],
-            "overload": "Overloaded phasers score double damage but are limited to 8 hexes range.",
+            "description": "Standard Federation energy weapon. Also used by Hydrans (gatling phasers) and others. Come in 4 sizes, with Phaser-1 being the largest and most powerful.",
+            "sizes": [
+              {
+                "size": "Phaser-1",
+                "description": "Largest phaser, typically on heavy cruisers and dreadnoughts.",
+                "energyCost": 1,
+                "fireChart": {
+                  "description": "Hit probability and damage by range band. Die roll 1-6 = hit, damage shown.",
+                  "bands": [
+                    {"band": "0 (point blank)", "hit": "1-6", "damage": 5, "overloadHit": "1-6", "overloadDamage": 10},
+                    {"band": "1 (1-2 hexes)", "hit": "1-6", "damage": 5, "overloadHit": "1-6", "overloadDamage": 10},
+                    {"band": "2 (3-5 hexes)", "hit": "1-6", "damage": 5, "overloadHit": "1-6", "overloadDamage": 10},
+                    {"band": "3 (6-8 hexes)", "hit": "1-5", "damage": 4, "overloadHit": "1-5", "overloadDamage": 8},
+                    {"band": "4 (9-12 hexes)", "hit": "1-4", "damage": 3, "overloadHit": "—", "overloadDamage": 0},
+                    {"band": "5 (13-15 hexes)", "hit": "1-3", "damage": 2, "overloadHit": "—", "overloadDamage": 0},
+                    {"band": "6 (16+ hexes)", "hit": "1-2", "damage": 1, "overloadHit": "—", "overloadDamage": 0}
+                  ]
+                }
+              },
+              {
+                "size": "Phaser-2",
+                "description": "Medium phaser, common on cruisers.",
+                "energyCost": 1,
+                "fireChart": {
+                  "bands": [
+                    {"band": "0", "hit": "1-6", "damage": 5, "overloadHit": "1-6", "overloadDamage": 10},
+                    {"band": "1", "hit": "1-6", "damage": 5, "overloadHit": "1-6", "overloadDamage": 10},
+                    {"band": "2", "hit": "1-5", "damage": 4, "overloadHit": "1-5", "overloadDamage": 8},
+                    {"band": "3", "hit": "1-4", "damage": 3, "overloadHit": "1-4", "overloadDamage": 6},
+                    {"band": "4", "hit": "1-3", "damage": 2, "overloadHit": "—", "overloadDamage": 0},
+                    {"band": "5", "hit": "1-2", "damage": 1, "overloadHit": "—", "overloadDamage": 0},
+                    {"band": "6", "hit": "1-1", "damage": 1, "overloadHit": "—", "overloadDamage": 0}
+                  ]
+                }
+              },
+              {
+                "size": "Phaser-3",
+                "description": "Smaller defensive phaser, energy cost 1/2.",
+                "energyCost": "1/2",
+                "fireChart": {
+                  "bands": [
+                    {"band": "0", "hit": "1-6", "damage": 4, "overloadHit": "1-6", "overloadDamage": 8},
+                    {"band": "1", "hit": "1-5", "damage": 3, "overloadHit": "1-5", "overloadDamage": 6},
+                    {"band": "2", "hit": "1-4", "damage": 2, "overloadHit": "1-4", "overloadDamage": 4},
+                    {"band": "3", "hit": "1-3", "damage": 1, "overloadHit": "—", "overloadDamage": 0},
+                    {"band": "4", "hit": "1-2", "damage": 1, "overloadHit": "—", "overloadDamage": 0},
+                    {"band": "5", "hit": "1-1", "damage": 1, "overloadHit": "—", "overloadDamage": 0}
+                  ]
+                }
+              },
+              {
+                "size": "Phaser-4",
+                "description": "Smallest phaser, used on shuttles and small craft. Energy cost 2.",
+                "energyCost": 2
+              }
+            ],
+            "overload": "Overloaded phasers score double damage but are limited to 8 hexes range (range band 3 maximum).",
             "firingArc": "Varies by mount. Designations include F (Forward), LF (Left-Forward), RF (Right-Forward), L (Left), R (Right), LR (Left-Rear), RR (Right-Rear), A (All-around).",
-            "usedBy": ["Federation", "Hydrans", "ISC", "Others"]
+            "usedBy": ["Federation", "Hydrans (Gatling Phasers)", "ISC", "Others"]
           },
           {
             "name": "Disruptors",
-            "description": "Klingon and Romulan energy weapon. Functions similarly to phasers but with different damage profiles.",
+            "description": "Klingon and Romulan energy weapon. Functions similarly to phasers but with different damage profiles. Energy cost to fire = 2 (overload: 2+2).",
             "variants": ["Standard Disruptor", "Varon-T Disruptor (Klingon)"],
+            "energyCost": 2,
+            "fireChart": {
+              "description": "Standard disruptor fire chart. HIT = die roll range to hit, DMG = damage points.",
+              "bands": [
+                {"band": "0 (point blank)", "hit": "1-6", "damage": 5, "overloadHit": "1-6", "overloadDamage": 10},
+                {"band": "1 (1-2 hexes)", "hit": "1-5", "damage": 5, "overloadHit": "1-5", "overloadDamage": 10},
+                {"band": "2 (3-5 hexes)", "hit": "1-5", "damage": 4, "overloadHit": "1-5", "overloadDamage": 8},
+                {"band": "3 (6-8 hexes)", "hit": "1-4", "damage": 4, "overloadHit": "1-4", "overloadDamage": 8},
+                {"band": "4 (9-12 hexes)", "hit": "1-4", "damage": 3, "overloadHit": "—", "overloadDamage": 0},
+                {"band": "5 (13-15 hexes)", "hit": "1-3", "damage": 2, "overloadHit": "—", "overloadDamage": 0}
+              ]
+            },
             "rangeBands": ["Close", "Short", "Medium", "Long", "Extreme"],
-            "overload": "Overloaded disruptors score double damage, limited to 8 hexes.",
+            "overload": "Overloaded disruptors score double damage, limited to 8 hexes (range band 3 maximum).",
             "usedBy": ["Klingon Empire", "Romulan Star Empire"]
           },
           {
             "name": "Photon Torpedoes",
-            "description": "Federation direct-fire projectile weapon. Limited ammunition. Features 'dial-a-yield' for adjustable warhead strength.",
+            "description": "Federation direct-fire projectile weapon. Limited ammunition. Features 'dial-a-yield' for adjustable warhead strength instead of standard overload. Energy cost to fire = 2+2.",
+            "energyCost": "2+2",
+            "fireChart": {
+              "description": "Photon torpedo fire chart with dial-a-yield. Standard damage = 8 at all ranges. Dial-a-yield adds +2 or +4 power for increased damage.",
+              "bands": [
+                {"band": "0 (point blank)", "hit": "1-6", "damage": 8, "dialA2": 12, "dialA4": 16},
+                {"band": "1 (1-2 hexes)", "hit": "1-6", "damage": 8, "dialA2": 12, "dialA4": 16},
+                {"band": "2 (3-5 hexes)", "hit": "1-5", "damage": 8, "dialA2": 12, "dialA4": 16},
+                {"band": "3 (6-8 hexes)", "hit": "1-4", "damage": 8, "dialA2": 12, "dialA4": 16},
+                {"band": "4 (9-12 hexes)", "hit": "1-3", "damage": 8, "dialA2": 12, "dialA4": 16},
+                {"band": "5 (13-15 hexes)", "hit": "1-2", "damage": 8, "dialA2": 0, "dialA4": 0},
+                {"band": "6 (16+ hexes)", "hit": "1-1", "damage": 8, "dialA2": 0, "dialA4": 0}
+              ]
+            },
+            "dialAYield": {
+              "description": "Instead of overloading, photon torpedoes allow the player to add extra energy to increase warhead yield.",
+              "options": [
+                {"power": "Standard (2+2)", "damage": 8, "description": "Base warhead strength."},
+                {"power": "+2 Power (4+2)", "damage": 12, "description": "Increased yield, limited to 8 hexes."},
+                {"power": "+4 Power (6+2)", "damage": 16, "description": "Maximum yield, limited to 8 hexes."}
+              ]
+            },
             "rangeBands": ["Close", "Short", "Medium", "Long", "Extreme"],
-            "overload": "Photon torpedoes have dial-a-yield instead of standard overload. Warhead strength can be adjusted.",
             "ammunition": "Limited — tracked on SSD.",
             "usedBy": ["Federation", "Hydrans", "Others"]
           },
@@ -59,34 +144,58 @@
         "types": [
           {
             "name": "Plasma Torpedoes",
-            "description": "Seeking weapon that pursues targets. Warhead strength degrades over distance. Cannot be held in tractor beams.",
+            "description": "Seeking weapon that pursues targets. Warhead strength degrades over distance. Cannot be held in tractor beams. Each launcher has a once-per-scenario feint launch that costs no energy.",
+            "energyCost": "Varies by type",
             "characteristics": [
               "Warhead degrades with distance traveled",
               "Can be disrupted by phaser fire",
               "Cannot be held by tractor beams",
-              "Forces targets to maneuver to avoid"
+              "Forces targets to maneuver to avoid",
+              "Each launcher has one feint launch per scenario (no energy cost)",
+              "Most types are self-guiding — launching ship can cloak and leave the torpedo to pursue"
             ],
             "variants": [
-              {"type": "Type-A (Federation/Gorn)", "description": "Standard plasma torpedo."},
-              {"type": "Type-B (Romulan)", "description": "Romulan plasma with trilithium isotope warhead."},
-              {"type": "Type-C", "description": "Variant with different characteristics."},
-              {"type": "Type-D", "description": "Variant with different characteristics."},
-              {"type": "Type-E", "description": "Weaker variant, used by Eneen."}
+              {"type": "Type-A (Federation/Gorn)", "description": "Standard plasma torpedo. Warhead degrades from 8 to 0 over 30+ hexes.", "warheadStart": 8, "warheadEnd": 0, "degradationRange": "30+ hexes"},
+              {"type": "Type-B (Romulan)", "description": "Romulan plasma with trilithium isotope warhead. Stronger initial warhead.", "warheadStart": 8, "warheadEnd": 0, "degradationRange": "30+ hexes"},
+              {"type": "Type-C", "description": "Variant with different characteristics.", "warheadStart": 8, "warheadEnd": 0},
+              {"type": "Type-D", "description": "Variant with different characteristics. Canisters can be carried by fighters.", "warheadStart": 8, "warheadEnd": 0},
+              {"type": "Type-E", "description": "Weaker variant, used by Eneen.", "warheadStart": 6, "warheadEnd": 0}
             ],
+            "interception": {
+              "description": "Plasma torpedoes can be intercepted by phaser fire.",
+              "method": "Phaser fire at the plasma torpedo can reduce its warhead strength or destroy it.",
+              "tractorBeam": "Cannot be held by tractor beams (only drones can)."
+            },
             "usedBy": ["Romulan Star Empire", "Gorn", "Kzinti", "Federation (X-Ships)"]
           },
           {
             "name": "Drones",
-            "description": "Seeking munitions with fixed warhead strength. Limited ammunition. Can be held in tractor beams.",
+            "description": "Seeking munitions with fixed warhead strength. Limited ammunition. Can be held in tractor beams. Require seeking weapon control channel to guide (not self-guiding).",
+            "energyCost": "Varies by type",
             "characteristics": [
               "Warhead strength remains constant until impact",
               "Limited ammunition — tracked on SSD",
               "Can be held in tractor beams",
               "Can be targeted and destroyed",
-              "Go inert after extended pursuit"
+              "Go inert after extended pursuit",
+              "Require seeking weapon control channel — not self-guiding (launching ship must guide)",
+              "Seeking weapon control can be transferred to allied ships"
             ],
-            "interception": "Drones can be intercepted by point-defense fire and tractor beams.",
-            "usedBy": ["Federation", "Klingon Empire", "Hydrans", "Others"]
+            "types": [
+              {"type": "Type-I (Slow)", "description": "Standard slow drones. Half warhead strength of modern drones. Included free with drone racks."},
+              {"type": "Type-IV (Slow)", "description": "Double warhead slow drones. Can be swapped 2:1 with Type-I at resupply."},
+              {"type": "Type-II", "description": "Standard modern drones."},
+              {"type": "Type-V", "description": "Advanced drones."}
+            ],
+            "interception": {
+              "description": "Drones can be intercepted by point-defense fire and tractor beams.",
+              "methods": ["Phaser fire to destroy", "Tractor beam to hold", "Wild weasel decoys to redirect"]
+            },
+            "resupply": {
+              "description": "Drones are restocked at bases. First load at full price, identical reloads free.",
+              "carrierStorage": "Carriers may store drones for fighters at half-price."
+            },
+            "usedBy": ["Federation", "Klingon Empire", "Hydrans", "Kzinti", "Others"]
           }
         ]
       },

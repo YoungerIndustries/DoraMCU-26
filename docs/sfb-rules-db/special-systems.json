@@ -99,21 +99,36 @@
       },
       {
         "name": "Sensors",
-        "description": "Detect and track enemy ships. Determine what information is visible to the player.",
+        "description": "Detect and track enemy ships. Determine what information is visible to the player. Functionally similar to 20th century radar but operating on different principles for FTL targets.",
         "rules": [
           "Sensor rating determines detection range and accuracy.",
           "Can see the SSD of an opponent's ship at a range of 5x the number of sensors.",
           "Sensor lock-on is required for some weapons fire.",
-          "Sensors can detect cloaked ships under certain conditions (especially with ECM)."
-        ]
+          "Sensors can detect cloaked ships under certain conditions (especially with ECM).",
+          "Sensors and scanners broadcast an electronic pulse reflected back by targets.",
+          "Computers analyze returns to gain information about the target.",
+          "Certain known targets (asteroids, Klingon frigates, plasma torpedoes) have specific sensor signatures.",
+          "The last sensor box is always 0 — represents residual capability after effective destruction."
+        ],
+        "detectionRanges": {
+          "description": "Sensor rating affects what can be detected and at what range.",
+          "ssdDetection": "Can see opponent's SSD at range of 5x sensor rating.",
+          "cloakedDetection": "ECM can sometimes detect cloaked ships."
+        }
       },
       {
         "name": "Scanners",
-        "description": "Provide additional information about enemy ships and terrain.",
+        "description": "Provide additional information about enemy ships and terrain. Work in conjunction with sensors.",
         "rules": [
           "Scanner rating determines the level of detail available about enemy ships.",
-          "Can reveal ship class, damage status, and other information at close range."
-        ]
+          "Can reveal ship class, damage status, and other information at close range.",
+          "The last scanner box is always 9 — represents residual capability after effective destruction.",
+          "Scanners help identify unknown ships and space monsters."
+        ],
+        "scannerRatings": {
+          "description": "Lower scanner numbers = better scanning capability.",
+          "scale": "1 (best) to 9 (worst, residual capability)."
+        }
       },
       {
         "name": "Batteries",

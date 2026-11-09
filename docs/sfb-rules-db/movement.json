@@ -4,8 +4,43 @@
     "speedSystem": {
       "maxSpeed": 32,
       "description": "Speed determines how often a ship moves during a turn. A speed-32 ship moves on every impulse except impulse 1. A speed-1 ship moves only on impulse 32.",
-      "movementChart": "The Movement Chart maps speed to impulses. At a given speed, a ship moves on specific impulses determined by the chart.",
-      "energyCost": "Higher speeds require more warp engine energy. The cost increases with speed."
+      "movementChart": {
+        "description": "The 32-Impulse Movement Chart maps speed to impulses. At a given speed, a ship moves on specific impulses determined by the chart. Impulse 1: no units move (speed 31 or less). Impulse 32: all units move.",
+        "impulse1": "No units move (starships restricted to speed 31 or less). Speed-32 seeking weapons one hex from targets hit automatically.",
+        "impulse32": "All units move, including the slowest. Targets at range limit of overloaded torpedoes (8 hexes) cannot escape.",
+        "speedToImpulses": {
+          "description": "Example impulse mappings for key speeds. Full chart has 32 speeds.",
+          "examples": [
+            {"speed": 32, "impulses": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32", "movesPerTurn": 31},
+            {"speed": 31, "impulses": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32", "movesPerTurn": 30},
+            {"speed": 16, "impulses": "4,6,8,10,12,14,16,18,20,22,24,26,28,30,32", "movesPerTurn": 15},
+            {"speed": 8, "impulses": "8,16,24,32", "movesPerTurn": 4},
+            {"speed": 4, "impulses": "16,32", "movesPerTurn": 2},
+            {"speed": 1, "impulses": "32", "movesPerTurn": 1}
+          ]
+        }
+      },
+      "energyCost": {
+        "description": "Higher speeds require more warp engine energy. The cost increases with speed.",
+        "costTable": {
+          "description": "Energy cost per speed level (warp engine boxes required).",
+          "speed1": 1,
+          "speed2": 1,
+          "speed3": 1,
+          "speed4": 2,
+          "speed5": 2,
+          "speed6": 2,
+          "speed7": 3,
+          "speed8": 3,
+          "speed9": 3,
+          "speed10": 4,
+          "speed16": 6,
+          "speed20": 8,
+          "speed24": 10,
+          "speed28": 12,
+          "speed32": 14
+        }
+      }
     },
     "turnModes": {
       "description": "Ships change facing (heading) using turn modes. Each mode allows a different amount of turning per turn.",
@@ -67,7 +102,75 @@
     },
     "sublightMovement": {
       "description": "Shuttles, fighters, and patrol fighters (PFs) have their own movement rules. They can move at higher speeds relative to their size.",
-      "maxSpeed": "PFs and Interceptors may move at a maximum speed of 6 hexes."
+      "maxSpeed": "PFs and Interceptors may move at a maximum speed of 6 hexes.",
+      "shuttles": {
+        "description": "Small transport vessels with simplified movement rules.",
+        "energy": "Shuttles do not fill out an Energy Allocation Form. Their engine provides energy to move and fire their phaser.",
+        "speed": {
+          "maxSpeed": 6,
+          "description": "Administrative shuttles have a maximum speed of 6 hexes per turn. Must announce speed at start of each turn and remain at this speed for the entire turn. If no speed is announced, maximum speed is assumed.",
+          "acceleration": "A shuttle may accelerate by up to one-half of its maximum movement (round up) at the start of a given turn (up to its maximum speed). May be launched at its maximum speed."
+        },
+        "uses": [
+          "Transporting personnel between ships",
+          "Boarding parties",
+          "Wild Weasel decoys to attract seeking weapons",
+          "Suicide shuttles charged with anti-matter bombs",
+          "Evacuation from damaged ships"
+        ],
+        "restrictions": [
+          "Destroyed if towed at high speed",
+          "Cannot move through planets",
+          "Limited weapons capability (typically phaser-4)"
+        ]
+      },
+      "fighters": {
+        "description": "Sublight combat aircraft launched from carriers.",
+        "speed": {
+          "maxSpeed": 6,
+          "description": "Fighters move at sublight speeds, typically up to 6 hexes per turn."
+        },
+        "types": [
+          {"type": "Standard Fighter", "description": "Basic fighter with phaser weapons. Used for combat and interception."},
+          {"type": "Interceptor", "description": "Fast fighter designed specifically to intercept seeking weapons (drones and plasma torpedoes)."},
+          {"type": "F-111", "description": "Advanced fighter variant."}
+        ],
+        "weapons": ["Phasers", "Drones (some variants)"],
+        "restrictions": [
+          "Require carrier or base for launch and recovery",
+          "Limited range from carrier",
+          "Cannot operate without supporting unit in campaign play"
+        ]
+      },
+      "patrolFighters": {
+        "description": "Fast Patrol Ships (PFs) — small, fast sublight vessels.",
+        "speed": {
+          "maxSpeed": 6,
+          "description": "PFs move at sublight speeds, typically up to 6 hexes per turn."
+        },
+        "uses": ["Patrol", "Light attack", "Reconnaissance"],
+        "restrictions": [
+          "Cannot operate without supporting unit in campaign play",
+          "Limited weapons and shield capability"
+        ]
+      }
+    },
+    "acceleration": {
+      "description": "Ships can change speed between turns, but acceleration is limited.",
+      "rules": [
+        "A ship may accelerate by up to 4 points per turn (from previous turn's speed).",
+        "After performing tactical maneuvers, the ship is considered to have had a speed of 'zero' for acceleration purposes.",
+        "The count of hexes for the turn and sideslip modes are reset to zero after tactical maneuvers."
+      ]
+    },
+    "sideslip": {
+      "description": "A tactical maneuver where a ship moves laterally while maintaining its facing.",
+      "rules": [
+        "Allows repositioning without turning.",
+        "Cannot be used at certain speeds.",
+        "Requires specific impulse timing.",
+        "The sideslip count of hexes is reset after tactical maneuvers."
+      ]
     }
   }
 }
