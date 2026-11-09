@@ -1,0 +1,147 @@
+{
+  "campaignRules": {
+    "description": "SFB campaign rules (Star Fleet Battles: A New Beginning and other campaign systems) extend tactical battles into strategic galaxy-wide campaigns. Players manage entire empires, including finances, diplomacy, shipbuilding, and fleet deployment.",
+    "overview": {
+      "description": "In campaign play, you assume command of an entire galactic empire. You manage finances, strategically position forces, protect assets, make military and diplomatic policy, and take charge in the tactical arena.",
+      "scope": "Galaxy-wide strategic map with multiple sectors and impulses."
+    },
+    "strategicMap": {
+      "description": "The galaxy is divided into sectors on a strategic map. Each sector may contain star systems, terrain, and enemy forces.",
+      "sectors": "Hex-based strategic map representing sectors of space.",
+      "impulses": "Strategic impulses represent longer time periods than tactical impulses. Each strategic impulse allows strategic movement and actions."
+    },
+    "fleetManagement": {
+      "description": "Fleets are groups of ships that operate together under a flagship's command.",
+      "rules": [
+        "Each fleet has its own command rating based on the flagship.",
+        "Fleets may only communicate during Energy Allocation, and in front of all players.",
+        "EW may not be lent between fleets.",
+        "Secret information (seeking weapon targets, real vs. pseudo plasma torpedoes) may not be revealed between fleets.",
+        "Boarding parties transported to a ship from another fleet are considered hostile.",
+        "Crew may be transported off a doomed vessel by a ship of another fleet."
+      ],
+      "flagship": {
+        "description": "The flagship provides command and control for the fleet.",
+        "commandRating": "Determines which ships can be included in the fleet's command structure.",
+        "disruption": "If the flagship is destroyed or loses all control spaces, fleet command is disrupted for 16 impulses (1/2 turn) while the flag is transferred.",
+        "disruptedEffects": [
+          "Ships may only fire at enemy vessels within 8 hexes (5 hexes for fighters, PFs, and shuttles).",
+          "No weapons may be overloaded, but previously overloaded weapons may be fired.",
+          "Once the flag is transferred, command is restored for ships that fit in the new flagship's Command Rating."
+        ]
+      },
+      "squadrons": {
+        "description": "Active squadrons must be included in the Command Rating or they lose their squadron benefits.",
+        "rules": [
+          "Once a vessel is included in a squadron, it may not be released until it is destroyed, crippled, disengaged, or the flagship is destroyed."
+        ]
+      }
+    },
+    "shipbuilding": {
+      "description": "Players can build new ships at shipyards in their controlled systems.",
+      "resources": "Shipbuilding requires resources, personnel, and authority.",
+      "costs": "Each ship has a construction cost based on its point value and complexity.",
+      "time": "Shipbuilding takes multiple strategic impulses to complete."
+    },
+    "diplomacy": {
+      "description": "Players can engage in diplomacy with other empires, forming alliances, declaring war, or negotiating peace.",
+      "war": {
+        "declaration": "War is declared through diplomatic channels. Border skirmishes and minor raids do not count as full hostilities — fleet actions do.",
+        "duration": "War ends on its own if there are no hostilities between the two sides for three full turns. It may also be ended by signing a Peace Treaty.",
+        "peaceTreaty": "Terms of the treaty are up to the empires involved and are usually made public to all empires in contact with those involved."
+      },
+      "alliances": "Alliances allow coordinated fleet actions and resource sharing between empires.",
+      "neutrality": "Neutral empires may be drawn into conflicts or remain independent."
+    },
+    "economy": {
+      "description": "Players manage their empire's finances, collecting revenue from controlled systems and spending on shipbuilding, maintenance, and research.",
+      "revenue": "Collected from controlled star systems.",
+      "expenses": [
+        "Ship construction",
+        "Fleet maintenance",
+        "Static defense maintenance (costs increase over time)",
+        "Scientific research",
+        "Diplomatic efforts"
+      ]
+    },
+    "repairs": {
+      "description": "Ships can be repaired between battles using repair systems and dock facilities.",
+      "damageControl": {
+        "description": "If a ship is completely repaired before its Damage Control track is used up, record the number of repairs left over. These will be used the next time the ship is damaged.",
+        "limitation": "If the ship is not fully repaired, it must dock with a repair unit for any more campaign repairs."
+      },
+      "repairSystems": {
+        "description": "Ships with repair systems may repair other ships.",
+        "rate": "Each Repair box may produce 1 repair point every strategic impulse."
+      },
+      "docking": "Ships must dock with repair units (fleet tugs, bases) for extensive repairs."
+    },
+    "combat": {
+      "description": "Tactical battles are resolved using the standard SFB tactical rules.",
+      "initiation": "When fleets encounter each other, a tactical battle may be initiated.",
+      "resolution": "Battles are resolved on a tactical hex map using the full SFB rules.",
+      "consequences": "Battle outcomes affect the strategic situation, including ship losses, damage, and territorial control."
+    },
+    "zoneOfControl": {
+      "description": "In campaign play, ships exert a Zone of Control (ZoC) that restricts enemy movement.",
+      "pinStrengths": {
+        "description": "The 'attacker' must commit a portion of their fleet to hold down a pin. Ships remaining after satisfying this value can run the pin into the defender's ZoC.",
+        "values": {
+          "6xFighter": "1/2",
+          "2xInterceptor": "1/3",
+          "2xF-111": "1/3",
+          "2xFleet": "1/2",
+          "SC4_Unit": "1",
+          "SC3_Unit": "2",
+          "SC2_Unit": "3"
+        }
+      },
+      "pinnedShip": {
+        "description": "A pinned ship must either fight, hold, or withdraw.",
+        "options": [
+          {"action": "Fight", "description": "Enter an encounter with the involved ships."},
+          {"action": "Hold", "description": "Keep all ships in the same sector; the pin can be continued into the next impulse with all ZoCs remaining the same."},
+          {"action": "Withdraw", "description": "The ships may attempt to withdraw along their ZoC."}
+        ]
+      },
+      "restrictions": [
+        "Freighters may not be used to pin or to satisfy a pin.",
+        "Fighters, Interceptors, and PFs may not be used without a supporting unit in the same sector."
+      ]
+    },
+    "scientificCorps": {
+      "description": "Players can develop their scientific corps to improve technology, research new weapons, and analyze threats.",
+      "research": "Research takes time and resources but can provide significant advantages.",
+      "analysis": "Labs and scientific facilities can analyze unknown threats and develop countermeasures."
+    },
+    "victory": {
+      "description": "Victory in campaign play is achieved through various means.",
+      "conditions": [
+        "Destroying the enemy's fleet and capturing their key systems.",
+        "Forcing the enemy to sign a Peace Treaty on favorable terms.",
+        "Achieving specific campaign objectives (e.g., protecting a system, delivering a payload).",
+        "Enemy surrender due to economic collapse or military defeat."
+      ]
+    },
+    "campaignModules": {
+      "description": "Various modules provide campaign rules and scenarios.",
+      "modules": [
+        {"name": "Star Fleet Battles: A New Beginning", "description": "Basic campaign rules for strategic play."},
+        {"name": "Module C1: New Worlds I", "description": "Rules and ships for Hydrans, Lyrans, and WYN."},
+        {"name": "Module J", "description": "Advanced campaign rules."},
+        {"name": "Module T / T-2000", "description": "Tournament play rules with specially balanced ships."}
+      ]
+    },
+    "tacticalAdvice": {
+      "description": "Key tactical principles for SFB.",
+      "principles": [
+        {"principle": "Speed is Life", "description": "Speed gives you more time to deal with incoming threats. You can run from plasma torpedoes until they run out of juice, run from drones, and keep enemies out of overload range. None of this works without speed."},
+        {"principle": "Use EW", "description": "Electronic Warfare at long to medium range is more efficient than shield reinforcement. With max ECM and EM, you should rarely take damage at medium range."},
+        {"principle": "Reinforce Facing Shields", "description": "Direct reinforcement to the shields facing your attackers is more efficient than general reinforcement."},
+        {"principle": "Centerline Your Target", "description": "Maneuver to put targets in your strongest firing arcs. For direct-fire weapons, centerlining (putting the target straight ahead) maximizes firepower."},
+        {"principle": "Protect Your Warp Engines", "description": "Warp engines are your power source. Protecting them ensures you can maintain speed, shields, and weapons."},
+        {"principle": "Destroy Enemy Warp Engines", "description": "Damaging enemy warp engines reduces their energy for everything, creating a cascading disadvantage."}
+      ]
+    }
+  }
+}

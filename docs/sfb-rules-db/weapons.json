@@ -1,0 +1,170 @@
+{
+  "weapons": {
+    "description": "SFB features a wide variety of weapons, divided into direct-fire and seeking weapons. Each weapon has range bands that affect hit probability and damage.",
+    "categories": {
+      "directFire": {
+        "description": "Weapons that travel in a straight line from the firing ship. Require line-of-fire and are subject to firing arcs.",
+        "types": [
+          {
+            "name": "Phasers",
+            "description": "Standard Federation energy weapon. Also used by Hydrans (gatling phasers) and others.",
+            "sizes": ["Phaser-1 (largest)", "Phaser-2", "Phaser-3", "Phaser-4 (smallest)"],
+            "rangeBands": ["Close", "Short", "Medium", "Long", "Extreme"],
+            "overload": "Overloaded phasers score double damage but are limited to 8 hexes range.",
+            "firingArc": "Varies by mount. Designations include F (Forward), LF (Left-Forward), RF (Right-Forward), L (Left), R (Right), LR (Left-Rear), RR (Right-Rear), A (All-around).",
+            "usedBy": ["Federation", "Hydrans", "ISC", "Others"]
+          },
+          {
+            "name": "Disruptors",
+            "description": "Klingon and Romulan energy weapon. Functions similarly to phasers but with different damage profiles.",
+            "variants": ["Standard Disruptor", "Varon-T Disruptor (Klingon)"],
+            "rangeBands": ["Close", "Short", "Medium", "Long", "Extreme"],
+            "overload": "Overloaded disruptors score double damage, limited to 8 hexes.",
+            "usedBy": ["Klingon Empire", "Romulan Star Empire"]
+          },
+          {
+            "name": "Photon Torpedoes",
+            "description": "Federation direct-fire projectile weapon. Limited ammunition. Features 'dial-a-yield' for adjustable warhead strength.",
+            "rangeBands": ["Close", "Short", "Medium", "Long", "Extreme"],
+            "overload": "Photon torpedoes have dial-a-yield instead of standard overload. Warhead strength can be adjusted.",
+            "ammunition": "Limited — tracked on SSD.",
+            "usedBy": ["Federation", "Hydrans", "Others"]
+          },
+          {
+            "name": "Torpedoes (Klingon/Romulan)",
+            "description": "Projectile weapons used by Klingons and Romulans, analogous to photon torpedoes.",
+            "usedBy": ["Klingon Empire", "Romulan Star Empire"]
+          },
+          {
+            "name": "Fusion Beams",
+            "description": "Hydran energy weapon. Scores half-again damage when overloaded (not double).",
+            "overload": "Half-again damage (1.5x) when overloaded.",
+            "usedBy": ["Hydrans"]
+          },
+          {
+            "name": "Lasers",
+            "description": "Energy weapons used by various empires. Come in light, medium, and heavy variants.",
+            "variants": ["Light Laser", "Medium Laser", "Heavy Laser", "Warp-tuned Laser"],
+            "usedBy": ["LMC", "Jindarians", "Others"]
+          },
+          {
+            "name": "Polarons",
+            "description": "Romulan energy weapon variant. Phased polaron cannons are also available.",
+            "usedBy": ["Romulan Star Empire"]
+          }
+        ]
+      },
+      "seeking": {
+        "description": "Weapons that can turn and pursue targets after launch. Can force targets to maneuver to avoid being hit.",
+        "types": [
+          {
+            "name": "Plasma Torpedoes",
+            "description": "Seeking weapon that pursues targets. Warhead strength degrades over distance. Cannot be held in tractor beams.",
+            "characteristics": [
+              "Warhead degrades with distance traveled",
+              "Can be disrupted by phaser fire",
+              "Cannot be held by tractor beams",
+              "Forces targets to maneuver to avoid"
+            ],
+            "variants": [
+              {"type": "Type-A (Federation/Gorn)", "description": "Standard plasma torpedo."},
+              {"type": "Type-B (Romulan)", "description": "Romulan plasma with trilithium isotope warhead."},
+              {"type": "Type-C", "description": "Variant with different characteristics."},
+              {"type": "Type-D", "description": "Variant with different characteristics."},
+              {"type": "Type-E", "description": "Weaker variant, used by Eneen."}
+            ],
+            "usedBy": ["Romulan Star Empire", "Gorn", "Kzinti", "Federation (X-Ships)"]
+          },
+          {
+            "name": "Drones",
+            "description": "Seeking munitions with fixed warhead strength. Limited ammunition. Can be held in tractor beams.",
+            "characteristics": [
+              "Warhead strength remains constant until impact",
+              "Limited ammunition — tracked on SSD",
+              "Can be held in tractor beams",
+              "Can be targeted and destroyed",
+              "Go inert after extended pursuit"
+            ],
+            "interception": "Drones can be intercepted by point-defense fire and tractor beams.",
+            "usedBy": ["Federation", "Klingon Empire", "Hydrans", "Others"]
+          }
+        ]
+      },
+      "special": {
+        "description": "Unique weapons with special effects.",
+        "types": [
+          {
+            "name": "Tholian Web",
+            "description": "Tholian device that casts a web in a hex, restricting movement and fire of ships within it.",
+            "usedBy": ["Tholians"]
+          },
+          {
+            "name": "Mines",
+            "description": "Pre-placed explosive devices that detonate when ships enter their hex.",
+            "types": ["Contact mines", "Proximity mines", "Smart mines"]
+          },
+          {
+            "name": "Transporter Bombs (T-Bombs)",
+            "description": "Explosives beamed onto enemy ships or placed in their path. Favorite tactic of the Andromedans.",
+            "usedBy": ["Andromedans", "Others"]
+          },
+          {
+            "name": "Tractor-Repulsor Beams",
+            "description": "Andromedan variant of tractor beams used as primary weapons. Shake targets to pieces.",
+            "usedBy": ["Andromedans"]
+          },
+          {
+            "name": "Planet Killers",
+            "description": "Extremely powerful weapons capable of destroying planets.",
+            "usedBy": ["Various — rare"]
+          },
+          {
+            "name": "Plasmatic Pulsar Device",
+            "description": "ISC weapon. Scores half-again damage when overloaded.",
+            "usedBy": ["Inter-Stellar Concordium (ISC)"]
+          },
+          {
+            "name": "Warp-Augmented Rail Gun",
+            "description": "Jindarian heavy weapon. Requires two consecutive turns to arm.",
+            "variants": ["Light", "Medium", "Heavy"],
+            "usedBy": ["Jindarians"]
+          },
+          {
+            "name": "Variable-Focus Neutron Beam",
+            "description": "Eneen heavy weapon. Can be fired in narrow aperture (hit-or-miss) or wide aperture (spread damage).",
+            "usedBy": ["Eneen"]
+          }
+        ]
+      }
+    },
+    "firingArcs": {
+      "description": "Direct-fire weapons have prescribed arcs of fire. Combined designations simplify notation.",
+      "designations": {
+        "F": "Forward",
+        "LF": "Left-Forward",
+        "RF": "Right-Forward",
+        "L": "Left",
+        "R": "Right",
+        "LR": "Left-Rear",
+        "RR": "Right-Rear",
+        "A": "All-around",
+        "FA": "LF + RF (Forward Arc)",
+        "FX": "L + LF + RF + R (Forward Extended)",
+        "RA": "LR + RR (Rear Arc)",
+        "RX": "L + LR + RR + R (Rear Extended)",
+        "LS": "LF + L + LR (Left Side)",
+        "RS": "RF + R + RR (Right Side)"
+      }
+    },
+    "rangeBands": {
+      "description": "Weapons have different effectiveness at different ranges. Each weapon has its own weapons chart showing hit probabilities and damage by range band.",
+      "bands": [
+        {"name": "Close", "range": "1-2 hexes", "description": "Highest hit probability and damage for most weapons."},
+        {"name": "Short", "range": "3-5 hexes", "description": "Good hit probability and damage."},
+        {"name": "Medium", "range": "6-8 hexes", "description": "Moderate hit probability. Maximum range for overloaded weapons."},
+        {"name": "Long", "range": "9-12 hexes", "description": "Lower hit probability and damage."},
+        {"name": "Extreme", "range": "13+ hexes", "description": "Lowest hit probability. Overloaded weapons cannot reach this range."}
+      ]
+    }
+  }
+}

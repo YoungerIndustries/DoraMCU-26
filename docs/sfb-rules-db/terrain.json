@@ -1,0 +1,115 @@
+{
+  "terrain": {
+    "description": "Terrain in SFB includes planets, asteroid fields, nebulae, ion storms, and other space phenomena that affect gameplay. Terrain can provide cover, restrict movement, or create hazards.",
+    "types": [
+      {
+        "name": "Planets",
+        "description": "Celestial bodies that ships can orbit, land on, or use for cover.",
+        "effects": [
+          "Ships can end their turn next to a planet to land.",
+          "Landing requires ending the turn next to the planet, being motionless the next turn, and landing at the end of the following turn.",
+          "Take-off requires spending a turn 'taking off' and reaching the hex adjacent to the planet on the last impulse.",
+          "Planets can provide cover from weapons fire.",
+          "Planet killers can destroy planets (rare weapons)."
+        ],
+        "variants": [
+          {"type": "Normal Planet", "description": "Standard planet with gravity well."},
+          {"type": "Gas Giant", "description": "Large planet with extended gravity effects."},
+          {"type": "Dwarf Planet", "description": "Smaller planet with reduced effects."}
+        ]
+      },
+      {
+        "name": "Asteroid Fields",
+        "description": "Fields of asteroids that restrict movement and provide cover.",
+        "effects": [
+          "Ships moving through asteroid fields may be damaged or forced to slow down.",
+          "Asteroids provide cover from weapons fire.",
+          "Movement through asteroid fields is restricted and may require special checks."
+        ]
+      },
+      {
+        "name": "Nebulae",
+        "description": "Clouds of gas and dust that interfere with sensors and weapons.",
+        "effects": [
+          "Cannot reinforce shields in a nebula.",
+          "Sensors and scanners are disrupted, reducing detection range.",
+          "Weapons fire may be disrupted.",
+          "Provides cover and concealment."
+        ]
+      },
+      {
+        "name": "Ion Storms",
+        "description": "Electrical storms that disrupt ship systems.",
+        "effects": [
+          "Disrupt electronic systems, including weapons fire control.",
+          "May cause breakdowns or system failures.",
+          "Interfere with sensors and communications."
+        ]
+      },
+      {
+        "name": "Tholian Webs",
+        "description": "Web-like structures cast by Tholian ships that restrict movement and fire.",
+        "effects": [
+          "Ships in webbed hexes have restricted movement.",
+          "Weapons fire is disrupted for ships in webs.",
+          "Webs can be cast in specific patterns to trap pursuers (Web Trap).",
+          "Web anchors mark the boundaries of web fields.",
+          "Cast webs are pre-deployed web structures."
+        ],
+        "usedBy": ["Tholians"],
+        "variants": [
+          {"type": "Standard Web", "description": "Normal web cast by Tholian ships."},
+          {"type": "Web Trap", "description": "One-hex web cast directly behind the ship to restrict pursuers."},
+          {"type": "Cast Web", "description": "Pre-deployed web structure."}
+        ]
+      },
+      {
+        "name": "Minefields",
+        "description": "Pre-placed areas containing space mines.",
+        "effects": [
+          "Ships entering mined hexes may trigger mines.",
+          "Mines detonate and damage ships.",
+          "Types include contact mines, proximity mines, and smart mines.",
+          "Minefields can be used to block passages or protect positions."
+        ],
+        "types": [
+          {"type": "Contact Mines", "description": "Detonate when a ship enters the hex."},
+          {"type": "Proximity Mines", "description": "Detonate when a ship comes within range."},
+          {"type": "Smart Mines", "description": "Can distinguish friend from foe."}
+        ]
+      },
+      {
+        "name": "Space Amoebas",
+        "description": "Biological hazards — space-faring organisms that attack ships.",
+        "effects": [
+          "Attack ships on contact.",
+          "Can damage shields and hull.",
+          "Require labs to identify and find vulnerabilities."
+        ],
+        "usedBy": ["Andromedans (as biological weapons)"]
+      },
+      {
+        "name": "Sun Snakes / Space Dragons",
+        "description": "Large space-faring creatures that can attack ships.",
+        "effects": [
+          "Move independently and attack ships.",
+          "Have their own attack and defense capabilities.",
+          "Require labs to identify vulnerabilities."
+        ]
+      },
+      {
+        "name": "Gravity Wells",
+        "description": "Areas of intense gravity that affect ship movement.",
+        "effects": [
+          "Ships may be pulled toward the gravity well.",
+          "Movement is restricted near gravity wells.",
+          "May cause breakdowns if ships attempt to resist."
+        ]
+      }
+    ],
+    "terrainModules": {
+      "description": "Module B provides maps with pre-printed terrain. Additional terrain rules are in the Master Rulebook.",
+      "moduleB": "Maps with pre-printed terrain (asteroid fields, gas giants, etc.). Out of print."
+    }
+  }
+}

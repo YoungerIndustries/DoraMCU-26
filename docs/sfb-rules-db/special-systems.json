@@ -1,0 +1,158 @@
+{
+  "specialSystems": {
+    "description": "Beyond standard weapons and shields, SFB ships have special systems that provide unique tactical capabilities.",
+    "systems": [
+      {
+        "name": "Cloaking Device",
+        "description": "Makes a ship invisible or 'fuzzy' to enemy sensors. Primarily used by Romulans.",
+        "energyCost": "Varies by ship. Requires energy allocation each turn.",
+        "rules": [
+          "A cloaked ship cannot fire weapons or use most active systems while cloaked.",
+          "Cloaked ships can be detected by the 'flash cube' effect — detonating an explosive (mine or T-bomb) near them reveals their position.",
+          "Default cloaking rules make the ship 'fuzzy' — opponents know approximately where it is but not precisely enough to target effectively.",
+          "Optional rules allow complete invisibility under some circumstances.",
+          "Ships cannot use EM (Electronic Measures) while cloaked."
+        ],
+        "usedBy": ["Romulan Star Empire", "Andromedans", "Some X-Ships"],
+        "tacticalNotes": [
+          "Cloaking enables ambush tactics and surprise attacks.",
+          "Decloaking takes time — plan when and where to reveal yourself.",
+          "Enemy ECM can sometimes detect cloaked ships."
+        ]
+      },
+      {
+        "name": "Tractor Beams",
+        "description": "Used to retrieve small objects and tow starships. Standard equipment on most starships.",
+        "energyCost": "1 energy per tractor beam.",
+        "rules": [
+          "May be used at any speed.",
+          "May be activated during any impulse. Once attached, can be released during any impulse.",
+          "Each tractor beam may only be used once per turn. Once released, cannot be reused for 8 impulses.",
+          "No firing arcs — can be used in any direction.",
+          "Used to tow starships, hold seeking weapons (drones), and prevent enemy maneuvers."
+        ],
+        "uses": [
+          "Towing damaged friendly ships",
+          "Holding enemy drones to prevent them from reaching their target",
+          "Gorn Anchor — preventing victims from launching wild weasel decoys",
+          "Tractor-repulsor beams (Andromedan) — used as weapons to shake targets apart"
+        ],
+        "limitations": [
+          "Shuttles are destroyed if towed at high speed.",
+          "Plasma torpedoes cannot be held by tractor beams (only drones)."
+        ]
+      },
+      {
+        "name": "Transporters",
+        "description": "Beam personnel, objects, or bombs between ships or to planets.",
+        "energyCost": "Varies by ship and use.",
+        "rules": [
+          "Transporters will not function through shields. A ship may need to drop a shield to use transporters.",
+          "Work on a direct line from ship to ship.",
+          "To determine which shield must be dropped, use the same rules as for direct-fire weapons.",
+          "A dropped shield must remain down for 1/4 turn (8 impulses).",
+          "Cannot transport through objects (including shuttle pilots, cloaking devices) without permission due to security systems."
+        ],
+        "uses": [
+          "Boarding parties — beam marines onto enemy ships with downed shields",
+          "Crew evacuation from doomed vessels",
+          "Transporter Bombs (T-Bombs) — beam explosives onto enemy ships or into their path",
+          "Retrieving personnel or objects"
+        ],
+        "tacticalNotes": [
+          "Boarding parties transported from another fleet are considered hostile.",
+          "T-Bombs are a favorite Andromedan tactic.",
+          "Dropping shields for transporters creates vulnerability."
+        ]
+      },
+      {
+        "name": "Electronic Warfare (EW)",
+        "description": "ECM (Electronic Countermeasures) and ECCM (Electronic Counter-Countermeasures) affect weapons fire and sensor effectiveness.",
+        "maxPower": 6,
+        "rules": [
+          "ECM reduces incoming damage from enemy weapons fire.",
+          "ECCM maintains own weapons effectiveness against enemy ECM.",
+          "At medium to long ranges, ECM can be more efficient than shield reinforcement.",
+          "Cannot fire seeking weapons while using EM (Electronic Measures).",
+          "EW may not be lent between fleets."
+        ],
+        "tacticalNotes": [
+          "With max ECM and EM, you should rarely take damage at medium range.",
+          "EW is a key defensive tool, especially for ships with weaker shields.",
+          "Electronic warfare range limitations may be waived in small engagements (no more than 2 ships per side, 5 total)."
+        ]
+      },
+      {
+        "name": "Labs",
+        "description": "Scientific laboratories used to scan and analyze unknown objects, space monsters, or enemy weapons.",
+        "energyCost": "Requires energy allocation.",
+        "rules": [
+          "Labs are used to identify unknown ships, space monsters, or weapon types.",
+          "Effectiveness depends on closest approach and lab rating.",
+          "In Federation Commander (simplified version), no die roll — automatic number of points based on closest approach."
+        ],
+        "uses": [
+          "Identifying space monsters and their vulnerabilities",
+          "Analyzing enemy weapon types",
+          "Scanning unknown ships"
+        ]
+      },
+      {
+        "name": "Sensors",
+        "description": "Detect and track enemy ships. Determine what information is visible to the player.",
+        "rules": [
+          "Sensor rating determines detection range and accuracy.",
+          "Can see the SSD of an opponent's ship at a range of 5x the number of sensors.",
+          "Sensor lock-on is required for some weapons fire.",
+          "Sensors can detect cloaked ships under certain conditions (especially with ECM)."
+        ]
+      },
+      {
+        "name": "Scanners",
+        "description": "Provide additional information about enemy ships and terrain.",
+        "rules": [
+          "Scanner rating determines the level of detail available about enemy ships.",
+          "Can reveal ship class, damage status, and other information at close range."
+        ]
+      },
+      {
+        "name": "Batteries",
+        "description": "Store energy from previous turns for use as Reserve Power.",
+        "rules": [
+          "Limited capacity — varies by ship.",
+          "Reserve Power allows activating systems not allocated in the Energy Allocation phase.",
+          "Useful for emergency situations — powering up shields or weapons mid-turn."
+        ]
+      },
+      {
+        "name": "Capacitors",
+        "description": "Store energy specifically for weapon overload.",
+        "rules": [
+          "Allow weapons to fire at increased damage without allocating overload energy in the Energy Allocation phase.",
+          "Limited capacity — varies by ship."
+        ]
+      },
+      {
+        "name": "Wild Weasels",
+        "description": "Decoy shuttlecraft launched to fool enemy seeking weapons into locking onto the wrong target.",
+        "rules": [
+          "Shuttles are launched and programmed to attract seeking weapon fire.",
+          "Effective against plasma torpedoes and drones.",
+          "Suicide shuttles can be charged with anti-matter bombs and fired unmanned as seeking weapons."
+        ]
+      },
+      {
+        "name": "Fire Control Systems",
+        "description": "Sensors, scanners, and electronic warfare systems that control weapons targeting.",
+        "disruptedFireControl": {
+          "description": "When fire control is disrupted (e.g., by EW or damage), weapons effectiveness is reduced.",
+          "effects": [
+            "Reduced hit probability",
+            "Inability to target specific shields",
+            "Seeking weapons may lose lock"
+          ]
+        }
+      }
+    ]
+  }
+}

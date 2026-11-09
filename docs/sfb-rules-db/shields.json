@@ -1,0 +1,65 @@
+{
+  "shields": {
+    "description": "Shields are the primary defense of starships. Each ship is surrounded by 6 shields, each protecting a separate 60-degree arc (hex side). Shields absorb damage before it reaches the ship's internal systems.",
+    "shieldDirections": {
+      "count": 6,
+      "numbering": "Shields are numbered 1 through 6, starting from the front (Shield 1) and proceeding clockwise. Shield 4 is the rear shield.",
+      "directions": [
+        {"number": 1, "name": "Front", "description": "Strongest shield, typically has the most boxes. Faces the ship's current heading."},
+        {"number": 2, "name": "Front-Right", "description": "Starboard-forward shield."},
+        {"number": 3, "name": "Rear-Right", "description": "Starboard-aft shield."},
+        {"number": 4, "name": "Rear", "description": "Weakest shield typically. Faces directly behind the ship."},
+        {"number": 5, "name": "Rear-Left", "description": "Port-aft shield."},
+        {"number": 6, "name": "Front-Left", "description": "Port-forward shield."}
+      ]
+    },
+    "shieldDamage": {
+      "description": "When weapons fire hits a shield, damage points are subtracted from the shield's boxes. Each box represents one point of shield strength.",
+      "resolution": "Damage is applied to the shield facing the attacker. If the attacker is between two shields, a die roll determines which shield is hit.",
+      "downedShield": "When all boxes in a shield are marked out, the shield is 'down.' Further damage from that direction is allocated to the ship's internal systems via the Damage Allocation Chart."
+    },
+    "shieldReinforcement": {
+      "description": "Players can allocate energy to reinforce shields, absorbing damage points and preventing them from marking out boxes on the SSD.",
+      "requirement": "Shields must be activated to use reinforcement.",
+      "types": [
+        {
+          "type": "General Reinforcement",
+          "calculation": "Energy allocated ÷ 2 (round down) = reinforcement points",
+          "description": "Points are distributed to all shields and eliminated by the first damage from any direction."
+        },
+        {
+          "type": "Directed Reinforcement",
+          "calculation": "1 energy = 1 reinforcement point",
+          "description": "Points are assigned to specific shields. More efficient than general reinforcement."
+        }
+      ],
+      "restriction": "Cannot reinforce shields in a nebula."
+    },
+    "shieldRepair": {
+      "description": "Shields can be repaired during the game using Damage Control (DamCon) capability.",
+      "damageControl": {
+        "description": "The Damage Control rating is the highest undestroyed box on the DamCon track of the SSD.",
+        "repairRate": "DamCon rating determines how many shield points can be repaired per turn.",
+        "repairLimit": "Repairs are limited by the ship's current DamCon rating, which decreases as damage control systems are destroyed."
+      },
+      "shieldRegeneration": {
+        "description": "Some ships have shield regeneration systems that automatically restore shield points over time.",
+        "rate": "Varies by ship class."
+      }
+    },
+    "shieldActivation": {
+      "description": "Shields must be activated to function. Activation requires energy allocation.",
+      "cost": "1 energy per shield activated.",
+      "droppingShields": {
+        "description": "A player may voluntarily drop a specific shield to facilitate transporter use.",
+        "duration": "A dropped shield must remain down for 1/4 of a turn (8 impulses), even if this extends into the next turn."
+      }
+    },
+    "tacticalNotes": [
+      "Maneuvering to present weaker shields to attackers is a key tactical consideration.",
+      "Turning to present fresh (undamaged) shields to incoming fire is a common tactic.",
+      "The front shield (Shield 1) typically has the most boxes, making head-on approaches difficult.",
+      "Attacking from the rear (Shield 4) is often the most effective approach."
+    ]
+  }
+}

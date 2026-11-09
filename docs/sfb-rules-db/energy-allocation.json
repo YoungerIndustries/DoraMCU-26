@@ -1,0 +1,97 @@
+{
+  "energyAllocation": {
+    "description": "Each turn, players allocate energy from their ship's power sources to various systems. Energy is the limiting resource — there is never enough to power everything at full capacity.",
+    "powerSources": [
+      {
+        "name": "Warp Engines",
+        "description": "Primary power source. Energy output depends on the number of undestroyed warp engine boxes on the SSD. Left and right engines may have different outputs.",
+        "damageable": true,
+        "notes": "Damaged warp engines reduce available energy, creating a cascading disadvantage."
+      },
+      {
+        "name": "Impulse Engines",
+        "description": "Secondary power source providing additional energy. Also used for sublight movement.",
+        "damageable": true
+      },
+      {
+        "name": "Auxiliary Reactors",
+        "description": "Additional power sources available on some ships. Provide fixed energy output.",
+        "damageable": true
+      },
+      {
+        "name": "Batteries",
+        "description": "Store energy from previous turns for use in future turns. Limited capacity. Can be used for Reserve Power to activate systems mid-turn.",
+        "capacity": "Varies by ship",
+        "notes": "Reserve Power allows powering systems not allocated in the Energy Allocation phase, but is limited."
+      },
+      {
+        "name": "Capacitors",
+        "description": "Store energy specifically for weapon overload. Allow weapons to fire at increased damage.",
+        "capacity": "Varies by ship"
+      }
+    ],
+    "allocationCategories": [
+      {
+        "category": "Warp Engine Power",
+        "description": "Energy allocated to maintain warp engine function. Determines ship's speed.",
+        "cost": "Varies by speed. Higher speed = more energy."
+      },
+      {
+        "category": "Impulse Engine Power",
+        "description": "Energy allocated to impulse engines for additional movement capability.",
+        "cost": "1 energy per impulse box used"
+      },
+      {
+        "category": "Shield Activation",
+        "description": "Minimum energy to activate shields. Shields must be activated to function.",
+        "cost": "1 energy per shield activated"
+      },
+      {
+        "category": "Shield Reinforcement",
+        "description": "Additional energy to absorb damage. General reinforcement is divided by 2. Directed reinforcement goes to specific shields.",
+        "cost": "1 energy = 1 directed reinforcement point; 2 energy = 1 general reinforcement point"
+      },
+      {
+        "category": "Weapon Power",
+        "description": "Energy to arm and fire weapons. Different weapons require different amounts.",
+        "cost": "Varies by weapon type and size"
+      },
+      {
+        "category": "Weapon Overload",
+        "description": "Extra energy to increase weapon damage. Overloaded weapons score double damage (in most cases) but have reduced range (max 8 hexes).",
+        "cost": "Same as base weapon power"
+      },
+      {
+        "category": "Electronic Warfare",
+        "description": "ECM (Electronic Countermeasures) to reduce incoming damage and ECCM (Electronic Counter-Countermeasures) to maintain own weapons effectiveness.",
+        "maxPower": 6,
+        "notes": "At medium to long ranges, ECM can be more efficient than shield reinforcement."
+      },
+      {
+        "category": "Special Systems",
+        "description": "Energy for cloaking devices, tractor beams, transporters, labs, and other special equipment.",
+        "cost": "Varies by system"
+      },
+      {
+        "category": "Life Support / Housekeeping",
+        "description": "Energy for basic ship functions. Usually free or minimal cost.",
+        "cost": "Typically free in standard play"
+      }
+    ],
+    "energyAllocationForm": {
+      "description": "A form filled out at the start of each turn. Systems not allocated energy cannot be used during the turn (except via Reserve Power from batteries).",
+      "sections": [
+        "Available Power (Warp + Impulse + Auxiliaries + Batteries)",
+        "Warp Engine Allocation",
+        "Impulse Engine Allocation",
+        "Shield Activation",
+        "Shield Reinforcement (General and Directed)",
+        "Weapon Power (by weapon bank)",
+        "Weapon Overload",
+        "Electronic Warfare (ECM/ECCM)",
+        "Special Systems",
+        "Remaining Energy (unused)"
+      ]
+    }
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "damageAllocation": {
+    "description": "When weapons fire penetrates a downed shield, damage is distributed throughout the ship's internal systems. This subsystem damage is the core of SFB's damage model — only when most systems are destroyed does damage go to the hull's excess damage track.",
+    "process": {
+      "step1": {
+        "name": "Shield Absorption",
+        "description": "Incoming damage is first applied to the shield facing the attacker. Reinforcement points absorb damage before shield boxes."
+      },
+      "step2": {
+        "name": "Shield Down Check",
+        "description": "If the shield has no remaining boxes, it is 'down.' Remaining damage proceeds to internal systems."
+      },
+      "step3": {
+        "name": "Damage Allocation Roll",
+        "description": "For each point of damage that penetrates, roll on the Damage Allocation Chart. The result determines which internal system is hit."
+      },
+      "step4": {
+        "name": "System Damage",
+        "description": "Mark out the indicated box on the SSD. Destroyed systems cannot be used. If a system has no remaining boxes, the damage may be redirected or go to excess damage."
+      },
+      "step5": {
+        "name": "Excess Damage",
+        "description": "When most systems are destroyed, remaining damage is allocated to the excess damage track. When excess damage fills up, the ship is destroyed."
+      }
+    },
+    "damageAllocationChart": {
+      "description": "Each ship has its own Damage Allocation Chart on its SSD. The chart maps die rolls to specific systems that can be damaged.",
+      "systemCategories": [
+        {
+          "category": "Warp Engines",
+          "description": "Left and right warp engines. Damage reduces available energy output.",
+          "effect": "Reduced energy production, potentially cascading into lower speed and weapon power."
+        },
+        {
+          "category": "Impulse Engines",
+          "description": "Left and right impulse engines. Damage reduces impulse power and sublight capability.",
+          "effect": "Reduced impulse energy and movement capability."
+        },
+        {
+          "category": "Shield Generators",
+          "description": "Systems that generate shield power. Damage may reduce shield capacity.",
+          "effect": "Reduced maximum shield strength."
+        },
+        {
+          "category": "Weapon Systems",
+          "description": "Individual weapon banks. Damage destroys weapons.",
+          "effect": "Lost weapon capability. Specific phasers, disruptors, or torpedo launchers become inoperable."
+        },
+        {
+          "category": "Control Systems",
+          "description": "Main bridge and control spaces. Damage impairs ship command.",
+          "effect": "Lost control spaces affect fleet command capability and may cripple the ship."
+        },
+        {
+          "category": "Damage Control",
+          "description": "Damage control track. Damage reduces repair capability.",
+          "effect": "Lower DamCon rating means fewer shield repairs per turn."
+        },
+        {
+          "category": "Special Systems",
+          "description": "Cloaking devices, tractor beams, transporters, labs, batteries, capacitors.",
+          "effect": "Lost special system capability."
+        },
+        {
+          "category": "Hull",
+          "description": "Structural integrity. Excess damage goes here.",
+          "effect": "When excess damage track is full, the ship is destroyed."
+        }
+      ]
+    },
+    "excessDamage": {
+      "description": "The excess damage track represents the ship's remaining structural integrity after systems are destroyed.",
+      "calculation": "Excess damage capacity = Hull boxes ÷ 4 (approximately). Varies by ship.",
+      "destruction": "When the excess damage track is filled, the ship is destroyed and may explode."
+    },
+    "damageControl": {
+      "description": "Damage Control (DamCon) is the ability to repair shields during a scenario without external facilities.",
+      "rating": "The highest undestroyed box on the DamCon track determines the current rating.",
+      "repairRate": "DamCon rating = number of shield points that can be repaired per turn.",
+      "limitations": [
+        "Can only repair shields, not internal systems (during tactical play)",
+        "DamCon parties also seal hull ruptures and prevent fires — this is factored into the rules and can be ignored by players",
+        "If DamCon is fully destroyed, no shield repair is possible"
+      ],
+      "campaignRepairs": {
+        "description": "In campaign play, ships with repair systems can perform strategic repairs between battles.",
+        "rate": "Each Repair box produces 1 repair point every strategic impulse.",
+        "limitation": "If the ship is not fully repaired, it must dock with a repair unit for further campaign repairs."
+      }
+    },
+    "crippledCondition": {
+      "description": "A ship is crippled when it loses all control spaces or both warp engines.",
+      "effects": [
+        "Cannot move or fire weapons",
+        "May self-destruct",
+        "Can be boarded or captured",
+        "Crew may be evacuated by friendly ships"
+      ]
+    },
+    "selfDestruction": {
+      "description": "A crippled or voluntarily sacrificing ship can self-destruct, creating a large explosion.",
+      "effects": [
+        "Damages nearby ships within a radius",
+        "Removes the ship from play",
+        "Tactical advantage — 'Suicide Dreadnought' tactic"
+      ]
+    },
+    "tacticalNotes": [
+      "Destroying enemy warp engines is a priority — it reduces their energy for everything.",
+      "DamCon destruction prevents shield repair, making the ship increasingly vulnerable.",
+      "Weapon destruction reduces the enemy's offensive capability.",
+      "Control space destruction can cripple a ship before it is fully destroyed.",
+      "The Damage Allocation system means ships can absorb significant damage before being destroyed."
+    ]
+  }
+}

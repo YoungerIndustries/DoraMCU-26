@@ -1,0 +1,73 @@
+{
+  "movement": {
+    "description": "SFB uses a proportional movement system where all ships move simultaneously. A ship's speed determines which of the 32 impulses it moves on. Movement is resolved on a hex grid.",
+    "speedSystem": {
+      "maxSpeed": 32,
+      "description": "Speed determines how often a ship moves during a turn. A speed-32 ship moves on every impulse except impulse 1. A speed-1 ship moves only on impulse 32.",
+      "movementChart": "The Movement Chart maps speed to impulses. At a given speed, a ship moves on specific impulses determined by the chart.",
+      "energyCost": "Higher speeds require more warp engine energy. The cost increases with speed."
+    },
+    "turnModes": {
+      "description": "Ships change facing (heading) using turn modes. Each mode allows a different amount of turning per turn.",
+      "modes": [
+        {
+          "name": "Mode 1 — Sharp Turn",
+          "turnAmount": "60 degrees (1 hex side)",
+          "description": "Standard turn. Ship turns 60 degrees left or right over the course of the turn."
+        },
+        {
+          "name": "Mode 2 — Moderate Turn",
+          "turnAmount": "120 degrees (2 hex sides)",
+          "description": "Ship turns 120 degrees over the turn. Moves in a wider arc."
+        },
+        {
+          "name": "Mode 3 — Wide Turn",
+          "turnAmount": "180 degrees (3 hex sides)",
+          "description": "Ship turns 180 degrees over the turn. Effectively a U-turn spread across the turn."
+        }
+      ]
+    },
+    "specialManeuvers": [
+      {
+        "name": "Sideslip",
+        "description": "A tactical maneuver where a ship moves laterally while maintaining its facing. Allows repositioning without turning.",
+        "restrictions": "Cannot be used at certain speeds. Requires specific impulse timing."
+      },
+      {
+        "name": "High Energy Turn (HET)",
+        "description": "A drastic turning maneuver that allows a ship to turn more than normal. Carries a risk of Breakdown.",
+        "risk": "Breakdown — if the breakdown check fails, the ship suffers a penalty and may lose movement for the turn.",
+        "energyCost": "Requires additional energy allocation."
+      },
+      {
+        "name": "Quick Reverse",
+        "description": "A ship can reverse direction quickly, but at reduced speed and with Breakdown risk.",
+        "risk": "Breakdown check required."
+      },
+      {
+        "name": "Acceleration / Deceleration",
+        "description": "Ships can change speed mid-turn, but acceleration and deceleration are limited. Changing speed affects which impulses the ship moves on.",
+        "restrictions": "Mid-turn speed changes are optional rules in some editions."
+      }
+    ],
+    "breakdown": {
+      "description": "When a ship attempts a risky maneuver (HET, Quick Reverse), it must pass a Breakdown check. Failure means the ship suffers a Breakdown penalty.",
+      "effects": [
+        "Ship may lose movement for the current turn",
+        "Ship may be forced to a lower speed",
+        "Breakdown Rating on the SSD determines vulnerability"
+      ]
+    },
+    "separation": {
+      "description": "Ships must maintain minimum separation. Two ships cannot occupy the same hex. Collision rules apply if ships end up in the same hex.",
+      "minimumSeparation": "1 hex"
+    },
+    "zoneOfControl": {
+      "description": "In campaign play, ships exert a Zone of Control (ZoC) that restricts enemy movement. In tactical play, certain weapons and terrain create ZoC effects."
+    },
+    "sublightMovement": {
+      "description": "Shuttles, fighters, and patrol fighters (PFs) have their own movement rules. They can move at higher speeds relative to their size.",
+      "maxSpeed": "PFs and Interceptors may move at a maximum speed of 6 hexes."
+    }
+  }
+}

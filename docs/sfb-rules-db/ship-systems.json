@@ -1,0 +1,158 @@
+{
+  "shipSystems": {
+    "description": "Every ship in SFB has a Ship System Display (SSD) — a schematic diagram showing all the ship's systems, shields, weapons, and hull structure. Each class has an individualized SSD.",
+    "ssdComponents": {
+      "description": "The SSD consists of check-off boxes for all the ship's structure and systems, arranged in the general layout of the ship.",
+      "sections": [
+        {
+          "name": "Shield Boxes",
+          "description": "Boxes around the ship's outline representing shield strength in each of the 6 directions. Marked out when damaged.",
+          "locations": ["Shield 1 (Front)", "Shield 2 (Front-Right)", "Shield 3 (Rear-Right)", "Shield 4 (Rear)", "Shield 5 (Rear-Left)", "Shield 6 (Front-Left)"]
+        },
+        {
+          "name": "Warp Engines",
+          "description": "Left and right warp engine boxes. Each box provides 1 unit of energy. Marked out when damaged, reducing energy output.",
+          "energyOutput": "1 energy per undestroyed box"
+        },
+        {
+          "name": "Impulse Engines",
+          "description": "Left and right impulse engine boxes. Provide additional energy and sublight movement capability.",
+          "energyOutput": "1 energy per undestroyed box"
+        },
+        {
+          "name": "Weapon Banks",
+          "description": "Individual weapon systems (phasers, disruptors, torpedo launchers, etc.). Marked out when destroyed.",
+          "types": ["Phaser banks", "Disruptor banks", "Torpedo launchers", "Drone racks", "Special weapons"]
+        },
+        {
+          "name": "Control Spaces",
+          "description": "Main bridge and control system boxes. Loss of all control spaces cripples the ship.",
+          "effect": "Ship is crippled when all control spaces are destroyed."
+        },
+        {
+          "name": "Damage Control Track",
+          "description": "Track showing the ship's damage control capability. The highest undestroyed box determines the current DamCon rating.",
+          "effect": "DamCon rating = shield points repaired per turn."
+        },
+        {
+          "name": "Hull / Excess Damage Track",
+          "description": "Track for excess damage after systems are destroyed. When full, the ship is destroyed.",
+          "calculation": "Approximately Hull boxes ÷ 4"
+        },
+        {
+          "name": "Special Systems",
+          "description": "Boxes for special equipment like batteries, capacitors, cloaking devices, tractor beams, transporters, and labs.",
+          "types": ["Batteries", "Capacitors", "Cloaking Device", "Tractor Beams", "Transporters", "Labs", "Repair Systems"]
+        },
+        {
+          "name": "Ammunition Tracks",
+          "description": "Tracks for limited-use weapons like drones, shuttles, and probes. Marked off as they are used.",
+          "types": ["Drone ammo", "Shuttles", "Probes", "Torpedo ammo"]
+        },
+        {
+          "name": "Weapons Fire Charts",
+          "description": "Firing charts for all weapons on the ship, showing hit probabilities and damage by range band.",
+          "location": "On the SSD sheet"
+        },
+        {
+          "name": "Firing Arcs",
+          "description": "Diagram showing the firing arcs for each weapon bank.",
+          "location": "On the SSD sheet"
+        },
+        {
+          "name": "Miscellaneous Data",
+          "description": "Ship data including size class, point value, command rating, breakdown rating, and other reference information.",
+          "fields": ["Size Class", "Point Value (BPV)", "Command Rating", "Breakdown Rating", "Sensor Rating", "Scanner Rating"]
+        }
+      ]
+    },
+    "shipTypes": {
+      "description": "Ships are classified by type and role. The numbering system indicates the class and variant.",
+      "classes": [
+        {
+          "type": "Heavy Cruiser (CA)",
+          "description": "The backbone of most fleets. The game was originally based on heavy cruisers.",
+          "role": "General-purpose combat",
+          "examples": ["Federation Constitution-class", "Klingon D7", "Romulan Warbird"]
+        },
+        {
+          "type": "Light Cruiser (CL)",
+          "description": "Smaller, faster cruisers with lighter armament.",
+          "role": "Scouting, screening, rapid response"
+        },
+        {
+          "type": "War Cruiser (CW)",
+          "description": "Wartime construction cruisers — relatively inexpensive substitutes for heavy cruisers.",
+          "role": "Mass-produced combat ships"
+        },
+        {
+          "type": "Dreadnought (DD)",
+          "description": "Large, powerful ships with heavy armament and armor.",
+          "role": "Fleet flagship, heavy combat"
+        },
+        {
+          "type": "Battleship (BB)",
+          "description": "Superheavy ships. Only the Klingons historically built the B10.",
+          "role": "Ultimate firepower",
+          "note": "Other races have conjectural battleship designs in Module R5."
+        },
+        {
+          "type": "Scout (SC)",
+          "description": "Small, fast ships designed for reconnaissance.",
+          "role": "Reconnaissance, early warning"
+        },
+        {
+          "type": "Fleet Tug (FT)",
+          "description": "Support ships with strong tractor beams for towing damaged vessels.",
+          "role": "Fleet support, salvage"
+        },
+        {
+          "type": "Carrier (CV)",
+          "description": "Ships that carry and launch fighters, interceptors, and shuttles.",
+          "role": "Air superiority, fighter operations"
+        },
+        {
+          "type": "Patrol Fighter (PF)",
+          "description": "Small sublight vessels used for patrol and light combat.",
+          "role": "Patrol, light attack"
+        },
+        {
+          "type": "Interceptor",
+          "description": "Fast sublight fighters designed to intercept seeking weapons.",
+          "role": "Seeking weapon interception"
+        },
+        {
+          "type": "Shuttle",
+          "description": "Small transport vessels. Can be used for boarding, evacuation, or as decoys (Wild Weasels).",
+          "role": "Transport, boarding, decoy"
+        },
+        {
+          "type": "Base",
+          "description": "Stationary or semi-stationary defensive installations.",
+          "role": "Defense, repair, resupply"
+        }
+      ]
+    },
+    "sizeClass": {
+      "description": "Ships are assigned a Size Class (SC) number that affects various game mechanics.",
+      "classes": [
+        {"class": "SC1", "description": "Largest ships — dreadnoughts and battleships."},
+        {"class": "SC2", "description": "Very large ships — heavy cruisers and large carriers."},
+        {"class": "SC3", "description": "Medium ships — light cruisers and war cruisers."},
+        {"class": "SC4", "description": "Small ships — scouts and patrol fighters."}
+      ]
+    },
+    "pointValue": {
+      "description": "Each ship has a Basic Point Value (BPV) used for balanced game setup. Players agree on a point limit and build their fleets accordingly.",
+      "usage": "BPV ensures balanced matchups. All players must agree on entry conditions and ground rules."
+    },
+    "ssdBookEvolution": {
+      "description": "SSDs have evolved over the editions of SFB.",
+      "history": [
+        {"era": "Designer Edition / Volume I-II", "description": "Half-sheet diagrams. Some ship classes shared sheets with shaded boxes to differentiate variants."},
+        {"era": "Commander's Edition", "description": "Full-sheet Commander's SSDs with extra record-keeping information, firing charts, and ammo tracks."},
+        {"era": "SSD Books", "description": "Nine Commander's SSD Books produced, presenting new-style SSDs and new ship classes."}
+      ]
+    }
+  }
+}

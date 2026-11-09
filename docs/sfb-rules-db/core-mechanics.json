@@ -1,0 +1,86 @@
+{
+  "game": "Star Fleet Battles",
+  "publisher": "Amarillo Design Bureau (ADB)",
+  "firstPublished": 1979,
+  "currentEdition": "Commander's Edition",
+  "coreMechanics": {
+    "turnStructure": {
+      "impulsesPerTurn": 32,
+      "description": "Each game turn is divided into 32 impulses. All players resolve movement simultaneously on each impulse based on their ship's speed.",
+      "specialImpulses": {
+        "impulse1": "No units move (starships restricted to speed 31 or less). Speed-32 seeking weapons one hex from targets hit automatically.",
+        "impulse32": "All units move, including the slowest. Targets at range limit of overloaded torpedoes (8 hexes) cannot escape."
+      }
+    },
+    "sequenceOfPlay": [
+      {
+        "step": 1,
+        "name": "Energy Allocation",
+        "description": "Each player fills out an Energy Allocation form, spending energy on movement, shields, weapons, and special systems for the upcoming turn."
+      },
+      {
+        "step": 2,
+        "name": "Self-Destruction",
+        "description": "Crippled ships may choose to self-destruct, creating a sizable explosion that can damage nearby ships."
+      },
+      {
+        "step": 3,
+        "name": "Sensor Lock-On",
+        "description": "Players use sensors to lock onto enemy targets for weapons fire."
+      },
+      {
+        "step": 4,
+        "name": "Initial Activity",
+        "description": "Preliminary actions before movement and combat, such as launching shuttles or probes."
+      },
+      {
+        "step": 5,
+        "name": "Impulse Procedure",
+        "description": "The main combat loop repeated for each of the 32 impulses: movement, weapons fire, seeking weapon resolution, and damage allocation."
+      }
+    ],
+    "impulseProcedure": [
+      {
+        "phase": "Movement",
+        "description": "Ships move according to their speed on the Movement Chart. Speed determines which impulses a ship moves on."
+      },
+      {
+        "phase": "Direct Fire Weapons",
+        "description": "Phasers, disruptors, and photon torpedoes fire. Hit probability and damage depend on range bands."
+      },
+      {
+        "phase": "Seeking Weapons",
+        "description": "Plasma torpedoes and drones move toward targets. Interception attempts are resolved."
+      },
+      {
+        "phase": "Tractor Beams",
+        "description": "Tractor beams can be activated or released. Used to tow ships or hold seeking weapons."
+      },
+      {
+        "phase": "Damage Allocation",
+        "description": "Damage from weapons fire is applied to shields first, then to internal systems via the Damage Allocation Chart."
+      }
+    ],
+    "mapSystem": {
+      "grid": "Hexagonal",
+      "hexSize": "Variable (typically 1 hex = 100,000 km)",
+      "facing": "Each ship maintains a definite heading on the hex grid, changeable by 60 degrees or less per turn under normal rules."
+    },
+    "ruleReferenceSystem": {
+      "format": "Letter + Number + Decimal Subsections",
+      "example": "D6.683 — Third subsection of D6.68 (Disrupted Fire Control), under D6.6 (Active Fire Control), in chapter D (Combat)",
+      "chapters": {
+        "A": "General Rules",
+        "B": "Setup and Deployment",
+        "C": "Movement",
+        "D": "Combat",
+        "E": "Electronic Warfare",
+        "F": "Special Weapons and Systems",
+        "G": "Additional Rules",
+        "H": "Terrain",
+        "I": "Shuttles and Fighters",
+        "J": "Campaign Rules"
+      }
+    }
+  }
+}
