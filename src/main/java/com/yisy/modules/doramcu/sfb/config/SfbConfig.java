@@ -3,12 +3,27 @@ package com.yisy.modules.doramcu.sfb.config;
 import com.yisy.modules.doramcu.sfb.service.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 /**
  * Spring configuration for SFB module.
  */
 @Configuration
-public class SfbConfig {
+@EnableWebSocket
+public class SfbConfig implements org.springframework.web.socket.config.annotation.WebSocketConfigurer {
+
+    private final SfbWebSocketHandler webSocketHandler;
+
+    public SfbConfig(SfbWebSocketHandler webSocketHandler) {
+        this.webSocketHandler = webSocketHandler;
+    }
+
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(webSocketHandler, "/ws/sfb")
+                .setAllowedOrigins("*");
+    }
 
     @Bean
     public SfbCombatEngine sfbCombatEngine(ImpulseManager impulseManager, 
@@ -36,8 +51,8 @@ public class SfbConfig {
     }
 
     @Bean
-    public MovementService movementService() {
-        return new MovementService();
+    public MovementService movementService(ImpulseManager impulseManager) {
+        return new MovementService(impulseManager);
     }
 
     @Bean
@@ -78,5 +93,10 @@ public class SfbConfig {
     @Bean
     public DamageAllocationService damageAllocationService() {
         return new DamageAllocationService();
+    }
+
+    @Bean
+    public SfbWebSocketHandler sfbWebSocketHandler(SfbCombatEngine combatEngine) {
+        return new SfbWebSocketHandler(combatEngine);
     }
 }

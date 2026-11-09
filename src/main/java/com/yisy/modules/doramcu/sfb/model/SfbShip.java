@@ -29,6 +29,8 @@ public class SfbShip {
     private boolean crippled;
     private boolean destroyed;
     private int side; // 0 or 1, for two-player battles
+    private int hexesMovedThisTurn; // Track movement for acceleration limits
+    private int previousSpeed; // Track previous speed for acceleration validation
 
     public SfbShip() {
         this.shields = new SfbShield[6];
@@ -37,6 +39,8 @@ public class SfbShip {
         this.speed = 16;
         this.turnMode = 1;
         this.side = 0;
+        this.hexesMovedThisTurn = 0;
+        this.previousSpeed = 16;
     }
 
     public String getId() { return id; }
@@ -93,6 +97,28 @@ public class SfbShip {
 
     public int getSide() { return side; }
     public void setSide(int side) { this.side = side; }
+
+    public int getHexesMovedThisTurn() { return hexesMovedThisTurn; }
+    public void setHexesMovedThisTurn(int hexesMovedThisTurn) { this.hexesMovedThisTurn = hexesMovedThisTurn; }
+
+    public int getPreviousSpeed() { return previousSpeed; }
+    public void setPreviousSpeed(int previousSpeed) { this.previousSpeed = previousSpeed; }
+
+    /**
+     * Reset movement tracking at the start of a new turn.
+     * Saves current speed as previous speed for acceleration validation.
+     */
+    public void resetMovementTracking() {
+        this.previousSpeed = this.speed;
+        this.hexesMovedThisTurn = 0;
+    }
+
+    /**
+     * Record a hex movement this turn.
+     */
+    public void recordHexMoved() {
+        this.hexesMovedThisTurn++;
+    }
 
     /**
      * Initialize the shields for this ship.

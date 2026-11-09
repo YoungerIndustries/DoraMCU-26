@@ -1,0 +1,252 @@
+{
+  "shipClasses": {
+    "description": "Notable ship classes organized by empire. Each ship has a designation, size class, and Basic Point Value (BPV).",
+    "federation": [
+      {
+        "name": "Constitution-class",
+        "designation": "CA",
+        "description": "The iconic Federation heavy cruiser. The NCC-1701 Enterprise is the most famous example.",
+        "sizeClass": "SC2",
+        "weapons": ["Phasers", "Photon Torpedoes", "Drones"],
+        "specialSystems": ["Tractor beams", "Transporters", "Labs"],
+        "variants": ["Constitution (original)", "Galaxy-class (refit)"],
+        "bpv": "~100-120"
+      },
+      {
+        "name": "Constellation-class",
+        "designation": "CA",
+        "description": "Federation cruiser NCC-1017, used in the Cadet Training Manual.",
+        "sizeClass": "SC2",
+        "weapons": ["Phasers", "Photon Torpedoes", "Drones"],
+        "bpv": "~100"
+      },
+      {
+        "name": "Ambassador-class",
+        "designation": "CA",
+        "description": "Larger Federation heavy cruiser with enhanced capabilities.",
+        "sizeClass": "SC2",
+        "weapons": ["Phasers", "Photon Torpedoes", "Drones"],
+        "bpv": "~130-150"
+      },
+      {
+        "name": "Nova-class",
+        "designation": "CL",
+        "description": "Federation light cruiser — faster and more agile.",
+        "sizeClass": "SC3",
+        "weapons": ["Phasers", "Photon Torpedoes"],
+        "bpv": "~60-80"
+      },
+      {
+        "name": "X-Ship",
+        "designation": "CA-X",
+        "description": "Advanced Federation experimental ships with improved EW, reloadable pseudo-plasma torpedoes, and overloaded phasers.",
+        "sizeClass": "SC2",
+        "weapons": ["Overloaded Phasers", "Pseudo-Plasma Torpedoes", "Drones"],
+        "specialSystems": ["Improved EW", "Built-in Scout functions"],
+        "bpv": "~150-180"
+      }
+    ],
+    "klingon": [
+      {
+        "name": "D7-class",
+        "designation": "CA",
+        "description": "Iconic Klingon heavy cruiser. One of the most recognizable ships in SFB.",
+        "sizeClass": "SC2",
+        "weapons": ["Disruptors", "Torpedoes"],
+        "specialSystems": ["Tractor beams", "Transporters", "Labs"],
+        "bpv": "~110-130"
+      },
+      {
+        "name": "D6-class",
+        "designation": "CA",
+        "description": "Smaller Klingon cruiser, similar to D7 but with fewer phasers and shield boxes.",
+        "sizeClass": "SC2",
+        "weapons": ["Disruptors", "Torpedoes"],
+        "bpv": "~90-100"
+      },
+      {
+        "name": "B10 Battleship",
+        "designation": "BB",
+        "description": "Superheavy Klingon battleship. The most powerful ship in the game. Only the Klingons historically built this class.",
+        "sizeClass": "SC1",
+        "weapons": ["Heavy Disruptors", "Torpedoes"],
+        "bpv": "~300-400"
+      },
+      {
+        "name": "K't'inga-class",
+        "designation": "CA",
+        "description": "Later Klingon heavy cruiser design.",
+        "sizeClass": "SC2",
+        "weapons": ["Varon-T Disruptors", "Torpedoes"],
+        "bpv": "~120-140"
+      },
+      {
+        "name": "Hammerhead-class",
+        "designation": "CA",
+        "description": "Advanced Klingon cruiser with improved capabilities.",
+        "sizeClass": "SC2",
+        "weapons": ["Disruptors", "Torpedoes"],
+        "bpv": "~130-150"
+      }
+    ],
+    "romulan": [
+      {
+        "name": "Warbird (D5-class)",
+        "designation": "CA",
+        "description": "Iconic Romulan heavy cruiser with cloaking device and plasma torpedoes.",
+        "sizeClass": "SC2",
+        "weapons": ["Disruptors", "Polarons", "Plasma Torpedoes"],
+        "specialSystems": ["Cloaking Device", "Tractor beams", "Transporters"],
+        "bpv": "~120-140"
+      },
+      {
+        "name": "Sparrowhawk",
+        "designation": "CL",
+        "description": "Smaller Romulan cruiser with cloaking capability.",
+        "sizeClass": "SC3",
+        "weapons": ["Disruptors", "Plasma Torpedoes"],
+        "specialSystems": ["Cloaking Device"],
+        "bpv": "~70-90"
+      },
+      {
+        "name": "Shadowhawk",
+        "designation": "CL",
+        "description": "Romulan light cruiser variant.",
+        "sizeClass": "SC3",
+        "weapons": ["Disruptors", "Plasma Torpedoes"],
+        "specialSystems": ["Cloaking Device"],
+        "bpv": "~70-90"
+      },
+      {
+        "name": "Consul-class",
+        "designation": "CON+",
+        "description": "Romulan cruiser variant.",
+        "sizeClass": "SC2",
+        "weapons": ["Disruptors", "Plasma Torpedoes"],
+        "specialSystems": ["Cloaking Device"],
+        "bpv": "~110-130"
+      }
+    ],
+    "gorn": [
+      {
+        "name": "Gorn Heavy Cruiser",
+        "designation": "CA",
+        "description": "Heavy, well-armored Gorn cruiser with plasma torpedo doctrine.",
+        "sizeClass": "SC2",
+        "weapons": ["Plasma Torpedoes", "Direct-fire weapons"],
+        "specialSystems": ["Tractor beams (Gorn Anchor)", "Transporters"],
+        "bpv": "~130-150"
+      },
+      {
+        "name": "Gorn Dreadnought",
+        "designation": "DD",
+        "description": "Large Gorn warship with overwhelming firepower.",
+        "sizeClass": "SC1",
+        "weapons": ["Heavy Plasma Torpedoes", "Direct-fire weapons"],
+        "bpv": "~200-250"
+      }
+    ],
+    "kzinti": [
+      {
+        "name": "Kzinti Heavy Cruiser",
+        "designation": "CA",
+        "description": "Fast Kzinti cruiser with combined drone and plasma doctrine.",
+        "sizeClass": "SC2",
+        "weapons": ["Phasers", "Drones", "Plasma Torpedoes"],
+        "bpv": "~110-130"
+      },
+      {
+        "name": "Kzinti Dreadnought",
+        "designation": "DD",
+        "description": "Large Kzinti warship.",
+        "sizeClass": "SC1",
+        "weapons": ["Phasers", "Drones", "Plasma Torpedoes"],
+        "bpv": "~200-250"
+      },
+      {
+        "name": "Kzinti Carrier",
+        "designation": "CV",
+        "description": "Kzinti carrier with fighter operations.",
+        "sizeClass": "SC2",
+        "weapons": ["Phasers", "Fighters"],
+        "bpv": "~120-140"
+      }
+    ],
+    "hydran": [
+      {
+        "name": "Hydran Heavy Cruiser",
+        "designation": "CA",
+        "description": "Hydran cruiser with gatling phasers and fusion beams.",
+        "sizeClass": "SC2",
+        "weapons": ["Gatling Phasers", "Fusion Beams", "Photon Torpedoes"],
+        "bpv": "~120-140"
+      },
+      {
+        "name": "Hydran Dreadnought",
+        "designation": "DD",
+        "description": "Large Hydran warship.",
+        "sizeClass": "SC1",
+        "weapons": ["Gatling Phasers", "Fusion Beams", "Photon Torpedoes"],
+        "bpv": "~200-250"
+      }
+    ],
+    "tholian": [
+      {
+        "name": "Tholian Patrol Cruiser",
+        "designation": "PC",
+        "description": "Tholian cruiser with web-casting capability.",
+        "sizeClass": "SC2",
+        "weapons": ["Direct-fire weapons", "Tholian Web Device"],
+        "specialSystems": ["Web casting", "Web traps"],
+        "bpv": "~100-120"
+      }
+    ],
+    "andromedan": [
+      {
+        "name": "Andromedan Dreadnought",
+        "designation": "DD",
+        "description": "Extremely powerful Andromedan warship with tractor-repulsor beams.",
+        "sizeClass": "SC1",
+        "weapons": ["Tractor-Repulsor Beams", "Transporter Bombs"],
+        "specialSystems": ["Advanced tractors", "Transporters", "Cloaking"],
+        "bpv": "~300-400"
+      },
+      {
+        "name": "Andromedan Cruiser",
+        "designation": "CA",
+        "description": "Andromedan cruiser with advanced capabilities.",
+        "sizeClass": "SC2",
+        "weapons": ["Tractor-Repulsor Beams"],
+        "bpv": "~200-250"
+      }
+    ],
+    "lyran": [
+      {
+        "name": "Lyran Heavy Cruiser",
+        "designation": "CA",
+        "description": "Fast Lyran cruiser.",
+        "sizeClass": "SC2",
+        "weapons": ["Phasers", "Torpedoes"],
+        "bpv": "~100-120"
+      }
+    ],
+    "other": [
+      {
+        "name": "Orion Raider",
+        "designation": "RA",
+        "description": "Pirate ship with stolen technology.",
+        "sizeClass": "SC3",
+        "weapons": ["Varies"],
+        "bpv": "~50-80"
+      },
+      {
+        "name": "Branthodon Space Dragon",
+        "designation": "SD",
+        "description": "Living ship — cybernetically enhanced space dragon.",
+        "sizeClass": "SC2",
+        "weapons": ["Biological weapons"],
+        "bpv": "~100-150"
+      }
+    ]
+  }
+}

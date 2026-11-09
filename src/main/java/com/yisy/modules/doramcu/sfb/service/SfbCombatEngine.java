@@ -71,6 +71,13 @@ public class SfbCombatEngine {
      * Returns true if the battle is over after this turn.
      */
     public boolean runTurn(SfbScenario scenario) {
+        // Reset movement tracking for all ships at turn start
+        for (SfbShip ship : scenario.getShips()) {
+            if (ship.isInCombat()) {
+                ship.resetMovementTracking();
+            }
+        }
+
         scenario.startTurn();
 
         // Energy allocation phase
@@ -223,10 +230,10 @@ public class SfbCombatEngine {
         // AI decides movement
         int movement = aiService.decideMovement(ship, targets);
         if (movement > 0) {
-            movementService.moveOneHex(ship);
+            movementService.moveShip(ship, impulse);
         } else if (movement < 0) {
             ship.turn(3);
-            movementService.moveOneHex(ship);
+            movementService.moveShip(ship, impulse);
         }
 
         // AI decides special systems
@@ -261,14 +268,20 @@ public class SfbCombatEngine {
 
     /**
      * Process movement for a ship.
+     * Uses proportional movement based on ship speed — faster ships move on more impulses.
      */
     private void processMovement(SfbScenario scenario, SfbShip ship, int impulse) {
         if (!ship.isInCombat()) return;
 
-        // Simple movement: move one hex in current facing
-        movementService.moveOneHex(ship);
-        scenario.logEvent(new SfbEvent(scenario.getCurrentTurn(), impulse,
-                SfbEvent.EventType.SHIP_MOVED, ship.getName() + " moved", ship.getId()));
+        // Proportional movement: ship moves only on impulses determined by its speed
+        boolean moved = movementService.moveShip(ship, impulse);
+        if (moved) {
+            scenario.logEvent(new SfbEvent(scenario.getCurrentTurn(), impulse,
+                    SfbEvent.EventType.SHIP_MOVED, 
+                    ship.getName() + " moved (speed " + ship.getSpeed() + 
+                    ", hex " + ship.getHexesMovedThisTurn() + "/" + 
+                    movementService.getHexesPerTurn(ship) + ")", ship.getId()));
+        }
     }
 
     /**

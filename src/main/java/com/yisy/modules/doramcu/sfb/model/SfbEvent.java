@@ -32,6 +32,7 @@ public class SfbEvent {
         CLOAK_ACTIVATED,
         CLOAK_DEACTIVATED,
         TRACTOR_BEAM_USED,
+        SPECIAL_SYSTEM,
         DAMCON_REPAIR,
         TURN_COMPLETED,
         BATTLE_ENDED

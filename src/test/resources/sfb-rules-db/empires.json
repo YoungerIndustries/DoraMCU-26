@@ -1,0 +1,263 @@
+{
+  "empires": {
+    "description": "The Star Fleet Universe features numerous empires, each with unique ships, weapons, technology, and combat doctrines. Empires are grouped by their galaxy of origin.",
+    "alphaOctant": [
+      {
+        "name": "United Earth Federation",
+        "abbreviation": "Federation",
+        "description": "A democratic alliance of star systems led by Earth. NATO analogue. The most well-known empire in the SFU.",
+        "combatStyle": "Balanced fleet with strong phasers and photon torpedoes. Relies on speed, maneuverability, and drone weapons.",
+        "primaryWeapons": ["Phasers", "Photon Torpedoes", "Drones"],
+        "seekingWeapons": "Drones — Federation doctrine emphasizes drone fire.",
+        "specialSystems": ["Tractor beams", "Transporters", "Labs"],
+        "notableShips": ["Constitution-class (CA)", "Constellation-class", "Ambassador-class", "Nova-class", "X-Ship"],
+        "fleetComposition": "Heavy cruisers, light cruisers, war cruisers, dreadnoughts, scouts, fleet tugs, carriers",
+        "pointValue": "Moderate — balanced ships with good all-around capability"
+      },
+      {
+        "name": "Klingon Empire",
+        "abbreviation": "Klingon",
+        "description": "A militaristic empire obsessed with honor and combat. Soviet Union analogue.",
+        "combatStyle": "Aggressive close-range combat with heavy disruptors and torpedoes. Ships have strong shields and heavy armor.",
+        "primaryWeapons": ["Disruptors", "Varon-T Disruptors", "Torpedoes"],
+        "seekingWeapons": "Limited — primarily direct-fire doctrine.",
+        "specialSystems": ["Tractor beams", "Transporters", "Labs"],
+        "notableShips": ["D7-class", "D6-class", "B10 Battleship (superheavy)", "K't'inga-class", "Hammerhead-class"],
+        "uniqueFeatures": "Only empire with the B10 Battleship (superheavy). Other races have conjectural battleship designs in R5.",
+        "pointValue": "High — heavy ships with strong offensive capability"
+      },
+      {
+        "name": "Romulan Star Empire",
+        "abbreviation": "Romulan",
+        "description": "A secretive empire descended from exiled Romulans. China with Roman names analogue. Uses Klingon-designed ships similarly to how Communist China used Soviet warcraft.",
+        "combatStyle": "Cloaking device users who strike from invisibility. Strong plasma torpedo doctrine.",
+        "primaryWeapons": ["Disruptors", "Polarons", "Plasma Torpedoes"],
+        "seekingWeapons": "Plasma Torpedoes — core of Romulan doctrine.",
+        "specialSystems": ["Cloaking Device", "Tractor beams", "Transporters", "Labs"],
+        "notableShips": ["Warbird (D5-class)", "Sparrowhawk", "Shadowhawk", "Consul-class", "Nebula-class"],
+        "uniqueFeatures": "Cloaking devices on most ships. Plasma torpedo doctrine.",
+        "pointValue": "Moderate to high — cloaking adds tactical value"
+      },
+      {
+        "name": "Gorn Empire",
+        "abbreviation": "Gorn",
+        "description": "A reptilian race with few but very good ships. Germany analogue. Steady alliance with the Federation.",
+        "combatStyle": "Seeking-weapon doctrine with plasma torpedoes. Heavy, well-armored ships.",
+        "primaryWeapons": ["Plasma Torpedoes", "Direct-fire weapons"],
+        "seekingWeapons": "Plasma Torpedoes — primary offensive weapon.",
+        "specialSystems": ["Tractor beams (Gorn Anchor tactic)", "Transporters", "Labs"],
+        "notableShips": ["Gorn Heavy Cruiser", "Gorn Dreadnought"],
+        "uniqueFeatures": "Gorn Anchor — using tractor beams to prevent victims from launching wild weasel decoys.",
+        "pointValue": "High — fewer ships but each is very capable"
+      },
+      {
+        "name": "Kzinti Empire",
+        "abbreviation": "Kzinti",
+        "description": "Cat-like bipedal humanoids. Imperial Japan circa 1941 analogue. Later alliance with the Federation.",
+        "combatStyle": "Seeking-weapon doctrine with drones and plasma. Fast, aggressive ships.",
+        "primaryWeapons": ["Phasers", "Drones", "Plasma Torpedoes"],
+        "seekingWeapons": "Both drones and plasma torpedoes.",
+        "specialSystems": ["Tractor beams", "Transporters", "Labs"],
+        "notableShips": ["Kzinti Heavy Cruiser", "Kzinti Dreadnought", "Kzinti Carrier"],
+        "uniqueFeatures": "Carrier-based fighter operations. Combined drone and plasma doctrine.",
+        "pointValue": "Moderate"
+      },
+      {
+        "name": "Tholian Empire",
+        "abbreviation": "Tholian",
+        "description": "Insectoid race from the M81 Galaxy. Masters of web technology.",
+        "combatStyle": "Defensive warfare using Tholian webs to trap and restrict enemy movement. Ambush tactics.",
+        "primaryWeapons": ["Tholian Web Device", "Direct-fire weapons"],
+        "seekingWeapons": "Limited.",
+        "specialSystems": ["Web casting devices", "Web traps"],
+        "notableShips": ["Tholian Patrol Cruiser", "Tholian Web Ship"],
+        "uniqueFeatures": "Tholian Web Trap — casts a one-hex web directly behind the ship to restrict pursuers.",
+        "pointValue": "Moderate — webs provide strong defensive capability"
+      },
+      {
+        "name": "Orion Pirates",
+        "abbreviation": "Orion",
+        "description": "Rogue pirates from the Orion sector. Not a formal empire but a significant threat.",
+        "combatStyle": "Hit-and-run tactics with stolen and modified ships. Unpredictable.",
+        "primaryWeapons": ["Varies — stolen technology"],
+        "seekingWeapons": "Varies by ship.",
+        "specialSystems": ["Varies — may use any available technology"],
+        "notableShips": ["Orion Raider", "Orion Pirate Cruiser"],
+        "uniqueFeatures": "Can use technology from multiple empires. Pirate ships cannot use empire-specific heavy weapons like Jindarian rail guns.",
+        "pointValue": "Variable"
+      },
+      {
+        "name": "Hydran Empire",
+        "abbreviation": "Hydran",
+        "description": "A seafaring empire. United Kingdom analogue. Introduced in early expansions.",
+        "combatStyle": "Gatling phaser doctrine with rapid-fire energy weapons. Strong fusion beams.",
+        "primaryWeapons": ["Gatling Phasers", "Fusion Beams", "Photon Torpedoes"],
+        "seekingWeapons": "Drones.",
+        "specialSystems": ["Tractor beams", "Transporters", "Labs"],
+        "notableShips": ["Hydran Heavy Cruiser", "Hydran Dreadnought"],
+        "uniqueFeatures": "Gatling phasers fire multiple shots per turn. Fusion beams score half-again damage when overloaded.",
+        "pointValue": "Moderate to high"
+      },
+      {
+        "name": "Lyran Empire",
+        "abbreviation": "Lyran",
+        "description": "Cat-like bipedal humanoids from a different lineage than the Kzinti. Vaguely reminiscent of pre-British Arabs.",
+        "combatStyle": "Fast, agile ships with strong offensive capability.",
+        "primaryWeapons": ["Phasers", "Torpedoes"],
+        "seekingWeapons": "Limited.",
+        "specialSystems": ["Tractor beams", "Transporters"],
+        "notableShips": ["Lyran Heavy Cruiser", "Lyran Scout"],
+        "pointValue": "Moderate"
+      },
+      {
+        "name": "WYN Cluster",
+        "abbreviation": "WYN",
+        "description": "A cluster of allied systems with unique technology.",
+        "combatStyle": "Unconventional tactics with unique weapons.",
+        "primaryWeapons": ["WYN-specific weapons"],
+        "notableShips": ["WYN Cruiser"],
+        "pointValue": "Variable"
+      },
+      {
+        "name": "Inter-Stellar Concordium (ISC)",
+        "abbreviation": "ISC",
+        "description": "A coalition of systems with advanced technology.",
+        "combatStyle": "Advanced weapons including the Plasmatic Pulsar Device.",
+        "primaryWeapons": ["Phasers", "Plasmatic Pulsar Device"],
+        "uniqueFeatures": "Plasmatic Pulsar Device scores half-again damage when overloaded.",
+        "pointValue": "High"
+      }
+    ],
+    "andromedaGalaxy": [
+      {
+        "name": "Andromedan Empire",
+        "abbreviation": "Andromedan",
+        "description": "Extraterrestrial invaders from the Andromeda Galaxy. The greatest threat in the SFU timeline.",
+        "combatStyle": "Overwhelming force with tractor-repulsor beams as primary weapons. Transporter bomb tactics.",
+        "primaryWeapons": ["Tractor-Repulsor Beams", "Transporter Bombs"],
+        "seekingWeapons": "Unique seeking weapons.",
+        "specialSystems": ["Advanced tractor beams", "Transporters", "Cloaking"],
+        "notableShips": ["Andromedan Dreadnought", "Andromedan Cruiser"],
+        "uniqueFeatures": "Tractor-repulsor beams shake targets to pieces. T-bombs are a favorite tactic. Space amoebas as biological weapons.",
+        "pointValue": "Very high — extremely powerful ships"
+      }
+    ],
+    "m81Galaxy": [
+      {
+        "name": "Neo-Tholians",
+        "description": "Descendants or variants of the Tholians from the M81 Galaxy.",
+        "combatStyle": "Web-based tactics similar to Alpha Octant Tholians.",
+        "primaryWeapons": ["Web devices", "Direct-fire weapons"]
+      },
+      {
+        "name": "Seltorians (M81)",
+        "description": "M81 Galaxy variant of the Seltorians.",
+        "combatStyle": "Varies."
+      },
+      {
+        "name": "M81 Pirates",
+        "description": "Pirate factions operating in the M81 Galaxy.",
+        "combatStyle": "Hit-and-run with stolen technology."
+      }
+    ],
+    "otherEmpires": [
+      {
+        "name": "Branthodon",
+        "description": "Use controlled, cybernetically enhanced space dragons as ships. Living ship concept.",
+        "uniqueFeatures": "Space dragons as living vessels. Cybernetic enhancement allows combat capability.",
+        "combatStyle": "Unconventional — living ships with biological weapons and unique movement patterns.",
+        "primaryWeapons": ["Biological weapons", "Space dragon attacks"],
+        "notableShips": ["Branthodon Space Dragon (SD)"]
+      },
+      {
+        "name": "Jindarians",
+        "description": "Empire with warp-augmented rail guns in light, medium, and heavy variants. Known for their devastating heavy weapons.",
+        "uniqueFeatures": "Warp-Augmented Rail Guns require two consecutive turns to arm. Once armed, they deliver massive damage.",
+        "combatStyle": "Heavy weapon doctrine centered around rail guns. Ships are heavily armed but may be slower.",
+        "primaryWeapons": ["Warp-Augmented Rail Guns (Light/Medium/Heavy)", "Direct-fire weapons"],
+        "notableShips": ["Jindarian Heavy Cruiser", "Jindarian Dreadnought"]
+      },
+      {
+        "name": "Eneen",
+        "description": "Empire with variable-focus neutron beams and Type-E plasma torpedoes. Masters of adaptive weapon systems.",
+        "uniqueFeatures": "Variable-Focus Neutron Beam can fire in narrow aperture (hit-or-miss, high damage) or wide aperture (spread damage across multiple targets).",
+        "combatStyle": "Adaptive weapon doctrine with neutron beams and plasma torpedoes.",
+        "primaryWeapons": ["Variable-Focus Neutron Beam", "Type-E Plasma Torpedoes"],
+        "notableShips": ["Eneen Heavy Cruiser"]
+      },
+      {
+        "name": "LMC (Lyran Merchant Consortium)",
+        "description": "Uses warp-tuned lasers as phaser-equivalent weapons. Merchant-based empire with strong trade networks.",
+        "uniqueFeatures": "Warp-tuned lasers come in light, medium, and heavy variants. Function as phaser equivalents.",
+        "combatStyle": "Merchant fleet doctrine with laser weapons. Strong economic base supports fleet operations.",
+        "primaryWeapons": ["Warp-tuned Lasers (Light/Medium/Heavy)"],
+        "notableShips": ["LMC Cruiser"]
+      },
+      {
+        "name": "Nicozians",
+        "description": "Smaller empire known for their unique ship designs and tactical flexibility.",
+        "combatStyle": "Flexible tactics with mixed weapon systems.",
+        "primaryWeapons": ["Phasers", "Torpedoes"],
+        "notableShips": ["Nicozian Cruiser"]
+      },
+      {
+        "name": "Vudar",
+        "description": "Smaller empire with strong defensive capabilities and unique technology.",
+        "combatStyle": "Defensive doctrine with strong shields and point-defense systems.",
+        "primaryWeapons": ["Direct-fire weapons", "Point-defense systems"],
+        "notableShips": ["Vudar Cruiser"]
+      },
+      {
+        "name": "Borak",
+        "description": "Smaller empire with aggressive combat style and unique ship designs.",
+        "combatStyle": "Aggressive close-range combat with heavy weapons.",
+        "primaryWeapons": ["Heavy direct-fire weapons"],
+        "notableShips": ["Borak Cruiser"]
+      },
+      {
+        "name": "Carnivons",
+        "description": "Extinct empire — xenocided by the Kzinti and Lyran alliance. Known for death bolt weapons. Rumors of exiles in the Sargasso Storm Zone.",
+        "combatStyle": "Death bolt doctrine — drone-like weapons unique to the Carnivons.",
+        "primaryWeapons": ["Death Bolts", "Direct-fire weapons"],
+        "uniqueFeatures": "Death bolts are drone-like weapons that ended with the Carnivon xenocide. Module C6 provides rules for how they would have evolved.",
+        "status": "Extinct (xenocided)",
+        "notableShips": ["Carnivon Cruiser (historical)"]
+      },
+      {
+        "name": "Peladine",
+        "description": "Smaller empire with unique characteristics and ship designs.",
+        "combatStyle": "Varies — smaller fleet with specialized ships.",
+        "primaryWeapons": ["Direct-fire weapons"],
+        "notableShips": ["Peladine Cruiser"]
+      },
+      {
+        "name": "Jumokian",
+        "description": "Pirate faction operating in the Alpha Octant. Known for raiding and hit-and-run tactics.",
+        "combatStyle": "Pirate hit-and-run tactics with stolen and modified ships.",
+        "primaryWeapons": ["Varies — stolen technology"],
+        "notableShips": ["Jumokian Raider"]
+      },
+      {
+        "name": "Zosman",
+        "description": "Pirate faction operating in the Alpha Octant. Similar to Jumokians but with different operational areas.",
+        "combatStyle": "Pirate hit-and-run tactics.",
+        "primaryWeapons": ["Varies — stolen technology"],
+        "notableShips": ["Zosman Raider"]
+      },
+      {
+        "name": "Seltorians",
+        "description": "Empire known for their unique technology and diplomatic approach.",
+        "combatStyle": "Balanced fleet with emphasis on diplomacy and scientific research.",
+        "primaryWeapons": ["Direct-fire weapons"],
+        "notableShips": ["Seltorian Cruiser"]
+      },
+      {
+        "name": "Paravians",
+        "description": "Empire from the Omega Sector with unique nest defense platforms and advanced technology.",
+        "combatStyle": "Defensive doctrine with nest-based operations.",
+        "primaryWeapons": ["Direct-fire weapons", "Nest defense systems"],
+        "notableShips": ["Paravian Nest Defense Platform"]
+      }
+    ]
+  }
+}

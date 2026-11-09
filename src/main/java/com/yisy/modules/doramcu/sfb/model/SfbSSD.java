@@ -66,6 +66,10 @@ public class SfbSSD {
     public int getHullBoxes() { return hullBoxes; }
     public int getExcessDamage() { return excessDamage; }
 
+    public void setExcessDamage(int excessDamage) { 
+        this.excessDamage = Math.max(0, excessDamage); 
+    }
+
     public void setDamConRating(int damConRating) { this.damConRating = damConRating; }
     public void setHullBoxes(int hullBoxes) { this.hullBoxes = hullBoxes; }
 
