@@ -3,245 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DoraMCU - Login</title>
-    <link rel="stylesheet" href="css/login.css">
+    <title>DoraMCU - Do You Want To Live Forever?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 70%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #e0e0e0;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 800px;
+            padding: 2rem;
+            animation: fadeIn 2s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7, #ff2d95);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            color: #b0b0b0;
+            margin-bottom: 3rem;
+            font-style: italic;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 4rem;
+        }
+
+        .btn {
+            padding: 1rem 3rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #00c853, #00e676);
+            color: #0a0a0a;
+            box-shadow: 0 4px 20px rgba(0, 200, 83, 0.3);
+        }
+
+        .btn-yes:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(0, 200, 83, 0.5);
+        }
+
+        .btn-no {
+            background: linear-gradient(135deg, #d50000, #ff1744);
+            color: #ffffff;
+            box-shadow: 0 4px 20px rgba(213, 0, 0, 0.3);
+        }
+
+        .btn-no:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(213, 0, 0, 0.5);
+        }
+
+        .attribution {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 2rem;
+        }
+
+        .attribution a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+
+        .attribution a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .question {
+                font-size: 2.5rem;
+            }
+            .tagline {
+                font-size: 1.2rem;
+            }
+            .buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- SVG Icon Sprite -->
-    <object data="icons/icons.svg" type="image/svg+xml" style="display:none"></object>
-    <!-- Login Window -->
-    <div class="login-container fade-in" id="loginView" role="main" aria-label="Login page">
-        <div class="app-logo">
-            <svg class="icon"><use href="#icon-rocket"></use></svg>
+    <div class="container">
+        <h1 class="question">Do You Want To Live Forever...?</h1>
+        <p class="tagline">Enter the DoraMCU Universe and Become Immortal!</p>
+        <div class="buttons">
+            <button class="btn btn-yes" type="button">Yes</button>
+            <button class="btn btn-no" type="button">No</button>
         </div>
-        <div class="app-title">DORAMCU</div>
-        <div class="app-subtitle">4X Space Strategy Game</div>
-
-        <!-- Target Server Selection -->
-        <div class="input-group">
-            <label class="form-label" for="serverSelect">Galactic Server Cluster</label>
-            <div class="input-wrapper">
-                <span class="input-group-text"><svg class="icon"><use href="#icon-galaxy"></use></svg></span>
-                <select class="form-control input-with-icon" id="serverSelect" aria-label="Select server">
-                    <option value="">Current Host (Default)</option>
-                    <option value="http://localhost:8080">Local Dev Server (8080)</option>
-                    <option value="custom">Custom Server Address...</option>
-                </select>
-            </div>
-            <div id="customServerContainer" class="custom-server-container">
-                <input type="text" class="form-control custom-server-input" id="customServerUrl" placeholder="http://192.168.1.100:8080">
-            </div>
-            <div class="server-status-pill" id="serverStatusPill">
-                <span class="status-dot" id="serverStatusDot"></span>
-                <span id="serverStatusLabel">Checking cluster...</span>
-            </div>
-        </div>
-
-        <!-- Empire Selection List -->
-        <div class="input-group">
-            <label class="form-label">Select Your Empire</label>
-            <div id="empireList" class="empire-list">
-                <div class="empire-list-loading">Loading empires...</div>
-            </div>
-        </div>
-
-        <!-- Alternative Login Methods -->
-        <div class="auth-tab-group">
-            <button type="button" class="auth-tab-btn active" id="tabEmpireBtn">
-                <svg class="icon"><use href="#icon-galaxy"></use></svg> Empire List
-            </button>
-            <button type="button" class="auth-tab-btn" id="tabPasswordBtn">
-                <svg class="icon"><use href="#icon-user"></use></svg> Commander Sign In
-            </button>
-            <button type="button" class="auth-tab-btn" id="tabPinBtn">
-                <svg class="icon"><use href="#icon-shield"></use></svg> Player PIN
-            </button>
-        </div>
-
-        <!-- Form 1: Username & Password Login -->
-        <form id="loginForm" class="auth-form" aria-label="Username and password login">
-            <div class="input-group">
-                <label class="form-label" for="username">Username</label>
-                <div class="input-wrapper">
-                    <span class="input-group-text"><svg class="icon"><use href="#icon-user"></use></svg></span>
-                    <input type="text" class="form-control input-with-icon" id="username" value="admin" placeholder="Enter your username" required autocomplete="username">
-                </div>
-            </div>
-            <div class="input-group">
-                <label class="form-label" for="password">Password</label>
-                <div class="input-wrapper">
-                    <span class="input-group-text"><svg class="icon"><use href="#icon-lock"></use></svg></span>
-                    <input type="password" class="form-control input-with-icon" id="password" placeholder="Enter your password" required autocomplete="current-password">
-                </div>
-            </div>
-            <div class="error-message" id="errorMessage">
-                <svg class="icon"><use href="#icon-alert"></use></svg> <span id="errorText"></span>
-            </div>
-            <button type="submit" class="btn-signin mt-3" id="submitLogin" aria-label="Sign in to game">
-                <svg class="icon"><use href="#icon-rocket"></use></svg> Sign In
-            </button>
-        </form>
-
-        <!-- Form 2: Player PIN / Access Code Login -->
-        <form id="pinLoginForm" class="auth-form" aria-label="Player PIN login">
-            <div class="input-group">
-                <label class="form-label" for="playerPinInput">Player Access PIN</label>
-                <div class="input-wrapper">
-                    <span class="input-group-text"><svg class="icon"><use href="#icon-shield"></use></svg></span>
-                    <input type="text" class="form-control input-with-icon pin-input" id="playerPinInput" placeholder="e.g. 123456 or 3214" maxlength="10" pattern="[0-9]*">
-                </div>
-            </div>
-            <div class="error-message" id="pinErrorMessage">
-                <svg class="icon"><use href="#icon-alert"></use></svg> <span id="pinErrorText"></span>
-            </div>
-            <button type="submit" class="btn-signin mt-3" id="submitPinLogin" aria-label="Sign in with PIN">
-                <svg class="icon"><use href="#icon-shield"></use></svg> Sign In with PIN
-            </button>
-        </form>
-
-        <div class="divider">or</div>
-        <button type="button" class="btn-new-empire" id="newEmpireBtn">
-            <svg class="icon"><use href="#icon-galaxy"></use></svg> Create New Empire
-        </button>
-        <!-- System Health Status -->
-        <div class="health-status-section" id="healthStatusSection">
-            <div class="health-status-header">
-                <svg class="icon"><use href="#icon-server"></use></svg>
-                <span>System Status</span>
-                <button type="button" class="health-refresh-btn" id="healthRefreshBtn" title="Refresh status">
-                    <svg class="icon"><use href="#icon-refresh"></use></svg>
-                </button>
-            </div>
-            <div class="health-status-grid" id="healthStatusGrid">
-                <div class="health-item">
-                    <span class="health-label">Status</span>
-                    <span class="health-value" id="healthOverall">Checking...</span>
-                </div>
-                <div class="health-item">
-                    <span class="health-label">Database</span>
-                    <span class="health-value" id="healthDatabase">-</span>
-                </div>
-                <div class="health-item">
-                    <span class="health-label">AI Service</span>
-                    <span class="health-value" id="healthAi">-</span>
-                </div>
-                <div class="health-item">
-                    <span class="health-label">Disk Free</span>
-                    <span class="health-value" id="healthDisk">-</span>
-                </div>
-            </div>
-            <div class="health-status-footer">
-                <a href="health.html" target="_blank">View Full Health Dashboard →</a>
-            </div>
-        </div>
-
-        <div class="footer-text">
-            <svg class="icon"><use href="#icon-shield"></use></svg> Secure Authentication
-        </div>
+        <p class="attribution">
+            Brought to You by Younger Industries and The Younger Industries Ship Yards<br>
+            <a href="https://eveonline.com" target="_blank" rel="noopener">[EVE Online YISY]</a>
+        </p>
     </div>
-
-    <!-- New Empire Registration View -->
-    <div class="login-container fade-in" id="registerView" style="display:none;">
-        <div class="app-logo">
-            <svg class="icon"><use href="#icon-galaxy"></use></svg>
-        </div>
-        <div class="app-title">NEW EMPIRE</div>
-        <div class="app-subtitle">Create Your Command Identity</div>
-
-        <form id="registerForm" aria-label="New empire registration">
-            <div class="input-group">
-                <label class="form-label" for="registerUsername">Commander Name</label>
-                <div class="input-wrapper">
-                    <span class="input-group-text"><svg class="icon"><use href="#icon-user"></use></svg></span>
-                    <input type="text" class="form-control input-with-icon" id="registerUsername" placeholder="Choose a commander name" required minlength="3" maxlength="50">
-                </div>
-            </div>
-            <div class="input-group">
-                <label class="form-label" for="registerPassword">Access Code / Password</label>
-                <div class="input-wrapper">
-                    <span class="input-group-text"><svg class="icon"><use href="#icon-lock"></use></svg></span>
-                    <input type="password" class="form-control input-with-icon" id="registerPassword" placeholder="Choose an access code" required minlength="4" maxlength="100">
-                </div>
-            </div>
-            <div class="input-group">
-                <label class="form-label" for="registerEmpireName">Empire Name</label>
-                <div class="input-wrapper">
-                    <span class="input-group-text"><svg class="icon"><use href="#icon-galaxy"></use></svg></span>
-                    <input type="text" class="form-control input-with-icon" id="registerEmpireName" placeholder="Choose an empire name" maxlength="100">
-                </div>
-            </div>
-            <div class="input-group">
-                <label class="form-label" for="registerGovernmentType">Government Type</label>
-                <div class="input-wrapper">
-                    <span class="input-group-text"><svg class="icon"><use href="#icon-shield"></use></svg></span>
-                    <select class="form-control input-with-icon" id="registerGovernmentType">
-                        <option value="DEMOCRACY">Democracy</option>
-                        <option value="AUTHORITARIAN">Authoritarian</option>
-                        <option value="MONARCHY">Monarchy</option>
-                        <option value="OLIGARCHY">Oligarchy</option>
-                        <option value="THEOCRACY">Theocracy</option>
-                        <option value="DICTATORSHIP">Dictatorship</option>
-                        <option value="CONFEDERATION">Confederation</option>
-                        <option value="CORPORATE">Corporate</option>
-                    </select>
-                </div>
-            </div>
-            <div class="input-group">
-                <label class="form-label" for="registerEthos">Ethos</label>
-                <div style="display: flex;">
-                    <span class="input-group-text"><svg class="icon"><use href="#icon-star"></use></svg></span>
-                    <select class="form-control" id="registerEthos" style="border-radius: 0 var(--radius-sm) var(--radius-sm) 0;">
-                        <option value="MATERIALIST">Materialist</option>
-                        <option value="SPIRITUALIST">Spiritualist</option>
-                        <option value="LIBERTARIAN">Libertarian</option>
-                        <option value="EQUALIST">Equalist</option>
-                        <option value="MILITARIST">Militarist</option>
-                        <option value="PACIFIST">Pacifist</option>
-                    </select>
-                </div>
-            </div>
-            <div class="input-group">
-                <label class="form-label" for="registerGalaxy">Galaxy</label>
-                <div style="display: flex;">
-                    <span class="input-group-text"><svg class="icon"><use href="#icon-galaxy"></use></svg></span>
-                    <select class="form-control" id="registerGalaxy" style="border-radius: 0 var(--radius-sm) var(--radius-sm) 0;">
-                        <option value="Milky Way">Milky Way</option>
-                    </select>
-                </div>
-            </div>
-            <div class="error-message" id="registerErrorMessage">
-                <svg class="icon"><use href="#icon-alert"></use></svg> <span id="registerErrorText"></span>
-            </div>
-            <button type="submit" class="btn-signin mt-3" id="submitRegister">
-                <svg class="icon"><use href="#icon-rocket"></use></svg> Create Empire & Get PIN
-            </button>
-        </form>
-
-        <div id="registrationSuccessBox" class="pin-display-box" style="display: none;">
-            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 4px;">Your Unique 6-Digit Player PIN:</div>
-            <div class="pin-code-text" id="generatedPinDisplay">------</div>
-            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;">Use this PIN to login or join multiplayer sessions instantly.</div>
-        </div>
-
-        <button type="button" class="btn-back mt-3" id="backToLoginBtn">
-            <svg class="icon"><use href="#icon-door"></use></svg> Back to Login
-        </button>
-    </div>
-
-    <!-- Logged-in overlay (shows briefly while creating session) -->
-    <div class="login-container dashboard-view" id="dashboardView" style="display:none;">
-        <div class="user-info-card">
-            <div style="font-size: 2rem;"><svg class="icon" style="width:2rem;height:2rem"><use href="#icon-rocket"></use></svg></div>
-            <div class="username mt-2" id="displayUsername"></div>
-            <div class="mt-1" style="color: var(--text-secondary); font-size: 0.88rem;">Launching game session...</div>
-        </div>
-        <button class="btn-logout" id="logoutBtn">
-            <svg class="icon"><use href="#icon-door"></use></svg> Logout
-        </button>
-    </div>
-
-    <script src="js/auth.js"></script>
-    <script src="js/game-api.js?v=13"></script>
-    <script src="js/login.js"></script>
 </body>
 </html>
