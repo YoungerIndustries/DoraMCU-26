@@ -1,3 +1,4 @@
 rootProject.name = 'DoraMCU'
 include 'dora-ai'
 include 'dora-dl-core'
+include 'dora-neuron'

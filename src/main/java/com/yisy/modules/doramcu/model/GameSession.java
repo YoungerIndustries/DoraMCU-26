@@ -136,4 +136,11 @@ public class GameSession {
     public void setGlobalClock(GlobalClock globalClock) {
         this.globalClock = globalClock;
     }
+
+    /**
+     * Returns the 4X unlock state for this session.
+     */
+    public com.yisy.modules.doramcu.dto.FourxUnlockState getFourxUnlockState() {
+        return new com.yisy.modules.doramcu.dto.FourxUnlockState();
+    }
 }

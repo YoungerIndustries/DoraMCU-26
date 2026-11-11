@@ -68,14 +68,42 @@ public class SectorBuilder {
      * @return the trade type name (e.g., "Agricultural", "Industrial")
      */
     public static String generateTradeType(int row, int col) {
-        if (row < 0 || row >= Galaxy.GRID_SIZE) {
-            throw new IllegalArgumentException("Row must be between 0 and " + (Galaxy.GRID_SIZE - 1) + ": " + row);
+        return generateTradeType(row, col, Galaxy.GRID_SIZE, TRADE_TYPES);
+    }
+
+    /**
+     * Generates a trade type name using a custom set of trade types.
+     *
+     * @param row the sector row
+     * @param col the sector column
+     * @param gridSize the grid size
+     * @param tradeTypes the array of trade type names, or null to use defaults
+     * @return the trade type name
+     */
+    public static String generateTradeType(int row, int col, int gridSize, String[] tradeTypes) {
+        return generateTradeType(row, col, gridSize, tradeTypes, new Random(row * 1000 + col));
+    }
+
+    /**
+     * Generates a trade type name using a custom set of trade types and random generator.
+     *
+     * @param row the sector row
+     * @param col the sector column
+     * @param gridSize the grid size
+     * @param tradeTypes the array of trade type names, or null to use defaults
+     * @param random the random number generator
+     * @return the trade type name
+     */
+    public static String generateTradeType(int row, int col, int gridSize, String[] tradeTypes, Random random) {
+        if (row < 0 || row >= gridSize) {
+            throw new IllegalArgumentException("Row must be between 0 and " + (gridSize - 1) + ": " + row);
         }
-        if (col < 0 || col >= Galaxy.GRID_SIZE) {
-            throw new IllegalArgumentException("Col must be between 0 and " + (Galaxy.GRID_SIZE - 1) + ": " + col);
+        if (col < 0 || col >= gridSize) {
+            throw new IllegalArgumentException("Col must be between 0 and " + (gridSize - 1) + ": " + col);
         }
-        int index = (row * Galaxy.GRID_SIZE + col) % TRADE_TYPES.length;
-        return TRADE_TYPES[index];
+        String[] types = (tradeTypes != null && tradeTypes.length > 0) ? tradeTypes : TRADE_TYPES;
+        int index = (row * gridSize + col) % types.length;
+        return types[index];
     }
 
     private final List<SolarSystem> systems;
@@ -201,6 +229,21 @@ public class SectorBuilder {
 
     // ---- Naming ----
 
+    // ---- Naming conventions ----
+
+    /** Astronomical naming convention (default) */
+    public static final String NAMING_ASTRONOMICAL = "astronomical";
+    /** Mythological naming convention */
+    public static final String NAMING_MYTHOLOGICAL = "mythological";
+    /** Star catalog naming convention */
+    public static final String NAMING_STAR = "star";
+    /** Roman numeral naming convention */
+    public static final String NAMING_ROMAN = "roman";
+    /** Greek letter naming convention (alias for astronomical) */
+    public static final String NAMING_GREEK = "astronomical";
+    /** Numerical naming convention */
+    public static final String NAMING_NUMERICAL = "numerical";
+
     /**
      * Generates the standard sector name for the given grid position.
      *
@@ -209,13 +252,55 @@ public class SectorBuilder {
      * @return the sector name (e.g., "Alpha-Prime")
      */
     public static String generateSectorName(int row, int col) {
-        if (row < 0 || row >= Galaxy.GRID_SIZE) {
-            throw new IllegalArgumentException("Row must be between 0 and " + (Galaxy.GRID_SIZE - 1) + ": " + row);
+        return generateSectorName(row, col, Galaxy.GRID_SIZE, "astronomical");
+    }
+
+    /**
+     * Generates a sector name using a custom grid size and naming convention.
+     *
+     * @param row the row position
+     * @param col the column position
+     * @param gridSize the grid size
+     * @param namingConvention the naming convention ("astronomical", "mythological", "star", "roman", "numerical")
+     * @return the sector name
+     */
+    public static String generateSectorName(int row, int col, int gridSize, String namingConvention) {
+        if (row < 0 || row >= gridSize) {
+            throw new IllegalArgumentException("Row must be between 0 and " + (gridSize - 1) + ": " + row);
         }
-        if (col < 0 || col >= Galaxy.GRID_SIZE) {
-            throw new IllegalArgumentException("Col must be between 0 and " + (Galaxy.GRID_SIZE - 1) + ": " + col);
+        if (col < 0 || col >= gridSize) {
+            throw new IllegalArgumentException("Col must be between 0 and " + (gridSize - 1) + ": " + col);
         }
-        return PREFIXES[row] + "-" + SUFFIXES[col];
+
+        String[] prefixes;
+        String[] suffixes;
+
+        if ("mythological".equalsIgnoreCase(namingConvention)) {
+            prefixes = new String[]{"Ares", "Athena", "Hades", "Hermes", "Apollo",
+                    "Artemis", "Aphrodite", "Hephaestus", "Dionysus", "Poseidon"};
+            suffixes = new String[]{"Sanctum", "Tartarus", "Elysium", "Asgard", "Valhalla",
+                    "Avalon", "Camelot", "El Dorado", "Shambhala", "Utopia"};
+        } else if ("star".equalsIgnoreCase(namingConvention)) {
+            prefixes = new String[]{"Alpha", "Beta", "Gamma", "Delta", "Epsilon",
+                    "Zeta", "Eta", "Theta", "Iota", "Kappa"};
+            suffixes = new String[]{"Centauri", "Cygni", "Draconis", "Eridani", "Geminorum",
+                    "Leonis", "Orionis", "Pegasi", "Scorpii", "Virginis"};
+        } else if ("roman".equalsIgnoreCase(namingConvention)) {
+            prefixes = new String[]{"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"};
+            suffixes = new String[]{"Primus", "Secundus", "Tertius", "Quartus", "Quintus",
+                    "Sextus", "Septimus", "Octavus", "Nonus", "Decimus"};
+        } else if ("numerical".equalsIgnoreCase(namingConvention)) {
+            // Numerical: Sector-RRCC format
+            return String.format("Sector-%02d%02d", row, col);
+        } else {
+            // Default: astronomical
+            prefixes = PREFIXES;
+            suffixes = SUFFIXES;
+        }
+
+        int prefixIndex = row % prefixes.length;
+        int suffixIndex = col % suffixes.length;
+        return prefixes[prefixIndex] + "-" + suffixes[suffixIndex];
     }
 
     /**

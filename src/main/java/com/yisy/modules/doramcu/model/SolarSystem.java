@@ -60,6 +60,10 @@ public class SolarSystem {
     @Column(nullable = false)
     private int posZ;
 
+    /** Hex system ID for cross-referencing with hex galaxy */
+    @Column
+    private Integer hexSystemId;
+
     @OneToOne(mappedBy = "solarSystem", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Star star;
 
@@ -265,6 +269,10 @@ public class SolarSystem {
     public void setAsteroids(List<Asteroid> asteroids) {
         this.asteroids = asteroids;
     }
+
+    public Integer getHexSystemId() { return hexSystemId; }
+    public void setHexSystemId(Integer hexSystemId) { this.hexSystemId = hexSystemId; }
+    public void setHexSystemId(int hexSystemId) { this.hexSystemId = hexSystemId; }
 
     @Override
     public String toString() {

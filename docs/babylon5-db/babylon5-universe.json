@@ -1,0 +1,1557 @@
+{
+  "metadata": {
+    "title": "Babylon 5 Universe — DoraMCU Format Database",
+    "description": "Complete character, race, storyline, and dialogue database from Babylon 5 (1993-1998), formatted for DoraMCU game integration.",
+    "source": "Babylon 5 TV series created by J. Michael Straczynski",
+    "years": "2257-2272 (in-universe), 1993-1998 (production)",
+    "seasons": 5,
+    "episodes": 110,
+    "tvFilms": 6,
+    "format": "DoraMCU 2.0 JSON database",
+    "version": "1.0.0"
+  },
+
+  "races": [
+    {
+      "id": "HUMAN",
+      "name": "Human / Earth Alliance",
+      "description": "The dominant species of the Earth Alliance. Humans are adaptable, ambitious, and technologically advanced. They built the Babylon stations as peacekeeping outposts.",
+      "homeworld": "Earth",
+      "government": "Earth Alliance (democratic, later authoritarian under Clark)",
+      "lifespan": 80,
+      "characteristics": {
+        "ST": 0,
+        "DX": 0,
+        "EN": 0,
+        "IN": 0,
+        "ED": 0,
+        "SO": 0
+      },
+      "specialAbilities": ["Psi Corps telepaths (subset)", "Technomage magic (subset)"],
+      "combatStyle": "Versatile — uses EarthForce military doctrine with advanced weaponry",
+      "tradeBonus": 0,
+      "socialDM": 0,
+      "navigationDM": 0,
+      "armorBonus": 0
+    },
+    {
+      "id": "NARN",
+      "name": "Narn",
+      "description": "A proud, resilient species from the Narn sector. Scarred by decades of Centauri occupation, the Narn are driven by a desire for freedom and justice. Short, stocky, and muscular with distinctive facial ridges.",
+      "homeworld": "Narn (destroyed; now live on Narn 3 / Narn Regime worlds)",
+      "government": "Narn Regime (military junta, later democratic)",
+      "lifespan": 60,
+      "characteristics": {
+        "ST": 1,
+        "DX": 0,
+        "EN": 1,
+        "IN": 0,
+        "ED": -1,
+        "SO": -1
+      },
+      "specialAbilities": ["Enhanced strength and endurance", "Pack tactics in combat"],
+      "combatStyle": "Aggressive close-quarters combat; guerrilla warfare expertise",
+      "tradeBonus": 0,
+      "socialDM": -1,
+      "navigationDM": 0,
+      "armorBonus": 0
+    },
+    {
+      "id": "CENTAURI",
+      "name": "Centauri",
+      "description": "A decadent, aristocratic species from the Centauri Republic. Tall, elegant, and obsessed with status and pleasure. Historically expansionist and imperialistic, later humbled by war.",
+      "homeworld": "Centauri Prime",
+      "government": "Centauri Republic (oligarchy, later empire under Londo Mollari)",
+      "lifespan": 70,
+      "characteristics": {
+        "ST": 0,
+        "DX": 1,
+        "EN": 0,
+        "IN": 0,
+        "ED": 1,
+        "SO": 2
+      },
+      "specialAbilities": ["Enhanced social manipulation", "Political cunning"],
+      "combatStyle": "Relies on wealth and political influence; declining military capability",
+      "tradeBonus": 2,
+      "socialDM": 2,
+      "navigationDM": 0,
+      "armorBonus": 0
+    },
+    {
+      "id": "MINBARI",
+      "name": "Minbari",
+      "description": "A spiritually advanced, long-lived species. The Minbari are guided by religious orders and possess technology far beyond most races. They have a caste system based on warrior, worker, and caster roles.",
+      "homeworld": "Minbar",
+      "government": "Minbari Federation (theocratic council)",
+      "lifespan": 250,
+      "characteristics": {
+        "ST": 0,
+        "DX": 1,
+        "EN": 1,
+        "IN": 1,
+        "ED": 1,
+        "SO": 1
+      },
+      "specialAbilities": ["Advanced technology", "Spiritual insight", "Whip weapons (warrior caste)"],
+      "combatStyle": "Disciplined military with advanced energy weapons and ships",
+      "tradeBonus": 0,
+      "socialDM": 0,
+      "navigationDM": 1,
+      "armorBonus": 1
+    },
+    {
+      "id": "VORLON",
+      "name": "Vorlon",
+      "description": "Ancient, immensely powerful First Ones who guide younger races through order and obedience. Their true form is unknown; they wear encounter suits. They believe evolution requires discipline and hierarchy.",
+      "homeworld": "Unknown (Vorlon Empire)",
+      "government": "Vorlon Empire (oligarchy of ancient beings)",
+      "lifespan": 999999,
+      "characteristics": {
+        "ST": 3,
+        "DX": 2,
+        "EN": 3,
+        "IN": 3,
+        "ED": 3,
+        "SO": 3
+      },
+      "specialAbilities": ["Encounter suits", "Reality manipulation", "Immense technology", "Longevity"],
+      "combatStyle": "Overwhelming technological superiority; rarely fight directly",
+      "tradeBonus": 0,
+      "socialDM": 0,
+      "navigationDM": 2,
+      "armorBonus": 3
+    },
+    {
+      "id": "SHADOW",
+      "name": "Shadow",
+      "description": "Ancient, immensely powerful First Ones who believe evolution requires conflict and chaos. Massive, reptilian beings who manipulate younger races into war. They consider themselves gardeners of civilization.",
+      "homeworld": "Shadow Empire (unknown location)",
+      "government": "Shadow Empire (collective of ancient beings)",
+      "lifespan": 999999,
+      "characteristics": {
+        "ST": 3,
+        "DX": 2,
+        "EN": 3,
+        "IN": 3,
+        "ED": 3,
+        "SO": 2
+      },
+      "specialAbilities": ["Shadow technology", "Manipulation of younger races", "Massive warships", "Hyperspace mastery"],
+      "combatStyle": "Instigate proxy wars; deploy massive war fleets when direct action needed",
+      "tradeBonus": 0,
+      "socialDM": -2,
+      "navigationDM": 3,
+      "armorBonus": 3
+    },
+    {
+      "id": "DRAZI",
+      "name": "Drazi",
+      "description": "Large, bird-like humanoids with a warrior culture. Known for their enmity with the Centauri over border territories. Part of the League of Non-Aligned Worlds.",
+      "homeworld": "Drazi sector",
+      "government": "Drazi warrior clans",
+      "lifespan": 50,
+      "characteristics": {
+        "ST": 2,
+        "DX": 0,
+        "EN": 1,
+        "IN": -1,
+        "ED": -1,
+        "SO": 0
+      },
+      "specialAbilities": ["Enhanced strength", "Warrior training"],
+      "combatStyle": "Direct assault; honor-bound combat",
+      "tradeBonus": 0,
+      "socialDM": -1,
+      "navigationDM": 0,
+      "armorBonus": 1
+    },
+    {
+      "id": "VREE",
+      "name": "Vree",
+      "description": "Small, rodent-like traders and merchants. Known for their love of food and commerce. Part of the League of Non-Aligned Worlds.",
+      "homeworld": "Vree sector",
+      "government": "Vree merchant guilds",
+      "lifespan": 40,
+      "characteristics": {
+        "ST": -1,
+        "DX": 1,
+        "EN": 0,
+        "IN": 1,
+        "ED": 1,
+        "SO": 1
+      },
+      "specialAbilities": ["Enhanced trade profit", "Merchant networks"],
+      "combatStyle": "Avoid direct combat; rely on wealth and alliances",
+      "tradeBonus": 3,
+      "socialDM": 1,
+      "navigationDM": 0,
+      "armorBonus": 0
+    },
+    {
+      "id": "HYACH",
+      "name": "Hyach",
+      "description": "Large, gentle, elephantine humanoids. Known for their peaceful nature and strength. Part of the League of Non-Aligned Worlds.",
+      "homeworld": "Hyach sector",
+      "government": "Hyach councils",
+      "lifespan": 100,
+      "characteristics": {
+        "ST": 2,
+        "DX": -1,
+        "EN": 2,
+        "IN": 0,
+        "ED": 0,
+        "SO": 1
+      },
+      "specialAbilities": ["Enhanced strength and endurance", "Peaceful diplomacy"],
+      "combatStyle": "Defensive; prefer to avoid conflict",
+      "tradeBonus": 0,
+      "socialDM": 1,
+      "navigationDM": 0,
+      "armorBonus": 1
+    },
+    {
+      "id": "BRAKIRI",
+      "name": "Brakiri",
+      "description": "Nocturnal, bat-like humanoids with distinctive bone ridges. Part of the League of Non-Aligned Worlds. Known for their spiritual beliefs.",
+      "homeworld": "Brakai",
+      "government": "Brakiri councils",
+      "lifespan": 55,
+      "characteristics": {
+        "ST": 0,
+        "DX": 1,
+        "EN": 0,
+        "IN": 1,
+        "ED": 0,
+        "SO": 0
+      },
+      "specialAbilities": ["Night vision", "Enhanced hearing"],
+      "combatStyle": "Guerrilla tactics; night operations",
+      "tradeBonus": 0,
+      "socialDM": 0,
+      "navigationDM": 0,
+      "armorBonus": 0
+    },
+    {
+      "id": "PAKMAR",
+      "name": "Pak'ma'ra",
+      "description": "Large, multi-limbed beings with tentacled faces. Originally a peaceful race, many were transformed into warriors by the Shadows. Slow but powerful.",
+      "homeworld": "Pak'ma'ra sector",
+      "government": "Pak'ma'ra warrior clans",
+      "lifespan": 45,
+      "characteristics": {
+        "ST": 2,
+        "DX": -1,
+        "EN": 2,
+        "IN": -1,
+        "ED": -1,
+        "SO": 0
+      },
+      "specialAbilities": ["Multiple limbs", "Enhanced strength", "Shadow-enhanced warriors"],
+      "combatStyle": "Brutal close-quarters combat; overwhelming force",
+      "tradeBonus": 0,
+      "socialDM": -1,
+      "navigationDM": 0,
+      "armorBonus": 1
+    },
+    {
+      "id": "DRAX",
+      "name": "Drakh",
+      "description": "The most ruthless faction of the Shadows. Remnant forces that survived the Shadow War and seek revenge. Led by Refan, they are even more dangerous than the original Shadows.",
+      "homeworld": "Unknown (Drakh remnant)",
+      "government": "Drakh remnant council",
+      "lifespan": 999999,
+      "characteristics": {
+        "ST": 3,
+        "DX": 2,
+        "EN": 3,
+        "IN": 3,
+        "ED": 3,
+        "SO": 1
+      },
+      "specialAbilities": ["Shadow technology", "Changeling nets", "Covert operations"],
+      "combatStyle": "Covert warfare; manipulation and assassination",
+      "tradeBonus": 0,
+      "socialDM": -3,
+      "navigationDM": 3,
+      "armorBonus": 3
+    },
+    {
+      "id": "LORIEN",
+      "name": "Lorien / First Ones",
+      "description": "Ancient beings who created the First Ones. Lorien is the last of his kind, a being of immense power who aids Sheridan in the Shadow War. Represents the original creators of the galaxy.",
+      "homeworld": "Unknown (pre-dates all civilizations)",
+      "government": "Solitary being",
+      "lifespan": 999999,
+      "characteristics": {
+        "ST": 3,
+        "DX": 3,
+        "EN": 3,
+        "IN": 3,
+        "ED": 3,
+        "SO": 3
+      },
+      "specialAbilities": ["Reality manipulation", "Immense technology", "Creation of other races"],
+      "combatStyle": "Overwhelming power; rarely used directly",
+      "tradeBonus": 0,
+      "socialDM": 0,
+      "navigationDM": 3,
+      "armorBonus": 3
+    }
+  ],
+
+  "characters": [
+    {
+      "id": "SHERIDAN",
+      "name": "John Sheridan",
+      "species": "HUMAN",
+      "actor": "Bruce Boxleitner",
+      "role": "Commander, later President of the Interstellar Alliance",
+      "description": "Central protagonist. A brilliant military commander who becomes the leader of the alliance against the Shadows and later the first President of the new Interstellar Alliance. Charismatic, decisive, and driven by a vision of peace.",
+      "firstAppearance": "Season 1, Episode 5 ('The Quality of Mercy')",
+      "lastAppearance": "Season 5, Episode 20 ('Sleeping in Light')",
+      "personality": {
+        "aggression": 0.7,
+        "diplomacy": 0.6,
+        "economicFocus": 0.3,
+        "scientificFocus": 0.4,
+        "expansionDrive": 0.5,
+        "riskTolerance": 0.8,
+        "altruism": 0.7,
+        "determination": 0.9,
+        "adaptability": 0.7,
+        "leadership": 0.95,
+        "cunning": 0.5,
+        "honor": 0.8
+      },
+      "archetype": "LEADER",
+      "characteristics": {
+        "ST": 8,
+        "DX": 9,
+        "EN": 8,
+        "IN": 9,
+        "ED": 10,
+        "SO": 10
+      },
+      "keySkills": ["Command", "Piloting", "Tactics", "Diplomacy", "Firearms"],
+      "storyArc": "Military officer → Station commander → Shadow War leader → President of the Interstellar Alliance",
+      "relationships": [
+        {"character": "DELN", "type": "Romantic / Political ally"},
+        {"character": "IVANOVA", "type": "Loyal subordinate / Close friend"},
+        {"character": "GARIBALDI", "type": "Trusted security chief"},
+        {"character": "SINCLAIR", "type": "Mentor / Predecessor"},
+        {"character": "GKAR", "type": "Reluctant ally → Friend"},
+        {"character": "MOLLARI", "type": "Adversary → Reluctant ally"},
+        {"character": "ZATHRAS", "type": "Seeker of truth"},
+        {"character": "FRANKLIN", "type": "Trusted medical advisor"},
+        {"character": "BESTER", "type": "Adversary"},
+        {"character": "VIR", "type": "Respected ally"},
+        {"character": "LOCHLEY", "type": "Respected officer"},
+        {"character": "LENNIER", "type": "Mentee / Friend"},
+        {"character": "KOSH", "type": "Vorlon guide"},
+        {"character": "BYRON", "type": "Telepath contact"},
+        {"character": "COLE", "type": "Fellow officer"},
+        {"character": "MORDEN", "type": "Shadow adversary"},
+        {"character": "LORIEN_B5", "type": "Lorien contact"},
+        {"character": "ZACK", "type": "Underground contact"}
+      ],
+      "famousQuotes": [
+        "We are all alone now, just the younger races. We can't blame anyone else from now on. It's a new age, Delenn. A third age!",
+        "Now get the hell out of our galaxy!",
+        "We are here to place President Clark under arrest.",
+        "Do you always worry when things are going well?",
+        "I'm not going to let you destroy everything we've built."
+      ]
+    },
+    {
+      "id": "IVANOVA",
+      "name": "Susan Ivanova",
+      "species": "HUMAN",
+      "actor": "Claudia Christian",
+      "role": "Executive Officer of Babylon 5, later commander",
+      "description": "The fiercely loyal and competent second-in-command of Babylon 5. Russian-born, she values her work above all else. Her tragic backstory and unwavering dedication make her one of the most compelling characters.",
+      "firstAppearance": "Season 1, Episode 1 ('The Gathering')",
+      "lastAppearance": "Season 5, Episode 20 ('Sleeping in Light')",
+      "personality": {
+        "aggression": 0.6,
+        "diplomacy": 0.4,
+        "economicFocus": 0.2,
+        "scientificFocus": 0.3,
+        "expansionDrive": 0.2,
+        "riskTolerance": 0.7,
+        "altruism": 0.6,
+        "determination": 0.9,
+        "adaptability": 0.6,
+        "leadership": 0.8,
+        "cunning": 0.4,
+        "honor": 0.85
+      },
+      "archetype": "COMMANDER",
+      "characteristics": {
+        "ST": 7,
+        "DX": 8,
+        "EN": 8,
+        "IN": 9,
+        "ED": 9,
+        "SO": 7
+      },
+      "keySkills": ["Command", "Tactics", "Engineering", "Firearms", "Leadership"],
+      "storyArc": "Station XO → Shadow War veteran → Narrator of the new age",
+      "relationships": [
+        {"character": "SHERIDAN", "type": "Loyal subordinate / Deep respect"},
+        {"character": "GARIBALDI", "type": "Romantic tension / Friendship"},
+        {"character": "FRANKLIN", "type": "Medical provider / Friend"},
+        {"character": "LYTA", "type": "Mentor / Friend"},
+        {"character": "COLE", "type": "Fellow officer"},
+        {"character": "SINCLAIR", "type": "Loyal subordinate"},
+        {"character": "BYRON", "type": "Telepath contact"}
+      ],
+      "famousQuotes": [
+        "I don't have time to worry about them when they're not [going well].",
+        "The Babylon project was our last, best hope for peace. It failed. But in the year of the Shadow war it became something greater: our last, best hope for victory.",
+        "It was the year everything changed."
+      ]
+    },
+    {
+      "id": "DELN",
+      "name": "Delenn",
+      "species": "MINBARI",
+      "actor": "Mira Furlan",
+      "role": "Minbari Ambassador, later military leader",
+      "description": "A Minbari ambassador who undergoes a physical transformation as she embraces her destiny. She bridges the gap between the Minbari religious orders and the younger races. Her journey from diplomat to warrior is central to the series.",
+      "firstAppearance": "Season 1, Episode 1 ('The Gathering')",
+      "lastAppearance": "Season 5, Episode 20 ('Sleeping in Light')",
+      "personality": {
+        "aggression": 0.5,
+        "diplomacy": 0.9,
+        "economicFocus": 0.2,
+        "scientificFocus": 0.5,
+        "expansionDrive": 0.3,
+        "riskTolerance": 0.6,
+        "altruism": 0.8,
+        "determination": 0.9,
+        "adaptability": 0.7,
+        "leadership": 0.85,
+        "cunning": 0.5,
+        "honor": 0.9
+      },
+      "archetype": "DIPLOMAT",
+      "characteristics": {
+        "ST": 7,
+        "DX": 9,
+        "EN": 9,
+        "IN": 10,
+        "ED": 10,
+        "SO": 9
+      },
+      "keySkills": ["Diplomacy", "Spiritual insight", "Whip combat", "Leadership", "Ancient languages"],
+      "storyArc": "Minbari ambassador → Transformed being → Military leader → Sheridan's partner",
+      "relationships": [
+        {"character": "SHERIDAN", "type": "Romantic / Political partner"},
+        {"character": "GKAR", "type": "Redemption / Forgiveness"},
+        {"character": "LOCHLEY", "type": "Mentee / Successor"},
+        {"character": "KOSH", "type": "Vorlon guide"},
+        {"character": "LENNIER", "type": "Mentor / Leader"},
+        {"character": "SINCLAIR", "type": "Romantic / Political ally"},
+        {"character": "LORIEN_B5", "type": "Lorien contact"}
+      ],
+      "famousQuotes": [
+        "Now we make our own magic. Now we create our own legends. Now we build the future. Now we stop... being afraid of shadows.",
+        "Perhaps, but not today.",
+        "It was the end of one chapter, and the beginning of another."
+      ]
+    },
+    {
+      "id": "GKAR",
+      "name": "G'Kar",
+      "species": "NARN",
+      "actor": "Andreas Katsulas",
+      "role": "Narn Ambassador, later religious figure",
+      "description": "A Narn ambassador who survived the Centauri torture camps. His journey from bitter revolutionary to spiritual leader is one of the most compelling arcs in the series. He carries the weight of his people's suffering.",
+      "firstAppearance": "Season 1, Episode 1 ('The Gathering')",
+      "lastAppearance": "Season 5, Episode 20 ('Sleeping in Light')",
+      "personality": {
+        "aggression": 0.7,
+        "diplomacy": 0.5,
+        "economicFocus": 0.2,
+        "scientificFocus": 0.3,
+        "expansionDrive": 0.4,
+        "riskTolerance": 0.8,
+        "altruism": 0.7,
+        "determination": 0.95,
+        "adaptability": 0.6,
+        "leadership": 0.8,
+        "cunning": 0.6,
+        "honor": 0.85
+      },
+      "archetype": "REVOLUTIONARY",
+      "characteristics": {
+        "ST": 9,
+        "DX": 7,
+        "EN": 10,
+        "IN": 8,
+        "ED": 7,
+        "SO": 8
+      },
+      "keySkills": ["Survival", "Revolutionary tactics", "Diplomacy", "Spiritual leadership", "Firearms"],
+      "storyArc": "Torture survivor → Ambassador → Revolutionary leader → Religious figure → Exile",
+      "relationships": [
+        {"character": "MOLLARI", "type": "Mortal enemy → Complex respect"},
+        {"character": "DELN", "type": "Guilt → Redemption"},
+        {"character": "SHERIDAN", "type": "Respected ally"},
+        {"character": "LYTA", "type": "Romantic / Companion in exile"},
+        {"character": "VIR", "type": "Reluctant friendship"}
+      ],
+      "famousQuotes": [
+        "I have a very bad feeling about this.",
+        "The Centauri are a dying race. They have forgotten what it means to be proud.",
+        "I am G'Kar of Narn, and I will not be forgotten."
+      ]
+    },
+    {
+      "id": "MOLLARI",
+      "name": "Londo Mollari",
+      "species": "CENTAURI",
+      "actor": "Peter Jurasik",
+      "role": "Centauri Ambassador, later Emperor",
+      "description": "A charming, witty Centauri ambassador whose Faustian bargain with the Shadows leads to his rise as Emperor and the destruction of his homeworld. One of the most tragic and complex characters in the series.",
+      "firstAppearance": "Season 1, Episode 1 ('The Gathering')",
+      "lastAppearance": "Season 5, Episode 20 ('Sleeping in Light')",
+      "personality": {
+        "aggression": 0.4,
+        "diplomacy": 0.8,
+        "economicFocus": 0.6,
+        "scientificFocus": 0.3,
+        "expansionDrive": 0.7,
+        "riskTolerance": 0.6,
+        "altruism": 0.3,
+        "determination": 0.7,
+        "adaptability": 0.8,
+        "leadership": 0.6,
+        "cunning": 0.9,
+        "honor": 0.2
+      },
+      "archetype": "CUNNING",
+      "characteristics": {
+        "ST": 6,
+        "DX": 7,
+        "EN": 7,
+        "IN": 9,
+        "ED": 10,
+        "SO": 10
+      },
+      "keySkills": ["Diplomacy", "Manipulation", "Politics", "Deception", "Social engineering"],
+      "storyArc": "Charming ambassador → Shadow puppet → Emperor → Tragic figure destroyed by his own ambition",
+      "relationships": [
+        {"character": "GKAR", "type": "Mortal enemy → Complex respect"},
+        {"character": "VIR", "type": "Loyal friend / Attendant"},
+        {"character": "SHERIDAN", "type": "Adversary → Reluctant ally"},
+        {"character": "MORDEN", "type": "Shadow manipulator"}
+      ],
+      "famousQuotes": [
+        "I am still Centauri, and I am not afraid.",
+        "The universe is an endless series of battles between those who want to rule and those who don't want to be ruled.",
+        "Stop eating that! You don't even know what it is."
+      ]
+    },
+    {
+      "id": "GARIBALDI",
+      "name": "Michael Garibaldi",
+      "species": "HUMAN",
+      "actor": "Jerry Doyle",
+      "role": "Head of Security, later underground resistance fighter",
+      "description": "The cynical, tough head of security on Babylon 5. A former cop with a drinking problem, he becomes a key figure in the resistance against President Clark's authoritarian regime.",
+      "firstAppearance": "Season 1, Episode 1 ('The Gathering')",
+      "lastAppearance": "Season 5, Episode 20 ('Sleeping in Light')",
+      "personality": {
+        "aggression": 0.7,
+        "diplomacy": 0.3,
+        "economicFocus": 0.2,
+        "scientificFocus": 0.2,
+        "expansionDrive": 0.1,
+        "riskTolerance": 0.8,
+        "altruism": 0.5,
+        "determination": 0.8,
+        "adaptability": 0.7,
+        "leadership": 0.5,
+        "cunning": 0.7,
+        "honor": 0.6
+      },
+      "archetype": "SPY",
+      "characteristics": {
+        "ST": 8,
+        "DX": 8,
+        "EN": 8,
+        "IN": 8,
+        "ED": 7,
+        "SO": 6
+      },
+      "keySkills": ["Investigation", "Firearms", "Interrogation", "Stealth", "Survival"],
+      "storyArc": "Station security chief → Framed and exiled → Underground resistance leader → Married to Lise",
+      "relationships": [
+        {"character": "SHERIDAN", "type": "Trusted friend"},
+        {"character": "IVANOVA", "type": "Romantic tension"},
+        {"character": "BESTER", "type": "Mortal enemy"},
+        {"character": "LYTA", "type": "Underground ally"},
+        {"character": "LOCHLEY", "type": "Security cooperation"},
+        {"character": "ZATHRAS", "type": "Seeker of truth"},
+        {"character": "ZACK", "type": "Underground ally"}
+      ],
+      "famousQuotes": [
+        "The year is 2261.",
+        "I've been in this business long enough to know that when something sounds too good to be true, it usually is."
+      ]
+    },
+    {
+      "id": "SINCLAIR",
+      "name": "Jeffrey Sinclair",
+      "species": "HUMAN",
+      "actor": "Michael O'Hare",
+      "role": "First Station Commander of Babylon 5, later President of the Minbari Federation",
+      "description": "The idealistic first commander of Babylon 5. A diplomat at heart, he discovers his destiny as a prophesied leader of the Minbari. His journey bridges the human and Minbari storylines.",
+      "firstAppearance": "Season 1, Episode 1 ('The Gathering')",
+      "lastAppearance": "Season 2, Episode 22 ('Severed Circuits')",
+      "personality": {
+        "aggression": 0.3,
+        "diplomacy": 0.9,
+        "economicFocus": 0.3,
+        "scientificFocus": 0.5,
+        "expansionDrive": 0.2,
+        "riskTolerance": 0.5,
+        "altruism": 0.9,
+        "determination": 0.7,
+        "adaptability": 0.8,
+        "leadership": 0.85,
+        "cunning": 0.4,
+        "honor": 0.9
+      },
+      "archetype": "DIPLOMAT",
+      "characteristics": {
+        "ST": 7,
+        "DX": 7,
+        "EN": 7,
+        "IN": 9,
+        "ED": 10,
+        "SO": 10
+      },
+      "keySkills": ["Diplomacy", "Leadership", "Spiritual insight", "Negotiation", "Ancient languages"],
+      "storyArc": "Station commander → Prophesied Minbari leader → President of the Minbari Federation",
+      "relationships": [
+        {"character": "SHERIDAN", "type": "Mentee / Successor"},
+        {"character": "DELN", "type": "Romantic / Political ally"},
+        {"character": "KOSH", "type": "Vorlon guide"},
+        {"character": "IVANOVA", "type": "Loyal subordinate"}
+      ],
+      "famousQuotes": [
+        "The place: Babylon 5.",
+        "I believe that the universe is a place of infinite possibility."
+      ]
+    },
+    {
+      "id": "FRANKLIN",
+      "name": "Stephen Franklin",
+      "species": "HUMAN",
+      "actor": "Richard Biggs",
+      "role": "Chief Medical Officer of Babylon 5",
+      "description": "The compassionate chief medical officer who deals with the psychological and physical trauma of the station's crew. His relationship with Lyta Alexander adds depth to his character.",
+      "firstAppearance": "Season 1, Episode 1 ('The Gathering')",
+      "lastAppearance": "Season 5, Episode 20 ('Sleeping in Light')",
+      "personality": {
+        "aggression": 0.2,
+        "diplomacy": 0.6,
+        "economicFocus": 0.2,
+        "scientificFocus": 0.9,
+        "expansionDrive": 0.1,
+        "riskTolerance": 0.4,
+        "altruism": 0.9,
+        "determination": 0.7,
+        "adaptability": 0.6,
+        "leadership": 0.4,
+        "cunning": 0.3,
+        "honor": 0.85
+      },
+      "archetype": "HEALER",
+      "characteristics": {
+        "ST": 6,
+        "DX": 7,
+        "EN": 7,
+        "IN": 10,
+        "ED": 10,
+        "SO": 7
+      },
+      "keySkills": ["Medicine", "Xenobiology", "Psychology", "Research", "Healing"],
+      "storyArc": "Station CMO → Head of xenobiology on Earth",
+      "relationships": [
+        {"character": "LYTA", "type": "Romantic / Deep bond"},
+        {"character": "IVANOVA", "type": "Friend / Medical provider"},
+        {"character": "SHERIDAN", "type": "Trusted medical advisor"}
+      ],
+      "famousQuotes": [
+        "I'm a doctor, not a miracle worker."
+      ]
+    },
+    {
+      "id": "LYTA",
+      "name": "Lyta Alexander",
+      "species": "HUMAN",
+      "actor": "Patricia Tallman",
+      "role": "Telepath, mother of the Shadow/Minbari hybrid child",
+      "description": "A powerful telepath who carries the child of the new age — a hybrid of Shadow and Minbari DNA. Her journey from broken telepath to mother and leader of the telepath refugees is central to the series.",
+      "firstAppearance": "Season 1, Episode 5 ('The Quality of Mercy')",
+      "lastAppearance": "Season 4, Episode 18 ('The Fall of Night')",
+      "personality": {
+        "aggression": 0.4,
+        "diplomacy": 0.5,
+        "economicFocus": 0.1,
+        "scientificFocus": 0.3,
+        "expansionDrive": 0.1,
+        "riskTolerance": 0.6,
+        "altruism": 0.7,
+        "determination": 0.8,
+        "adaptability": 0.7,
+        "leadership": 0.5,
+        "cunning": 0.4,
+        "honor": 0.6
+      },
+      "archetype": "PSIONIC",
+      "characteristics": {
+        "ST": 6,
+        "DX": 7,
+        "EN": 7,
+        "IN": 9,
+        "ED": 8,
+        "SO": 6
+      },
+      "keySkills": ["Telepathy", "Psychic combat", "Empathy", "Survival"],
+      "storyArc": "Broken telepath → Mother of the new age → Exile with G'Kar",
+      "relationships": [
+        {"character": "FRANKLIN", "type": "Romantic / Deep bond"},
+        {"character": "GKAR", "type": "Companion in exile"},
+        {"character": "BESTER", "type": "Abuser / Enemy"},
+        {"character": "BYRON", "type": "Telepath leader"},
+        {"character": "IVANOVA", "type": "Mentor / Friend"},
+        {"character": "GARIBALDI", "type": "Underground ally"}
+      ],
+      "famousQuotes": [
+        "I'm not broken. I'm just... different."
+      ]
+    },
+    {
+      "id": "BESTER",
+      "name": "Alfred Bester",
+      "species": "HUMAN",
+      "actor": "Walter Koenig",
+      "role": "Psi Corps commander, antagonist",
+      "description": "The ruthless head of the Psi Corps who will stop at nothing to maintain control over telepaths. A chilling villain who represents the darkest side of institutional power.",
+      "firstAppearance": "Season 1, Episode 5 ('The Quality of Mercy')",
+      "lastAppearance": "Season 4, Episode 20 ('The Deconstruction of Falling Stars')",
+      "personality": {
+        "aggression": 0.9,
+        "diplomacy": 0.2,
+        "economicFocus": 0.3,
+        "scientificFocus": 0.4,
+        "expansionDrive": 0.6,
+        "riskTolerance": 0.9,
+        "altruism": 0.05,
+        "determination": 0.95,
+        "adaptability": 0.7,
+        "leadership": 0.7,
+        "cunning": 0.9,
+        "honor": 0.05
+      },
+      "archetype": "VILLAIN",
+      "characteristics": {
+        "ST": 7,
+        "DX": 7,
+        "EN": 8,
+        "IN": 10,
+        "ED": 9,
+        "SO": 8
+      },
+      "keySkills": ["Telepathy", "Psychic domination", "Interrogation", "Manipulation", "Psi Corps command"],
+      "storyArc": "Psi Corps commander → Corrupt enforcer → Destroyed by his own hubris",
+      "relationships": [
+        {"character": "LYTA", "type": "Abuser / Enemy"},
+        {"character": "GARIBALDI", "type": "Mortal enemy"},
+        {"character": "SHERIDAN", "type": "Adversary"}
+      ],
+      "famousQuotes": [
+        "The Psi Corps serves the Earth Alliance. That is all that matters."
+      ]
+    },
+    {
+      "id": "VIR",
+      "name": "Vir Cotto",
+      "species": "CENTAURI",
+      "actor": "Stephen Furst",
+      "role": "Londo Mollari's attendant, later Prime Minister",
+      "description": "Londo Mollari's loyal, nervous attendant who evolves into a capable politician. His friendship with G'Kar is one of the most touching relationships in the series.",
+      "firstAppearance": "Season 1, Episode 1 ('The Gathering')",
+      "lastAppearance": "Season 5, Episode 14 ('The Yellow King')",
+      "personality": {
+        "aggression": 0.2,
+        "diplomacy": 0.7,
+        "economicFocus": 0.5,
+        "scientificFocus": 0.3,
+        "expansionDrive": 0.2,
+        "riskTolerance": 0.3,
+        "altruism": 0.7,
+        "determination": 0.5,
+        "adaptability": 0.7,
+        "leadership": 0.5,
+        "cunning": 0.5,
+        "honor": 0.7
+      },
+      "archetype": "DIPLOMAT",
+      "characteristics": {
+        "ST": 5,
+        "DX": 6,
+        "EN": 6,
+        "IN": 8,
+        "ED": 9,
+        "SO": 8
+      },
+      "keySkills": ["Diplomacy", "Administration", "Negotiation", "Loyalty"],
+      "storyArc": "Nervous attendant → Prime Minister → Murdered by Prime Candidates",
+      "relationships": [
+        {"character": "MOLLARI", "type": "Loyal friend / Attendant"},
+        {"character": "GKAR", "type": "Reluctant friendship"},
+        {"character": "SHERIDAN", "type": "Respected ally"}
+      ],
+      "famousQuotes": [
+        "I'm just a simple attendant.",
+        "Londo, please. Think before you act."
+      ]
+    },
+    {
+      "id": "LOCHLEY",
+      "name": "Elizabeth Lochley",
+      "species": "HUMAN",
+      "actor": "Tracy Scoggins",
+      "role": "Station Commander of Babylon 5 (Season 5)",
+      "description": "A strict, by-the-book military officer who becomes the station commander in Season 5. She represents the new generation of leaders who must maintain the Alliance.",
+      "firstAppearance": "Season 4, Episode 1 ('War Without End, Part One')",
+      "lastAppearance": "Season 5, Episode 20 ('Sleeping in Light')",
+      "personality": {
+        "aggression": 0.6,
+        "diplomacy": 0.4,
+        "economicFocus": 0.3,
+        "scientificFocus": 0.3,
+        "expansionDrive": 0.3,
+        "riskTolerance": 0.5,
+        "altruism": 0.5,
+        "determination": 0.85,
+        "adaptability": 0.5,
+        "leadership": 0.8,
+        "cunning": 0.4,
+        "honor": 0.8
+      },
+      "archetype": "COMMANDER",
+      "characteristics": {
+        "ST": 7,
+        "DX": 8,
+        "EN": 8,
+        "IN": 8,
+        "ED": 9,
+        "SO": 7
+      },
+      "keySkills": ["Command", "Military tactics", "Discipline", "Leadership"],
+      "storyArc": "Military officer → Station commander → Guardian of the new Alliance",
+      "relationships": [
+        {"character": "SHERIDAN", "type": "Respected mentor"},
+        {"character": "DELN", "type": "Mentor"},
+        {"character": "GARIBALDI", "type": "Security cooperation"},
+        {"character": "ZACK", "type": "Underground contact"}
+      ],
+      "famousQuotes": [
+        "I will not let this station fall."
+      ]
+    },
+    {
+      "id": "LENNIER",
+      "name": "Lennier",
+      "species": "MINBARI",
+      "actor": "Bill Mumy",
+      "role": "Delenn's attendant, later military officer",
+      "description": "Delenn's loyal attendant who evolves into a capable military officer. His unwavering devotion to Delenn and the Minbari cause makes him a steadfast character.",
+      "firstAppearance": "Season 1, Episode 1 ('The Gathering')",
+      "lastAppearance": "Season 5, Episode 20 ('Sleeping in Light')",
+      "personality": {
+        "aggression": 0.4,
+        "diplomacy": 0.6,
+        "economicFocus": 0.2,
+        "scientificFocus": 0.3,
+        "expansionDrive": 0.2,
+        "riskTolerance": 0.5,
+        "altruism": 0.7,
+        "determination": 0.8,
+        "adaptability": 0.5,
+        "leadership": 0.5,
+        "cunning": 0.3,
+        "honor": 0.9
+      },
+      "archetype": "LOYALIST",
+      "characteristics": {
+        "ST": 7,
+        "DX": 8,
+        "EN": 7,
+        "IN": 7,
+        "ED": 7,
+        "SO": 6
+      },
+      "keySkills": ["Loyalty", "Military training", "Service", "Whip combat"],
+      "storyArc": "Attendant → Military officer → Delenn's trusted aide",
+      "relationships": [
+        {"character": "DELN", "type": "Loyal attendant / Deep respect"},
+        {"character": "SHERIDAN", "type": "Respected commander"}
+      ],
+      "famousQuotes": [
+        "I serve Delenn, and through her, the Minbari."
+      ]
+    },
+    {
+      "id": "KOSH",
+      "name": "Kosh Naranek",
+      "species": "VORLON",
+      "actor": "Ardwight Chamberlain (voice) / Jeffery Willerth (encounter suit)",
+      "role": "Vorlon Ambassador to Babylon 5",
+      "description": "The enigmatic Vorlon ambassador who communicates through a massive, mysterious encounter suit. His true intentions are unclear, but he guides the younger races toward independence.",
+      "firstAppearance": "Season 1, Episode 1 ('The Gathering')",
+      "lastAppearance": "Season 3, Episode 13 ('Point of No Return')",
+      "personality": {
+        "aggression": 0.3,
+        "diplomacy": 0.7,
+        "economicFocus": 0.1,
+        "scientificFocus": 0.8,
+        "expansionDrive": 0.5,
+        "riskTolerance": 0.4,
+        "altruism": 0.5,
+        "determination": 0.8,
+        "adaptability": 0.6,
+        "leadership": 0.7,
+        "cunning": 0.8,
+        "honor": 0.6
+      },
+      "archetype": "ENVOY",
+      "characteristics": {
+        "ST": 12,
+        "DX": 10,
+        "EN": 12,
+        "IN": 12,
+        "ED": 12,
+        "SO": 10
+      },
+      "keySkills": ["Encounter suit", "Ancient knowledge", "Manipulation", "Guidance"],
+      "storyArc": "Vorlon ambassador → Withdraws before Shadow War → Legacy of guidance",
+      "relationships": [
+        {"character": "SINCLAIR", "type": "Guide / Mentee"},
+        {"character": "DELN", "type": "Guide / Protégé"},
+        {"character": "SHERIDAN", "type": "Reluctant ally"}
+      ],
+      "famousQuotes": [
+        "The Vorlon way is the way of order and obedience.",
+        "You are not ready for the truth."
+      ]
+    },
+    {
+      "id": "BYRON",
+      "name": "Byron",
+      "species": "HUMAN",
+      "actor": "Robin Atkin Downes",
+      "role": "Rogue telepath, leader of telepath refugees",
+      "description": "A charismatic rogue telepath who leads a group of telepath refugees seeking asylum. Unlike Bester, he genuinely wants what's best for his people and is a committed pacifist.",
+      "firstAppearance": "Season 5, Episode 1 ('The Sword of Damocles, Part One')",
+      "lastAppearance": "Season 5, Episode 10 ('Soul Hunter')",
+      "personality": {
+        "aggression": 0.1,
+        "diplomacy": 0.8,
+        "economicFocus": 0.2,
+        "scientificFocus": 0.4,
+        "expansionDrive": 0.1,
+        "riskTolerance": 0.3,
+        "altruism": 0.9,
+        "determination": 0.8,
+        "adaptability": 0.7,
+        "leadership": 0.7,
+        "cunning": 0.5,
+        "honor": 0.85
+      },
+      "archetype": "PEACEMAKER",
+      "characteristics": {
+        "ST": 6,
+        "DX": 7,
+        "EN": 7,
+        "IN": 10,
+        "ED": 9,
+        "SO": 7
+      },
+      "keySkills": ["Telepathy", "Leadership", "Pacifism", "Empathy"],
+      "storyArc": "Rogue telepath → Refugee leader → Tragic sacrifice",
+      "relationships": [
+        {"character": "LYTA", "type": "Fellow telepath"},
+        {"character": "SHERIDAN", "type": "Seeking asylum"},
+        {"character": "IVANOVA", "type": "Negotiator"}
+      ],
+      "famousQuotes": [
+        "We just want to live in peace."
+      ]
+    },
+    {
+      "id": "MORDEN",
+      "name": "Mr. Morden",
+      "species": "SHADOW",
+      "actor": "Ed Wasser",
+      "role": "Shadow agent, manipulator of Londo Mollari",
+      "description": "A Shadow agent who appears as a human businessman. He manipulates Londo Mollari into serving the Shadows, making him one of the most dangerous villains in the series.",
+      "firstAppearance": "Season 1, Episode 6 ('The Long Night')",
+      "lastAppearance": "Season 4, Episode 10 ('Moment of Passion')",
+      "personality": {
+        "aggression": 0.8,
+        "diplomacy": 0.6,
+        "economicFocus": 0.5,
+        "scientificFocus": 0.4,
+        "expansionDrive": 0.9,
+        "riskTolerance": 0.9,
+        "altruism": 0.0,
+        "determination": 0.95,
+        "adaptability": 0.8,
+        "leadership": 0.6,
+        "cunning": 0.95,
+        "honor": 0.0
+      },
+      "archetype": "VILLAIN",
+      "characteristics": {
+        "ST": 10,
+        "DX": 9,
+        "EN": 10,
+        "IN": 11,
+        "ED": 10,
+        "SO": 9
+      },
+      "keySkills": ["Manipulation", "Deception", "Shadow technology", "Influence"],
+      "storyArc": "Shadow agent → Londo's corruptor → Instrument of the Shadow War",
+      "relationships": [
+        {"character": "MOLLARI", "type": "Puppet master"},
+        {"character": "SHERIDAN", "type": "Primary adversary"}
+      ],
+      "famousQuotes": [
+        "The Shadows offer you power, Londo. Power to reshape your world."
+      ]
+    },
+    {
+      "id": "ZATHRAS",
+      "name": "Zathras",
+      "species": "UNKNOWN",
+      "actor": "Tim Choate",
+      "role": "Mysterious alien connected to Babylon 4",
+      "description": "An alien of unknown origin who is central to the disappearance of Babylon 4. His cryptic messages and connection to the station's fate make him one of the most mysterious characters.",
+      "firstAppearance": "Season 1, Episode 3 ('Now You See Him')",
+      "lastAppearance": "Season 4, Episode 22 ('The Fall of Night')",
+      "personality": {
+        "aggression": 0.1,
+        "diplomacy": 0.3,
+        "economicFocus": 0.0,
+        "scientificFocus": 0.9,
+        "expansionDrive": 0.0,
+        "riskTolerance": 0.2,
+        "altruism": 0.4,
+        "determination": 0.6,
+        "adaptability": 0.3,
+        "leadership": 0.1,
+        "cunning": 0.5,
+        "honor": 0.5
+      },
+      "archetype": "MYSTIC",
+      "characteristics": {
+        "ST": 5,
+        "DX": 6,
+        "EN": 6,
+        "IN": 10,
+        "ED": 8,
+        "SO": 5
+      },
+      "keySkills": ["Ancient knowledge", "Babylon 4 connection", "Cryptic communication"],
+      "storyArc": "Mysterious figure → Key to Babylon 4's return → Resolution of the Babylon mystery",
+      "relationships": [
+        {"character": "SHERIDAN", "type": "Seeker of truth"},
+        {"character": "GARIBALDI", "type": "Investigator"}
+      ],
+      "famousQuotes": [
+        "I am Zathras. I have been waiting for you.",
+        "Babylon 4 is not lost. It is waiting."
+      ]
+    },
+    {
+      "id": "ZACK",
+      "name": "Zack Allan",
+      "species": "HUMAN",
+      "actor": "Jeff Conaway",
+      "role": "Security officer, later station security chief",
+      "description": "A young, ambitious security officer who rises through the ranks. His loyalty to the station and growth into a capable leader make him a valuable character.",
+      "firstAppearance": "Season 2, Episode 1 ('A Voice in Dreaming')",
+      "lastAppearance": "Season 5, Episode 20 ('Sleeping in Light')",
+      "personality": {
+        "aggression": 0.5,
+        "diplomacy": 0.4,
+        "economicFocus": 0.2,
+        "scientificFocus": 0.3,
+        "expansionDrive": 0.2,
+        "riskTolerance": 0.6,
+        "altruism": 0.6,
+        "determination": 0.7,
+        "adaptability": 0.6,
+        "leadership": 0.5,
+        "cunning": 0.4,
+        "honor": 0.7
+      },
+      "archetype": "SOLDIER",
+      "characteristics": {
+        "ST": 8,
+        "DX": 7,
+        "EN": 8,
+        "IN": 7,
+        "ED": 7,
+        "SO": 6
+      },
+      "keySkills": ["Security", "Firearms", "Leadership", "Loyalty"],
+      "storyArc": "Security officer → Station security chief → Guardian of Babylon 5",
+      "relationships": [
+        {"character": "GARIBALDI", "type": "Mentor"},
+        {"character": "LOCHLEY", "type": "Superior"},
+        {"character": "SHERIDAN", "type": "Respected commander"}
+      ],
+      "famousQuotes": [
+        "I'll keep this station safe."
+      ]
+    },
+    {
+      "id": "COLE",
+      "name": "Marcus Cole",
+      "species": "HUMAN",
+      "actor": "Jason Carter",
+      "role": "Peacekeeper defector, warrior",
+      "description": "A former Peacekeeper who defects after discovering the truth about the Shadows. A skilled warrior with a strong moral compass.",
+      "firstAppearance": "Season 3, Episode 1 ('The Shape of Shadows')",
+      "lastAppearance": "Season 4, Episode 22 ('The Fall of Night')",
+      "personality": {
+        "aggression": 0.7,
+        "diplomacy": 0.3,
+        "economicFocus": 0.1,
+        "scientificFocus": 0.2,
+        "expansionDrive": 0.2,
+        "riskTolerance": 0.8,
+        "altruism": 0.6,
+        "determination": 0.8,
+        "adaptability": 0.5,
+        "leadership": 0.5,
+        "cunning": 0.4,
+        "honor": 0.8
+      },
+      "archetype": "WARRIOR",
+      "characteristics": {
+        "ST": 9,
+        "DX": 8,
+        "EN": 9,
+        "IN": 7,
+        "ED": 7,
+        "SO": 6
+      },
+      "keySkills": ["Combat", "Firearms", "Peacekeeper training", "Survival"],
+      "storyArc": "Peacekeeper → Defector → Warrior against the Shadows",
+      "relationships": [
+        {"character": "SHERIDAN", "type": "Commander"},
+        {"character": "IVANOVA", "type": "Fellow officer"}
+      ],
+      "famousQuotes": [
+        "I won't let them win."
+      ]
+    },
+    {
+      "id": "LORIEN_B5",
+      "name": "Lorien",
+      "species": "LORIEN",
+      "actor": "Wayne Alexander",
+      "role": "Last of the First Ones, ally of Sheridan",
+      "description": "The last of the ancient Lorien race, who created the First Ones. He aids Sheridan at a critical moment in the Shadow War, providing the technology and knowledge needed to defeat the Shadows.",
+      "firstAppearance": "Season 3, Episode 13 ('Point of No Return')",
+      "lastAppearance": "Season 4, Episode 15 ('The Passing of the Technomancer')",
+      "personality": {
+        "aggression": 0.2,
+        "diplomacy": 0.5,
+        "economicFocus": 0.0,
+        "scientificFocus": 1.0,
+        "expansionDrive": 0.0,
+        "riskTolerance": 0.3,
+        "altruism": 0.8,
+        "determination": 0.9,
+        "adaptability": 0.5,
+        "leadership": 0.6,
+        "cunning": 0.4,
+        "honor": 0.8
+      },
+      "archetype": "CREATOR",
+      "characteristics": {
+        "ST": 12,
+        "DX": 12,
+        "EN": 12,
+        "IN": 12,
+        "ED": 12,
+        "SO": 10
+      },
+      "keySkills": ["Reality manipulation", "Ancient technology", "Creation", "Wisdom"],
+      "storyArc": "Last of his kind → Sheridan's ally → Sacrifices himself to help defeat the Shadows",
+      "relationships": [
+        {"character": "SHERIDAN", "type": "Chosen ally"},
+        {"character": "DELN", "type": "Guide"}
+      ],
+      "famousQuotes": [
+        "Do you have anything worth living for?",
+        "It is a great responsibility. This is yours now."
+      ]
+    }
+  ],
+
+  "storylines": [
+    {
+      "id": "SHADOW_WAR",
+      "title": "The Shadow War",
+      "description": "The central conflict of the series. The ancient Shadows and Vorlons have been manipulating younger races for millions of years. The Shadows believe evolution requires conflict; the Vorlons believe it requires order. Sheridan and the younger races rebel against both.",
+      "seasons": [1, 2, 3, 4],
+      "keyCharacters": ["SHERIDAN", "DELN", "GKAR", "MOLLARI", "KOSH", "LORIEN_B5"],
+      "chapters": [
+        {
+          "title": "The Gathering",
+          "description": "Babylon 5 opens. The station's first commander, Jeffrey Sinclair, discovers the station's true purpose as a meeting point for the great powers. The Shadows and Vorlons begin their game.",
+          "season": 1,
+          "keyEvents": ["Station opening", "First contact with Kosh", "Sinclair's prophecy revealed", "The Rangers' mission"]
+        },
+        {
+          "title": "The Long Shadow",
+          "description": "Sheridan takes command. The truth about the Shadows emerges. Londo Mollari makes his Faustian bargain. The Narn-Centauri war escalates.",
+          "season": 2,
+          "keyEvents": ["Sheridan arrives", "Londo's deal with Morden", "Narn-Centauri conflict", "The Rangers' return"]
+        },
+        {
+          "title": "The Fire",
+          "description": "The Shadow War begins in earnest. Sheridan builds an alliance of younger races. The Earth government slides toward dictatorship under President Clark.",
+          "season": 3,
+          "keyEvents": ["Shadow attack on Babylon 5", "Sheridan's resurrection", "Alliance formation", "Earth civil war begins"]
+        },
+        {
+          "title": "The Endgame",
+          "description": "The Shadow War reaches its climax. Sheridan defeats the Shadows. The Vorlons withdraw. The younger races must now stand on their own.",
+          "season": 4,
+          "keyEvents": ["Final Shadow battle", "Vorlon withdrawal", "Earth conflict resolution", "The new age begins"]
+        }
+      ]
+    },
+    {
+      "id": "EARTH_DICTATORSHIP",
+      "title": "Earth's Descent into Dictatorship",
+      "description": "Parallel to the Shadow War, Earth slides from democracy to authoritarianism under President Clark. The Psi Corps becomes a tool of oppression. Garibaldi leads the underground resistance.",
+      "seasons": [2, 3, 4],
+      "keyCharacters": ["GARIBALDI", "SHERIDAN", "BESTER", "IVANOVA", "LYTA"],
+      "chapters": [
+        {
+          "title": "The Seeds of Tyranny",
+          "description": "President Clark begins consolidating power. The Psi Corps expands its reach. Garibaldi is framed and exiled.",
+          "season": 2,
+          "keyEvents": ["Clark's rise", "Garibaldi's exile", "Psi Corps expansion"]
+        },
+        {
+          "title": "The Underground",
+          "description": "Garibaldi builds a resistance movement. The telepath underground grows. Sheridan discovers the truth about Earth.",
+          "season": 3,
+          "keyEvents": ["Resistance formation", "Telepath underground", "Sheridan's discovery"]
+        },
+        {
+          "title": "The Mars Conflict",
+          "description": "Mars declares independence. Sheridan must choose between Earth and justice. The conflict is resolved through diplomacy and force.",
+          "season": 4,
+          "keyEvents": ["Mars independence", "Sheridan's choice", "Clark's downfall"]
+        }
+      ]
+    },
+    {
+      "id": "TELEPATH_CRISIS",
+      "title": "The Telepath Crisis",
+      "description": "Telepaths face extinction and persecution. The Psi Corps' abuse leads to a telepath underground. Lyta Alexander carries the child of the new age — a hybrid that could save or destroy telepaths.",
+      "seasons": [1, 2, 3, 5],
+      "keyCharacters": ["LYTA", "FRANKLIN", "BESTER", "BYRON", "GARIBALDI"],
+      "chapters": [
+        {
+          "title": "The Psi Corps",
+          "description": "The Psi Corps' abuse of telepaths is revealed. Lyta is broken by Bester. The underground begins to form.",
+          "season": 1,
+          "keyEvents": ["Bester's abuse", "Lyta's breaking", "Underground formation"]
+        },
+        {
+          "title": "The Child",
+          "description": "Lyta discovers she is pregnant with a Shadow/Minbari hybrid. The child's fate will determine the future of telepaths.",
+          "season": 2,
+          "keyEvents": ["Lyta's pregnancy", "The child's birth", "The hybrid's nature"]
+        },
+        {
+          "title": "The Refugee Crisis",
+          "description": "Telepath refugees seek asylum on Babylon 5. Byron leads them. The Psi Corps hunts them down.",
+          "season": 5,
+          "keyEvents": ["Refugee arrival", "Byron's leadership", "The telepath war"]
+        }
+      ]
+    },
+    {
+      "id": "CENTAURI_TRAGEDY",
+      "title": "The Centauri Tragedy",
+      "description": "Londo Mollari's rise to power and the destruction of Centauri Prime. A Faustian tale of ambition, betrayal, and the cost of power.",
+      "seasons": [1, 2, 3, 4, 5],
+      "keyCharacters": ["MOLLARI", "GKAR", "VIR", "MORDEN", "SHERIDAN"],
+      "chapters": [
+        {
+          "title": "The Ambassador",
+          "description": "Londo arrives at Babylon 5 as a charming, witty ambassador. His deal with the Shadows sets him on a path of destruction.",
+          "season": 1,
+          "keyEvents": ["Londo's arrival", "The deal with Morden", "G'Kar's hatred"]
+        },
+        {
+          "title": "The Rise",
+          "description": "Londo's influence grows. He manipulates events to gain power. Vir remains his loyal friend.",
+          "season": 2,
+          "keyEvents": ["Londo's manipulation", "Vir's loyalty", "The Centauri political crisis"]
+        },
+        {
+          "title": "The Emperor",
+          "description": "Londo becomes Emperor of the Centauri Republic. But the cost is the destruction of his homeworld by the Drakh.",
+          "season": 5,
+          "keyEvents": ["Londo's coronation", "Centauri Prime's destruction", "The Drakh's revenge"]
+        }
+      ]
+    },
+    {
+      "id": "NARN_REDEMPTION",
+      "title": "The Narn Redemption",
+      "description": "G'Kar's journey from bitter torture survivor to spiritual leader. The Narn people's struggle for freedom and justice.",
+      "seasons": [1, 2, 3, 4, 5],
+      "keyCharacters": ["GKAR", "DELN", "MOLLARI", "LYTA", "VIR"],
+      "chapters": [
+        {
+          "title": "The Survivor",
+          "description": "G'Kar arrives at Babylon 5 as a bitter survivor of Centauri torture. His hatred of Mollari drives him.",
+          "season": 1,
+          "keyEvents": ["G'Kar's arrival", "The torture scars", "Hatred of Mollari"]
+        },
+        {
+          "title": "The Revolutionary",
+          "description": "G'Kar becomes a leader of the Narn resistance. He works with Sheridan to free the Narn from Centauri oppression.",
+          "season": 2,
+          "keyEvents": ["Narn resistance", "G'Kar's leadership", "The Narn-Centauri war"]
+        },
+        {
+          "title": "The Prophet",
+          "description": "G'Kar discovers he has become a religious figure. Unable to stay anywhere, he exiles himself with Lyta.",
+          "season": 5,
+          "keyEvents": ["G'Kar's religious role", "Exile with Lyta", "The wandering prophet"]
+        }
+      ]
+    },
+    {
+      "id": "MINBARI_SPIRITUAL",
+      "title": "The Minbari Spiritual Journey",
+      "description": "Delenn's transformation from diplomat to warrior and her role in bridging the Minbari and human worlds. The Minbari civil war and spiritual crisis.",
+      "seasons": [1, 2, 3, 4, 5],
+      "keyCharacters": ["DELN", "SINCLAIR", "SHERIDAN", "KOSH", "LENNIER"],
+      "chapters": [
+        {
+          "title": "The Ambassador",
+          "description": "Delenn arrives as Minbari ambassador. She discovers the truth about the Minbari religious orders and her own destiny.",
+          "season": 1,
+          "keyEvents": ["Delenn's arrival", "The religious orders", "First contact with Sinclair"]
+        },
+        {
+          "title": "The Transformation",
+          "description": "Delenn undergoes a physical transformation, becoming the bridge between Minbari and human. She embraces her warrior side.",
+          "season": 2,
+          "keyEvents": ["Delenn's transformation", "The warrior caste", "Sheridan's arrival"]
+        },
+        {
+          "title": "The Leader",
+          "description": "Delenn leads the Minbari through the Shadow War and beyond. She becomes Sheridan's partner in building the new Alliance.",
+          "season": 4,
+          "keyEvents": ["Minbari leadership", "The Shadow War", "The new Alliance"]
+        }
+      ]
+    }
+  ],
+
+  "dialogues": [
+    {
+      "id": "DIALOGUE_001",
+      "title": "The Third Age",
+      "scene": "Into the Fire, Season 4",
+      "characters": ["SHERIDAN", "DELN"],
+      "dialogue": [
+        {"speaker": "SHERIDAN", "line": "We are all alone now, just the younger races. We can't blame anyone else from now on. It's a new age, Delenn. A third age!"},
+        {"speaker": "DELN", "line": "Why third?"},
+        {"speaker": "SHERIDAN", "line": "We begun in chaos, too primitive to make our own decisions. Then we were manipulated from outside by forces that thought they knew what was best for us. And now — now we are finally standing on our own. Lorien was right, it's a great responsibility. This is ours now."},
+        {"speaker": "DELN", "line": "Strange. The galaxy seems somehow smaller now that the First Ones are gone forever."},
+        {"speaker": "SHERIDAN", "line": "It feels like the magic's gone now."},
+        {"speaker": "DELN", "line": "No, not gone. Now we make our own magic. Now we create our own legends. Now we build the future. Now we stop... being afraid of shadows."}
+      ]
+    },
+    {
+      "id": "DIALOGUE_002",
+      "title": "The Apology",
+      "scene": "The Fall of Night, Season 4",
+      "characters": ["SHERIDAN"],
+      "dialogue": [
+        {"speaker": "SHERIDAN", "line": "I apologize. I'm sorry. I'm sorry we had to defend ourselves against an unwarranted attack. I'm sorry that your crew was stupid enough to fire on a station filled with a quarter million civilians, including your own people. And I'm sorry I waited as long as I did before I blew them all straight to hell. As with everything else, it's the thought that counts."}
+      ]
+    },
+    {
+      "id": "DIALOGUE_003",
+      "title": "The Burden",
+      "scene": "Ship of Tears, Season 2",
+      "characters": ["GKAR", "DELN"],
+      "dialogue": [
+        {"speaker": "GKAR", "line": "'Some must be sacrificed for all to be saved.' First I took that as a revelation for the future. Now I see that it is as much about how we got here as about where we are going. I think that one sentence is the greatest burden I have ever known."},
+        {"speaker": "DELN", "line": "You are right, nothing would've been changed. Except that my people would now be a dead race."},
+        {"speaker": "DELN", "line": "You have come a long way, G'Kar. Further than I would've guessed. Sheridan's promise binds me as well it does him. We will take you into the Council, G'Kar. And someday, when all this is over, perhaps you will find it in your heart to forgive me."},
+        {"speaker": "GKAR", "line": "Perhaps, but not today."}
+      ]
+    },
+    {
+      "id": "DIALOGUE_004",
+      "title": "Worrying",
+      "scene": "Season 2",
+      "characters": ["SHERIDAN", "IVANOVA"],
+      "dialogue": [
+        {"speaker": "SHERIDAN", "line": "Do you always worry when things are going well?"},
+        {"speaker": "IVANOVA", "line": "I don't have time to worry about them when they're not."}
+      ]
+    },
+    {
+      "id": "DIALOGUE_005",
+      "title": "The Season 3 Opening",
+      "scene": "Matters of Honor, Season 3",
+      "characters": ["IVANOVA"],
+      "dialogue": [
+        {"speaker": "IVANOVA", "line": "The Babylon project was our last, best hope for peace. It failed. But in the year of the Shadow war it became something greater: our last, best hope for victory. The year is 2260, the place: Babylon 5."}
+      ]
+    },
+    {
+      "id": "DIALOGUE_006",
+      "title": "The Final Monologue",
+      "scene": "Sleeping in Light, Season 5 Finale",
+      "characters": ["DELN"],
+      "dialogue": [
+        {"speaker": "DELN", "line": "It was the end of the Earth year 2261. It was the dawn of a new age for all of us. It was the end of one chapter, and the beginning of another. The next twenty years would see great changes, great joy, great sorrow. The telepath war. The Drakh war. The new Alliance would waver and crack. In the end, it would hold — because what is built endures. And what is loved endures. And Babylon 5... Babylon 5 endures."}
+      ]
+    },
+    {
+      "id": "DIALOGUE_007",
+      "title": "Lorien's Question",
+      "scene": "Whatever Happened to Mr Garibaldi, Season 5",
+      "characters": ["LORIEN_B5"],
+      "dialogue": [
+        {"speaker": "LORIEN_B5", "line": "Do you have anything worth living for?"}
+      ]
+    },
+    {
+      "id": "DIALOGUE_008",
+      "title": "Now Get Out",
+      "scene": "Into the Fire, Season 4",
+      "characters": ["SHERIDAN"],
+      "dialogue": [
+        {"speaker": "SHERIDAN", "line": "Now get the hell out of our galaxy!"}
+      ]
+    },
+    {
+      "id": "DIALOGUE_009",
+      "title": "The Arrest",
+      "scene": "Endgame, Season 4",
+      "characters": ["SHERIDAN"],
+      "dialogue": [
+        {"speaker": "SHERIDAN", "line": "We are here to place President Clark under arrest."}
+      ]
+    },
+    {
+      "id": "DIALOGUE_010",
+      "title": "Delenn and Sheridan — Business or Pleasure",
+      "scene": "Movements of Fire and Shadow, Season 3",
+      "characters": ["DELN", "SHERIDAN"],
+      "dialogue": [
+        {"speaker": "DELN", "line": "Something's bothering you. What is it?"},
+        {"speaker": "SHERIDAN", "line": "I need to ask you to do something I don't want to ask you to do."},
+        {"speaker": "DELN", "line": "If it's about me wearing those little-- I appreciate the gift and I didn't say I wouldn't wear them, I just said that for me, from a Minbari perspective, I thought that it looked silly."},
+        {"speaker": "SHERIDAN", "line": "No, it's not anything to do with that."},
+        {"speaker": "DELN", "line": "Business then?"}
+      ]
+    }
+  ],
+
+  "locations": [
+    {
+      "id": "BABYLON5",
+      "name": "Babylon 5",
+      "type": "Space Station",
+      "description": "The primary setting of the series. A massive space station built as a peacekeeping outpost and meeting point for all races. Located in neutral space.",
+      "faction": "Neutral / Earth Alliance",
+      "significance": "Central hub of the series; where all storylines converge"
+    },
+    {
+      "id": "EARTH",
+      "name": "Earth",
+      "type": "Planet",
+      "description": "Homeworld of humanity and capital of the Earth Alliance. Site of the authoritarian government under President Clark.",
+      "faction": "Earth Alliance",
+      "significance": "Political center of human civilization"
+    },
+    {
+      "id": "MARS",
+      "name": "Mars",
+      "type": "Planet",
+      "description": "The red planet, a colony of Earth that declares independence during the Clark regime.",
+      "faction": "Earth Alliance / Mars Independence",
+      "significance": "Site of the Mars independence conflict"
+    },
+    {
+      "id": "MINBAR",
+      "name": "Minbar",
+      "type": "Planet",
+      "description": "Homeworld of the Minbari. A spiritually advanced world with towering cities and deep religious significance.",
+      "faction": "Minbari Federation",
+      "significance": "Minbari capital; site of the Minbari civil war"
+    },
+    {
+      "id": "CENTAURI_PRIME",
+      "name": "Centauri Prime",
+      "type": "Planet",
+      "description": "Homeworld of the Centauri. A decadent world of pleasure and politics. Destroyed by the Drakh in the series finale.",
+      "faction": "Centauri Republic",
+      "significance": "Centauri capital; destroyed as punishment for Shadow War complicity"
+    },
+    {
+      "id": "NARN3",
+      "name": "Narn 3 (Narn Regime)",
+      "type": "Planet",
+      "description": "The new homeworld of the Narn people after their original world was destroyed by the Centauri.",
+      "faction": "Narn Regime",
+      "significance": "Narn capital; symbol of resilience"
+    },
+    {
+      "id": "BABYLON4",
+      "name": "Babylon 4",
+      "type": "Space Station",
+      "description": "The previous Babylon station that disappeared into the Shadow dimension. Its return is a key plot point.",
+      "faction": "Unknown / Shadow dimension",
+      "significance": "Mystery of the missing station; connection to Zathras"
+    },
+    {
+      "id": "SKARRIN",
+      "name": "Skarrin",
+      "type": "Planet",
+      "description": "A world that becomes the site of the new Interstellar Alliance headquarters.",
+      "faction": "Interstellar Alliance",
+      "significance": "New capital of the Alliance"
+    }
+  ]
+}

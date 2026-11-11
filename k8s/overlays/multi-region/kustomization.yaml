@@ -1,0 +1,47 @@
+# Kustomization — Multi-Region Federation overlay
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+patches:
+  # Scale up for multi-region
+  - target:
+      kind: HorizontalPodAutoscaler
+      name: neuron-hpa
+    patch: |
+      - op: replace
+        path: /spec/minReplicas
+        value: 3
+      - op: replace
+        path: /spec/maxReplicas
+        value: 30
+
+configMapGenerator:
+  - name: neuron-config-multi-region
+    behavior: merge
+    literals:
+      - NEURON_COORDINATOR_FEDERATION_ENABLED="true"
+      - NEURON_COORDINATOR_FEDERATION_PRIMARY="false"
+      - NEURON_COORDINATOR_FEDERATION_REGION=us-east
+      - NEURON_COORDINATOR_FEDERATION_PEER_URLS=http://coordinator-eu:8084,http://coordinator-apac:8084
+      - NEURON_COORDINATOR_FEDERATION_SYNC_INTERVAL_MS="60000"
+      - NEURON_COORDINATOR_FEDERATION_CONSENSUS_TIMEOUT_MS="10000"
+      - NEURON_COORDINATOR_FEDERATION_EXPERIENCE_FORWARDING="true"
+      - NEURON_COORDINATOR_FEDERATION_MODEL_PROPAGATION="true"
+      - NEURON_COORDINATOR_FEDERATION_MAX_PEERS="10"
+      - NEURON_COORDINATOR_FALLBACK_URLS=http://coordinator-eu:8084,http://coordinator-apac:8084
+      - NEURON_FAILOVER_ENABLED="true"
+      - NEURON_FAILOVER_CHECK_INTERVAL_MS="30000"
+
+images:
+  - name: doramcu/app
+    newName: doramcu/app
+    newTag: latest
+  - name: doramcu/neuron
+    newName: doramcu/neuron
+    newTag: latest
+  - name: doramcu/dl-python
+    newName: doramcu/dl-python
+    newTag: latest

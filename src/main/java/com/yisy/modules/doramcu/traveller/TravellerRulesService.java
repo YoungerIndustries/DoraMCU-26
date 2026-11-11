@@ -1,5 +1,8 @@
 package com.yisy.modules.doramcu.traveller;
 
+import com.yisy.modules.doramcu.shared.model.GameSystem;
+import com.yisy.modules.doramcu.shared.model.RulesEntry;
+import com.yisy.modules.doramcu.shared.repository.UnifiedRulesEntryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -41,11 +44,11 @@ public class TravellerRulesService {
 
     private static final Logger log = LoggerFactory.getLogger(TravellerRulesService.class);
 
-    private final TravellerRulesEntryRepository entryRepository;
+    private final UnifiedRulesEntryRepository entryRepository;
     private final TravellerRulesTableRepository tableRepository;
     private boolean initialized = false;
 
-    public TravellerRulesService(TravellerRulesEntryRepository entryRepository,
+    public TravellerRulesService(UnifiedRulesEntryRepository entryRepository,
                                   TravellerRulesTableRepository tableRepository) {
         this.entryRepository = entryRepository;
         this.tableRepository = tableRepository;
@@ -90,7 +93,7 @@ public class TravellerRulesService {
 
     @Transactional
     public void populateRuleEntries() {
-        List<TravellerRulesEntry> entries = new ArrayList<>();
+        List<RulesEntry> entries = new ArrayList<>();
 
         // ============================================================
         // THE TRAVELLER BOOK — Core Rules
@@ -933,9 +936,10 @@ public class TravellerRulesService {
 
     // ==================== Helper Methods ====================
 
-    private TravellerRulesEntry createEntry(String title, String source, String chapter, String category,
+    private RulesEntry createEntry(String title, String source, String chapter, String category,
                                             Integer page, String text, String notes) {
-        TravellerRulesEntry entry = new TravellerRulesEntry();
+        RulesEntry entry = new RulesEntry();
+        entry.setGameSystem(GameSystem.TRAVELLER);
         entry.setTitle(title);
         entry.setSource(source);
         entry.setChapter(chapter);
@@ -967,36 +971,38 @@ public class TravellerRulesService {
     /**
      * Get all rules for a given category.
      */
-    public List<TravellerRulesEntry> getRulesByCategory(String category) {
-        return entryRepository.findByCategoryAndActiveTrue(category);
+    public List<RulesEntry> getRulesByCategory(String category) {
+        return entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.TRAVELLER, category);
     }
 
     /**
      * Get all rules from a given source book.
      */
-    public List<TravellerRulesEntry> getRulesBySource(String source) {
-        return entryRepository.findBySourceAndActiveTrue(source);
+    public List<RulesEntry> getRulesBySource(String source) {
+        return entryRepository.findByGameSystemAndSourceAndActiveTrue(GameSystem.TRAVELLER, source);
     }
 
     /**
      * Search rules by keyword.
      */
-    public List<TravellerRulesEntry> searchRules(String keyword) {
-        return entryRepository.searchByKeyword(keyword);
+    public List<RulesEntry> searchRules(String keyword) {
+        return entryRepository.searchByTitle(GameSystem.TRAVELLER, keyword);
     }
 
     /**
      * Get all distinct categories.
      */
     public List<String> getCategories() {
-        return entryRepository.findDistinctCategories();
+        return entryRepository.findByGameSystemAndActiveTrue(GameSystem.TRAVELLER)
+                .stream().map(RulesEntry::getCategory).distinct().toList();
     }
 
     /**
      * Get all distinct source books.
      */
     public List<String> getSources() {
-        return entryRepository.findDistinctSources();
+        return entryRepository.findByGameSystemAndActiveTrue(GameSystem.TRAVELLER)
+                .stream().map(RulesEntry::getSource).distinct().toList();
     }
 
     /**

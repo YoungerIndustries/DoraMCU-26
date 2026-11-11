@@ -51,6 +51,10 @@ public class SpaceStation {
     final Set<StartingFacility> startingFacilities;
     private int maxDockedShips;
 
+    // 3D hull model support
+    private HullModule hullModule;
+    private final Map<String, Compartment> compartments;
+
     // Lazy-initialized helper delegates
     private SpaceStationCombatStats combatStats;
     private SpaceStationEconomy economy;
@@ -95,6 +99,7 @@ public class SpaceStation {
         this.strategicResources = new HashSet<>();
         this.startingFacilities = new HashSet<>();
         this.maxDockedShips = stationType.getBaseShipBayCapacity();
+        this.compartments = new HashMap<>();
     }
 
     // ---- Helper Delegates ----
@@ -616,6 +621,156 @@ public class SpaceStation {
     public void fullRepair() {
         currentShieldPoints = shieldPoints;
         currentHullPoints = hullPoints;
+    }
+
+    // ---- 3D Hull Model Support ----
+
+    /**
+     * Returns the 3D hull module for this station, lazily initialized.
+     * <p>
+     * The hull module provides a 10×10×10 grid of M3space cells that can be
+     * used for detailed spatial damage modeling of the station structure.
+     * </p>
+     *
+     * @return the hull module
+     */
+    public HullModule getHullModule() {
+        if (hullModule == null) {
+            hullModule = new HullModule(name + "-Hull");
+        }
+        return hullModule;
+    }
+
+    /**
+     * Sets the hull module for this station.
+     *
+     * @param module the hull module
+     */
+    public void setHullModule(HullModule module) {
+        this.hullModule = module;
+    }
+
+    /**
+     * @return true if this station has a hull module configured
+     */
+    public boolean hasHullModule() {
+        return hullModule != null;
+    }
+
+    /**
+     * Returns the map of compartments by name.
+     *
+     * @return unmodifiable map of compartments
+     */
+    public Map<String, Compartment> getCompartments() {
+        return Map.copyOf(compartments);
+    }
+
+    /**
+     * Adds a compartment to the station.
+     *
+     * @param compartment the compartment to add
+     */
+    public void addCompartment(Compartment compartment) {
+        if (compartment == null) {
+            throw new IllegalArgumentException("Compartment must not be null");
+        }
+        compartments.put(compartment.getName(), compartment);
+    }
+
+    /**
+     * Removes a compartment by name.
+     *
+     * @param name the compartment name
+     * @return the removed compartment, or null
+     */
+    public Compartment removeCompartment(String name) {
+        return compartments.remove(name);
+    }
+
+    /**
+     * Returns a compartment by name.
+     *
+     * @param name the compartment name
+     * @return the compartment, or null
+     */
+    public Compartment getCompartment(String name) {
+        return compartments.get(name);
+    }
+
+    /**
+     * Returns the hull integrity based on the 3D hull module.
+     * If no hull module is configured, falls back to the flat hull points ratio.
+     *
+     * @return hull integrity ratio (0.0 to 1.0)
+     */
+    public double getHullIntegrity() {
+        if (hullModule != null) {
+            int totalCells = hullModule.getShapeCellCount();
+            if (totalCells == 0) {
+                return getHullHealthRatio();
+            }
+            int destroyedCells = 0;
+            for (M3space cell : hullModule.getShapeCells()) {
+                if (cell.isDestroyed()) {
+                    destroyedCells++;
+                }
+            }
+            return 1.0 - ((double) destroyedCells / totalCells);
+        }
+        return getHullHealthRatio();
+    }
+
+    /**
+     * Applies damage to a specific cell in the hull module.
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param z the z coordinate
+     * @param damage the damage amount
+     * @return true if the cell was destroyed
+     */
+    public boolean damageHullCell(int x, int y, int z, int damage) {
+        HullModule module = getHullModule();
+        M3space cell = module.get(x, y, z);
+        if (cell == null) {
+            return false;
+        }
+        boolean destroyed = cell.damage(damage);
+
+        // Propagate damage if exterior cell is destroyed
+        if (destroyed && module.isExteriorCell(cell)) {
+            DamagePropagation.propagate(module, cell);
+        }
+
+        return destroyed;
+    }
+
+    /**
+     * Repairs the entire hull module.
+     *
+     * @return the number of cells repaired
+     */
+    public int repairHullModule() {
+        if (hullModule == null) {
+            return 0;
+        }
+        int count = 0;
+        for (M3space cell : hullModule.getShapeCells()) {
+            if (cell.isDestroyed()) {
+                if (cell.repair()) {
+                    count++;
+                }
+            } else if (cell.isDamaged()) {
+                cell.setHitpoints(cell.getMaxHitpoints());
+                count++;
+            }
+        }
+        // Clear compartment secondary effects
+        for (Compartment compartment : compartments.values()) {
+            compartment.clearSecondaryEffects();
+        }
+        return count;
     }
 
     // ---- Facility Management ----

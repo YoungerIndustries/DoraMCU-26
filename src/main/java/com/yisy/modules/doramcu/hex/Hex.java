@@ -62,6 +62,10 @@ public class Hex {
     private final int s;
     private HexState state = HexState.EMPTY;
     private Object payload;
+    
+    // 3D structure support — bridges 2D hex grid with 3D hull model
+    private BuildingHull building;
+    private int structureHeight;
 
     /**
      * Creates a hex cell at the given axial coordinates.
@@ -224,6 +228,50 @@ public class Hex {
      */
     public Object getPayload() {
         return payload;
+    }
+
+    // ---- 3D Structure support ----
+
+    /**
+     * @return true if this hex has a 3D structure (building) at its position
+     */
+    public boolean hasStructure() {
+        return building != null;
+    }
+
+    /**
+     * @return the 3D building structure at this hex, or null if none
+     */
+    public BuildingHull getBuilding() {
+        return building;
+    }
+
+    /**
+     * Sets the 3D building structure at this hex position.
+     *
+     * @param building the building hull model
+     */
+    public void setBuilding(BuildingHull building) {
+        this.building = building;
+    }
+
+    /**
+     * @return the height of the structure in hex cells (number of floors)
+     */
+    public int getStructureHeight() {
+        return structureHeight;
+    }
+
+    /**
+     * Sets the height of the structure.
+     *
+     * @param height the structure height in hex cells
+     */
+    public void setStructureHeight(int height) {
+        if (height < 0) {
+            throw new IllegalArgumentException("Height must be non-negative: " + height);
+        }
+        this.structureHeight = height;
     }
 
     // ---- Hex arithmetic ----

@@ -18,6 +18,12 @@ public enum PlanetSize {
      * Small planet — limited capacity, modest resources, few buildings.
      * Base radius 5, mineral yield 3, food yield 4, research yield 2, 3 building slots.
      */
+    /**
+     * Tiny planet — minimal capacity, very limited resources.
+     * Base radius 3, mineral yield 1, food yield 2, research yield 1, 1 building slot.
+     */
+    TINY(3, 1, 2, 1, 1, 3),
+
     SMALL(5, 3, 4, 2, 3, 5),
 
     /**

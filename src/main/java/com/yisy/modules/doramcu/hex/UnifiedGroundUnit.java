@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.hex;
 
 import com.yisy.modules.doramcu.traveller.*;
+import com.yisy.modules.doramcu.util.DiceUtil;
 
 /**
  * A unified ground unit that combines DoraMCU's ArmyUnit with Traveller's MarineUnit.
@@ -247,13 +248,12 @@ public class UnifiedGroundUnit {
     /**
      * Performs a morale check.
      *
-     * @param random the random number generator
      * @return true if the unit holds position
      */
-    public boolean moraleCheck(java.util.Random random) {
+    public boolean moraleCheck() {
         if (getCasualtyPercentage() < 50.0) return true;
 
-        int roll = random.nextInt(12) + 2; // 2D6
+        int roll = DiceUtil.roll2D6();
         int threshold = 7 + morale.getBonus();
         return roll <= threshold;
     }

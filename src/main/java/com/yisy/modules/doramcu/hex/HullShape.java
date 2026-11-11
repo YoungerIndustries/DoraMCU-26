@@ -20,7 +20,7 @@ package com.yisy.modules.doramcu.hex;
  *       Cells are included if their distance from the center axis is within the cone's radius at that Z level.</li>
  * </ul>
  */
-public enum HullShape {
+public enum HullShape implements ShapeDefinition {
 
     /**
      * Full 10×10×10 cube — all cells included.

@@ -1,9 +1,9 @@
 package com.yisy.modules.doramcu.traveller;
 
+import com.yisy.modules.doramcu.util.DiceUtil;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 /**
@@ -31,8 +31,6 @@ public class WorldEconomy {
     private final int marketSize;
     private final boolean tradeRestricted;
     private final Set<Commodity> restrictedCommodities;
-    private final Random random = new Random();
-
     /** B07 Actual Value table: 2D6 roll → percentage of base price. */
     private static final int[] ACTUAL_VALUE_TABLE = {
             0,   // index 0 (unused)
@@ -278,7 +276,7 @@ public class WorldEconomy {
      * @return the sum of two d6 rolls
      */
     int roll2D6() {
-        return (random.nextInt(6) + 1) + (random.nextInt(6) + 1);
+        return DiceUtil.roll2D6();
     }
 
     /**

@@ -1,9 +1,7 @@
 package com.yisy.modules.doramcu.hex;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Manages the 3D hull module grid for a ship.
@@ -23,6 +21,10 @@ public class ShipHull {
     private int[] moduleGridDimensions;
     private final Map<ShipComponent, List<M3space>> componentSpaces;
 
+    // ---- Graph-based connections between modules ----
+    private final Map<String, HullModule> moduleIdMap;
+    private final List<ShipConnection> connections;
+
     /**
      * Creates hull management for the given ship.
      *
@@ -32,6 +34,8 @@ public class ShipHull {
         this.ship = ship;
         this.hullModules = new ArrayList<>();
         this.componentSpaces = new HashMap<ShipComponent, List<M3space>>();
+        this.moduleIdMap = new LinkedHashMap<>();
+        this.connections = new ArrayList<>();
         initializeModules();
     }
 
@@ -428,5 +432,246 @@ public class ShipHull {
             }
         }
         return null;
+    }
+
+    // ---- Graph-based Connection Management ----
+
+    /**
+     * Registers a module with a unique ID for graph-based connections.
+     * <p>
+     * This enables pathfinding and adjacency queries between modules.
+     * </p>
+     *
+     * @param moduleId the unique identifier for this module
+     * @param module the HullModule instance
+     */
+    public void registerModule(String moduleId, HullModule module) {
+        if (moduleId == null || moduleId.isBlank()) {
+            throw new IllegalArgumentException("moduleId must not be null or blank");
+        }
+        if (module == null) {
+            throw new IllegalArgumentException("module must not be null");
+        }
+        moduleIdMap.put(moduleId, module);
+    }
+
+    /**
+     * Returns the module with the given ID, or null if not found.
+     *
+     * @param moduleId the module ID
+     * @return the HullModule instance, or null
+     */
+    public HullModule getModuleById(String moduleId) {
+        return moduleIdMap.get(moduleId);
+    }
+
+    /**
+     * @return unmodifiable map of module IDs to HullModules
+     */
+    public Map<String, HullModule> getModuleIdMap() {
+        return Collections.unmodifiableMap(moduleIdMap);
+    }
+
+    /**
+     * Connects two modules at specific passage cells.
+     * <p>
+     * Creates a bidirectional connection that enables pathfinding and
+     * damage propagation between modules.
+     * </p>
+     *
+     * @param fromModuleId the source module ID
+     * @param fromCell the passage cell in the source module
+     * @param toModuleId the target module ID
+     * @param toCell the passage cell in the target module
+     * @return the created connection
+     */
+    public ShipConnection connectModules(String fromModuleId, M3space fromCell, String toModuleId, M3space toCell) {
+        HullModule fromModule = moduleIdMap.get(fromModuleId);
+        HullModule toModule = moduleIdMap.get(toModuleId);
+        if (fromModule == null) {
+            throw new IllegalArgumentException("Module not found: " + fromModuleId);
+        }
+        if (toModule == null) {
+            throw new IllegalArgumentException("Module not found: " + toModuleId);
+        }
+        ShipConnection connection = new ShipConnection(fromModuleId, fromCell, toModuleId, toCell);
+        connections.add(connection);
+        return connection;
+    }
+
+    /**
+     * Removes a connection between two modules.
+     *
+     * @param connection the connection to remove
+     * @return true if removed
+     */
+    public boolean removeConnection(ShipConnection connection) {
+        return connections.remove(connection);
+    }
+
+    /**
+     * @return unmodifiable list of all connections
+     */
+    public List<ShipConnection> getConnections() {
+        return Collections.unmodifiableList(connections);
+    }
+
+    /**
+     * Returns all modules directly connected to the given module.
+     *
+     * @param moduleId the module ID
+     * @return map of adjacent module IDs to their HullModule instances
+     */
+    public Map<String, HullModule> getAdjacentModules(String moduleId) {
+        Map<String, HullModule> adjacent = new LinkedHashMap<>();
+        for (ShipConnection conn : connections) {
+            String otherId = conn.getOtherModuleId(moduleId);
+            if (otherId != null && !adjacent.containsKey(otherId)) {
+                HullModule otherModule = moduleIdMap.get(otherId);
+                if (otherModule != null) {
+                    adjacent.put(otherId, otherModule);
+                }
+            }
+        }
+        return adjacent;
+    }
+
+    /**
+     * Returns all connections involving the given module.
+     *
+     * @param moduleId the module ID
+     * @return list of connections involving this module
+     */
+    public List<ShipConnection> getModuleConnections(String moduleId) {
+        return connections.stream()
+                .filter(conn -> conn.involvesModule(moduleId))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Finds a path between two modules using BFS across connections.
+     * <p>
+     * Returns the sequence of module IDs from the start module to the end module.
+     * Useful for crew movement simulation, damage propagation analysis,
+     * and boarding mechanics.
+     * </p>
+     *
+     * @param fromModuleId the starting module ID
+     * @param toModuleId the target module ID
+     * @return list of module IDs forming the path, or null if no path exists
+     */
+    public List<String> findPath(String fromModuleId, String toModuleId) {
+        if (!moduleIdMap.containsKey(fromModuleId)) {
+            throw new IllegalArgumentException("Module not found: " + fromModuleId);
+        }
+        if (!moduleIdMap.containsKey(toModuleId)) {
+            throw new IllegalArgumentException("Module not found: " + toModuleId);
+        }
+        if (fromModuleId.equals(toModuleId)) {
+            return Collections.singletonList(fromModuleId);
+        }
+
+        // BFS
+        Queue<String> queue = new LinkedList<>();
+        Map<String, String> visited = new HashMap<>();
+        queue.add(fromModuleId);
+        visited.put(fromModuleId, null);
+
+        while (!queue.isEmpty()) {
+            String current = queue.poll();
+            Map<String, HullModule> adjacent = getAdjacentModules(current);
+            for (String neighborId : adjacent.keySet()) {
+                if (!visited.containsKey(neighborId)) {
+                    visited.put(neighborId, current);
+                    if (neighborId.equals(toModuleId)) {
+                        // Reconstruct path
+                        List<String> path = new ArrayList<>();
+                        String node = toModuleId;
+                        while (node != null) {
+                            path.add(node);
+                            node = visited.get(node);
+                        }
+                        Collections.reverse(path);
+                        return path;
+                    }
+                    queue.add(neighborId);
+                }
+            }
+        }
+        return null;  // No path found
+    }
+
+    /**
+     * Checks if two modules are connected (directly or indirectly).
+     *
+     * @param fromModuleId the starting module ID
+     * @param toModuleId the target module ID
+     * @return true if a path exists between the modules
+     */
+    public boolean isConnected(String fromModuleId, String toModuleId) {
+        return findPath(fromModuleId, toModuleId) != null;
+    }
+
+    /**
+     * Returns the set of reachable module IDs from the given module.
+     * <p>
+     * Useful for breach containment analysis: if a module is breached,
+     * which other modules can the breach spread to?
+     * </p>
+     *
+     * @param moduleId the starting module ID
+     * @return set of reachable module IDs (including the starting module)
+     */
+    public Set<String> getReachableModules(String moduleId) {
+        Set<String> reachable = new HashSet<>();
+        Queue<String> queue = new LinkedList<>();
+        queue.add(moduleId);
+        reachable.add(moduleId);
+
+        while (!queue.isEmpty()) {
+            String current = queue.poll();
+            Map<String, HullModule> adjacent = getAdjacentModules(current);
+            for (String neighborId : adjacent.keySet()) {
+                if (reachable.add(neighborId)) {
+                    queue.add(neighborId);
+                }
+            }
+        }
+        return reachable;
+    }
+
+    /**
+     * Returns the number of isolated module groups (connected components).
+     * <p>
+     * A value of 1 means all modules are connected. Higher values indicate
+     * isolated sections of the ship hull.
+     * </p>
+     *
+     * @return the number of connected components
+     */
+    public int getConnectedComponentCount() {
+        if (moduleIdMap.isEmpty()) return 0;
+        Set<String> visited = new HashSet<>();
+        int components = 0;
+
+        for (String moduleId : moduleIdMap.keySet()) {
+            if (!visited.contains(moduleId)) {
+                components++;
+                // BFS from this module
+                Queue<String> queue = new LinkedList<>();
+                queue.add(moduleId);
+                visited.add(moduleId);
+                while (!queue.isEmpty()) {
+                    String current = queue.poll();
+                    Map<String, HullModule> adjacent = getAdjacentModules(current);
+                    for (String neighborId : adjacent.keySet()) {
+                        if (visited.add(neighborId)) {
+                            queue.add(neighborId);
+                        }
+                    }
+                }
+            }
+        }
+        return components;
     }
 }

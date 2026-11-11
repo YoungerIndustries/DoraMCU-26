@@ -23,6 +23,7 @@ public class SfbCharacterAssignment {
     private boolean active;
     private CaptainLogCharacter character;
     private Map<String, Integer> modifiers; // attribute/discipline -> bonus value
+    private Long aiCharacterId; // AI character ID for experience tracking
 
     public SfbCharacterAssignment() {
     }
@@ -62,6 +63,9 @@ public class SfbCharacterAssignment {
 
     public Map<String, Integer> getModifiers() { return modifiers; }
     public void setModifiers(Map<String, Integer> modifiers) { this.modifiers = modifiers; }
+
+    public Long getAiCharacterId() { return aiCharacterId; }
+    public void setAiCharacterId(Long aiCharacterId) { this.aiCharacterId = aiCharacterId; }
 
     /**
      * Validate the assignment.

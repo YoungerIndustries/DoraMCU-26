@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: doramcu-secrets
+  namespace: doramcu
+  labels:
+    app.kubernetes.io/name: doramcu
+    app.kubernetes.io/part-of: doramcu-neuron-network
+type: Opaque
+stringData:
+  # Database password — override in production overlay
+  db-password: "root"
+  # JWT secret for authentication — MUST be changed in production
+  jwt-secret: "CHANGE-THIS-TO-A-SECURE-RANDOM-KEY-IN-PRODUCTION"
+  # Neuron security JWT secret
+  neuron-jwt-secret: "CHANGE-THIS-TO-A-SECURE-RANDOM-KEY-IN-PRODUCTION"
+  # Redis password (empty by default, override in production)
+  redis-password: ""
+  # Grafana admin password
+  grafana-admin-password: "admin"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: doramcu-config
+  namespace: doramcu
+  labels:
+    app.kubernetes.io/name: doramcu
+    app.kubernetes.io/part-of: doramcu-neuron-network
+data:
+  # DoraMCU application properties
+  SPRING_PROFILES_ACTIVE: "mysql"
+  DL_MODE: "rest"
+  # Database connection
+  DB_HOST: "doramcu-mysql"
+  DB_PORT: "3306"
+  DB_NAME: "doramcu"
+  # Redis connection
+  NEURON_COORDINATOR_REDIS_ENABLED: "true"
+  NEURON_COORDINATOR_REDIS_HOST: "doramcu-redis"
+  NEURON_COORDINATOR_REDIS_PORT: "6379"
+  # DL Python service
+  DL_SERVICE_URL: "http://doramcu-dl:8083"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: neuron-config
+  namespace: doramcu
+  labels:
+    app.kubernetes.io/name: neuron
+    app.kubernetes.io/part-of: doramcu-neuron-network
+data:
+  # Coordinator connection
+  NEURON_COORDINATOR_URL: "http://doramcu-app:8084"
+  # Game server URL
+  NEURON_GAME_SERVER_URL: "http://doramcu-app:8084"
+  # Neuron identity
+  NEURON_NODE_NAME: "Neuron-Default"
+  NEURON_NODE_REGION: "default"
+  # Heartbeat
+  NEURON_HEARTBEAT_INTERVAL_MS: "15000"
+  # AI Inference
+  NEURON_INFERENCE_THREADS: "2"
+  NEURON_CONFIDENCE_THRESHOLD: "0.6"
+  # Experience Collection
+  NEURON_EXPERIENCE_BUFFER_SIZE: "500"
+  NEURON_EXPERIENCE_FLUSH_INTERVAL_MS: "30000"
+  # Consensus
+  NEURON_ENABLE_CONSENSUS: "true"
+  NEURON_CONSENSUS_TIMEOUT_MS: "5000"
+  NEURON_VOTE_WEIGHT: "1.0"
+  # Mesh Network
+  NEURON_MESH_ENABLED: "true"
+  NEURON_MESH_MAX_PEERS: "5"
+  NEURON_MESH_PEER_DISCOVERY_INTERVAL_MS: "30000"
+  NEURON_MESH_CONSENSUS_ENABLED: "true"
+  NEURON_MESH_EXPERIENCE_SYNC_ENABLED: "true"
+  # Security
+  NEURON_SECURITY_JWT_ENABLED: "true"
+  NEURON_SECURITY_RATE_LIMITING_ENABLED: "true"
+  NEURON_SECURITY_MAX_REQUESTS_PER_WINDOW: "100"
+  NEURON_SECURITY_RATE_LIMIT_WINDOW_SECONDS: "60"
+  NEURON_SECURITY_MODEL_SIGNATURE_ENABLED: "true"
+  # Monitoring
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,metrics,prometheus"

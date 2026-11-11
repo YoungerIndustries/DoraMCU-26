@@ -125,7 +125,7 @@ public class UnifiedExploration {
 
         ExplorationActivity activity = ExplorationActivity.createSurvey(
                 celestialBody.getName(), targetWorld, hasComputer);
-        ExplorationActivity result = activity.execute(random);
+        ExplorationActivity result = activity.execute();
         activities.add(result);
 
         if (result.isSuccessful()) {
@@ -149,7 +149,7 @@ public class UnifiedExploration {
 
         ExplorationActivity activity = ExplorationActivity.createResourceScan(
                 celestialBody.getName(), targetWorld, hasComputer);
-        ExplorationActivity result = activity.execute(random);
+        ExplorationActivity result = activity.execute();
         activities.add(result);
 
         if (result.isSuccessful()) {
@@ -179,7 +179,7 @@ public class UnifiedExploration {
 
         ExplorationActivity activity = ExplorationActivity.createHazardDetection(
                 celestialBody.getName(), targetWorld, hasComputer);
-        ExplorationActivity result = activity.execute(random);
+        ExplorationActivity result = activity.execute();
         activities.add(result);
 
         if (result.isSuccessful()) {
@@ -205,7 +205,7 @@ public class UnifiedExploration {
 
         ExplorationActivity activity = ExplorationActivity.createFullSystemSurvey(
                 world, hasComputer);
-        ExplorationActivity result = activity.execute(random);
+        ExplorationActivity result = activity.execute();
         activities.add(result);
 
         if (result.isSuccessful()) {
@@ -229,7 +229,7 @@ public class UnifiedExploration {
 
         ExplorationActivity activity = ExplorationActivity.createBeaconDeployment(
                 celestialBody.getName(), world);
-        ExplorationActivity result = activity.execute(random);
+        ExplorationActivity result = activity.execute();
         activities.add(result);
 
         if (result.isSuccessful()) {
@@ -255,7 +255,7 @@ public class UnifiedExploration {
 
         ExplorationActivity activity = ExplorationActivity.createRouteMapping(
                 from, to, world);
-        ExplorationActivity result = activity.execute(random);
+        ExplorationActivity result = activity.execute();
         activities.add(result);
 
         if (result.isSuccessful()) {

@@ -1,0 +1,99 @@
+package com.yisy.modules.doradl.rest;
+
+import com.yisy.modules.doradl.dl.network.FeatureExtractor;
+import com.yisy.modules.doradl.dl.network.FeatureExtractorRegistry;
+import com.yisy.modules.doradl.model.GameStateFeatures;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
+
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@DisplayName("DlRestClient ONNX and Experience Tests")
+class DlRestClientOnnxTest {
+
+    @Mock
+    private FeatureExtractorRegistry extractorRegistry;
+
+    @Mock
+    private FeatureExtractor extractor;
+
+    private DlRestClient client;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        when(extractorRegistry.getDefaultExtractor()).thenReturn(extractor);
+        when(extractor.extract(any(), any())).thenReturn(
+                new GameStateFeatures(new double[GameStateFeatures.FEATURE_DIMENSION])
+        );
+        client = new DlRestClient(extractorRegistry);
+    }
+
+    @Test
+    @DisplayName("exportOnnxModel returns null when REST call fails")
+    void testExportOnnxModelFailure() {
+        // Without a running Python service, export should fail
+        DlRestClient.DlServiceException ex = assertThrows(
+                DlRestClient.DlServiceException.class,
+                () -> client.exportOnnxModel()
+        );
+        assertTrue(ex.getMessage().contains("exportOnnxModel"));
+    }
+
+    @Test
+    @DisplayName("submitExperienceBatch fails when REST call fails")
+    void testSubmitExperienceBatchFailure() {
+        List<Map<String, Object>> samples = List.of(
+                Map.of("state", List.of(0.1, 0.2, 0.3), "action", 0, "reward", 1.0)
+        );
+
+        DlRestClient.DlServiceException ex = assertThrows(
+                DlRestClient.DlServiceException.class,
+                () -> client.submitExperienceBatch("client-1", "unity", samples, 1L)
+        );
+        assertTrue(ex.getMessage().contains("submitExperienceBatch"));
+    }
+
+    @Test
+    @DisplayName("submitExperienceBatch does not throw for empty samples")
+    void testSubmitExperienceBatchEmpty() {
+        // Empty samples still attempt a REST call, which will fail
+        DlRestClient.DlServiceException ex = assertThrows(
+                DlRestClient.DlServiceException.class,
+                () -> client.submitExperienceBatch("client-1", "web", List.of(), 0L)
+        );
+    }
+
+    @Test
+    @DisplayName("isServiceAvailable returns false when service is down")
+    void testIsServiceAvailableDown() {
+        boolean available = client.isServiceAvailable();
+        assertFalse(available);
+    }
+
+    @Test
+    @DisplayName("DlServiceException carries message and cause")
+    void testDlServiceException() {
+        Throwable cause = new RestClientException("Connection refused");
+        DlRestClient.DlServiceException ex = new DlRestClient.DlServiceException("operation failed", cause);
+        assertEquals("operation failed", ex.getMessage());
+        assertEquals(cause, ex.getCause());
+    }
+
+    @Test
+    @DisplayName("init does not throw when service is unavailable")
+    void testInitServiceUnavailable() {
+        assertDoesNotThrow(() -> client.init());
+    }
+}

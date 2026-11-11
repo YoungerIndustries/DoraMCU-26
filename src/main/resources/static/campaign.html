@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Tycoon — Transport Empire Campaign</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/game.css">
+    <style>
+        /* Campaign-specific styles */
+        .campaign-page {
+            display: none;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .campaign-page.active {
+            display: flex;
+        }
+
+        /* Campaign header */
+        .campaign-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 100;
+        }
+        .campaign-header h1 {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            color: var(--accent-cyan);
+            margin-right: 20px;
+        }
+        .campaign-header-stats {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .campaign-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .campaign-stat .value {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .campaign-stat.credits .value { color: var(--accent-gold); }
+        .campaign-stat.rank .value { color: var(--accent-cyan); }
+        .campaign-stat.turn .value { color: var(--accent-purple); }
+        .campaign-stat.market-share .value { color: var(--accent-green); }
+
+        /* Back button */
+        .back-btn {
+            background: var(--glass-bg-light);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-right: 16px;
+            transition: var(--transition-fast);
+        }
+        .back-btn:hover {
+            background: var(--glass-bg-hover);
+            color: var(--text-primary);
+        }
+
+        /* Campaign layout */
+        .campaign-layout {
+            display: flex;
+            flex: 1;
+            margin-top: 56px;
+            height: calc(100vh - 56px);
+        }
+
+        /* Sidebar navigation */
+        .campaign-sidebar {
+            width: 220px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border-right: 1px solid var(--glass-border);
+            padding: 16px 0;
+            overflow-y: auto;
+        }
+        .campaign-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-size: 0.9rem;
+        }
+        .campaign-nav-item:hover {
+            background: var(--glass-bg-hover);
+            color: var(--text-primary);
+        }
+        .campaign-nav-item.active {
+            background: var(--holo-cyan);
+            color: var(--accent-cyan);
+            border-left: 3px solid var(--accent-cyan);
+        }
+        .campaign-nav-item svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Main content area */
+        .campaign-main {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .campaign-section {
+            display: none;
+        }
+        .campaign-section.active {
+            display: block;
+        }
+
+        /* Dashboard grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .dashboard-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+        }
+        .dashboard-card h3 {
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+            margin-bottom: 12px;
+        }
+
+        /* Turn processing */
+        .turn-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .turn-btn {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border: none;
+            color: white;
+            padding: 10px 24px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--transition-fast);
+        }
+        .turn-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .turn-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Market share bar */
+        .market-share-bar {
+            height: 24px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            display: flex;
+            margin: 10px 0;
+        }
+        .market-share-segment {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: white;
+            transition: width 0.3s ease;
+        }
+
+        /* Contract & Quest cards */
+        .contract-list, .quest-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .contract-card, .quest-card {
+            background: var(--glass-bg-light);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            transition: var(--transition-fast);
+        }
+        .contract-card:hover, .quest-card:hover {
+            border-color: var(--glass-border-hover);
+        }
+        .contract-card h4, .quest-card h4 {
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+        .contract-card p, .quest-card p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+        .contract-meta, .quest-meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .meta-tag {
+            background: var(--holo-cyan);
+            color: var(--accent-cyan);
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+        }
+        .meta-tag.reward {
+            background: rgba(251, 191, 36, 0.15);
+            color: var(--accent-gold);
+        }
+        .accept-btn {
+            background: var(--accent-green);
+            border: none;
+            color: white;
+            padding: 6px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .accept-btn:hover {
+            opacity: 0.9;
+        }
+        .accept-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Reputation bars */
+        .reputation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .reputation-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .reputation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .reputation-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .reputation-value {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .reputation-bar {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .reputation-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Campaign creation form */
+        .campaign-form {
+            max-width: 600px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+        .form-input, .form-select {
+            width: 100%;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+        }
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+        }
+
+        /* Event log */
+        .event-log {
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+        }
+        .event-entry {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+        }
+        .event-entry:last-child {
+            border-bottom: none;
+        }
+        .event-entry .turn {
+            color: var(--accent-purple);
+            font-weight: 600;
+        }
+
+        /* Win/Lose overlay */
+        .campaign-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(5, 8, 16, 0.9);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        .campaign-overlay.active {
+            display: flex;
+        }
+        .campaign-overlay-content {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+        }
+        .campaign-overlay-content h2 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            margin-bottom: 16px;
+        }
+        .campaign-overlay-content h2.win {
+            color: var(--accent-green);
+        }
+        .campaign-overlay-content h2.lose {
+            color: var(--accent-red);
+        }
+        .campaign-overlay-content p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        /* Route list */
+        .route-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .route-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--glass-bg-light);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+        }
+        .route-item .route-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .route-item .route-revenue {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Campaign Page -->
+    <div class="campaign-page" id="campaignPage">
+        <!-- Header -->
+        <div class="campaign-header">
+            <button class="back-btn" id="backBtn">← Back</button>
+            <h1>Business Tycoon</h1>
+            <div class="campaign-header-stats">
+                <div class="campaign-stat turn">
+                    <span>Turn</span>
+                    <span class="value" id="headerTurn">0</span>
+                </div>
+                <div class="campaign-stat credits">
+                    <span>Credits</span>
+                    <span class="value" id="headerCredits">0</span>
+                </div>
+                <div class="campaign-stat rank">
+                    <span>Rank</span>
+                    <span class="value" id="headerRank">Freelancer</span>
+                </div>
+                <div class="campaign-stat market-share">
+                    <span>Market Share</span>
+                    <span class="value" id="headerMarketShare">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layout -->
+        <div class="campaign-layout">
+            <!-- Sidebar -->
+            <div class="campaign-sidebar">
+                <div class="campaign-nav-item active" data-section="dashboard">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Dashboard
+                </div>
+                <div class="campaign-nav-item" data-section="contracts">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                    Contracts
+                </div>
+                <div class="campaign-nav-item" data-section="quests">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    Quests
+                </div>
+                <div class="campaign-nav-item" data-section="routes">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"></circle><circle cx="18" cy="18" r="3"></circle><path d="M6 9v6c0 1.1.9 2 2 2h8"></path></svg>
+                    Routes
+                </div>
+                <div class="campaign-nav-item" data-section="reputation">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></path><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    Reputation
+                </div>
+                <div class="campaign-nav-item" data-section="market-share">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    Market Share
+                </div>
+                <div class="campaign-nav-item" data-section="events">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Event Log
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="campaign-main">
+                <!-- Dashboard Section -->
+                <div class="campaign-section active" id="section-dashboard">
+                    <div class="turn-controls">
+                        <button class="turn-btn" id="processTurnBtn">Process Turn</button>
+                        <button class="turn-btn" id="newCampaignBtn" style="background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));">New Campaign</button>
+                    </div>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <h3>Corporation Overview</h3>
+                            <div id="corpOverview"></div>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>Market Share</h3>
+                            <div id="marketShareOverview"></div>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>Active Contracts</h3>
+                            <div id="activeContractsOverview"></div>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>Active Quests</h3>
+                            <div id="activeQuestsOverview"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contracts Section -->
+                <div class="campaign-section" id="section-contracts">
+                    <h2 style="font-family: var(--font-display); color: var(--accent-cyan); margin-bottom: 20px;">Available Contracts</h2>
+                    <div class="contract-list" id="availableContracts"></div>
+                    <h2 style="font-family: var(--font-display); color: var(--accent-cyan); margin: 30px 0 20px;">Active Contracts</h2>
+                    <div class="contract-list" id="activeContracts"></div>
+                </div>
+
+                <!-- Quests Section -->
+                <div class="campaign-section" id="section-quests">
+                    <h2 style="font-family: var(--font-display); color: var(--accent-cyan); margin-bottom: 20px;">Available Quests</h2>
+                    <div class="quest-list" id="availableQuests"></div>
+                    <h2 style="font-family: var(--font-display); color: var(--accent-cyan); margin: 30px 0 20px;">Active Quests</h2>
+                    <div class="quest-list" id="activeQuests"></div>
+                </div>
+
+                <!-- Routes Section -->
+                <div class="campaign-section" id="section-routes">
+                    <h2 style="font-family: var(--font-display); color: var(--accent-cyan); margin-bottom: 20px;">Trade Routes</h2>
+                    <div class="route-list" id="tradeRoutes"></div>
+                </div>
+
+                <!-- Reputation Section -->
+                <div class="campaign-section" id="section-reputation">
+                    <h2 style="font-family: var(--font-display); color: var(--accent-cyan); margin-bottom: 20px;">Empire Reputation</h2>
+                    <div class="reputation-list" id="reputationList"></div>
+                </div>
+
+                <!-- Market Share Section -->
+                <div class="campaign-section" id="section-market-share">
+                    <h2 style="font-family: var(--font-display); color: var(--accent-cyan); margin-bottom: 20px;">Market Share Leaderboard</h2>
+                    <div id="marketShareLeaderboard"></div>
+                </div>
+
+                <!-- Events Section -->
+                <div class="campaign-section" id="section-events">
+                    <h2 style="font-family: var(--font-display); color: var(--accent-cyan); margin-bottom: 20px;">Event Log</h2>
+                    <div class="event-log" id="eventLog"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Win/Lose Overlay -->
+    <div class="campaign-overlay" id="campaignOverlay">
+        <div class="campaign-overlay-content">
+            <h2 id="overlayTitle">Campaign Ended</h2>
+            <p id="overlayMessage"></p>
+            <button class="turn-btn" id="overlayBtn">New Campaign</button>
+        </div>
+    </div>
+
+    <script src="js/campaign-ui.js"></script>
+</body>
+</html>

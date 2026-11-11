@@ -23,6 +23,7 @@ public class SfbCombatEngine {
     private final SfbAIService aiService;
     private final SfbRoleSystem roleSystem;
     private final SfbCharacterBridge characterBridge;
+    private final com.yisy.modules.doramcu.service.AiCommanderExperienceService experienceService;
 
     public SfbCombatEngine() {
         this.impulseManager = new ImpulseManager();
@@ -34,6 +35,7 @@ public class SfbCombatEngine {
         this.aiService = new SfbAIService();
         this.characterBridge = new SfbCharacterBridge();
         this.roleSystem = new SfbRoleSystem(characterBridge);
+        this.experienceService = null;
     }
 
     /**
@@ -45,6 +47,21 @@ public class SfbCombatEngine {
                            SpecialSystemsService specialSystemsService,
                            SfbAIService aiService, SfbRoleSystem roleSystem,
                            SfbCharacterBridge characterBridge) {
+        this(impulseManager, energyAllocationService, movementService, weaponsFireService,
+                damageAllocationService, specialSystemsService, aiService, roleSystem,
+                characterBridge, null);
+    }
+
+    /**
+     * Constructor with injected dependencies including experience service.
+     */
+    public SfbCombatEngine(ImpulseManager impulseManager, EnergyAllocationService energyAllocationService,
+                           MovementService movementService, WeaponsFireService weaponsFireService,
+                           DamageAllocationService damageAllocationService,
+                           SpecialSystemsService specialSystemsService,
+                           SfbAIService aiService, SfbRoleSystem roleSystem,
+                           SfbCharacterBridge characterBridge,
+                           com.yisy.modules.doramcu.service.AiCommanderExperienceService experienceService) {
         this.impulseManager = impulseManager;
         this.energyAllocationService = energyAllocationService;
         this.movementService = movementService;
@@ -54,6 +71,7 @@ public class SfbCombatEngine {
         this.aiService = aiService;
         this.roleSystem = roleSystem;
         this.characterBridge = characterBridge;
+        this.experienceService = experienceService;
     }
 
     public ImpulseManager getImpulseManager() { return impulseManager; }
@@ -65,6 +83,25 @@ public class SfbCombatEngine {
     public SfbAIService getAiService() { return aiService; }
     public SfbRoleSystem getRoleSystem() { return roleSystem; }
     public SfbCharacterBridge getCharacterBridge() { return characterBridge; }
+
+    /**
+     * Records experience for AI admirals after a battle.
+     * If the experience service is configured, it will record experience
+     * for each admiral based on battle performance.
+     *
+     * @param scenario the completed battle scenario
+     */
+    public void recordAdmiralExperience(SfbScenario scenario) {
+        if (experienceService == null) {
+            return;
+        }
+        for (int side = 0; side < 2; side++) {
+            SfbCharacterAssignment admiral = scenario.getAdmiralAssignment(side);
+            if (admiral != null && admiral.getAiCharacterId() != null) {
+                experienceService.recordExperience(admiral.getAiCharacterId(), scenario);
+            }
+        }
+    }
 
     /**
      * Run a complete turn for the scenario.

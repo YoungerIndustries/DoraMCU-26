@@ -1,0 +1,49 @@
+{
+  "name": "dora-electron",
+  "version": "1.0.0",
+  "description": "DoraMCU Base Node - Electron Desktop App",
+  "main": "main.js",
+  "author": "DoraMCU Team",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^28.3.3"
+  },
+  "devDependencies": {
+    "electron-builder": "^24.0.0"
+  },
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
+  },
+  "build": {
+    "appId": "com.yisy.doramcu.base-node",
+    "productName": "DoraMCU Base Node",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "resources/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "resources/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "resources/icon.icns"
+    },
+    "linux": {
+      "target": "deb",
+      "icon": "resources/icon.png"
+    }
+  },
+  "allowScripts": {
+    "electron@28.3.3": true
+  }
+}

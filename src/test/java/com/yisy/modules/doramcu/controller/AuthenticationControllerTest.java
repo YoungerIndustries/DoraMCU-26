@@ -7,9 +7,9 @@ import com.yisy.modules.doramcu.dto.RegisterRequest;
 import com.yisy.modules.doramcu.model.User;
 import com.yisy.modules.doramcu.repository.UserRepository;
 import com.yisy.modules.doramcu.repository.PlayerRepository;
+import com.yisy.modules.doramcu.repository.GalaxyRepository;
 import com.yisy.modules.doramcu.service.JwtService;
 import com.yisy.modules.doramcu.service.PlayerService;
-import com.yisy.modules.doramcu.service.PromoCodeService;
 import io.micrometer.core.instrument.Counter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -77,7 +77,7 @@ class AuthenticationControllerTest {
     private ObjectProvider<PlayerRepository> playerRepositoryProvider;
 
     @Mock
-    private ObjectProvider<PromoCodeService> promoCodeServiceProvider;
+    private ObjectProvider<GalaxyRepository> galaxyRepositoryProvider;
 
     private AuthenticationController controller;
 
@@ -88,10 +88,10 @@ class AuthenticationControllerTest {
         when(passwordEncoder.encode(anyString())).thenReturn("encoded-password");
         when(playerServiceProvider.getIfAvailable()).thenReturn(playerService);
         when(playerRepositoryProvider.getIfAvailable()).thenReturn(playerRepository);
-        when(promoCodeServiceProvider.getIfAvailable()).thenReturn(null);
+        when(galaxyRepositoryProvider.getIfAvailable()).thenReturn(null);
 
         controller = new AuthenticationController(authenticationManager, jwtService, metricsConfig, userRepository, passwordEncoder,
-                playerServiceProvider, playerRepositoryProvider, promoCodeServiceProvider);
+                playerServiceProvider, playerRepositoryProvider, galaxyRepositoryProvider);
     }
 
     // ---- Login Success ----
@@ -414,14 +414,14 @@ class AuthenticationControllerTest {
 
         ObjectProvider<PlayerService> mockPlayerServiceProvider = mock(ObjectProvider.class);
         ObjectProvider<PlayerRepository> mockPlayerRepoProvider = mock(ObjectProvider.class);
-        ObjectProvider<PromoCodeService> mockPromoCodeServiceProvider = mock(ObjectProvider.class);
+        ObjectProvider<GalaxyRepository> mockGalaxyRepoProvider = mock(ObjectProvider.class);
         when(mockPlayerServiceProvider.getIfAvailable()).thenReturn(mockPlayerService);
         when(mockPlayerRepoProvider.getIfAvailable()).thenReturn(mockPlayerRepo);
-        when(mockPromoCodeServiceProvider.getIfAvailable()).thenReturn(null);
+        when(mockGalaxyRepoProvider.getIfAvailable()).thenReturn(null);
 
         AuthenticationController authCtrl = new AuthenticationController(
                 authenticationManager, jwtService, metricsConfig, userRepository, passwordEncoder,
-                mockPlayerServiceProvider, mockPlayerRepoProvider, mockPromoCodeServiceProvider
+                mockPlayerServiceProvider, mockPlayerRepoProvider, mockGalaxyRepoProvider
         );
 
         var response = authCtrl.pinLogin(new com.yisy.modules.doramcu.dto.PinLoginRequest("999999"));
@@ -449,14 +449,14 @@ class AuthenticationControllerTest {
 
         ObjectProvider<PlayerService> mockPlayerServiceProvider = mock(ObjectProvider.class);
         ObjectProvider<PlayerRepository> mockPlayerRepoProvider = mock(ObjectProvider.class);
-        ObjectProvider<PromoCodeService> mockPromoCodeServiceProvider = mock(ObjectProvider.class);
+        ObjectProvider<GalaxyRepository> mockGalaxyRepoProvider = mock(ObjectProvider.class);
         when(mockPlayerServiceProvider.getIfAvailable()).thenReturn(mockPlayerService);
         when(mockPlayerRepoProvider.getIfAvailable()).thenReturn(mockPlayerRepo);
-        when(mockPromoCodeServiceProvider.getIfAvailable()).thenReturn(null);
+        when(mockGalaxyRepoProvider.getIfAvailable()).thenReturn(null);
 
         AuthenticationController authCtrl = new AuthenticationController(
                 authenticationManager, jwtService, metricsConfig, userRepository, passwordEncoder,
-                mockPlayerServiceProvider, mockPlayerRepoProvider, mockPromoCodeServiceProvider
+                mockPlayerServiceProvider, mockPlayerRepoProvider, mockGalaxyRepoProvider
         );
 
         var response = authCtrl.pinLogin(new com.yisy.modules.doramcu.dto.PinLoginRequest("123456"));

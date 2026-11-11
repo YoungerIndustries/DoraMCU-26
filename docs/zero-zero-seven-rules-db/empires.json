@@ -1,0 +1,5 @@
+{
+  "western": ["United States", "United Kingdom", "France", "West Germany", "Japan", "Italy", "Australia"],
+  "soviet": ["Soviet Union", "China", "East Germany"],
+  "non_aligned": ["India", "Brazil"]
+}

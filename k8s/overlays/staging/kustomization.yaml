@@ -1,0 +1,38 @@
+# Kustomization — Staging overlay
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+patches:
+  # Moderate neuron replicas for staging
+  - target:
+      kind: HorizontalPodAutoscaler
+      name: neuron-hpa
+    patch: |
+      - op: replace
+        path: /spec/minReplicas
+        value: 2
+      - op: replace
+        path: /spec/maxReplicas
+        value: 10
+
+configMapGenerator:
+  - name: neuron-config-staging
+    behavior: merge
+    literals:
+      - NEURON_NODE_REGION=staging
+      - NEURON_MESH_ENABLED="true"
+      - NEURON_ENABLE_CONSENSUS="true"
+
+images:
+  - name: doramcu/app
+    newName: doramcu/app
+    newTag: staging-latest
+  - name: doramcu/neuron
+    newName: doramcu/neuron
+    newTag: staging-latest
+  - name: doramcu/dl-python
+    newName: doramcu/dl-python
+    newTag: staging-latest

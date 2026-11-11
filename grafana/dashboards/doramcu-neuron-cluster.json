@@ -1,0 +1,433 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+      "id": 1,
+      "title": "Cluster Overview",
+      "type": "row"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 4, "w": 4, "x": 0, "y": 1},
+      "id": 2,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "textMode": "auto"},
+      "title": "Active Neurons",
+      "type": "stat",
+      "targets": [{"expr": "count(up{job=\"doramcu-neuron\"} == 1)", "legendFormat": ""}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]}
+        }
+      },
+      "gridPos": {"h": 4, "w": 4, "x": 4, "y": 1},
+      "id": 3,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "textMode": "auto"},
+      "title": "WebSocket Connected",
+      "type": "stat",
+      "targets": [{"expr": "sum(neuron_websocket_connected)", "legendFormat": ""}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 4, "w": 4, "x": 8, "y": 1},
+      "id": 4,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "textMode": "auto"},
+      "title": "Mesh Peers",
+      "type": "stat",
+      "targets": [{"expr": "sum(neuron_mesh_peers_active)", "legendFormat": ""}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 4, "w": 4, "x": 12, "y": 1},
+      "id": 5,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "textMode": "auto"},
+      "title": "Unity Clients",
+      "type": "stat",
+      "targets": [{"expr": "sum(neuron_unity_clients_connected)", "legendFormat": ""}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 4, "w": 4, "x": 16, "y": 1},
+      "id": 6,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "textMode": "auto"},
+      "title": "Model Version",
+      "type": "stat",
+      "targets": [{"expr": "max(neuron_model_version)", "legendFormat": ""}]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 5},
+      "id": 7,
+      "title": "AI Inference",
+      "type": "row"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "reqps",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 6},
+      "id": 8,
+      "options": {"legend": {"calcs": ["mean", "max"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Inference Rate (per neuron)",
+      "type": "timeseries",
+      "targets": [{"expr": "rate(neuron_inference_total[5m])", "legendFormat": "{{instance}}"}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "s",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 0.1}, {"color": "red", "value": 0.5}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 6},
+      "id": 9,
+      "options": {"legend": {"calcs": ["mean", "p95", "max"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Inference Latency (per neuron)",
+      "type": "timeseries",
+      "targets": [
+        {"expr": "rate(neuron_inference_duration_seconds_sum[5m]) / rate(neuron_inference_duration_seconds_count[5m])", "legendFormat": "{{instance}} avg"},
+        {"expr": "histogram_quantile(0.95, rate(neuron_inference_duration_seconds_bucket[5m]))", "legendFormat": "{{instance}} p95"}
+      ]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "reqps",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 14},
+      "id": 10,
+      "options": {"legend": {"calcs": ["sum"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Inference Errors",
+      "type": "timeseries",
+      "targets": [{"expr": "rate(neuron_inference_errors_total[5m])", "legendFormat": "{{instance}}"}]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 22},
+      "id": 11,
+      "title": "Experience Collection",
+      "type": "row"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "reqps",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 23},
+      "id": 12,
+      "options": {"legend": {"calcs": ["sum"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Experience Collection Rate",
+      "type": "timeseries",
+      "targets": [{"expr": "rate(neuron_experience_collected_total[5m])", "legendFormat": "{{instance}}"}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "reqps",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 23},
+      "id": 13,
+      "options": {"legend": {"calcs": ["sum"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Experience Flush Rate",
+      "type": "timeseries",
+      "targets": [{"expr": "rate(neuron_experience_flushed_total[5m])", "legendFormat": "{{instance}}"}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 23},
+      "id": 14,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "textMode": "auto"},
+      "title": "Experience Buffer Size",
+      "type": "stat",
+      "targets": [{"expr": "neuron_experience_buffer_size", "legendFormat": "{{instance}}"}]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 31},
+      "id": 15,
+      "title": "Consensus Network",
+      "type": "row"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "reqps",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 32},
+      "id": 16,
+      "options": {"legend": {"calcs": ["sum"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Consensus Requests",
+      "type": "timeseries",
+      "targets": [{"expr": "rate(neuron_consensus_requested_total[5m])", "legendFormat": "{{instance}}"}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "reqps",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 32},
+      "id": 17,
+      "options": {"legend": {"calcs": ["sum"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Consensus Votes Cast",
+      "type": "timeseries",
+      "targets": [{"expr": "rate(neuron_consensus_votes_cast_total[5m])", "legendFormat": "{{instance}}"}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "s",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 1}, {"color": "red", "value": 5}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 32},
+      "id": 18,
+      "options": {"legend": {"calcs": ["mean", "p95"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Consensus Latency",
+      "type": "timeseries",
+      "targets": [{"expr": "rate(neuron_consensus_duration_seconds_sum[5m]) / rate(neuron_consensus_duration_seconds_count[5m])", "legendFormat": "{{instance}}"}]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 40},
+      "id": 19,
+      "title": "P2P Mesh Network",
+      "type": "row"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "reqps",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 41},
+      "id": 20,
+      "options": {"legend": {"calcs": ["sum"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Mesh Messages Sent",
+      "type": "timeseries",
+      "targets": [{"expr": "rate(neuron_mesh_messages_sent_total[5m])", "legendFormat": "{{instance}}"}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "reqps",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 41},
+      "id": 21,
+      "options": {"legend": {"calcs": ["sum"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Mesh Messages Received",
+      "type": "timeseries",
+      "targets": [{"expr": "rate(neuron_mesh_messages_received_total[5m])", "legendFormat": "{{instance}}"}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 41},
+      "id": 22,
+      "options": {"legend": {"calcs": ["sum"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Mesh Peer Count",
+      "type": "timeseries",
+      "targets": [{"expr": "neuron_mesh_peers_active", "legendFormat": "{{instance}}"}]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 49},
+      "id": 23,
+      "title": "Unity Client Integration",
+      "type": "row"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "reqps",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 50},
+      "id": 24,
+      "options": {"legend": {"calcs": ["sum"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Unity AI Predictions",
+      "type": "timeseries",
+      "targets": [{"expr": "rate(neuron_unity_predictions_total[5m])", "legendFormat": "{{instance}}"}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "reqps",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 50},
+      "id": 25,
+      "options": {"legend": {"calcs": ["sum"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Unity Experience Uploads",
+      "type": "timeseries",
+      "targets": [{"expr": "rate(neuron_unity_experience_uploaded_total[5m])", "legendFormat": "{{instance}}"}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 50},
+      "id": 26,
+      "options": {"legend": {"calcs": ["sum"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Connected Unity Clients",
+      "type": "timeseries",
+      "targets": [{"expr": "neuron_unity_clients_connected", "legendFormat": "{{instance}}"}]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 58},
+      "id": 27,
+      "title": "System Health",
+      "type": "row"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "bytes",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 2e9}, {"color": "red", "value": 3e9}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 59},
+      "id": 28,
+      "options": {"legend": {"calcs": ["max"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "JVM Heap Used",
+      "type": "timeseries",
+      "targets": [{"expr": "jvm_memory_used_bytes{area=\"heap\"}", "legendFormat": "{{instance}} {{id}}"}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "percentunit",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 0.7}, {"color": "red", "value": 0.9}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 59},
+      "id": 29,
+      "options": {"legend": {"calcs": ["max"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "JVM CPU Load",
+      "type": "timeseries",
+      "targets": [{"expr": "system_cpu_usage", "legendFormat": "{{instance}}"}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "reqps",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 59},
+      "id": 30,
+      "options": {"legend": {"calcs": ["sum"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "HTTP Request Rate",
+      "type": "timeseries",
+      "targets": [{"expr": "rate(http_server_requests_seconds_count[5m])", "legendFormat": "{{instance}} {{status}}"}]
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["doramcu", "neuron", "ai"],
+  "templating": {"list": []},
+  "time": {"from": "now-1h", "to": "now"},
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "DoraMCU Neuron Cluster",
+  "uid": "doramcu-neuron-cluster",
+  "version": 1
+}

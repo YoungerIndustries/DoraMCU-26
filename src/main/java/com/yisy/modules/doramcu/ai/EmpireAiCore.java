@@ -26,7 +26,8 @@ public class EmpireAiCore {
 
     private final int id;
     private final Player player;
-    private final AiPersonality personality;
+    private AiPersonality personality;
+    private DynamicAiPersonality dynamicPersonality;
     private int researchLevel;
 
     private final TacticalAiCore tacticalCore;
@@ -88,14 +89,14 @@ public class EmpireAiCore {
      */
     public double evaluateAction(AiDecision.ActionType actionType, AiDecisionContext context) {
         double baseScore = switch (actionType) {
-            case ENGAGE_COMBAT -> personality.getAggression();
-            case MOVE_FLEET, SCOUT -> personality.getExpansionDrive();
-            case BUILD_SHIP -> (personality.getEconomicFocus() + personality.getAggression()) / 2.0;
-            case BUILD_STATION -> (personality.getEconomicFocus() + (1.0 - personality.getAggression())) / 2.0;
-            case UPGRADE_STATION -> personality.getScientificFocus();
-            case RETREAT -> 1.0 - personality.getRiskTolerance();
-            case FORTIFY -> 1.0 - personality.getAggression();
-            case WAIT -> 1.0 - personality.getRiskTolerance();
+            case ENGAGE_COMBAT -> getPersonality().getAggression();
+            case MOVE_FLEET, SCOUT -> getPersonality().getExpansionDrive();
+            case BUILD_SHIP -> (getPersonality().getEconomicFocus() + getPersonality().getAggression()) / 2.0;
+            case BUILD_STATION -> (getPersonality().getEconomicFocus() + (1.0 - getPersonality().getAggression())) / 2.0;
+            case UPGRADE_STATION -> getPersonality().getScientificFocus();
+            case RETREAT -> 1.0 - getPersonality().getRiskTolerance();
+            case FORTIFY -> 1.0 - getPersonality().getAggression();
+            case WAIT -> 1.0 - getPersonality().getRiskTolerance();
         };
 
         // Research level bonus: higher research = better decisions
@@ -151,7 +152,7 @@ public class EmpireAiCore {
         int energy = context.getEnergy();
 
         // Aggressive personalities prefer larger combat ships
-        if (personality.getAggression() > 0.6) {
+        if (getPersonality().getAggression() > 0.6) {
             if (minerals >= 50 && energy >= 30) {
                 return ShipType.CRUISER;
             }
@@ -162,7 +163,7 @@ public class EmpireAiCore {
         }
 
         // Economic personalities prefer cheaper ships
-        if (personality.getEconomicFocus() > 0.6) {
+        if (getPersonality().getEconomicFocus() > 0.6) {
             return ShipType.FRIGATE;
         }
 
@@ -252,8 +253,52 @@ public class EmpireAiCore {
         return player;
     }
 
+    /**
+     * Gets the personality used for decision making.
+     * <p>
+     * If a dynamic personality is set, returns it; otherwise returns the static personality.
+     * </p>
+     *
+     * @return the personality profile
+     */
     public AiPersonality getPersonality() {
+        if (dynamicPersonality != null) {
+            return dynamicPersonality;
+        }
         return personality;
+    }
+
+    /**
+     * Sets a dynamic personality that blends observed behavior with the base personality.
+     *
+     * @param dynamic the dynamic personality
+     */
+    public void setDynamicPersonality(DynamicAiPersonality dynamic) {
+        this.dynamicPersonality = dynamic;
+        if (dynamic != null) {
+            log.info("Updated EmpireAiCore #{} with dynamic personality: {}", id, dynamic);
+        }
+    }
+
+    /**
+     * Gets the dynamic personality, if set.
+     *
+     * @return the dynamic personality or null
+     */
+    public DynamicAiPersonality getDynamicPersonality() {
+        return dynamicPersonality;
+    }
+
+    /**
+     * Refreshes the dynamic personality from the PlayerActionAnalyzer.
+     *
+     * @param analyzer the action analyzer
+     */
+    public void refreshPersonality(PlayerActionAnalyzer analyzer) {
+        if (dynamicPersonality != null) {
+            dynamicPersonality.updateFromAnalyzer(analyzer, player.getId());
+            log.debug("Refreshed personality for EmpireAiCore #{}: {}", id, dynamicPersonality);
+        }
     }
 
     public int getResearchLevel() {
@@ -274,10 +319,16 @@ public class EmpireAiCore {
 
     @Override
     public String toString() {
+        String personalityInfo;
+        if (dynamicPersonality != null) {
+            personalityInfo = dynamicPersonality.toString();
+        } else {
+            personalityInfo = personality.getLabel();
+        }
         return "EmpireAiCore{" +
                 "id=" + id +
                 ", player='" + player.getEmpireName() + '\'' +
-                ", personality=" + personality.getLabel() +
+                ", personality=" + personalityInfo +
                 ", researchLevel=" + researchLevel +
                 '}';
     }

@@ -235,4 +235,20 @@ public class AiAdminService {
     public Optional<AiAdminTestReport> getReport(Long reportId) {
         return reportRepository.findById(reportId);
     }
+
+    /**
+     * Finds orders by text prefix.
+     */
+    @Transactional(readOnly = true)
+    public List<AiAdminOrder> getOrdersByPrefix(String prefix) {
+        return orderRepository.findBySubmittedByContaining(prefix);
+    }
+
+    /**
+     * Finds orders by text prefix and status.
+     */
+    @Transactional(readOnly = true)
+    public List<AiAdminOrder> getOrdersByPrefixAndStatus(String prefix, AiAdminOrder.OrderStatus status) {
+        return orderRepository.findBySubmittedByContainingAndStatus(prefix, status);
+    }
 }

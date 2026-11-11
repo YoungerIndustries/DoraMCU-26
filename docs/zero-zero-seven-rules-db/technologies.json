@@ -1,0 +1,6 @@
+{
+  "nuclear": ["Atomic Bomb", "Hydrogen Bomb", "Nuclear Submarine"],
+  "military": ["Jet Aircraft", "Missile Systems", "Radar"],
+  "intelligence": ["Cryptography", "Surveillance", "Signals Intelligence"],
+  "communications": ["Satellite", "Radio Network", "Undersea Cable"]
+}

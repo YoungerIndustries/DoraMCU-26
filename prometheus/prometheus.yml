@@ -1,0 +1,20 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # DoraMCU Coordinator (embedded in app service)
+  - job_name: 'doramcu-coordinator'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['app:8084']
+        labels:
+          application: 'DoraMCU-Coordinator'
+
+  # DoraMCU Neuron nodes
+  - job_name: 'doramcu-neuron'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['neuron-1:8090', 'neuron-2:8090']
+        labels:
+          application: 'DoraMCU-Neuron'

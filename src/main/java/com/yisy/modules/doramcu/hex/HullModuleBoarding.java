@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.hex;
 
 import com.yisy.modules.doramcu.traveller.*;
+import com.yisy.modules.doramcu.util.DiceUtil;
 
 import java.util.*;
 
@@ -100,7 +101,6 @@ public class HullModuleBoarding {
     private final List<String> eventLog;
     private BoardingAction.Outcome outcome;
     private int combatRounds;
-    private final Random random;
 
     /**
      * Creates a new hull module boarding action.
@@ -125,7 +125,6 @@ public class HullModuleBoarding {
         this.eventLog = new ArrayList<>();
         this.outcome = null;
         this.combatRounds = 0;
-        this.random = new Random();
 
         // Identify critical rooms (cells with components)
         identifyCriticalRooms();
@@ -200,7 +199,7 @@ public class HullModuleBoarding {
         logEvent("Phase: APPROACH — Point defenses engage");
 
         for (MarineUnit unit : attackerMarines) {
-            int pdRoll = random.nextInt(12) + 2; // 2D6
+            int pdRoll = DiceUtil.roll2D6();
             int defense = unit.getEquipment().getBonus() + unit.getMorale().getBonus();
             int hitThreshold = 10 - defense;
 
@@ -280,7 +279,7 @@ public class HullModuleBoarding {
 
             // Morale checks
             for (MarineUnit unit : attackerMarines) {
-                if (unit.isCombatEffective() && !unit.moraleCheck(random)) {
+                if (unit.isCombatEffective() && !unit.moraleCheck()) {
                     logEvent(unit.getName() + " breaks and retreats!");
                 }
             }
@@ -309,7 +308,7 @@ public class HullModuleBoarding {
         }
 
         // Combat resolution
-        int attackerRoll = random.nextInt(12) + 2;
+        int attackerRoll = DiceUtil.roll2D6();
         if (attackerRoll * attackerPower > 7 * defenderPower) {
             int casualties = Math.max(1, (int) (attackerPower / 3));
             defender.applyCasualties(casualties);

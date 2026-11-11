@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.traveller;
 
+import com.yisy.modules.doramcu.shared.model.RulesEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -62,10 +63,10 @@ public class TravellerRulesController {
      * Gets all rule entries for a given category.
      */
     @GetMapping("/category")
-    public ResponseEntity<List<TravellerRulesEntry>> getRulesByCategory(
+    public ResponseEntity<List<RulesEntry>> getRulesByCategory(
             @RequestParam String category) {
         log.debug("GET /api/v1/traveller/rules/category?category={}", category);
-        List<TravellerRulesEntry> rules = travellerRulesService.getRulesByCategory(category);
+        List<RulesEntry> rules = travellerRulesService.getRulesByCategory(category);
         return ResponseEntity.ok(rules);
     }
 
@@ -73,22 +74,20 @@ public class TravellerRulesController {
      * Gets all rule entries from a given source book.
      */
     @GetMapping("/source")
-    public ResponseEntity<List<TravellerRulesEntry>> getRulesBySource(
+    public ResponseEntity<List<RulesEntry>> getRulesBySource(
             @RequestParam String source) {
         log.debug("GET /api/v1/traveller/rules/source?source={}", source);
-        List<TravellerRulesEntry> rules = travellerRulesService.getRulesBySource(source);
-        return ResponseEntity.ok(rules);
+        return ResponseEntity.ok(travellerRulesService.getRulesBySource(source));
     }
 
     /**
      * Searches rule entries by keyword.
      */
     @GetMapping("/search")
-    public ResponseEntity<List<TravellerRulesEntry>> searchRules(
+    public ResponseEntity<List<RulesEntry>> searchRules(
             @RequestParam String keyword) {
         log.debug("GET /api/v1/traveller/rules/search?keyword={}", keyword);
-        List<TravellerRulesEntry> rules = travellerRulesService.searchRules(keyword);
-        return ResponseEntity.ok(rules);
+        return ResponseEntity.ok(travellerRulesService.searchRules(keyword));
     }
 
     /**

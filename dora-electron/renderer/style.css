@@ -1,0 +1,162 @@
+/* ============================================
+   DoraMCU Electron Renderer Styles
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: #1a1a2e;
+    color: #eee;
+    min-height: 100vh;
+}
+
+.header {
+    background: #16213e;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 2px solid #0f3460;
+}
+
+.header h1 {
+    color: #e94560;
+    margin-bottom: 5px;
+}
+
+.header p {
+    color: #888;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.status-card {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #0f3460;
+}
+
+.status-card h2 {
+    color: #e94560;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.status-running { background: #4caf50; }
+.status-stopped { background: #f44336; }
+.status-starting { background: #ff9800; }
+.status-error { background: #9c27b0; }
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.metric {
+    background: #1a1a2e;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #0f3460;
+}
+
+.metric-spaced {
+    margin-top: 10px;
+}
+
+.metric-label {
+    color: #888;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+.metric-value {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #e94560;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background 0.3s;
+}
+
+.btn-primary {
+    background: #e94560;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #c13651;
+}
+
+.btn-secondary {
+    background: #0f3460;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #1a4a8a;
+}
+
+.log {
+    background: #0a0a1a;
+    padding: 15px;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85em;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 15px;
+}
+
+.log-entry {
+    margin-bottom: 5px;
+    color: #888;
+}
+
+.log-entry.info { color: #4caf50; }
+.log-entry.warn { color: #ff9800; }
+.log-entry.error { color: #f44336; }
+
+.network-viz {
+    background: #0a0a1a;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.network-viz svg {
+    max-width: 100%;
+}

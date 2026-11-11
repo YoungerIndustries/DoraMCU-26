@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.service;
 
+import com.yisy.modules.doramcu.ai.PlayerActionAnalyzer;
 import com.yisy.modules.doramcu.dto.CreateSessionResponse;
 import com.yisy.modules.doramcu.dto.JoinSessionResponse;
 import com.yisy.modules.doramcu.dto.MoveFleetRequest;
@@ -56,7 +57,8 @@ class GameSessionServiceTest {
             resp.setSubSectors(new ArrayList<>());
             return resp;
         });
-        SessionActionHandler sessionActionHandler = new SessionActionHandler(gameStateBuilder, null, null);
+        PlayerActionAnalyzer playerActionAnalyzer = mock(PlayerActionAnalyzer.class);
+        SessionActionHandler sessionActionHandler = new SessionActionHandler(gameStateBuilder, null, null, playerActionAnalyzer);
         GlobalClockService globalClockService = mock(GlobalClockService.class);
         when(globalClockService.getOrCreateClock(anyString(), any())).thenAnswer(invocation -> {
             String sessionId = invocation.getArgument(0);

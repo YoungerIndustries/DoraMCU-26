@@ -1,0 +1,17 @@
+{
+  "recruit": {
+    "description": "Recruit a new agent",
+    "cost": 10,
+    "time": 1
+  },
+  "establish_network": {
+    "description": "Set up a spy network",
+    "cost": 20,
+    "time": 2
+  },
+  "upgrade_network": {
+    "description": "Upgrade an existing network",
+    "cost": 15,
+    "time": 1
+  }
+}

@@ -1,0 +1,30 @@
+# Multi-stage build for DoraMCU Neuron
+# Stage 1: Build
+FROM eclipse-temurin:27-jdk AS build
+WORKDIR /app
+COPY build.gradle settings.gradle gradlew ./
+COPY gradle/wrapper gradle/wrapper
+COPY dora-neuron dora-neuron
+COPY dora-dl-core dora-dl-core
+RUN chmod +x gradlew
+RUN ./gradlew :dora-neuron:bootJar --no-daemon
+
+# Stage 2: Run
+FROM eclipse-temurin:27-jre
+WORKDIR /app
+
+# Run as non-root user
+RUN groupadd -r neuron && useradd -r -g neuron -d /app -s /sbin/nologin neuron
+COPY --from=build /app/dora-neuron/build/libs/*.jar app.jar
+
+RUN chown -R neuron:neuron /app
+USER neuron
+
+EXPOSE 8090
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+  CMD curl -f http://localhost:8090/api/health/live || exit 1
+
+ENV NEURON_COORDINATOR_URL=http://doramcu-app:8084
+ENV NEURON_GAME_SERVER_URL=http://doramcu-app:8084
+
+ENTRYPOINT ["java", "-Xmx1G", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=200", "-jar", "app.jar"]

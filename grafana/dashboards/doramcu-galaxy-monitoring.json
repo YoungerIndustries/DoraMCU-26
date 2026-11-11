@@ -1,0 +1,433 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+      "id": 1,
+      "title": "Galaxy Overview",
+      "type": "row"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 4, "w": 4, "x": 0, "y": 1},
+      "id": 2,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "textMode": "auto"},
+      "title": "Total Galaxies",
+      "type": "stat",
+      "targets": [{"expr": "dora_galaxy_count", "legendFormat": ""}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]}
+        }
+      },
+      "gridPos": {"h": 4, "w": 4, "x": 4, "y": 1},
+      "id": 3,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "textMode": "auto"},
+      "title": "Build Running",
+      "type": "stat",
+      "targets": [{"expr": "dora_galaxy_build_running", "legendFormat": ""}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "percent",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "orange", "value": null}, {"color": "green", "value": 75}, {"color": "blue", "value": 100}]}
+        }
+      },
+      "gridPos": {"h": 4, "w": 4, "x": 8, "y": 1},
+      "id": 4,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "textMode": "auto"},
+      "title": "Build Completion %",
+      "type": "stat",
+      "targets": [{"expr": "dora_galaxy_build_completion_percent", "legendFormat": ""}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 4, "w": 4, "x": 12, "y": 1},
+      "id": 5,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "textMode": "auto"},
+      "title": "Systems Generated",
+      "type": "stat",
+      "targets": [{"expr": "dora_galaxy_build_systems_generated", "legendFormat": ""}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 4, "w": 4, "x": 16, "y": 1},
+      "id": 6,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "textMode": "auto"},
+      "title": "AI Characters",
+      "type": "stat",
+      "targets": [{"expr": "dora_galaxy_ai_characters_total", "legendFormat": ""}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 4, "w": 4, "x": 20, "y": 1},
+      "id": 7,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "textMode": "auto"},
+      "title": "Players",
+      "type": "stat",
+      "targets": [{"expr": "dora_galaxy_players_total", "legendFormat": ""}]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 5},
+      "id": 8,
+      "title": "Galaxy Health",
+      "type": "row"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "short",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "orange", "value": 50}, {"color": "green", "value": 80}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 6},
+      "id": 9,
+      "options": {"legend": {"calcs": ["mean", "max", "min"], "displayMode": "table"}, "tooltip": {"mode": "multi"}},
+      "title": "Health Score by Galaxy",
+      "type": "timeseries",
+      "targets": [{"expr": "dora_galaxy_health_score", "legendFormat": "{{galaxy}}"}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 6},
+      "id": 10,
+      "options": {"legend": {"calcs": ["lastNotNull"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Health Status by Galaxy",
+      "type": "bargauge",
+      "targets": [{"expr": "dora_galaxy_health_status", "legendFormat": "{{galaxy}} ({{status}})"}]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 14},
+      "id": 11,
+      "title": "Assessment Findings",
+      "type": "row"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 15},
+      "id": 12,
+      "options": {"legend": {"calcs": ["lastNotNull"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Findings by Severity",
+      "type": "bargauge",
+      "targets": [
+        {"expr": "dora_galaxy_findings_count{severity=\"CRITICAL\"}", "legendFormat": "{{galaxy}} CRITICAL"},
+        {"expr": "dora_galaxy_findings_count{severity=\"HIGH\"}", "legendFormat": "{{galaxy}} HIGH"},
+        {"expr": "dora_galaxy_findings_count{severity=\"MEDIUM\"}", "legendFormat": "{{galaxy}} MEDIUM"},
+        {"expr": "dora_galaxy_findings_count{severity=\"LOW\"}", "legendFormat": "{{galaxy}} LOW"}
+      ]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "reqps",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 15},
+      "id": 13,
+      "options": {"legend": {"calcs": ["mean", "max"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Assessment Duration",
+      "type": "timeseries",
+      "targets": [
+        {"expr": "rate(dora_galaxy_assessment_duration_seconds_count[5m])", "legendFormat": "assessments/s"},
+        {"expr": "rate(dora_galaxy_assessment_duration_seconds_sum[5m]) / rate(dora_galaxy_assessment_duration_seconds_count[5m])", "legendFormat": "avg duration"}
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 23},
+      "id": 14,
+      "title": "Workforce",
+      "type": "row"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24},
+      "id": 15,
+      "options": {"legend": {"calcs": ["lastNotNull"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "AI Agents by Galaxy",
+      "type": "bargauge",
+      "targets": [{"expr": "dora_galaxy_ai_agents_count", "legendFormat": "{{galaxy}}"}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24},
+      "id": 16,
+      "options": {"legend": {"calcs": ["lastNotNull"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "AI Agents by Role",
+      "type": "bargauge",
+      "targets": [{"expr": "dora_galaxy_ai_agents_by_role", "legendFormat": "{{galaxy}} {{role}}"}]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 32},
+      "id": 17,
+      "title": "Work Orders",
+      "type": "row"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 33},
+      "id": 18,
+      "options": {"legend": {"calcs": ["lastNotNull"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Work Orders by Status",
+      "type": "bargauge",
+      "targets": [
+        {"expr": "dora_galaxy_workorders_count{status=\"PENDING\"}", "legendFormat": "Pending"},
+        {"expr": "dora_galaxy_workorders_count{status=\"RUNNING\"}", "legendFormat": "Running"},
+        {"expr": "dora_galaxy_workorders_count{status=\"COMPLETED\"}", "legendFormat": "Completed"},
+        {"expr": "dora_galaxy_workorders_count{status=\"FAILED\"}", "legendFormat": "Failed"}
+      ]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "reqps",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 33},
+      "id": 19,
+      "options": {"legend": {"calcs": ["mean", "max"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Work Order Creation Rate",
+      "type": "timeseries",
+      "targets": [{"expr": "rate(dora_galaxy_workorders_created_total[5m])", "legendFormat": "orders/s"}]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 41},
+      "id": 20,
+      "title": "Events",
+      "type": "row"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "reqps",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 42},
+      "id": 21,
+      "options": {"legend": {"calcs": ["mean", "max"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Event Rate by Type",
+      "type": "timeseries",
+      "targets": [{"expr": "rate(dora_galaxy_events_total_total[5m])", "legendFormat": "{{type}}"}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 42},
+      "id": 22,
+      "options": {"legend": {"calcs": ["lastNotNull"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Total Events by Type",
+      "type": "bargauge",
+      "targets": [{"expr": "dora_galaxy_events_total_total", "legendFormat": "{{type}}"}]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 50},
+      "id": 23,
+      "title": "Build History",
+      "type": "row"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "dtdurations",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 51},
+      "id": 24,
+      "options": {"legend": {"calcs": ["mean", "max", "min"], "displayMode": "table"}, "tooltip": {"mode": "single"}},
+      "title": "Build Duration",
+      "type": "timeseries",
+      "targets": [
+        {"expr": "rate(dora_galaxy_build_duration_seconds_count[5m])", "legendFormat": "builds/s"},
+        {"expr": "rate(dora_galaxy_build_duration_seconds_sum[5m]) / rate(dora_galaxy_build_duration_seconds_count[5m])", "legendFormat": "avg duration"}
+      ]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 51},
+      "id": 25,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "textMode": "auto"},
+      "title": "Build Success/Failure",
+      "type": "stat",
+      "targets": [
+        {"expr": "dora_galaxy_build_completed_total", "legendFormat": "Completed"},
+        {"expr": "dora_galaxy_build_failures_total", "legendFormat": "Failed"}
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 59},
+      "id": 26,
+      "title": "Character Transitions",
+      "type": "row"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 60},
+      "id": 27,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "textMode": "auto"},
+      "title": "Characters Transitioned",
+      "type": "stat",
+      "targets": [{"expr": "dora_galaxy_characters_transitioned_total", "legendFormat": ""}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 60},
+      "id": 28,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "textMode": "auto"},
+      "title": "Galaxies Created",
+      "type": "stat",
+      "targets": [{"expr": "dora_galaxy_created_total", "legendFormat": ""}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 60},
+      "id": 29,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "textMode": "auto"},
+      "title": "Sectors Generated",
+      "type": "stat",
+      "targets": [{"expr": "dora_galaxy_sectors_generated_total", "legendFormat": ""}]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 60},
+      "id": 30,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "textMode": "auto"},
+      "title": "Assessments Completed",
+      "type": "stat",
+      "targets": [{"expr": "dora_galaxy_assessments_completed_total", "legendFormat": ""}]
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 39,
+  "tags": ["doramcu", "galaxy", "monitoring"],
+  "templating": {"list": []},
+  "time": {"from": "now-1h", "to": "now"},
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "DoraMCU Galaxy Monitoring",
+  "uid": "doramcu-galaxy-monitoring",
+  "version": 1
+}

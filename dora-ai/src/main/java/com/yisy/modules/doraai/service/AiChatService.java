@@ -129,6 +129,65 @@ public class AiChatService {
     }
 
     /**
+     * Sends a chat message with a custom system prompt.
+     *
+     * @param sessionId the conversation session ID (generated if null)
+     * @param message the user message
+     * @param mode the chat mode
+     * @param systemPrompt custom system prompt to override the default
+     * @return SseEmitter for streaming the AI response
+     */
+    public SseEmitter chatWithSystemPrompt(String sessionId, String message, String mode, String systemPrompt) {
+        if (sessionId == null || sessionId.isBlank()) {
+            sessionId = UUID.randomUUID().toString();
+        }
+
+        log.info("Chat with system prompt: sessionId={}, mode={}", sessionId, mode);
+
+        Conversation conversation = conversations.computeIfAbsent(sessionId, k -> new Conversation(k));
+        conversation.addUserMessage(message);
+
+        List<Message> messages = new ArrayList<>();
+        messages.add(new Message("system", systemPrompt));
+
+        List<Conversation.Message> history = conversation.getMessages();
+        int startIdx = Math.max(0, history.size() - 10);
+        for (int i = startIdx; i < history.size(); i++) {
+            Conversation.Message m = history.get(i);
+            messages.add(new Message(m.getRole(), m.getContent()));
+        }
+
+        SseEmitter emitter = new SseEmitter(0L);
+        StringBuilder fullResponse = new StringBuilder();
+        emitter.onCompletion(() -> {
+            if (fullResponse.length() > 0) {
+                conversation.addAiMessage(fullResponse.toString());
+            }
+        });
+
+        try {
+            emitter.send(SseEmitter.event().name("status").data("receiving"));
+        } catch (IOException e) {
+            log.error("Failed to send receiving status", e);
+        }
+
+        AiProvider provider = providerFactory.getProviderWithFallback(null);
+        try {
+            provider.streamChat(null, messages, emitter, fullResponse);
+        } catch (Exception e) {
+            log.error("Failed to stream chat", e);
+            try {
+                emitter.send(SseEmitter.event().name("error").data("Error: " + e.getMessage()));
+                emitter.complete();
+            } catch (IOException ioException) {
+                log.error("Failed to send error event", ioException);
+            }
+        }
+
+        return emitter;
+    }
+
+    /**
      * Builds the system prompt based on the chat mode.
      */
     private String buildSystemPrompt(String mode) {

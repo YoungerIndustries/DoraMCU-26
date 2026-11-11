@@ -2,10 +2,10 @@ package com.yisy.modules.doramcu.thirdreich;
 
 import com.yisy.modules.doramcu.dorat.ShipCombatStatus;
 import com.yisy.modules.doramcu.dorat.ShipToShipBattle;
+import com.yisy.modules.doramcu.util.DiceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Space battle engine supporting two modes: Abstract (single CRT roll) and Detailed (ship-by-ship phase combat).
@@ -27,7 +27,6 @@ public class SpaceBattle {
     private SpaceBattleResult result;
     private final List<SpaceBattleEvent> events;
     private int currentRound;
-    private final Random random;
 
     // Detailed mode delegate
     private ShipToShipBattle detailedBattle;
@@ -51,7 +50,6 @@ public class SpaceBattle {
         this.state = BattleState.INITIATED;
         this.events = new ArrayList<>();
         this.currentRound = 0;
-        this.random = new Random();
         this.participants = new ArrayList<>();
     }
 
@@ -105,7 +103,7 @@ public class SpaceBattle {
             oddsRatio = formatOdds(odds);
 
             // Roll 2D6
-            int diceRoll = 2 + random.nextInt(6) + random.nextInt(6);
+            int diceRoll = DiceUtil.roll2D6();
             outcome = lookupCRT(odds, diceRoll);
             crtResult = describeCRTResult(outcome, odds, diceRoll);
             calculateCasualties(outcome, odds, attackerShips.size(), defenderShips.size(), attackerLosses, defenderLosses);

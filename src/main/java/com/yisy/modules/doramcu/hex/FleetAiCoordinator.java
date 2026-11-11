@@ -50,7 +50,7 @@ public class FleetAiCoordinator {
         for (Ship ship : activeShips) {
             AiCoreComponent core = ship.getAiCore();
             if (core != null) {
-                if (best == null || core.getLevel() > best.getLevel()) {
+                if (best == null || core.getLevel().ordinal() > best.getLevel().ordinal()) {
                     best = core;
                 }
             }
@@ -110,7 +110,7 @@ public class FleetAiCoordinator {
         if (aiCoreCount <= 1) return 1.0;
 
         // Each additional AI Core ship provides a small bonus scaled by best core level
-        double bonus = (aiCoreCount - 1) * 0.02 * best.getLevel();
+        double bonus = (aiCoreCount - 1) * 0.02 * best.getLevel().ordinal();
         return 1.0 + Math.min(bonus, 0.30); // Cap at 30% bonus
     }
 

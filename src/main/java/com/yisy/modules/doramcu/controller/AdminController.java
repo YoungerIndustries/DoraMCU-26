@@ -56,6 +56,7 @@ public class AdminController {
     private final TurnScheduler turnScheduler;
     private final GameSessionService gameSessionService;
     private final DoraAiLearningService doraAiLearningService;
+    private final com.yisy.modules.doramcu.service.PromoCodeService promoCodeService;
 
     @Value("${server.port:8080}")
     private int serverPort;
@@ -72,7 +73,8 @@ public class AdminController {
                            PlayerRepository playerRepository,
                            TurnScheduler turnScheduler,
                            GameSessionService gameSessionService,
-                           DoraAiLearningService doraAiLearningService) {
+                           DoraAiLearningService doraAiLearningService,
+                           com.yisy.modules.doramcu.service.PromoCodeService promoCodeService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.galaxyRepository = galaxyRepository;
@@ -84,6 +86,7 @@ public class AdminController {
         this.turnScheduler = turnScheduler;
         this.gameSessionService = gameSessionService;
         this.doraAiLearningService = doraAiLearningService;
+        this.promoCodeService = promoCodeService;
     }
 
     // ==================== Admin Rights Check ====================
@@ -644,5 +647,97 @@ public class AdminController {
             return String.format("%dm %ds", minutes, seconds);
         }
         return String.format("%ds", seconds);
+    }
+
+    // ==================== Promo Code Management ====================
+
+    @GetMapping("/promo-codes")
+    public ResponseEntity<?> getAllPromoCodes() {
+        java.util.List<com.yisy.modules.doramcu.model.PromoCode> codes = promoCodeService.findAll();
+        Map<String, Object> result = new java.util.HashMap<>();
+        result.put("count", codes.size());
+        result.put("promoCodes", codes);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/promo-codes/{code}")
+    public ResponseEntity<?> getPromoCode(@PathVariable String code) {
+        try {
+            com.yisy.modules.doramcu.model.PromoCode pc = promoCodeService.findByCode(code)
+                    .orElseThrow(() -> new IllegalArgumentException("Promo code not found: " + code));
+            return ResponseEntity.ok(pc);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/promo-codes")
+    public ResponseEntity<?> createPromoCode(@RequestBody Map<String, Object> request) {
+        String code = (String) request.get("code");
+        if (code == null || code.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "code is required"));
+        }
+        String description = (String) request.get("description");
+        Integer maxUses = request.get("maxUses") != null ? (Integer) request.get("maxUses") : null;
+        String typeStr = (String) request.get("type");
+        com.yisy.modules.doramcu.model.PromoCode.CodeType type = typeStr != null ?
+                com.yisy.modules.doramcu.model.PromoCode.CodeType.valueOf(typeStr) :
+                com.yisy.modules.doramcu.model.PromoCode.CodeType.PLAYER;
+        try {
+            com.yisy.modules.doramcu.model.PromoCode pc = promoCodeService.createPromoCode(code, description, maxUses, type);
+            return ResponseEntity.status(HttpStatus.CREATED).body(pc);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/promo-codes/{code}/activate")
+    public ResponseEntity<?> activatePromoCode(@PathVariable String code) {
+        try {
+            com.yisy.modules.doramcu.model.PromoCode pc = promoCodeService.activatePromoCode(code);
+            return ResponseEntity.ok(pc);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/promo-codes/{code}/deactivate")
+    public ResponseEntity<?> deactivatePromoCode(@PathVariable String code) {
+        try {
+            com.yisy.modules.doramcu.model.PromoCode pc = promoCodeService.deactivatePromoCode(code);
+            return ResponseEntity.ok(pc);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/promo-codes/{code}")
+    public ResponseEntity<?> deletePromoCode(@PathVariable String code) {
+        try {
+            boolean deleted = promoCodeService.deletePromoCode(code);
+            if (!deleted) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Promo code not found: " + code));
+            }
+            return ResponseEntity.ok(Map.of("message", "Promo code deleted"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PutMapping("/promo-codes/{code}")
+    public ResponseEntity<?> updatePromoCode(@PathVariable String code, @RequestBody Map<String, Object> request) {
+        try {
+            String description = request.get("description") != null ? (String) request.get("description") : null;
+            Integer maxUses = request.get("maxUses") != null ? (Integer) request.get("maxUses") : null;
+            java.time.LocalDateTime expiryDate = null;
+            if (request.get("expiryDate") instanceof String) {
+                expiryDate = java.time.LocalDateTime.parse((String) request.get("expiryDate"));
+            }
+            String bonuses = request.get("bonuses") != null ? (String) request.get("bonuses") : null;
+            com.yisy.modules.doramcu.model.PromoCode pc = promoCodeService.updatePromoCode(code, description, maxUses, expiryDate, bonuses);
+            return ResponseEntity.ok(pc);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
     }
 }

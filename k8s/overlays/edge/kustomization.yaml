@@ -1,0 +1,37 @@
+# Kustomize overlay for edge deployment
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Base references
+bases:
+  - ../../base
+
+# Namespace
+namespace: doramcu
+
+# Name prefix for edge resources
+namePrefix: edge-
+
+# Labels for edge resources
+commonLabels:
+  deployment-type: edge
+  app.kubernetes.io/component: satellite-ai-edge
+
+# Patches
+patches:
+  # Patch neuron deployment for edge-specific settings
+  - path: neuron-edge-deployment.yaml
+  - path: neuron-edge-config.yaml
+
+# ConfigMap generator (overrides base config)
+configMapGenerator:
+  - name: neuron-edge-config
+    literals:
+      - NEURON_EDGE_AUTO_OPTIMIZE=true
+      - NEURON_EDGE_QUANTIZATION_ENABLED=true
+      - NEURON_EDGE_THERMAL_DETECTION_ENABLED=true
+      - NEURON_INFERENCE_THREADS=1
+      - NEURON_EXPERIENCE_BUFFER_SIZE=100
+      - NEURON_ENABLE_CONSENSUS=false
+      - NEURON_MESH_ENABLED=false
+      - NEURON_NODE_REGION=edge

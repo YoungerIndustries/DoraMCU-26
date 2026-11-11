@@ -37,10 +37,14 @@ public class OllamaService implements AiProvider {
     private final ObjectMapper objectMapper;
 
     public OllamaService(OllamaConfig config) {
-        this.config = config;
-        this.httpClient = HttpClient.newBuilder()
+        this(config, HttpClient.newBuilder()
                 .connectTimeout(java.time.Duration.ofMillis(config.getConnectTimeoutMs()))
-                .build();
+                .build());
+    }
+
+    OllamaService(OllamaConfig config, HttpClient httpClient) {
+        this.config = config;
+        this.httpClient = httpClient;
         this.objectMapper = new ObjectMapper();
     }
 

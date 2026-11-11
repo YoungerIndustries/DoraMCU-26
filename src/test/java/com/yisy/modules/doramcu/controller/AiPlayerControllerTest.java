@@ -2,6 +2,8 @@ package com.yisy.modules.doramcu.controller;
 
 import com.yisy.modules.doramcu.ai.AiDelegationService;
 import com.yisy.modules.doramcu.ai.GameChatService;
+import com.yisy.modules.doramcu.ai.PlayerActionAnalyzer;
+import com.yisy.modules.doramcu.ai.PlayerCloneService;
 import com.yisy.modules.doramcu.config.AiDifficultyConfig;
 import com.yisy.modules.doradl.dl.service.DlGameAiService;
 import com.yisy.modules.doradl.dl.service.DoraAiLearningService;
@@ -69,9 +71,11 @@ class AiPlayerControllerTest {
         AiDifficultyConfig aiDifficultyConfig = new AiDifficultyConfig();
         GameChatService gameChatService = Mockito.mock(GameChatService.class);
         DoraAiLearningService doraAiLearningService = Mockito.mock(DoraAiLearningService.class);
-        aiPlayerService = new AiPlayerService(gameSessionService, dlGameAiService, aiDifficultyConfig, gameChatService, doraAiLearningService);
+        PlayerActionAnalyzer playerActionAnalyzer = Mockito.mock(PlayerActionAnalyzer.class);
+        PlayerCloneService playerCloneService = Mockito.mock(PlayerCloneService.class);
+        aiPlayerService = new AiPlayerService(gameSessionService, dlGameAiService, aiDifficultyConfig, gameChatService, doraAiLearningService, playerActionAnalyzer, playerCloneService);
         AiDelegationService aiDelegationService = Mockito.mock(AiDelegationService.class);
-        controller = new AiPlayerController(aiPlayerService, aiDelegationService);
+        controller = new AiPlayerController(aiPlayerService, aiDelegationService, gameSessionService);
     }
 
     // ---- Create AI Player ----

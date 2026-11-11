@@ -1,0 +1,14 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!150 &1
+EditorSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 11
+  m_ExternalVersionControlSupport: Visible Meta Files
+  m_ProjectGenerationIncludedExtensions: boo;cpp;cs;h;js;jsproj;ts;yaml;asset;svg;tiff
+  m_ProjectGenerationRootNamespace: DoraMCU
+  m_EnableTextureStreamingInEditMode: 1
+  m_EnableTextureStreamingInPlayMode: 1
+  m_AsyncShaderCompilation: 1
+  m_EnterPlayModeOptionsEnabled: 0
+  m_EnterPlayModeOptions: 3

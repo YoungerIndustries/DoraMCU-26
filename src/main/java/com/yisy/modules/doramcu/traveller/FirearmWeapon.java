@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.traveller;
 
+import com.yisy.modules.doramcu.util.DiceUtil;
+
 /**
  * Firearms from Classic Traveller Book 1: Characters & Combat (1981).
  * <p>
@@ -364,7 +366,7 @@ public enum FirearmWeapon {
      * @param random the random number generator
      * @return the rolled damage
      */
-    public int rollDamage(java.util.Random random) {
+    public int rollDamage() {
         // Parse damage code like "2D6+2", "3D6", "4D6+4"
         int totalDice = 0;
         int bonus = 0;
@@ -382,12 +384,7 @@ public enum FirearmWeapon {
         }
 
         // Roll dice
-        int damage = 0;
-        for (int i = 0; i < totalDice; i++) {
-            damage += random.nextInt(6) + 1;
-        }
-        damage += bonus;
-
+        int damage = DiceUtil.rollNdX(totalDice, 6) + bonus;
         return Math.max(1, damage);
     }
 

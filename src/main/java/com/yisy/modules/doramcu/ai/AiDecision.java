@@ -111,6 +111,27 @@ public class AiDecision {
         return decision;
     }
 
+    /**
+     * Creates an expand colony decision.
+     */
+    public static AiDecision expandColony(String colonyName, double investment) {
+        return new AiDecision(ActionType.BUILD_STATION, "Expand colony " + colonyName + " with investment " + investment);
+    }
+
+    /**
+     * Creates a declare war decision.
+     */
+    public static AiDecision declareWar(Integer empireId, String targetEmpireName, double aggressionLevel) {
+        return new AiDecision(ActionType.ENGAGE_COMBAT, "Empire " + empireId + " declares war on " + targetEmpireName);
+    }
+
+    /**
+     * Creates a form alliance decision.
+     */
+    public static AiDecision formAlliance(Integer empireId, String partnerEmpireName, double trustLevel) {
+        return new AiDecision(ActionType.WAIT, "Empire " + empireId + " forms alliance with " + partnerEmpireName);
+    }
+
     // --- Accessors ---
 
     public ActionType getActionType() {

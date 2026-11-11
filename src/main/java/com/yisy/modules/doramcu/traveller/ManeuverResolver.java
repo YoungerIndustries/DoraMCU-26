@@ -322,7 +322,7 @@ public class ManeuverResolver {
     public ExplorationActivity exploreSystem() {
         ExplorationActivity activity = ExplorationActivity.createFullSystemSurvey(
                 starSystem, computerClass >= 2);
-        ExplorationActivity result = activity.execute(random);
+        ExplorationActivity result = activity.execute();
         activityLog.add(result.toString());
         return result;
     }
@@ -337,7 +337,7 @@ public class ManeuverResolver {
         Objects.requireNonNull(bodyName, "Body name must not be null");
         ExplorationActivity activity = ExplorationActivity.createSurvey(
                 bodyName, starSystem, computerClass >= 2);
-        ExplorationActivity result = activity.execute(random);
+        ExplorationActivity result = activity.execute();
         activityLog.add(result.toString());
         return result;
     }
@@ -352,7 +352,7 @@ public class ManeuverResolver {
         Objects.requireNonNull(area, "Area must not be null");
         ExplorationActivity activity = ExplorationActivity.createResourceScan(
                 area, starSystem, computerClass >= 2);
-        ExplorationActivity result = activity.execute(random);
+        ExplorationActivity result = activity.execute();
         activityLog.add(result.toString());
         return result;
     }
@@ -367,7 +367,7 @@ public class ManeuverResolver {
         Objects.requireNonNull(area, "Area must not be null");
         ExplorationActivity activity = ExplorationActivity.createHazardDetection(
                 area, starSystem, computerClass >= 2);
-        ExplorationActivity result = activity.execute(random);
+        ExplorationActivity result = activity.execute();
         activityLog.add(result.toString());
         return result;
     }

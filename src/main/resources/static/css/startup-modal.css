@@ -1,0 +1,168 @@
+/* Startup Modal Styles */
+
+.startup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    backdrop-filter: blur(4px);
+}
+
+.startup-modal {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 12px;
+    padding: 32px;
+    width: 520px;
+    max-width: 90vw;
+    box-shadow: 0 0 40px rgba(0, 212, 255, 0.15);
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.startup-modal h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.4rem;
+    color: #00d4ff;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.startup-modal .startup-subtitle {
+    text-align: center;
+    color: #888;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+}
+
+.startup-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.startup-progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00d4ff, #00ff88);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+    width: 0%;
+}
+
+.startup-steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 520px;
+    overflow-y: auto;
+}
+
+.startup-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.startup-step:last-child {
+    border-bottom: none;
+}
+
+.startup-step-icon {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    margin-top: 2px;
+}
+
+.startup-step-icon.pending {
+    background: rgba(255, 255, 255, 0.1);
+    color: #666;
+}
+
+.startup-step-icon.in-progress {
+    background: rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+    animation: pulse 1.5s infinite;
+}
+
+.startup-step-icon.completed {
+    background: rgba(0, 255, 136, 0.2);
+    color: #00ff88;
+}
+
+.startup-step-icon.skipped {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+}
+
+.startup-step-icon.error {
+    background: rgba(255, 68, 68, 0.2);
+    color: #ff4444;
+}
+
+.startup-step-content {
+    flex: 1;
+}
+
+.startup-step-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #ccc;
+}
+
+.startup-step-message {
+    font-size: 0.78rem;
+    color: #888;
+    margin-top: 2px;
+}
+
+.startup-step-icon.in-progress .startup-step-label {
+    color: #00d4ff;
+}
+
+.startup-step-icon.completed .startup-step-label {
+    color: #00ff88;
+}
+
+.startup-footer {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+/* Spinner animation for in-progress steps */
+.startup-step-icon.in-progress::after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

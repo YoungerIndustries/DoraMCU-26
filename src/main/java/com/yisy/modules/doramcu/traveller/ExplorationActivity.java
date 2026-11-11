@@ -1,9 +1,9 @@
 package com.yisy.modules.doramcu.traveller;
 
+import com.yisy.modules.doramcu.util.DiceUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.Objects;
 
 /**
@@ -205,17 +205,16 @@ public class ExplorationActivity {
     }
 
     /**
-     * Executes the exploration activity with the given random seed.
+     * Executes the exploration activity.
      * <p>
      * Returns a new ExplorationActivity with the results.
      * </p>
      *
-     * @param random the random number generator
      * @return a new completed exploration activity
      */
-    public ExplorationActivity execute(Random random) {
-        boolean success = random.nextInt(100) < successProbability;
-        Discovery disc = success ? rollDiscovery(random, type) : Discovery.NONE;
+    public ExplorationActivity execute() {
+        boolean success = DiceUtil.rollPercentile() < successProbability;
+        Discovery disc = success ? rollDiscovery(type) : Discovery.NONE;
         String note = generateNotes(success, disc);
         return new ExplorationActivity(type, target, starSystem, weeksRequired, success, disc, note);
     }
@@ -223,8 +222,8 @@ public class ExplorationActivity {
     /**
      * Rolls for a discovery based on the activity type.
      */
-    private Discovery rollDiscovery(Random random, ActivityType activityType) {
-        int roll = random.nextInt(100);
+    private Discovery rollDiscovery(ActivityType activityType) {
+        int roll = DiceUtil.rollPercentile();
 
         if (activityType == ActivityType.RESOURCE_SCAN) {
             if (roll < 40) return Discovery.MINERAL_DEPOSITS;

@@ -1,0 +1,81 @@
+# Kustomization — Production overlay
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+patches:
+  # Full-scale neuron replicas for production
+  - target:
+      kind: HorizontalPodAutoscaler
+      name: neuron-hpa
+    patch: |
+      - op: replace
+        path: /spec/minReplicas
+        value: 5
+      - op: replace
+        path: /spec/maxReplicas
+        value: 50
+
+  # Increase DoraMCU app replicas for high availability
+  - target:
+      kind: Deployment
+      name: doramcu-app
+    patch: |
+      - op: replace
+        path: /spec/replicas
+        value: 2
+
+  # Increase resource quotas for production
+  - target:
+      kind: ResourceQuota
+      name: doramcu-quota
+    patch: |
+      - op: replace
+        path: /spec/hard/requests.cpu
+        value: "32"
+      - op: replace
+        path: /spec/hard/requests.memory
+        value: "64Gi"
+      - op: replace
+        path: /spec/hard/limits.cpu
+        value: "64"
+      - op: replace
+        path: /spec/hard/limits.memory
+        value: "128Gi"
+      - op: replace
+        path: /spec/hard/pods
+        value: "100"
+
+configMapGenerator:
+  - name: neuron-config-production
+    behavior: merge
+    literals:
+      - NEURON_NODE_REGION=production
+      - NEURON_MESH_ENABLED="true"
+      - NEURON_ENABLE_CONSENSUS="true"
+      - NEURON_SECURITY_JWT_ENABLED="true"
+      - NEURON_SECURITY_MODEL_SIGNATURE_ENABLED="true"
+
+secretGenerator:
+  - name: doramcu-secrets-prod
+    behavior: merge
+    literals:
+      # These MUST be replaced with actual secure values
+      - db-password=CHANGE-ME-PRODUCTION
+      - jwt-secret=CHANGE-ME-PRODUCTION
+      - neuron-jwt-secret=CHANGE-ME-PRODUCTION
+      - redis-password=CHANGE-ME-PRODUCTION
+      - grafana-admin-password=CHANGE-ME-PRODUCTION
+
+images:
+  - name: doramcu/app
+    newName: doramcu/app
+    newTag: latest
+  - name: doramcu/neuron
+    newName: doramcu/neuron
+    newTag: latest
+  - name: doramcu/dl-python
+    newName: doramcu/dl-python
+    newTag: latest

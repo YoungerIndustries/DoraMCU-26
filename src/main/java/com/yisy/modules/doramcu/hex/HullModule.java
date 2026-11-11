@@ -28,14 +28,33 @@ import java.util.stream.Collectors;
  */
 public class HullModule {
 
-    public static final int WIDTH = 10;
-    public static final int HEIGHT = 10;
-    public static final int DEPTH = 10;
-    public static final int SIZE = WIDTH * HEIGHT * DEPTH;
+    /** Default grid dimension (backward compatibility constant) */
+    public static final int DEFAULT_WIDTH = 10;
+    /** Default grid dimension (backward compatibility constant) */
+    public static final int DEFAULT_HEIGHT = 10;
+    /** Default grid dimension (backward compatibility constant) */
+    public static final int DEFAULT_DEPTH = 10;
+    /** Default total size (backward compatibility constant) */
+    public static final int DEFAULT_SIZE = DEFAULT_WIDTH * DEFAULT_HEIGHT * DEFAULT_DEPTH;
+
+    // Backward compatibility aliases — deprecated, use instance getters instead
+    @Deprecated
+    public static final int WIDTH = DEFAULT_WIDTH;
+    @Deprecated
+    public static final int HEIGHT = DEFAULT_HEIGHT;
+    @Deprecated
+    public static final int DEPTH = DEFAULT_DEPTH;
+    @Deprecated
+    public static final int SIZE = DEFAULT_SIZE;
 
     private final Map<M3space, M3space> cells;
     private final String name;
     private HullShape shape;
+    private ShapeDefinition customShape;  // Optional custom shape overriding HullShape enum
+    private final int width;
+    private final int height;
+    private final int depth;
+    private final List<Compartment> compartments;  // Named functional compartments
 
     /**
      * Creates a new HullModule with the given name, initialized with a 10×10×10 grid of M3space cells.
@@ -44,10 +63,7 @@ public class HullModule {
      * @param name the name of this hull module
      */
     public HullModule(String name) {
-        this.name = name;
-        this.cells = new HashMap<>();
-        this.shape = HullShape.CUBE;
-        initializeGrid();
+        this(name, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_DEPTH);
     }
 
     /**
@@ -58,18 +74,42 @@ public class HullModule {
     }
 
     /**
-     * Initializes the 10×10×10 grid of M3space cells.
+     * Creates a new HullModule with custom grid dimensions.
+     *
+     * @param name the name of this hull module
+     * @param width the grid width (X axis)
+     * @param height the grid height (Y axis)
+     * @param depth the grid depth (Z axis)
+     * @throws IllegalArgumentException if any dimension is less than 1
+     */
+    public HullModule(String name, int width, int height, int depth) {
+        if (width < 1 || height < 1 || depth < 1) {
+            throw new IllegalArgumentException("Dimensions must be at least 1: " + width + "x" + height + "x" + depth);
+        }
+        this.name = name;
+        this.width = width;
+        this.height = height;
+        this.depth = depth;
+        this.cells = new HashMap<>();
+        this.shape = HullShape.CUBE;
+        this.customShape = null;
+        this.compartments = new ArrayList<>();
+        initializeGrid();
+    }
+
+    /**
+     * Initializes the grid of M3space cells with the configured dimensions.
      * Exterior cells (on the shape's surface) default to Aluminum (material 1).
      * Interior cells (fully surrounded within the shape) default to Empty (material 0).
      * Cells outside the shape default to Empty.
      */
     private void initializeGrid() {
-        for (int z = 0; z < DEPTH; z++) {
-            for (int x = 0; x < WIDTH; x++) {
-                for (int y = 0; y < HEIGHT; y++) {
+        for (int z = 0; z < depth; z++) {
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
                     Material material;
-                    if (shape.contains(x, y, z)) {
-                        if (shape.isExterior(x, y, z)) {
+                    if (activeShape().contains(x, y, z)) {
+                        if (activeShape().isExterior(x, y, z)) {
                             material = Material.Aluminum;
                         } else {
                             material = Material.Empty;
@@ -84,6 +124,13 @@ public class HullModule {
         }
     }
 
+    /**
+     * Returns the active shape definition: customShape if set, otherwise the HullShape enum.
+     */
+    private ShapeDefinition activeShape() {
+        return customShape != null ? customShape : shape;
+    }
+
     // ---- Name accessors ----
 
     /** @return the name of this hull module */
@@ -93,19 +140,24 @@ public class HullModule {
 
     // ---- Grid dimensions ----
 
-    /** @return the width of the grid (10) */
+    /** @return the width of the grid (X axis) */
     public int getWidth() {
-        return WIDTH;
+        return width;
     }
 
-    /** @return the height of the grid (10) */
+    /** @return the height of the grid (Y axis) */
     public int getHeight() {
-        return HEIGHT;
+        return height;
     }
 
-    /** @return the depth of the grid (10) */
+    /** @return the depth of the grid (Z axis) */
     public int getDepth() {
-        return DEPTH;
+        return depth;
+    }
+
+    /** @return the total number of cells in the grid */
+    public int getTotalCells() {
+        return width * height * depth;
     }
 
     // ---- Shape operations ----
@@ -120,8 +172,8 @@ public class HullModule {
     }
 
     /**
-     * Sets the shape of this hull module, determining which cells are considered part of the hull.
-     * Cells outside the shape remain in the grid but are excluded from shape queries.
+     * Sets the shape of this hull module using a predefined {@link HullShape} enum.
+     * This clears any custom shape that was previously set.
      *
      * @param newShape the shape to apply
      */
@@ -130,6 +182,25 @@ public class HullModule {
             throw new IllegalArgumentException("Shape must not be null");
         }
         this.shape = newShape;
+        this.customShape = null;
+    }
+
+    /**
+     * Sets a custom shape definition for this hull module.
+     * <p>
+     * This allows arbitrary shapes (e.g., {@link MaskShape}, {@link CompositeShape})
+     * to be used instead of the predefined {@link HullShape} enum values.
+     * The custom shape takes precedence over the HullShape enum when querying
+     * shape cells, exterior cells, and interior cells.
+     * </p>
+     *
+     * @param newShape the custom shape definition to apply
+     */
+    public void setShape(ShapeDefinition newShape) {
+        if (newShape == null) {
+            throw new IllegalArgumentException("Shape must not be null");
+        }
+        this.customShape = newShape;
     }
 
     /**
@@ -141,7 +212,7 @@ public class HullModule {
      * @return true if the cell is within the current shape boundaries
      */
     public boolean isShapeCell(int x, int y, int z) {
-        return shape.contains(x, y, z);
+        return activeShape().contains(x, y, z);
     }
 
     /**
@@ -160,8 +231,9 @@ public class HullModule {
      * @return list of cells inside the shape boundaries
      */
     public List<M3space> getShapeCells() {
+        ShapeDefinition active = activeShape();
         return cells.values().stream()
-                .filter(cell -> shape.contains(cell.getX(), cell.getY(), cell.getZ()))
+                .filter(cell -> active.contains(cell.getX(), cell.getY(), cell.getZ()))
                 .collect(Collectors.toList());
     }
 
@@ -171,8 +243,9 @@ public class HullModule {
      * @return count of cells inside the shape boundaries
      */
     public int getShapeCellCount() {
+        ShapeDefinition active = activeShape();
         return (int) cells.values().stream()
-                .filter(cell -> shape.contains(cell.getX(), cell.getY(), cell.getZ()))
+                .filter(cell -> active.contains(cell.getX(), cell.getY(), cell.getZ()))
                 .count();
     }
 
@@ -188,7 +261,7 @@ public class HullModule {
      * @return true if the cell is on the exterior surface of the current shape
      */
     public boolean isExteriorCell(int x, int y, int z) {
-        return shape.isExterior(x, y, z);
+        return activeShape().isExterior(x, y, z);
     }
 
     /**
@@ -211,7 +284,7 @@ public class HullModule {
      * @return true if the cell is an interior cell of the current shape
      */
     public boolean isInteriorCell(int x, int y, int z) {
-        return shape.isInterior(x, y, z);
+        return activeShape().isInterior(x, y, z);
     }
 
     /**
@@ -230,8 +303,9 @@ public class HullModule {
      * @return list of exterior cells
      */
     public List<M3space> getExteriorCells() {
+        ShapeDefinition active = activeShape();
         return cells.values().stream()
-                .filter(cell -> shape.isExterior(cell.getX(), cell.getY(), cell.getZ()))
+                .filter(cell -> active.isExterior(cell.getX(), cell.getY(), cell.getZ()))
                 .collect(Collectors.toList());
     }
 
@@ -241,8 +315,9 @@ public class HullModule {
      * @return count of exterior cells
      */
     public int getExteriorCellCount() {
+        ShapeDefinition active = activeShape();
         return (int) cells.values().stream()
-                .filter(cell -> shape.isExterior(cell.getX(), cell.getY(), cell.getZ()))
+                .filter(cell -> active.isExterior(cell.getX(), cell.getY(), cell.getZ()))
                 .count();
     }
 
@@ -252,8 +327,9 @@ public class HullModule {
      * @return list of interior cells
      */
     public List<M3space> getInteriorCells() {
+        ShapeDefinition active = activeShape();
         return cells.values().stream()
-                .filter(cell -> shape.isInterior(cell.getX(), cell.getY(), cell.getZ()))
+                .filter(cell -> active.isInterior(cell.getX(), cell.getY(), cell.getZ()))
                 .collect(Collectors.toList());
     }
 
@@ -262,13 +338,13 @@ public class HullModule {
     /**
      * Retrieves an M3space cell by its 3D coordinates.
      *
-     * @param x the x coordinate (0-9)
-     * @param y the y coordinate (0-9)
-     * @param z the z coordinate (0-9)
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param z the z coordinate
      * @return the cell at the given position, or null if out of bounds
      */
     public M3space get(int x, int y, int z) {
-        if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT || z < 0 || z >= DEPTH) {
+        if (x < 0 || x >= width || y < 0 || y >= height || z < 0 || z >= depth) {
             return null;
         }
         return cells.get(new M3space(x, y, z));
@@ -299,7 +375,7 @@ public class HullModule {
      * @return true if the grid contains a cell at the given 3D coordinates
      */
     public boolean contains(int x, int y, int z) {
-        return x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT && z >= 0 && z < DEPTH
+        return x >= 0 && x < width && y >= 0 && y < height && z >= 0 && z < depth
                 && cells.containsKey(new M3space(x, y, z));
     }
 
@@ -348,6 +424,60 @@ public class HullModule {
         for (M3space cell : getInteriorCells()) {
             cell.setMaterial(material);
         }
+    }
+
+    // ---- Compartment management ----
+
+    /**
+     * Adds a named compartment to this hull module.
+     *
+     * @param compartment the compartment to add
+     */
+    public void addCompartment(Compartment compartment) {
+        if (compartment == null) {
+            throw new IllegalArgumentException("Compartment must not be null");
+        }
+        compartments.add(compartment);
+    }
+
+    /**
+     * Removes a compartment from this hull module.
+     *
+     * @param compartment the compartment to remove
+     * @return true if removed
+     */
+    public boolean removeCompartment(Compartment compartment) {
+        return compartments.remove(compartment);
+    }
+
+    /**
+     * @return unmodifiable list of all compartments in this module
+     */
+    public List<Compartment> getCompartments() {
+        return List.copyOf(compartments);
+    }
+
+    /**
+     * Returns the compartment containing the given cell, or null if none.
+     *
+     * @param cell the cell to look up
+     * @return the compartment containing this cell, or null
+     */
+    public Compartment getCompartmentAt(M3space cell) {
+        if (cell == null) return null;
+        for (Compartment compartment : compartments) {
+            if (compartment.getCells().contains(cell)) {
+                return compartment;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Alias for {@link #get(int, int, int)} — provides a clearer name for cell lookup.
+     */
+    public M3space getCell(int x, int y, int z) {
+        return get(x, y, z);
     }
 
     // ---- Object contract ----

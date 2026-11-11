@@ -1,0 +1,52 @@
+[
+  {
+    "id": "ALPHA_001",
+    "name": "Alpha Centauri",
+    "sector": "Alpha Quadrant",
+    "description": "The closest star system to Earth, home to Starbase 6 and Colony Alpha.",
+    "type": "G-type main sequence",
+    "planets": 3,
+    "habitable": true,
+    "tradeValue": 80
+  },
+  {
+    "id": "BETA_002",
+    "name": "Beta Hydri",
+    "sector": "Alpha Quadrant",
+    "description": "Mining system with rich mineral deposits.",
+    "type": "G-type main sequence",
+    "planets": 5,
+    "habitable": true,
+    "tradeValue": 60
+  },
+  {
+    "id": "VULCAN_003",
+    "name": "Vulcan System",
+    "sector": "Alpha Quadrant",
+    "description": "Home of the Vulcan High Command and ancient temples.",
+    "type": "G-type main sequence",
+    "planets": 2,
+    "habitable": true,
+    "tradeValue": 90
+  },
+  {
+    "id": "KLINGON_004",
+    "name": "Kronos System",
+    "sector": "Alpha Quadrant",
+    "description": "Capital of the Klingon Empire, seat of the High Council.",
+    "type": "K-type main sequence",
+    "planets": 4,
+    "habitable": true,
+    "tradeValue": 70
+  },
+  {
+    "id": "ROMULAN_005",
+    "name": "Romulus System",
+    "sector": "Alpha Quadrant",
+    "description": "Capital of the Romulan Star Empire, hidden by the Neutral Zone.",
+    "type": "G-type main sequence",
+    "planets": 3,
+    "habitable": true,
+    "tradeValue": 85
+  }
+]

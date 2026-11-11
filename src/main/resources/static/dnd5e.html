@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dungeons & Dragons 5e</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #1a1a2e; color: #e0e0e0; }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #2d1b69 0%, #1a1a2e 100%);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #6c63ff;
+        }
+        .header h1 { font-size: 24px; color: #fff; }
+        .header .subtitle { font-size: 12px; color: #a0a0a0; margin-top: 2px; }
+        .btn-back {
+            background: #6c63ff; color: #fff; padding: 8px 16px;
+            border-radius: 6px; text-decoration: none; font-size: 14px;
+        }
+        .btn-back:hover { background: #5a52d5; }
+
+        /* Layout */
+        .layout { display: flex; height: calc(100vh - 70px); }
+
+        /* Sidebar */
+        .sidebar {
+            width: 220px; background: #16213e; padding: 16px;
+            overflow-y: auto; border-right: 1px solid #2d3748;
+        }
+        .sidebar-section { margin-bottom: 20px; }
+        .sidebar-title {
+            font-size: 11px; text-transform: uppercase; color: #6c63ff;
+            margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;
+        }
+        .sidebar-item {
+            padding: 8px 12px; margin: 2px 0; border-radius: 6px;
+            cursor: pointer; font-size: 14px; transition: all 0.2s;
+        }
+        .sidebar-item:hover { background: #2d3748; }
+        .sidebar-item.active { background: #6c63ff; color: #fff; }
+
+        /* Main Content */
+        .main-content {
+            flex: 1; padding: 24px; overflow-y: auto;
+        }
+
+        /* Cards */
+        .card {
+            background: #16213e; border-radius: 8px; padding: 20px;
+            margin-bottom: 16px; border: 1px solid #2d3748;
+        }
+        .card h3 { color: #6c63ff; margin-bottom: 12px; font-size: 16px; }
+
+        /* Grid */
+        .grid { display: grid; gap: 16px; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-6 { grid-template-columns: repeat(6, 1fr); }
+
+        /* Ability Scores */
+        .ability-score {
+            background: #1a1a2e; border: 2px solid #6c63ff;
+            border-radius: 8px; padding: 12px; text-align: center;
+        }
+        .ability-score .name { font-size: 11px; text-transform: uppercase; color: #a0a0a0; }
+        .ability-score .value { font-size: 28px; font-weight: bold; color: #fff; }
+        .ability-score .mod { font-size: 14px; color: #6c63ff; }
+
+        /* HP Bar */
+        .hp-bar {
+            background: #1a1a2e; border-radius: 8px; height: 24px;
+            overflow: hidden; margin: 8px 0;
+        }
+        .hp-bar-fill {
+            height: 100%; background: linear-gradient(90deg, #e53e3e, #48bb78);
+            transition: width 0.3s; border-radius: 8px;
+        }
+
+        /* Buttons */
+        .btn {
+            background: #6c63ff; color: #fff; border: none;
+            padding: 8px 16px; border-radius: 6px; cursor: pointer;
+            font-size: 14px; margin: 4px;
+        }
+        .btn:hover { background: #5a52d5; }
+        .btn-danger { background: #e53e3e; }
+        .btn-danger:hover { background: #c53030; }
+        .btn-success { background: #48bb78; }
+        .btn-success:hover { background: #38a169; }
+
+        /* Input */
+        .input {
+            background: #1a1a2e; border: 1px solid #2d3748;
+            color: #e0e0e0; padding: 8px 12px; border-radius: 6px;
+            font-size: 14px; width: 100%;
+        }
+        .input:focus { outline: none; border-color: #6c63ff; }
+
+        /* Dice Roller */
+        .dice-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin: 16px 0; }
+        .dice-btn {
+            background: #2d3748; border: 2px solid #6c63ff; color: #fff;
+            padding: 16px; border-radius: 8px; cursor: pointer;
+            font-size: 18px; font-weight: bold; text-align: center;
+            transition: all 0.2s;
+        }
+        .dice-btn:hover { background: #6c63ff; transform: scale(1.05); }
+        .dice-result {
+            background: #1a1a2e; border-radius: 8px; padding: 20px;
+            text-align: center; font-size: 32px; font-weight: bold;
+            color: #6c63ff; margin: 16px 0; min-height: 80px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .dice-history { max-height: 200px; overflow-y: auto; }
+        .dice-history-item {
+            padding: 8px; border-bottom: 1px solid #2d3748;
+            display: flex; justify-content: space-between;
+        }
+
+        /* Spell Card */
+        .spell-card {
+            background: #1a1a2e; border: 1px solid #2d3748;
+            border-radius: 8px; padding: 16px; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .spell-card:hover { border-color: #6c63ff; transform: translateY(-2px); }
+        .spell-card h4 { color: #6c63ff; margin-bottom: 4px; }
+        .spell-card .meta { font-size: 12px; color: #a0a0a0; }
+
+        /* Combat Tracker */
+        .combatant {
+            background: #1a1a2e; border-radius: 8px; padding: 12px;
+            margin: 8px 0; display: flex; align-items: center; gap: 12px;
+        }
+        .combatant.active { border: 2px solid #6c63ff; }
+        .combatant-info { flex: 1; }
+        .combatant-name { font-weight: bold; }
+        .combatant-hp { font-size: 12px; color: #a0a0a0; }
+
+        /* Conditions */
+        .condition-tag {
+            display: inline-block; background: #e53e3e; color: #fff;
+            padding: 2px 8px; border-radius: 12px; font-size: 11px;
+            margin: 2px;
+        }
+
+        /* Loading */
+        .loading { text-align: center; padding: 40px; color: #a0a0a0; }
+        .spinner {
+            width: 40px; height: 40px; border: 4px solid #2d3748;
+            border-top-color: #6c63ff; border-radius: 50%;
+            animation: spin 1s linear infinite; margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Form */
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12px; color: #a0a0a0; margin-bottom: 4px; }
+
+        /* Table */
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #2d3748; }
+        th { color: #6c63ff; font-size: 12px; text-transform: uppercase; }
+
+        /* Filter */
+        .filter-bar {
+            display: flex; gap: 8px; margin-bottom: 16px;
+            flex-wrap: wrap; align-items: center;
+        }
+        .filter-bar select {
+            background: #1a1a2e; border: 1px solid #2d3748;
+            color: #e0e0e0; padding: 6px 12px; border-radius: 6px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .layout { flex-direction: column; }
+            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #2d3748; }
+            .grid-2, .grid-3, .grid-6 { grid-template-columns: 1fr; }
+            .dice-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🐉 Dungeons & Dragons 5e</h1>
+            <div class="subtitle">Character Sheets, Combat, Spells & Rules</div>
+        </div>
+        <a href="game.html" class="btn-back">← Back to Games</a>
+    </div>
+
+    <div class="layout">
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Core</div>
+                <div class="sidebar-item active" onclick="switchView('dashboard')">📊 Dashboard</div>
+                <div class="sidebar-item" onclick="switchView('characters')">👤 Characters</div>
+                <div class="sidebar-item" onclick="switchView('dice')">🎲 Dice Roller</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Gameplay</div>
+                <div class="sidebar-item" onclick="switchView('combat')">⚔️ Combat</div>
+                <div class="sidebar-item" onclick="switchView('spells')">✨ Spells</div>
+                <div class="sidebar-item" onclick="switchView('gameplay')">🎯 Skill Checks</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Reference</div>
+                <div class="sidebar-item" onclick="switchView('rules')">📖 Rules</div>
+            </div>
+        </div>
+
+        <div class="main-content" id="mainContent">
+            <div class="loading"><div class="spinner"></div><div>Loading...</div></div>
+        </div>
+    </div>
+
+    <script>
+        const API = '/api/v1/dnd5e';
+        let currentView = 'dashboard';
+        let characters = [];
+        let spells = [];
+        let currentCombat = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCharacters();
+            loadSpells();
+            switchView('dashboard');
+        });
+
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            event?.target?.classList.add('active');
+
+            const content = document.getElementById('mainContent');
+            switch(view) {
+                case 'dashboard': renderDashboard(content); break;
+                case 'characters': renderCharacters(content); break;
+                case 'dice': renderDiceRoller(content); break;
+                case 'combat': renderCombat(content); break;
+                case 'spells': renderSpells(content); break;
+                case 'gameplay': renderGameplay(content); break;
+                case 'rules': renderRules(content); break;
+            }
+        }
+
+        // ===== Dashboard =====
+        async function renderDashboard(container) {
+            const chars = await getCharacters();
+            const spellCount = spells.length;
+
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🐉 D&D 5e Dashboard</h2>
+                <div class="grid grid-3">
+                    <div class="card">
+                        <h3>👤 Characters</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#6c63ff;">${chars.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Created characters</div>
+                    </div>
+                    <div class="card">
+                        <h3>✨ Spells</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#6c63ff;">${spellCount}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">In database</div>
+                    </div>
+                    <div class="card">
+                        <h3>📖 Rules</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#6c63ff;">✓</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Rules reference ready</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>⚡ Quick Actions</h3>
+                    <button class="btn" onclick="switchView('characters');event.target.classList.add('active');">Create Character</button>
+                    <button class="btn" onclick="switchView('dice');event.target.classList.add('active');">Roll Dice</button>
+                    <button class="btn" onclick="switchView('combat');event.target.classList.add('active');">Start Combat</button>
+                    <button class="btn" onclick="switchView('spells');event.target.classList.add('active');">Browse Spells</button>
+                </div>
+                ${chars.length > 0 ? `
+                <div class="card">
+                    <h3>👤 Your Characters</h3>
+                    ${chars.map(c => `
+                        <div class="combatant" style="cursor:pointer" onclick="viewCharacter(${c.id})">
+                            <div class="combatant-info">
+                                <div class="combatant-name">${c.name}</div>
+                                <div class="combatant-hp">${c.race} ${c.characterClass} ${c.level} • HP: ${c.hitPoints}/${c.maxHitPoints}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>` : ''}
+            `;
+        }
+
+        // ===== Characters =====
+        async function renderCharacters(container) {
+            const chars = await getCharacters();
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">👤 Characters</h2>
+                <button class="btn btn-success" onclick="showCreateCharacter()">+ New Character</button>
+                <div id="characterList" style="margin-top:16px;">
+                    ${chars.length === 0 ? '<div class="loading">No characters yet. Create one!</div>' :
+                        chars.map(c => renderCharacterCard(c)).join('')}
+                </div>
+            `;
+        }
+
+        function renderCharacterCard(c) {
+            return `
+                <div class="card">
+                    <div style="display:flex;justify-content:space-between;align-items:start;">
+                        <div>
+                            <h3>${c.name}</h3>
+                            <div style="font-size:12px;color:#a0a0a0;">
+                                ${c.race} ${c.characterClass} ${c.level} • ${c.background || 'No background'}
+                            </div>
+                        </div>
+                        <div>
+                            <button class="btn" onclick="viewCharacter(${c.id})">View</button>
+                            <button class="btn btn-danger" onclick="deleteCharacter(${c.id})">Delete</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-6" style="margin-top:12px;">
+                        <div class="ability-score">
+                            <div class="name">STR</div>
+                            <div class="value">${c.strScore}</div>
+                            <div class="mod">${c.strMod >= 0 ? '+' : ''}${c.strMod}</div>
+                        </div>
+                        <div class="ability-score">
+                            <div class="name">DEX</div>
+                            <div class="value">${c.dexScore}</div>
+                            <div class="mod">${c.dexMod >= 0 ? '+' : ''}${c.dexMod}</div>
+                        </div>
+                        <div class="ability-score">
+                            <div class="name">CON</div>
+                            <div class="value">${c.conScore}</div>
+                            <div class="mod">${c.conMod >= 0 ? '+' : ''}${c.conMod}</div>
+                        </div>
+                        <div class="ability-score">
+                            <div class="name">INT</div>
+                            <div class="value">${c.intScore}</div>
+                            <div class="mod">${c.intMod >= 0 ? '+' : ''}${c.intMod}</div>
+                        </div>
+                        <div class="ability-score">
+                            <div class="name">WIS</div>
+                            <div class="value">${c.wisScore}</div>
+                            <div class="mod">${c.wisMod >= 0 ? '+' : ''}${c.wisMod}</div>
+                        </div>
+                        <div class="ability-score">
+                            <div class="name">CHA</div>
+                            <div class="value">${c.chaScore}</div>
+                            <div class="mod">${c.chaMod >= 0 ? '+' : ''}${c.chaMod}</div>
+                        </div>
+                    </div>
+                    <div style="margin-top:12px;">
+                        <div style="display:flex;justify-content:space-between;font-size:12px;">
+                            <span>HP: ${c.hitPoints}/${c.maxHitPoints}</span>
+                            <span>AC: ${c.armorClass}</span>
+                            <span>XP: ${c.experiencePoints}</span>
+                        </div>
+                        <div class="hp-bar">
+                            <div class="hp-bar-fill" style="width:${(c.hitPoints/c.maxHitPoints)*100}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function showCreateCharacter() {
+            const content = document.getElementById('mainContent');
+            content.innerHTML = `
+                <h2 style="margin-bottom:20px;">👤 Create Character</h2>
+                <div class="card" style="max-width:600px;">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input class="input" id="charName" placeholder="Character name">
+                    </div>
+                    <div class="form-group">
+                        <label>Race</label>
+                        <select class="input" id="charRace">
+                            <option>Human</option><option>Elf</option><option>Dwarf</option>
+                            <option>Halfling</option><option>Dragonborn</option><option>Gnome</option>
+                            <option>Half-Elf</option><option>Half-Orc</option><option>Tiefling</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Class</label>
+                        <select class="input" id="charClass">
+                            <option>Barbarian</option><option>Bard</option><option>Cleric</option>
+                            <option>Druid</option><option>Fighter</option><option>Monk</option>
+                            <option>Paladin</option><option>Ranger</option><option>Rogue</option>
+                            <option>Sorcerer</option><option>Warlock</option><option>Wizard</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Background</label>
+                        <input class="input" id="charBackground" placeholder="Soldier, Sage, Criminal...">
+                    </div>
+                    <div class="form-group">
+                        <label>Ability Score Method</label>
+                        <select class="input" id="scoreMethod">
+                            <option value="standard">Standard Array</option>
+                            <option value="roll">4d6 Drop Lowest</option>
+                            <option value="pointbuy">Point Buy</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-success" onclick="createCharacter()">Create Character</button>
+                    <button class="btn" onclick="switchView('characters')">Cancel</button>
+                </div>
+            `;
+        }
+
+        async function createCharacter() {
+            const name = document.getElementById('charName').value;
+            if (!name) return alert('Please enter a name');
+
+            const response = await fetch(`${API}/characters`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    name,
+                    race: document.getElementById('charRace').value,
+                    characterClass: document.getElementById('charClass').value,
+                    background: document.getElementById('charBackground').value,
+                    scoreMethod: document.getElementById('scoreMethod').value
+                })
+            });
+
+            if (response.ok) {
+                await loadCharacters();
+                switchView('characters');
+            }
+        }
+
+        async function viewCharacter(id) {
+            const char = await fetch(`${API}/characters/${id}`).then(r => r.json());
+            const content = document.getElementById('mainContent');
+
+            content.innerHTML = `
+                <h2 style="margin-bottom:20px;">👤 ${char.name}</h2>
+                <div class="grid grid-2">
+                    <div class="card">
+                        <h3>📊 Stats</h3>
+                        <p><strong>Race:</strong> ${char.race}</p>
+                        <p><strong>Class:</strong> ${char.characterClass} ${char.level}</p>
+                        <p><strong>Background:</strong> ${char.background || 'None'}</p>
+                        <p><strong>HP:</strong> ${char.hitPoints}/${char.maxHitPoints}</p>
+                        <p><strong>AC:</strong> ${char.armorClass}</p>
+                        <p><strong>Speed:</strong> ${char.speed} ft</p>
+                        <p><strong>Proficiency:</strong> +${char.proficiencyBonus}</p>
+                        <p><strong>XP:</strong> ${char.experiencePoints}</p>
+                        <p><strong>Hit Dice:</strong> ${char.hitDice || 'd8'}</p>
+                    </div>
+                    <div class="card">
+                        <h3>🎲 Ability Scores</h3>
+                        <div class="grid grid-3">
+                            <div class="ability-score"><div class="name">STR</div><div class="value">${char.strScore}</div><div class="mod">${char.strMod >= 0 ? '+' : ''}${char.strMod}</div></div>
+                            <div class="ability-score"><div class="name">DEX</div><div class="value">${char.dexScore}</div><div class="mod">${char.dexMod >= 0 ? '+' : ''}${char.dexMod}</div></div>
+                            <div class="ability-score"><div class="name">CON</div><div class="value">${char.conScore}</div><div class="mod">${char.conMod >= 0 ? '+' : ''}${char.conMod}</div></div>
+                            <div class="ability-score"><div class="name">INT</div><div class="value">${char.intScore}</div><div class="mod">${char.intMod >= 0 ? '+' : ''}${char.intMod}</div></div>
+                            <div class="ability-score"><div class="name">WIS</div><div class="value">${char.wisScore}</div><div class="mod">${char.wisMod >= 0 ? '+' : ''}${char.wisMod}</div></div>
+                            <div class="ability-score"><div class="name">CHA</div><div class="value">${char.chaScore}</div><div class="mod">${char.chaMod >= 0 ? '+' : ''}${char.chaMod}</div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>⚡ Actions</h3>
+                    <button class="btn" onclick="showSkillCheck(${char.id})">Skill Check</button>
+                    <button class="btn" onclick="showSavingThrow(${char.id})">Saving Throw</button>
+                    <button class="btn" onclick="showShortRest(${char.id})">Short Rest</button>
+                    <button class="btn" onclick="showLongRest(${char.id})">Long Rest</button>
+                    <button class="btn" onclick="showAwardXp(${char.id})">Award XP</button>
+                </div>
+                <button class="btn" onclick="switchView('characters')">← Back to Characters</button>
+            `;
+        }
+
+        async function deleteCharacter(id) {
+            if (!confirm('Delete this character?')) return;
+            await fetch(`${API}/characters/${id}`, {method: 'DELETE'});
+            await loadCharacters();
+            switchView('characters');
+        }
+
+        // ===== Dice Roller =====
+        let diceHistory = [];
+
+        function renderDiceRoller(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🎲 Dice Roller</h2>
+                <div class="card">
+                    <div class="dice-grid">
+                        <div class="dice-btn" onclick="rollDice('d4')">d4</div>
+                        <div class="dice-btn" onclick="rollDice('d6')">d6</div>
+                        <div class="dice-btn" onclick="rollDice('d8')">d8</div>
+                        <div class="dice-btn" onclick="rollDice('d10')">d10</div>
+                        <div class="dice-btn" onclick="rollDice('d12')">d12</div>
+                        <div class="dice-btn" onclick="rollDice('d20')">d20</div>
+                        <div class="dice-btn" onclick="rollDice('d100')">d100</div>
+                    </div>
+                    <div class="dice-result" id="diceResult">Roll a dice!</div>
+                    <div style="margin-top:16px;">
+                        <div class="form-group">
+                            <label>Custom Formula (e.g., 2d6+3, 4d6dl)</label>
+                            <div style="display:flex;gap:8px;">
+                                <input class="input" id="customFormula" placeholder="2d6+3" style="flex:1;">
+                                <button class="btn" onclick="rollCustomDice()">Roll</button>
+                            </div>
+                        </div>
+                        <div style="margin-top:8px;">
+                            <button class="btn" onclick="rollDiceAdvantage('d20')">d20 Advantage</button>
+                            <button class="btn" onclick="rollDiceDisadvantage('d20')">d20 Disadvantage</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>📜 Roll History</h3>
+                    <div class="dice-history" id="diceHistory">
+                        <div style="color:#a0a0a0;">No rolls yet</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function rollDice(formula) {
+            const response = await fetch(`${API}/dice/roll`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({formula})
+            });
+            const result = await response.json();
+            displayDiceResult(result);
+        }
+
+        async function rollCustomDice() {
+            const formula = document.getElementById('customFormula').value;
+            if (!formula) return;
+            await rollDice(formula);
+        }
+
+        async function rollDiceAdvantage(formula) {
+            const response = await fetch(`${API}/dice/roll/advantage`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({formula})
+            });
+            const result = await response.json();
+            displayDiceResult(result);
+        }
+
+        async function rollDiceDisadvantage(formula) {
+            const response = await fetch(`${API}/dice/roll/disadvantage`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({formula})
+            });
+            const result = await response.json();
+            displayDiceResult(result);
+        }
+
+        function displayDiceResult(result) {
+            document.getElementById('diceResult').innerHTML = `
+                <div>
+                    <div style="font-size:48px;">${result.total}</div>
+                    <div style="font-size:14px;color:#a0a0a0;">${result.description}</div>
+                </div>
+            `;
+            diceHistory.unshift(result);
+            if (diceHistory.length > 50) diceHistory.pop();
+            renderDiceHistory();
+        }
+
+        function renderDiceHistory() {
+            const container = document.getElementById('diceHistory');
+            if (!container) return;
+            container.innerHTML = diceHistory.map(r => `
+                <div class="dice-history-item">
+                    <span>${r.formula}</span>
+                    <span style="color:#6c63ff;font-weight:bold;">${r.total}</span>
+                </div>
+            `).join('');
+        }
+
+        // ===== Combat =====
+        async function renderCombat(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">⚔️ Combat Tracker</h2>
+                <div class="card">
+                    <h3>New Encounter</h3>
+                    <div style="display:flex;gap:8px;">
+                        <input class="input" id="encounterName" placeholder="Encounter name" style="flex:1;">
+                        <button class="btn btn-success" onclick="createCombat()">Start Combat</button>
+                    </div>
+                </div>
+                <div id="combatArea"></div>
+            `;
+        }
+
+        async function createCombat() {
+            const name = document.getElementById('encounterName').value || 'Unnamed Encounter';
+            const response = await fetch(`${API}/combat`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({encounterName: name})
+            });
+            currentCombat = await response.json();
+            renderCombatArea();
+        }
+
+        async function renderCombatArea() {
+            const area = document.getElementById('combatArea');
+            if (!currentCombat) return;
+
+            const combat = await fetch(`${API}/combat/${currentCombat.id}`).then(r => r.json());
+            area.innerHTML = `
+                <div class="card">
+                    <h3>${combat.encounterName || 'Combat'}</h3>
+                    <p style="font-size:12px;color:#a0a0a0;">Round: ${combat.currentRound || 0} • Status: ${combat.status}</p>
+                    <div style="margin-top:12px;">
+                        <button class="btn" onclick="addCombatant()">Add Combatant</button>
+                        <button class="btn" onclick="rollInitiative()">Roll Initiative</button>
+                        <button class="btn" onclick="endRound()">End Round</button>
+                        <button class="btn btn-danger" onclick="endCombat()">End Combat</button>
+                    </div>
+                    <div id="combatantList" style="margin-top:16px;">
+                        ${combat.combatants?.map(c => `
+                            <div class="combatant ${c.isCurrentTurn ? 'active' : ''}">
+                                <div class="combatant-info">
+                                    <div class="combatant-name">${c.name}</div>
+                                    <div class="combatant-hp">HP: ${c.currentHp}/${c.maxHp} • AC: ${c.ac} • Initiative: ${c.initiative || '-'}</div>
+                                    ${c.conditions ? `<div>${c.conditions.split(',').map(cond => `<span class="condition-tag">${cond.trim()}</span>`).join('')}</div>` : ''}
+                                </div>
+                                <div>
+                                    <button class="btn" onclick="attackCombatant('${c.name}')">Attack</button>
+                                    <button class="btn" onclick="healCombatant('${c.name}')">Heal</button>
+                                </div>
+                            </div>
+                        `).join('') || '<div style="color:#a0a0a0;">No combatants yet</div>'}
+                    </div>
+                </div>
+            `;
+        }
+
+        async function addCombatant() {
+            const name = prompt('Combatant name:');
+            if (!name) return;
+            const ac = parseInt(prompt('AC:', '10')) || 10;
+            const hp = parseInt(prompt('Max HP:', '10')) || 10;
+            await fetch(`${API}/combat/${currentCombat.id}/combatant`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({name, ac, maxHp: hp})
+            });
+            renderCombatArea();
+        }
+
+        async function rollInitiative() {
+            await fetch(`${API}/combat/${currentCombat.id}/initiative`, {method: 'POST'});
+            renderCombatArea();
+        }
+
+        async function attackCombatant(targetName) {
+            const attacker = prompt('Attacker name:');
+            if (!attacker) return;
+            const bonus = parseInt(prompt('Attack bonus:', '5')) || 0;
+            const damage = prompt('Damage formula (e.g., 1d8+2):', '1d6');
+            const advantage = confirm('Advantage? (Cancel for normal)');
+            const disadvantage = !advantage && confirm('Disadvantage? (Cancel for normal)');
+
+            const response = await fetch(`${API}/combat/${currentCombat.id}/attack`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    attackerName: attacker,
+                    targetName,
+                    attackBonus: bonus,
+                    damageFormula: damage,
+                    advantage,
+                    disadvantage
+                })
+            });
+            const result = await response.json();
+            alert(result.description);
+            renderCombatArea();
+        }
+
+        async function healCombatant(name) {
+            const amount = parseInt(prompt('Healing amount:')) || 0;
+            if (!amount) return;
+            await fetch(`${API}/combat/${currentCombat.id}/heal`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({name, amount})
+            });
+            renderCombatArea();
+        }
+
+        async function endRound() {
+            await fetch(`${API}/combat/${currentCombat.id}/end-round`, {method: 'POST'});
+            renderCombatArea();
+        }
+
+        async function endCombat() {
+            await fetch(`${API}/combat/${currentCombat.id}/end`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({status: 'ENDED'})
+            });
+            currentCombat = null;
+            renderCombat(document.getElementById('mainContent'));
+        }
+
+        // ===== Spells =====
+        async function renderSpells(container) {
+            const allSpells = await loadSpells();
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">✨ Spell Browser</h2>
+                <div class="filter-bar">
+                    <input class="input" id="spellSearch" placeholder="Search spells..." style="width:300px;" oninput="filterSpells()">
+                    <select id="spellLevel" onchange="filterSpells()">
+                        <option value="">All Levels</option>
+                        <option value="0">Cantrip</option>
+                        ${[1,2,3,4,5,6,7,8,9].map(l => `<option value="${l}">Level ${l}</option>`).join('')}
+                    </select>
+                    <select id="spellSchool" onchange="filterSpells()">
+                        <option value="">All Schools</option>
+                        <option>Abjuration</option><option>Conjuration</option><option>Divination</option>
+                        <option>Enchantment</option><option>Evocation</option><option>Illusion</option>
+                        <option>Necromancy</option><option>Transmutation</option>
+                    </select>
+                </div>
+                <div class="grid grid-3" id="spellList">
+                    ${allSpells.map(s => renderSpellCard(s)).join('')}
+                </div>
+            `;
+        }
+
+        function renderSpellCard(s) {
+            return `
+                <div class="spell-card" onclick="showSpellDetail(${s.id})">
+                    <h4>${s.name}</h4>
+                    <div class="meta">
+                        Level ${s.level} • ${s.school} • ${s.castingTime}
+                    </div>
+                    <div class="meta" style="margin-top:4px;">
+                        Range: ${s.range} • Duration: ${s.duration}
+                    </div>
+                    ${s.concentration ? '<span class="condition-tag" style="background:#6c63ff;">Concentration</span>' : ''}
+                    ${s.ritual ? '<span class="condition-tag" style="background:#48bb78;">Ritual</span>' : ''}
+                </div>
+            `;
+        }
+
+        async function showSpellDetail(id) {
+            const spell = spells.find(s => s.id === id);
+            if (!spell) return;
+            const content = document.getElementById('mainContent');
+            content.innerHTML = `
+                <h2 style="margin-bottom:20px;">✨ ${spell.name}</h2>
+                <div class="card">
+                    <div class="grid grid-2">
+                        <div>
+                            <p><strong>Level:</strong> ${spell.level}</p>
+                            <p><strong>School:</strong> ${spell.school}</p>
+                            <p><strong>Casting Time:</strong> ${spell.castingTime}</p>
+                            <p><strong>Range:</strong> ${spell.range}</p>
+                            <p><strong>Components:</strong> ${spell.components}</p>
+                            <p><strong>Duration:</strong> ${spell.duration}</p>
+                            <p><strong>Concentration:</strong> ${spell.concentration ? 'Yes' : 'No'}</p>
+                            <p><strong>Ritual:</strong> ${spell.ritual ? 'Yes' : 'No'}</p>
+                        </div>
+                        <div>
+                            ${spell.damageFormula ? `<p><strong>Damage:</strong> ${spell.damageFormula} (${spell.damageType || ''})</p>` : ''}
+                            ${spell.healingFormula ? `<p><strong>Healing:</strong> ${spell.healingFormula}</p>` : ''}
+                        </div>
+                    </div>
+                    <div style="margin-top:16px;">
+                        <h4>Description</h4>
+                        <p style="color:#a0a0a0;white-space:pre-wrap;">${spell.description || 'No description'}</p>
+                    </div>
+                </div>
+                <button class="btn" onclick="switchView('spells')">← Back to Spells</button>
+            `;
+        }
+
+        function filterSpells() {
+            const search = document.getElementById('spellSearch').value.toLowerCase();
+            const level = document.getElementById('spellLevel').value;
+            const school = document.getElementById('spellSchool').value;
+
+            const filtered = spells.filter(s => {
+                if (search && !s.name.toLowerCase().includes(search)) return false;
+                if (level !== '' && s.level !== parseInt(level)) return false;
+                if (school && s.school !== school) return false;
+                return true;
+            });
+
+            document.getElementById('spellList').innerHTML = filtered.map(s => renderSpellCard(s)).join('');
+        }
+
+        // ===== Gameplay =====
+        async function renderGameplay(container) {
+            const chars = await getCharacters();
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🎯 Skill Checks & Actions</h2>
+                ${chars.length === 0 ? '<div class="loading">Create a character first!</div>' : `
+                <div class="card">
+                    <h3>Select Character</h3>
+                    <select class="input" id="gameplayChar" style="max-width:300px;">
+                        ${chars.map(c => `<option value="${c.id}">${c.name} (${c.characterClass} ${c.level})</option>`).join('')}
+                    </select>
+                </div>
+                <div class="grid grid-2">
+                    <div class="card">
+                        <h3>🎯 Skill Check</h3>
+                        <div class="form-group">
+                            <label>Skill</label>
+                            <select class="input" id="skillCheckSkill">
+                                <option>Athletics</option><option>Acrobatics</option><option>Sleight of Hand</option>
+                                <option>Stealth</option><option>Arcana</option><option>History</option>
+                                <option>Investigation</option><option>Nature</option><option>Religion</option>
+                                <option>Animal Handling</option><option>Insight</option><option>Medicine</option>
+                                <option>Perception</option><option>Survival</option><option>Deception</option>
+                                <option>Intimidation</option><option>Performance</option><option>Persuasion</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>DC</label>
+                            <input class="input" type="number" id="skillCheckDc" value="10">
+                        </div>
+                        <button class="btn" onclick="doSkillCheck()">Make Check</button>
+                        <button class="btn" onclick="doSkillCheck(true)">Advantage</button>
+                        <button class="btn" onclick="doSkillCheck(false,true)">Disadvantage</button>
+                    </div>
+                    <div class="card">
+                        <h3>🛡️ Saving Throw</h3>
+                        <div class="form-group">
+                            <label>Ability</label>
+                            <select class="input" id="saveAbility">
+                                <option>Str</option><option>Dex</option><option>Con</option>
+                                <option>Int</option><option>Wis</option><option>Cha</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>DC</label>
+                            <input class="input" type="number" id="saveDc" value="10">
+                        </div>
+                        <button class="btn" onclick="doSavingThrow()">Make Save</button>
+                        <button class="btn" onclick="doSavingThrow(true)">Advantage</button>
+                        <button class="btn" onclick="doSavingThrow(false,true)">Disadvantage</button>
+                    </div>
+                </div>
+                <div class="grid grid-2">
+                    <div class="card">
+                        <h3>🌙 Rest</h3>
+                        <button class="btn" onclick="doShortRest()">Short Rest</button>
+                        <button class="btn" onclick="doLongRest()">Long Rest</button>
+                    </div>
+                    <div class="card">
+                        <h3>⭐ Award XP</h3>
+                        <div class="form-group">
+                            <label>XP Amount</label>
+                            <input class="input" type="number" id="xpAmount" value="100">
+                        </div>
+                        <button class="btn btn-success" onclick="doAwardXp()">Award XP</button>
+                    </div>
+                </div>
+                <div class="card" id="gameplayResult" style="display:none;"></div>
+                `}
+            `;
+        }
+
+        async function doSkillCheck(advantage=false, disadvantage=false) {
+            const charId = document.getElementById('gameplayChar').value;
+            const skill = document.getElementById('skillCheckSkill').value;
+            const dc = parseInt(document.getElementById('skillCheckDc').value) || 10;
+
+            const response = await fetch(`${API}/gameplay/skill-check`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({characterId: parseInt(charId), skill, dc, advantage, disadvantage})
+            });
+            const result = await response.json();
+            showGameplayResult(result.description);
+        }
+
+        async function doSavingThrow(advantage=false, disadvantage=false) {
+            const charId = document.getElementById('gameplayChar').value;
+            const ability = document.getElementById('saveAbility').value;
+            const dc = parseInt(document.getElementById('saveDc').value) || 10;
+
+            const response = await fetch(`${API}/gameplay/saving-throw`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({characterId: parseInt(charId), ability, dc, advantage, disadvantage})
+            });
+            const result = await response.json();
+            showGameplayResult(result.description);
+        }
+
+        async function doShortRest() {
+            const charId = document.getElementById('gameplayChar').value;
+            const response = await fetch(`${API}/gameplay/short-rest`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({characterId: parseInt(charId), hitDice: 1})
+            });
+            const char = await response.json();
+            showGameplayResult(`Short rest complete! HP: ${char.hitPoints}/${char.maxHitPoints}`);
+        }
+
+        async function doLongRest() {
+            const charId = document.getElementById('gameplayChar').value;
+            const response = await fetch(`${API}/gameplay/long-rest`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({characterId: parseInt(charId)})
+            });
+            const char = await response.json();
+            showGameplayResult(`Long rest complete! HP: ${char.hitPoints}/${char.maxHitPoints}`);
+        }
+
+        async function doAwardXp() {
+            const charId = document.getElementById('gameplayChar').value;
+            const xp = parseInt(document.getElementById('xpAmount').value) || 0;
+            const response = await fetch(`${API}/gameplay/award-xp`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({characterId: parseInt(charId), xp})
+            });
+            const char = await response.json();
+            showGameplayResult(`Awarded ${xp} XP! Total: ${char.experiencePoints} XP (Level ${char.level})`);
+        }
+
+        function showGameplayResult(message) {
+            const el = document.getElementById('gameplayResult');
+            el.style.display = 'block';
+            el.innerHTML = `<h3>📜 Result</h3><p style="font-size:18px;color:#6c63ff;">${message}</p>`;
+        }
+
+        // ===== Rules =====
+        async function renderRules(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">📖 Rules Reference</h2>
+                <div class="card">
+                    <div class="form-group">
+                        <input class="input" id="rulesSearch" placeholder="Search rules..." oninput="searchRules()">
+                    </div>
+                </div>
+                <div id="rulesList"></div>
+            `;
+            loadRules();
+        }
+
+        async function loadRules() {
+            const response = await fetch(`${API}/rules/summary`);
+            const summary = await response.json();
+            const list = document.getElementById('rulesList');
+            list.innerHTML = `
+                <div class="card">
+                    <h3>📊 Summary</h3>
+                    <p>Total Rules: ${summary.totalRules}</p>
+                    <p>Categories: ${summary.categories?.join(', ') || 'None'}</p>
+                </div>
+                <div class="card">
+                    <h3>📚 Categories</h3>
+                    <div id="categoryRules"></div>
+                </div>
+            `;
+
+            // Load rules by category
+            if (summary.categories) {
+                const catContainer = document.getElementById('categoryRules');
+                for (const cat of summary.categories) {
+                    const rules = await fetch(`${API}/rules/category?category=${cat}`).then(r => r.json());
+                    catContainer.innerHTML += `
+                        <div style="margin:8px 0;">
+                            <strong>${cat}</strong> (${rules.length} rules)
+                            <ul style="margin-left:20px;color:#a0a0a0;">
+                                ${rules.slice(0, 5).map(r => `<li>${r.title}: ${r.content?.substring(0, 100)}...</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        async function searchRules() {
+            const query = document.getElementById('rulesSearch').value;
+            if (query.length < 2) return loadRules();
+
+            const response = await fetch(`${API}/rules/search?keyword=${encodeURIComponent(query)}`);
+            const rules = await response.json();
+            const list = document.getElementById('rulesList');
+            list.innerHTML = `
+                <div class="card">
+                    <h3>🔍 Search Results: ${query}</h3>
+                    ${rules.map(r => `
+                        <div style="margin:8px 0;padding:8px;border-bottom:1px solid #2d3748;">
+                            <strong>${r.title}</strong>
+                            <p style="color:#a0a0a0;">${r.content?.substring(0, 200)}...</p>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No results</div>'}
+                </div>
+            `;
+        }
+
+        // ===== Data Loading =====
+        async function getCharacters() {
+            if (characters.length === 0) {
+                await loadCharacters();
+            }
+            return characters;
+        }
+
+        async function loadCharacters() {
+            try {
+                const response = await fetch(`${API}/characters`);
+                characters = await response.json();
+            } catch (e) {
+                console.error('Failed to load characters:', e);
+            }
+            return characters;
+        }
+
+        async function loadSpells() {
+            try {
+                const response = await fetch(`${API}/spells`);
+                spells = await response.json();
+            } catch (e) {
+                console.error('Failed to load spells:', e);
+            }
+            return spells;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+[
+  {
+    "id": "HUMAN",
+    "name": "Human",
+    "description": "Humans are known for their ingenuity, determination, and adaptability. They excel in diplomacy and exploration.",
+    "homeWorld": "Earth",
+    "government": "United Federation of Planets",
+    "socialDM": 0,
+    "combatBonus": 0,
+    "scienceBonus": 2,
+    "diplomacyBonus": 2,
+    "tradeBonus": 0
+  },
+  {
+    "id": "VULCAN",
+    "name": "Vulcan",
+    "description": "Vulcans value logic and reason above all. They are master scientists and negotiators.",
+    "homeWorld": "Vulcan",
+    "government": "United Federation of Planets",
+    "socialDM": -1,
+    "combatBonus": 0,
+    "scienceBonus": 3,
+    "diplomacyBonus": 1,
+    "tradeBonus": 0
+  },
+  {
+    "id": "KLINGON",
+    "name": "Klingon",
+    "description": "Klingons are a warrior culture that values honor, courage, and strength in battle.",
+    "homeWorld": "Qo'noS",
+    "government": "Klingon Empire",
+    "socialDM": -2,
+    "combatBonus": 3,
+    "scienceBonus": 0,
+    "diplomacyBonus": -1,
+    "tradeBonus": 0
+  },
+  {
+    "id": "ROMULAN",
+    "name": "Romulan",
+    "description": "Romulans are cunning strategists who value secrecy and deception. Masters of stealth technology.",
+    "homeWorld": "Romulus",
+    "government": "Romulan Star Empire",
+    "socialDM": -1,
+    "combatBonus": 1,
+    "scienceBonus": 2,
+    "diplomacyBonus": 1,
+    "tradeBonus": 0
+  },
+  {
+    "id": "FERENGI",
+    "name": "Ferengi",
+    "description": "Ferengi are driven by profit and commerce. They are the greatest traders in the galaxy.",
+    "homeWorld": "Ferenginar",
+    "government": "Ferengi Alliance",
+    "socialDM": -2,
+    "combatBonus": -1,
+    "scienceBonus": 1,
+    "diplomacyBonus": 0,
+    "tradeBonus": 3
+  },
+  {
+    "id": "BORG",
+    "name": "Borg",
+    "description": "The Borg are a cybernetic collective that assimilates other species. They represent an existential threat.",
+    "homeWorld": "Borg Cube",
+    "government": "Borg Collective",
+    "socialDM": -3,
+    "combatBonus": 3,
+    "scienceBonus": 3,
+    "diplomacyBonus": -3,
+    "tradeBonus": 0
+  },
+  {
+    "id": "CARDASSIAN",
+    "name": "Cardassian",
+    "description": "Cardassians are militaristic and expansionist, valuing order and discipline above all.",
+    "homeWorld": "Cardassia Prime",
+    "government": "Cardassian Union",
+    "socialDM": -1,
+    "combatBonus": 2,
+    "scienceBonus": 1,
+    "diplomacyBonus": 0,
+    "tradeBonus": 0
+  },
+  {
+    "id": "ANDORIAN",
+    "name": "Andorian",
+    "description": "Andorians are fierce warriors from a cold world, known for their military prowess and honor.",
+    "homeWorld": "Andoria",
+    "government": "United Federation of Planets",
+    "socialDM": -1,
+    "combatBonus": 2,
+    "scienceBonus": 0,
+    "diplomacyBonus": 0,
+    "tradeBonus": 0
+  },
+  {
+    "id": "BETAZOID",
+    "name": "Betazoid",
+    "description": "Betazoids are telepathic beings who excel in diplomacy and interspecies communication.",
+    "homeWorld": "Betazed",
+    "government": "United Federation of Planets",
+    "socialDM": 1,
+    "combatBonus": 0,
+    "scienceBonus": 1,
+    "diplomacyBonus": 3,
+    "tradeBonus": 0
+  },
+  {
+    "id": "DENOBULAN",
+    "name": "Denobulan",
+    "description": "Denobulans are the greatest healers in the galaxy, with advanced medical knowledge.",
+    "homeWorld": "Denobula",
+    "government": "United Federation of Planets",
+    "socialDM": 0,
+    "combatBonus": -1,
+    "scienceBonus": 3,
+    "diplomacyBonus": 1,
+    "tradeBonus": 0
+  }
+]

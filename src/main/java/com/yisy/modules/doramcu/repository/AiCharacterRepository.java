@@ -40,4 +40,14 @@ public interface AiCharacterRepository extends JpaRepository<AiCharacter, Long> 
      * Find AI admin tester characters.
      */
     java.util.List<AiCharacter> findByAiAdminTrue();
+
+    /**
+     * Find AI admin characters that are active, filtered by empire name.
+     */
+    java.util.List<AiCharacter> findByAiAdminTrueAndActiveTrueAndEmpireName(String empireName);
+
+    /**
+     * Find AI characters by role that are active, ordered by total experience descending.
+     */
+    List<AiCharacter> findByRoleAndActiveTrueOrderByTotalExperienceDesc(String role);
 }

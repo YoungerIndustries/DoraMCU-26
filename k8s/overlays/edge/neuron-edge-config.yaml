@@ -1,0 +1,62 @@
+# Edge Neuron ConfigMap — Configuration for edge-optimized neurons
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: neuron-edge-config
+  namespace: doramcu
+  labels:
+    app.kubernetes.io/name: neuron-edge
+    app.kubernetes.io/component: satellite-ai-edge
+    app.kubernetes.io/part-of: doramcu-neuron-network
+data:
+  # Server settings
+  SERVER_PORT: "8090"
+  SERVER_ADDRESS: "0.0.0.0"
+
+  # Neuron identity
+  NEURON_NODE_REGION: "edge"
+
+  # Coordinator connection
+  NEURON_COORDINATOR_URL: "http://doramcu-app:8084"
+  NEURON_HEARTBEAT_INTERVAL_MS: "30000"
+  NEURON_HEARTBEAT_TIMEOUT_MS: "10000"
+
+  # Satellite AI
+  NEURON_INFERENCE_THREADS: "1"
+  NEURON_CONFIDENCE_THRESHOLD: "0.6"
+
+  # Experience collection — reduced for edge
+  NEURON_EXPERIENCE_BUFFER_SIZE: "100"
+  NEURON_EXPERIENCE_FLUSH_INTERVAL_MS: "60000"
+
+  # Web portal
+  NEURON_GAME_SERVER_URL: "http://doramcu-app:8084"
+  NEURON_ENABLE_GAME_PROXY: "false"
+
+  # Consensus — disabled on edge to save resources
+  NEURON_ENABLE_CONSENSUS: "false"
+
+  # Mesh — disabled on edge to save resources
+  NEURON_MESH_ENABLED: "false"
+
+  # Edge optimization
+  NEURON_EDGE_AUTO_OPTIMIZE: "true"
+  NEURON_EDGE_QUANTIZATION_ENABLED: "true"
+  NEURON_EDGE_THERMAL_DETECTION_ENABLED: "true"
+  NEURON_EDGE_THERMAL_THROTTLE_THRESHOLD: "80.0"
+  NEURON_EDGE_SWAP_MONITORING_ENABLED: "true"
+  NEURON_EDGE_MAX_HEAP_MB: "512"
+
+  # Security
+  NEURON_SECURITY_JWT_ENABLED: "true"
+  NEURON_SECURITY_RATE_LIMITING_ENABLED: "true"
+  NEURON_SECURITY_MAX_REQUESTS_PER_WINDOW: "50"
+  NEURON_SECURITY_RATE_LIMIT_WINDOW_SECONDS: "60"
+
+  # Logging
+  LOGGING_LEVEL_ROOT: "INFO"
+  LOGGING_LEVEL_COM_YISY_MODULES_DORANEURON: "INFO"
+
+  # Actuator
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,metrics,prometheus"

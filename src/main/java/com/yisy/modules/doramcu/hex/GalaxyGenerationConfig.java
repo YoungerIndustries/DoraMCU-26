@@ -20,6 +20,15 @@ public class GalaxyGenerationConfig {
     public static final double DEFAULT_COMET_CHANCE = 0.2;
     public static final double DEFAULT_SPACE_STATION_CHANCE = 0.1;
     public static final double DEFAULT_HYPERLANE_DENSITY = 1.0;
+    public static final int DEFAULT_SECTOR_SIZE = 10;
+    public static final int DEFAULT_SUBSECTOR_DIMENSION = 10;
+    public static final double DEFAULT_CIVILIZATION_DENSITY = 0.3;
+    public static final double DEFAULT_RESOURCE_DISTRIBUTION = 0.5;
+    public static final String DEFAULT_GALAXY_SHAPE = "spiral";
+    public static final String DEFAULT_NAMING_CONVENTION = "astronomical";
+    public static final int DEFAULT_EMPIRE_COUNT = 4;
+    public static final String DEFAULT_DIFFICULTY_LEVEL = "medium";
+    public static final String DEFAULT_GAME_TYPE = "DoraT";
 
     private final int systemCount;
     private final int planetsPerSystem;
@@ -31,6 +40,20 @@ public class GalaxyGenerationConfig {
     private final double cometChance;
     private final double spaceStationChance;
     private final double hyperlaneDensity;
+    private final int sectorSize;
+    private final int subSectorDimension;
+    private final double civilizationDensity;
+    private final double resourceDistribution;
+    private final String galaxyShape;
+    private final String namingConvention;
+    private final int empireCount;
+    private final String difficultyLevel;
+    private final String gameType;
+    private final String campaignTheme;
+    private final int adventureHookCount;
+    private final double npcDensity;
+    private final String systemTheme;
+    private final boolean enable4xLayer;
 
     private GalaxyGenerationConfig(Builder builder) {
         this.systemCount = builder.systemCount;
@@ -43,6 +66,20 @@ public class GalaxyGenerationConfig {
         this.cometChance = builder.cometChance;
         this.spaceStationChance = builder.spaceStationChance;
         this.hyperlaneDensity = builder.hyperlaneDensity;
+        this.sectorSize = builder.sectorSize;
+        this.subSectorDimension = builder.subSectorDimension;
+        this.civilizationDensity = builder.civilizationDensity;
+        this.resourceDistribution = builder.resourceDistribution;
+        this.galaxyShape = builder.galaxyShape;
+        this.namingConvention = builder.namingConvention;
+        this.empireCount = builder.empireCount;
+        this.difficultyLevel = builder.difficultyLevel;
+        this.gameType = builder.gameType;
+        this.campaignTheme = builder.campaignTheme;
+        this.adventureHookCount = builder.adventureHookCount;
+        this.npcDensity = builder.npcDensity;
+        this.systemTheme = builder.systemTheme;
+        this.enable4xLayer = builder.enable4xLayer;
     }
 
     /**
@@ -94,6 +131,21 @@ public class GalaxyGenerationConfig {
         return hyperlaneDensity;
     }
 
+    public int getSectorSize() { return sectorSize; }
+    public int getSubSectorDimension() { return subSectorDimension; }
+    public double getCivilizationDensity() { return civilizationDensity; }
+    public double getResourceDistribution() { return resourceDistribution; }
+    public String getGalaxyShape() { return galaxyShape; }
+    public String getNamingConvention() { return namingConvention; }
+    public int getEmpireCount() { return empireCount; }
+    public String getDifficultyLevel() { return difficultyLevel; }
+    public String getGameType() { return gameType; }
+    public String getCampaignTheme() { return campaignTheme; }
+    public int getAdventureHookCount() { return adventureHookCount; }
+    public double getNpcDensity() { return npcDensity; }
+    public String getSystemTheme() { return systemTheme; }
+    public boolean isEnable4xLayer() { return enable4xLayer; }
+
     @Override
     public String toString() {
         return String.format("GalaxyGenerationConfig{systems=%d, planets=%d, moon=%.0f%%, asteroid=%.0f%%, gasGiant=%.0f%%, nebula=%.0f%%, blackHole=%.0f%%, comet=%.0f%%, station=%.0f%%, hyperlanes=%.1fx}",
@@ -117,6 +169,20 @@ public class GalaxyGenerationConfig {
         private double cometChance = DEFAULT_COMET_CHANCE;
         private double spaceStationChance = DEFAULT_SPACE_STATION_CHANCE;
         private double hyperlaneDensity = DEFAULT_HYPERLANE_DENSITY;
+        private int sectorSize = DEFAULT_SECTOR_SIZE;
+        private int subSectorDimension = DEFAULT_SUBSECTOR_DIMENSION;
+        private double civilizationDensity = DEFAULT_CIVILIZATION_DENSITY;
+        private double resourceDistribution = DEFAULT_RESOURCE_DISTRIBUTION;
+        private String galaxyShape = DEFAULT_GALAXY_SHAPE;
+        private String namingConvention = DEFAULT_NAMING_CONVENTION;
+        private int empireCount = DEFAULT_EMPIRE_COUNT;
+        private String difficultyLevel = DEFAULT_DIFFICULTY_LEVEL;
+        private String gameType = DEFAULT_GAME_TYPE;
+        private String campaignTheme;
+        private int adventureHookCount;
+        private double npcDensity;
+        private String systemTheme;
+        private boolean enable4xLayer;
 
         public Builder systemCount(int systemCount) {
             if (systemCount < 0) {
@@ -195,6 +261,76 @@ public class GalaxyGenerationConfig {
                 throw new IllegalArgumentException("Hyperlane density must be between 0.5 and 2.75: " + density);
             }
             this.hyperlaneDensity = density;
+            return this;
+        }
+
+        public Builder sectorSize(int sectorSize) {
+            this.sectorSize = sectorSize;
+            return this;
+        }
+
+        public Builder subSectorDimension(int subSectorDimension) {
+            this.subSectorDimension = subSectorDimension;
+            return this;
+        }
+
+        public Builder civilizationDensity(double civilizationDensity) {
+            this.civilizationDensity = civilizationDensity;
+            return this;
+        }
+
+        public Builder resourceDistribution(double resourceDistribution) {
+            this.resourceDistribution = resourceDistribution;
+            return this;
+        }
+
+        public Builder galaxyShape(String galaxyShape) {
+            this.galaxyShape = galaxyShape;
+            return this;
+        }
+
+        public Builder namingConvention(String namingConvention) {
+            this.namingConvention = namingConvention;
+            return this;
+        }
+
+        public Builder empireCount(int empireCount) {
+            this.empireCount = empireCount;
+            return this;
+        }
+
+        public Builder difficultyLevel(String difficultyLevel) {
+            this.difficultyLevel = difficultyLevel;
+            return this;
+        }
+
+        public Builder gameType(String gameType) {
+            this.gameType = gameType;
+            return this;
+        }
+
+        public Builder campaignTheme(String campaignTheme) {
+            this.campaignTheme = campaignTheme;
+            return this;
+        }
+
+        public Builder adventureHookCount(int adventureHookCount) {
+            this.adventureHookCount = adventureHookCount;
+            return this;
+        }
+
+        public Builder npcDensity(double npcDensity) {
+            this.npcDensity = npcDensity;
+            return this;
+        }
+
+        public Builder systemTheme(String systemTheme) {
+            this.systemTheme = systemTheme;
+            return this;
+        }
+
+        public Builder enable4xLayer(boolean enable4xLayer) {
+            this.enable4xLayer = enable4xLayer;
             return this;
         }
 

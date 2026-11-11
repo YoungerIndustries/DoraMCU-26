@@ -1,0 +1,21 @@
+# Kustomization — Base configuration
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: doramcu
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - resource-quota.yaml
+  - app-deployment.yaml
+  - neuron-deployment.yaml
+  - mysql.yaml
+  - redis.yaml
+  - dl-service.yaml
+  - prometheus.yaml
+  - grafana.yaml
+  - ingress.yaml
+
+commonLabels:
+  app.kubernetes.io/part-of: doramcu-neuron-network

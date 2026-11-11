@@ -141,16 +141,110 @@ public enum GalaxyTemplate {
             "Custom",
             "A blank slate using all default generation parameters.",
             GalaxyGenerationConfig.builder().build()
+    ),
+
+    /**
+     * Subsector RPG template: small-scale galaxy for subsector-focused campaigns.
+     */
+    SUBSECTOR_RPG(
+            "Subsector RPG",
+            "A small-scale subsector galaxy for focused RPG campaigns.",
+            GalaxyGenerationConfig.builder()
+                    .sectorSize(3)
+                    .subSectorDimension(1)
+                    .civilizationDensity(0.5)
+                    .resourceDistribution(0.6)
+                    .galaxyShape("irregular")
+                    .namingConvention("astronomical")
+                    .empireCount(2)
+                    .difficultyLevel("medium")
+                    .gameType("Subsector RPG")
+                    .build()
+    ),
+
+    /**
+     * Single System RPG template: a single solar system for tabletop RPG campaigns.
+     */
+    SINGLE_SYSTEM_RPG(
+            "Single System RPG",
+            "A single solar system for tabletop RPG campaigns.",
+            GalaxyGenerationConfig.builder()
+                    .systemCount(1)
+                    .planetsPerSystem(5)
+                    .moonChance(0.3)
+                    .asteroidBeltChance(0.5)
+                    .gasGiantChance(0.3)
+                    .nebulaChance(0.0)
+                    .blackHoleChance(0.0)
+                    .cometChance(0.1)
+                    .spaceStationChance(0.2)
+                    .hyperlaneDensity(0.0)
+                    .empireCount(1)
+                    .difficultyLevel("easy")
+                    .gameType("Single System RPG")
+                    .build()
     );
 
     private final String displayName;
     private final String description;
     private final GalaxyGenerationConfig config;
 
+    /**
+     * Optional empire builder for this template. When set, {@link #launchGame(String, long)}
+     * will use this builder to populate the galaxy with themed empires.
+     */
+    private static volatile EmpireBuilder empireBuilder;
+
     GalaxyTemplate(String displayName, String description, GalaxyGenerationConfig config) {
         this.displayName = displayName;
         this.description = description;
         this.config = config;
+    }
+
+    /**
+     * Sets the global empire builder used by {@link #launchGame(String, long)}.
+     *
+     * @param builder the empire builder, or null to use the default
+     */
+    public static void setEmpireBuilder(EmpireBuilder builder) {
+        empireBuilder = builder;
+    }
+
+    /**
+     * Returns the current global empire builder.
+     *
+     * @return the empire builder, or null if not set
+     */
+    public static EmpireBuilder getEmpireBuilder() {
+        return empireBuilder;
+    }
+
+    /**
+     * Launches a new game using this template's configuration.
+     * <p>
+     * Creates a {@link Game} with a single galaxy generated from this template's config,
+     * then populates it with empires using the configured {@link EmpireBuilder}.
+     * </p>
+     *
+     * @param name the game/galaxy name
+     * @param seed the random seed for reproducibility
+     * @return the created game with galaxy and empires
+     */
+    public Game launchGame(String name, long seed) {
+        Game game = new Game(name);
+
+        // Generate galaxy from this template's config
+        Galaxy galaxy = GalaxyFactory.generateFromTemplate(name, this, seed);
+        game.addGalaxy(galaxy);
+
+        // Build empires using the configured builder or a default one
+        EmpireBuilder builder = empireBuilder;
+        if (builder == null) {
+            builder = new com.yisy.modules.doramcu.hex.manager.DefaultEmpireBuilder(seed);
+        }
+        builder.buildEmpires(game, galaxy);
+
+        return game;
     }
 
     /**

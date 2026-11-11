@@ -1,9 +1,10 @@
 package com.yisy.modules.doramcu.captainslog.service;
 
-import com.yisy.modules.doramcu.captainslog.model.RulesEntry;
 import com.yisy.modules.doramcu.captainslog.model.RulesTable;
-import com.yisy.modules.doramcu.captainslog.repository.RulesEntryRepository;
 import com.yisy.modules.doramcu.captainslog.repository.RulesTableRepository;
+import com.yisy.modules.doramcu.shared.model.GameSystem;
+import com.yisy.modules.doramcu.shared.model.RulesEntry;
+import com.yisy.modules.doramcu.shared.repository.UnifiedRulesEntryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -31,11 +32,11 @@ public class RulesService {
 
     private static final Logger log = LoggerFactory.getLogger(RulesService.class);
 
-    private final RulesEntryRepository entryRepository;
+    private final UnifiedRulesEntryRepository entryRepository;
     private final RulesTableRepository tableRepository;
     private boolean initialized = false;
 
-    public RulesService(RulesEntryRepository entryRepository, RulesTableRepository tableRepository) {
+    public RulesService(UnifiedRulesEntryRepository entryRepository, RulesTableRepository tableRepository) {
         this.entryRepository = entryRepository;
         this.tableRepository = tableRepository;
     }
@@ -70,6 +71,7 @@ public class RulesService {
     @Transactional
     public void populateRuleEntries() {
         List<RulesEntry> entries = new ArrayList<>();
+        GameSystem gs = GameSystem.CAPTAINS_LOG;
 
         // --- Chapter 05.00: Rules of Play ---
 
@@ -1648,42 +1650,48 @@ public class RulesService {
      * Gets all rule entries for a specific category.
      */
     public List<RulesEntry> getRulesByCategory(String category) {
-        return entryRepository.findByCategoryAndActiveTrue(category);
+        return entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, category);
     }
 
     /**
      * Gets all rule entries for a specific chapter.
      */
     public List<RulesEntry> getRulesByChapter(String chapter) {
-        return entryRepository.findByChapterAndActiveTrue(chapter);
+        return entryRepository.findByGameSystemAndChapterAndActiveTrue(GameSystem.CAPTAINS_LOG, chapter);
     }
 
     /**
      * Searches rules by keyword across all categories.
      */
     public List<RulesEntry> searchRules(String keyword) {
-        return entryRepository.searchByKeyword(keyword);
+        return entryRepository.searchByTitle(GameSystem.CAPTAINS_LOG, keyword);
     }
 
     /**
      * Searches rules by keyword within a specific category.
      */
     public List<RulesEntry> searchRulesInCategory(String category, String keyword) {
-        return entryRepository.searchByKeywordInCategory(category, keyword);
+        return entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, category)
+                .stream()
+                .filter(r -> r.getTitle().toLowerCase().contains(keyword.toLowerCase()) ||
+                             (r.getText() != null && r.getText().toLowerCase().contains(keyword.toLowerCase())))
+                .toList();
     }
 
     /**
      * Gets all available rule categories.
      */
     public List<String> getCategories() {
-        return entryRepository.findDistinctCategories();
+        return entryRepository.findByGameSystemAndActiveTrue(GameSystem.CAPTAINS_LOG)
+                .stream().map(RulesEntry::getCategory).distinct().toList();
     }
 
     /**
      * Gets all available chapters.
      */
     public List<String> getChapters() {
-        return entryRepository.findDistinctChapters();
+        return entryRepository.findByGameSystemAndActiveTrue(GameSystem.CAPTAINS_LOG)
+                .stream().map(RulesEntry::getChapter).distinct().toList();
     }
 
     /**
@@ -1745,52 +1753,52 @@ public class RulesService {
 
         String actionLower = action.toLowerCase();
         if (actionLower.contains("roll") || actionLower.contains("check") || actionLower.contains("task")) {
-            results.addAll(entryRepository.findByCategoryAndActiveTrue("DICE_MECHANICS"));
+            results.addAll(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "DICE_MECHANICS"));
         }
         if (actionLower.contains("combat") || actionLower.contains("fight") || actionLower.contains("attack")) {
-            results.addAll(entryRepository.findByCategoryAndActiveTrue("COMBAT"));
+            results.addAll(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "COMBAT"));
         }
         if (actionLower.contains("momentum")) {
-            results.addAll(entryRepository.findByCategoryAndActiveTrue("MOMENTUM"));
+            results.addAll(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "MOMENTUM"));
         }
         if (actionLower.contains("threat")) {
-            results.addAll(entryRepository.findByCategoryAndActiveTrue("THREAT"));
+            results.addAll(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "THREAT"));
         }
         if (actionLower.contains("mission") || actionLower.contains("act") || actionLower.contains("beat")) {
-            results.addAll(entryRepository.findByCategoryAndActiveTrue("MISSION_STRUCTURE"));
+            results.addAll(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "MISSION_STRUCTURE"));
         }
         if (actionLower.contains("oracle") || actionLower.contains("yes") || actionLower.contains("no")) {
-            results.addAll(entryRepository.findByCategoryAndActiveTrue("ORACLE"));
+            results.addAll(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "ORACLE"));
         }
         if (actionLower.contains("ship") || actionLower.contains("starship")) {
-            results.addAll(entryRepository.findByCategoryAndActiveTrue("STARSHIP"));
+            results.addAll(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "STARSHIP"));
         }
         if (actionLower.contains("character") || actionLower.contains("create") || actionLower.contains("lifepath")) {
-            results.addAll(entryRepository.findByCategoryAndActiveTrue("CHARACTER_CREATION"));
+            results.addAll(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "CHARACTER_CREATION"));
         }
         if (actionLower.contains("career") || actionLower.contains("promotion") || actionLower.contains("rank")) {
-            results.addAll(entryRepository.findByCategoryAndActiveTrue("CAREER"));
+            results.addAll(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "CAREER"));
         }
         if (actionLower.contains("maintenance") || actionLower.contains("downtime") || actionLower.contains("repair")) {
-            results.addAll(entryRepository.findByCategoryAndActiveTrue("MAINTENANCE"));
+            results.addAll(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "MAINTENANCE"));
         }
         if (actionLower.contains("equipment") || actionLower.contains("weapon") || actionLower.contains("gear")) {
-            results.addAll(entryRepository.findByCategoryAndActiveTrue("EQUIPMENT"));
+            results.addAll(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "EQUIPMENT"));
         }
         if (actionLower.contains("crew") || actionLower.contains("npc") || actionLower.contains("team")) {
-            results.addAll(entryRepository.findByCategoryAndActiveTrue("CREW"));
+            results.addAll(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "CREW"));
         }
         if (actionLower.contains("campaign") || actionLower.contains("arc") || actionLower.contains("story")) {
-            results.addAll(entryRepository.findByCategoryAndActiveTrue("CAMPAIGN"));
+            results.addAll(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "CAMPAIGN"));
         }
         if (actionLower.contains("injury") || actionLower.contains("health") || actionLower.contains("wound")) {
-            results.addAll(entryRepository.findByCategoryAndActiveTrue("INJURY"));
+            results.addAll(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "INJURY"));
         }
         if (actionLower.contains("world") || actionLower.contains("planet") || actionLower.contains("generate")) {
-            results.addAll(entryRepository.findByCategoryAndActiveTrue("WORLD_GENERATION"));
+            results.addAll(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "WORLD_GENERATION"));
         }
         if (actionLower.contains("setting") || actionLower.contains("universe") || actionLower.contains("trek")) {
-            results.addAll(entryRepository.findByCategoryAndActiveTrue("SETTING"));
+            results.addAll(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "SETTING"));
         }
 
         return results;
@@ -1800,6 +1808,8 @@ public class RulesService {
 
     private RulesEntry createEntry(String title, String chapter, String category, Integer page, String text, String notes) {
         RulesEntry entry = new RulesEntry();
+        entry.setGameSystem(GameSystem.CAPTAINS_LOG);
+        entry.setSource("Captain's Log Solo RPG");
         entry.setTitle(title);
         entry.setChapter(chapter);
         entry.setCategory(category);

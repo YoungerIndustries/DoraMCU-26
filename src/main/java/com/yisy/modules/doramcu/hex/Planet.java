@@ -605,6 +605,19 @@ public class Planet extends CelestialBody {
         return !isIndependent;
     }
 
+    /**
+     * Returns the list of empire IDs that claim this planet.
+     * Currently returns a single-element list if owned, or an empty list if independent.
+     *
+     * @return list of empire IDs claiming this planet
+     */
+    public java.util.List<Integer> getEmpires() {
+        if (ownerEmpireId != null) {
+            return java.util.List.of(ownerEmpireId);
+        }
+        return java.util.Collections.emptyList();
+    }
+
     // ---- Delegated hex operations (backward compatibility) ----
 
     public Hex3D get(int x, int y) { return geometry.get(x, y); }

@@ -28,6 +28,18 @@ public class User {
     @Column(nullable = false)
     private String galaxyName = "Milky Way";
 
+    @Column(length = 100)
+    private String firstName;
+
+    @Column(length = 100)
+    private String lastName;
+
+    @Column(length = 20)
+    private String phoneNumber;
+
+    @Column(length = 200)
+    private String displayName;
+
     public User() {
     }
 
@@ -68,4 +80,16 @@ public class User {
     public void setGalaxyName(String galaxyName) {
         this.galaxyName = galaxyName;
     }
+
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+
+    public String getDisplayName() { return displayName; }
+    public void setDisplayName(String displayName) { this.displayName = displayName; }
 }

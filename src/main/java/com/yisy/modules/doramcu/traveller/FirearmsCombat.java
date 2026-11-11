@@ -350,7 +350,7 @@ public class FirearmsCombat {
         }
 
         // Hit — calculate damage
-        int rawDamage = weapon.rollDamage(null);
+        int rawDamage = weapon.rollDamage();
         int coverReduction = target.getCover().getDamageReduction();
         int actualDamage = target.applyDamage(rawDamage);
 

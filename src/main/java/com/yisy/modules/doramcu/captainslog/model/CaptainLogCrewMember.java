@@ -61,6 +61,10 @@ public class CaptainLogCrewMember {
     @Column(nullable = false)
     private boolean active = true;
 
+    /** Galaxy name for cross-galaxy crew management */
+    @Column(length = 100)
+    private String galaxyName;
+
     /** The character this crew member serves under. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "character_id", nullable = false)
@@ -161,5 +165,13 @@ public class CaptainLogCrewMember {
 
     public void setCharacter(CaptainLogCharacter character) {
         this.character = character;
+    }
+
+    public String getGalaxyName() {
+        return galaxyName;
+    }
+
+    public void setGalaxyName(String galaxyName) {
+        this.galaxyName = galaxyName;
     }
 }

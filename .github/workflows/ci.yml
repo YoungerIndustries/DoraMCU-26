@@ -5,12 +5,19 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
+  release:
+    types: [ published ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: write
 
     steps:
       - name: Checkout code
@@ -35,8 +42,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Build and test with Gradle
-        run: ./gradlew build --no-daemon --parallel
+      - name: Build with Gradle (skip distTar on Linux to avoid path issues)
+        run: ./gradlew :bootJar dora-ai:build dora-dl-core:build --no-daemon --parallel
+        env:
+          JAVA_OPTS: "-Xmx4g"
+
+      - name: Run tests
+        run: ./gradlew test --no-daemon --parallel
         env:
           JAVA_OPTS: "-Xmx4g"
 
@@ -54,3 +66,81 @@ jobs:
         with:
           name: dora-mcu-jar
           path: build/libs/*.jar
+
+      # Code Quality Check
+      - name: Check for compilation warnings
+        run: ./gradlew compileJava --no-daemon -warning-mode all 2>&1 | tee compile-log.txt || true
+
+      # Docker Build and Push
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for main app
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push main Docker image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push neuron Docker image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.neuron
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-neuron:latest,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-neuron:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-dev:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    environment: development
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Kubernetes (dev)
+        run: |
+          echo "Deploying to development cluster"
+          # kubectl apply -f k8s/base/ -n doramcu-dev
+          # kubectl apply -f k8s/overlays/dev/ -n doramcu-dev
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG_DEV }}
+
+  deploy-prod:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Kubernetes (prod)
+        run: |
+          echo "Deploying to production cluster"
+          # kubectl apply -f k8s/base/ -n doramcu-prod
+          # kubectl apply -f k8s/overlays/prod/ -n doramcu-prod
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG_PROD }}

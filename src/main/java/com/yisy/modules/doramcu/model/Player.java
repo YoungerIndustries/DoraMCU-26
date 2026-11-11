@@ -54,6 +54,21 @@ public class Player {
     @Column(nullable = false, length = 20)
     private Ethos ethos;
 
+    @Column(length = 100)
+    private String firstName;
+
+    @Column(length = 100)
+    private String lastName;
+
+    @Column(length = 20)
+    private String phoneNumber;
+
+    @Column(length = 50)
+    private String corporateRole;
+
+    @Column(length = 200)
+    private String displayName;
+
     @ManyToOne
     private User user;
 
@@ -167,6 +182,51 @@ public class Player {
 
     public void setAdmin(boolean admin) {
         isAdmin = admin;
+    }
+
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+
+    public String getCorporateRole() { return corporateRole; }
+    public void setCorporateRole(String corporateRole) { this.corporateRole = corporateRole; }
+
+    /** Returns display name, or falls back to first/last name or empire name */
+    public String getDisplayName() {
+        if (displayName != null && !displayName.isBlank()) {
+            return displayName;
+        }
+        if (firstName != null && !firstName.isBlank()) {
+            if (lastName != null && !lastName.isBlank()) {
+                return firstName + " " + lastName;
+            }
+            return firstName;
+        }
+        return empireName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    /** Returns the number of empires owned (always 1 for this model) */
+    public int getEmpireCount() {
+        return empireName != null ? 1 : 0;
+    }
+
+    /** Returns whether this player is owned by a corporation */
+    public boolean getOwnedByCorporation() {
+        return corporateRole != null && !corporateRole.isBlank();
+    }
+
+    /** Adds a skill — no-op placeholder for compatibility */
+    public void addSkill(Object skill) {
+        // No-op placeholder
     }
 
     @Override

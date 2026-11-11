@@ -1,0 +1,47 @@
+[
+  {
+    "id": "EXPLORATION",
+    "name": "Deep Space Exploration",
+    "description": "Chart unknown sectors and discover new star systems.",
+    "type": "EXPLORATION",
+    "difficulty": 3,
+    "rewardType": "RESEARCH",
+    "rewardAmount": 50
+  },
+  {
+    "id": "DIPLOMACY",
+    "name": "First Contact",
+    "description": "Establish diplomatic relations with a new species.",
+    "type": "DIPLOMACY",
+    "difficulty": 4,
+    "rewardType": "REPUTATION",
+    "rewardAmount": 30
+  },
+  {
+    "id": "COMBAT",
+    "name": "Fleet Engagement",
+    "description": "Defend against or attack an enemy fleet.",
+    "type": "COMBAT",
+    "difficulty": 5,
+    "rewardType": "TERRITORY",
+    "rewardAmount": 1
+  },
+  {
+    "id": "SCIENCE",
+    "name": "Scientific Survey",
+    "description": "Study a planet or phenomenon for scientific knowledge.",
+    "type": "SCIENCE",
+    "difficulty": 2,
+    "rewardType": "RESEARCH",
+    "rewardAmount": 80
+  },
+  {
+    "id": "COLONIZATION",
+    "name": "Colony Establishment",
+    "description": "Set up a new colony on an unclaimed planet.",
+    "type": "EXPANSION",
+    "difficulty": 3,
+    "rewardType": "COLONY",
+    "rewardAmount": 1
+  }
+]

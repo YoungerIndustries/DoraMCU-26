@@ -1,0 +1,604 @@
+{
+  "metadata": {
+    "title": "Earth 2026 Rules Database — DoraMCU Format",
+    "description": "Complete rules database for galaxy, system, and planet creation with species name databases for AI character generation. Used by Earth 2026 PlanetService for cross-game planet creation.",
+    "source": "Earth 2026 module — DoraMCU core game mechanics",
+    "format": "DoraMCU 2.0 JSON rules database",
+    "version": "1.0.0"
+  },
+
+  "species": [
+    {
+      "id": "HUMAN",
+      "name": "Human",
+      "description": "The dominant species of Earth, adaptable and versatile.",
+      "gameModule": "EARTH_2026",
+      "characteristics": {
+        "ST": 0,
+        "DX": 0,
+        "EN": 0,
+        "IN": 0,
+        "ED": 0,
+        "SO": 0
+      },
+      "combatDM": 0,
+      "socialDM": 0,
+      "navigationDM": 0,
+      "armorBonus": 0,
+      "tradeBonusPercent": 0,
+      "lifespan": 80,
+      "homeworld": "Earth",
+      "nameDatabase": {
+        "maleFirstNames": ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas", "Charles", "Christopher", "Daniel", "Matthew", "Anthony", "Mark", "Donald", "Steven", "Paul", "Andrew", "Joshua", "Kenneth", "Kevin", "Brian", "George", "Timothy", "Ronald", "Edward", "Jason", "Jeffrey", "Ryan", "Jacob", "Gary", "Nicholas", "Eric", "Jonathan", "Stephen", "Larry", "Justin", "Scott", "Brandon", "Benjamin", "Samuel", "Raymond", "Gregory", "Frank", "Alexander", "Patrick", "Jack", "Dennis", "Jerry"],
+        "femaleFirstNames": ["Mary", "Patricia", "Jennifer", "Linda", "Barbara", "Elizabeth", "Susan", "Jessica", "Sarah", "Karen", "Lisa", "Nancy", "Betty", "Margaret", "Sandra", "Ashley", "Dorothy", "Kimberly", "Emily", "Donna", "Michelle", "Carol", "Amanda", "Melissa", "Deborah", "Stephanie", "Rebecca", "Sharon", "Laura", "Cynthia", "Kathleen", "Amy", "Angela", "Shirley", "Anna", "Brenda", "Pamela", "Emma", "Nicole", "Helen", "Samantha", "Katherine", "Christine", "Debra", "Rachel", "Carolyn", "Janet", "Catherine", "Maria", "Heather"],
+        "lastNames": ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin", "Lee", "Perez", "Thompson", "White", "Harris", "Sanchez", "Clark", "Ramirez", "Lewis", "Robinson", "Walker", "Young", "Allen", "King", "Wright", "Scott", "Torres", "Nguyen", "Hill", "Flores", "Green", "Adams", "Nelson", "Baker", "Gonzalez", "Rivera", "Campbell", "Mitchell", "Carter", "Roberts", "Phillips"],
+        "titlePrefixes": ["Mr.", "Mrs.", "Ms.", "Dr.", "Prof.", "Capt.", "Gen.", "Adm.", "Pres.", "Hon."],
+        "titleSuffixes": ["Jr.", "Sr.", "II", "III", "IV", "Esq.", "MD", "PhD"],
+        "aiLeaderTitles": ["President", "Prime Minister", "Chancellor", "King", "Queen", "Emperor", "Governor", "Director", "Commander", "Ambassador"],
+        "aiGovernorTitles": ["Governor", "Mayor", "Prefect", "Minister", "Senator", "Representative", "Commissioner", "Administrator"],
+        "aiCaptainTitles": ["Captain", "Commander", "Colonel", "Major", "Lieutenant", "Admiral", "General"]
+      }
+    },
+    {
+      "id": "ASLAN",
+      "name": "Aslan",
+      "description": "Cat-like humanoids from the Aslan Compact. Proud warriors with enhanced combat abilities.",
+      "gameModule": "TRAVELLER",
+      "characteristics": {
+        "ST": 1,
+        "DX": 0,
+        "EN": 1,
+        "IN": 0,
+        "ED": 0,
+        "SO": -1
+      },
+      "combatDM": 1,
+      "socialDM": -1,
+      "navigationDM": 0,
+      "armorBonus": 0,
+      "tradeBonusPercent": 0,
+      "lifespan": 70,
+      "homeworld": "Rokiga",
+      "nameDatabase": {
+        "maleFirstNames": ["K'tharr", "R'kass", "T'vass", "K'vass", "R'tharr", "T'kass", "K'zarr", "R'zarr", "T'zarr", "K'nass", "R'nass", "T'nass", "K'voss", "R'voss", "T'voss", "K'thass", "R'thass", "T'thass", "K'zass", "R'zass", "T'zass", "K'noss", "R'noss", "T'noss", "K'vassh", "R'vassh", "T'vassh", "K'tharrh", "R'tharrh", "T'tharrh"],
+        "femaleFirstNames": ["K'thara", "R'kassa", "T'vassa", "K'vassa", "R'thara", "T'kassa", "K'zara", "R'zara", "T'zara", "K'nassa", "R'nassa", "T'nassa", "K'vossa", "R'vossa", "T'vossa", "K'thassa", "R'thassa", "T'thassa", "K'zassa", "R'zassa", "T'zassa", "K'nossa", "R'nossa", "T'nossa", "K'vassha", "R'vassha", "T'vassha", "K'tharrha", "R'tharrha", "T'tharrha"],
+        "lastNames": ["of Rokiga", "of Aslan", "of the Compact", "Clan K'tharr", "Clan R'kass", "Clan T'vass", "Clan K'vass", "Clan R'tharr", "Clan T'kass", "Clan K'zarr", "Clan R'zarr", "Clan T'zarr", "Clan K'nass", "Clan R'nass", "Clan T'nass"],
+        "titlePrefixes": ["Warlord", "Chieftain", "Elder", "Scout", "Hunter", "Guardian"],
+        "titleSuffixes": ["the Brave", "the Fierce", "the Swift", "the Proud", "the Noble"],
+        "aiLeaderTitles": ["Warlord", "High Chieftain", "Clan Leader", "Compact Elder", "War Chief"],
+        "aiGovernorTitles": ["District Elder", "Clan Governor", "Territory Chief", "Regional Scout"],
+        "aiCaptainTitles": ["Pack Leader", "Squadron Commander", "War Band Captain"]
+      }
+    },
+    {
+      "id": "VARGR",
+      "name": "Vargr",
+      "description": "Wolf-like humanoids, nomadic and tribal. Excellent navigators with pack tactics.",
+      "gameModule": "TRAVELLER",
+      "characteristics": {
+        "ST": 0,
+        "DX": 0,
+        "EN": 0,
+        "IN": 0,
+        "ED": 1,
+        "SO": 0
+      },
+      "combatDM": 0,
+      "socialDM": 0,
+      "navigationDM": 1,
+      "armorBonus": 0,
+      "tradeBonusPercent": 0,
+      "lifespan": 60,
+      "homeworld": "Spenrid",
+      "nameDatabase": {
+        "maleFirstNames": ["Fenris", "Garul", "Lupus", "Varg", "Korg", "Tharok", "Grom", "Ragnar", "Skoll", "Hati", "Morg", "Drakk", "Vorn", "Krag", "Thul", "Gruk", "Bork", "Durn", "Falk", "Grim", "Hrok", "Jarl", "Kael", "Mork", "Norr", "Osk", "Pyr", "Rokk", "Svar", "Torv"],
+        "femaleFirstNames": ["Fenra", "Garula", "Lupa", "Varga", "Korga", "Tharoka", "Groma", "Ragna", "Skolla", "Hati", "Morga", "Drakka", "Vorna", "Kraga", "Thula", "Gruka", "Borka", "Durna", "Falka", "Grima", "Hroka", "Jarla", "Kaela", "Morka", "Norra", "Oska", "Pyra", "Rokka", "Svara", "Torva"],
+        "lastNames": ["of the Pack", "of Spenrid", "of the Void", "Pack Fenris", "Pack Garul", "Pack Lupus", "Pack Varg", "Pack Korg", "Pack Tharok", "Pack Grom", "Pack Ragnar", "Pack Skoll", "Pack Hati", "Pack Morg", "Pack Drakk"],
+        "titlePrefixes": ["Pack Lord", "Alpha", "Howler", "Tracker", "Scout", "Hunter"],
+        "titleSuffixes": ["the Swift", "the Fierce", "the Howling", "the Pack Leader", "the Nomad"],
+        "aiLeaderTitles": ["Pack Lord", "Alpha Commander", "High Howler", "Nomad Chief"],
+        "aiGovernorTitles": ["Pack Elder", "Territory Alpha", "Regional Tracker"],
+        "aiCaptainTitles": ["Pack Captain", "Squadron Alpha", "Hunter Leader"]
+      }
+    },
+    {
+      "id": "INSECTOID",
+      "name": "Insectoid",
+      "description": "Insect-like, hive-minded beings with chitin armor and hive mind communication.",
+      "gameModule": "TRAVELLER",
+      "characteristics": {
+        "ST": 0,
+        "DX": 0,
+        "EN": 0,
+        "IN": 0,
+        "ED": 0,
+        "SO": 0
+      },
+      "combatDM": 0,
+      "socialDM": 0,
+      "navigationDM": 0,
+      "armorBonus": 1,
+      "tradeBonusPercent": 0,
+      "lifespan": 120,
+      "homeworld": "Kiirfo",
+      "nameDatabase": {
+        "maleFirstNames": ["Klik", "Klak", "Krok", "Krik", "Kruk", "Zlik", "Zlak", "Zrok", "Zrik", "Zruk", "Tlik", "Tlak", "Trok", "Trik", "Truk", "Plik", "Plak", "Prok", "Prik", "Pruk", "Blik", "Blak", "Brok", "Brik", "Bruk", "Dlik", "Dlak", "Drok", "Drik", "Druk"],
+        "femaleFirstNames": ["Klika", "Klaka", "Kroka", "Krika", "Kruka", "Zlika", "Zlaka", "Zroka", "Zrika", "Zruka", "Tlika", "Tlaka", "Troka", "Trika", "Truka", "Plika", "Plaka", "Proka", "Prika", "Pruka", "Blika", "Blaka", "Broka", "Brika", "Bruka", "Dlika", "Dlaka", "Droka", "Drika", "Druka"],
+        "lastNames": ["of the Hive", "of Kiirfo", "Hive Klik", "Hive Klak", "Hive Krok", "Hive Krik", "Hive Kruk", "Hive Zlik", "Hive Zlak", "Hive Zrok", "Hive Zrik", "Hive Zruk"],
+        "titlePrefixes": ["Hive Queen", "Swarm Lord", "Brood Mother", "Caste Leader", "Worker Chief"],
+        "titleSuffixes": ["of the Hive", "of the Swarm", "of the Brood", "the Chitinous", "the Hive Mind"],
+        "aiLeaderTitles": ["Hive Queen", "Swarm Lord", "Brood Mother", "High Caste"],
+        "aiGovernorTitles": ["Caste Governor", "Hive Administrator", "Swarm Elder"],
+        "aiCaptainTitles": ["Swarm Captain", "Brood Leader", "Caste Commander"]
+      }
+    },
+    {
+      "id": "MELNIKI",
+      "name": "Melniki",
+      "description": "Small, rodent-like traders with exceptional business acumen and trade bonuses.",
+      "gameModule": "TRAVELLER",
+      "characteristics": {
+        "ST": -1,
+        "DX": 0,
+        "EN": 0,
+        "IN": 0,
+        "ED": 0,
+        "SO": 0
+      },
+      "combatDM": -1,
+      "socialDM": 0,
+      "navigationDM": 0,
+      "armorBonus": 0,
+      "tradeBonusPercent": 2,
+      "lifespan": 50,
+      "homeworld": "Melnihyeva",
+      "nameDatabase": {
+        "maleFirstNames": ["Melnik", "Voss", "Krell", "Tix", "Zarn", "Pip", "Squeak", "Nibble", "Chatter", "Whisker", "Flick", "Snip", "Twitch", "Blink", "Click", "Snap", "Crackle", "Pop", "Buzz", "Fizz", "Jinx", "Mint", "Penny", "Coin", "Gold", "Silver", "Copper", "Bronze", "Pearl", "Gem"],
+        "femaleFirstNames": ["Melnika", "Vossa", "Krella", "Tixa", "Zarna", "Pipa", "Squeaka", "Nibblea", "Chattera", "Whiskera", "Flicka", "Snipa", "Twitcha", "Blinka", "Clicka", "Snapa", "Crackla", "Popa", "Buzza", "Fizza", "Jinxa", "Minta", "Penna", "Coina", "Golda", "Silvera", "Copperra", "Bronza", "Pearla", "Gema"],
+        "lastNames": ["of Melnihyeva", "of the Trade", "Trade Melnik", "Trade Voss", "Trade Krell", "Trade Tix", "Trade Zarn", "Trade Pip", "Trade Squeak", "Trade Nibble", "Trade Chatter", "Trade Whisker"],
+        "titlePrefixes": ["Trade Baron", "Merchant Prince", "Guild Master", "Trade Lord", "Barter King"],
+        "titleSuffixes": ["the Wealthy", "the Prosperous", "the Trader", "the Merchant", "the Barter Master"],
+        "aiLeaderTitles": ["Trade Baron", "Merchant Prince", "Guild Master", "Trade Lord"],
+        "aiGovernorTitles": ["Trade Governor", "Merchant Elder", "Guild Administrator"],
+        "aiCaptainTitles": ["Trade Captain", "Merchant Commander", "Guild Captain"]
+      }
+    },
+    {
+      "id": "TILTEAN",
+      "name": "Tiltean",
+      "description": "Tall, elegant humanoids with enhanced grace and dexterity-based skills.",
+      "gameModule": "TRAVELLER",
+      "characteristics": {
+        "ST": 0,
+        "DX": 1,
+        "EN": 0,
+        "IN": 0,
+        "ED": 0,
+        "SO": 1
+      },
+      "combatDM": 0,
+      "socialDM": 1,
+      "navigationDM": 0,
+      "armorBonus": 0,
+      "tradeBonusPercent": 0,
+      "lifespan": 90,
+      "homeworld": "Tilte",
+      "nameDatabase": {
+        "maleFirstNames": ["Aelion", "Baelor", "Caelum", "Daelin", "Elyon", "Faelan", "Gaelen", "Haelor", "Ilyon", "Jaelin", "Kaelen", "Laelor", "Maelin", "Naelen", "Oelion", "Paelor", "Qaelin", "Raelen", "Saelor", "Taelin", "Uaelen", "Vaelor", "Waelin", "Xaelen", "Yaelor", "Zaelin"],
+        "femaleFirstNames": ["Aeliona", "Baelora", "Caeluma", "Daelina", "Elyona", "Faelana", "Gaelena", "Haelora", "Ilyona", "Jaelina", "Kaelena", "Laelora", "Maelina", "Naelena", "Oeliona", "Paelora", "Qaelina", "Raelena", "Saelora", "Taelina", "Uaelena", "Vaelora", "Waelina", "Xaelena", "Yaelora", "Zaelina"],
+        "lastNames": ["of Tilte", "of the Grace", "Grace Aelion", "Grace Baelor", "Grace Caelum", "Grace Daelin", "Grace Elyon", "Grace Faelan", "Grace Gaelen", "Grace Haelor", "Grace Ilyon", "Grace Jaelin"],
+        "titlePrefixes": ["Chancellor", "Diplomat", "Ambassador", "Elegant One", "Grace Master"],
+        "titleSuffixes": ["the Elegant", "the Graceful", "the Diplomatic", "the Refined", "the Noble"],
+        "aiLeaderTitles": ["Chancellor", "High Diplomat", "Ambassador General", "Grace Master"],
+        "aiGovernorTitles": ["Regional Chancellor", "Diplomatic Governor", "Grace Administrator"],
+        "aiCaptainTitles": ["Diplomatic Captain", "Grace Commander", "Ambassador Captain"]
+      }
+    },
+    {
+      "id": "ZHODANI",
+      "name": "Zhodani",
+      "description": "Human-like with natural telepathic abilities and psionic powers.",
+      "gameModule": "TRAVELLER",
+      "characteristics": {
+        "ST": 0,
+        "DX": 0,
+        "EN": 0,
+        "IN": 0,
+        "ED": 0,
+        "SO": 0
+      },
+      "combatDM": 0,
+      "socialDM": 0,
+      "navigationDM": 0,
+      "armorBonus": 0,
+      "tradeBonusPercent": 0,
+      "lifespan": 85,
+      "homeworld": "Zhodane",
+      "nameDatabase": {
+        "maleFirstNames": ["Zhodan", "Psion", "Telek", "Mindor", "Thought", "Vision", "Dream", "Spirit", "Soul", "Ether", "Astral", "Mystic", "Oracle", "Seer", "Prophet", "Sage", "Wise", "Elder", "Master", "Adept", "Novice", "Disciple", "Initiate", "Scholar", "Learned", "Enlightened", "Awakened", "Aware", "Perceptive", "Insightful"],
+        "femaleFirstNames": ["Zhodana", "Psiona", "Teleka", "Mindora", "Thoughta", "Visiona", "Dreama", "Spirita", "Soulia", "Ethera", "Astrala", "Mystica", "Oracila", "Seera", "Prophetia", "Sagea", "Wisea", "Eldera", "Mistress", "Adepta", "Novicia", "Discipla", "Initia", "Scholaria", "Learneda", "Enlighteneda", "Awakeneda", "Awarea", "Perceptivea", "Insightfula"],
+        "lastNames": ["of Zhodane", "of the Commune", "Commune Zhodan", "Commune Psion", "Commune Telek", "Commune Mindor", "Commune Thought", "Commune Vision", "Commune Dream", "Commune Spirit", "Commune Soul", "Commune Ether"],
+        "titlePrefixes": ["High Priest", "Psion Master", "Telepath", "Mind Reader", "Commune Leader"],
+        "titleSuffixes": ["the Telepathic", "the Psionic", "the Mindful", "the Enlightened", "the Awakened"],
+        "aiLeaderTitles": ["High Priest", "Psion Master", "Commune Leader", "Telepath Supreme"],
+        "aiGovernorTitles": ["Psion Governor", "Commune Administrator", "Telepath Elder"],
+        "aiCaptainTitles": ["Psion Captain", "Commune Commander", "Telepath Leader"]
+      }
+    },
+    {
+      "id": "LOXI",
+      "name": "Loxi",
+      "description": "Small, bird-like humanoids with enhanced stealth abilities.",
+      "gameModule": "TRAVELLER",
+      "characteristics": {
+        "ST": -1,
+        "DX": 0,
+        "EN": 0,
+        "IN": 0,
+        "ED": 0,
+        "SO": 0
+      },
+      "combatDM": -1,
+      "socialDM": 0,
+      "navigationDM": 0,
+      "armorBonus": 0,
+      "tradeBonusPercent": 0,
+      "lifespan": 65,
+      "homeworld": "Lox",
+      "nameDatabase": {
+        "maleFirstNames": ["Pip", "Squawk", "Chirp", "Tweet", "Flap", "Wing", "Feather", "Beak", "Claw", "Talons", "Sky", "Air", "Wind", "Storm", "Cloud", "Rain", "Sun", "Moon", "Star", "Dawn", "Dusk", "Night", "Day", "Light", "Shadow", "Glide", "Soar", "Fly", "Hover", "Perch"],
+        "femaleFirstNames": ["Pipa", "Squawka", "Chirpa", "Tweeta", "Flapa", "Winga", "Feathera", "Beaka", "Clawa", "Talonsa", "Skya", "Airra", "Winda", "Storma", "Clouda", "Raina", "Suna", "Moona", "Stara", "Dawna", "Duska", "Nights", "Daya", "Lighta", "Shadowa", "Glidea", "Soara", "Flya", "Hovra", "Percha"],
+        "lastNames": ["of Lox", "of the Sky", "Sky Pip", "Sky Squawk", "Sky Chirp", "Sky Tweet", "Sky Flap", "Sky Wing", "Sky Feather", "Sky Beak", "Sky Claw", "Sky Talons"],
+        "titlePrefixes": ["Sky Lord", "Flight Master", "Wing Commander", "Flock Leader", "Aerial Scout"],
+        "titleSuffixes": ["the Swift", "the Silent", "the Stealthy", "the Flying", "the Soaring"],
+        "aiLeaderTitles": ["Sky Lord", "Flight Master", "Flock Leader", "Aerial Commander"],
+        "aiGovernorTitles": ["Sky Governor", "Flight Administrator", "Wing Elder"],
+        "aiCaptainTitles": ["Flight Captain", "Wing Commander", "Aerial Leader"]
+      }
+    },
+    {
+      "id": "KLINGON",
+      "name": "Klingon",
+      "description": "Fierce warriors who value honor above all. A Klingon's strength is legendary.",
+      "gameModule": "CAPTAINS_LOG",
+      "characteristics": {
+        "ST": 1,
+        "DX": 0,
+        "EN": 1,
+        "IN": 0,
+        "ED": 0,
+        "SO": -1
+      },
+      "combatDM": 1,
+      "socialDM": -1,
+      "navigationDM": 0,
+      "armorBonus": 1,
+      "tradeBonusPercent": 0,
+      "lifespan": 75,
+      "homeworld": "Qo'noS",
+      "nameDatabase": {
+        "maleFirstNames": ["Kahless", "Worf", "Martok", "Kor", "Koloth", "Kruge", "Chang", "Gowron", "Weyoun", "Duras", "Borg", "Curzon", "Azetbur", "K'Ehleyr", "Molor", "Applera", "Brody", "Chakotay", "D'Ghor", "Eden", "Fred", "Gorkon", "Havlan", "Ilyan", "J'm泊a", "K'mpec", "Lursa", "Morn", "Nok", "Obrist"],
+        "femaleFirstNames": ["Azetbur", "Leah", "Elena", "Ilyan", "Lursa", "B'Etor", "Toran", "K'Ehleyr", "Mirell", "Noree", "Obrist", "P'cha", "Qapla'", "R'var", "S'chn T'gai", "T'Plana-Hath", "Ullra", "V'Las", "Wuv", "Xa", "Yar", "Zas"],
+        "lastNames": ["of House of Kahless", "of House of Mogh", "of House of Duras", "of House of Martok", "of House of Kor", "of House of Kruge", "of House of Gowron", "of House of Weyoun", "of House of Borg", "of House of Curzon"],
+        "titlePrefixes": ["General", "Admiral", "Commander", "Captain", "Warrior", "Chancellor"],
+        "titleSuffixes": ["the Brave", "the Fierce", "the Honorable", "the Victorious", "the Unyielding"],
+        "aiLeaderTitles": ["Chancellor", "High General", "Fleet Admiral", "Emperor"],
+        "aiGovernorTitles": ["District Governor", "House Leader", "Territory Commander"],
+        "aiCaptainTitles": ["Ship Captain", "Fleet Commander", "Battle Leader"]
+      }
+    },
+    {
+      "id": "VULCAN",
+      "name": "Vulcan",
+      "description": "Logical and disciplined. Vulcans have a rich tradition of scientific and scholarly pursuit.",
+      "gameModule": "CAPTAINS_LOG",
+      "characteristics": {
+        "ST": 0,
+        "DX": 0,
+        "EN": 0,
+        "IN": 1,
+        "ED": 1,
+        "SO": 1
+      },
+      "combatDM": 0,
+      "socialDM": 1,
+      "navigationDM": 0,
+      "armorBonus": 0,
+      "tradeBonusPercent": 0,
+      "lifespan": 200,
+      "homeworld": "Vulcan",
+      "nameDatabase": {
+        "maleFirstNames": ["Sarek", "Spock", "Sybok", "T'Pol", "T'Pau", "Stonn", "Soval", "T'Leh", "T'Pring", "V'Las", "V'Vant", "V'Ger", "Xon", "Yaris", "Zefram", "Ambriel", "Borg", "Chenar", "Daram", "Elyar", "Fenris", "Gorkon", "Havlan", "Ilyan", "J'm泊a", "K'mpec", "Lursa", "Morn", "Nok", "Obrist"],
+        "femaleFirstNames": ["T'Pring", "T'Pau", "T'Les", "T'Pol", "Ambriel", "Borga", "Chenara", "Darama", "Elyara", "Fenrisa", "Gorkona", "Havlena", "Ilyana", "J'm泊a", "K'mpeca", "Lursa", "Morna", "Noka", "Obrista", "P'cha", "Qapla'", "R'var", "S'chn", "T'Plana", "Ullra", "V'Las", "Wuv", "Xa", "Yar", "Zas"],
+        "lastNames": ["of Vulcan", "of the High Command", "High Command Sarek", "High Command Spock", "High Command Sybok", "High Command T'Pol", "High Command T'Pau", "High Command Stonn", "High Command Soval", "High Command T'Leh", "High Command T'Pring", "High Command V'Las"],
+        "titlePrefixes": ["Ambassador", "Scientist", "Scholar", "Elder", "High Commander"],
+        "titleSuffixes": ["the Logical", "the Wise", "the Scholarly", "the Disciplined", "the Enlightened"],
+        "aiLeaderTitles": ["Ambassador", "High Commander", "Elder Council", "Scientific Director"],
+        "aiGovernorTitles": ["District Ambassador", "Scientific Governor", "Elder Administrator"],
+        "aiCaptainTitles": ["Science Captain", "Ambassador Captain", "Scholar Commander"]
+      }
+    },
+    {
+      "id": "ROMULAN",
+      "name": "Romulan",
+      "description": "A secretive empire descended from exiled Romulans. Masters of cloaking technology.",
+      "gameModule": "CAPTAINS_LOG",
+      "characteristics": {
+        "ST": 0,
+        "DX": 1,
+        "EN": 0,
+        "IN": 1,
+        "ED": 0,
+        "SO": 0
+      },
+      "combatDM": 0,
+      "socialDM": 0,
+      "navigationDM": 1,
+      "armorBonus": 0,
+      "tradeBonusPercent": 0,
+      "lifespan": 80,
+      "homeworld": "Romulus",
+      "nameDatabase": {
+        "maleFirstNames": ["Neral", "V'Las", "Shinzaron", "Tal'Aura", "Donatra", "Veen", "Praetor", "Senator", "Ambassador", "Commander", "Captain", "Admiral", "General", "Colonel", "Major", "Lieutenant", "Ensign", "Cadet", "Officer", "Agent", "Spy", "Infiltrator", "Assassin", "Guard", "Sentinel", "Watcher", "Shadow", "Cloak", "Mist", "Fog"],
+        "femaleFirstNames": ["Nerala", "V'Las", "Shinzaron", "Tal'Aura", "Donatra", "Veen", "Praetora", "Senadora", "Ambassador", "Commandera", "Captaina", "Admirala", "Generala", "Colonela", "Majora", "Lieutenanta", "Ensigna", "Cadeta", "Officera", "Agenta", "Spya", "Infiltratora", "Assassina", "Guarda", "Sentinela", "Watchera", "Shadowa", "Cloaka", "Mista", "Foga"],
+        "lastNames": ["of Romulus", "of the Senate", "Senate Neral", "Senate V'Las", "Senate Shinzaron", "Senate Tal'Aura", "Senate Donatra", "Senate Veen", "Senate Praetor", "Senate Senator", "Senate Ambassador", "Senate Commander"],
+        "titlePrefixes": ["Praetor", "Senator", "Ambassador", "Commander", "Agent"],
+        "titleSuffixes": ["the Secretive", "the Cunning", "the Deceptive", "the Strategic", "the Shadow"],
+        "aiLeaderTitles": ["Praetor", "Senate Leader", "Fleet Commander", "Intelligence Director"],
+        "aiGovernorTitles": ["District Senator", "Intelligence Governor", "Senate Administrator"],
+        "aiCaptainTitles": ["Ship Captain", "Fleet Commander", "Intelligence Captain"]
+      }
+    },
+    {
+      "id": "FERENGI",
+      "name": "Ferengi",
+      "description": "Profit-driven traders with sharp minds for business and technology.",
+      "gameModule": "CAPTAINS_LOG",
+      "characteristics": {
+        "ST": 0,
+        "DX": 0,
+        "EN": 0,
+        "IN": 0,
+        "ED": 1,
+        "SO": 0
+      },
+      "combatDM": -1,
+      "socialDM": 0,
+      "navigationDM": 0,
+      "armorBonus": 0,
+      "tradeBonusPercent": 3,
+      "lifespan": 70,
+      "homeworld": "Ferenginar",
+      "nameDatabase": {
+        "maleFirstNames": ["Gris", "Grok", "Zek", "Quark", "Rom", "Nog", "Braggo", "Leeta", "Morn", "Dax", "Odo", "Quinn", "Riker", "Sisko", "Worf", "Picard", "Kirk", "Spock", "Scott", "McCoy", "Chekov", "Uhura", "Sulu", "Janeway", "Paris", "Tuvok", "Kim", "Neelix", "Tom", "Harry"],
+        "femaleFirstNames": ["Grisa", "Groka", "Zeka", "Quarka", "Roma", "Noga", "Braggo", "Leeta", "Morna", "Daxa", "Odo", "Quinna", "Rikera", "Siskoa", "Worfa", "Picarda", "Kirka", "Spocka", "Scotta", "McCoya", "Chekova", "Uhura", "Sulu", "Janeway", "Paris", "Tuvok", "Kima", "Neelix", "Tom", "Harry"],
+        "lastNames": ["of Ferenginar", "of the Trade", "Trade Gris", "Trade Grok", "Trade Zek", "Trade Quark", "Trade Rom", "Trade Nog", "Trade Braggo", "Trade Leeta", "Trade Morn", "Trade Dax"],
+        "titlePrefixes": ["Trade Baron", "Merchant Prince", "Guild Master", "Profit Master", "Exchange Lord"],
+        "titleSuffixes": ["the Wealthy", "the Prosperous", "the Trader", "the Merchant", "the Profit Seeker"],
+        "aiLeaderTitles": ["Trade Baron", "Merchant Prince", "Guild Master", "Exchange Lord"],
+        "aiGovernorTitles": ["Trade Governor", "Merchant Elder", "Guild Administrator"],
+        "aiCaptainTitles": ["Trade Captain", "Merchant Commander", "Guild Captain"]
+      }
+    },
+    {
+      "id": "NARN",
+      "name": "Narn",
+      "description": "A proud, resilient species from the Narn sector. Scarred by decades of Centauri occupation.",
+      "gameModule": "BABYLON5",
+      "characteristics": {
+        "ST": 1,
+        "DX": 0,
+        "EN": 1,
+        "IN": 0,
+        "ED": -1,
+        "SO": -1
+      },
+      "combatDM": 1,
+      "socialDM": -1,
+      "navigationDM": 0,
+      "armorBonus": 0,
+      "tradeBonusPercent": 0,
+      "lifespan": 60,
+      "homeworld": "Narn (destroyed)",
+      "nameDatabase": {
+        "maleFirstNames": ["G'Kar", "Refan", "Lennier", "Carte", "Kosh", "Mollari", "Delenn", "Ivanova", "Sheridan", "Garibaldi", "Franklin", "Marcus", "Delenn", "Londo", "G'Kar", "Refan", "Lennier", "Carte", "Kosh", "Mollari"],
+        "femaleFirstNames": ["G'Kar", "Refan", "Lennier", "Carte", "Kosh", "Mollari", "Delenn", "Ivanova", "Sheridan", "Garibaldi", "Franklin", "Marcus", "Delenn", "Londo", "G'Kar", "Refan", "Lennier", "Carte", "Kosh", "Mollari"],
+        "lastNames": ["of Narn", "of the Regime", "Regime G'Kar", "Regime Refan", "Regime Lennier", "Regime Carte", "Regime Kosh", "Regime Mollari", "Regime Delenn", "Regime Ivanova"],
+        "titlePrefixes": ["Councilor", "Commander", "Captain", "General", "Admiral"],
+        "titleSuffixes": ["the Proud", "the Resilient", "the Free", "the Liberated", "the Unbroken"],
+        "aiLeaderTitles": ["Councilor", "Regime Leader", "Fleet Commander", "Liberation Chief"],
+        "aiGovernorTitles": ["District Councilor", "Regime Governor", "Liberation Administrator"],
+        "aiCaptainTitles": ["Ship Captain", "Fleet Commander", "Liberation Leader"]
+      }
+    },
+    {
+      "id": "CENTAURI",
+      "name": "Centauri",
+      "description": "A decadent, aristocratic species from the Centauri Republic. Tall, elegant, and obsessed with status.",
+      "gameModule": "BABYLON5",
+      "characteristics": {
+        "ST": 0,
+        "DX": 1,
+        "EN": 0,
+        "IN": 0,
+        "ED": 1,
+        "SO": 2
+      },
+      "combatDM": 0,
+      "socialDM": 2,
+      "navigationDM": 0,
+      "armorBonus": 0,
+      "tradeBonusPercent": 2,
+      "lifespan": 70,
+      "homeworld": "Centauri Prime",
+      "nameDatabase": {
+        "maleFirstNames": ["Londo", "Mollari", "Carte", "G'Kar", "Refan", "Lennier", "Kosh", "Delenn", "Ivanova", "Sheridan", "Garibaldi", "Franklin", "Marcus", "Delenn", "Londo", "G'Kar", "Refan", "Lennier", "Carte", "Kosh"],
+        "femaleFirstNames": ["Londo", "Mollari", "Carte", "G'Kar", "Refan", "Lennier", "Kosh", "Delenn", "Ivanova", "Sheridan", "Garibaldi", "Franklin", "Marcus", "Delenn", "Londo", "G'Kar", "Refan", "Lennier", "Carte", "Kosh"],
+        "lastNames": ["of Centauri", "of the Republic", "Republic Londo", "Republic Mollari", "Republic Carte", "Republic G'Kar", "Republic Refan", "Republic Lennier", "Republic Kosh", "Republic Delenn"],
+        "titlePrefixes": ["Emperor", "Prince", "Duke", "Count", "Baron"],
+        "titleSuffixes": ["the Elegant", "the Aristocratic", "the Decadent", "the Noble", "the Refined"],
+        "aiLeaderTitles": ["Emperor", "High Prince", "Republic Leader", "Imperial Governor"],
+        "aiGovernorTitles": ["District Prince", "Republic Governor", "Imperial Administrator"],
+        "aiCaptainTitles": ["Ship Captain", "Fleet Commander", "Imperial Leader"]
+      }
+    },
+    {
+      "id": "MINBARI",
+      "name": "Minbari",
+      "description": "A spiritually advanced, long-lived species guided by religious orders.",
+      "gameModule": "BABYLON5",
+      "characteristics": {
+        "ST": 0,
+        "DX": 1,
+        "EN": 1,
+        "IN": 1,
+        "ED": 1,
+        "SO": 1
+      },
+      "combatDM": 0,
+      "socialDM": 0,
+      "navigationDM": 1,
+      "armorBonus": 1,
+      "tradeBonusPercent": 0,
+      "lifespan": 250,
+      "homeworld": "Minbar",
+      "nameDatabase": {
+        "maleFirstNames": ["Delenn", "Ivanova", "Sheridan", "Garibaldi", "Franklin", "Marcus", "Delenn", "Londo", "G'Kar", "Refan", "Lennier", "Carte", "Kosh", "Mollari", "Delenn", "Ivanova", "Sheridan", "Garibaldi", "Franklin", "Marcus"],
+        "femaleFirstNames": ["Delenn", "Ivanova", "Sheridan", "Garibaldi", "Franklin", "Marcus", "Delenn", "Londo", "G'Kar", "Refan", "Lennier", "Carte", "Kosh", "Mollari", "Delenn", "Ivanova", "Sheridan", "Garibaldi", "Franklin", "Marcus"],
+        "lastNames": ["of Minbar", "of the Federation", "Federation Delenn", "Federation Ivanova", "Federation Sheridan", "Federation Garibaldi", "Federation Franklin", "Federation Marcus", "Federation Delenn", "Federation Londo"],
+        "titlePrefixes": ["High Priestess", "Warrior", "Caste Leader", "Spiritual Guide", "Religious Elder"],
+        "titleSuffixes": ["the Spiritual", "the Advanced", "the Long-Lived", "the Wise", "the Enlightened"],
+        "aiLeaderTitles": ["High Priestess", "Federation Leader", "Spiritual Guide", "Religious Elder"],
+        "aiGovernorTitles": ["District Priestess", "Federation Governor", "Spiritual Administrator"],
+        "aiCaptainTitles": ["Ship Captain", "Fleet Commander", "Spiritual Leader"]
+      }
+    }
+  ],
+
+  "galaxyRules": {
+    "defaultGalaxySeed": 42,
+    "voidGalaxySeed": 54321,
+    "earthGalaxySeed": 12345,
+    "testGalaxySeed": 99999,
+    "maxSectorsPerGalaxy": 100,
+    "maxSystemsPerSector": 10,
+    "maxPlanetsPerSystem": 8,
+    "maxMoonsPerPlanet": 5,
+    "defaultTechLevel": 5,
+    "minTechLevel": 0,
+    "maxTechLevel": 20,
+    "galaxyTypes": [
+      {
+        "id": "SPIRAL",
+        "name": "Spiral Galaxy",
+        "description": "A spiral galaxy with arms containing star systems.",
+        "maxArms": 8,
+        "maxSystemsPerArm": 12
+      },
+      {
+        "id": "ELLIPTICAL",
+        "name": "Elliptical Galaxy",
+        "description": "An elliptical galaxy with a dense core.",
+        "maxSystemsPerCore": 50
+      },
+      {
+        "id": "IRREGULAR",
+        "name": "Irregular Galaxy",
+        "description": "An irregular galaxy with no defined structure.",
+        "maxSystems": 30
+      }
+    ]
+  },
+
+  "systemRules": {
+    "starTypes": [
+      {"id": "O", "name": "O-Type Star", "mass": "15-90 solar masses", "lifespan": "1-10 million years", "temperature": "30000-50000K"},
+      {"id": "B", "name": "B-Type Star", "mass": "2-15 solar masses", "lifespan": "10-100 million years", "temperature": "10000-30000K"},
+      {"id": "A", "name": "A-Type Star", "mass": "1.4-2 solar masses", "lifespan": "100-1000 million years", "temperature": "7500-10000K"},
+      {"id": "F", "name": "F-Type Star", "mass": "1.0-1.4 solar masses", "lifespan": "1000-3000 million years", "temperature": "6000-7500K"},
+      {"id": "G", "name": "G-Type Star", "mass": "0.8-1.0 solar masses", "lifespan": "3000-10000 million years", "temperature": "5000-6000K"},
+      {"id": "K", "name": "K-Type Star", "mass": "0.4-0.8 solar masses", "lifespan": "10000-30000 million years", "temperature": "3500-5000K"},
+      {"id": "M", "name": "M-Type Star", "mass": "0.08-0.4 solar masses", "lifespan": "30000-100000 million years", "temperature": "2000-3500K"}
+    ],
+    "planetTypes": [
+      {"id": "TERRESTRIAL", "name": "Terrestrial Planet", "description": "Rocky planet with solid surface", "minRadius": 0.1, "maxRadius": 2.0},
+      {"id": "GAS_GIANT", "name": "Gas Giant", "description": "Large planet composed mainly of hydrogen and helium", "minRadius": 5.0, "maxRadius": 15.0},
+      {"id": "ICE_GIANT", "name": "Ice Giant", "description": "Planet composed mainly of volatiles like water, ammonia, methane", "minRadius": 2.0, "maxRadius": 5.0},
+      {"id": "ROCKY", "name": "Rocky Planet", "description": "Small rocky planet with thin or no atmosphere", "minRadius": 0.05, "maxRadius": 0.5},
+      {"id": "WATER", "name": "Water World", "description": "Planet covered entirely by water", "minRadius": 0.5, "maxRadius": 1.5},
+      {"id": "LAVA", "name": "Lava World", "description": "Planet with molten surface", "minRadius": 0.3, "maxRadius": 1.0}
+    ],
+    "habitableZone": {
+      "minDistance": 0.7,
+      "maxDistance": 1.5,
+      "unit": "AU"
+    }
+  },
+
+  "planetRules": {
+    "governmentTypes": [
+      {"id": "ANARCHY", "name": "Anarchy", "lawLevel": 0, "stability": 1},
+      {"id": "FEUDAL", "name": "Feudal", "lawLevel": 3, "stability": 5},
+      {"id": "DEMOCRACY", "name": "Democracy", "lawLevel": 7, "stability": 7},
+      {"id": "TOTALITARIAN", "name": "Totalitarian", "lawLevel": 9, "stability": 8},
+      {"id": "THEOCRACY", "name": "Theocracy", "lawLevel": 8, "stability": 6},
+      {"id": "CORPORATE", "name": "Corporate", "lawLevel": 6, "stability": 7}
+    ],
+    "lawLevels": {
+      "min": 0,
+      "max": 9,
+      "descriptions": {
+        "0": "No law - complete anarchy",
+        "1": "Very little law - only basic survival rules",
+        "2": "Minimal law - some basic regulations",
+        "3": "Low law - limited enforcement",
+        "4": "Below average law - some enforcement",
+        "5": "Average law - standard enforcement",
+        "6": "Above average law - good enforcement",
+        "7": "High law - strong enforcement",
+        "8": "Very high law - strict enforcement",
+        "9": "Total law - complete control"
+      }
+    },
+    "worldModifiers": [
+      {"id": "AG", "name": "Agricultural World", "description": "Planet dedicated to agriculture"},
+      {"id": "BC", "name": "Barren", "description": "Lifeless world with no atmosphere"},
+      {"id": "CH", "name": "Chemical World", "description": "Planet with toxic atmosphere"},
+      {"id": "CO", "name": "Continent", "description": "Large landmass on water world"},
+      {"id": "DS", "name": "Desert World", "description": "Planet covered in deserts"},
+      {"id": "EN", "name": "Enforced Habitability", "description": "Artificially maintained habitability"},
+      {"id": "FC", "name": "Full Gravity", "description": "Standard gravity world"},
+      {"id": "HI", "name": "High Gravity", "description": "Planet with high gravity"},
+      {"id": "IC", "name": "Ice World", "description": "Planet covered in ice"},
+      {"id": "LO", "name": "Low Gravity", "description": "Planet with low gravity"},
+      {"id": "NA", "name": "Normal Atmosphere", "description": "Breathable atmosphere"},
+      {"id": "OC", "name": "Ocean World", "description": "Planet covered by oceans"},
+      {"id": "RA", "name": "Radiation World", "description": "Planet with high radiation"},
+      {"id": "RF", "name": "Rough Terrain", "description": "Planet with difficult terrain"},
+      {"id": "VA", "name": "Vacuum", "description": "No atmosphere"},
+      {"id": "VL", "name": "Very Low Gravity", "description": "Planet with very low gravity"}
+    ]
+  },
+
+  "aiCharacterRules": {
+    "defaultRole": "Leader",
+    "defaultActive": true,
+    "defaultCanPromoteToCoServer": false,
+    "nameGeneration": {
+      "useSpeciesDatabase": true,
+      "fallbackToHuman": true,
+      "includeTitle": true,
+      "includeLastName": true
+    },
+    "roleAssignment": {
+      "planetOverseer": "UN Secretary-General",
+      "countryLeader": "President",
+      "regionGovernor": "Governor",
+      "cityMayor": "Mayor",
+      "militaryCommander": "General",
+      "tradeLeader": "Trade Baron",
+      "religiousLeader": "High Priest",
+      "scientificDirector": "Scientific Director"
+    }
+  }
+}

@@ -1,0 +1,2 @@
+[console_scripts]
+dora-dl-server = dora_dl.server:main

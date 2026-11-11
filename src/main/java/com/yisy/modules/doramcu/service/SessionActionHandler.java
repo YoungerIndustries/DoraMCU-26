@@ -1,6 +1,8 @@
 package com.yisy.modules.doramcu.service;
 
 import com.yisy.modules.doramcu.ai.AiDelegationService;
+import com.yisy.modules.doramcu.ai.AiDecision;
+import com.yisy.modules.doramcu.ai.PlayerActionAnalyzer;
 import com.yisy.modules.doramcu.dto.*;
 import com.yisy.modules.doramcu.hex.*;
 import com.yisy.modules.doramcu.hex.Player;
@@ -32,13 +34,16 @@ public class SessionActionHandler {
     private final GameStateBuilder gameStateBuilder;
     private final CharacterService characterService;
     private final AiDelegationService aiDelegationService;
+    private final PlayerActionAnalyzer playerActionAnalyzer;
 
     public SessionActionHandler(GameStateBuilder gameStateBuilder,
                                 CharacterService characterService,
-                                @Lazy AiDelegationService aiDelegationService) {
+                                @Lazy AiDelegationService aiDelegationService,
+                                PlayerActionAnalyzer playerActionAnalyzer) {
         this.gameStateBuilder = gameStateBuilder;
         this.characterService = characterService;
         this.aiDelegationService = aiDelegationService;
+        this.playerActionAnalyzer = playerActionAnalyzer;
     }
 
     /**
@@ -169,6 +174,7 @@ public class SessionActionHandler {
                 applyBattleResult(game, session, battle, result, player, defenderPlayer);
             }
 
+            recordHumanAction(player, game, AiDecision.ActionType.MOVE_FLEET);
             return getGameStateInternal(session, playerId);
         } finally {
             session.getLock().writeLock().unlock();
@@ -217,6 +223,7 @@ public class SessionActionHandler {
             log.info("Ship build queued for {} (pipeline modules): {}", player.getName(), request.getShipType());
             log.debug("Player {} queued build for ship type: {} in fleet: {}", playerId, request.getShipType(), targetFleetId);
 
+            recordHumanAction(player, game, AiDecision.ActionType.BUILD_SHIP);
             return getGameStateInternal(session, playerId);
         } finally {
             session.getLock().writeLock().unlock();
@@ -286,6 +293,7 @@ public class SessionActionHandler {
                     playerId, attackerFleetId, request.getDefenderFleetId(),
                     result != null ? result.getOutcome() : "null");
 
+            recordHumanAction(player, game, AiDecision.ActionType.ENGAGE_COMBAT);
             return getGameStateInternal(session, playerId);
         } finally {
             session.getLock().writeLock().unlock();
@@ -319,6 +327,7 @@ public class SessionActionHandler {
                 log.warn("AI delegation turn execution failed in session {}: {}", session.getSessionId(), e.getMessage());
             }
 
+            recordHumanAction(player, game, AiDecision.ActionType.WAIT);
             return getGameStateInternal(session, playerId);
         } finally {
             session.getLock().writeLock().unlock();
@@ -358,6 +367,7 @@ public class SessionActionHandler {
             }
 
             log.info("Player {} built {} station (id={})", player.getName(), stationType, station.getId());
+            recordHumanAction(player, game, AiDecision.ActionType.BUILD_STATION);
             return getGameStateInternal(session, playerId);
         } finally {
             session.getLock().writeLock().unlock();
@@ -404,6 +414,7 @@ public class SessionActionHandler {
             }
 
             log.info("Player {} built {} facility on planet {}", player.getName(), facility.getDisplayName(), request.getPlanetId());
+            recordHumanAction(player, game, AiDecision.ActionType.BUILD_STATION);
             return getGameStateInternal(session, playerId);
         } finally {
             session.getLock().writeLock().unlock();
@@ -427,6 +438,7 @@ public class SessionActionHandler {
             }
 
             log.info("Player {} created fleet '{}' (id={})", player.getName(), request.getFleetName(), fleet.getId());
+            recordHumanAction(player, game, AiDecision.ActionType.SCOUT);
             return getGameStateInternal(session, playerId);
         } finally {
             session.getLock().writeLock().unlock();
@@ -458,6 +470,7 @@ public class SessionActionHandler {
             }
 
             log.info("Player {} colonized planet {}", player.getName(), request.getPlanetId());
+            recordHumanAction(player, game, AiDecision.ActionType.SCOUT);
             return getGameStateInternal(session, playerId);
         } finally {
             session.getLock().writeLock().unlock();
@@ -487,6 +500,7 @@ public class SessionActionHandler {
             log.info("Player {} reinforced battle {} with {} ships from fleet {}",
                     player.getName(), battleId, added, fleetId);
 
+            recordHumanAction(player, game, AiDecision.ActionType.ENGAGE_COMBAT);
             return getGameStateInternal(session, playerId);
         } finally {
             session.getLock().writeLock().unlock();
@@ -505,6 +519,7 @@ public class SessionActionHandler {
             game.retreatBattle(battleId);
             log.info("Player {} retreated from battle {}", player.getName(), battleId);
 
+            recordHumanAction(player, game, AiDecision.ActionType.RETREAT);
             return getGameStateInternal(session, playerId);
         } finally {
             session.getLock().writeLock().unlock();
@@ -523,6 +538,7 @@ public class SessionActionHandler {
             int shipId = game.createShipFromDesign(player, request);
             log.info("Player {} built ship from design: {}", player.getName(), request.getName());
 
+            recordHumanAction(player, game, AiDecision.ActionType.BUILD_SHIP);
             return getGameStateInternal(session, playerId);
         } finally {
             session.getLock().writeLock().unlock();
@@ -541,6 +557,7 @@ public class SessionActionHandler {
             int cost = game.buyCommodity(player, request.getWorldId(), request.getCommodity(), request.getQuantity());
             log.info("Player {} bought {} units of {} for {} credits", player.getName(), request.getQuantity(), request.getCommodity(), cost);
 
+            recordHumanAction(player, game, AiDecision.ActionType.BUILD_STATION);
             return getGameStateInternal(session, playerId);
         } finally {
             session.getLock().writeLock().unlock();
@@ -559,6 +576,7 @@ public class SessionActionHandler {
             int revenue = game.sellCommodity(player, request.getWorldId(), request.getCommodity(), request.getQuantity());
             log.info("Player {} sold {} units of {} for {} credits", player.getName(), request.getQuantity(), request.getCommodity(), revenue);
 
+            recordHumanAction(player, game, AiDecision.ActionType.BUILD_STATION);
             return getGameStateInternal(session, playerId);
         } finally {
             session.getLock().writeLock().unlock();
@@ -582,9 +600,40 @@ public class SessionActionHandler {
             player.setCommander(character);
             log.info("Player {} assigned commander '{}' (id={})", player.getName(), character.getName(), characterId);
 
+            recordHumanAction(player, game, AiDecision.ActionType.WAIT);
             return getGameStateInternal(session, playerId);
         } finally {
             session.getLock().writeLock().unlock();
+        }
+    }
+
+    // ---- Human action recording ----
+
+    /**
+     * Records a human player action for behavioral personality analysis.
+     * <p>
+     * Only records actions for human players (IDs < 1000). AI players (IDs >= 1000)
+     * are excluded because their actions are generated by the AI, not observed behavior.
+     * </p>
+     *
+     * @param player the player who performed the action
+     * @param game the current game state
+     * @param actionType the type of action performed
+     */
+    private void recordHumanAction(Player player, Game game, AiDecision.ActionType actionType) {
+        if (player == null || game == null || actionType == null) {
+            return;
+        }
+        int playerId = player.getId();
+        // Only record human players; AI players have IDs >= 1000
+        if (playerId >= 1000) {
+            return;
+        }
+        try {
+            int turn = game.getCurrentTurn();
+            playerActionAnalyzer.recordActionFromDecision(playerId, actionType, turn);
+        } catch (Exception e) {
+            log.warn("Failed to record human player action: {}", e.getMessage());
         }
     }
 

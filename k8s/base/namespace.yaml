@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: doramcu
+  labels:
+    app.kubernetes.io/name: doramcu
+    app.kubernetes.io/part-of: doramcu-neuron-network

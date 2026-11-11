@@ -1,0 +1,43 @@
+# Resource Quotas for the DoraMCU namespace
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: doramcu-quota
+  namespace: doramcu
+  labels:
+    app.kubernetes.io/part-of: doramcu-neuron-network
+spec:
+  hard:
+    requests.cpu: "8"
+    requests.memory: "16Gi"
+    limits.cpu: "16"
+    limits.memory: "32Gi"
+    pods: "50"
+    persistentvolumeclaims: "10"
+    services: "20"
+    configmaps: "20"
+    secrets: "20"
+---
+# LimitRange — default resource limits for containers
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: doramcu-limits
+  namespace: doramcu
+  labels:
+    app.kubernetes.io/part-of: doramcu-neuron-network
+spec:
+  limits:
+    - type: Container
+      default:
+        cpu: "500m"
+        memory: "1Gi"
+      defaultRequest:
+        cpu: "100m"
+        memory: "256Mi"
+      max:
+        cpu: "4"
+        memory: "8Gi"
+      min:
+        cpu: "50m"
+        memory: "64Mi"

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoraMCU Game Launcher</title>
+    <link rel="stylesheet" href="css/shell.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1>DoraMCU</h1>
+                <span class="version">v1.0.0</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-tab="dashboard">
+                    <span class="nav-icon">🏠</span> Dashboard
+                </li>
+                <li class="nav-item" data-tab="games">
+                    <span class="nav-icon">🎮</span> Games
+                </li>
+                <li class="nav-item" data-tab="sessions">
+                    <span class="nav-icon">👥</span> Sessions
+                </li>
+                <li class="nav-item" data-tab="galaxy">
+                    <span class="nav-icon">🌌</span> Galaxy
+                </li>
+                <li class="nav-item" data-tab="settings">
+                    <span class="nav-icon">⚙️</span> Settings
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <span class="user-status" id="userStatus">Disconnected</span>
+                    <span class="user-name" id="userName">Guest</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="dashboard">
+                <div class="tab-header">
+                    <h2>Dashboard</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="connectBtn">Connect to Server</button>
+                    </div>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="card stat-card">
+                        <div class="card-icon">🎮</div>
+                        <div class="card-content">
+                            <h3>Active Games</h3>
+                            <p class="stat-value" id="activeGamesCount">0</p>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="card-icon">👥</div>
+                        <div class="card-content">
+                            <h3>Online Players</h3>
+                            <p class="stat-value" id="onlinePlayersCount">0</p>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="card-icon">🌌</div>
+                        <div class="card-content">
+                            <h3>Galaxies</h3>
+                            <p class="stat-value" id="galaxiesCount">0</p>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="card-icon">🚀</div>
+                        <div class="card-content">
+                            <h3>Game Client</h3>
+                            <p class="stat-value" id="gameClientStatus">Not Running</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Recent Activity</h3>
+                    <div class="activity-list" id="activityList">
+                        <p class="empty-state">No recent activity</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Games Tab -->
+            <div class="tab-content" id="games">
+                <div class="tab-header">
+                    <h2>Game Modules</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="launchGameBtn">Launch Game Client</button>
+                    </div>
+                </div>
+                <div class="games-grid" id="gamesGrid">
+                    <div class="card game-card">
+                        <div class="game-icon">🚀</div>
+                        <h3>Traveller</h3>
+                        <p>Classic space-faring RPG with careers, skills, and exploration</p>
+                        <div class="game-status">Available</div>
+                    </div>
+                    <div class="card game-card">
+                        <div class="game-icon">⭐</div>
+                        <h3>Captain's Log</h3>
+                        <p>Solo Star Trek Adventures RPG with missions and character development</p>
+                        <div class="game-status">Available</div>
+                    </div>
+                    <div class="card game-card">
+                        <div class="game-icon">🌟</div>
+                        <h3>DoraMCU 4X</h3>
+                        <p>4X empire strategy game — build and manage your galactic empire</p>
+                        <div class="game-status">Available</div>
+                    </div>
+                    <div class="card game-card">
+                        <div class="game-icon">🌍</div>
+                        <h3>Earth 2026</h3>
+                        <p>Sci-fi RPG set in a near-future Earth</p>
+                        <div class="game-status">Available</div>
+                    </div>
+                    <div class="card game-card">
+                        <div class="game-icon">⚔️</div>
+                        <h3>D&D 5th Edition</h3>
+                        <p>Dungeons & Dragons 5th Edition</p>
+                        <div class="game-status">Available</div>
+                    </div>
+                    <div class="card game-card">
+                        <div class="game-icon">🛸</div>
+                        <h3>Babylon 5</h3>
+                        <p>Babylon 5 universe RPG</p>
+                        <div class="game-status">Available</div>
+                    </div>
+                    <div class="card game-card">
+                        <div class="game-icon">🔫</div>
+                        <h3>Star Trek 4X</h3>
+                        <p>Star Trek themed 4X strategy game</p>
+                        <div class="game-status">Available</div>
+                    </div>
+                    <div class="card game-card">
+                        <div class="game-icon">🎯</div>
+                        <h3>Star Frontiers Battle</h3>
+                        <p>Star Frontiers combat and exploration</p>
+                        <div class="game-status">Available</div>
+                    </div>
+                    <div class="card game-card">
+                        <div class="game-icon">🕵️</div>
+                        <h3>007</h3>
+                        <p>James Bond espionage 4X game</p>
+                        <div class="game-status">Available</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sessions Tab -->
+            <div class="tab-content" id="sessions">
+                <div class="tab-header">
+                    <h2>Game Sessions</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="createSessionBtn">Create Session</button>
+                        <button class="btn btn-secondary" id="refreshSessionsBtn">Refresh</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="sessions-list" id="sessionsList">
+                        <p class="empty-state">No active sessions</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Galaxy Tab -->
+            <div class="tab-content" id="galaxy">
+                <div class="tab-header">
+                    <h2>Galaxy Status</h2>
+                    <div class="header-actions">
+                        <select id="galaxySelect" class="form-select">
+                            <option value="">Select a galaxy...</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="galaxy-info" id="galaxyInfo">
+                    <div class="card">
+                        <p class="empty-state">Select a galaxy to view its status</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-content" id="settings">
+                <div class="tab-header">
+                    <h2>Settings</h2>
+                </div>
+                <div class="card settings-card">
+                    <h3>Server Connection</h3>
+                    <div class="form-group">
+                        <label for="serverUrl">Server URL</label>
+                        <input type="text" id="serverUrl" class="form-input" value="http://localhost:8080" placeholder="http://localhost:8080">
+                    </div>
+                    <button class="btn btn-primary" id="saveSettingsBtn">Save Settings</button>
+                </div>
+                <div class="card settings-card">
+                    <h3>Game Client</h3>
+                    <div class="form-group">
+                        <label for="clientPath">Client Path</label>
+                        <input type="text" id="clientPath" class="form-input" placeholder="Auto-detect" readonly>
+                    </div>
+                    <div class="status-bar" id="clientStatusBar">
+                        <span class="status-indicator disconnected">●</span>
+                        <span class="status-text">Game client not running</span>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="startClientBtn">Start Client</button>
+                        <button class="btn btn-danger" id="stopClientBtn">Stop Client</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Game Client Status Modal -->
+    <div class="modal" id="statusModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Game Client Status</h3>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <p>Checking status...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth-service.js"></script>
+    <script src="js/game-launcher.js"></script>
+</body>
+</html>

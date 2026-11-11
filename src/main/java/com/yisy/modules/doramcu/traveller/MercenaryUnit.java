@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.traveller;
 
+import com.yisy.modules.doramcu.util.DiceUtil;
 import java.util.*;
 
 /**
@@ -111,11 +112,10 @@ public class MercenaryUnit {
     /**
      * Performs a morale check.
      *
-     * @param random the random number generator
      * @return true if the morale check passes
      */
-    public boolean moraleCheck(Random random) {
-        int roll = random.nextInt(6) + 1 + random.nextInt(6) + 1;
+    public boolean moraleCheck() {
+        int roll = DiceUtil.roll2D6();
         return roll <= morale + leadershipBonus;
     }
 

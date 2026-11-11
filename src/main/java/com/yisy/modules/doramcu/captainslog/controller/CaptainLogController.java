@@ -1070,10 +1070,10 @@ public class CaptainLogController {
      * @param category the rule category to query
      */
     @GetMapping("/rules/category")
-    public ResponseEntity<java.util.List<com.yisy.modules.doramcu.captainslog.model.RulesEntry>> getRulesByCategory(
+    public ResponseEntity<java.util.List<com.yisy.modules.doramcu.shared.model.RulesEntry>> getRulesByCategory(
             @RequestParam String category) {
         log.debug("GET /api/v1/captains-log/rules/category?category={}", category);
-        java.util.List<com.yisy.modules.doramcu.captainslog.model.RulesEntry> rules =
+        java.util.List<com.yisy.modules.doramcu.shared.model.RulesEntry> rules =
                 captainLogService.getRulesService().getRulesByCategory(category);
         return ResponseEntity.ok(rules);
     }
@@ -1088,10 +1088,10 @@ public class CaptainLogController {
      * @param chapter the rulebook chapter to query
      */
     @GetMapping("/rules/chapter")
-    public ResponseEntity<java.util.List<com.yisy.modules.doramcu.captainslog.model.RulesEntry>> getRulesByChapter(
+    public ResponseEntity<java.util.List<com.yisy.modules.doramcu.shared.model.RulesEntry>> getRulesByChapter(
             @RequestParam String chapter) {
         log.debug("GET /api/v1/captains-log/rules/chapter?chapter={}", chapter);
-        java.util.List<com.yisy.modules.doramcu.captainslog.model.RulesEntry> rules =
+        java.util.List<com.yisy.modules.doramcu.shared.model.RulesEntry> rules =
                 captainLogService.getRulesService().getRulesByChapter(chapter);
         return ResponseEntity.ok(rules);
     }
@@ -1105,10 +1105,10 @@ public class CaptainLogController {
      * @param keyword the search keyword
      */
     @GetMapping("/rules/search")
-    public ResponseEntity<java.util.List<com.yisy.modules.doramcu.captainslog.model.RulesEntry>> searchRules(
+    public ResponseEntity<java.util.List<com.yisy.modules.doramcu.shared.model.RulesEntry>> searchRules(
             @RequestParam String keyword) {
         log.debug("GET /api/v1/captains-log/rules/search?keyword={}", keyword);
-        java.util.List<com.yisy.modules.doramcu.captainslog.model.RulesEntry> rules =
+        java.util.List<com.yisy.modules.doramcu.shared.model.RulesEntry> rules =
                 captainLogService.getRulesService().searchRules(keyword);
         return ResponseEntity.ok(rules);
     }
@@ -1123,10 +1123,10 @@ public class CaptainLogController {
      * @param action a description of the game action (e.g., "roll combat check", "spend momentum")
      */
     @GetMapping("/rules/action")
-    public ResponseEntity<java.util.List<com.yisy.modules.doramcu.captainslog.model.RulesEntry>> getRulesForAction(
+    public ResponseEntity<java.util.List<com.yisy.modules.doramcu.shared.model.RulesEntry>> getRulesForAction(
             @RequestParam String action) {
         log.debug("GET /api/v1/captains-log/rules/action?action={}", action);
-        java.util.List<com.yisy.modules.doramcu.captainslog.model.RulesEntry> rules =
+        java.util.List<com.yisy.modules.doramcu.shared.model.RulesEntry> rules =
                 captainLogService.getRulesService().getRulesForAction(action);
         return ResponseEntity.ok(rules);
     }

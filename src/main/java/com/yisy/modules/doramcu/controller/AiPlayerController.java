@@ -3,16 +3,24 @@ package com.yisy.modules.doramcu.controller;
 import com.yisy.modules.doramcu.ai.AiDelegationArea;
 import com.yisy.modules.doramcu.ai.AiDelegationSettings;
 import com.yisy.modules.doramcu.ai.AiDelegationService;
+import com.yisy.modules.doramcu.ai.DynamicAiPersonality;
+import com.yisy.modules.doramcu.babylon5.model.B5Personality;
 import com.yisy.modules.doramcu.dto.JoinSessionResponse;
 import com.yisy.modules.doramcu.dto.GameStateResponse;
+import com.yisy.modules.doramcu.hex.Game;
+import com.yisy.modules.doramcu.hex.Player;
+import com.yisy.modules.doramcu.model.GameSession;
+import com.yisy.modules.doramcu.unified.GameEngine;
 import com.yisy.modules.doramcu.service.AiPlayerService;
 import com.yisy.modules.doramcu.service.AiPlayerService.Difficulty;
+import com.yisy.modules.doramcu.service.GameSessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -36,10 +44,14 @@ public class AiPlayerController {
 
     private final AiPlayerService aiPlayerService;
     private final AiDelegationService aiDelegationService;
+    private final GameSessionService gameSessionService;
 
-    public AiPlayerController(AiPlayerService aiPlayerService, AiDelegationService aiDelegationService) {
+    public AiPlayerController(AiPlayerService aiPlayerService,
+                              AiDelegationService aiDelegationService,
+                              GameSessionService gameSessionService) {
         this.aiPlayerService = aiPlayerService;
         this.aiDelegationService = aiDelegationService;
+        this.gameSessionService = gameSessionService;
     }
 
     /**
@@ -249,5 +261,81 @@ public class AiPlayerController {
             areas.put(area.name(), areaInfo);
         }
         return ResponseEntity.ok(areas);
+    }
+
+    // ========================================================================
+    // Personality Profile Endpoint
+    // ========================================================================
+
+    /**
+     * Gets the AI personality profile for a player.
+     * <p>
+     * Returns the blended personality profile based on the player's government/ethos
+     * and observed behavioral patterns. The profile includes 6 core personality axes,
+     * a confidence score indicating how accurate the clone is, and the number of
+     * observed actions.
+     * </p>
+     *
+     * @param sessionId the game session ID
+     * @param playerId the player's ID
+     * @return the personality profile with traits, confidence, action count, and B5 personality
+     */
+    @GetMapping("/personality")
+    public ResponseEntity<Map<String, Object>> getPlayerPersonality(
+            @PathVariable String sessionId,
+            @RequestParam Long playerId) {
+
+        log.debug("Getting personality profile for player: {} in session: {}", playerId, sessionId);
+
+        try {
+            GameSession session = gameSessionService.getGameSession(sessionId);
+            if (session == null) {
+                log.warn("Session not found: {}", sessionId);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            GameEngine engine = session.getGame();
+            Player player = null;
+            if (engine instanceof Game) {
+                player = ((Game) engine).getPlayer(playerId.intValue());
+            }
+            if (player == null) {
+                log.warn("Player {} not found in session: {}", playerId, sessionId);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            DynamicAiPersonality personality = aiPlayerService.getPlayerPersonality(player);
+            if (personality == null) {
+                log.warn("No personality profile for player: {}", playerId);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            double confidence = aiPlayerService.getPlayerConfidenceScore(player.getId());
+            int actionCount = personality.getObservedActionCount();
+
+            // Build traits map with 6 core axes
+            Map<String, Double> traits = new HashMap<>();
+            traits.put("aggression", personality.getAggression());
+            traits.put("expansionDrive", personality.getExpansionDrive());
+            traits.put("economicFocus", personality.getEconomicFocus());
+            traits.put("scientificFocus", personality.getScientificFocus());
+            traits.put("diplomaticStance", personality.getDiplomaticStance());
+            traits.put("riskTolerance", personality.getRiskTolerance());
+
+            // Build B5 12-axis personality map
+            B5Personality b5 = personality.toB5Personality();
+            Map<String, Double> b5Personality = b5.toMap();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("traits", traits);
+            response.put("confidence", confidence);
+            response.put("actionCount", actionCount);
+            response.put("b5Personality", b5Personality);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.warn("Failed to get personality profile: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

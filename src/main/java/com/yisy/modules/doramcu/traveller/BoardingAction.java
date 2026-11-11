@@ -1,9 +1,9 @@
 package com.yisy.modules.doramcu.traveller;
 
+import com.yisy.modules.doramcu.util.DiceUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Coordinates a boarding action from Classic Traveller High Guard.
@@ -74,7 +74,6 @@ public class BoardingAction {
     private Phase currentPhase;
     private Outcome outcome;
     private final List<String> eventLog;
-    private final Random random;
     private int combatRounds;
 
     /**
@@ -108,7 +107,6 @@ public class BoardingAction {
         this.currentPhase = Phase.LAUNCH;
         this.outcome = null;
         this.eventLog = new ArrayList<>();
-        this.random = new Random();
         this.combatRounds = 0;
     }
 
@@ -222,7 +220,7 @@ public class BoardingAction {
 
         for (BoardingShuttle shuttle : shuttles) {
             // Point defense roll: 2D6 vs shuttle stealth + armor
-            int pdRoll = random.nextInt(12) + 2; // 2D6
+            int pdRoll = DiceUtil.roll2D6();
             int defense = shuttle.getStealth() + shuttle.getArmor();
             int hitThreshold = 10 - defense;
 
@@ -252,7 +250,7 @@ public class BoardingAction {
         for (BoardingShuttle shuttle : shuttles) {
             if (shuttle.isDestroyed()) continue;
 
-            boolean docked = shuttle.attemptDocking(defenderPointDefense, random);
+            boolean docked = shuttle.attemptDocking(defenderPointDefense);
             if (docked) {
                 logEvent(shuttle.getName() + " successfully docked with " +
                         defenderShip.getName());
@@ -308,14 +306,14 @@ public class BoardingAction {
                     " casualties, Defenders: " + result.defenderCasualties + " casualties");
 
             // Morale checks
-            if (!defenderMarines.moraleCheck(random)) {
+            if (!defenderMarines.moraleCheck()) {
                 logEvent("Defender marines break and retreat!");
                 break;
             }
 
             boolean attackersBroke = false;
             for (MarineUnit unit : attackers) {
-                if (!unit.moraleCheck(random)) {
+                if (!unit.moraleCheck()) {
                     logEvent(unit.getName() + " breaks and retreats!");
                     attackersBroke = true;
                 }
@@ -346,7 +344,7 @@ public class BoardingAction {
         double defenderPower = defender.getEffectiveCombatPower();
 
         // Attacker roll
-        int attackerRoll = random.nextInt(12) + 2; // 2D6
+        int attackerRoll = DiceUtil.roll2D6();
         int defenderCasualties = 0;
         if (attackerRoll * attackerPower > 7 * defenderPower) {
             defenderCasualties = Math.max(1, (int) (attackerPower / 3));
@@ -354,7 +352,7 @@ public class BoardingAction {
         }
 
         // Defender roll
-        int defenderRoll = random.nextInt(12) + 2; // 2D6
+        int defenderRoll = DiceUtil.roll2D6();
         int attackerCasualties = 0;
         if (defenderRoll * defenderPower > 7 * attackerPower) {
             attackerCasualties = Math.max(1, (int) (defenderPower / 3));

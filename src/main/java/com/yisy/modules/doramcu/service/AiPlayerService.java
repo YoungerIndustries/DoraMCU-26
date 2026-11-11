@@ -41,6 +41,8 @@ public class AiPlayerService {
     private final DlGameAiService dlGameAiService;
     private final DoraAiLearningService doraAiLearningService;
     private final GameChatService gameChatService;
+    private final PlayerActionAnalyzer playerActionAnalyzer;
+    private final PlayerCloneService playerCloneService;
     private final Random random;
 
     /**
@@ -62,12 +64,16 @@ public class AiPlayerService {
 
     public AiPlayerService(GameSessionService gameSessionService, DlGameAiService dlGameAiService,
                            AiDifficultyConfig aiDifficultyConfig, GameChatService gameChatService,
-                           DoraAiLearningService doraAiLearningService) {
+                           DoraAiLearningService doraAiLearningService,
+                           PlayerActionAnalyzer playerActionAnalyzer,
+                           PlayerCloneService playerCloneService) {
         this.gameSessionService = gameSessionService;
         this.dlGameAiService = dlGameAiService;
         this.aiDifficultyConfig = aiDifficultyConfig;
         this.gameChatService = gameChatService;
         this.doraAiLearningService = doraAiLearningService;
+        this.playerActionAnalyzer = playerActionAnalyzer;
+        this.playerCloneService = playerCloneService;
         this.random = new Random();
     }
 
@@ -639,6 +645,65 @@ public class AiPlayerService {
                 .filter(p -> p.getId() == playerId)
                 .findFirst()
                 .orElse(null);
+    }
+
+    /**
+     * Records a human player action for behavioral personality analysis.
+     * <p>
+     * This method intercepts human player actions and feeds them to the
+     * PlayerActionAnalyzer, which builds a behavioral profile over time.
+     * The profile can then be used to create an AI clone of the player.
+     * </p>
+     *
+     * @param playerId the human player's Game internal ID
+     * @param actionType the action type performed
+     * @param turnNumber the current turn number
+     */
+    public void recordHumanPlayerAction(int playerId, AiDecision.ActionType actionType, int turnNumber) {
+        try {
+            playerActionAnalyzer.recordActionFromDecision(playerId, actionType, turnNumber);
+
+            // Periodically refresh the player's cached personality
+            int actionCount = playerActionAnalyzer.getTotalActionCount(playerId);
+            if (actionCount % 10 == 0) {
+                playerCloneService.refreshPersonality(playerId);
+                log.debug("Refreshed personality for human player {} after {} actions", playerId, actionCount);
+            }
+        } catch (Exception e) {
+            log.warn("Failed to record human player action: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Creates an AI clone of a human player based on their observed behavior.
+     *
+     * @param playerId the session player ID for the clone
+     * @param player the human player to clone
+     * @param researchLevel the AI research level (0-10)
+     * @return the EmpireAiCore configured with the player's observed personality
+     */
+    public EmpireAiCore createPlayerClone(int playerId, Player player, int researchLevel) {
+        return playerCloneService.createClone(playerId, player, researchLevel);
+    }
+
+    /**
+     * Gets the dynamic personality profile for a player.
+     *
+     * @param player the player
+     * @return the dynamic personality or null if not available
+     */
+    public DynamicAiPersonality getPlayerPersonality(Player player) {
+        return playerCloneService.getOrCreatePersonality(player);
+    }
+
+    /**
+     * Gets the confidence score for a player's personality profile.
+     *
+     * @param playerId the player's ID
+     * @return the confidence score (0.0-1.0)
+     */
+    public double getPlayerConfidenceScore(int playerId) {
+        return playerCloneService.getConfidenceScore(playerId);
     }
 
     /**

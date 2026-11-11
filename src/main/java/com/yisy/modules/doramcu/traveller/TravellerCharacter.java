@@ -131,6 +131,15 @@ public class TravellerCharacter {
     }
 
     /**
+     * Adds a skill to the character.
+     *
+     * @param skill the skill to add
+     */
+    public void addSkill(Skill skill) {
+        skills.add(Objects.requireNonNull(skill, "Skill must not be null"));
+    }
+
+    /**
      * Checks if the character has a specific skill.
      *
      * @param skill the skill to check

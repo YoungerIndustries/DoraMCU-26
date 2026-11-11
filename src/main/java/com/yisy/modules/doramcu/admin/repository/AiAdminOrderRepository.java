@@ -12,4 +12,8 @@ public interface AiAdminOrderRepository extends JpaRepository<AiAdminOrder, Long
     List<AiAdminOrder> findByStatus(AiAdminOrder.OrderStatus status);
 
     List<AiAdminOrder> findBySubmittedBy(String submittedBy);
+
+    List<AiAdminOrder> findBySubmittedByContaining(String submittedBy);
+
+    List<AiAdminOrder> findBySubmittedByContainingAndStatus(String submittedBy, AiAdminOrder.OrderStatus status);
 }

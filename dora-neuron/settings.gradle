@@ -1,0 +1,3 @@
+rootProject.name = 'dora-neuron'
+include 'dora-dl-core'
+project(':dora-dl-core').projectDir = new File(settingsDir.parentFile, 'dora-dl-core')

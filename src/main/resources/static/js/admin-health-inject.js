@@ -1,0 +1,508 @@
+/**
+ * Admin Health Panels — Startup Injection Script
+ *
+ * Injects the admin health panels overlay at the beginning of startup on index.html.
+ * The overlay displays all health panels (JVM, OS, Database, Ollama, Python, Game
+ * Sessions, Turn Scheduler, DL Circuit Breaker, Junie Agent) and auto-refreshes
+ * every 5 seconds. It also polls startup progress and shows a mini progress bar.
+ *
+ * The overlay can be dismissed manually or will auto-dismiss once startup is
+ * complete and the user proceeds to login.
+ */
+(function () {
+    'use strict';
+
+    // Only inject if not already present (avoid double injection)
+    if (window.__adminHealthInjected) return;
+    window.__adminHealthInjected = true;
+
+    let refreshTimer = null;
+    let startupPollTimer = null;
+
+    // ============================================================
+    // CSS Injection
+    // ============================================================
+    const styleId = 'admin-health-inject-styles';
+    if (!document.getElementById(styleId)) {
+        const style = document.createElement('style');
+        style.id = styleId;
+        style.textContent = `
+        .admin-health-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(5, 10, 20, 0.95);
+            z-index: 20000;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .admin-health-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 24px;
+            background: rgba(26, 26, 46, 0.9);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+            flex-shrink: 0;
+        }
+        .admin-health-header h1 {
+            font-size: 1.1rem;
+            color: #00d4ff;
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            letter-spacing: 1px;
+        }
+        .admin-health-header .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .admin-health-header .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #888;
+        }
+        .admin-health-header .status-pill .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #34d399;
+            box-shadow: 0 0 8px #34d399;
+        }
+        .admin-health-header .status-pill .dot.offline {
+            background: #f87171;
+            box-shadow: 0 0 8px #f87171;
+        }
+        .admin-health-close {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ccc;
+            padding: 4px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+        .admin-health-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: #fff;
+        }
+        .admin-health-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 24px;
+        }
+        .admin-health-body .health-grid {
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .admin-health-body .health-card {
+            background: rgba(26, 26, 46, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+        }
+        .admin-health-body .health-card:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            transform: translateY(-1px);
+        }
+        .admin-health-body .card-header {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px 14px;
+        }
+        .admin-health-body .card-header h2 {
+            font-size: 0.8rem;
+            color: #e0e0e0;
+        }
+        .admin-health-body .card-body {
+            padding: 12px 14px;
+            gap: 8px;
+        }
+        .admin-health-body .metric-label {
+            font-size: 0.72rem;
+            color: #888;
+        }
+        .admin-health-body .metric-value {
+            font-size: 0.78rem;
+            color: #ccc;
+        }
+        .admin-health-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 24px;
+            background: rgba(26, 26, 46, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            flex-shrink: 0;
+        }
+        .admin-health-footer span {
+            font-size: 0.7rem;
+            color: #555;
+        }
+        .admin-health-footer .footer-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .admin-health-footer .btn-nav {
+            padding: 4px 14px;
+            font-size: 0.72rem;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            background: transparent;
+            color: #00d4ff;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .admin-health-footer .btn-nav:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+        .admin-health-footer .btn-nav.btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #c084fc);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+        }
+        .admin-health-footer .btn-nav.btn-primary:hover {
+            box-shadow: 0 0 16px rgba(0, 212, 255, 0.4);
+        }
+        .admin-health-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #555;
+            font-size: 0.9rem;
+        }
+        .admin-health-loading .spinner {
+            width: 32px; height: 32px;
+            border: 3px solid rgba(0, 212, 255, 0.2);
+            border-top-color: #00d4ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 12px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .startup-mini-bar {
+            width: 120px; height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .startup-mini-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
+            border-radius: 2px;
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // ============================================================
+    // HTML Injection
+    // ============================================================
+    const overlayId = 'adminHealthOverlay';
+    if (!document.getElementById(overlayId)) {
+        const overlay = document.createElement('div');
+        overlay.className = 'admin-health-overlay';
+        overlay.id = overlayId;
+        overlay.innerHTML = `
+            <div class="admin-health-header">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <h1>⚙ DORAMCU — Admin Health Panels</h1>
+                    <div class="startup-mini-bar">
+                        <div class="startup-mini-bar-fill" id="startupMiniBarFill"></div>
+                    </div>
+                </div>
+                <div class="header-controls">
+                    <div class="status-pill">
+                        <span class="dot" id="overallDot"></span>
+                        <span id="overallLabel">Initializing...</span>
+                    </div>
+                    <button class="admin-health-close" id="adminHealthDismissBtn">Dismiss</button>
+                </div>
+            </div>
+            <div class="admin-health-body" id="adminHealthBody">
+                <div class="admin-health-loading" id="adminHealthLoading">
+                    <div class="spinner"></div>
+                    <span>Loading health panels...</span>
+                </div>
+                <div class="health-grid" id="adminHealthGrid" style="display:none;"></div>
+            </div>
+            <div class="admin-health-footer">
+                <span id="footerInfo">DoraMCU — Startup Health Check</span>
+                <div class="footer-actions">
+                    <a href="health.html" class="btn-nav">Full Dashboard</a>
+                    <a href="admin-health.html" class="btn-nav">Open in New Tab</a>
+                    <button class="btn-nav btn-primary" id="btnProceedToLogin">Proceed to Login →</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        // Dismiss button handler
+        document.getElementById('adminHealthDismissBtn').addEventListener('click', closeAdminHealth);
+        document.getElementById('btnProceedToLogin').addEventListener('click', closeAdminHealth);
+    }
+
+    // ============================================================
+    // Utilities
+    // ============================================================
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+
+    function formatUptime(ms) {
+        const seconds = Math.floor(ms / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        if (days > 0) return days + 'd ' + (hours % 24) + 'h';
+        if (hours > 0) return hours + 'h ' + (minutes % 60) + 'm';
+        if (minutes > 0) return minutes + 'm ' + (seconds % 60) + 's';
+        return seconds + 's';
+    }
+
+    function badge(status) {
+        const upper = (status || '').toUpperCase();
+        let cls = 'status-warning';
+        if (['UP', 'ACTIVE', 'RUNNING', 'TRUE'].includes(upper)) cls = 'status-up';
+        else if (['DOWN', 'ERROR', 'FALSE'].includes(upper)) cls = 'status-down';
+        return '<span class="status-badge ' + cls + '">' + upper + '</span>';
+    }
+
+    // ============================================================
+    // Startup Progress Polling
+    // ============================================================
+    async function pollStartupProgress() {
+        try {
+            const res = await fetch('/api/v1/startup/progress');
+            if (!res.ok) return;
+            const steps = await res.json();
+            const completed = steps.filter(function (s) {
+                return s.status === 'COMPLETED' || s.status === 'SKIPPED';
+            }).length;
+            const total = steps.length;
+            const pct = Math.round((completed / total) * 100);
+
+            var bar = document.getElementById('startupMiniBarFill');
+            if (bar) bar.style.width = pct + '%';
+
+            var label = document.getElementById('overallLabel');
+            if (label) {
+                if (pct === 100) label.textContent = 'Startup Complete';
+                else label.textContent = 'Startup ' + pct + '%';
+            }
+
+            var dot = document.getElementById('overallDot');
+            if (dot) {
+                if (pct === 100) dot.className = 'dot';
+                else dot.className = 'dot offline';
+            }
+        } catch (e) {
+            // Server may not be ready yet
+        }
+    }
+
+    // ============================================================
+    // Health Dashboard Loading
+    // ============================================================
+    async function loadHealthPanels() {
+        try {
+            const res = await fetch('/api/v1/health/dashboard');
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+            renderHealthPanels(data);
+        } catch (err) {
+            console.warn('Health dashboard not yet available:', err.message);
+        }
+    }
+
+    function renderHealthPanels(data) {
+        var grid = document.getElementById('adminHealthGrid');
+        var loading = document.getElementById('adminHealthLoading');
+        if (!grid) return;
+
+        var html = '';
+
+        // 1. JVM Runtime
+        if (data.jvm) {
+            var heapPct = data.jvm.heapPercent || 0;
+            var barColor = heapPct > 90 ? '#f87171' : heapPct > 70 ? '#fb923c' : '#34d399';
+            html += '<div class="health-card"><div class="card-header">' +
+                '<span style="font-size:1.2rem">🖥</span><h2>JVM Runtime</h2>' + badge('UP') +
+                '</div><div class="card-body">' +
+                '<div class="metric-row"><span class="metric-label">Heap Usage</span>' +
+                '<span class="metric-value">' + formatBytes(data.jvm.heapUsed) + ' / ' + formatBytes(data.jvm.heapMax) + '</span></div>' +
+                '<div class="metric-bar"><div class="metric-bar-fill" style="width:' + heapPct + '%;background:' + barColor + '"></div></div>' +
+                '<div class="metric-row"><span class="metric-label">Threads</span><span class="metric-value">' + data.jvm.threadCount + '</span></div>' +
+                '<div class="metric-row"><span class="metric-label">Non-Heap</span><span class="metric-value">' + formatBytes(data.jvm.nonHeapUsed) + '</span></div>' +
+                '</div></div>';
+        }
+
+        // 2. System / OS
+        if (data.os) {
+            html += '<div class="health-card"><div class="card-header">' +
+                '<span style="font-size:1.2rem">💻</span><h2>System</h2>' + badge('UP') +
+                '</div><div class="card-body">' +
+                '<div class="metric-row"><span class="metric-label">OS</span><span class="metric-value">' + (data.os.name || '-') + '</span></div>' +
+                '<div class="metric-row"><span class="metric-label">Architecture</span><span class="metric-value">' + (data.os.arch || '-') + '</span></div>' +
+                '<div class="metric-row"><span class="metric-label">Processors</span><span class="metric-value">' + (data.os.processors || '-') + '</span></div>' +
+                '<div class="metric-row"><span class="metric-label">Load Average</span><span class="metric-value">' + (data.os.loadAverage != null ? data.os.loadAverage.toFixed(2) : '-') + '</span></div>' +
+                '</div></div>';
+        }
+
+        // 3. Components (Database, Ollama, etc.)
+        if (data.components) {
+            data.components.forEach(function (comp) {
+                var name = comp.name.replace(/HealthIndicator$/, '');
+                var icons = { Database: '🗄', Ollama: '🧠' };
+                var icon = icons[name] || '📦';
+                var detailsHtml = '';
+                if (comp.details) {
+                    Object.keys(comp.details).forEach(function (k) {
+                        detailsHtml += '<div class="metric-row"><span class="metric-label">' + k + '</span><span class="metric-value">' + comp.details[k] + '</span></div>';
+                    });
+                }
+                html += '<div class="health-card"><div class="card-header">' +
+                    '<span style="font-size:1.2rem">' + icon + '</span><h2>' + name + '</h2>' + badge(comp.status) +
+                    '</div><div class="card-body">' +
+                    (detailsHtml || '<div class="metric-row"><span class="metric-label">Status</span><span class="metric-value">' + comp.status + '</span></div>') +
+                    '</div></div>';
+            });
+        }
+
+        // 4. Python Server
+        if (data.pythonServer) {
+            var pyErrorHtml = data.pythonServer.error ?
+                '<div class="metric-row"><span class="metric-label">Error</span><span class="metric-value" style="color:#f87171">' + data.pythonServer.error + '</span></div>' : '';
+            html += '<div class="health-card"><div class="card-header">' +
+                '<span style="font-size:1.2rem">🐍</span><h2>Python AI Server</h2>' + badge(data.pythonServer.status) +
+                '</div><div class="card-body">' +
+                '<div class="metric-row"><span class="metric-label">Port</span><span class="metric-value">' + (data.pythonServer.port || '-') + '</span></div>' +
+                '<div class="metric-row"><span class="metric-label">URL</span><span class="metric-value">' + (data.pythonServer.url || '-') + '</span></div>' +
+                pyErrorHtml + '</div></div>';
+        }
+
+        // 5. Game Sessions
+        if (data.gameSessions) {
+            var gameStatus = (data.gameSessions.activeSessions || 0) > 0 ? 'UP' : 'DOWN';
+            html += '<div class="health-card"><div class="card-header">' +
+                '<span style="font-size:1.2rem">🎮</span><h2>Game Sessions</h2>' + badge(gameStatus) +
+                '</div><div class="card-body">' +
+                '<div class="metric-row"><span class="metric-label">Active Sessions</span><span class="metric-value">' + (data.gameSessions.activeSessions || 0) + '</span></div>' +
+                '<div class="metric-row"><span class="metric-label">AI Players</span><span class="metric-value">' + (data.gameSessions.aiPlayers || 0) + '</span></div>' +
+                '<div class="metric-row"><span class="metric-label">Current Turn</span><span class="metric-value">' + (data.gameSessions.currentTurn || '-') + '</span></div>' +
+                '</div></div>';
+        }
+
+        // 6. Turn Scheduler
+        if (data.turnScheduler) {
+            html += '<div class="health-card"><div class="card-header">' +
+                '<span style="font-size:1.2rem">⏱</span><h2>Turn Scheduler</h2>' + badge(data.turnScheduler.running ? 'UP' : 'DOWN') +
+                '</div><div class="card-body">' +
+                '<div class="metric-row"><span class="metric-label">Running</span><span class="metric-value">' + (data.turnScheduler.running ? 'Yes' : 'No') + '</span></div>' +
+                '<div class="metric-row"><span class="metric-label">Interval</span><span class="metric-value">' + (data.turnScheduler.intervalSeconds || '-') + 's</span></div>' +
+                '</div></div>';
+        }
+
+        // 7. DL Circuit Breaker
+        if (data.dlCircuitBreaker) {
+            html += '<div class="health-card"><div class="card-header">' +
+                '<span style="font-size:1.2rem">🛡</span><h2>DL Circuit Breaker</h2>' + badge(data.dlCircuitBreaker.status) +
+                '</div><div class="card-body">' +
+                '<div class="metric-row"><span class="metric-label">Status</span><span class="metric-value">' + (data.dlCircuitBreaker.status || '-') + '</span></div>' +
+                '<div class="metric-row"><span class="metric-label">Note</span><span class="metric-value">' + (data.dlCircuitBreaker.note || '-') + '</span></div>' +
+                '</div></div>';
+        }
+
+        // 8. Junie Agent
+        if (data.junieAgent) {
+            html += '<div class="health-card" style="border-color:rgba(192,132,252,0.3);box-shadow:0 0 20px rgba(192,132,252,0.1)"><div class="card-header">' +
+                '<span style="font-size:1.2rem">🤖</span><h2>Junie Agent</h2>' + badge(data.junieAgent.status) +
+                '</div><div class="card-body">' +
+                '<div class="metric-row"><span class="metric-label">Agent</span><span class="metric-value">' + (data.junieAgent.agent || '-') + '</span></div>' +
+                '<div class="metric-row"><span class="metric-label">Model</span><span class="metric-value">' + (data.junieAgent.model || '-') + '</span></div>' +
+                '<div class="metric-row"><span class="metric-label">Provider</span><span class="metric-value">' + (data.junieAgent.provider || '-') + '</span></div>' +
+                '<div class="metric-row"><span class="metric-label">CLI Running</span><span class="metric-value">' + (data.junieAgent.cliRunning ? 'Yes' : 'No') + '</span></div>' +
+                '<div class="metric-row"><span class="metric-label">Sessions</span><span class="metric-value">' + (data.junieAgent.sessionFiles != null ? data.junieAgent.sessionFiles : '-') + '</span></div>' +
+                '</div></div>';
+        }
+
+        // 9. App Info
+        html += '<div class="health-card"><div class="card-header">' +
+            '<span style="font-size:1.2rem">📋</span><h2>Application</h2>' + badge('UP') +
+            '</div><div class="card-body">' +
+            '<div class="metric-row"><span class="metric-label">Version</span><span class="metric-value">' + (data.appVersion || '-') + '</span></div>' +
+            '<div class="metric-row"><span class="metric-label">Uptime</span><span class="metric-value">' + formatUptime(data.uptime || 0) + '</span></div>' +
+            '<div class="metric-row"><span class="metric-label">Game Started</span><span class="metric-value">' + (data.gameStarted ? 'Yes' : 'No') + '</span></div>' +
+            '</div></div>';
+
+        grid.innerHTML = html;
+        grid.style.display = 'grid';
+        if (loading) loading.style.display = 'none';
+
+        var footerInfo = document.getElementById('footerInfo');
+        if (footerInfo) {
+            footerInfo.textContent = 'DoraMCU v' + (data.appVersion || '0.1.7') + ' — Uptime: ' + formatUptime(data.uptime || 0);
+        }
+    }
+
+    // ============================================================
+    // Auto-refresh
+    // ============================================================
+    function startAutoRefresh() {
+        refreshTimer = setInterval(function () {
+            loadHealthPanels();
+            pollStartupProgress();
+        }, 5000);
+    }
+
+    function stopAutoRefresh() {
+        if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
+        if (startupPollTimer) { clearInterval(startupPollTimer); startupPollTimer = null; }
+    }
+
+    // ============================================================
+    // Close / Dismiss
+    // ============================================================
+    function closeAdminHealth() {
+        stopAutoRefresh();
+        var overlay = document.getElementById('adminHealthOverlay');
+        if (overlay) overlay.remove();
+    }
+    window.closeAdminHealth = closeAdminHealth;
+
+    // ============================================================
+    // Init — wait briefly for server to be ready
+    // ============================================================
+    function init() {
+        // Initial load with retry
+        function tryLoad() {
+            loadHealthPanels().then(function () {
+                // Successfully loaded — start auto-refresh
+                startAutoRefresh();
+            }).catch(function () {
+                // Server not ready yet — retry after 1s
+                setTimeout(tryLoad, 1000);
+            });
+        }
+        tryLoad();
+        pollStartupProgress();
+        startupPollTimer = setInterval(pollStartupProgress, 2000);
+    }
+
+    // Start after a brief delay to let the page render
+    setTimeout(init, 500);
+})();

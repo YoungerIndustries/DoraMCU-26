@@ -4,6 +4,7 @@ import com.yisy.modules.doramcu.dto.CreateSessionResponse;
 import com.yisy.modules.doramcu.dto.JoinSessionResponse;
 import com.yisy.modules.doramcu.hex.Empire;
 import com.yisy.modules.doramcu.model.Player;
+import com.yisy.modules.doramcu.repository.EveCorporationRepository;
 import com.yisy.modules.doramcu.repository.PlayerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +26,7 @@ class GalaxyCreationServiceTest {
     private GameSessionService gameSessionService;
     private AiPlayerService aiPlayerService;
     private PlayerRepository playerRepository;
+    private EveCorporationRepository corporationRepository;
     private GalaxyCreationService galaxyCreationService;
 
     @BeforeEach
@@ -34,13 +36,15 @@ class GalaxyCreationServiceTest {
         gameSessionService = Mockito.mock(GameSessionService.class);
         aiPlayerService = Mockito.mock(AiPlayerService.class);
         playerRepository = Mockito.mock(PlayerRepository.class);
+        corporationRepository = Mockito.mock(EveCorporationRepository.class);
 
         galaxyCreationService = new GalaxyCreationService(
                 galaxyService,
                 galaxyProgressService,
                 gameSessionService,
                 aiPlayerService,
-                playerRepository
+                playerRepository,
+                corporationRepository
         );
     }
 

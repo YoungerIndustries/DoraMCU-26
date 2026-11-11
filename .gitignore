@@ -67,6 +67,14 @@ work/
 transcript.md
 search.ps1
 setup-memory-drive.ps1
+test_output.txt
+
+### Python ###
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+uv.lock
 
 ### Backups ###
 backups/
@@ -80,6 +88,10 @@ unity-client/obj/
 ### DL models (large files) ###
 dl-models/*.zip
 dl-models/*.h5
+
+### Deprecated projects ###
+DoraAI2/
+DoraMCU.bundle
 
 ### Junie session files ###
 .junie/plans/

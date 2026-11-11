@@ -1,0 +1,27 @@
+{
+  "sabotage": {
+    "description": "Destroy enemy infrastructure",
+    "baseDifficulty": 5,
+    "rewardMultiplier": 10
+  },
+  "assassination": {
+    "description": "Eliminate key personnel",
+    "baseDifficulty": 8,
+    "rewardMultiplier": 20
+  },
+  "intel_gathering": {
+    "description": "Collect intelligence",
+    "baseDifficulty": 3,
+    "rewardMultiplier": 15
+  },
+  "propaganda": {
+    "description": "Influence public opinion",
+    "baseDifficulty": 4,
+    "rewardMultiplier": 8
+  },
+  "infiltration": {
+    "description": "Infiltrate enemy organizations",
+    "baseDifficulty": 6,
+    "rewardMultiplier": 18
+  }
+}

@@ -1,0 +1,71 @@
+# DoraMCU Neuron — Edge-Optimized Dockerfile
+# Optimized for ARM64 devices (Raspberry Pi 4/5, Jetson Nano, etc.)
+#
+# Usage:
+#   docker build -f Dockerfile.neuron-edge -t doramcu/neuron-edge:latest .
+#
+# Multi-arch build:
+#   docker buildx build --platform linux/arm64/v8 -f Dockerfile.neuron-edge -t doramcu/neuron-edge:latest .
+
+# ── Stage 1: Build ─────────────────────────────────────────────────────────────
+FROM eclipse-temurin:27-jdk-alpine AS builder
+
+WORKDIR /build
+
+# Copy build files
+COPY build.gradle settings.gradle gradlew ./
+COPY gradle gradle
+
+# Copy dora-neuron module
+COPY dora-neuron dora-neuron
+
+# Copy dora-dl-core module (dependency)
+COPY dora-dl-core dora-dl-core
+
+# Build the neuron JAR
+RUN ./gradlew :dora-neuron:bootJar --no-daemon --warning-mode none
+
+# ── Stage 2: Runtime ───────────────────────────────────────────────────────────
+# Use Alpine Java 27 for minimal image size on ARM64
+FROM eclipse-temurin:27-jre-alpine
+
+# Metadata labels
+LABEL maintainer="DoraMCU Team"
+LABEL description="DoraMCU Neuron — Edge-optimized satellite AI node"
+LABEL version="0.1.0"
+
+# Run as non-root user
+RUN addgroup -S neuron && adduser -S neuron -G neuron
+
+# Set working directory
+WORKDIR /app
+
+# Copy the built JAR
+COPY --from=builder /build/dora-neuron/build/libs/dora-neuron-0.1.0.jar app.jar
+
+# Create directories for models and temp files
+RUN mkdir -p /app/dl-models /tmp/neuron-quantized-models && \
+    chown -R neuron:neuron /app
+
+# Switch to non-root user
+USER neuron
+
+# Expose the neuron port
+EXPOSE 8090
+
+# Edge-optimized JVM settings:
+# - Reduced heap size (512MB max for edge devices)
+# - G1GC for better pause times on constrained hardware
+# - Enable container support for resource awareness
+# - Reduce thread stack size
+ENV JAVA_OPTS="-Xms128m -Xmx512m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 \
+  -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 \
+  -Xss256k -Djava.security.egd=file:/dev/./urandom \
+  -Dneuron.edge.auto-optimize=true"
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+  CMD wget -qO- http://localhost:8090/api/health/live || exit 1
+
+# Start the neuron
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

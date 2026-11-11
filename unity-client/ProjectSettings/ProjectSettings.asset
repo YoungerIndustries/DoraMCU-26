@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!129 &1
+PlayerSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 26
+  productGUID: 8a9b7c6d5e4f3a2b1c0d9e8f7a6b5c4d
+  companyName: DoraMCU
+  productName: DoraMCU Unity Client
+  defaultScreenWidth: 1024
+  defaultScreenHeight: 768
+  m_ActiveColorSpace: 1
+  runInBackground: 0
+  fullscreenMode: 1
+  applicationIdentifier:
+    Standalone: com.DoraMCU.UnityClient
+  projectName: DoraMCU Unity Client
+  cloudProjectId: 
+  organizationId: 
+  cloudEnabled: 0

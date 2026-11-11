@@ -107,4 +107,11 @@ public class NameDatabaseLoader {
         }
         return defaultValue;
     }
+
+    /**
+     * Loads themes from a JSON file. Alias for loadCategorized.
+     */
+    public static Map<String, List<String>> loadThemes(String resourcePath) {
+        return loadCategorized(resourcePath);
+    }
 }

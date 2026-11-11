@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.traveller;
 
+import com.yisy.modules.doramcu.util.DiceUtil;
+
 /**
  * A boarding shuttle used to transport marines to a target ship.
  * <p>
@@ -212,11 +214,11 @@ public class BoardingShuttle {
      * @param random the random number generator
      * @return true if docking was successful
      */
-    public boolean attemptDocking(int pointDefenseRating, java.util.Random random) {
+    public boolean attemptDocking(int pointDefenseRating) {
         if (destroyed) return false;
 
         // Docking roll: 2D6 + speed vs point defense
-        int roll = random.nextInt(12) + 2; // 2D6
+        int roll = DiceUtil.roll2D6();
         int dockingBonus = shuttleType.getSpeed() + shuttleType.getStealth();
         int threshold = 12 + pointDefenseRating - dockingBonus;
 

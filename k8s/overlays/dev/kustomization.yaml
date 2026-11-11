@@ -1,0 +1,59 @@
+# Kustomization — Dev overlay
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+patches:
+  # Reduce neuron replicas for dev
+  - target:
+      kind: HorizontalPodAutoscaler
+      name: neuron-hpa
+    patch: |
+      - op: replace
+        path: /spec/minReplicas
+        value: 1
+      - op: replace
+        path: /spec/maxReplicas
+        value: 3
+
+  # Reduce resource quotas for dev
+  - target:
+      kind: ResourceQuota
+      name: doramcu-quota
+    patch: |
+      - op: replace
+        path: /spec/hard/requests.cpu
+        value: "4"
+      - op: replace
+        path: /spec/hard/requests.memory
+        value: "8Gi"
+      - op: replace
+        path: /spec/hard/limits.cpu
+        value: "8"
+      - op: replace
+        path: /spec/hard/limits.memory
+        value: "16Gi"
+      - op: replace
+        path: /spec/hard/pods
+        value: "20"
+
+configMapGenerator:
+  - name: neuron-config-dev
+    behavior: merge
+    literals:
+      - NEURON_NODE_REGION=dev
+      - NEURON_MESH_ENABLED="false"
+      - NEURON_ENABLE_CONSENSUS="false"
+
+images:
+  - name: doramcu/app
+    newName: doramcu/app
+    newTag: dev-latest
+  - name: doramcu/neuron
+    newName: doramcu/neuron
+    newTag: dev-latest
+  - name: doramcu/dl-python
+    newName: doramcu/dl-python
+    newTag: dev-latest

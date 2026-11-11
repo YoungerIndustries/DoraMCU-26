@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.traveller;
 
+import com.yisy.modules.doramcu.util.DiceUtil;
+
 /**
  * A marine unit for boarding actions in Classic Traveller.
  * <p>
@@ -304,13 +306,12 @@ public class MarineUnit {
      * The morale bonus determines the chance to hold position.
      * </p>
      *
-     * @param random the random number generator
      * @return true if the unit holds position, false if it breaks
      */
-    public boolean moraleCheck(java.util.Random random) {
+    public boolean moraleCheck() {
         if (getCasualtyPercentage() < 50.0) return true;
 
-        int roll = random.nextInt(12) + 2; // 2D6
+        int roll = DiceUtil.roll2D6();
         int threshold = 7 + morale.getBonus();
         return roll <= threshold;
     }

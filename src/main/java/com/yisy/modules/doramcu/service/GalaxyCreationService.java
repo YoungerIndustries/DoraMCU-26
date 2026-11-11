@@ -1,10 +1,14 @@
 package com.yisy.modules.doramcu.service;
 
+import com.yisy.modules.doramcu.dto.CreateGalaxyRequest;
 import com.yisy.modules.doramcu.dto.CreateSessionResponse;
+import com.yisy.modules.doramcu.dto.GalaxyCreationCostDto;
 import com.yisy.modules.doramcu.dto.JoinSessionResponse;
+import com.yisy.modules.doramcu.eve.model.EveCorporation;
 import com.yisy.modules.doramcu.hex.Empire;
 import com.yisy.modules.doramcu.hex.GalaxyFactory;
 import com.yisy.modules.doramcu.model.Player;
+import com.yisy.modules.doramcu.repository.EveCorporationRepository;
 import com.yisy.modules.doramcu.repository.PlayerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,17 +48,89 @@ public class GalaxyCreationService {
     private final GameSessionService gameSessionService;
     private final AiPlayerService aiPlayerService;
     private final PlayerRepository playerRepository;
+    private final EveCorporationRepository corporationRepository;
 
     public GalaxyCreationService(GalaxyService galaxyService,
                                   GalaxyProgressService galaxyProgressService,
                                   GameSessionService gameSessionService,
                                   AiPlayerService aiPlayerService,
-                                  PlayerRepository playerRepository) {
+                                  PlayerRepository playerRepository,
+                                  EveCorporationRepository corporationRepository) {
         this.galaxyService = galaxyService;
         this.galaxyProgressService = galaxyProgressService;
         this.gameSessionService = gameSessionService;
         this.aiPlayerService = aiPlayerService;
         this.playerRepository = playerRepository;
+        this.corporationRepository = corporationRepository;
+    }
+
+    /**
+     * Estimates the cost for creating a galaxy based on the request parameters.
+     */
+    public GalaxyCreationCostDto estimateCost(CreateGalaxyRequest request) {
+        long baseCost = 100000L;
+        long sizeMultiplier = request.getSystemCount() != null ? request.getSystemCount() : 100;
+        long cost = baseCost * sizeMultiplier / 100L;
+        java.util.Map<String, Long> breakdown = new java.util.HashMap<>();
+        breakdown.put("baseCost", baseCost);
+        breakdown.put("sizeMultiplier", sizeMultiplier);
+        return new GalaxyCreationCostDto(cost, request.getGameType(), request.getDifficultyLevel(), 100L, breakdown);
+    }
+
+    /**
+     * Estimates the cost for creating a galaxy, including the corporation's balance.
+     */
+    public GalaxyCreationCostDto estimateCostWithBalance(CreateGalaxyRequest request, Long corporationId) {
+        GalaxyCreationCostDto costDto = estimateCost(request);
+        long balance = getCorporationCreditBalance(corporationId);
+        costDto.setCorporationBalance(balance);
+        costDto.setSufficientFunds(balance >= costDto.getTotalCost());
+        return costDto;
+    }
+
+    /**
+     * Creates a galaxy from a corporation's credits.
+     */
+    public PaidGalaxyCreationResult createGalaxyFromCorporation(CreateGalaxyRequest request, Long playerId, Long corporationId) {
+        EveCorporation corporation = corporationRepository.findById(corporationId)
+                .orElseThrow(() -> new IllegalArgumentException("Corporation not found: " + corporationId));
+
+        GalaxyCreationCostDto costDto = estimateCost(request);
+        long balance = getCorporationCreditBalance(corporationId);
+        if (balance < costDto.getTotalCost()) {
+            throw new InsufficientFundsException(
+                    "Corporation " + corporation.getName() + " has insufficient funds: " + balance + " < " + costDto.getTotalCost());
+        }
+
+        // Create the galaxy
+        GalaxyCreationResult result = createGalaxyWithAiPlayers(request.getName());
+
+        // Create JPA galaxy entity
+        com.yisy.modules.doramcu.model.Galaxy galaxyEntity = new com.yisy.modules.doramcu.model.Galaxy();
+        galaxyEntity.setName(request.getName());
+        galaxyEntity.setDescription(request.getDescription());
+        galaxyEntity.setGameType(request.getGameType());
+        galaxyEntity.setDifficultyLevel(request.getDifficultyLevel());
+        galaxyEntity.setTheme(request.getTheme());
+
+        return new PaidGalaxyCreationResult(
+                result.getSessionId(),
+                result.getSessionName(),
+                costDto.getTotalCost(),
+                corporationId,
+                corporation.getName(),
+                galaxyEntity
+        );
+    }
+
+    /**
+     * Gets the credit balance of a corporation.
+     */
+    public long getCorporationCreditBalance(Long corporationId) {
+        EveCorporation corporation = corporationRepository.findById(corporationId)
+                .orElseThrow(() -> new IllegalArgumentException("Corporation not found: " + corporationId));
+        // Default balance if not set
+        return corporation.getCreditBalance() != null ? corporation.getCreditBalance() : 1000000L;
     }
 
     /**
@@ -240,6 +316,43 @@ public class GalaxyCreationService {
         public List<AiPlayerInfo> getAiPlayers() {
             return aiPlayers;
         }
+    }
+
+    /**
+     * Exception thrown when a corporation has insufficient funds for galaxy creation.
+     */
+    public static class InsufficientFundsException extends RuntimeException {
+        public InsufficientFundsException(String message) {
+            super(message);
+        }
+    }
+
+    /**
+     * Result of a paid galaxy creation request.
+     */
+    public static class PaidGalaxyCreationResult {
+        private final String sessionId;
+        private final String sessionName;
+        private final double creditsSpent;
+        private final Long corporationId;
+        private final String corporationName;
+        private final com.yisy.modules.doramcu.model.Galaxy galaxy;
+
+        public PaidGalaxyCreationResult(String sessionId, String sessionName, double creditsSpent, Long corporationId, String corporationName, com.yisy.modules.doramcu.model.Galaxy galaxy) {
+            this.sessionId = sessionId;
+            this.sessionName = sessionName;
+            this.creditsSpent = creditsSpent;
+            this.corporationId = corporationId;
+            this.corporationName = corporationName;
+            this.galaxy = galaxy;
+        }
+
+        public String getSessionId() { return sessionId; }
+        public String getSessionName() { return sessionName; }
+        public double getCreditsSpent() { return creditsSpent; }
+        public Long getCorporationId() { return corporationId; }
+        public String getCorporationName() { return corporationName; }
+        public com.yisy.modules.doramcu.model.Galaxy getGalaxy() { return galaxy; }
     }
 
     /**

@@ -25,12 +25,32 @@ public class EmpireFeatureExtractor {
 
     private static final Logger log = LoggerFactory.getLogger(EmpireFeatureExtractor.class);
 
+    /** Optional service for dynamic personality lookup. Null uses static personality. */
+    private final PlayerCloneService cloneService;
+
     // Normalization constants
     private static final int MAX_FLEETS = 50;
     private static final int MAX_STATIONS = 30;
     private static final int MAX_TECH_LEVEL = 10;
     private static final int MAX_RESOURCE_RATE = 1000;
     private static final int MAX_PLANETS = 100;
+
+    /**
+     * Creates a feature extractor without dynamic personality support.
+     * Uses static government/ethos-based personality for all extractions.
+     */
+    public EmpireFeatureExtractor() {
+        this(null);
+    }
+
+    /**
+     * Creates a feature extractor with optional dynamic personality support.
+     *
+     * @param cloneService the player clone service for dynamic personality, or null for static only
+     */
+    public EmpireFeatureExtractor(PlayerCloneService cloneService) {
+        this.cloneService = cloneService;
+    }
 
     /**
      * Extracts empire-specific features and populates dimensions 32-63 of the given feature vector.
@@ -60,9 +80,24 @@ public class EmpireFeatureExtractor {
 
     /**
      * Sets personality features (indices 32-33): aggression and expansion drive.
+     * <p>
+     * If a PlayerCloneService is available and the player has observed actions,
+     * uses the blended dynamic personality; otherwise falls back to the static
+     * government/ethos-based personality.
+     * </p>
      */
     private void extractPersonality(GameStateFeatures features, Player player) {
-        AiPersonality personality = AiPersonality.fromPlayer(player);
+        AiPersonality personality;
+        if (cloneService != null) {
+            DynamicAiPersonality dynamic = cloneService.getOrCreatePersonality(player);
+            if (dynamic != null) {
+                personality = dynamic;
+            } else {
+                personality = AiPersonality.fromPlayer(player);
+            }
+        } else {
+            personality = AiPersonality.fromPlayer(player);
+        }
         features.setPersonality(
                 personality.getAggression(),
                 personality.getExpansionDrive()

@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.traveller;
 
+import com.yisy.modules.doramcu.util.DiceUtil;
 import java.util.*;
 
 /**
@@ -372,7 +373,6 @@ public class Survival {
         }
 
         // Disease progression
-        Random random = new Random();
         Iterator<DiseaseInstance> iterator = diseases.iterator();
         while (iterator.hasNext()) {
             DiseaseInstance disease = iterator.next();
@@ -398,7 +398,7 @@ public class Survival {
         // Check for new disease
         if (currentShelter == ShelterType.NONE || currentShelter == ShelterType.TARP) {
             int diseaseChance = 10; // 10% chance per day in poor conditions
-            if (random.nextInt(100) < diseaseChance) {
+            if (DiceUtil.rollPercentile() < diseaseChance) {
                 Disease newDisease = randomDisease();
                 diseases.add(new DiseaseInstance(newDisease, newDisease.getDurationDays(), newDisease.getDurationDays()));
                 events.append("  Contracted ").append(newDisease.getName())
@@ -590,9 +590,8 @@ public class Survival {
      */
     private Disease randomDisease() {
         Disease[] diseases = Disease.values();
-        Random random = new Random();
         // Weight toward less severe diseases
-        int roll = random.nextInt(100);
+        int roll = DiceUtil.rollPercentile();
         if (roll < 40) {
             return Disease.COMMON_COLD;
         } else if (roll < 70) {

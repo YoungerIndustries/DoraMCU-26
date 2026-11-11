@@ -1,0 +1,82 @@
+[
+  {
+    "id": "WARP_DRIVE",
+    "name": "Warp Drive",
+    "description": "Faster-than-light propulsion using warp field generation.",
+    "techLevel": 9,
+    "category": "TRANSPORT",
+    "researchCost": 200
+  },
+  {
+    "id": "PHASER",
+    "name": "Phaser Technology",
+    "description": "Directed energy weapon using phased energy concentrations.",
+    "techLevel": 7,
+    "category": "WEAPON",
+    "researchCost": 100
+  },
+  {
+    "id": "SHIELDS",
+    "name": "Deflector Shields",
+    "description": "Energy barrier that absorbs and dissipates incoming attacks.",
+    "techLevel": 8,
+    "category": "WEAPON",
+    "researchCost": 150
+  },
+  {
+    "id": "TRANSPORTER",
+    "name": "Transporter",
+    "description": "Matter-energy conversion for instantaneous personnel and cargo transfer.",
+    "techLevel": 8,
+    "category": "TRANSPORT",
+    "researchCost": 150
+  },
+  {
+    "id": "LIFESUPPORT",
+    "name": "Advanced Life Support",
+    "description": "Environmental systems for long-duration spaceflight.",
+    "techLevel": 6,
+    "category": "MEDICINE",
+    "researchCost": 80
+  },
+  {
+    "id": "COMPUTER",
+    "name": "Ship Computer Systems",
+    "description": "Advanced onboard computing for navigation, weapons, and systems control.",
+    "techLevel": 7,
+    "category": "COMPUTING",
+    "researchCost": 120
+  },
+  {
+    "id": "MEDICAL",
+    "name": "Medical Tricorder",
+    "description": "Diagnostic and treatment device for field medicine.",
+    "techLevel": 6,
+    "category": "MEDICINE",
+    "researchCost": 80
+  },
+  {
+    "id": "STEALTH",
+    "name": "Cloaking Device",
+    "description": "Optical and sensor invisibility field. Restricted technology.",
+    "techLevel": 10,
+    "category": "WEAPON",
+    "researchCost": 300
+  },
+  {
+    "id": "LONG_RANGE_COMMS",
+    "name": "Long-Range Communications",
+    "description": "Subspace communication array for galaxy-wide messaging.",
+    "techLevel": 7,
+    "category": "COMMS",
+    "researchCost": 100
+  },
+  {
+    "id": "COLONY_SUPPORT",
+    "name": "Colony Infrastructure",
+    "description": "Self-sustaining colony systems with automated resource management.",
+    "techLevel": 6,
+    "category": "INDUSTRY",
+    "researchCost": 120
+  }
+]

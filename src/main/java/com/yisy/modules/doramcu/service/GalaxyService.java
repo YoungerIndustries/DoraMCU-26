@@ -113,6 +113,16 @@ public class GalaxyService {
     }
 
     /**
+     * Returns the galaxy with the given name.
+     *
+     * @param name the exact galaxy name to look up
+     * @return optional galaxy entity
+     */
+    public Optional<com.yisy.modules.doramcu.model.Galaxy> getGalaxyByName(String name) {
+        return galaxyRepository.findByName(name);
+    }
+
+    /**
      * Returns all galaxies stored in the database.
      *
      * @return list of all galaxies
@@ -788,6 +798,22 @@ public class GalaxyService {
     }
 
     /**
+     * Returns the test galaxy from the database, or empty if it doesn't exist.
+     *
+     * @return the test galaxy entity
+     */
+    @Transactional(readOnly = true)
+    public Optional<com.yisy.modules.doramcu.model.Galaxy> getTestGalaxy() {
+        List<com.yisy.modules.doramcu.model.Galaxy> galaxies = getAllGalaxies();
+        for (com.yisy.modules.doramcu.model.Galaxy galaxy : galaxies) {
+            if (GalaxyFactory.TEST_GALAXY_NAME.equals(galaxy.getName())) {
+                return Optional.of(galaxy);
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
      * Finds a sector by galaxy ID and grid position.
      *
      * @param galaxyId the galaxy ID
@@ -811,5 +837,87 @@ public class GalaxyService {
     @Transactional(readOnly = true)
     public com.yisy.modules.doramcu.model.SubSector findSubSectorBySectorAndPosition(Long sectorId, int subSectorRow, int subSectorCol) {
         return subSectorRepository.findBySectorIdAndSubSectorRowAndSubSectorCol(sectorId, subSectorRow, subSectorCol);
+    }
+
+    /**
+     * Generates and saves a galaxy from a template.
+     */
+    @Transactional
+    public GalaxyGenerationResult generateAndSaveGalaxyFromTemplate(
+            String name,
+            java.util.Map<Integer, com.yisy.modules.doramcu.hex.Empire> empires,
+            String gameType,
+            long seed,
+            Integer systemCount,
+            Integer planetsPerSystem,
+            Double moonChance,
+            Double asteroidBeltChance,
+            Double gasGiantChance,
+            Double nebulaChance,
+            Double blackHoleChance,
+            Double cometChance,
+            Double spaceStationChance,
+            Double hyperlaneDensity) {
+
+        com.yisy.modules.doramcu.hex.Galaxy inMemoryGalaxy = generateGalaxyInMemory(
+                name, systemCount, planetsPerSystem, moonChance, asteroidBeltChance,
+                gasGiantChance, nebulaChance, blackHoleChance, cometChance, spaceStationChance, seed);
+
+        if (empires != null && !empires.isEmpty()) {
+            assignPlanetsAndEstablishCapitals(inMemoryGalaxy, empires, new java.util.Random(seed));
+        }
+
+        com.yisy.modules.doramcu.model.Galaxy dbGalaxy = persistGalaxy(name, inMemoryGalaxy, hyperlaneDensity);
+        return new GalaxyGenerationResult(dbGalaxy, inMemoryGalaxy);
+    }
+
+    /**
+     * Generates remaining sectors in memory for an existing galaxy.
+     */
+    public void generateRemainingSectorsInMemory(com.yisy.modules.doramcu.hex.Galaxy galaxy, int sectorCount, long seed) {
+        // No-op placeholder — full galaxy is generated at once
+    }
+
+    /**
+     * Persists remaining sectors from an in-memory galaxy to the database.
+     */
+    @Transactional
+    public void persistRemainingSectors(com.yisy.modules.doramcu.model.Galaxy dbGalaxy,
+            com.yisy.modules.doramcu.hex.Galaxy inMemoryGalaxy, double hyperlaneDensity) {
+        // No-op placeholder — full galaxy is persisted at once
+    }
+
+    /**
+     * Deletes a galaxy by name.
+     */
+    @Transactional
+    public void deleteGalaxy(String name) {
+        getGalaxyByName(name).ifPresent(galaxy -> {
+            galaxyRepository.delete(galaxy);
+        });
+    }
+
+    /**
+     * Checks if a galaxy is playable.
+     */
+    public boolean isGalaxyPlayable(String name) {
+        return getGalaxyByName(name).isPresent();
+    }
+
+    /**
+     * Returns the completion percentage for a galaxy.
+     */
+    public int getGalaxyCompletionPercent(String name) {
+        return getGalaxyByName(name)
+                .map(g -> g.getSolarSystems() != null ? g.getSolarSystems().size() : 0)
+                .map(size -> Math.min(100, size / 10))
+                .orElse(0);
+    }
+
+    /**
+     * Returns the default galaxy generation config.
+     */
+    public com.yisy.modules.doramcu.hex.GalaxyGenerationConfig defaultConfig() {
+        return GalaxyFactory.gameGalaxyConfig();
     }
 }

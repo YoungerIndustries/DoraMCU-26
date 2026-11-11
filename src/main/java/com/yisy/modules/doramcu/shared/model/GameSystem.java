@@ -18,5 +18,20 @@ public enum GameSystem {
     UNIVERSAL,
 
     /** DoraMCU 4X game engine rules. */
-    DORAMCU_4X
+    DORAMCU_4X,
+
+    /** D&D 5th Edition rules. */
+    DND_5E,
+
+    /** Subsector RPG rules. */
+    SUBSECTOR_RPG,
+
+    /** Theme-based game rules. */
+    THEME_BASED,
+
+    /** Babylon 5 universe rules. */
+    BABYLON_5,
+
+    /** Star Frontiers Battle rules. */
+    SFB
 }

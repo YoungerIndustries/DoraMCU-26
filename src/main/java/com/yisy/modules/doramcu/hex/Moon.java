@@ -26,6 +26,17 @@ public class Moon extends CelestialBody {
     public static final double DEFAULT_GRAVITY_DEFENSE_BONUS = 0.1;
 
     /**
+     * Strategic resource deposits found on moons.
+     */
+    public enum StrategicResource {
+        ELERIUM,
+        ANTI_MATTER,
+        THULIUM,
+        DURANTIUM,
+        PROMETHION
+    }
+
+    /**
      * Moon size classification affecting capacity and output.
      */
     public enum MoonSize {
