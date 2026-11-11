@@ -5,11 +5,11 @@ import com.yisy.modules.doramcu.dto.LoginRequest;
 import com.yisy.modules.doramcu.dto.LoginResponse;
 import com.yisy.modules.doramcu.dto.RegisterRequest;
 import com.yisy.modules.doramcu.model.User;
-import com.yisy.modules.doramcu.repository.GalaxyRepository;
 import com.yisy.modules.doramcu.repository.UserRepository;
 import com.yisy.modules.doramcu.repository.PlayerRepository;
 import com.yisy.modules.doramcu.service.JwtService;
 import com.yisy.modules.doramcu.service.PlayerService;
+import com.yisy.modules.doramcu.service.PromoCodeService;
 import io.micrometer.core.instrument.Counter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -77,10 +77,7 @@ class AuthenticationControllerTest {
     private ObjectProvider<PlayerRepository> playerRepositoryProvider;
 
     @Mock
-    private GalaxyRepository galaxyRepository;
-
-    @Mock
-    private ObjectProvider<GalaxyRepository> galaxyRepositoryProvider;
+    private ObjectProvider<PromoCodeService> promoCodeServiceProvider;
 
     private AuthenticationController controller;
 
@@ -91,20 +88,10 @@ class AuthenticationControllerTest {
         when(passwordEncoder.encode(anyString())).thenReturn("encoded-password");
         when(playerServiceProvider.getIfAvailable()).thenReturn(playerService);
         when(playerRepositoryProvider.getIfAvailable()).thenReturn(playerRepository);
-        when(galaxyRepositoryProvider.getIfAvailable()).thenReturn(galaxyRepository);
-
-        // Mock galaxy repository to return two predefined galaxies
-        com.yisy.modules.doramcu.model.Galaxy milkyWay = new com.yisy.modules.doramcu.model.Galaxy();
-        milkyWay.setName("Milky Way");
-        com.yisy.modules.doramcu.model.Galaxy testGalaxy = new com.yisy.modules.doramcu.model.Galaxy();
-        testGalaxy.setName("Test Galaxy");
-        when(galaxyRepository.findAll()).thenReturn(List.of(milkyWay, testGalaxy));
-        when(galaxyRepository.findByName("Milky Way")).thenReturn(Optional.of(milkyWay));
-        when(galaxyRepository.findByName("Test Galaxy")).thenReturn(Optional.of(testGalaxy));
-        when(galaxyRepository.findByName("Andromeda")).thenReturn(Optional.empty());
+        when(promoCodeServiceProvider.getIfAvailable()).thenReturn(null);
 
         controller = new AuthenticationController(authenticationManager, jwtService, metricsConfig, userRepository, passwordEncoder,
-                playerServiceProvider, playerRepositoryProvider, galaxyRepositoryProvider);
+                playerServiceProvider, playerRepositoryProvider, promoCodeServiceProvider);
     }
 
     // ---- Login Success ----
@@ -327,14 +314,16 @@ class AuthenticationControllerTest {
     // ---- Galaxy List ----
 
     @Test
-    @DisplayName("listGalaxies - should return both predefined galaxies")
-    void listGalaxies_shouldReturnBothGalaxies() {
+    @DisplayName("listGalaxies - should return all predefined galaxies")
+    void listGalaxies_shouldReturnAllGalaxies() {
         ResponseEntity<List<String>> response = controller.listGalaxies();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(2, response.getBody().size());
+        assertEquals(4, response.getBody().size());
+        assertTrue(response.getBody().contains("Earth 2026"));
         assertTrue(response.getBody().contains("Milky Way"));
+        assertTrue(response.getBody().contains("The Void"));
         assertTrue(response.getBody().contains("Test Galaxy"));
     }
 
@@ -357,8 +346,8 @@ class AuthenticationControllerTest {
     }
 
     @Test
-    @DisplayName("register - should default to Milky Way when galaxy is null")
-    void register_shouldDefaultToMilkyWayWhenGalaxyNull() {
+    @DisplayName("register - should default to Earth 2026 when galaxy is null")
+    void register_shouldDefaultToEarth2026WhenGalaxyNull() {
         RegisterRequest request = new RegisterRequest("newplayer", "securepass");
 
         when(userRepository.findByUsername("newplayer")).thenReturn(Optional.empty());
@@ -367,13 +356,13 @@ class AuthenticationControllerTest {
         controller.register(request);
 
         verify(userRepository).save(argThat(user ->
-                "Milky Way".equals(user.getGalaxyName())
+                "Earth 2026".equals(user.getGalaxyName())
         ));
     }
 
     @Test
-    @DisplayName("register - should default to Milky Way when galaxy is empty")
-    void register_shouldDefaultToMilkyWayWhenGalaxyEmpty() {
+    @DisplayName("register - should default to Earth 2026 when galaxy is empty")
+    void register_shouldDefaultToEarth2026WhenGalaxyEmpty() {
         RegisterRequest request = new RegisterRequest("newplayer", "securepass", "");
 
         when(userRepository.findByUsername("newplayer")).thenReturn(Optional.empty());
@@ -382,24 +371,24 @@ class AuthenticationControllerTest {
         controller.register(request);
 
         verify(userRepository).save(argThat(user ->
-                "Milky Way".equals(user.getGalaxyName())
+                "Earth 2026".equals(user.getGalaxyName())
         ));
     }
 
     @Test
-    @DisplayName("register - should reject invalid galaxy name")
-    void register_shouldRejectInvalidGalaxy() {
+    @DisplayName("register - should accept any non-blank galaxy name")
+    void register_shouldAcceptAnyNonBlankGalaxy() {
         RegisterRequest request = new RegisterRequest("newplayer", "securepass", "Andromeda");
 
         when(userRepository.findByUsername("newplayer")).thenReturn(Optional.empty());
+        when(jwtService.generateToken("newplayer")).thenReturn("new-token");
 
         var response = controller.register(request);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        @SuppressWarnings("unchecked")
-        Map<String, String> errorBody = (Map<String, String>) response.getBody();
-        assertTrue(errorBody.get("error").contains("Invalid galaxy"));
-        verify(userRepository, never()).save(any(User.class));
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        verify(userRepository).save(argThat(user ->
+                "Andromeda".equals(user.getGalaxyName())
+        ));
     }
 
     // ---- Server Info & PIN Login Tests ----
@@ -425,14 +414,14 @@ class AuthenticationControllerTest {
 
         ObjectProvider<PlayerService> mockPlayerServiceProvider = mock(ObjectProvider.class);
         ObjectProvider<PlayerRepository> mockPlayerRepoProvider = mock(ObjectProvider.class);
-        ObjectProvider<GalaxyRepository> mockGalaxyRepoProvider = mock(ObjectProvider.class);
+        ObjectProvider<PromoCodeService> mockPromoCodeServiceProvider = mock(ObjectProvider.class);
         when(mockPlayerServiceProvider.getIfAvailable()).thenReturn(mockPlayerService);
         when(mockPlayerRepoProvider.getIfAvailable()).thenReturn(mockPlayerRepo);
-        when(mockGalaxyRepoProvider.getIfAvailable()).thenReturn(null);
+        when(mockPromoCodeServiceProvider.getIfAvailable()).thenReturn(null);
 
         AuthenticationController authCtrl = new AuthenticationController(
                 authenticationManager, jwtService, metricsConfig, userRepository, passwordEncoder,
-                mockPlayerServiceProvider, mockPlayerRepoProvider, mockGalaxyRepoProvider
+                mockPlayerServiceProvider, mockPlayerRepoProvider, mockPromoCodeServiceProvider
         );
 
         var response = authCtrl.pinLogin(new com.yisy.modules.doramcu.dto.PinLoginRequest("999999"));
@@ -460,14 +449,14 @@ class AuthenticationControllerTest {
 
         ObjectProvider<PlayerService> mockPlayerServiceProvider = mock(ObjectProvider.class);
         ObjectProvider<PlayerRepository> mockPlayerRepoProvider = mock(ObjectProvider.class);
-        ObjectProvider<GalaxyRepository> mockGalaxyRepoProvider = mock(ObjectProvider.class);
+        ObjectProvider<PromoCodeService> mockPromoCodeServiceProvider = mock(ObjectProvider.class);
         when(mockPlayerServiceProvider.getIfAvailable()).thenReturn(mockPlayerService);
         when(mockPlayerRepoProvider.getIfAvailable()).thenReturn(mockPlayerRepo);
-        when(mockGalaxyRepoProvider.getIfAvailable()).thenReturn(null);
+        when(mockPromoCodeServiceProvider.getIfAvailable()).thenReturn(null);
 
         AuthenticationController authCtrl = new AuthenticationController(
                 authenticationManager, jwtService, metricsConfig, userRepository, passwordEncoder,
-                mockPlayerServiceProvider, mockPlayerRepoProvider, mockGalaxyRepoProvider
+                mockPlayerServiceProvider, mockPlayerRepoProvider, mockPromoCodeServiceProvider
         );
 
         var response = authCtrl.pinLogin(new com.yisy.modules.doramcu.dto.PinLoginRequest("123456"));
