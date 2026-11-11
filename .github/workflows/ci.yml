@@ -25,11 +25,20 @@ jobs:
       - name: Grant execute permission for Gradle wrapper
         run: chmod +x gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew build -x test --no-daemon
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-      - name: Run tests
-        run: ./gradlew test --no-daemon
+      - name: Build and test with Gradle
+        run: ./gradlew build --no-daemon --parallel
+        env:
+          JAVA_OPTS: "-Xmx4g"
 
       - name: Upload test results
         uses: actions/upload-artifact@v4

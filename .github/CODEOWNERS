@@ -1,0 +1,53 @@
+# Code Owners for DoraMCU
+# This file defines code review ownership for the repository.
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for all files
+* @YoungerIndustries
+
+# CI/CD workflows
+.github/workflows/ @YoungerIndustries
+
+# Build configuration
+build.gradle @YoungerIndustries
+settings.gradle @YoungerIndustries
+gradle/ @YoungerIndustries
+
+# Docker and containerization
+Dockerfile* @YoungerIndustries
+docker-compose.yml @YoungerIndustries
+
+# Kubernetes configurations
+k8s/ @YoungerIndustries
+
+# Core application modules
+src/main/java/com/yisy/modules/doramcu/config/ @YoungerIndustries
+src/main/java/com/yisy/modules/doramcu/controller/ @YoungerIndustries
+
+# Game modules
+src/main/java/com/yisy/modules/doramcu/traveller/ @YoungerIndustries
+src/main/java/com/yisy/modules/doramcu/star_trek_4x/ @YoungerIndustries
+src/main/java/com/yisy/modules/doramcu/babylon5/ @YoungerIndustries
+src/main/java/com/yisy/modules/doramcu/earth2026/ @YoungerIndustries
+src/main/java/com/yisy/modules/doramcu/dnd5e/ @YoungerIndustries
+src/main/java/com/yisy/modules/doramcu/hex/ @YoungerIndustries
+
+# AI and deep learning modules
+dora-ai/ @YoungerIndustries
+dora-dl-core/ @YoungerIndustries
+
+# Neuron coordination
+src/main/java/com/yisy/modules/doramcu/neuron/ @YoungerIndustries
+
+# Frontend clients
+dora-electron/ @YoungerIndustries
+dora-pwa/ @YoungerIndustries
+unity-client/ @YoungerIndustries
+
+# Documentation
+docs/ @YoungerIndustries
+README.md @YoungerIndustries
+
+# Monitoring
+grafana/ @YoungerIndustries
+prometheus/ @YoungerIndustries

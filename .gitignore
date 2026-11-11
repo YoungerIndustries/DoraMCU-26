@@ -53,20 +53,33 @@ Thumbs.db
 ### Docker ###
 docker-compose.override.yml
 
-### JVM Crash Logs ###
+### Node.js ###
+node_modules/
+dora-electron/dist/
+
+### Crash dumps and error logs ###
+*.log
+dl4j-memory-crash-dump-*.txt
 hs_err_pid*.log
-replay_pid*.log
 
-### Deep Learning Models ###
-dl-models/
-
-### Orphaned/Temporary Files ###
-DoraAI2/
-search.ps1
+### Temporary files ###
+work/
 transcript.md
+search.ps1
+setup-memory-drive.ps1
 
-### Python ###
-**/__pycache__/
-*.pyc
-*.pyo
-*.egg-info/
+### Backups ###
+backups/
+
+### Unity ###
+unity-client/Library/
+unity-client/Temp/
+unity-client/obj/
+*.unitypackage
+
+### DL models (large files) ###
+dl-models/*.zip
+dl-models/*.h5
+
+### Junie session files ###
+.junie/plans/
