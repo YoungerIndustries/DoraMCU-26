@@ -3,9 +3,9 @@ package com.yisy.modules.doraai.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yisy.modules.doraai.config.OllamaConfig;
-import com.yisy.modules.doraai.util.RetryUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -27,6 +27,7 @@ import java.util.stream.Stream;
  * </p>
  */
 @Service
+@Primary
 public class OllamaService implements AiProvider {
 
     private static final Logger log = LoggerFactory.getLogger(OllamaService.class);
@@ -35,9 +36,11 @@ public class OllamaService implements AiProvider {
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
-    public OllamaService(OllamaConfig config, HttpClient httpClient) {
+    public OllamaService(OllamaConfig config) {
         this.config = config;
-        this.httpClient = httpClient;
+        this.httpClient = HttpClient.newBuilder()
+                .connectTimeout(java.time.Duration.ofMillis(config.getConnectTimeoutMs()))
+                .build();
         this.objectMapper = new ObjectMapper();
     }
 
@@ -57,44 +60,44 @@ public class OllamaService implements AiProvider {
         String modelName = (model != null && !model.isBlank()) ? model : config.getModel();
         log.debug("Sending chat request to Ollama, model: {}, messages: {}", modelName, messages.size());
 
-        return RetryUtil.withRetry(3, 1000L, () -> {
-            try {
-                Map<String, Object> requestBody = Map.of(
-                        "model", modelName,
-                        "messages", messages,
-                        "stream", false,
-                        "options", Map.of(
-                                "temperature", config.getTemperature(),
-                                "num_predict", config.getMaxTokens()
-                        )
-                );
+        try {
+            Map<String, Object> requestBody = Map.of(
+                    "model", modelName,
+                    "messages", messages,
+                    "stream", false,
+                    "options", Map.of(
+                            "temperature", config.getTemperature(),
+                            "num_predict", config.getMaxTokens()
+                    )
+            );
 
-                String jsonBody = objectMapper.writeValueAsString(requestBody);
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(config.getBaseUrl() + "/api/chat"))
-                        .timeout(java.time.Duration.ofMillis(config.getReadTimeoutMs()))
-                        .header("Content-Type", "application/json")
-                        .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
-                        .build();
+            String jsonBody = objectMapper.writeValueAsString(requestBody);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(config.getBaseUrl() + "/api/chat"))
+                    .timeout(java.time.Duration.ofMillis(config.getReadTimeoutMs()))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                    .build();
 
-                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-                if (response.statusCode() != 200) {
-                    log.error("Ollama chat request failed with status: {}", response.statusCode());
-                    throw new OllamaException("Ollama API error: " + response.statusCode());
-                }
-
-                JsonNode jsonNode = objectMapper.readTree(response.body());
-                String content = jsonNode.path("message").path("content").asText();
-                return ResponseTextFilter.normalize(content);
-
-            } catch (IOException e) {
-                throw new OllamaException("Failed to communicate with Ollama: " + e.getMessage(), e);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new OllamaException("Interrupted while waiting for Ollama response", e);
+            if (response.statusCode() != 200) {
+                log.error("Ollama chat request failed with status: {}", response.statusCode());
+                throw new OllamaException("Ollama API error: " + response.statusCode());
             }
-        });
+
+            JsonNode jsonNode = objectMapper.readTree(response.body());
+            String content = jsonNode.path("message").path("content").asText();
+            return ResponseTextFilter.normalize(content);
+
+        } catch (IOException e) {
+            log.error("IO error communicating with Ollama", e);
+            throw new OllamaException("Failed to communicate with Ollama: " + e.getMessage(), e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("Interrupted while waiting for Ollama response", e);
+            throw new OllamaException("Interrupted while waiting for Ollama response", e);
+        }
     }
 
     /**
@@ -105,7 +108,7 @@ public class OllamaService implements AiProvider {
      * @return SseEmitter for streaming the response
      */
     public SseEmitter streamChat(String model, List<Message> messages) {
-        SseEmitter emitter = new SseEmitter(300_000L); // 5 minute timeout
+        SseEmitter emitter = new SseEmitter(0L);
         streamChat(model, messages, emitter, null);
         return emitter;
     }

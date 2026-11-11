@@ -14,12 +14,19 @@ bootRun {
 }
 
 group = 'com.YISY.modules'
-version = '0.2.7'
+version = '0.1.3'
 description = 'DoraMCU'
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(27)
+    }
+    sourceSets {
+        main {
+            java {
+                exclude 'com/yisy/modules/doramcu/BROKEN/**'
+            }
+        }
     }
 }
 
@@ -29,7 +36,7 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -39,6 +46,7 @@ dependencies {
     implementation 'com.github.ben-manes.caffeine:caffeine:3.2.0'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation 'org.springframework.kafka:spring-kafka'
     // JSON logging for production (Logstash encoder for ELK/Grafana Loki)
     implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
@@ -60,24 +68,12 @@ dependencies {
     testRuntimeOnly 'com.h2database:h2'
 }
 
-// JVM memory settings — standardized across environments.
-// Override via JVM_OPTS environment variable where supported.
-// DL4J is disabled by default (dl.rest-client.enabled=true), so JavaCPP args are not needed.
-def jvmBaseArgs = ['-XX:+UseG1GC', '-XX:MaxGCPauseMillis=200', '-Xmx4G']
-
-// DL4J-specific JVM args — only needed when running local DL4J (dl.rest-client.enabled=false)
-// Add these via JVM_OPTS or the bootRun command when local DL4J is enabled.
-def dl4jArgs = ['-Dorg.bytedeco.javacpp.maxbytes=2G', '-Dorg.bytedeco.javacpp.maxphysicalbytes=4G', '-Dorg.bytedeco.javacpp.alwaysscan=true']
-
 tasks.named('test') {
     useJUnitPlatform()
-    maxHeapSize = '4G'
-    jvmArgs jvmBaseArgs + dl4jArgs
+    maxHeapSize = '2G'
+    jvmArgs '-XX:+UseG1GC', '-XX:MaxGCPauseMillis=200', '-Dorg.bytedeco.javacpp.maxbytes=512M', '-Dorg.bytedeco.javacpp.maxphysicalbytes=1G'
 }
 
 tasks.named('bootRun') {
-    // Default: no DL4J native args (REST client mode)
-    // To enable local DL4J, add: --args="-Ddl.rest-client.enabled=false"
-    jvmArgs jvmBaseArgs
-    maxHeapSize = '8G'
+    jvmArgs '-Xmx8G', '-XX:+UseG1GC', '-XX:MaxGCPauseMillis=200', '-Dorg.bytedeco.javacpp.maxbytes=4G', '-Dorg.bytedeco.javacpp.maxphysicalbytes=8G'
 }
