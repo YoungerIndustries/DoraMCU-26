@@ -12,6 +12,12 @@ import com.yisy.modules.doramcu.dnd5e.service.Dnd5eCharacterService;
 import com.yisy.modules.doramcu.dnd5e.service.Dnd5eCombatService;
 import com.yisy.modules.doramcu.dnd5e.service.Dnd5eDiceService;
 import com.yisy.modules.doramcu.dnd5e.service.Dnd5eGameplayService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eCraftingService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eExhaustionService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eFeatService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eHeroicInspirationService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eToolProficiencyService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5ePsionService;
 import com.yisy.modules.doramcu.dnd5e.service.Dnd5eInventoryService;
 import com.yisy.modules.doramcu.dnd5e.service.Dnd5eRulesService;
 import com.yisy.modules.doramcu.dnd5e.service.Dnd5eSpellService;
@@ -45,6 +51,12 @@ class Dnd5eControllerCampaignTest {
     private Dnd5eDiceService diceService;
     private Dnd5eGameplayService gameplayService;
     private Dnd5eInventoryService inventoryService;
+    private Dnd5eCraftingService craftingService;
+    private Dnd5eHeroicInspirationService heroicInspirationService;
+    private Dnd5eExhaustionService exhaustionService;
+    private Dnd5eFeatService featService;
+    private Dnd5eToolProficiencyService toolProficiencyService;
+    private Dnd5ePsionService psionService;
 
     @BeforeEach
     void setUp() {
@@ -56,10 +68,18 @@ class Dnd5eControllerCampaignTest {
         diceService = mock(Dnd5eDiceService.class);
         gameplayService = mock(Dnd5eGameplayService.class);
         inventoryService = mock(Dnd5eInventoryService.class);
+        craftingService = mock(Dnd5eCraftingService.class);
+        heroicInspirationService = mock(Dnd5eHeroicInspirationService.class);
+        exhaustionService = mock(Dnd5eExhaustionService.class);
+        featService = mock(Dnd5eFeatService.class);
+        toolProficiencyService = mock(Dnd5eToolProficiencyService.class);
+        psionService = mock(Dnd5ePsionService.class);
 
         Dnd5eController controller = new Dnd5eController(
                 characterService, combatService, spellService, rulesService,
-                diceService, gameplayService, campaignService, inventoryService
+                diceService, gameplayService, campaignService, inventoryService, craftingService,
+                heroicInspirationService, exhaustionService, featService, toolProficiencyService,
+                psionService
         );
 
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
