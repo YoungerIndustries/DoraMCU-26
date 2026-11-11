@@ -7,7 +7,7 @@ public class ChatRequest {
 
     private String sessionId;
     private String message;
-    private String mode; // chat | code-gen | bug-detect
+    private String mode; // chat | code-gen | bug-detect | admin-test
     private String projectId;
     private String sourceLanguage; // e.g., "en", "zh" — detected or user-specified language
     private String inputType; // "text" | "voice" — how the input was provided
