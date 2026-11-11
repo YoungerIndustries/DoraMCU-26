@@ -257,8 +257,8 @@ public class GalaxyGenerationConfig {
         }
 
         public Builder hyperlaneDensity(double density) {
-            if (density < 0.5 || density > 2.75) {
-                throw new IllegalArgumentException("Hyperlane density must be between 0.5 and 2.75: " + density);
+            if (density < 0.0 || density > 2.75) {
+                throw new IllegalArgumentException("Hyperlane density must be between 0.0 and 2.75: " + density);
             }
             this.hyperlaneDensity = density;
             return this;

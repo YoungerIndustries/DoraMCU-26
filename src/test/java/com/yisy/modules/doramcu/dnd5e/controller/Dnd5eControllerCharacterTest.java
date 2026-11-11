@@ -14,7 +14,23 @@ import com.yisy.modules.doramcu.dnd5e.service.Dnd5eFeatService;
 import com.yisy.modules.doramcu.dnd5e.service.Dnd5eHeroicInspirationService;
 import com.yisy.modules.doramcu.dnd5e.service.Dnd5eToolProficiencyService;
 import com.yisy.modules.doramcu.dnd5e.service.Dnd5ePsionService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eHorrorService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eGrowingMagicItemService;
 import com.yisy.modules.doramcu.dnd5e.service.Dnd5eInventoryService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eVillainService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eBastionService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eAdventureHookService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eDungeonRoomService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eTensionPoolService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eEncounterService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eNpcService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eModuleService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eSpeciesService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eCampaignTemplateService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eMagicItemService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eBackgroundService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eClassService;
+import com.yisy.modules.doramcu.dnd5e.service.Dnd5eMonsterService;
 import com.yisy.modules.doramcu.dnd5e.service.Dnd5eRulesService;
 import com.yisy.modules.doramcu.dnd5e.service.Dnd5eSpellService;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,6 +67,22 @@ class Dnd5eControllerCharacterTest {
     private Dnd5eFeatService featService;
     private Dnd5eToolProficiencyService toolProficiencyService;
     private Dnd5ePsionService psionService;
+    private Dnd5eHorrorService horrorService;
+    private Dnd5eGrowingMagicItemService growingItemService;
+    private Dnd5eVillainService villainService;
+    private Dnd5eBastionService bastionService;
+    private Dnd5eAdventureHookService adventureHookService;
+    private Dnd5eDungeonRoomService dungeonRoomService;
+    private Dnd5eTensionPoolService tensionPoolService;
+    private Dnd5eNpcService npcService;
+    private Dnd5eEncounterService encounterService;
+    private Dnd5eModuleService moduleService;
+    private Dnd5eSpeciesService speciesService;
+    private Dnd5eCampaignTemplateService campaignTemplateService;
+    private Dnd5eMagicItemService magicItemService;
+    private Dnd5eBackgroundService backgroundService;
+    private Dnd5eClassService classService;
+    private Dnd5eMonsterService monsterService;
 
     @BeforeEach
     void setUp() {
@@ -68,12 +100,31 @@ class Dnd5eControllerCharacterTest {
         featService = mock(Dnd5eFeatService.class);
         toolProficiencyService = mock(Dnd5eToolProficiencyService.class);
         psionService = mock(Dnd5ePsionService.class);
+        horrorService = mock(Dnd5eHorrorService.class);
+        growingItemService = mock(Dnd5eGrowingMagicItemService.class);
+        villainService = mock(Dnd5eVillainService.class);
+        bastionService = mock(Dnd5eBastionService.class);
+        adventureHookService = mock(Dnd5eAdventureHookService.class);
+        dungeonRoomService = mock(Dnd5eDungeonRoomService.class);
+        tensionPoolService = mock(Dnd5eTensionPoolService.class);
+        npcService = mock(Dnd5eNpcService.class);
+        encounterService = mock(Dnd5eEncounterService.class);
+        moduleService = mock(Dnd5eModuleService.class);
+        speciesService = mock(Dnd5eSpeciesService.class);
+        campaignTemplateService = mock(Dnd5eCampaignTemplateService.class);
+        magicItemService = mock(Dnd5eMagicItemService.class);
+        backgroundService = mock(Dnd5eBackgroundService.class);
+        classService = mock(Dnd5eClassService.class);
+        monsterService = mock(Dnd5eMonsterService.class);
 
         Dnd5eController controller = new Dnd5eController(
                 characterService, combatService, spellService, rulesService,
                 diceService, gameplayService, campaignService, inventoryService, craftingService,
                 heroicInspirationService, exhaustionService, featService, toolProficiencyService,
-                psionService
+                psionService, horrorService, growingItemService, villainService, bastionService, adventureHookService,
+                dungeonRoomService, tensionPoolService, npcService, encounterService, moduleService,
+                speciesService, campaignTemplateService, magicItemService, backgroundService, classService,
+                monsterService
         );
 
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();

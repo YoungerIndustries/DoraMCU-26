@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DoraMCU - Do You Want To Live Forever?</title>
+    <title>Dora Network News — Live Universe Feed</title>
     <style>
         * {
             margin: 0;
@@ -13,130 +13,860 @@
 
         body {
             min-height: 100vh;
+            background: #0a0a0f;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        /* ── Header ── */
+        .header {
+            background: linear-gradient(135deg, #0d0d1a 0%, #1a0a2e 100%);
+            border-bottom: 2px solid #ff2d55;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #ff2d55, #ff6b35);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 70%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #e0e0e0;
-            overflow: hidden;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #fff;
+            animation: pulse 2s infinite;
         }
 
-        .container {
-            text-align: center;
-            max-width: 800px;
-            padding: 2rem;
-            animation: fadeIn 2s ease-in;
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 45, 85, 0.6); }
+            50% { box-shadow: 0 0 0 12px rgba(255, 45, 85, 0); }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .question {
-            font-size: 4rem;
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #00d4ff, #7b2ff7, #ff2d95);
+        .logo-text h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #ff2d55, #ff6b35, #ffd700);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-shadow: none;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
-        .tagline {
-            font-size: 1.5rem;
-            color: #b0b0b0;
-            margin-bottom: 3rem;
-            font-style: italic;
+        .logo-text span {
+            font-size: 0.75rem;
+            color: #888;
+            letter-spacing: 4px;
+            text-transform: uppercase;
         }
 
-        .buttons {
+        .header-status {
             display: flex;
-            gap: 2rem;
-            justify-content: center;
-            margin-bottom: 4rem;
+            align-items: center;
+            gap: 1.5rem;
+            font-size: 0.85rem;
         }
 
-        .btn {
-            padding: 1rem 3rem;
-            font-size: 1.5rem;
+        .live-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 45, 85, 0.15);
+            border: 1px solid #ff2d55;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            color: #ff2d55;
             font-weight: 600;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 150px;
+            font-size: 0.8rem;
         }
 
-        .btn-yes {
-            background: linear-gradient(135deg, #00c853, #00e676);
-            color: #0a0a0a;
-            box-shadow: 0 4px 20px rgba(0, 200, 83, 0.3);
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #ff2d55;
+            border-radius: 50%;
+            animation: blink 1s infinite;
         }
 
-        .btn-yes:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 30px rgba(0, 200, 83, 0.5);
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
         }
 
-        .btn-no {
-            background: linear-gradient(135deg, #d50000, #ff1744);
-            color: #ffffff;
-            box-shadow: 0 4px 20px rgba(213, 0, 0, 0.3);
+        .subscriber-count {
+            color: #888;
         }
 
-        .btn-no:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 30px rgba(213, 0, 0, 0.5);
-        }
-
-        .attribution {
+        /* ── Breaking News Ticker ── */
+        .ticker {
+            background: linear-gradient(90deg, #ff2d55, #ff6b35);
+            color: #fff;
+            padding: 0.5rem 0;
+            overflow: hidden;
+            white-space: nowrap;
             font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .ticker-content {
+            display: inline-block;
+            padding-left: 100%;
+            animation: tickerScroll 30s linear infinite;
+        }
+
+        @keyframes tickerScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .ticker-label {
+            background: #fff;
+            color: #ff2d55;
+            padding: 0.1rem 0.6rem;
+            border-radius: 3px;
+            margin-right: 1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+        }
+
+        /* ── Main Layout ── */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 2rem;
+        }
+
+        /* ── Feed ── */
+        .feed-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #222;
+        }
+
+        .feed-header h2 {
+            font-size: 1.3rem;
+            color: #ccc;
+            font-weight: 600;
+        }
+
+        .feed-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            background: #1a1a2e;
+            border: 1px solid #333;
+            color: #888;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            border-color: #ff2d55;
+            color: #ff2d55;
+            background: rgba(255, 45, 85, 0.1);
+        }
+
+        .feed {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* ── News Card ── */
+        .news-card {
+            background: linear-gradient(135deg, #12121f 0%, #1a1a2e 100%);
+            border: 1px solid #222;
+            border-left: 3px solid #ff2d55;
+            border-radius: 8px;
+            padding: 1.2rem 1.5rem;
+            transition: all 0.3s ease;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        .news-card:hover {
+            border-color: #444;
+            transform: translateX(4px);
+        }
+
+        .news-card.new {
+            border-left-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .news-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.6rem;
+        }
+
+        .news-type {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        .type-build_started { background: rgba(0, 200, 83, 0.15); color: #00c853; }
+        .type-build_completed { background: rgba(0, 212, 255, 0.15); color: #00d4ff; }
+        .type-build_failed { background: rgba(213, 0, 0, 0.15); color: #ff1744; }
+        .type-sector_generated { background: rgba(123, 47, 247, 0.15); color: #b388ff; }
+        .type-galaxy_created { background: rgba(255, 215, 0, 0.15); color: #ffd700; }
+        .type-health_threshold_crossed { background: rgba(255, 107, 53, 0.15); color: #ff6b35; }
+        .type-character_transitioned { background: rgba(0, 230, 118, 0.15); color: #00e676; }
+        .type-work_order_created { background: rgba(255, 152, 0, 0.15); color: #ff9800; }
+        .type-ai_agent_deployed { background: rgba(0, 176, 255, 0.15); color: #00b0ff; }
+        .type-assessment_completed { background: rgba(156, 39, 176, 0.15); color: #ce93d8; }
+        .type-wormhole_created { background: rgba(255, 64, 129, 0.15); color: #ff4081; }
+        .type-wormhole_travel { background: rgba(38, 198, 218, 0.15); color: #26c6da; }
+        .type-wormhole_toggled { background: rgba(139, 195, 74, 0.15); color: #8bc34a; }
+
+        .news-time {
+            font-size: 0.75rem;
             color: #666;
+        }
+
+        .news-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #eee;
+            margin-bottom: 0.4rem;
+        }
+
+        .news-galaxy {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
+
+        .news-galaxy strong {
+            color: #00d4ff;
+        }
+
+        .news-details {
+            font-size: 0.8rem;
+            color: #666;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem 0.8rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .sidebar-panel {
+            background: #12121f;
+            border: 1px solid #222;
+            border-radius: 8px;
+            padding: 1.2rem;
+        }
+
+        .sidebar-panel h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #222;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #ff2d55;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.3rem;
+        }
+
+        .event-type-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .event-type-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.8rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .event-type-item .count {
+            background: rgba(255, 45, 85, 0.15);
+            color: #ff2d55;
+            padding: 0.1rem 0.5rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+
+        /* ── Announce Form ── */
+        .announce-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .announce-form select,
+        .announce-form input {
+            background: #0a0a0f;
+            border: 1px solid #333;
+            color: #e0e0e0;
+            padding: 0.5rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .announce-form select:focus,
+        .announce-form input:focus {
+            outline: none;
+            border-color: #ff2d55;
+        }
+
+        .announce-btn {
+            background: linear-gradient(135deg, #ff2d55, #ff6b35);
+            border: none;
+            color: #fff;
+            padding: 0.6rem;
+            border-radius: 4px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.8rem;
+        }
+
+        .announce-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(255, 45, 85, 0.4);
+        }
+
+        /* ── Empty State ── */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #555;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #444;
+            font-size: 0.8rem;
+            border-top: 1px solid #1a1a2e;
             margin-top: 2rem;
         }
 
-        .attribution a {
+        .footer a {
             color: #00d4ff;
             text-decoration: none;
         }
 
-        .attribution a:hover {
-            text-decoration: underline;
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .main {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                flex-direction: column;
+                gap: 0.8rem;
+                text-align: center;
+            }
+            .logo {
+                flex-direction: column;
+            }
         }
 
         @media (max-width: 600px) {
-            .question {
-                font-size: 2.5rem;
-            }
-            .tagline {
+            .logo-text h1 {
                 font-size: 1.2rem;
             }
-            .buttons {
-                flex-direction: column;
-                gap: 1rem;
+            .news-card {
+                padding: 1rem;
             }
-            .btn {
-                width: 100%;
+            .stat-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="question">Do You Want To Live Forever...?</h1>
-        <p class="tagline">Enter the DoraMCU Universe and Become Immortal!</p>
-        <div class="buttons">
-            <button class="btn btn-yes" type="button">Yes</button>
-            <button class="btn btn-no" type="button">No</button>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">DN</div>
+            <div class="logo-text">
+                <h1>Dora Network News</h1>
+                <span>Live Universe Feed</span>
+            </div>
         </div>
-        <p class="attribution">
-            Brought to You by Younger Industries and The Younger Industries Ship Yards<br>
-            <a href="https://eveonline.com" target="_blank" rel="noopener">[EVE Online YISY]</a>
-        </p>
+        <div class="header-status">
+            <div class="live-badge">
+                <div class="live-dot"></div>
+                LIVE
+            </div>
+            <div class="subscriber-count" id="subscriberCount">Connecting...</div>
+        </div>
+    </header>
+
+    <!-- Breaking News Ticker -->
+    <div class="ticker">
+        <div class="ticker-content" id="tickerContent">
+            <span class="ticker-label">BREAKING</span>
+            Dora Network News — Real-time updates from across the DoraMCU Universe — Galaxy events, AI deployments, wormhole activity, and more —
+            <span class="ticker-label">LIVE</span>
+            Monitoring all galaxy systems for major events —
+            <span class="ticker-label">ALERT</span>
+            Stay informed with live SSE event streaming —
+        </div>
     </div>
+
+    <!-- Main Content -->
+    <div class="main">
+
+        <!-- News Feed -->
+        <div class="feed-section">
+            <div class="feed-header">
+                <h2>📡 Event Feed</h2>
+                <div class="feed-controls">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="BUILD">Build</button>
+                    <button class="filter-btn" data-filter="WORMHOLE">Wormhole</button>
+                    <button class="filter-btn" data-filter="AI">AI</button>
+                    <button class="filter-btn" data-filter="HEALTH">Health</button>
+                </div>
+            </div>
+            <div class="feed" id="newsFeed">
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-state-icon">📡</div>
+                    <h3>Waiting for events...</h3>
+                    <p>Connecting to the DoraMCU event stream</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+            <!-- Stats Panel -->
+            <div class="sidebar-panel">
+                <h3>📊 Network Stats</h3>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="statEvents">0</div>
+                        <div class="stat-label">Events</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statSubscribers">0</div>
+                        <div class="stat-label">Subscribers</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statTypes">0</div>
+                        <div class="stat-label">Event Types</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statGalaxies">0</div>
+                        <div class="stat-label">Galaxies</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Type Breakdown -->
+            <div class="sidebar-panel">
+                <h3>🏷️ Event Types</h3>
+                <div class="event-type-list" id="eventTypeList">
+                    <div style="color: #555; font-size: 0.8rem; text-align: center; padding: 1rem;">
+                        No events yet
+                    </div>
+                </div>
+            </div>
+
+            <!-- Announce Panel -->
+            <div class="sidebar-panel">
+                <h3>📢 Announce Event</h3>
+                <form class="announce-form" id="announceForm">
+                    <select name="type" required>
+                        <option value="">Select event type...</option>
+                        <option value="BUILD_STARTED">Build Started</option>
+                        <option value="BUILD_COMPLETED">Build Completed</option>
+                        <option value="BUILD_FAILED">Build Failed</option>
+                        <option value="SECTOR_GENERATED">Sector Generated</option>
+                        <option value="GALAXY_CREATED">Galaxy Created</option>
+                        <option value="HEALTH_THRESHOLD_CROSSED">Health Alert</option>
+                        <option value="CHARACTER_TRANSITIONED">Character Transitioned</option>
+                        <option value="WORK_ORDER_CREATED">Work Order Created</option>
+                        <option value="AI_AGENT_DEPLOYED">AI Agent Deployed</option>
+                        <option value="ASSESSMENT_COMPLETED">Assessment Complete</option>
+                        <option value="WORMHOLE_CREATED">Wormhole Created</option>
+                        <option value="WORMHOLE_TRAVEL">Wormhole Travel</option>
+                        <option value="WORMHOLE_TOGGLED">Wormhole Toggled</option>
+                    </select>
+                    <input type="text" name="galaxyName" placeholder="Galaxy name..." required>
+                    <input type="text" name="message" placeholder="Announcement message..." required>
+                    <button type="submit" class="announce-btn">📡 Broadcast</button>
+                </form>
+            </div>
+
+        </aside>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        Dora Network News — Powered by DoraMCU Event System<br>
+        Brought to You by Younger Industries and The Younger Industries Ship Yards<br>
+        <a href="https://eveonline.com" target="_blank" rel="noopener">[EVE Online YISY]</a>
+    </footer>
+
+    <script>
+        // ── State ──
+        let events = [];
+        let currentFilter = 'all';
+        let eventSource = null;
+
+        // ── DOM refs ──
+        const feedEl = document.getElementById('newsFeed');
+        const emptyState = document.getElementById('emptyState');
+        const tickerContent = document.getElementById('tickerContent');
+        const subscriberCountEl = document.getElementById('subscriberCount');
+        const announceForm = document.getElementById('announceForm');
+
+        // ── Initialize ──
+        function init() {
+            loadFeed();
+            connectSSE();
+            setupFilters();
+            setupAnnounceForm();
+        }
+
+        // ── Load initial feed via REST ──
+        async function loadFeed() {
+            try {
+                const res = await fetch('/api/v1/news/feed?limit=50');
+                if (res.ok) {
+                    events = await res.json();
+                    events.reverse(); // newest first
+                    renderFeed();
+                    updateStats();
+                }
+            } catch (e) {
+                console.warn('Failed to load initial feed:', e);
+            }
+        }
+
+        // ── Connect to live SSE stream ──
+        function connectSSE() {
+            try {
+                eventSource = new EventSource('/api/v1/news/live');
+
+                eventSource.onopen = () => {
+                    subscriberCountEl.textContent = '● Connected';
+                    subscriberCountEl.style.color = '#00c853';
+                };
+
+                eventSource.addEventListener('connected', (e) => {
+                    const data = JSON.parse(e.data);
+                    subscriberCountEl.textContent = data.subscriberCount + ' subscribers';
+                });
+
+                eventSource.addEventListener('subscribed', (e) => {
+                    console.log('Subscribed to event stream');
+                });
+
+                eventSource.addEventListener('history', (e) => {
+                    // History events already loaded via REST
+                });
+
+                // Handle all event types dynamically
+                eventSource.onmessage = (e) => {
+                    handleEvent(e);
+                };
+
+                // Handle named events
+                const eventTypes = [
+                    'build_started', 'build_completed', 'build_failed',
+                    'sector_generated', 'galaxy_created', 'health_threshold_crossed',
+                    'character_transitioned', 'work_order_created', 'ai_agent_deployed',
+                    'assessment_completed', 'wormhole_created', 'wormhole_travel',
+                    'wormhole_toggled'
+                ];
+
+                eventTypes.forEach(type => {
+                    eventSource.addEventListener(type, (e) => {
+                        handleEvent(e);
+                    });
+                });
+
+                eventSource.onerror = () => {
+                    subscriberCountEl.textContent = '● Reconnecting...';
+                    subscriberCountEl.style.color = '#ff9800';
+                    eventSource.close();
+                    // Reconnect after 5 seconds
+                    setTimeout(connectSSE, 5000);
+                };
+
+            } catch (e) {
+                console.error('SSE connection failed:', e);
+                subscriberCountEl.textContent = '● Offline';
+                subscriberCountEl.style.color = '#ff1744';
+            }
+        }
+
+        // ── Handle incoming event ──
+        function handleEvent(e) {
+            try {
+                const data = JSON.parse(e.data);
+                const item = {
+                    id: Date.now(),
+                    type: data.type,
+                    title: formatTitle(data.type, data.galaxyName),
+                    galaxyName: data.galaxyName,
+                    timestamp: data.timestamp,
+                    details: data.payload || data.details
+                };
+
+                // Add to beginning of events array
+                events.unshift(item);
+
+                // Update ticker
+                updateTicker(item);
+
+                // Render and update stats
+                renderFeed();
+                updateStats();
+
+                // Flash the new item
+                setTimeout(() => {
+                    const firstCard = feedEl.querySelector('.news-card');
+                    if (firstCard) firstCard.classList.add('new');
+                }, 50);
+
+            } catch (err) {
+                console.error('Failed to parse event:', err);
+            }
+        }
+
+        // ── Format event title ──
+        function formatTitle(type, galaxy) {
+            const g = galaxy || 'Unknown';
+            const titles = {
+                'BUILD_STARTED': 'Galaxy Build Initiated: ' + g,
+                'BUILD_COMPLETED': 'Galaxy Build Complete: ' + g,
+                'BUILD_FAILED': 'Build Failure Detected: ' + g,
+                'SECTOR_GENERATED': 'New Sector Generated in ' + g,
+                'GALAXY_CREATED': 'New Galaxy Discovered: ' + g,
+                'HEALTH_THRESHOLD_CROSSED': 'Health Alert: ' + g,
+                'CHARACTER_TRANSITIONED': 'Character Transitioned to ' + g,
+                'WORK_ORDER_CREATED': 'Work Order Created for ' + g,
+                'AI_AGENT_DEPLOYED': 'AI Agent Deployed to ' + g,
+                'ASSESSMENT_COMPLETED': 'Assessment Complete: ' + g,
+                'WORMHOLE_CREATED': 'Wormhole Established: ' + g,
+                'WORMHOLE_TRAVEL': 'Wormhole Travel Detected via ' + g,
+                'WORMHOLE_TOGGLED': 'Wormhole Status Changed: ' + g
+            };
+            return titles[type] || type + ': ' + g;
+        }
+
+        // ── Update ticker ──
+        function updateTicker(item) {
+            const label = item.type === 'HEALTH_THRESHOLD_CROSSED' || item.type === 'BUILD_FAILED'
+                ? 'ALERT' : 'BREAKING';
+            const tickerItem = `<span class="ticker-label">${label}</span> ${item.title} — `;
+            tickerContent.innerHTML = tickerItem + tickerContent.innerHTML;
+        }
+
+        // ── Render feed ──
+        function renderFeed() {
+            if (events.length === 0) {
+                emptyState.style.display = 'block';
+                feedEl.innerHTML = '';
+                feedEl.appendChild(emptyState);
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            // Apply filter
+            let filtered = events;
+            if (currentFilter !== 'all') {
+                filtered = events.filter(e => e.type && e.type.includes(currentFilter));
+            }
+
+            feedEl.innerHTML = filtered.slice(0, 50).map(item => {
+                const typeClass = 'type-' + (item.type || '').toLowerCase();
+                const time = item.timestamp ? new Date(item.timestamp).toLocaleTimeString() : '';
+                const detailsHtml = item.details ? `
+                    <div class="news-details">
+                        ${Object.entries(item.details).map(([k, v]) => `${k}: ${v}`).join(' | ')}
+                    </div>
+                ` : '';
+
+                return `
+                    <div class="news-card">
+                        <div class="news-card-header">
+                            <span class="news-type ${typeClass}">${item.type || 'EVENT'}</span>
+                            <span class="news-time">${time}</span>
+                        </div>
+                        <div class="news-title">${item.title}</div>
+                        <div class="news-galaxy">Galaxy: <strong>${item.galaxyName || 'N/A'}</strong></div>
+                        ${detailsHtml}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ── Update stats ──
+        function updateStats() {
+            const typeCounts = {};
+            const galaxySet = new Set();
+
+            events.forEach(e => {
+                if (e.type) typeCounts[e.type] = (typeCounts[e.type] || 0) + 1;
+                if (e.galaxyName) galaxySet.add(e.galaxyName);
+            });
+
+            document.getElementById('statEvents').textContent = events.length;
+            document.getElementById('statTypes').textContent = Object.keys(typeCounts).length;
+            document.getElementById('statGalaxies').textContent = galaxySet.size;
+
+            // Update event type list
+            const typeListEl = document.getElementById('eventTypeList');
+            if (Object.keys(typeCounts).length === 0) {
+                typeListEl.innerHTML = '<div style="color: #555; font-size: 0.8rem; text-align: center; padding: 1rem;">No events yet</div>';
+            } else {
+                typeListEl.innerHTML = Object.entries(typeCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([type, count]) => `
+                        <div class="event-type-item">
+                            <span>${type.replace(/_/g, ' ')}</span>
+                            <span class="count">${count}</span>
+                        </div>
+                    `).join('');
+            }
+        }
+
+        // ── Filter buttons ──
+        function setupFilters() {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
+                    renderFeed();
+                });
+            });
+        }
+
+        // ── Announce form ──
+        function setupAnnounceForm() {
+            announceForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(announceForm);
+                const params = new URLSearchParams(formData);
+
+                try {
+                    const res = await fetch('/api/v1/news/announce?' + params.toString(), {
+                        method: 'POST'
+                    });
+                    if (res.ok) {
+                        announceForm.reset();
+                    }
+                } catch (err) {
+                    console.error('Failed to announce:', err);
+                }
+            });
+        }
+
+        // ── Load stats periodically ──
+        async function refreshStats() {
+            try {
+                const res = await fetch('/api/v1/news/stats');
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('statSubscribers').textContent = data.subscribers || 0;
+                }
+            } catch (e) {
+                // Silent fail
+            }
+        }
+        setInterval(refreshStats, 10000);
+
+        // ── Start ──
+        init();
+    </script>
 </body>
 </html>

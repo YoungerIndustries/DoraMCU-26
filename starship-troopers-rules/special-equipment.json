@@ -1,0 +1,155 @@
+{
+  "special_weapons_and_equipment": {
+    "description": "Special Weapons & Equipment (SW&E) that can be carried by Mobile Infantry units. Not all units can carry all equipment.",
+    "equipment": [
+      {
+        "id": "dap",
+        "name": "Delayed Action Proximity Mine",
+        "type": "Explosive",
+        "attack_strength": 8,
+        "max_per_unit": 1,
+        "tax_strength": 8,
+        "range": 0,
+        "special_effects": [
+          "Proximity detonation",
+          "Delayed action",
+          "Area effect in hex"
+        ],
+        "restrictions": ["Combat Engineers only"],
+        "description": "Proximity-triggered mine that detonates after a delay, affecting all units in the hex."
+      },
+      {
+        "id": "dar",
+        "name": "Delayed Action Remote Mine",
+        "type": "Explosive",
+        "attack_strength": 8,
+        "max_per_unit": 1,
+        "tax_strength": 8,
+        "range": 0,
+        "special_effects": [
+          "Remote detonation",
+          "Delayed action",
+          "Area effect in hex"
+        ],
+        "restrictions": ["Combat Engineers only"],
+        "description": "Remote-controlled mine that detonates on command after a delay."
+      },
+      {
+        "id": "hedm",
+        "name": "Heavy Explosive Demolition Munitions",
+        "type": "Demolition",
+        "attack_strength": 10,
+        "max_per_unit": 1,
+        "tax_strength": 10,
+        "range": 0,
+        "special_effects": [
+          "Heavy damage",
+          "Can breach tunnels",
+          "Area effect"
+        ],
+        "restrictions": ["Combat Engineers only"],
+        "description": "Powerful conventional explosive for breaching tunnels and destroying fortifications."
+      },
+      {
+        "id": "ndm",
+        "name": "Nuclear Demolition Munitions",
+        "type": "Nuclear",
+        "attack_strength": 15,
+        "max_per_unit": 1,
+        "tax_strength": 15,
+        "range": 0,
+        "special_effects": [
+          "Massive area effect",
+          "Radiation damage",
+          "Affects friendly units",
+          "Can destroy tunnels"
+        ],
+        "restrictions": ["Combat Engineers only", "Requires authorization"],
+        "description": "Tactical nuclear weapon. Devastating but affects all units in the area, including friendly forces. Creates radiation zones."
+      },
+      {
+        "id": "listening_device",
+        "name": "Listening Device",
+        "type": "Sensor",
+        "attack_strength": 0,
+        "max_per_unit": 1,
+        "range": 3,
+        "special_effects": [
+          "Detect tunnel movement",
+          "Reveal hidden positions",
+          "Range of 3 hexes"
+        ],
+        "restrictions": ["Scouts and Combat Engineers"],
+        "description": "Sensor device that can detect underground tunnel activity within 3 hexes."
+      },
+      {
+        "id": "rocket_beacon",
+        "name": "Rocket Beacon",
+        "type": "Signal",
+        "attack_strength": 0,
+        "max_per_unit": 1,
+        "range": 0,
+        "special_effects": [
+          "Signal marker",
+          "Call reinforcements",
+          "Mark position"
+        ],
+        "restrictions": ["Any unit"],
+        "description": "Signal device for marking positions or calling in reinforcements."
+      },
+      {
+        "id": "heavy_nerve_gas",
+        "name": "Heavy Nerve Gas",
+        "type": "Heavy Weapon",
+        "attack_strength": 9,
+        "max_per_unit": 1,
+        "tax_strength": 9,
+        "range": 10,
+        "special_effects": [
+          "Long range",
+          "Area effect",
+          "Suppresses enemies"
+        ],
+        "restrictions": ["MIC squads with heavy weapon designation"],
+        "description": "Long-range heavy weapon firing nerve gas projectiles. Can suppress enemy units."
+      },
+      {
+        "id": "heavy_explosive",
+        "name": "Heavy Explosive",
+        "type": "Heavy Weapon",
+        "attack_strength": 9,
+        "max_per_unit": 1,
+        "tax_strength": 9,
+        "range": 10,
+        "special_effects": [
+          "Long range",
+          "High damage",
+          "Area effect"
+        ],
+        "restrictions": ["MIC squads with heavy weapon designation"],
+        "description": "Long-range heavy weapon firing explosive projectiles."
+      }
+    ]
+  },
+  "equipment_chart": {
+    "description": "Chart of what special weapons and equipment are available and which units can carry them",
+    "columns": [
+      "Name",
+      "Type",
+      "Unit Type",
+      "Max per Unit",
+      "Max Uses",
+      "Tax Strength",
+      "Range",
+      "Special Effects",
+      "Restrictions"
+    ]
+  },
+  "usage_notes": [
+    "The equipment chart in the back of the rulebook is frequently referenced during play",
+    "Consider photocopying the chart for easier access",
+    "Not all units can carry all types of equipment",
+    "Heavy weapons have range limitations",
+    "Nuclear weapons affect friendly units - use with caution"
+  ]
+}

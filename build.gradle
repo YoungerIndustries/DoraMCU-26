@@ -28,6 +28,9 @@ java {
                 exclude 'com/yisy/modules/doramcu/thirdreich/SpaceBattle.java'
                 exclude 'com/yisy/modules/doramcu/thirdreich/AircraftConversionController.java'
             }
+            resources {
+                srcDirs = ['src/main/resources', 'starship-troopers-rules']
+            }
         }
         test {
             java {

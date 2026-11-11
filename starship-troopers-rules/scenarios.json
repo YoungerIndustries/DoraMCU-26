@@ -1,0 +1,282 @@
+{
+  "scenarios": [
+    {
+      "id": 1,
+      "name": "Feint against the humanoids",
+      "description": "A single squad of Rasczak's Roughnecks hits a Skinny colony. Introductory scenario that removes ranged combat entirely - focuses on drop and retrieval.",
+      "difficulty": "Introductory",
+      "turns": 10,
+      "special_rules": [
+        "Ranged combat is removed - only close combat",
+        "Focuses on drop and retrieval mechanics"
+      ],
+      "terran_forces": {
+        "command": 1,
+        "marauder": 6,
+        "scout": 1
+      },
+      "arachnid_forces": {
+        "humanoid_warrior": 6,
+        "humanoid_worker": 4
+      },
+      "victory_conditions": {
+        "terran_victory": "Eliminate all Humanoid units or extract with sufficient victory points",
+        "arachnid_victory": "Eliminate all Terran units"
+      }
+    },
+    {
+      "id": 2,
+      "name": "Operation Bughouse",
+      "description": "A complete platoon takes on an Arachnid hive. First full scenario with all mechanics.",
+      "difficulty": "Easy",
+      "turns": 15,
+      "special_rules": [
+        "Full combat rules apply",
+        "Arachnid player sets up hidden tunnel system"
+      ],
+      "terran_forces": {
+        "command": 3,
+        "marauder": 21,
+        "scout": 3,
+        "combat_engineer": 6,
+        "air_car": 6,
+        "heavy_nerve_gas": 6
+      },
+      "arachnid_forces": {
+        "warrior": 25,
+        "worker": 25,
+        "heavy_weapon_beam": 3,
+        "heavy_weapon_missile": 2,
+        "strong_point": 6
+      },
+      "victory_conditions": {
+        "terran_victory": "Capture the Brain Bug or eliminate sufficient Bug forces",
+        "arachnid_victory": "Eliminate all Terran units or survive all turns"
+      }
+    },
+    {
+      "id": 3,
+      "name": "Invasion of Skinny-5",
+      "description": "A platoon's attack on a Skinny industrial center. Humanoids defend critical installations.",
+      "difficulty": "Medium",
+      "turns": 15,
+      "special_rules": [
+        "Humanoid critical installations must be captured",
+        "Power, communications, and water facilities are objectives"
+      ],
+      "terran_forces": {
+        "command": 3,
+        "marauder": 21,
+        "scout": 3,
+        "combat_engineer": 6,
+        "heavy_nerve_gas": 6
+      },
+      "arachnid_forces": {
+        "humanoid_warrior": 18,
+        "humanoid_worker": 12,
+        "humanoid_heavy_beam": 3,
+        "humanoid_heavy_missile": 2,
+        "critical_installations": 4
+      },
+      "victory_conditions": {
+        "terran_victory": "Capture all critical installations",
+        "arachnid_victory": "Defend installations or eliminate Terran forces"
+      }
+    },
+    {
+      "id": 4,
+      "name": "Revolt!",
+      "description": "The Skinnies change sides and attack the Arachnids with the help of the Mobile Infantry. First scenario with combined Terran-Humanoid forces.",
+      "difficulty": "Medium",
+      "turns": 15,
+      "special_rules": [
+        "Terran and Humanoid units move together during the same player segment",
+        "Terran and Humanoid units may not voluntarily stack together",
+        "Terran and Humanoid units may not combine attack strengths",
+        "They may not attack the same enemy unit in the same combat phase",
+        "Humanoid units use Terran attack table when attacking Arachnids"
+      ],
+      "terran_forces": {
+        "command": 3,
+        "marauder": 21,
+        "scout": 3,
+        "combat_engineer": 6,
+        "heavy_nerve_gas": 6
+      },
+      "humanoid_forces": {
+        "humanoid_warrior": 9,
+        "humanoid_worker": 9,
+        "humanoid_heavy_beam": 3,
+        "humanoid_heavy_missile": 2
+      },
+      "arachnid_forces": {
+        "warrior": 25,
+        "worker": 25,
+        "heavy_weapon_beam": 3,
+        "heavy_weapon_missile": 2,
+        "strong_point": 6
+      },
+      "victory_conditions": {
+        "terran_victory": "Capture the Brain Bug with combined forces",
+        "arachnid_victory": "Eliminate all allied forces"
+      }
+    },
+    {
+      "id": 5,
+      "name": "Sheol - Part 1: Operation Corkscrew",
+      "description": "The combat engineers enter the battle. Focus on tunnel breaching and underground combat.",
+      "difficulty": "Hard",
+      "turns": 15,
+      "special_rules": [
+        "Combat engineers can breach tunnels",
+        "MI can enter tunnel systems",
+        "Sensors can detect tunnel locations"
+      ],
+      "terran_forces": {
+        "command": 3,
+        "marauder": 21,
+        "scout": 3,
+        "combat_engineer": 6,
+        "listening_device": 6,
+        "heavy_nerve_gas": 6,
+        "demolition_munitions": 6
+      },
+      "arachnid_forces": {
+        "warrior": 25,
+        "worker": 25,
+        "heavy_weapon_beam": 3,
+        "heavy_weapon_missile": 2,
+        "tanker": 5,
+        "strong_point": 6
+      },
+      "victory_conditions": {
+        "terran_victory": "Destroy the underground complex",
+        "arachnid_victory": "Defend the complex and eliminate attackers"
+      }
+    },
+    {
+      "id": 6,
+      "name": "Sheol - Part 2: Retreat and Evacuation",
+      "description": "A group of wounded M.I. are rescued. Evacuation scenario with retrieval boats.",
+      "difficulty": "Hard",
+      "turns": 10,
+      "special_rules": [
+        "Wounded units must be evacuated",
+        "Retrieval boats are available",
+        "Time pressure - must extract before time runs out"
+      ],
+      "terran_forces": {
+        "command": 2,
+        "marauder": 12,
+        "wounded": 8,
+        "retrieval_boat": 2,
+        "air_car": 3
+      },
+      "arachnid_forces": {
+        "warrior": 20,
+        "worker": 15,
+        "heavy_weapon_beam": 2,
+        "heavy_weapon_missile": 2,
+        "tanker": 3
+      },
+      "victory_conditions": {
+        "terran_victory": "Evacuate all wounded units",
+        "arachnid_victory": "Prevent evacuation or eliminate all Terran units"
+      }
+    },
+    {
+      "id": 7,
+      "name": "Operation Royalty",
+      "description": "A reinforced platoon takes on two Arachnid complexes to capture a Brain Bug. Large scenario with multiple objectives.",
+      "difficulty": "Very Hard",
+      "turns": 20,
+      "special_rules": [
+        "Two Arachnid complexes",
+        "Brain Bug is the primary objective",
+        "Reinforced platoon strength"
+      ],
+      "terran_forces": {
+        "command": 4,
+        "marauder": 27,
+        "scout": 4,
+        "combat_engineer": 8,
+        "air_car": 8,
+        "heavy_nerve_gas": 8,
+        "listening_device": 6,
+        "demolition_munitions": 6
+      },
+      "arachnid_forces": {
+        "warrior": 40,
+        "worker": 35,
+        "heavy_weapon_beam": 6,
+        "heavy_weapon_missile": 4,
+        "tanker": 6,
+        "crawler": 2,
+        "brain_bug": 1,
+        "royal_warrior": 4,
+        "strong_point": 10
+      },
+      "victory_conditions": {
+        "terran_victory": "Capture the Brain Bug alive",
+        "arachnid_victory": "Protect the Brain Bug or eliminate all Terran forces"
+      }
+    },
+    {
+      "id": 8,
+      "name": "Klendathu",
+      "description": "Two platoons vs. two Arachnid complexes in a fight to free human prisoners of war. The ultimate battle - largest scenario.",
+      "difficulty": "Expert",
+      "turns": 25,
+      "special_rules": [
+        "Two full platoons",
+        "Two Arachnid complexes",
+        "Human POWs must be rescued",
+        "Full rules including nuclear weapons"
+      ],
+      "terran_forces": {
+        "command": 6,
+        "marauder": 42,
+        "scout": 6,
+        "combat_engineer": 12,
+        "air_car": 12,
+        "heavy_nerve_gas": 12,
+        "listening_device": 12,
+        "demolition_munitions": 12,
+        "nuclear_munitions": 2
+      },
+      "arachnid_forces": {
+        "warrior": 50,
+        "worker": 50,
+        "heavy_weapon_beam": 8,
+        "heavy_weapon_missile": 6,
+        "tanker": 10,
+        "crawler": 4,
+        "plasma": 6,
+        "brain_bug": 2,
+        "royal_warrior": 6,
+        "strong_point": 12
+      },
+      "victory_conditions": {
+        "terran_victory": "Rescue human POWs and destroy both complexes",
+        "arachnid_victory": "Defend both complexes and eliminate all Terran forces"
+      }
+    }
+  ],
+  "victory_point_system": {
+    "description": "Victory is determined by counting victory points for eliminated units and objectives",
+    "terran_units": {
+      "mic_squad": 1,
+      "heavy_weapon_unit": 2,
+      "command_unit": 1
+    },
+    "arachnid_units": {
+      "warrior": 1,
+      "worker": 1,
+      "heavy_weapon": 2,
+      "tanker": 2,
+      "crawler": 4,
+      "brain_bug": 10
+    },
+    "notes": "Units that are KIA, WIA, or disrupted do not count for victory point purposes"
+  }
+}

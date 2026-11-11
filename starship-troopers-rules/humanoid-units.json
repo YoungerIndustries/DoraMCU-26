@@ -1,0 +1,67 @@
+{
+  "faction": "Humanoids (Skinnies)",
+  "description": "Humanoid alien species that initially fight alongside the Arachnids but switch sides to ally with the Terran Mobile Infantry in later scenarios. Represented by yellow/gold counters.",
+  "unit_types": [
+    {
+      "id": "humanoid_warrior",
+      "name": "Humanoid Warrior",
+      "type": "Infantry",
+      "attack_strength": 4,
+      "defense_strength": 4,
+      "movement_allowance": 6,
+      "description": "Standard humanoid combat unit. Yellow/gold counters with black numbering.",
+      "abilities": ["Standard combat", "Can ally with Terrans in later scenarios"],
+      "victory_points": 1,
+      "counters_per_scenario": 9
+    },
+    {
+      "id": "humanoid_worker",
+      "name": "Humanoid Worker",
+      "type": "Support",
+      "attack_strength": 0,
+      "defense_strength": 2,
+      "movement_allowance": 6,
+      "description": "Non-combat humanoid unit. No offensive capability.",
+      "abilities": ["Construction", "Support"],
+      "victory_points": 1,
+      "counters_per_scenario": 9
+    },
+    {
+      "id": "humanoid_heavy_beam",
+      "name": "Humanoid Heavy Weapon - Beam",
+      "type": "Heavy Weapon",
+      "attack_strength": 12,
+      "defense_strength": 2,
+      "movement_allowance": 6,
+      "range": 6,
+      "description": "Humanoid heavy energy weapon. Red numbering on counter to indicate ranged capability.",
+      "abilities": ["Energy beam attack", "Medium range"],
+      "victory_points": 2,
+      "counters_per_scenario": 3
+    },
+    {
+      "id": "humanoid_heavy_missile",
+      "name": "Humanoid Heavy Weapon - Missile",
+      "type": "Heavy Weapon",
+      "attack_strength": 12,
+      "defense_strength": 2,
+      "movement_allowance": 6,
+      "range": 10,
+      "description": "Humanoid heavy missile weapon. Red numbering on counter to indicate ranged capability.",
+      "abilities": ["Missile attack", "Long range"],
+      "victory_points": 2,
+      "counters_per_scenario": 2
+    }
+  ],
+  "special_rules": {
+    "alliance_switch": "In later scenarios (Revolt! and beyond), Humanoid units switch from the Arachnid side to the Terran side.",
+    "stacking": "Terran and Humanoid units may not voluntarily stack together or remain in the same hex unless involuntarily immobilized as a result of combat.",
+    "combined_attacks": "Terran and Humanoid units may not combine attack strengths for any type of ranged or close combat. They may not attack the same enemy unit in the same combat phase.",
+    "combat_tables": "Humanoid units use the Terran attack table when attacking Arachnid units and vice versa."
+  },
+  "counter_identification": {
+    "color": "Yellow/Gold",
+    "warrior_worker_numbering": "Black",
+    "heavy_weapon_numbering": "Red - indicates ranged weapon capability"
+  }
+}

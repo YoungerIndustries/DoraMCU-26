@@ -180,10 +180,10 @@ class GalaxyGenerationConfigTest {
         }
 
         @Test
-        @DisplayName("hyperlaneDensity should reject values below 0.5")
+        @DisplayName("hyperlaneDensity should reject values below 0.0")
         void hyperlaneDensity_shouldRejectBelowMin() {
             assertThrows(IllegalArgumentException.class, () ->
-                    GalaxyGenerationConfig.builder().hyperlaneDensity(0.4).build()
+                    GalaxyGenerationConfig.builder().hyperlaneDensity(-0.1).build()
             );
         }
 
@@ -196,11 +196,11 @@ class GalaxyGenerationConfigTest {
         }
 
         @Test
-        @DisplayName("hyperlaneDensity should accept boundary values 0.5 and 2.75")
+        @DisplayName("hyperlaneDensity should accept boundary values 0.0 and 2.75")
         void hyperlaneDensity_shouldAcceptBoundaries() {
-            GalaxyGenerationConfig configLow = GalaxyGenerationConfig.builder().hyperlaneDensity(0.5).build();
+            GalaxyGenerationConfig configLow = GalaxyGenerationConfig.builder().hyperlaneDensity(0.0).build();
             GalaxyGenerationConfig configHigh = GalaxyGenerationConfig.builder().hyperlaneDensity(2.75).build();
-            assertEquals(0.5, configLow.getHyperlaneDensity());
+            assertEquals(0.0, configLow.getHyperlaneDensity());
             assertEquals(2.75, configHigh.getHyperlaneDensity());
         }
 
