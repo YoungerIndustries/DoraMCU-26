@@ -70,8 +70,9 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
-    maxHeapSize = '2G'
-    jvmArgs '-XX:+UseG1GC', '-XX:MaxGCPauseMillis=200', '-Dorg.bytedeco.javacpp.maxbytes=512M', '-Dorg.bytedeco.javacpp.maxphysicalbytes=1G'
+    maxHeapSize = '6G'
+    forkEvery = 50
+    jvmArgs '-XX:+UseG1GC', '-XX:MaxGCPauseMillis=200', '-Dorg.bytedeco.javacpp.maxbytes=2G', '-Dorg.bytedeco.javacpp.maxphysicalbytes=4G'
 }
 
 tasks.named('bootRun') {
