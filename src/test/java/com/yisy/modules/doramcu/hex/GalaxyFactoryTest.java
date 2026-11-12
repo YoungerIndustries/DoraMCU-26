@@ -58,10 +58,10 @@ class GalaxyFactoryTest {
         void testGalaxyConfig_shouldUseMinimalValues() {
             GalaxyGenerationConfig config = GalaxyFactory.testGalaxyConfig();
 
-            assertEquals(SectorBuilder.minimumSystemCount(), config.getSystemCount());
+            assertEquals(50, config.getSystemCount());
             assertEquals(2, config.getPlanetsPerSystem());
-            assertEquals(0.3, config.getMoonChance());
-            assertEquals(0.5, config.getHyperlaneDensity());
+            assertEquals(0.4, config.getMoonChance());
+            assertEquals(1.0, config.getHyperlaneDensity());
         }
 
         @Test
@@ -317,13 +317,11 @@ class GalaxyFactoryTest {
 
         @Test
         @DisplayName("GalaxyFactory should not be instantiable")
-        void factory_shouldNotBeInstantiable() {
+        void factory_shouldNotBeInstantiable() throws NoSuchMethodException {
             // The constructor is private — verify via reflection
-            assertThrows(java.lang.IllegalAccessException.class, () -> {
-                var constructor = GalaxyFactory.class.getDeclaredConstructor();
-                constructor.setAccessible(true);
-                constructor.newInstance();
-            });
+            var constructor = GalaxyFactory.class.getDeclaredConstructor();
+            assertTrue(java.lang.reflect.Modifier.isPrivate(constructor.getModifiers()),
+                    "GalaxyFactory constructor should be private");
         }
     }
 }

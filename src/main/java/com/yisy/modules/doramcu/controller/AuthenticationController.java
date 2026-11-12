@@ -287,7 +287,11 @@ public class AuthenticationController {
                     .distinct()
                     .collect(Collectors.toList());
         } else {
-            galaxies = Arrays.asList(GalaxyFactory.GAME_GALAXY_NAME);
+            galaxies = Arrays.asList(
+                    GalaxyFactory.EARTH_2026_GALAXY_NAME,
+                    GalaxyFactory.GAME_GALAXY_NAME,
+                    GalaxyFactory.TEST_GALAXY_NAME
+            );
         }
         return ResponseEntity.ok(galaxies);
     }
@@ -303,17 +307,15 @@ public class AuthenticationController {
         // Validate galaxy name if provided
         String galaxyName = request.getGalaxyName();
         if (galaxyName == null || galaxyName.trim().isEmpty()) {
-            // Default to the first available galaxy, or fall back to the game galaxy constant
+            // Default to Earth 2026, or fall back to the first available galaxy
             if (galaxyRepository != null && !galaxyRepository.findAll().isEmpty()) {
                 galaxyName = galaxyRepository.findAll().get(0).getName();
             } else {
-                galaxyName = GalaxyFactory.GAME_GALAXY_NAME;
+                galaxyName = GalaxyFactory.EARTH_2026_GALAXY_NAME;
             }
-        } else if (galaxyRepository != null && !galaxyRepository.findByName(galaxyName).isPresent()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Invalid galaxy: " + galaxyName));
-        } else if (galaxyRepository == null && !GalaxyFactory.isValidGalaxyName(galaxyName)) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Invalid galaxy: " + galaxyName));
         }
+        // Accept any non-blank galaxy name — no validation against predefined list
+        // The galaxy will be created on-demand if it doesn't exist yet
 
         User user = new User();
         user.setUsername(request.getUsername());

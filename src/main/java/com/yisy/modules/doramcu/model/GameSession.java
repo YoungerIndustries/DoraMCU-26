@@ -32,6 +32,8 @@ public class GameSession {
     private final ReentrantReadWriteLock lock;
     /** Global clock tracking in-game time for this session. */
     private GlobalClock globalClock;
+    /** 4X progressive unlock state for this session. */
+    private final com.yisy.modules.doramcu.dto.FourxUnlockState fourxUnlockState = new com.yisy.modules.doramcu.dto.FourxUnlockState();
 
     public GameSession(String sessionId, String name, GameEngine game) {
         this.sessionId = sessionId;
@@ -141,6 +143,6 @@ public class GameSession {
      * Returns the 4X unlock state for this session.
      */
     public com.yisy.modules.doramcu.dto.FourxUnlockState getFourxUnlockState() {
-        return new com.yisy.modules.doramcu.dto.FourxUnlockState();
+        return fourxUnlockState;
     }
 }

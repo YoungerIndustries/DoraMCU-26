@@ -299,7 +299,7 @@ public class Dnd5ePsionService {
      */
     @Transactional(readOnly = true)
     public List<Dnd5ePsionicPower> listCantrips() {
-        return powerRepository.findByPowerLevelZero();
+        return powerRepository.findByPowerLevel(0);
     }
 
     /**

@@ -265,47 +265,62 @@ public class GalaxyGenerationConfig {
         }
 
         public Builder sectorSize(int sectorSize) {
+            if (sectorSize < 2 || sectorSize > 20) {
+                throw new IllegalArgumentException("Sector size must be between 2 and 20: " + sectorSize);
+            }
             this.sectorSize = sectorSize;
             return this;
         }
 
         public Builder subSectorDimension(int subSectorDimension) {
+            if (subSectorDimension < 2 || subSectorDimension > 20) {
+                throw new IllegalArgumentException("Subsector dimension must be between 2 and 20: " + subSectorDimension);
+            }
             this.subSectorDimension = subSectorDimension;
             return this;
         }
 
         public Builder civilizationDensity(double civilizationDensity) {
+            if (civilizationDensity < 0.0 || civilizationDensity > 1.0) {
+                throw new IllegalArgumentException("Civilization density must be between 0.0 and 1.0: " + civilizationDensity);
+            }
             this.civilizationDensity = civilizationDensity;
             return this;
         }
 
         public Builder resourceDistribution(double resourceDistribution) {
+            if (resourceDistribution < 0.0 || resourceDistribution > 1.0) {
+                throw new IllegalArgumentException("Resource distribution must be between 0.0 and 1.0: " + resourceDistribution);
+            }
             this.resourceDistribution = resourceDistribution;
             return this;
         }
 
         public Builder galaxyShape(String galaxyShape) {
-            this.galaxyShape = galaxyShape;
+            this.galaxyShape = (galaxyShape != null) ? galaxyShape : DEFAULT_GALAXY_SHAPE;
             return this;
         }
 
         public Builder namingConvention(String namingConvention) {
-            this.namingConvention = namingConvention;
+            this.namingConvention = (namingConvention != null) ? namingConvention : DEFAULT_NAMING_CONVENTION;
             return this;
         }
 
         public Builder empireCount(int empireCount) {
+            if (empireCount < 1 || empireCount > 16) {
+                throw new IllegalArgumentException("Empire count must be between 1 and 16: " + empireCount);
+            }
             this.empireCount = empireCount;
             return this;
         }
 
         public Builder difficultyLevel(String difficultyLevel) {
-            this.difficultyLevel = difficultyLevel;
+            this.difficultyLevel = (difficultyLevel != null) ? difficultyLevel : DEFAULT_DIFFICULTY_LEVEL;
             return this;
         }
 
         public Builder gameType(String gameType) {
-            this.gameType = gameType;
+            this.gameType = (gameType != null) ? gameType : DEFAULT_GAME_TYPE;
             return this;
         }
 

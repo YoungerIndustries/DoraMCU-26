@@ -89,7 +89,7 @@ class GalaxyNameDatabaseThemeTest {
         void unknownThemeFallsBack() {
             GalaxyNameDatabase db = new GalaxyNameDatabase("NGC", "unknown");
             assertNull(db.getActiveTheme());
-            assertEquals(132, db.getNameCount(), "Should load all names");
+            assertEquals(340, db.getNameCount(), "Should load all names");
         }
 
         @Test
@@ -192,7 +192,7 @@ class GalaxyNameDatabaseThemeTest {
         @DisplayName("Astronomical theme has correct count")
         void astronomicalCount() {
             GalaxyNameDatabase db = new GalaxyNameDatabase();
-            assertEquals(47, db.getNamesByTheme("astronomical").size());
+            assertEquals(258, db.getNamesByTheme("astronomical").size());
         }
 
         @Test

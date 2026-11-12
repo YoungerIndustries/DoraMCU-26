@@ -654,9 +654,21 @@ public class AdminController {
     @GetMapping("/promo-codes")
     public ResponseEntity<?> getAllPromoCodes() {
         java.util.List<com.yisy.modules.doramcu.model.PromoCode> codes = promoCodeService.findAll();
+        List<Map<String, Object>> promoCodeMaps = new java.util.ArrayList<>();
+        for (com.yisy.modules.doramcu.model.PromoCode pc : codes) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", pc.getId());
+            map.put("code", pc.getCode());
+            map.put("description", pc.getDescription());
+            map.put("maxUses", pc.getMaxUses());
+            map.put("usedCount", pc.getUsedCount());
+            map.put("active", pc.isActive());
+            map.put("bonuses", pc.getBonuses());
+            promoCodeMaps.add(map);
+        }
         Map<String, Object> result = new java.util.HashMap<>();
         result.put("count", codes.size());
-        result.put("promoCodes", codes);
+        result.put("promoCodes", promoCodeMaps);
         return ResponseEntity.ok(result);
     }
 
@@ -665,7 +677,15 @@ public class AdminController {
         try {
             com.yisy.modules.doramcu.model.PromoCode pc = promoCodeService.findByCode(code)
                     .orElseThrow(() -> new IllegalArgumentException("Promo code not found: " + code));
-            return ResponseEntity.ok(pc);
+            Map<String, Object> result = new HashMap<>();
+            result.put("id", pc.getId());
+            result.put("code", pc.getCode());
+            result.put("description", pc.getDescription());
+            result.put("maxUses", pc.getMaxUses());
+            result.put("usedCount", pc.getUsedCount());
+            result.put("active", pc.isActive());
+            result.put("bonuses", pc.getBonuses());
+            return ResponseEntity.ok(result);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         }
@@ -685,7 +705,11 @@ public class AdminController {
                 com.yisy.modules.doramcu.model.PromoCode.CodeType.PLAYER;
         try {
             com.yisy.modules.doramcu.model.PromoCode pc = promoCodeService.createPromoCode(code, description, maxUses, type);
-            return ResponseEntity.status(HttpStatus.CREATED).body(pc);
+            Map<String, Object> result = new HashMap<>();
+            result.put("message", "Promo code created successfully");
+            result.put("code", pc.getCode());
+            result.put("id", pc.getId());
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
@@ -694,8 +718,13 @@ public class AdminController {
     @PostMapping("/promo-codes/{code}/activate")
     public ResponseEntity<?> activatePromoCode(@PathVariable String code) {
         try {
-            com.yisy.modules.doramcu.model.PromoCode pc = promoCodeService.activatePromoCode(code);
-            return ResponseEntity.ok(pc);
+            com.yisy.modules.doramcu.model.PromoCode pc = promoCodeService.findByCode(code)
+                    .orElseThrow(() -> new IllegalArgumentException("Promo code not found: " + code));
+            pc.setActive(true);
+            promoCodeService.updatePromoCode(code, null, null, null, null);
+            Map<String, Object> result = new HashMap<>();
+            result.put("message", "Promo code activated successfully");
+            return ResponseEntity.ok(result);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         }
@@ -718,9 +747,75 @@ public class AdminController {
             if (!deleted) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Promo code not found: " + code));
             }
-            return ResponseEntity.ok(Map.of("message", "Promo code deleted"));
+            return ResponseEntity.ok(Map.of("message", "Promo code deleted successfully"));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/promo-codes/generate")
+    public ResponseEntity<?> generatePromoCodes(@RequestBody(required = false) Map<String, Object> request) {
+        try {
+            int count = 10; // default
+            int length = 8; // default
+            String prefix = null;
+            String description = "Generated promo code";
+            Integer maxUses = null; // unlimited
+            String typeStr = "PLAYER";
+
+            if (request != null) {
+                count = request.get("count") != null ? ((Number) request.get("count")).intValue() : count;
+                length = request.get("length") != null ? ((Number) request.get("length")).intValue() : length;
+                prefix = request.get("prefix") != null ? (String) request.get("prefix") : prefix;
+                description = request.get("description") != null ? (String) request.get("description") : description;
+                maxUses = request.get("maxUses") != null ? ((Number) request.get("maxUses")).intValue() : null;
+                typeStr = request.get("type") != null ? (String) request.get("type") : typeStr;
+            }
+
+            if (count < 1 || count > 1000) {
+                return ResponseEntity.badRequest().body(Map.of("error", "count must be between 1 and 1000"));
+            }
+
+            com.yisy.modules.doramcu.model.PromoCode.CodeType type = com.yisy.modules.doramcu.model.PromoCode.CodeType.valueOf(typeStr);
+
+            // Generate unique codes
+            List<String> generatedCodes;
+            if (prefix != null && !prefix.isEmpty()) {
+                generatedCodes = com.yisy.modules.doramcu.util.PromoCodeGenerator.generateBatchWithPrefix(prefix, count, length);
+            } else {
+                generatedCodes = com.yisy.modules.doramcu.util.PromoCodeGenerator.generateBatch(count, length);
+            }
+
+            // Save to database
+            List<Map<String, Object>> created = new java.util.ArrayList<>();
+            int skipped = 0;
+            for (String code : generatedCodes) {
+                try {
+                    com.yisy.modules.doramcu.model.PromoCode pc = promoCodeService.createPromoCode(code, description, maxUses, type);
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", pc.getId());
+                    map.put("code", pc.getCode());
+                    map.put("description", pc.getDescription());
+                    map.put("type", pc.getCodeType().name());
+                    map.put("maxUses", pc.getMaxUses());
+                    map.put("active", pc.isActive());
+                    created.add(map);
+                } catch (IllegalArgumentException e) {
+                    // Code already exists, skip it
+                    skipped++;
+                }
+            }
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("message", "Generated " + created.size() + " promo codes" + (skipped > 0 ? " (" + skipped + " skipped - already exist)" : ""));
+            result.put("generated", created.size());
+            result.put("skipped", skipped);
+            result.put("promoCodes", created);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
         }
     }
 
@@ -735,9 +830,14 @@ public class AdminController {
             }
             String bonuses = request.get("bonuses") != null ? (String) request.get("bonuses") : null;
             com.yisy.modules.doramcu.model.PromoCode pc = promoCodeService.updatePromoCode(code, description, maxUses, expiryDate, bonuses);
-            return ResponseEntity.ok(pc);
+            Map<String, Object> result = new HashMap<>();
+            result.put("message", "Promo code updated successfully");
+            result.put("description", pc.getDescription());
+            result.put("maxUses", pc.getMaxUses());
+            result.put("bonuses", pc.getBonuses());
+            return ResponseEntity.ok(result);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
 }

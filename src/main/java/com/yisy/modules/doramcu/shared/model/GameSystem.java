@@ -33,5 +33,17 @@ public enum GameSystem {
     BABYLON_5,
 
     /** Star Frontiers Battle rules. */
-    SFB
+    SFB,
+
+    /** Earth 2026 rules. */
+    EARTH_2026,
+
+    /** Star Trek 4X rules. */
+    STAR_TREK_4X,
+
+    /** 007 espionage rules. */
+    ZERO_ZERO_SEVEN,
+
+    /** Third Reich ground combat rules. */
+    THIRD_REICH
 }

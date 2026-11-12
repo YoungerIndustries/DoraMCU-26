@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * REST controller for agent management and missions.
  */
-@RestController
+@RestController("bondRpgController")
 @RequestMapping("/api/zero-zero-seven/agents")
 public class RpgController {
 

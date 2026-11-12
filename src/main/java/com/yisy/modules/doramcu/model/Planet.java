@@ -88,6 +88,7 @@ public class Planet {
 
     /** Planet size determining capacity and yield. */
     public enum PlanetSize {
+        TINY,
         SMALL,
         MEDIUM,
         LARGE,

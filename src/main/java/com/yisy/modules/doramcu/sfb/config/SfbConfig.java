@@ -3,6 +3,7 @@ package com.yisy.modules.doramcu.sfb.config;
 import com.yisy.modules.doramcu.sfb.service.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
@@ -15,7 +16,7 @@ public class SfbConfig implements org.springframework.web.socket.config.annotati
 
     private final SfbWebSocketHandler webSocketHandler;
 
-    public SfbConfig(SfbWebSocketHandler webSocketHandler) {
+    public SfbConfig(@Lazy SfbWebSocketHandler webSocketHandler) {
         this.webSocketHandler = webSocketHandler;
     }
 

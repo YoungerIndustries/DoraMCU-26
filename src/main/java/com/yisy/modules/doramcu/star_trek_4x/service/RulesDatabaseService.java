@@ -37,7 +37,7 @@ import java.util.*;
  * between sources by prioritizing: Star Trek lore > SFB > Captain's Log > Earth 2026.
  * </p>
  */
-@Service
+@Service("starTrek4xRulesDatabaseService")
 public class RulesDatabaseService {
 
     private static final Logger log = LoggerFactory.getLogger(RulesDatabaseService.class);

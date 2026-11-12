@@ -23,10 +23,10 @@ public class User {
 
     /**
      * The galaxy the player has chosen to play in.
-     * Defaults to "Milky Way" if not specified.
+     * Defaults to Earth 2026 if not specified — the starting hub for all new users.
      */
     @Column(nullable = false)
-    private String galaxyName = "Milky Way";
+    private String galaxyName = "Earth 2026";
 
     @Column(length = 100)
     private String firstName;

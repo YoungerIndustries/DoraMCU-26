@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoraMCU — Create Your Account</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #0a0a1a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(ellipse at center, #1a0a2e 0%, #0a0a1a 60%, #000 100%);
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #b388ff, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #333;
+            transition: all 0.3s;
+        }
+
+        .step-dot.active {
+            background: #b388ff;
+            box-shadow: 0 0 10px rgba(179, 136, 255, 0.5);
+        }
+
+        .step-dot.completed {
+            background: #00c853;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #12121f 0%, #1a1a2e 100%);
+            border: 1px solid #2a2a3e;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 0 40px rgba(138, 43, 226, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ccc;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            background: #0a0a15;
+            border: 1px solid #333;
+            color: #e0e0e0;
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .input-group select {
+            cursor: pointer;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #b388ff;
+            box-shadow: 0 0 10px rgba(179, 136, 255, 0.2);
+        }
+
+        .input-group input::placeholder {
+            color: #555;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            margin-top: 1.5rem;
+            background: linear-gradient(135deg, #ff6b35, #ff2d55);
+            border: none;
+            color: #fff;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.5);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: center;
+            display: none;
+        }
+
+        .result.success {
+            display: block;
+            background: rgba(0, 200, 83, 0.1);
+            border: 1px solid rgba(0, 200, 83, 0.3);
+            color: #00c853;
+        }
+
+        .result.error {
+            display: block;
+            background: rgba(255, 45, 85, 0.1);
+            border: 1px solid rgba(255, 45, 85, 0.3);
+            color: #ff2d55;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .back-link a {
+            color: #666;
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+
+        .back-link a:hover {
+            color: #b388ff;
+        }
+
+        @media (max-width: 500px) {
+            .card { padding: 1.5rem; }
+            .input-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Create Your Account</h1>
+            <p>Set up your identity before entering the galaxy</p>
+        </div>
+
+        <div class="steps">
+            <div class="step-dot completed" title="Door"></div>
+            <div class="step-dot completed" title="Access"></div>
+            <div class="step-dot active" title="Register"></div>
+            <div class="step-dot" title="Character"></div>
+            <div class="step-dot" title="Earth 2026"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">👤 Your Identity</div>
+
+            <form id="registerForm" onsubmit="submitRegistration(event)">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Choose a username…" required autocomplete="username">
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="At least 4 characters…" required minlength="4" autocomplete="new-password">
+                </div>
+
+                <div class="input-group">
+                    <label for="email">Email (optional)</label>
+                    <input type="email" id="email" placeholder="your@email.com" autocomplete="email">
+                </div>
+
+                <div class="input-group">
+                    <label for="empireName">Empire Name</label>
+                    <input type="text" id="empireName" placeholder="Your interstellar empire…" required>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="governmentType">Government</label>
+                        <select id="governmentType">
+                            <option value="DEMOCRACY">Democracy</option>
+                            <option value="MONARCHY">Monarchy</option>
+                            <option value="DICTATORSHIP">Dictatorship</option>
+                            <option value="OLIGARCHY">Oligarchy</option>
+                            <option value="THEOCRACY">Theocracy</option>
+                            <option value="CORPORATOCRACY">Corporatocracy</option>
+                            <option value="ANARCHY">Anarchy</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="ethos">Ethos</label>
+                        <select id="ethos">
+                            <option value="MATERIALIST">Materialist</option>
+                            <option value="IDEALIST">Idealist</option>
+                            <option value="PRAGMATIST">Pragmatist</option>
+                            <option value="MILITARIST">Militarist</option>
+                            <option value="SPIRITUALIST">Spiritualist</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Create Account
+                </button>
+
+                <div class="result" id="result"></div>
+            </form>
+        </div>
+
+        <div class="back-link">
+            <a href="promo.html">← Back to Access</a>
+        </div>
+    </div>
+
+    <script>
+        async function submitRegistration(e) {
+            e.preventDefault();
+
+            const btn = document.getElementById('submitBtn');
+            const result = document.getElementById('result');
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const email = document.getElementById('email').value.trim() || null;
+            const empireName = document.getElementById('empireName').value.trim();
+            const governmentType = document.getElementById('governmentType').value;
+            const ethos = document.getElementById('ethos').value;
+
+            if (!username || !password || !empireName) {
+                showResult('Please fill in all required fields', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span>Creating Account…';
+
+            // Retrieve promo/payment state
+            let state = {};
+            try {
+                state = JSON.parse(sessionStorage.getItem('onboarding_state') || '{}');
+            } catch (err) {
+                // ignore
+            }
+
+            const payload = {
+                username: username,
+                password: password,
+                email: email,
+                empireName: empireName,
+                governmentType: governmentType,
+                ethos: ethos,
+                promoCode: state.promoCode || null,
+                paymentToken: state.paymentToken || null
+            };
+
+            try {
+                const response = await fetch('/api/v1/onboarding/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok || response.status === 201) {
+                    // Store auth token and user info
+                    sessionStorage.setItem('onboarding_token', data.token);
+                    sessionStorage.setItem('onboarding_username', username);
+                    sessionStorage.setItem('onboarding_empire', data.empireName);
+                    if (data.playerPin) {
+                        sessionStorage.setItem('onboarding_pin', data.playerPin);
+                    }
+
+                    showResult('✓ Account created! Redirecting to character creation…', 'success');
+
+                    setTimeout(() => {
+                        window.location.href = 'character.html';
+                    }, 1500);
+                } else {
+                    showResult('✗ ' + (data.error || 'Registration failed'), 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Create Account';
+                }
+            } catch (err) {
+                showResult('✗ Network error — try again', 'error');
+                btn.disabled = false;
+                btn.innerHTML = 'Create Account';
+            }
+        }
+
+        function showResult(message, type) {
+            const result = document.getElementById('result');
+            result.textContent = message;
+            result.className = 'result ' + type;
+        }
+
+        // Pre-fill empire name from username
+        document.getElementById('username').addEventListener('input', function() {
+            const empire = document.getElementById('empireName');
+            if (!empire.dataset.manuallySet && this.value.trim()) {
+                empire.value = this.value.trim() + ' Empire';
+            }
+        });
+
+        document.getElementById('empireName').addEventListener('input', function() {
+            this.dataset.manuallySet = 'true';
+        });
+    </script>
+</body>
+</html>

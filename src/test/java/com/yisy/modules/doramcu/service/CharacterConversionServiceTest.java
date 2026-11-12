@@ -398,7 +398,7 @@ class CharacterConversionServiceTest {
         void mapsSurvivalToSecurity() {
             TravellerCharacter tc = createTraveller("John Doe");
             tc.addSkill(Skill.SURVIVAL);
-            tc.addSkill(Skill.MEDICAL);
+            tc.addSkill(Skill.FIREARMS);
             CaptainLogCharacter cl = service.toCaptainsLog(tc);
 
             assertEquals(2, cl.getSecurity());

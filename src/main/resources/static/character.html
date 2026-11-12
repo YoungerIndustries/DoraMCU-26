@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoraMCU — Create Your Character</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #0a0a1a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(ellipse at center, #0a1a0a 0%, #0a0a1a 60%, #000 100%);
+        }
+
+        /* Earth globe decoration */
+        .earth-globe {
+            position: fixed;
+            bottom: -200px;
+            right: -200px;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%,
+                #1a4a8a 0%,
+                #0a2a5a 30%,
+                #0a1a3a 60%,
+                #000 100%);
+            opacity: 0.15;
+            z-index: 1;
+            animation: earthRotate 20s linear infinite;
+        }
+
+        @keyframes earthRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #00c853, #00b0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #333;
+            transition: all 0.3s;
+        }
+
+        .step-dot.active {
+            background: #00c853;
+            box-shadow: 0 0 10px rgba(0, 200, 83, 0.5);
+        }
+
+        .step-dot.completed {
+            background: #00c853;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #12121f 0%, #1a1a2e 100%);
+            border: 1px solid #2a2a3e;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 0 40px rgba(0, 200, 83, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ccc;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            background: #0a0a15;
+            border: 1px solid #333;
+            color: #e0e0e0;
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #00c853;
+            box-shadow: 0 0 10px rgba(0, 200, 83, 0.2);
+        }
+
+        .input-group input::placeholder {
+            color: #555;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1rem;
+        }
+
+        .occupation-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+            margin-top: 0.5rem;
+        }
+
+        .occupation-option {
+            background: #0a0a15;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 0.8rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .occupation-option:hover {
+            border-color: #00c853;
+            color: #e0e0e0;
+        }
+
+        .occupation-option.selected {
+            border-color: #00c853;
+            background: rgba(0, 200, 83, 0.1);
+            color: #00c853;
+        }
+
+        .occupation-option .icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            margin-top: 1.5rem;
+            background: linear-gradient(135deg, #00c853, #00b0ff);
+            border: none;
+            color: #fff;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(0, 200, 83, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 200, 83, 0.5);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: center;
+            display: none;
+        }
+
+        .result.success {
+            display: block;
+            background: rgba(0, 200, 83, 0.1);
+            border: 1px solid rgba(0, 200, 83, 0.3);
+            color: #00c853;
+        }
+
+        .result.error {
+            display: block;
+            background: rgba(255, 45, 85, 0.1);
+            border: 1px solid rgba(255, 45, 85, 0.3);
+            color: #ff2d55;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .back-link a {
+            color: #666;
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+
+        .back-link a:hover {
+            color: #00c853;
+        }
+
+        /* Arrival animation */
+        .arrival-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .arrival-overlay.active {
+            display: flex;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .arrival-text {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #00c853, #00b0ff, #b388ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: arrivalPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes arrivalPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .arrival-sub {
+            color: #888;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 500px) {
+            .card { padding: 1.5rem; }
+            .input-row { grid-template-columns: 1fr; }
+            .occupation-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg"></div>
+    <div class="earth-globe"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Create Your Character</h1>
+            <p>Who will you be on Earth 2026?</p>
+        </div>
+
+        <div class="steps">
+            <div class="step-dot completed" title="Door"></div>
+            <div class="step-dot completed" title="Access"></div>
+            <div class="step-dot completed" title="Register"></div>
+            <div class="step-dot active" title="Character"></div>
+            <div class="step-dot" title="Earth 2026"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🌍 Your Earth Identity</div>
+
+            <form id="characterForm" onsubmit="submitCharacter(event)">
+                <div class="input-group">
+                    <label for="characterName">Character Name</label>
+                    <input type="text" id="characterName" placeholder="Your character's name…" required>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" value="25" min="16" max="100" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="occupation">Occupation</label>
+                        <select id="occupation">
+                            <option value="">Select…</option>
+                            <option value="Engineer">Engineer</option>
+                            <option value="Doctor">Doctor</option>
+                            <option value="Soldier">Soldier</option>
+                            <option value="Scientist">Scientist</option>
+                            <option value="Detective">Detective</option>
+                            <option value="Pilot">Pilot</option>
+                            <option value="Hacker">Hacker</option>
+                            <option value="Journalist">Journalist</option>
+                            <option value="Teacher">Teacher</option>
+                            <option value="Mercenary">Mercenary</option>
+                            <option value="Diplomat">Diplomat</option>
+                            <option value="Explorer">Explorer</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Quick Pick Occupation</label>
+                    <div class="occupation-grid">
+                        <div class="occupation-option" onclick="selectOccupation(this, 'Engineer')">
+                            <span class="icon">⚙️</span>
+                            Engineer
+                        </div>
+                        <div class="occupation-option" onclick="selectOccupation(this, 'Doctor')">
+                            <span class="icon">🏥</span>
+                            Doctor
+                        </div>
+                        <div class="occupation-option" onclick="selectOccupation(this, 'Soldier')">
+                            <span class="icon">🎖️</span>
+                            Soldier
+                        </div>
+                        <div class="occupation-option" onclick="selectOccupation(this, 'Scientist')">
+                            <span class="icon">🔬</span>
+                            Scientist
+                        </div>
+                        <div class="occupation-option" onclick="selectOccupation(this, 'Pilot')">
+                            <span class="icon">✈️</span>
+                            Pilot
+                        </div>
+                        <div class="occupation-option" onclick="selectOccupation(this, 'Hacker')">
+                            <span class="icon">💻</span>
+                            Hacker
+                        </div>
+                        <div class="occupation-option" onclick="selectOccupation(this, 'Mercenary')">
+                            <span class="icon">⚔️</span>
+                            Mercenary
+                        </div>
+                        <div class="occupation-option" onclick="selectOccupation(this, 'Explorer')">
+                            <span class="icon">🧭</span>
+                            Explorer
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Enter Earth 2026
+                </button>
+
+                <div class="result" id="result"></div>
+            </form>
+        </div>
+
+        <div class="back-link">
+            <a href="register.html">← Back to Registration</a>
+        </div>
+    </div>
+
+    <!-- Arrival Overlay -->
+    <div class="arrival-overlay" id="arrivalOverlay">
+        <div class="arrival-text">Welcome to Earth 2026</div>
+        <div class="arrival-sub">Your journey begins now…</div>
+    </div>
+
+    <script>
+        let selectedOccupation = null;
+
+        function selectOccupation(el, occupation) {
+            // Clear previous selection
+            document.querySelectorAll('.occupation-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+
+            // Select new
+            el.classList.add('selected');
+            selectedOccupation = occupation;
+            document.getElementById('occupation').value = occupation;
+        }
+
+        // Sync select with quick pick
+        document.getElementById('occupation').addEventListener('change', function() {
+            document.querySelectorAll('.occupation-option').forEach(opt => {
+                opt.classList.remove('selected');
+                if (opt.textContent.trim() === this.value) {
+                    opt.classList.add('selected');
+                }
+            });
+            selectedOccupation = this.value;
+        });
+
+        async function submitCharacter(e) {
+            e.preventDefault();
+
+            const btn = document.getElementById('submitBtn');
+            const result = document.getElementById('result');
+
+            const username = sessionStorage.getItem('onboarding_username');
+            const characterName = document.getElementById('characterName').value.trim();
+            const age = parseInt(document.getElementById('age').value) || 25;
+            const occupation = document.getElementById('occupation').value || null;
+
+            if (!username) {
+                showResult('Session expired — please start over', 'error');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+                return;
+            }
+
+            if (!characterName) {
+                showResult('Please enter a character name', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span>Creating Character…';
+
+            const payload = {
+                username: username,
+                characterName: characterName,
+                age: age,
+                occupation: occupation
+            };
+
+            try {
+                const response = await fetch('/api/v1/onboarding/character', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok || response.status === 201) {
+                    showResult('✓ Character created! Transporting to Earth 2026…', 'success');
+
+                    // Show arrival animation
+                    setTimeout(() => {
+                        const overlay = document.getElementById('arrivalOverlay');
+                        overlay.classList.add('active');
+
+                        // Redirect to game after animation
+                        setTimeout(() => {
+                            window.location.href = 'game.html';
+                        }, 3000);
+                    }, 1000);
+                } else {
+                    showResult('✗ ' + (data.error || 'Character creation failed'), 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Enter Earth 2026';
+                }
+            } catch (err) {
+                showResult('✗ Network error — try again', 'error');
+                btn.disabled = false;
+                btn.innerHTML = 'Enter Earth 2026';
+            }
+        }
+
+        function showResult(message, type) {
+            const result = document.getElementById('result');
+            result.textContent = message;
+            result.className = 'result ' + type;
+        }
+
+        // Pre-fill character name from username
+        (function() {
+            const username = sessionStorage.getItem('onboarding_username');
+            if (username) {
+                document.getElementById('characterName').value = username;
+            }
+        })();
+    </script>
+</body>
+</html>

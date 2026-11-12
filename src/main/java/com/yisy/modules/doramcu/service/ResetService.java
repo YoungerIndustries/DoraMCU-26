@@ -5,19 +5,16 @@ import com.yisy.modules.doramcu.eve.model.EveCorporation;
 import com.yisy.modules.doramcu.eve.model.Treasury;
 import com.yisy.modules.doramcu.hex.GalaxyFactory;
 import com.yisy.modules.doramcu.hex.GalaxyGenerationConfig;
-import com.yisy.modules.doramcu.hex.GalaxyTemplate;
 import com.yisy.modules.doramcu.hex.Empire;
 import com.yisy.modules.doramcu.model.Player;
 import com.yisy.modules.doramcu.model.PromoCode;
 import com.yisy.modules.doramcu.model.User;
-import com.yisy.modules.doramcu.captainslog.model.StarTrekSpecies;
 import com.yisy.modules.doramcu.repository.AiCharacterRepository;
 import com.yisy.modules.doramcu.repository.EveCorporationRepository;
 import com.yisy.modules.doramcu.repository.PlayerRepository;
 import com.yisy.modules.doramcu.repository.PromoCodeRepository;
 import com.yisy.modules.doramcu.repository.TreasuryRepository;
 import com.yisy.modules.doramcu.repository.UserRepository;
-import com.yisy.modules.doramcu.traveller.AlienRace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -203,7 +200,7 @@ public class ResetService {
             sifUser.setFirstName("Sif");
             sifUser.setLastName("Younger");
             sifUser.setPhoneNumber("6196596073");
-            sifUser.setGalaxyName("Milky Way");
+            sifUser.setGalaxyName(GalaxyFactory.GAME_GALAXY_NAME);
             userRepository.save(sifUser);
             repopulated.add("User: Sif Younger (admin)");
             log.info("Repopulated user: Sif Younger");
@@ -214,7 +211,7 @@ public class ResetService {
             butchUser.setPassword(passwordEncoder.encode("3214"));
             butchUser.setFirstName("Butch");
             butchUser.setLastName("Younger");
-            butchUser.setGalaxyName("Milky Way");
+            butchUser.setGalaxyName(GalaxyFactory.GAME_GALAXY_NAME);
             userRepository.save(butchUser);
             repopulated.add("User: Butch Younger (player)");
             log.info("Repopulated user: Butch Younger");
@@ -353,7 +350,7 @@ public class ResetService {
             sifAi.setLinkedPlayerId("Sif Younger");
             sifAi.setActive(true);
             sifAi.setCanPromoteToCoServer(true);
-            sifAi.setDescription("AI character representing Sif Younger, CEO of Younger Industries and Leader of the Interstellar Alliance empire. The only empire in the Milky Way galaxy.");
+            sifAi.setDescription("AI character representing Sif Younger, CEO of Younger Industries and Leader of the Interstellar Alliance empire.");
             aiCharacterRepository.save(sifAi);
             repopulated.add("AI Character: Sif Younger (Leader)");
             log.info("Repopulated AI character: Sif Younger");
@@ -385,8 +382,7 @@ public class ResetService {
     /**
      * Executes a galaxy-only reset: clears all galaxy data tables but retains
      * all players, characters, users, corporations, and treasuries, then
-     * regenerates and populates both the Milky Way (Human/Interstellar Alliance)
-     * and The Void (all alien races) galaxies.
+     * regenerates the galaxy using GalaxyCreationService.
      * <p>
      * This is the entry point called when the GALAXY_RESET admin promo code is used.
      * </p>
@@ -415,10 +411,9 @@ public class ResetService {
 
             log.info("Phase 1 complete: {} galaxy tables truncated", tablesCleaned.size());
 
-            // Phase 2 — Regenerate Milky Way (Human/Interstellar Alliance) and The Void (Alien races)
-            regenerateMilkyWay(entitiesRepopulated, errors);
-            regenerateVoidGalaxy(entitiesRepopulated, errors);
-            log.info("Phase 2 complete: galaxies regenerated, {} entities repopulated", entitiesRepopulated.size());
+            // Phase 2 — Regenerate galaxy using GalaxyCreationService
+            regenerateGalaxy(entitiesRepopulated, errors);
+            log.info("Phase 2 complete: galaxy regenerated, {} entities repopulated", entitiesRepopulated.size());
 
             // Phase 3 — Reset the GALAXY_RESET promo code usage count
             resetGalaxyResetPromoCodeUsage(errors);
@@ -436,29 +431,28 @@ public class ResetService {
     }
 
     /**
-     * Regenerates the Milky Way galaxy using only Human (Interstellar Alliance) players' empires.
+     * Regenerates the galaxy using GalaxyCreationService.
+     * All galaxies are now created dynamically — no hardcoded Milky Way or Void galaxies.
      */
-    private void regenerateMilkyWay(List<String> repopulated, List<String> errors) {
+    private void regenerateGalaxy(List<String> repopulated, List<String> errors) {
         try {
-            // Build empire map from Human (Interstellar Alliance) players only
+            // Build empire map from all players
             List<Player> players = playerRepository.findAll();
             Map<Integer, Empire> empires = new HashMap<>();
             for (Player player : players) {
-                if ("Interstellar Alliance".equals(player.getEmpireName())) {
-                    int empireId = player.getId().intValue();
-                    String empireName = player.getEmpireName();
-                    Empire empire = new Empire(empireId, empireName, -1);
-                    empires.put(empireId, empire);
-                    log.info("Included Human empire in Milky Way regeneration: {} (player id={})", empireName, player.getId());
-                }
+                int empireId = player.getId().intValue();
+                String empireName = player.getEmpireName();
+                Empire empire = new Empire(empireId, empireName, -1);
+                empires.put(empireId, empire);
+                log.info("Included empire in galaxy regeneration: {} (player id={})", empireName, player.getId());
             }
 
             if (empires.isEmpty()) {
-                log.warn("No Interstellar Alliance players found — generating Milky Way without empire assignments");
+                log.warn("No players found — generating galaxy without empire assignments");
             }
 
-            // Generate and persist the Milky Way galaxy
-            GalaxyGenerationConfig config = GalaxyTemplate.TRAVELLER_CLASSIC.getConfig();
+            // Generate and persist the galaxy using GalaxyCreationService defaults
+            GalaxyGenerationConfig config = GalaxyFactory.gameGalaxyConfig();
             galaxyService.generateAndSaveGalaxyWithEmpires(
                     GalaxyFactory.GAME_GALAXY_NAME,
                     empires,
@@ -475,187 +469,13 @@ public class ResetService {
                     GalaxyFactory.GAME_GALAXY_SEED
             );
 
-            repopulated.add("Galaxy: Milky Way regenerated with " + empires.size() + " Human empire(s)");
-            log.info("Milky Way galaxy regenerated with {} Human empire(s)", empires.size());
+            repopulated.add("Galaxy regenerated with " + empires.size() + " empire(s)");
+            log.info("Galaxy regenerated with {} empire(s)", empires.size());
 
         } catch (Exception e) {
-            String err = "Milky Way regeneration failed: " + e.getMessage();
+            String err = "Galaxy regeneration failed: " + e.getMessage();
             errors.add(err);
-            log.error("Failed to regenerate Milky Way galaxy", e);
-        }
-    }
-
-    /**
-     * Thematic mapping between Traveller AlienRaces and predefined empires.
-     * Mirrors the mapping in GalaxyCreationService.
-     */
-    private static final Map<AlienRace, String> RACE_TO_EMPIRE = Map.of(
-            AlienRace.ASLAN, "Stellar Hegemony",
-            AlienRace.VARGR, "United Colonies",
-            AlienRace.INSECTOID, "Solar Imperium",
-            AlienRace.MELNIKI, "Corporate Syndicate",
-            AlienRace.TILTEAN, "Terran Republic",
-            AlienRace.ZHODANI, "Divine Theocracy",
-            AlienRace.LOXI, "Interstellar Alliance"
-    );
-
-    /**
-     * Lore-based AI character names for each Traveller alien race.
-     * Mirrors the mapping in GalaxyCreationService.
-     */
-    private static final Map<AlienRace, String> RACE_TO_AI_NAME = Map.of(
-            AlienRace.ASLAN, "Aslan Warlord K'tharr",
-            AlienRace.VARGR, "Vargr Pack Lord Fenris",
-            AlienRace.INSECTOID, "Insectoid Hive Queen Xylos",
-            AlienRace.MELNIKI, "Melniki Trade Baron Nibbles",
-            AlienRace.TILTEAN, "Tiltean Chancellor Elara",
-            AlienRace.ZHODANI, "Zhodani High Priestess Vael",
-            AlienRace.LOXI, "Loxi Sky Commander Zephyr"
-    );
-
-    /**
-     * Thematic mapping between Star Trek Species and predefined empires.
-     * Mirrors the mapping in GalaxyCreationService.
-     */
-    private static final Map<StarTrekSpecies, String> STAR_TREK_SPECIES_TO_EMPIRE = Map.of(
-            StarTrekSpecies.KLINGON, "Stellar Hegemony",
-            StarTrekSpecies.ANDORIAN, "United Colonies",
-            StarTrekSpecies.FERENGI, "Corporate Syndicate",
-            StarTrekSpecies.BETAZOID, "Divine Theocracy",
-            StarTrekSpecies.VULCAN, "Terran Republic",
-            StarTrekSpecies.TRILL, "Solar Imperium",
-            StarTrekSpecies.BAJORAN, "Interstellar Alliance"
-    );
-
-    /**
-     * Lore-based AI character names for each Star Trek species.
-     * Mirrors the mapping in GalaxyCreationService.
-     */
-    private static final Map<StarTrekSpecies, String> STAR_TREK_SPECIES_TO_AI_NAME = Map.of(
-            StarTrekSpecies.KLINGON, "Klingon Warlord Kahless",
-            StarTrekSpecies.ANDORIAN, "Andorian General Ilyan",
-            StarTrekSpecies.FERENGI, "Ferengi Grand Nagus Zek",
-            StarTrekSpecies.BETAZOID, "Betazoid Empress Selar",
-            StarTrekSpecies.VULCAN, "Vulcan Ambassador Sarek",
-            StarTrekSpecies.TRILL, "Trill Ambassador Jadzia",
-            StarTrekSpecies.BAJORAN, "Bajoran Kai Winn"
-    );
-
-    /**
-     * Regenerates The Void galaxy using all non-Human (alien) players' empires
-     * and creates AI characters for each alien race.
-     */
-    private void regenerateVoidGalaxy(List<String> repopulated, List<String> errors) {
-        try {
-            // Build empire map from non-Human (alien) players only
-            List<Player> players = playerRepository.findAll();
-            Map<Integer, Empire> empires = new HashMap<>();
-            for (Player player : players) {
-                if (!"Interstellar Alliance".equals(player.getEmpireName())) {
-                    int empireId = player.getId().intValue();
-                    String empireName = player.getEmpireName();
-                    Empire empire = new Empire(empireId, empireName, -1);
-                    empires.put(empireId, empire);
-                    log.info("Included Alien empire in The Void regeneration: {} (player id={})", empireName, player.getId());
-                }
-            }
-
-            if (empires.isEmpty()) {
-                log.warn("No alien players found — generating The Void without empire assignments");
-            }
-
-            // Generate and persist The Void galaxy
-            GalaxyGenerationConfig config = GalaxyTemplate.VOID.getConfig();
-            galaxyService.generateAndSaveGalaxyWithEmpires(
-                    GalaxyFactory.VOID_GALAXY_NAME,
-                    empires,
-                    config.getSystemCount(),
-                    config.getPlanetsPerSystem(),
-                    config.getMoonChance(),
-                    config.getAsteroidBeltChance(),
-                    config.getGasGiantChance(),
-                    config.getNebulaChance(),
-                    config.getBlackHoleChance(),
-                    config.getCometChance(),
-                    config.getSpaceStationChance(),
-                    config.getHyperlaneDensity(),
-                    GalaxyFactory.VOID_GALAXY_SEED
-            );
-
-            repopulated.add("Galaxy: The Void regenerated with " + empires.size() + " Alien empire(s)");
-            log.info("The Void galaxy regenerated with {} Alien empire(s)", empires.size());
-
-            // Delete existing AI characters for alien races and Star Trek species and recreate them
-            Set<String> allEmpireNames = new HashSet<>();
-            allEmpireNames.addAll(RACE_TO_EMPIRE.values());
-            allEmpireNames.addAll(STAR_TREK_SPECIES_TO_EMPIRE.values());
-            for (String empireName : allEmpireNames) {
-                List<AiCharacter> existing = aiCharacterRepository.findByEmpireName(empireName);
-                for (AiCharacter ai : existing) {
-                    aiCharacterRepository.delete(ai);
-                }
-            }
-
-            // Create AI characters for each Traveller alien race-empire mapping
-            for (Map.Entry<AlienRace, String> entry : RACE_TO_EMPIRE.entrySet()) {
-                AlienRace race = entry.getKey();
-                String empireName = entry.getValue();
-                String aiName = RACE_TO_AI_NAME.get(race);
-
-                AiCharacter aiCharacter = new AiCharacter();
-                aiCharacter.setName(aiName);
-                aiCharacter.setRole("Leader");
-                aiCharacter.setEmpireName(empireName);
-                aiCharacter.setActive(true);
-                aiCharacter.setCanPromoteToCoServer(false);
-                aiCharacter.setDescription(String.format(
-                        "AI character representing the %s race leader of %s. %s Combat DM: %d, Social DM: %d, Navigation DM: %d, Armor Bonus: %d, Trade Bonus: %d%%.",
-                        race.getDisplayName(),
-                        empireName,
-                        race.getDescription(),
-                        race.getCombatDM(),
-                        race.getSocialDM(),
-                        race.getNavigationDM(),
-                        race.getArmorBonus(),
-                        race.getTradeBonusPercent()
-                ));
-                aiCharacterRepository.save(aiCharacter);
-                repopulated.add("AI Character: " + aiName + " (" + race.getDisplayName() + " - " + empireName + ")");
-                log.info("Repopulated AI character: {} ({}) for empire {}", aiName, race.getDisplayName(), empireName);
-            }
-
-            // Create AI characters for each Star Trek species-empire mapping
-            for (Map.Entry<StarTrekSpecies, String> entry : STAR_TREK_SPECIES_TO_EMPIRE.entrySet()) {
-                StarTrekSpecies species = entry.getKey();
-                String empireName = entry.getValue();
-                String aiName = STAR_TREK_SPECIES_TO_AI_NAME.get(species);
-
-                AiCharacter aiCharacter = new AiCharacter();
-                aiCharacter.setName(aiName);
-                aiCharacter.setRole("Leader");
-                aiCharacter.setEmpireName(empireName);
-                aiCharacter.setActive(true);
-                aiCharacter.setCanPromoteToCoServer(false);
-                aiCharacter.setDescription(String.format(
-                        "AI character representing the %s species leader of %s. %s Combat DM: %d, Social DM: %d, Navigation DM: %d, Armor Bonus: %d, Trade Bonus: %d%%.",
-                        species.getDisplayName(),
-                        empireName,
-                        species.getDescription(),
-                        species.getCombatDM(),
-                        species.getSocialDM(),
-                        species.getNavigationDM(),
-                        species.getArmorBonus(),
-                        species.getTradeBonusPercent()
-                ));
-                aiCharacterRepository.save(aiCharacter);
-                repopulated.add("AI Character: " + aiName + " (" + species.getDisplayName() + " - " + empireName + ")");
-                log.info("Repopulated AI character: {} ({}) for empire {}", aiName, species.getDisplayName(), empireName);
-            }
-
-        } catch (Exception e) {
-            String err = "The Void regeneration failed: " + e.getMessage();
-            errors.add(err);
-            log.error("Failed to regenerate The Void galaxy", e);
+            log.error("Failed to regenerate galaxy", e);
         }
     }
 

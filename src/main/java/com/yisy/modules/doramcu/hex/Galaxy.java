@@ -785,7 +785,7 @@ public class Galaxy {
 
     /** Returns the number of empires in this galaxy */
     public int getEmpireCount() {
-        return empireCount != null ? empireCount : 0;
+        return empireCount != null ? empireCount : 4;
     }
 
     /**

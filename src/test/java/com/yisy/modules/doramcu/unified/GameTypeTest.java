@@ -9,9 +9,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class GameTypeTest {
 
     @Test
-    @DisplayName("Should have 6 game types")
+    @DisplayName("Should have 10 game types")
     void testEnumSize() {
-        assertEquals(6, GameType.values().length);
+        assertEquals(10, GameType.values().length);
     }
 
     @Test

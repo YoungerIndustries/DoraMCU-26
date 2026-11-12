@@ -34,10 +34,11 @@ public class PluginGatewayService implements PluginGateway {
 
     /**
      * Maps galaxy names to game types for plugin discovery.
+     * @deprecated Plugins are now loaded dynamically based on galaxy metadata, not hardcoded names.
      */
+    @Deprecated
     private static final Map<String, GameType> GALAXY_TO_GAME_TYPE = Map.of(
             GalaxyFactory.GAME_GALAXY_NAME, GameType.DORAMCU_4X,
-            GalaxyFactory.VOID_GALAXY_NAME, GameType.TRAVELLER,
             GalaxyFactory.TEST_GALAXY_NAME, GameType.DORAMCU_4X
     );
 
@@ -155,7 +156,6 @@ public class PluginGatewayService implements PluginGateway {
                 "Classic space-faring RPG with careers, skills, and exploration",
                 "com.yisy.modules.doramcu.traveller"
         );
-        traveller.setTargetGalaxy(GalaxyFactory.VOID_GALAXY_NAME);
         registerPlugin(traveller);
 
         // Captain's Log - Star Trek RPG
@@ -165,7 +165,6 @@ public class PluginGatewayService implements PluginGateway {
                 "Solo Star Trek Adventures RPG with missions and character development",
                 "com.yisy.modules.doramcu.captainslog"
         );
-        captainsLog.setTargetGalaxy(GalaxyFactory.VOID_GALAXY_NAME);
         registerPlugin(captainsLog);
 
         // D&D 5e - Fantasy RPG

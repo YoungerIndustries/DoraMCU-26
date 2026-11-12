@@ -9,11 +9,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class PlanetSizeTest {
 
     @Test
-    @DisplayName("values - should have 4 planet sizes")
-    void values_shouldHaveFourSizes() {
+    @DisplayName("values - should have 5 planet sizes")
+    void values_shouldHaveFiveSizes() {
         PlanetSize[] sizes = PlanetSize.values();
 
-        assertEquals(4, sizes.length);
+        assertEquals(5, sizes.length);
     }
 
     @Test
@@ -71,6 +71,7 @@ class PlanetSizeTest {
     @Test
     @DisplayName("Max population should increase with size")
     void maxPopulation_shouldIncreaseWithSize() {
+        assertTrue(PlanetSize.TINY.getMaxPopulation() < PlanetSize.SMALL.getMaxPopulation());
         assertTrue(PlanetSize.SMALL.getMaxPopulation() < PlanetSize.MEDIUM.getMaxPopulation());
         assertTrue(PlanetSize.MEDIUM.getMaxPopulation() < PlanetSize.LARGE.getMaxPopulation());
         assertTrue(PlanetSize.LARGE.getMaxPopulation() < PlanetSize.HUGE.getMaxPopulation());
@@ -79,6 +80,7 @@ class PlanetSizeTest {
     @Test
     @DisplayName("Building slots should increase with size")
     void buildingSlots_shouldIncreaseWithSize() {
+        assertTrue(PlanetSize.TINY.getBuildingSlots() < PlanetSize.SMALL.getBuildingSlots());
         assertTrue(PlanetSize.SMALL.getBuildingSlots() < PlanetSize.MEDIUM.getBuildingSlots());
         assertTrue(PlanetSize.MEDIUM.getBuildingSlots() < PlanetSize.LARGE.getBuildingSlots());
         assertTrue(PlanetSize.LARGE.getBuildingSlots() < PlanetSize.HUGE.getBuildingSlots());
@@ -87,6 +89,7 @@ class PlanetSizeTest {
     @Test
     @DisplayName("Base radius should increase with size")
     void baseRadius_shouldIncreaseWithSize() {
+        assertTrue(PlanetSize.TINY.getBaseRadius() < PlanetSize.SMALL.getBaseRadius());
         assertTrue(PlanetSize.SMALL.getBaseRadius() < PlanetSize.MEDIUM.getBaseRadius());
         assertTrue(PlanetSize.MEDIUM.getBaseRadius() < PlanetSize.LARGE.getBaseRadius());
         assertTrue(PlanetSize.LARGE.getBaseRadius() < PlanetSize.HUGE.getBaseRadius());

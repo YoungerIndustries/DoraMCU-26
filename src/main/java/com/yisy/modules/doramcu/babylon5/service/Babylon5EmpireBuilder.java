@@ -5,6 +5,7 @@ import com.yisy.modules.doramcu.babylon5.model.B5Race;
 import com.yisy.modules.doramcu.hex.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class Babylon5EmpireBuilder {
     private final Babylon5DatabaseService databaseService;
     private final Random random;
 
+    @Autowired
     public Babylon5EmpireBuilder(Babylon5DatabaseService databaseService) {
         this(databaseService, DEFAULT_EMPIRE_SEED);
     }

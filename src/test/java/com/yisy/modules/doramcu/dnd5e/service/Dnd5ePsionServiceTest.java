@@ -589,7 +589,7 @@ class Dnd5ePsionServiceTest {
         @Test
         @DisplayName("should return cantrips (level 0)")
         void listCantrips_shouldReturnCantrips() {
-            when(powerRepository.findByPowerLevelZero()).thenReturn(List.of(power));
+            when(powerRepository.findByPowerLevel(0)).thenReturn(List.of(power));
 
             List<Dnd5ePsionicPower> result = service.listCantrips();
 

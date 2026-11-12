@@ -684,9 +684,23 @@ public class Planet extends CelestialBody {
     // Traveller UWP (Universal World Profile) accessors
     // ========================================================================
 
-    /** Returns the UWP atmosphere value (0-10). Null if not set. */
+    /** Returns the UWP atmosphere value (0-10). Computes from atmosphere thickness if not explicitly set. */
     public Integer getUwpAtmosphere() {
-        return atmosphere;
+        if (atmosphere != null) {
+            return atmosphere;
+        }
+        // Compute from atmosphere thickness (Traveller rules)
+        int thickness = geometry.getAtmosphereThickness();
+        if (thickness == 0) return 0;  // None
+        if (thickness <= 1) return 1;  // Thin, toxic
+        if (thickness <= 2) return 2;  // Thin
+        if (thickness <= 3) return 3;  // Thin, thin
+        if (thickness <= 7) return 4;  // Standard
+        if (thickness <= 9) return 5;  // Standard, standard
+        if (thickness <= 11) return 6; // Dense
+        if (thickness <= 13) return 7; // Very dense
+        if (thickness <= 14) return 8; // Choking
+        return 9;  // Hostile
     }
 
     /** Sets the UWP atmosphere value (0-10, where 10 = 'A' = none). */
@@ -694,9 +708,13 @@ public class Planet extends CelestialBody {
         this.atmosphere = atmosphere;
     }
 
-    /** Returns the UWP gravity value (0-10). Null if not set. */
+    /** Returns the UWP gravity value (0-10). Computes from planet size if not explicitly set. */
     public Integer getUwpGravity() {
-        return gravity;
+        if (gravity != null) {
+            return gravity;
+        }
+        // Compute from planet size (Traveller rules)
+        return size.getUwpGravity();
     }
 
     /** Sets the UWP gravity value (0-10, where 10 = 'A' = none). */
@@ -704,9 +722,16 @@ public class Planet extends CelestialBody {
         this.gravity = gravity;
     }
 
-    /** Returns the UWP starport class (0-10). Null if not set. */
+    /** Returns the UWP starport class (0-10). Computes from starbase if not explicitly set. */
     public Integer getUwpStarport() {
-        return starport;
+        if (starport != null) {
+            return starport;
+        }
+        // Default: Class C (2) when no starbase, Class A (0) with StarBase
+        if (orbitingStarBase != null) {
+            return 0;
+        }
+        return 2;
     }
 
     /** Sets the UWP starport class (0-10, where 0 = XL, 10 = 'A' = none). */
@@ -714,9 +739,23 @@ public class Planet extends CelestialBody {
         this.starport = starport;
     }
 
-    /** Returns the UWP population level (0-10). Null if not set. */
+    /** Returns the UWP population level (0-10). Computes from population ratio if not explicitly set. */
     public Integer getUwpPopulationLevel() {
-        return populationLevel;
+        if (populationLevel != null) {
+            return populationLevel;
+        }
+        // Compute from population ratio (Traveller rules)
+        if (currentPopulation <= 0) return 0;
+        int maxPop = size.getMaxPopulation();
+        if (maxPop <= 0) return 1;
+        double ratio = (double) currentPopulation / maxPop;
+        if (ratio < 0.01) return 1;  // Empty world
+        if (ratio < 0.1) return 4;   // Developing
+        if (ratio < 0.2) return 5;   // Urbanizing
+        if (ratio < 0.4) return 6;   // World
+        if (ratio < 0.6) return 7;   // Developed world
+        if (ratio < 0.8) return 8;   // Populous
+        return 9;  // Ecumenopoleis
     }
 
     /** Sets the UWP population level (0-10, where 0 = none, 10 = 'A' = 1+ trillion). */
@@ -724,9 +763,13 @@ public class Planet extends CelestialBody {
         this.populationLevel = populationLevel;
     }
 
-    /** Returns the UWP government type (0-10). Null if not set. */
+    /** Returns the UWP government type (0-10). Computes from ownership if not explicitly set. */
     public Integer getUwpGovernmentType() {
-        return governmentType;
+        if (governmentType != null) {
+            return governmentType;
+        }
+        // Independent = 0 (Anarchy), owned = 1 (Feudal)
+        return ownerEmpireId == null ? 0 : 1;
     }
 
     /** Sets the UWP government type (0-10, where 10 = 'A' = none). */
@@ -734,9 +777,14 @@ public class Planet extends CelestialBody {
         this.governmentType = governmentType;
     }
 
-    /** Returns the UWP law level (0-10). Null if not set. */
+    /** Returns the UWP law level (0-10). Computes from economic level if not explicitly set. */
     public Integer getUwpLawLevel() {
-        return lawLevel;
+        if (lawLevel != null) {
+            return lawLevel;
+        }
+        // Independent = 0 (Anarchy), owned = economicLevel + 1, capped at 9
+        if (ownerEmpireId == null) return 0;
+        return Math.min(9, economicLevel + 1);
     }
 
     /** Sets the UWP law level (0-10, where 0 = 'A' = anarchy, 10 = 'X' = total control). */

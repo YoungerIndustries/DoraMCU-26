@@ -48,7 +48,7 @@ public class CharacterHomeService {
 
         String galaxy = user.getGalaxyName();
         if (galaxy == null || galaxy.isBlank()) {
-            return "Milky Way";
+            return "Earth 2026";
         }
         return galaxy;
     }
@@ -117,7 +117,7 @@ public class CharacterHomeService {
         return userRepository.findById(playerId).map(user -> {
             String galaxy = user.getGalaxyName();
             if (galaxy == null || galaxy.isBlank()) {
-                galaxy = "Milky Way";
+                galaxy = "Earth 2026";
             }
             return new HomeLocation(galaxy);
         });

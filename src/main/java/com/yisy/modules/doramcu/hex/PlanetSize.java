@@ -113,4 +113,22 @@ public enum PlanetSize {
     public int getBuildingSlots() {
         return buildingSlots;
     }
+
+    /**
+     * Returns the Traveller UWP gravity value (0-10) for this planet size.
+     * <p>
+     * Mapping: TINY→0, SMALL→1, MEDIUM→4, LARGE→6, HUGE→8
+     * </p>
+     *
+     * @return the UWP gravity value
+     */
+    public int getUwpGravity() {
+        return switch (this) {
+            case TINY -> 0;
+            case SMALL -> 1;
+            case MEDIUM -> 4;
+            case LARGE -> 6;
+            case HUGE -> 8;
+        };
+    }
 }

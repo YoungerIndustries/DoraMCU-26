@@ -37,7 +37,7 @@ class CharacterHomeServiceTest {
     class GetHomeGalaxy {
 
         @Test
-        @DisplayName("returns Milky Way when galaxy name is null")
+        @DisplayName("returns Earth 2026 when galaxy name is null")
         void returnsDefaultWhenNull() {
             User user = new User(1L, "testuser", "password");
             user.setGalaxyName(null);
@@ -45,11 +45,11 @@ class CharacterHomeServiceTest {
 
             String result = service.getHomeGalaxy(1L);
 
-            assertEquals("Milky Way", result);
+            assertEquals("Earth 2026", result);
         }
 
         @Test
-        @DisplayName("returns Milky Way when galaxy name is blank")
+        @DisplayName("returns Earth 2026 when galaxy name is blank")
         void returnsDefaultWhenBlank() {
             User user = new User(1L, "testuser", "password");
             user.setGalaxyName("   ");
@@ -57,11 +57,11 @@ class CharacterHomeServiceTest {
 
             String result = service.getHomeGalaxy(1L);
 
-            assertEquals("Milky Way", result);
+            assertEquals("Earth 2026", result);
         }
 
         @Test
-        @DisplayName("returns Milky Way when galaxy name is empty")
+        @DisplayName("returns Earth 2026 when galaxy name is empty")
         void returnsDefaultWhenEmpty() {
             User user = new User(1L, "testuser", "password");
             user.setGalaxyName("");
@@ -69,7 +69,7 @@ class CharacterHomeServiceTest {
 
             String result = service.getHomeGalaxy(1L);
 
-            assertEquals("Milky Way", result);
+            assertEquals("Earth 2026", result);
         }
 
         @Test
@@ -93,15 +93,15 @@ class CharacterHomeServiceTest {
         }
 
         @Test
-        @DisplayName("returns default Earth 2026 for default user")
+        @DisplayName("returns Milky Way for default user")
         void returnsDefaultForDefaultUser() {
             User user = new User(1L, "testuser", "password");
-            // galaxyName defaults to "Earth 2026" in User constructor
+            // galaxyName defaults to "Milky Way" in User constructor
             when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
             String result = service.getHomeGalaxy(1L);
 
-            assertEquals("Earth 2026", result);
+            assertEquals("Milky Way", result);
         }
     }
 
@@ -188,7 +188,7 @@ class CharacterHomeServiceTest {
 
             String result = service.getCurrentGalaxy(1L);
 
-            assertEquals("Milky Way", result);
+            assertEquals("Earth 2026", result);
         }
     }
 
@@ -237,7 +237,7 @@ class CharacterHomeServiceTest {
             Optional<CharacterHomeService.HomeLocation> result = service.getHomeLocation(1L);
 
             assertTrue(result.isPresent());
-            assertEquals("Milky Way", result.get().getGalaxyName());
+            assertEquals("Earth 2026", result.get().getGalaxyName());
         }
 
         @Test

@@ -16,7 +16,7 @@ import java.util.Map;
  * Handles alliances, non-aggression pacts, and trade agreements.
  * </p>
  */
-@Service
+@Service("starTrek4xTreatyService")
 public class TreatyService {
 
     private static final Logger log = LoggerFactory.getLogger(TreatyService.class);

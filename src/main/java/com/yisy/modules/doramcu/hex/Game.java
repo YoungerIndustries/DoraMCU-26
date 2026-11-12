@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.hex;
 
 import com.yisy.modules.doramcu.unified.GameEngine;
+import com.yisy.modules.doramcu.unified.GameType;
 import com.yisy.modules.doramcu.hex.manager.CharacterManager;
 import com.yisy.modules.doramcu.hex.manager.CombatResolver;
 import com.yisy.modules.doramcu.hex.manager.FacilityConstructionManager;
@@ -169,6 +170,11 @@ public class Game implements GameContext, GameEngine {
      */
     public long getTurnDuration() {
         return turnDuration;
+    }
+
+    @Override
+    public GameType getGameType() {
+        return GameType.DORAMCU_4X;
     }
 
     /**

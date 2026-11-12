@@ -1,7 +1,9 @@
 package com.yisy.modules.doramcu.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -37,6 +39,16 @@ public class WebConfig implements WebMvcConfigurer {
      * Filter that forces no-cache headers on all static resource requests.
      * This ensures browsers always fetch fresh content during development.
      */
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
+
     @Bean
     public Filter noCacheFilter() {
         return new Filter() {

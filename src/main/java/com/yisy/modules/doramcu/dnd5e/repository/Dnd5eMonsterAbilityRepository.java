@@ -32,5 +32,5 @@ public interface Dnd5eMonsterAbilityRepository extends JpaRepository<Dnd5eMonste
 
     List<Dnd5eMonsterAbility> findByMonsterNameAndDamageTypeAndActiveTrue(String monsterName, String damageType);
 
-    List<Dnd5eMonsterAbility> findBySaveDcGreaterThanAndActiveTrue(int minDc);
+    List<Dnd5eMonsterAbility> findBySaveDCGreaterThanAndActiveTrue(int minDc);
 }

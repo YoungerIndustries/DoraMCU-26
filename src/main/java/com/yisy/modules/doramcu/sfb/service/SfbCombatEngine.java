@@ -95,10 +95,64 @@ public class SfbCombatEngine {
         if (experienceService == null) {
             return;
         }
+        if (scenario == null) {
+            return;
+        }
+
+        // Determine surviving ships per side
+        int side0Surviving = 0;
+        int side1Surviving = 0;
+        for (SfbShip ship : scenario.getShips()) {
+            if (!ship.isDestroyed()) {
+                if (ship.getSide() == 0) {
+                    side0Surviving++;
+                } else {
+                    side1Surviving++;
+                }
+            }
+        }
+
+        // Determine outcome for each side
+        com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome outcome0;
+        com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome outcome1;
+
+        if (side0Surviving > 0 && side1Surviving > 0) {
+            // Both sides have survivors — stalemate
+            outcome0 = com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.STALEMATE;
+            outcome1 = com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.STALEMATE;
+        } else if (side0Surviving > 0 && side1Surviving == 0) {
+            // Side 0 wins
+            outcome0 = com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.VICTORY;
+            outcome1 = com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.DEFEAT;
+        } else if (side0Surviving == 0 && side1Surviving > 0) {
+            // Side 1 wins
+            outcome0 = com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.DEFEAT;
+            outcome1 = com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.VICTORY;
+        } else {
+            // No survivors on either side — stalemate (mutual destruction)
+            outcome0 = com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.STALEMATE;
+            outcome1 = com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.STALEMATE;
+        }
+
+        com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome[] outcomes =
+                new com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome[]{outcome0, outcome1};
+
+        String description = "SFB Battle: " + scenario.getName() + " (turn " + scenario.getCurrentTurn() + ")";
+
         for (int side = 0; side < 2; side++) {
             SfbCharacterAssignment admiral = scenario.getAdmiralAssignment(side);
             if (admiral != null && admiral.getAiCharacterId() != null) {
-                experienceService.recordExperience(admiral.getAiCharacterId(), scenario);
+                try {
+                    experienceService.recordBattleExperience(
+                            admiral.getAiCharacterId(),
+                            "SFB",
+                            "Space Battle",
+                            outcomes[side],
+                            description,
+                            scenario.getName());
+                } catch (Exception e) {
+                    // Silently ignore experience recording failures
+                }
             }
         }
     }

@@ -7,6 +7,7 @@ import com.yisy.modules.doramcu.hex.GalaxyTemplate;
 import com.yisy.modules.doramcu.fourx.FourxTradeRoute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
@@ -22,6 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * </p>
  */
 @Service
+@Primary
 public class SfbEconomyService implements FourxEconomyService, GalaxyServiceRegistry.ServiceProvider {
 
     private static final Logger log = LoggerFactory.getLogger(SfbEconomyService.class);

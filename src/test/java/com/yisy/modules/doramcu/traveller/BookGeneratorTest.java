@@ -224,7 +224,7 @@ class BookGeneratorTest {
         BookGenerator generator = new BookGenerator();
         String book = generator.generateSummaryBook(log);
         assertTrue(book.contains("--- SKILLS"));
-        assertTrue(book.contains("Melee"));
+        assertTrue(book.contains("melee"));
     }
 
     @Test
@@ -382,7 +382,7 @@ class BookGeneratorTest {
         BookGenerator generator = new BookGenerator();
         String book = generator.generateBook(log);
         assertTrue(book.contains("--- SKILLS ---"));
-        assertTrue(book.contains("Melee"));
+        assertTrue(book.contains("melee"));
     }
 
     @Test

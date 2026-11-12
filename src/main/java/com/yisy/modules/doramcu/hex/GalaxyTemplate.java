@@ -135,12 +135,30 @@ public enum GalaxyTemplate {
     ),
 
     /**
-     * Custom template: uses all default values. Starting point for fully custom galaxies.
+     * Single System RPG template: a single solar system for tabletop RPG campaigns.
      */
-    CUSTOM(
-            "Custom",
-            "A blank slate using all default generation parameters.",
-            GalaxyGenerationConfig.builder().build()
+    SINGLE_SYSTEM_RPG(
+            "Single System RPG",
+            "A single solar system for tabletop RPG campaigns.",
+            GalaxyGenerationConfig.builder()
+                    .systemCount(1)
+                    .planetsPerSystem(8)
+                    .moonChance(0.7)
+                    .asteroidBeltChance(0.6)
+                    .gasGiantChance(0.3)
+                    .nebulaChance(0.0)
+                    .blackHoleChance(0.0)
+                    .cometChance(0.1)
+                    .spaceStationChance(0.3)
+                    .hyperlaneDensity(0.0)
+                    .sectorSize(2)
+                    .subSectorDimension(2)
+                    .empireCount(1)
+                    .difficultyLevel("medium")
+                    .gameType("Traveler4x")
+                    .galaxyShape("single")
+                    .namingConvention("mythological")
+                    .build()
     ),
 
     /**
@@ -150,39 +168,34 @@ public enum GalaxyTemplate {
             "Subsector RPG",
             "A small-scale subsector galaxy for focused RPG campaigns.",
             GalaxyGenerationConfig.builder()
-                    .sectorSize(3)
-                    .subSectorDimension(1)
+                    .systemCount(25)
+                    .planetsPerSystem(4)
+                    .moonChance(0.5)
+                    .asteroidBeltChance(0.5)
+                    .hyperlaneDensity(1.2)
+                    .sectorSize(2)
+                    .subSectorDimension(2)
                     .civilizationDensity(0.5)
                     .resourceDistribution(0.6)
-                    .galaxyShape("irregular")
+                    .galaxyShape("cluster")
                     .namingConvention("astronomical")
                     .empireCount(2)
                     .difficultyLevel("medium")
-                    .gameType("Subsector RPG")
+                    .gameType("Traveler4x")
+                    .campaignTheme("Traveler")
+                    .adventureHookCount(10)
+                    .npcDensity(0.5)
+                    .systemTheme("mixed")
                     .build()
     ),
 
     /**
-     * Single System RPG template: a single solar system for tabletop RPG campaigns.
+     * Custom template: uses all default values. Starting point for fully custom galaxies.
      */
-    SINGLE_SYSTEM_RPG(
-            "Single System RPG",
-            "A single solar system for tabletop RPG campaigns.",
-            GalaxyGenerationConfig.builder()
-                    .systemCount(1)
-                    .planetsPerSystem(5)
-                    .moonChance(0.3)
-                    .asteroidBeltChance(0.5)
-                    .gasGiantChance(0.3)
-                    .nebulaChance(0.0)
-                    .blackHoleChance(0.0)
-                    .cometChance(0.1)
-                    .spaceStationChance(0.2)
-                    .hyperlaneDensity(0.0)
-                    .empireCount(1)
-                    .difficultyLevel("easy")
-                    .gameType("Single System RPG")
-                    .build()
+    CUSTOM(
+            "Custom",
+            "A blank slate using all default generation parameters.",
+            GalaxyGenerationConfig.builder().build()
     );
 
     private final String displayName;

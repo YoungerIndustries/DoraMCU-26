@@ -6,9 +6,11 @@ import com.yisy.modules.doramcu.hex.GalaxyGenerationProgress;
 import com.yisy.modules.doramcu.hex.GalaxyGenerator;
 import com.yisy.modules.doramcu.model.Device;
 import com.yisy.modules.doramcu.model.Player;
+import com.yisy.modules.doramcu.model.PromoCode;
 import com.yisy.modules.doramcu.model.User;
 import com.yisy.modules.doramcu.repository.DeviceRepository;
 import com.yisy.modules.doramcu.repository.PlayerRepository;
+import com.yisy.modules.doramcu.repository.PromoCodeRepository;
 import com.yisy.modules.doramcu.repository.UserRepository;
 import com.yisy.modules.doramcu.service.AiPlayerService;
 import com.yisy.modules.doramcu.service.GalaxyCreationService;
@@ -35,7 +37,8 @@ public class DataInitializer {
     @Bean
     @ConditionalOnProperty(name = "app.seed-data", havingValue = "true", matchIfMissing = false)
     CommandLineRunner initBasicData(DeviceRepository deviceRepository, UserRepository userRepository,
-                                    PlayerRepository playerRepository, PasswordEncoder passwordEncoder) {
+                                    PlayerRepository playerRepository, PasswordEncoder passwordEncoder,
+                                    PromoCodeRepository promoCodeRepository) {
         return args -> {
             log.warn("SEED DATA IS ENABLED - This should only be used in development environments!");
             log.info("Initializing database with seed data...");
@@ -124,6 +127,28 @@ public class DataInitializer {
                 playerRepository.save(player6);
 
                 log.info("8 default players created (including admin)");
+            }
+            // Seed promo codes for onboarding flow testing
+            if (promoCodeRepository.count() == 0) {
+                PromoCode immortal = new PromoCode();
+                immortal.setCode("IMMORTAL");
+                immortal.setDescription("Welcome to DoraMCU — Free access code");
+                immortal.setActive(true);
+                immortal.setMaxUses(1000);
+                immortal.setUsedCount(0);
+                immortal.setCodeType(PromoCode.CodeType.PLAYER);
+                promoCodeRepository.save(immortal);
+
+                PromoCode dragons = new PromoCode();
+                dragons.setCode("DRAGONS");
+                dragons.setDescription("Dragon slayer bonus — Early access code");
+                dragons.setActive(true);
+                dragons.setMaxUses(500);
+                dragons.setUsedCount(0);
+                dragons.setCodeType(PromoCode.CodeType.PLAYER);
+                promoCodeRepository.save(dragons);
+
+                log.info("2 default promo codes created (IMMORTAL, DRAGONS)");
             }
             log.info("Basic database initialization completed");
         };

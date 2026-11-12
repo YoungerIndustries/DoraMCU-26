@@ -5,6 +5,7 @@ import com.yisy.modules.doramcu.hex.GalaxyServiceRegistry;
 import com.yisy.modules.doramcu.hex.GalaxyTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
@@ -19,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * </p>
  */
 @Service
+@Primary
 public class SfbExplorationService implements FourxExplorationService, GalaxyServiceRegistry.ServiceProvider {
 
     private static final Logger log = LoggerFactory.getLogger(SfbExplorationService.class);

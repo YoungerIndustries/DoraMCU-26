@@ -387,8 +387,8 @@ class TravellerToCaptainsLogConverterTest {
     void testGenerateCareerAct2WithSkills() {
         List<Skill> skills = List.of(Skill.MELEE, Skill.FIREARMS);
         String act2 = TravellerToCaptainsLogConverter.generateCareerAct2(skills, false, null);
-        assertTrue(act2.contains("Melee"));
-        assertTrue(act2.contains("Firearms"));
+        assertTrue(act2.contains("melee"));
+        assertTrue(act2.contains("firearms"));
     }
 
     @Test

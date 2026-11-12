@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yisy.modules.doraai.config.OllamaConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -28,6 +30,7 @@ import java.util.stream.Stream;
  */
 @Service
 @Primary
+@ConditionalOnProperty(name = "ollama.enabled", havingValue = "true", matchIfMissing = true)
 public class OllamaService implements AiProvider {
 
     private static final Logger log = LoggerFactory.getLogger(OllamaService.class);
@@ -36,6 +39,7 @@ public class OllamaService implements AiProvider {
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
+    @Autowired
     public OllamaService(OllamaConfig config) {
         this(config, HttpClient.newBuilder()
                 .connectTimeout(java.time.Duration.ofMillis(config.getConnectTimeoutMs()))

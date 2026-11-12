@@ -19,7 +19,7 @@ import java.util.Random;
  * Handles diplomatic relations, reputation scores, and war status.
  * </p>
  */
-@Service
+@Service("starTrek4xDiplomacyService")
 public class DiplomacyService {
 
     private static final Logger log = LoggerFactory.getLogger(DiplomacyService.class);

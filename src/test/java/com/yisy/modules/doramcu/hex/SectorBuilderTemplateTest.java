@@ -124,7 +124,7 @@ class SectorBuilderTemplateTest {
         @Test
         @DisplayName("Mythological naming at 1,0")
         void mythological10() {
-            assertEquals("Apollo-Sanctum", SectorBuilder.generateSectorName(1, 0, 10, "mythological"));
+            assertEquals("Athena-Sanctum", SectorBuilder.generateSectorName(1, 0, 10, "mythological"));
         }
 
         @Test

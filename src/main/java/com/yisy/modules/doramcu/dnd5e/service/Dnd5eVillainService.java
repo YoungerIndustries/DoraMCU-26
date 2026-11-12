@@ -641,7 +641,7 @@ public class Dnd5eVillainService {
             reg2.setName("Rising Dead");
             reg2.setPowerType("Regional Effect");
             reg2.setActionCost(0);
-            reg1.setDescription("The dead rise unbidden. Any creature that dies within 1 mile of the lair rises as a zombie or skeleton under Vecna's control after 1 hour.");
+            reg2.setDescription("The dead rise unbidden. Any creature that dies within 1 mile of the lair rises as a zombie or skeleton under Vecna's control after 1 hour.");
             reg2.setRange("1 mile");
             reg2.setRegional(true);
             reg2.setSortOrder(2);

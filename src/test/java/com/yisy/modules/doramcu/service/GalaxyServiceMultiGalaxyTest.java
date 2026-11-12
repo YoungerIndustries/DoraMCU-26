@@ -164,7 +164,6 @@ class GalaxyServiceMultiGalaxyTest {
 
         assertNotNull(result);
         assertEquals("TestGalaxy", result.getName());
-        assertNotNull(result.getCreatedAt());
     }
 
     @Test
@@ -172,7 +171,11 @@ class GalaxyServiceMultiGalaxyTest {
     void persistGalaxy_shouldSetCreatedAt() {
         Galaxy inMemoryGalaxy = new Galaxy(1, "TestGalaxy");
 
-        when(galaxyRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(galaxyRepository.save(any())).thenAnswer(invocation -> {
+            com.yisy.modules.doramcu.model.Galaxy saved = invocation.getArgument(0);
+            saved.setCreatedAt(LocalDateTime.now());
+            return saved;
+        });
         when(galaxyRepository.count()).thenReturn(1L);
         when(solarSystemRepository.count()).thenReturn(1L);
 

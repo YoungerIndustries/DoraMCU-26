@@ -1,31 +1,40 @@
 package com.yisy.modules.doramcu.hex;
 
 /**
- * Factory for creating the single galaxy in DoraMCU.
+ * Factory for creating galaxy configurations in DoraMCU.
  * <p>
- * Only one galaxy is allowed:
- * <ul>
- *   <li><b>Game Galaxy</b> ("Milky Way") — Full-size galaxy for actual gameplay with default settings.</li>
- * </ul>
- * <p>
- * This factory ensures consistent galaxy configurations and prevents arbitrary galaxy creation.
+ * Supports dynamic galaxy creation via GalaxyCreationService.
+ * Provides default configurations for the game galaxy and test galaxy.
+ * All galaxies are now created dynamically — no hardcoded Milky Way or Void galaxies.
  */
 public class GalaxyFactory {
 
     /**
-     * Name of the game galaxy used for actual gameplay.
+     * Name of the default game galaxy.
+     * @deprecated Use GalaxyCreationService to create galaxies dynamically.
      */
+    @Deprecated
     public static final String GAME_GALAXY_NAME = "Milky Way";
-
-    /**
-     * Name of the Void galaxy used for Traveller plugin.
-     */
-    public static final String VOID_GALAXY_NAME = "The Void";
 
     /**
      * Name of the test galaxy used for model development.
      */
     public static final String TEST_GALAXY_NAME = "Test Galaxy";
+
+    /**
+     * Name of the Earth 2026 galaxy — the default galaxy for new users.
+     */
+    public static final String EARTH_2026_GALAXY_NAME = "Earth 2026";
+
+    /**
+     * Name of the Void galaxy — a special empty galaxy used for testing and edge cases.
+     */
+    public static final String VOID_GALAXY_NAME = "The Void";
+
+    /**
+     * Random seed for the Void galaxy.
+     */
+    public static final long VOID_GALAXY_SEED = 0L;
 
     /**
      * Random seed for the test galaxy.
@@ -34,13 +43,10 @@ public class GalaxyFactory {
 
     /**
      * Random seed for the game galaxy — ensures reproducibility.
+     * @deprecated Use GalaxyCreationService to create galaxies dynamically.
      */
+    @Deprecated
     public static final long GAME_GALAXY_SEED = GalaxyGenerator.DEFAULT_SEED;
-
-    /**
-     * Random seed for the Void galaxy — ensures reproducibility.
-     */
-    public static final long VOID_GALAXY_SEED = 42L;
 
     private GalaxyFactory() {
         // Utility class, no instantiation
@@ -97,15 +103,22 @@ public class GalaxyFactory {
     }
 
     /**
-     * Generates a Void galaxy for Traveller plugin.
+     * Generates a Void galaxy — a minimal empty galaxy used for testing edge cases.
      * <p>
-     * Uses the VOID template configuration with low civilization density.
+     * Uses the minimum system count (1) and no planets.
      *
      * @return the in-memory Void galaxy
      */
     public static Galaxy generateVoidGalaxy() {
-        return generateFromTemplate(VOID_GALAXY_NAME, GalaxyTemplate.VOID, VOID_GALAXY_SEED);
+        GalaxyGenerationConfig config = GalaxyGenerationConfig.builder()
+                .systemCount(1)
+                .planetsPerSystem(0)
+                .build();
+        GalaxyGenerator generator = new GalaxyGenerator(VOID_GALAXY_SEED);
+        generator.setConfig(config);
+        return generator.generateGalaxy(1, VOID_GALAXY_NAME);
     }
+
 
     /**
      * Generates a custom galaxy with the given name, configuration, and seed.
@@ -137,8 +150,6 @@ public class GalaxyFactory {
             return generateGameGalaxy();
         } else if (TEST_GALAXY_NAME.equals(name)) {
             return generateTestGalaxy();
-        } else if (VOID_GALAXY_NAME.equals(name)) {
-            return generateVoidGalaxy();
         } else {
             throw new IllegalArgumentException(
                     "Unknown galaxy: " + name + ". Use generateCustomGalaxy() for custom names.");
@@ -152,19 +163,19 @@ public class GalaxyFactory {
      * @return true if the name is a predefined galaxy name
      */
     public static boolean isValidGalaxyName(String name) {
-        return isPredefinedGalaxyName(name);
+        return name != null && !name.trim().isEmpty();
     }
 
     /**
      * Checks if the given name is a predefined galaxy name.
      *
      * @param name the name to check
-     * @return true if the name matches a predefined galaxy (Milky Way, Test Galaxy, or The Void)
+     * @return true if the name matches a predefined galaxy (Milky Way, Test Galaxy, or Earth 2026)
      */
     public static boolean isPredefinedGalaxyName(String name) {
         return GAME_GALAXY_NAME.equals(name) ||
                TEST_GALAXY_NAME.equals(name) ||
-               VOID_GALAXY_NAME.equals(name);
+               EARTH_2026_GALAXY_NAME.equals(name);
     }
 
     /**

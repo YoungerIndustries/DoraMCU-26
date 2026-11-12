@@ -76,7 +76,7 @@ class UnifiedCharacterCreationServiceTest {
     void testGetAvailableGames() {
         List<GameType> games = service.getAvailableGames();
 
-        assertEquals(3, games.size());
+        assertEquals(10, games.size());
         assertTrue(games.contains(GameType.TRAVELLER));
         assertTrue(games.contains(GameType.CAPTAINS_LOG));
         assertTrue(games.contains(GameType.DORAMCU_4X));

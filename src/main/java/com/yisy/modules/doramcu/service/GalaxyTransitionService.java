@@ -130,6 +130,7 @@ public class GalaxyTransitionService {
     /**
      * Lists available game galaxies for transition.
      * <p>
+     * Galaxies are now created dynamically via GalaxyCreationService.
      * The descriptions include the plugin that will be loaded for each galaxy.
      * </p>
      *
@@ -137,9 +138,9 @@ public class GalaxyTransitionService {
      */
     public Map<String, String> getAvailableGalaxies() {
         return Map.of(
-                GalaxyFactory.GAME_GALAXY_NAME, "Milky Way — Human/Interstellar Alliance (DoraMCU 4X plugin)",
-                GalaxyFactory.VOID_GALAXY_NAME, "The Void — Alien races with AI empires (Traveller plugin)",
-                GalaxyFactory.TEST_GALAXY_NAME, "Test Galaxy — Small galaxy for model development (DoraMCU 4X plugin)"
+                GalaxyFactory.GAME_GALAXY_NAME, "Game Galaxy — Human interstellar civilization, 4X empire strategy with the Interstellar Alliance (DoraMCU 4X plugin)",
+                GalaxyFactory.VOID_GALAXY_NAME, "The Void — Alien frontier, uncharted territory beyond human space (Traveler plugin)",
+                GalaxyFactory.TEST_GALAXY_NAME, "Test Galaxy — Small galaxy for model development and testing (DoraMCU 4X plugin)"
         );
     }
 

@@ -17,7 +17,7 @@ import java.util.Map;
  * Provides endpoints for character management, character import, and mission integration.
  * </p>
  */
-@RestController
+@RestController("starTrek4xRpgController")
 @RequestMapping("/api/star-trek-4x/rpg")
 public class RpgController {
 

@@ -238,7 +238,7 @@ class SfbCombatEngineExperienceTest {
                     eq(AiCommanderExperience.Outcome.VICTORY), anyString(), eq("Fleet Engagement"));
             verify(experienceService).recordBattleExperience(
                     eq(200L), eq("SFB"), eq("Space Battle"),
-                    eq(AiCommanderExperience.Outcome.VICTORY), anyString(), eq("Fleet Engagement"));
+                    eq(AiCommanderExperience.Outcome.DEFEAT), anyString(), eq("Fleet Engagement"));
         }
 
         @Test

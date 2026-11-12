@@ -15,7 +15,7 @@ import java.util.Map;
  * Provides endpoints for diplomatic actions, treaties, and faction relations.
  * </p>
  */
-@RestController
+@RestController("starTrek4xDiplomacyController")
 @RequestMapping("/api/star-trek-4x/diplomacy")
 public class DiplomacyController {
 

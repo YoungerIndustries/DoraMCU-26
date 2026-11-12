@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
  * <p>
  * Earth 2026 is the default starting point for all characters. New users arrive
  * on Earth 2026 and can play modern-day scenarios before choosing to transition
- * to a game galaxy (Milky Way, The Void, etc.) via a portal.
+ * to a game galaxy via a portal. Galaxies are created dynamically via GalaxyCreationService.
  * </p>
  */
 @Configuration

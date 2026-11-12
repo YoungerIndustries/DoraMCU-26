@@ -52,7 +52,7 @@ body:
     attributes:
       label: Version
       description: What version of DoraMCU are you running?
-      placeholder: "0.1.3"
+      placeholder: "0.3.0"
     validations:
       required: true
 

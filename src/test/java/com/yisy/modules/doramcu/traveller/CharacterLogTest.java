@@ -145,7 +145,7 @@ class CharacterLogTest {
         assertEquals(1, log.getExperienceCount());
         CharacterExperience exp = log.getExperiences().get(0);
         assertEquals(ExperienceType.CAREER_COMPLETION, exp.getType());
-        assertTrue(exp.getDescription().contains("Melee"));
+        assertTrue(exp.getDescription().contains("melee"));
         assertTrue(exp.getDescription().contains("12000"));
     }
 

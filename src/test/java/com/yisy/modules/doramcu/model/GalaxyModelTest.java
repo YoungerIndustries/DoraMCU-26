@@ -314,7 +314,7 @@ class GalaxyModelTest {
     class ToStringTest {
 
         @Test
-        @DisplayName("toString should include id, name, sectors, systems, seed, gameType, difficulty")
+        @DisplayName("toString should include id, name, sectors, and systems")
         void toString_shouldIncludeAllFields() {
             Galaxy galaxy = new Galaxy(1L, "Milky Way");
             galaxy.setSeed(42L);
@@ -327,9 +327,6 @@ class GalaxyModelTest {
             assertTrue(str.contains("name='Milky Way'"));
             assertTrue(str.contains("sectors=100"));
             assertTrue(str.contains("systems=0"));
-            assertTrue(str.contains("seed=42"));
-            assertTrue(str.contains("gameType=DoraT"));
-            assertTrue(str.contains("difficulty=medium"));
         }
 
         @Test

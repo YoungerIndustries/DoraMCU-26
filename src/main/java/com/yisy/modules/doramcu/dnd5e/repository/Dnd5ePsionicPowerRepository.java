@@ -38,10 +38,6 @@ public interface Dnd5ePsionicPowerRepository extends JpaRepository<Dnd5ePsionicP
      */
     List<Dnd5ePsionicPower> findBySchool(String school);
 
-    /**
-     * Find psionic cantrips (level 0).
-     */
-    List<Dnd5ePsionicPower> findByPowerLevelZero();
 
     /**
      * Find psionic powers that require concentration.

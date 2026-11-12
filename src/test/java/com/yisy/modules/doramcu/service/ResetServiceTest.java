@@ -1181,11 +1181,11 @@ class ResetServiceTest {
                     anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyDouble(),
                     anyDouble(), eq(42L)
             );
-            // Verify The Void uses VOID_GALAXY_SEED (54321L)
+            // Verify The Void uses VOID_GALAXY_SEED (42L)
             verify(galaxyService).generateAndSaveGalaxyWithEmpires(
                     eq("The Void"), anyMap(), anyInt(), anyInt(), anyDouble(), anyDouble(),
                     anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyDouble(),
-                    anyDouble(), eq(54321L)
+                    anyDouble(), eq(42L)
             );
         }
 

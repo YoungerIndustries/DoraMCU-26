@@ -63,10 +63,10 @@ class SharedCharacterModelTest {
     // ==================== GameType Integration ====================
 
     @Test
-    @DisplayName("GameType - should have TRAVELLER, CAPTAINS_LOG, DORAMCU_4X, DND_5E, THIRD_REICH, and EARTH_2026 values")
+    @DisplayName("GameType - should have TRAVELLER, CAPTAINS_LOG, DORAMCU_4X, DND_5E, THIRD_REICH, EARTH_2026, BABYLON_5, STAR_TREK_4X, SFB, and ZERO_ZERO_SEVEN values")
     void gameType_hasValues() {
         GameType[] values = GameType.values();
-        assertEquals(6, values.length);
+        assertEquals(10, values.length);
         assertTrue(java.util.Arrays.asList(values).contains(GameType.TRAVELLER));
         assertTrue(java.util.Arrays.asList(values).contains(GameType.CAPTAINS_LOG));
         assertTrue(java.util.Arrays.asList(values).contains(GameType.DORAMCU_4X));

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dora Network News — Live Universe Feed</title>
+    <title>DoraMCU — Enter the Game</title>
     <style>
         * {
             margin: 0;
@@ -111,6 +111,7 @@
         .subscriber-count {
             color: #888;
         }
+
 
         /* ── Breaking News Ticker ── */
         .ticker {
@@ -436,6 +437,83 @@
             text-decoration: none;
         }
 
+        /* ── Door Panel (Sidebar) ── */
+        .door-panel-section {
+            background: linear-gradient(135deg, #1a1008 0%, #12121f 100%);
+            border: 1px solid #8b7530;
+        }
+
+        .door-panel-section h3 {
+            color: #ffd700;
+            border-bottom-color: #8b7530;
+        }
+
+        .door-panel-text {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .door-q {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #ffd700;
+            margin-bottom: 0.4rem;
+            line-height: 1.4;
+        }
+
+        .door-immortal {
+            font-size: 1rem;
+            font-weight: 900;
+            color: #ff6b35;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0.5rem 0;
+        }
+
+        .door-walk {
+            font-size: 0.8rem;
+            color: #c0c0c0;
+            font-style: italic;
+            margin-bottom: 0.3rem;
+        }
+
+        .door-beware {
+            font-size: 0.75rem;
+            color: #ff2d55;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.4rem;
+        }
+
+        .door-yourself {
+            font-size: 0.8rem;
+            color: #b388ff;
+            font-weight: 600;
+            margin-top: 0.3rem;
+        }
+
+        .door-enter-link {
+            display: block;
+            background: linear-gradient(135deg, #8a2be2, #4b0082);
+            border: 1px solid #b388ff;
+            color: #fff;
+            text-align: center;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+
+        .door-enter-link:hover {
+            background: linear-gradient(135deg, #9b30ff, #6a0dad);
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+        }
+
         /* ── Responsive ── */
         @media (max-width: 900px) {
             .main {
@@ -522,6 +600,20 @@
 
         <!-- Sidebar -->
         <aside class="sidebar">
+
+            <!-- Enter the Game Panel -->
+            <div class="sidebar-panel door-panel-section">
+                <h3>🚪 Enter the Game</h3>
+                <div class="door-panel-text">
+                    <p class="door-q">Do You Want to Live Forever?</p>
+                    <p class="door-q">Do You Want to Play a Game?</p>
+                    <p class="door-immortal">Want to be IMMORTAL?</p>
+                    <p class="door-walk">Just walk thru the Door…</p>
+                    <p class="door-beware">⚠ But BEWARE — There be more than Dragons awaiting you ⚠</p>
+                    <p class="door-yourself">…You will meet YOURSELF…</p>
+                </div>
+                <a href="promo.html" class="door-enter-link">🚪 Walk Through the Door</a>
+            </div>
 
             <!-- Stats Panel -->
             <div class="sidebar-panel">

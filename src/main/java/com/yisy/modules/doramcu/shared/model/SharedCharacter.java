@@ -76,6 +76,28 @@ public class SharedCharacter {
     @Column(name = "doramcu4x_player_id")
     private Long doramcu4xPlayerId;
 
+    // Additional system-specific references for all game types
+    @Column(name = "earth2026_character_id")
+    private Long earth2026CharacterId;
+
+    @Column(name = "sfb_character_id")
+    private Long sfbCharacterId;
+
+    @Column(name = "b5_character_id")
+    private Long b5CharacterId;
+
+    @Column(name = "dnd5e_character_id")
+    private Long dnd5eCharacterId;
+
+    @Column(name = "star_trek_4x_player_id")
+    private Long starTrek4xPlayerId;
+
+    @Column(name = "bond_agent_id")
+    private Long bondAgentId;
+
+    @Column(name = "third_reich_unit_id")
+    private Long thirdReichUnitId;
+
     // Character metadata
     private int age;
     private String race;
@@ -230,6 +252,62 @@ public class SharedCharacter {
 
     public void setDoramcu4xPlayerId(Long doramcu4xPlayerId) {
         this.doramcu4xPlayerId = doramcu4xPlayerId;
+    }
+
+    public Long getEarth2026CharacterId() {
+        return earth2026CharacterId;
+    }
+
+    public void setEarth2026CharacterId(Long earth2026CharacterId) {
+        this.earth2026CharacterId = earth2026CharacterId;
+    }
+
+    public Long getSfbCharacterId() {
+        return sfbCharacterId;
+    }
+
+    public void setSfbCharacterId(Long sfbCharacterId) {
+        this.sfbCharacterId = sfbCharacterId;
+    }
+
+    public Long getB5CharacterId() {
+        return b5CharacterId;
+    }
+
+    public void setB5CharacterId(Long b5CharacterId) {
+        this.b5CharacterId = b5CharacterId;
+    }
+
+    public Long getDnd5eCharacterId() {
+        return dnd5eCharacterId;
+    }
+
+    public void setDnd5eCharacterId(Long dnd5eCharacterId) {
+        this.dnd5eCharacterId = dnd5eCharacterId;
+    }
+
+    public Long getStarTrek4xPlayerId() {
+        return starTrek4xPlayerId;
+    }
+
+    public void setStarTrek4xPlayerId(Long starTrek4xPlayerId) {
+        this.starTrek4xPlayerId = starTrek4xPlayerId;
+    }
+
+    public Long getBondAgentId() {
+        return bondAgentId;
+    }
+
+    public void setBondAgentId(Long bondAgentId) {
+        this.bondAgentId = bondAgentId;
+    }
+
+    public Long getThirdReichUnitId() {
+        return thirdReichUnitId;
+    }
+
+    public void setThirdReichUnitId(Long thirdReichUnitId) {
+        this.thirdReichUnitId = thirdReichUnitId;
     }
 
     public int getAge() {

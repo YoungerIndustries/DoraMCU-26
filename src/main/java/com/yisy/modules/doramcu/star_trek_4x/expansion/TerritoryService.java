@@ -16,7 +16,7 @@ import java.util.Map;
  * Handles sector claiming, territorial disputes, and integration with SfbCampaignEngine.
  * </p>
  */
-@Service
+@Service("starTrek4xTerritoryService")
 public class TerritoryService {
 
     private static final Logger log = LoggerFactory.getLogger(TerritoryService.class);

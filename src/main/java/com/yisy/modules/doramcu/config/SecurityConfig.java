@@ -34,8 +34,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/4x/auth/**", "/api/v1/4x/health/**").permitAll()
                         .requestMatchers("/api/v1/captains-log/**", "/api/v1/traveller/rules/**", "/api/v1/traveller/trade/**", "/api/v1/traveller/psionics/**").permitAll()
+                        .requestMatchers("/api/v1/onboarding/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                         .requestMatchers("/", "/index.html", "/static/**", "/game.html", "/health.html", "/traveller-rules.html", "/css/**", "/js/**", "/favicon.ico", "/icons/**").permitAll()
+                        .requestMatchers("/promo.html", "/register.html", "/character.html").permitAll()
                         .requestMatchers("/api/v1/4x/galaxy/progress").permitAll()
                         .requestMatchers("/admin.html").authenticated()
                         .requestMatchers("/ws/**", "/ws/v1/**").authenticated()
