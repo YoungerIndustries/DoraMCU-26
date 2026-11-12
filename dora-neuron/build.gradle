@@ -35,7 +35,7 @@ dependencies {
     // JWT for authentication
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
 
     // ONNX Runtime for Java — lightweight inference without full DL4J
     implementation 'com.microsoft.onnxruntime:onnxruntime:1.28.0'
