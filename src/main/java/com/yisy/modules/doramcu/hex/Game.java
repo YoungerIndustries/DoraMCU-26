@@ -1,7 +1,10 @@
 package com.yisy.modules.doramcu.hex;
 
+import com.yisy.modules.doramcu.hex.spi.AiCommanderExperienceSpi;
+import com.yisy.modules.doramcu.hex.spi.AiEntityRegistration;
+import com.yisy.modules.doramcu.hex.spi.StationAiSupportSpi;
 import com.yisy.modules.doramcu.unified.GameEngine;
-import com.yisy.modules.doramcu.unified.GameType;
+import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.hex.manager.CharacterManager;
 import com.yisy.modules.doramcu.hex.manager.CombatResolver;
 import com.yisy.modules.doramcu.hex.manager.FacilityConstructionManager;
@@ -13,12 +16,14 @@ import com.yisy.modules.doramcu.hex.manager.PlanetManager;
 import com.yisy.modules.doramcu.hex.manager.ResourceManager;
 import com.yisy.modules.doramcu.hex.manager.TradeManager;
 import com.yisy.modules.doramcu.hex.manager.TurnManager;
+import com.yisy.modules.doramcu.hex.manager.TaxManager;
 import com.yisy.modules.doramcu.hex.Player;
 import com.yisy.modules.doramcu.hex.ShipOrder;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -93,6 +98,23 @@ public class Game implements GameContext, GameEngine {
     private final FacilityConstructionManager facilityConstructionManager;
     private final TradeManager tradeManager;
     private final MercenaryIncomeManager mercenaryIncomeManager;
+    private final TaxManager taxManager;
+
+    /** Active survey missions across all empires. */
+    private final List<SurveyMission> activeSurveyMissions = new ArrayList<>();
+    private int nextSurveyMissionId = 1;
+
+    /** Optional service for registering entities as AI characters (set via Spring). */
+    private AiEntityRegistration aiEntityRegistrationService;
+
+    /** When true, trade prices use the B07 Actual Value table (2D6 roll) for random variation. */
+    private boolean actualValueEnabled;
+
+    /** Optional service for recording AI commander experience (set via Spring). */
+    private AiCommanderExperienceSpi aiCommanderExperienceService;
+
+    /** Optional service for station AI support during battles (set via Spring). */
+    private StationAiSupportSpi stationAiSupportService;
 
     /**
      * Creates a new game with the given name.
@@ -132,7 +154,9 @@ public class Game implements GameContext, GameEngine {
         this.planetManager = new PlanetManager(this);
         this.facilityConstructionManager = new FacilityConstructionManager(this);
         this.tradeManager = new TradeManager(this);
+        this.tradeManager.setActualValueEnabled(actualValueEnabled);
         this.mercenaryIncomeManager = new MercenaryIncomeManager(this);
+        this.taxManager = new TaxManager(this);
     }
 
     // ============================================================
@@ -594,7 +618,8 @@ public class Game implements GameContext, GameEngine {
 
             // Sync the home planet's starting facilities to the Empire facilities component
             for (StartingFacility facility : homePlanet.getStartingFacilities()) {
-                empire.getFacilities().buildFacility(homePlanet.getId(), facility);
+                PlanetFacility pf = empire.getFacilities().buildFacility(homePlanet.getId(), facility);
+                registerFacilityAsAi(pf, empire.getName());
             }
         }
 
@@ -777,6 +802,16 @@ public class Game implements GameContext, GameEngine {
         return turnManager.getPipelineManagers();
     }
 
+    /**
+     * Returns the EconomicState for the given empire.
+     *
+     * @param empireId the empire ID
+     * @return the economic state, or null if not yet initialized
+     */
+    public com.yisy.modules.doramcu.hex.manager.EconomicState getEconomicState(int empireId) {
+        return turnManager.getEconomicState(empireId);
+    }
+
     // ---- Facility Construction (delegated) ----
 
     /**
@@ -801,7 +836,11 @@ public class Game implements GameContext, GameEngine {
     public SpaceStation buildStation(Player owner, SpaceStationType stationType,
                                       SolarSystemEntity homeSystem) {
         ResourcePipelineManager pipeline = getPipelineManager(owner.getEmpireId());
-        return facilityConstructionManager.buildStation(owner, stationType, homeSystem, pipeline);
+        SpaceStation station = facilityConstructionManager.buildStation(owner, stationType, homeSystem, pipeline);
+        if (station != null) {
+            registerStationAsAi(station, owner.getName());
+        }
+        return station;
     }
 
     /**
@@ -813,11 +852,92 @@ public class Game implements GameContext, GameEngine {
     }
 
     /**
-     * Adds a facility to a planet by consuming modules from the pipeline.
+     * Adds a facility to a planet by consuming modules from the pipeline,
+     * creating a PlanetFacility entity with an AI core and registering it as an AI character.
      */
     public boolean buildPlanetFacility(Planet planet, StartingFacility facility, int empireId) {
         ResourcePipelineManager pipeline = getPipelineManager(empireId);
-        return facilityConstructionManager.buildPlanetFacility(planet, facility, pipeline);
+        boolean consumed = facilityConstructionManager.buildPlanetFacility(planet, facility, pipeline);
+        if (consumed) {
+            Empire empire = getEmpire(empireId);
+            if (empire != null) {
+                PlanetFacility pf = empire.getFacilities().buildFacility(planet.getId(), facility);
+                registerFacilityAsAi(pf, empire.getName());
+            }
+        }
+        return consumed;
+    }
+
+    /**
+     * Sets the AI entity registration service (injected by Spring when available).
+     * Propagates the service to sub-managers that also need it.
+     */
+    public void setAiEntityRegistrationService(AiEntityRegistration aiEntityRegistrationService) {
+        this.aiEntityRegistrationService = aiEntityRegistrationService;
+        if (turnManager != null) {
+            turnManager.setAiEntityRegistrationService(aiEntityRegistrationService);
+        }
+        if (fleetManager != null) {
+            fleetManager.setAiEntityRegistrationService(aiEntityRegistrationService);
+        }
+        // Propagate to all empires' armies
+        for (Empire empire : empires.values()) {
+            empire.setAiEntityRegistrationService(aiEntityRegistrationService);
+        }
+    }
+
+    /**
+     * Sets the AI commander experience service (injected by Spring when available).
+     * Propagates the service to sub-managers that also need it.
+     */
+    public void setAiCommanderExperienceService(AiCommanderExperienceSpi aiCommanderExperienceService) {
+        this.aiCommanderExperienceService = aiCommanderExperienceService;
+        if (turnManager != null) {
+            turnManager.setAiCommanderExperienceService(aiCommanderExperienceService);
+        }
+        // Propagate GameContext for AI Core tier sync
+        if (aiCommanderExperienceService != null) {
+            aiCommanderExperienceService.setGameContext(this);
+        }
+    }
+
+    /**
+     * Sets the station AI support service (injected by Spring when available).
+     * Propagates the service to sub-managers that also need it.
+     */
+    public void setStationAiSupportService(StationAiSupportSpi stationAiSupportService) {
+        this.stationAiSupportService = stationAiSupportService;
+        if (combatResolver != null) {
+            combatResolver.setStationAiSupportService(stationAiSupportService);
+        }
+    }
+
+    /**
+     * Registers a space station as an AI character in the AI character repository.
+     * No-op if the AI entity registration service is not available.
+     */
+    private void registerStationAsAi(SpaceStation station, String empireName) {
+        if (aiEntityRegistrationService != null && station != null) {
+            try {
+                aiEntityRegistrationService.registerStation(station, empireName);
+            } catch (Exception e) {
+                // Silently ignore if registration fails
+            }
+        }
+    }
+
+    /**
+     * Registers a facility as an AI character in the AI character repository.
+     * No-op if the AI entity registration service is not available.
+     */
+    private void registerFacilityAsAi(PlanetFacility facility, String empireName) {
+        if (aiEntityRegistrationService != null && facility != null) {
+            try {
+                aiEntityRegistrationService.registerFacility(facility, empireName);
+            } catch (Exception e) {
+                // Silently ignore if registration fails
+            }
+        }
     }
 
     // ---- Fleet management (delegated) ----
@@ -1131,6 +1251,98 @@ public class Game implements GameContext, GameEngine {
         return mercenaryIncomeManager;
     }
 
+    /** Returns the TaxManager instance. */
+    public TaxManager getTaxManager() {
+        return taxManager;
+    }
+
+    // ============================================================
+    // Survey Missions
+    // ============================================================
+
+    /**
+     * Launches a survey mission to a celestial body.
+     *
+     * @param empireId the empire conducting the survey
+     * @param bodyId the celestial body ID to survey
+     * @param type the type of survey
+     * @return the created survey mission, or null if the body is not found
+     */
+    public SurveyMission launchSurvey(int empireId, int bodyId, SurveyMission.SurveyType type) {
+        CelestialBody body = findCelestialBody(bodyId);
+        if (body == null) {
+            return null;
+        }
+        SurveyMission mission = new SurveyMission(nextSurveyMissionId++, empireId, body, type, random);
+        activeSurveyMissions.add(mission);
+        return mission;
+    }
+
+    /**
+     * Processes all active survey missions for one turn.
+     * Completed missions are removed from the active list.
+     *
+     * @return the number of missions that completed this turn
+     */
+    public int processSurveyMissions() {
+        int completed = 0;
+        Iterator<SurveyMission> it = activeSurveyMissions.iterator();
+        while (it.hasNext()) {
+            SurveyMission mission = it.next();
+            if (mission.processTurn()) {
+                it.remove();
+                completed++;
+            }
+        }
+        return completed;
+    }
+
+    /**
+     * Returns all active survey missions.
+     *
+     * @return list of active survey missions
+     */
+    public List<SurveyMission> getActiveSurveyMissions() {
+        return new ArrayList<>(activeSurveyMissions);
+    }
+
+    /**
+     * Returns active survey missions for a specific empire.
+     *
+     * @param empireId the empire ID
+     * @return list of active survey missions for that empire
+     */
+    public List<SurveyMission> getActiveSurveyMissions(int empireId) {
+        return activeSurveyMissions.stream()
+                .filter(m -> m.getEmpireId() == empireId)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
+     * Finds a celestial body by ID across all solar systems.
+     *
+     * @param bodyId the body ID
+     * @return the celestial body, or null if not found
+     */
+    private CelestialBody findCelestialBody(int bodyId) {
+        // Check planets first
+        Planet planet = planets.get(bodyId);
+        if (planet != null) return planet;
+
+        // Check solar systems for other bodies
+        for (SolarSystem system : solarSystems.values()) {
+            for (SolarSystemEntity entity : system.getAllSystems().values()) {
+                for (SystemBody sb : entity.getAllBodies()) {
+                    CelestialBody body = sb.getBodyAs(CelestialBody.class);
+                    if (body != null && body.getId() == bodyId) {
+                        return body;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Serializes the essential game state to a JSON-compatible Map.
      * <p>
@@ -1150,6 +1362,24 @@ public class Game implements GameContext, GameEngine {
      */
     public long getRandomSeed() {
         return randomSeed;
+    }
+
+    /**
+     * Returns whether B07 Actual Value rolls are enabled for trade price calculation.
+     * When enabled, prices vary from 40% to 400% of base price based on a 2D6 roll.
+     * @return true if Actual Value rolls are enabled
+     */
+    public boolean isActualValueEnabled() {
+        return actualValueEnabled;
+    }
+
+    /**
+     * Sets whether B07 Actual Value rolls are enabled for trade price calculation.
+     * @param actualValueEnabled true to enable random price variation
+     */
+    public void setActualValueEnabled(boolean actualValueEnabled) {
+        this.actualValueEnabled = actualValueEnabled;
+        this.tradeManager.setActualValueEnabled(actualValueEnabled);
     }
 
     // ---- Traveller RPG Integration Methods ----

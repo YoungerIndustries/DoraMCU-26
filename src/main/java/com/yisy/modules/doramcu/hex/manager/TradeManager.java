@@ -48,6 +48,10 @@ public class TradeManager {
     /** History of completed trade missions. */
     private final List<TradeMissionRecord> missionHistory = new ArrayList<>();
 
+    /** Active player-initiated trade orders. */
+    private final List<TradeOrder> activeTradeOrders = new ArrayList<>();
+    private int nextTradeOrderId = 1;
+
     /** Credit exchange service for bidirectional credit-resource conversion. */
     private CreditExchangeService creditExchangeService;
 
@@ -56,6 +60,21 @@ public class TradeManager {
 
     /** Trade route network for sector-wide trade simulation. */
     private TradeRouteNetwork tradeRouteNetwork;
+
+    /** Sector-wide market board for inter-player trade. */
+    private MarketBoard marketBoard;
+
+    /** Whether B07 Actual Value rolls are enabled for trade price calculation. */
+    private boolean actualValueEnabled;
+
+    /**
+     * Sets whether B07 Actual Value rolls are enabled for trade price calculation.
+     * When enabled, prices vary from 40% to 400% of base price based on a 2D6 roll.
+     * @param actualValueEnabled true to enable random price variation
+     */
+    public void setActualValueEnabled(boolean actualValueEnabled) {
+        this.actualValueEnabled = actualValueEnabled;
+    }
 
     /**
      * Creates a new TradeManager.
@@ -68,6 +87,17 @@ public class TradeManager {
         this.creditExchangeService = new CreditExchangeService(context);
         this.tradeCareerService = new TradeCareerService(context);
         this.tradeRouteNetwork = new TradeRouteNetwork(context);
+        this.marketBoard = new MarketBoard();
+        this.marketBoard.setCreditExchangeService(this.creditExchangeService);
+    }
+
+    /**
+     * Returns the market board for inter-player trade.
+     *
+     * @return the market board
+     */
+    public MarketBoard getMarketBoard() {
+        return marketBoard;
     }
 
     /**
@@ -177,7 +207,7 @@ public class TradeManager {
     public int getBuyPrice(int planetId, Commodity commodity) {
         WorldEconomy economy = getEconomy(planetId);
         if (economy == null) return 0;
-        return economy.getBuyPrice(commodity);
+        return economy.getBuyPrice(commodity, actualValueEnabled);
     }
 
     /**
@@ -193,7 +223,7 @@ public class TradeManager {
     public int getSellPrice(int planetId, Commodity commodity) {
         WorldEconomy economy = getEconomy(planetId);
         if (economy == null) return 0;
-        return economy.getSellPrice(commodity);
+        return economy.getSellPrice(commodity, actualValueEnabled);
     }
 
     /**
@@ -286,8 +316,8 @@ public class TradeManager {
 
                 // Buy at from, sell at to
                 if (fromEcon.canBuy(commodity) && toEcon.canSell(commodity)) {
-                    int buyPrice = fromEcon.getBuyPrice(commodity);
-                    int sellPrice = toEcon.getSellPrice(commodity);
+                    int buyPrice = fromEcon.getBuyPrice(commodity, actualValueEnabled);
+                    int sellPrice = toEcon.getSellPrice(commodity, actualValueEnabled);
                     int profit = sellPrice - buyPrice;
                     if (profit > bestProfit) {
                         bestProfit = profit;
@@ -297,8 +327,8 @@ public class TradeManager {
 
                 // Buy at to, sell at from
                 if (toEcon.canBuy(commodity) && fromEcon.canSell(commodity)) {
-                    int buyPrice = toEcon.getBuyPrice(commodity);
-                    int sellPrice = fromEcon.getSellPrice(commodity);
+                    int buyPrice = toEcon.getBuyPrice(commodity, actualValueEnabled);
+                    int sellPrice = fromEcon.getSellPrice(commodity, actualValueEnabled);
                     int profit = sellPrice - buyPrice;
                     if (profit > bestProfit) {
                         bestProfit = profit;
@@ -341,14 +371,14 @@ public class TradeManager {
                 for (Commodity commodity : Commodity.values()) {
                     // Direction 1: buy at p1, sell at p2
                     if (econ1.canBuy(commodity) && econ2.canSell(commodity)) {
-                        int profit = econ2.getSellPrice(commodity) - econ1.getBuyPrice(commodity);
+                        int profit = econ2.getSellPrice(commodity, actualValueEnabled) - econ1.getBuyPrice(commodity, actualValueEnabled);
                         if (profit > 0) {
                             routes.add(new TradeRoute(p1.getId(), p2.getId(), commodity, profit, true));
                         }
                     }
                     // Direction 2: buy at p2, sell at p1
                     if (econ2.canBuy(commodity) && econ1.canSell(commodity)) {
-                        int profit = econ1.getSellPrice(commodity) - econ2.getBuyPrice(commodity);
+                        int profit = econ1.getSellPrice(commodity, actualValueEnabled) - econ2.getBuyPrice(commodity, actualValueEnabled);
                         if (profit > 0) {
                             routes.add(new TradeRoute(p2.getId(), p1.getId(), commodity, profit, true));
                         }
@@ -406,8 +436,8 @@ public class TradeManager {
         }
 
         // Calculate costs and revenue
-        int buyPrice = sourceEcon.getBuyPrice(commodity);
-        int sellPrice = destEcon.getSellPrice(commodity);
+        int buyPrice = sourceEcon.getBuyPrice(commodity, actualValueEnabled);
+        int sellPrice = destEcon.getSellPrice(commodity, actualValueEnabled);
 
         // Check market size limits
         int maxUnits = Math.min(sourceEcon.getMaxTradeUnits(commodity), destEcon.getMaxTradeUnits(commodity));
@@ -479,8 +509,8 @@ public class TradeManager {
         }
 
         // Calculate base costs and revenue
-        int buyPrice = sourceEcon.getBuyPrice(commodity);
-        int sellPrice = destEcon.getSellPrice(commodity);
+        int buyPrice = sourceEcon.getBuyPrice(commodity, actualValueEnabled);
+        int sellPrice = destEcon.getSellPrice(commodity, actualValueEnabled);
 
         // Apply resource scarcity modifiers if pipeline is available
         if (pipeline != null) {
@@ -519,6 +549,144 @@ public class TradeManager {
         missionHistory.add(record);
 
         return new TradeResult(profitable, cost, revenue, netProfit, actualUnits);
+    }
+
+    // ============================================================
+    // Player Trade Orders
+    // ============================================================
+
+    /**
+     * Creates a player-initiated trade order.
+     * <p>
+     * The trade order will be processed over multiple turns based on distance.
+     * When complete, the profit is calculated and fed into the EconomicState.
+     * </p>
+     *
+     * @param player the player creating the order
+     * @param sourcePlanetId the planet to buy from
+     * @param destPlanetId the planet to sell at
+     * @param commodity the commodity to trade
+     * @param units the number of units to trade
+     * @param distance the distance between planets
+     * @return the trade order, or null if the trade is not viable
+     */
+    public TradeOrder createTradeOrder(Player player, int sourcePlanetId, int destPlanetId,
+                                        Commodity commodity, int units, int distance) {
+        if (player == null || commodity == null || units <= 0) {
+            return null;
+        }
+
+        // Check if trade is viable
+        WorldEconomy sourceEcon = getEconomy(sourcePlanetId);
+        WorldEconomy destEcon = getEconomy(destPlanetId);
+        if (sourceEcon == null || destEcon == null) {
+            return null;
+        }
+        if (!sourceEcon.canBuy(commodity) || !destEcon.canSell(commodity)) {
+            return null;
+        }
+
+        int buyPrice = sourceEcon.getBuyPrice(commodity, actualValueEnabled);
+        int sellPrice = destEcon.getSellPrice(commodity, actualValueEnabled);
+        if (sellPrice <= buyPrice) {
+            return null; // Not profitable
+        }
+
+        // Find empire ID for this player
+        Integer empireId = findEmpireIdForPlayer(player);
+        if (empireId == null) {
+            return null;
+        }
+
+        int orderId = nextTradeOrderId++;
+        TradeOrder order = new TradeOrder(orderId, empireId, sourcePlanetId, destPlanetId,
+                commodity, units, distance);
+        activeTradeOrders.add(order);
+        return order;
+    }
+
+    /**
+     * Cancels a trade order by ID.
+     *
+     * @param orderId the order ID to cancel
+     * @return true if the order was found and cancelled
+     */
+    public boolean cancelTradeOrder(int orderId) {
+        for (TradeOrder order : activeTradeOrders) {
+            if (order.getId() == orderId && order.isInProgress()) {
+                order.cancel();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Processes all active trade orders for one turn.
+     * Completed orders have their profit calculated and recorded.
+     */
+    public void processTradeOrders() {
+        List<TradeOrder> completed = new ArrayList<>();
+        for (TradeOrder order : activeTradeOrders) {
+            if (order.isInProgress() && order.processTurn()) {
+                completed.add(order);
+            }
+        }
+
+        // Calculate profit for completed orders
+        for (TradeOrder order : completed) {
+            WorldEconomy sourceEcon = getEconomy(order.getSourcePlanetId());
+            WorldEconomy destEcon = getEconomy(order.getDestPlanetId());
+            if (sourceEcon != null && destEcon != null) {
+                int buyPrice = sourceEcon.getBuyPrice(order.getCommodity(), actualValueEnabled);
+                int sellPrice = destEcon.getSellPrice(order.getCommodity(), actualValueEnabled);
+                long profit = (long) (sellPrice - buyPrice) * order.getUnits();
+                order.setProfit(profit);
+
+                // Feed profit to EconomicState
+                if (profit > 0) {
+                    EconomicState state = creditExchangeService.getEconomicState(order.getEmpireId());
+                    if (state != null) {
+                        state.addCredits(EconomicState.IncomeSource.TRADE, profit);
+                    }
+                }
+
+                // Record mission
+                TradeMissionRecord record = new TradeMissionRecord(
+                        context.getCurrentTurn(), order.getEmpireId(),
+                        order.getSourcePlanetId(), order.getDestPlanetId(),
+                        order.getCommodity(), order.getUnits(),
+                        (long) buyPrice * order.getUnits(),
+                        (long) sellPrice * order.getUnits(),
+                        profit
+                );
+                missionHistory.add(record);
+            }
+        }
+
+        // Clean up completed/cancelled orders
+        activeTradeOrders.removeIf(o -> !o.isInProgress());
+    }
+
+    /**
+     * Returns all active trade orders (immutable).
+     *
+     * @return list of active trade orders
+     */
+    public List<TradeOrder> getActiveTradeOrders() {
+        return List.copyOf(activeTradeOrders);
+    }
+
+    /**
+     * Returns active trade orders for a specific empire.
+     *
+     * @param empireId the empire ID
+     * @return list of active trade orders
+     */
+    public List<TradeOrder> getActiveTradeOrders(int empireId) {
+        return activeTradeOrders.stream()
+                .filter(o -> o.getEmpireId() == empireId)
+                .collect(Collectors.toList());
     }
 
     // ============================================================
@@ -697,9 +865,9 @@ public class TradeManager {
             int empireId = entry.getKey();
             com.yisy.modules.doramcu.hex.ResourcePipelineManager pipeline = entry.getValue();
 
-            // Find the empire's planets
+            // Find the empire's planets (skip unowned planets with null owner)
             List<Planet> ownedPlanets = context.getPlanets().values().stream()
-                    .filter(p -> empireId == p.getOwnerEmpireId())
+                    .filter(p -> p.getOwnerEmpireId() != null && empireId == p.getOwnerEmpireId())
                     .collect(Collectors.toList());
 
             if (ownedPlanets.size() < 2) continue; // Need at least 2 planets to trade
@@ -732,6 +900,9 @@ public class TradeManager {
 
         // Reset trade volumes for next turn
         tradeRouteNetwork.resetTradeVolumes();
+
+        // Process inter-player market board
+        marketBoard.processTurn();
     }
 
     // ============================================================
@@ -757,6 +928,54 @@ public class TradeManager {
         return missionHistory.stream()
                 .filter(r -> r.playerId == playerId)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns a trade summary for a specific empire.
+     * <p>
+     * Aggregates trade mission history into statistics: total trades,
+     * total profit, average profit, and recent trades.
+     * </p>
+     *
+     * @param empireId the empire ID
+     * @return a trade summary DTO
+     */
+    public com.yisy.modules.doramcu.dto.TradeSummaryDto getTradeSummary(int empireId) {
+        List<TradeMissionRecord> empireMissions = missionHistory.stream()
+                .filter(r -> r.playerId == empireId)
+                .collect(Collectors.toList());
+
+        int totalTrades = empireMissions.size();
+        if (totalTrades == 0) {
+            return new com.yisy.modules.doramcu.dto.TradeSummaryDto(
+                    empireId, 0, 0, 0, 0, 0, new ArrayList<>(),
+                    getActiveTradeOrders(empireId).size()
+            );
+        }
+
+        long totalProfit = empireMissions.stream().mapToLong(r -> r.profit).sum();
+        long averageProfit = totalProfit / totalTrades;
+        int profitableTrades = (int) empireMissions.stream().filter(r -> r.profit > 0).count();
+        int unprofitableTrades = totalTrades - profitableTrades;
+
+        // Get last 10 trades
+        List<TradeMissionRecord> recent = empireMissions.stream()
+                .sorted(Comparator.comparingInt((TradeMissionRecord r) -> r.turn).reversed())
+                .limit(10)
+                .collect(Collectors.toList());
+
+        List<com.yisy.modules.doramcu.dto.TradeMissionDto> recentDtos = recent.stream()
+                .map(r -> new com.yisy.modules.doramcu.dto.TradeMissionDto(
+                        r.turn, r.sourcePlanetId, r.destPlanetId,
+                        r.commodity.getName(), r.units, r.cost, r.revenue, r.profit
+                ))
+                .collect(Collectors.toList());
+
+        return new com.yisy.modules.doramcu.dto.TradeSummaryDto(
+                empireId, totalTrades, totalProfit, averageProfit,
+                profitableTrades, unprofitableTrades, recentDtos,
+                getActiveTradeOrders(empireId).size()
+        );
     }
 
     // ============================================================
@@ -827,7 +1046,7 @@ public class TradeManager {
                 for (Commodity commodity : Commodity.values()) {
                     // Direction 1: buy at p1, sell at p2
                     if (econ1.canBuy(commodity) && econ2.canSell(commodity)) {
-                        int profit = econ2.getSellPrice(commodity) - econ1.getBuyPrice(commodity);
+                        int profit = econ2.getSellPrice(commodity, actualValueEnabled) - econ1.getBuyPrice(commodity, actualValueEnabled);
                         if (profit > bestProfit) {
                             bestProfit = profit;
                             bestRoute = new TradeRoute(p1.getId(), p2.getId(), commodity, profit, true);
@@ -835,7 +1054,7 @@ public class TradeManager {
                     }
                     // Direction 2: buy at p2, sell at p1
                     if (econ2.canBuy(commodity) && econ1.canSell(commodity)) {
-                        int profit = econ1.getSellPrice(commodity) - econ2.getBuyPrice(commodity);
+                        int profit = econ1.getSellPrice(commodity, actualValueEnabled) - econ2.getBuyPrice(commodity, actualValueEnabled);
                         if (profit > bestProfit) {
                             bestProfit = profit;
                             bestRoute = new TradeRoute(p2.getId(), p1.getId(), commodity, profit, true);
