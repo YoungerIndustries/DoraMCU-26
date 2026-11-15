@@ -745,7 +745,7 @@ public class Fleet {
      *
      * @return a copy of this fleet with independent ship copies
      */
-    Fleet copyFleet() {
+    public Fleet copyFleet() {
         Fleet copy = new Fleet(id, name + " (copy)");
         copy.position = this.position;
         copy.homeSystem = this.homeSystem;
@@ -759,6 +759,9 @@ public class Fleet {
             for (ShipComponent comp : original.getComponents()) {
                 shipCopy.addComponent(comp);
             }
+            if (original.getAiCore() != null) {
+                shipCopy.setAiCore(new AiCoreComponent());
+            }
             copy.ships.add(shipCopy);
         }
         return copy;
@@ -769,7 +772,7 @@ public class Fleet {
      *
      * @return the active ship count
      */
-    int getActiveShipCount() {
+    public int getActiveShipCount() {
         return getActiveShips().size();
     }
 

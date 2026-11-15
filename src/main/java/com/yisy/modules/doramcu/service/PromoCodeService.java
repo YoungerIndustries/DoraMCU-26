@@ -1,10 +1,10 @@
 package com.yisy.modules.doramcu.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.model.PromoCode;
 import com.yisy.modules.doramcu.repository.PromoCodeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -75,6 +75,56 @@ public class PromoCodeService {
      */
     public ValidationResult validate(String code) {
         return validate(code, PromoCode.CodeType.PLAYER);
+    }
+
+    /**
+     * Validates a promo code of any type (PLAYER, CORPORATION, CHARACTER, ADMIN).
+     * <p>
+     * Checks that the code exists, is active, has not expired, and has not reached
+     * its usage limit. Does not enforce a specific code type â€” the caller should
+     * inspect the returned PromoCode.getCodeType() to determine how to route the user.
+     * </p>
+     *
+     * @param code the promo code string to validate
+     * @return validation result indicating whether the code is valid, with the full PromoCode object
+     */
+    public ValidationResult validateAny(String code) {
+        if (code == null || code.trim().isEmpty()) {
+            return ValidationResult.invalid("Promo code is required");
+        }
+
+        // Normalize to uppercase for case-insensitive matching
+        String normalizedCode = code.trim().toUpperCase();
+
+        // Find the promo code in the database
+        Optional<PromoCode> optional = promoCodeRepository.findByCode(normalizedCode);
+        if (optional.isEmpty()) {
+            log.warn("Invalid promo code attempted: {}", code);
+            return ValidationResult.invalid("Invalid promo code");
+        }
+
+        PromoCode promoCode = optional.get();
+
+        // Check if the code is active
+        if (!promoCode.isActive()) {
+            log.warn("Inactive promo code attempted: {}", code);
+            return ValidationResult.invalid("Promo code is no longer active");
+        }
+
+        // Check if the code has expired
+        if (promoCode.isExpired()) {
+            log.warn("Expired promo code attempted: {}", code);
+            return ValidationResult.invalid("Promo code has expired");
+        }
+
+        // Check if the usage limit has been reached
+        if (promoCode.isUsageLimitReached()) {
+            log.warn("Usage limit reached for promo code: {}", code);
+            return ValidationResult.invalid("Promo code usage limit has been reached");
+        }
+
+        log.info("Valid promo code validated: {} (type: {})", code, promoCode.getCodeType());
+        return ValidationResult.valid(promoCode);
     }
 
     /**
@@ -185,6 +235,25 @@ public class PromoCodeService {
      */
     @Transactional
     public PromoCode createPromoCode(String code, String description, Integer maxUses, PromoCode.CodeType codeType) {
+        return createPromoCode(code, description, maxUses, codeType, null, null, null);
+    }
+
+    /**
+     * Creates a new promo code with the specified type and entity reference.
+     *
+     * @param code the promo code string
+     * @param description human-readable description
+     * @param maxUses maximum number of uses (null for unlimited)
+     * @param codeType the type of promo code
+     * @param playerId associated player ID (for PLAYER codes)
+     * @param corporationId associated corporation ID (for CORPORATION codes)
+     * @param characterId associated character ID (for CHARACTER codes)
+     * @return the created promo code
+     * @throws IllegalArgumentException if the code already exists
+     */
+    @Transactional
+    public PromoCode createPromoCode(String code, String description, Integer maxUses,
+                                      PromoCode.CodeType codeType, Long playerId, Long corporationId, Long characterId) {
         if (code == null || code.trim().isEmpty()) {
             throw new IllegalArgumentException("Promo code is required");
         }
@@ -201,6 +270,9 @@ public class PromoCodeService {
         promoCode.setMaxUses(maxUses);
         promoCode.setCodeType(codeType != null ? codeType : PromoCode.CodeType.PLAYER);
         promoCode.setActive(true);
+        promoCode.setPlayerId(playerId);
+        promoCode.setCorporationId(corporationId);
+        promoCode.setCharacterId(characterId);
 
         PromoCode saved = promoCodeRepository.save(promoCode);
         log.info("Created new promo code: {}", saved);

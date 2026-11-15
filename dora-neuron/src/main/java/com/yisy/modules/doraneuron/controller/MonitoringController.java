@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.controller;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.service.NeuronMetricsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/neuron/monitoring")
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class MonitoringController {
 
     private final NeuronMetricsService metricsService;

@@ -13,6 +13,8 @@ import com.yisy.modules.doramcu.repository.AiCharacterRepository;
 import com.yisy.modules.doramcu.repository.GalaxyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +24,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Service that manages the Galaxy-level AI Overseer — the top AI Admin who oversees
+ * Service that manages the Galaxy-level AI Overseer â€” the top AI Admin who oversees
  * the entire galaxy workforce of AI agents and monitors resources to detect overstaffing.
  * <p>
  * The Galaxy Overseer:
@@ -37,6 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * </ul>
  * </p>
  */
+@SuppressWarnings("ClassEscapesItsScope")
 @Service
 public class GalaxyOverseerService {
 
@@ -60,6 +64,7 @@ public class GalaxyOverseerService {
     private final AiAdminService aiAdminService;
     private final GalaxyEventService galaxyEventService;
     private final GalaxyMetricsService galaxyMetricsService;
+    private final java.util.concurrent.Executor galaxyHealthCheckExecutor;
 
     // Tracks previous health scores for threshold-crossing detection
     private final Map<Long, Integer> previousHealthScores = new ConcurrentHashMap<>();
@@ -67,15 +72,18 @@ public class GalaxyOverseerService {
     public GalaxyOverseerService(GalaxyRepository galaxyRepository,
                                   AiCharacterRepository aiCharacterRepository,
                                   Earth2026RulesDatabaseService rulesDatabase,
-                                  AiAdminService aiAdminService,
+                                  @Lazy AiAdminService aiAdminService,
                                   GalaxyEventService galaxyEventService,
-                                  GalaxyMetricsService galaxyMetricsService) {
+                                  GalaxyMetricsService galaxyMetricsService,
+                                  @org.springframework.beans.factory.annotation.Qualifier("galaxyHealthCheckExecutor")
+                                  java.util.concurrent.Executor galaxyHealthCheckExecutor) {
         this.galaxyRepository = galaxyRepository;
         this.aiCharacterRepository = aiCharacterRepository;
         this.rulesDatabase = rulesDatabase;
         this.aiAdminService = aiAdminService;
         this.galaxyEventService = galaxyEventService;
         this.galaxyMetricsService = galaxyMetricsService;
+        this.galaxyHealthCheckExecutor = galaxyHealthCheckExecutor;
     }
 
     /**
@@ -106,7 +114,7 @@ public class GalaxyOverseerService {
             AiCharacter overseer = pool.get(0);
             overseer.setEmpireName(galaxy.getName());
             overseer.setDescription("Galaxy Overseer for " + galaxy.getName() +
-                    " — oversees the entire AI workforce across all planets in the galaxy.");
+                    " â€” oversees the entire AI workforce across all planets in the galaxy.");
             overseer.setAiAdmin(true);
             overseer = aiCharacterRepository.save(overseer);
             galaxy.setGalaxyOverseerId(overseer.getId());
@@ -122,7 +130,7 @@ public class GalaxyOverseerService {
         overseer.setAiAdmin(true);
         overseer.setCanPromoteToCoServer(true);
         overseer.setDescription("Galaxy Overseer for " + galaxy.getName() +
-                " — oversees the entire AI workforce across all planets in the galaxy.");
+                " â€” oversees the entire AI workforce across all planets in the galaxy.");
         overseer.setHirable(false);
         overseer.setDailySalary(1000);
         overseer = aiCharacterRepository.save(overseer);
@@ -296,13 +304,13 @@ public class GalaxyOverseerService {
 
         if (systemCount == 0) {
             assessment.addFinding(GalaxyAssessment.Severity.CRITICAL,
-                    "No solar systems generated — galaxy is empty. Players cannot join.");
-            assessment.addRecommendation("Generate Earth hub sector immediately — this is the character creation hub.");
+                    "No solar systems generated â€” galaxy is empty. Players cannot join.");
+            assessment.addRecommendation("Generate Earth hub sector immediately â€” this is the character creation hub.");
         } else if (systemCount < expectedMaxSystems / 4) {
             assessment.addFinding(GalaxyAssessment.Severity.HIGH,
                     "Only " + systemCount + " of " + expectedMaxSystems + " expected solar systems generated (" +
                     String.format("%.1f", (double) systemCount / expectedMaxSystems * 100) + "% complete).");
-            assessment.addRecommendation("Continue generating sectors — galaxy is less than 25% complete.");
+            assessment.addRecommendation("Continue generating sectors â€” galaxy is less than 25% complete.");
         } else if (systemCount < expectedMaxSystems) {
             assessment.addFinding(GalaxyAssessment.Severity.MEDIUM,
                     "Galaxy partially generated: " + systemCount + " of " + expectedMaxSystems + " systems (" +
@@ -320,7 +328,7 @@ public class GalaxyOverseerService {
 
         if (workforce.getTotalAiAgents() == 0) {
             assessment.addFinding(GalaxyAssessment.Severity.HIGH,
-                    "No AI agents deployed — galaxy has no workforce.");
+                    "No AI agents deployed â€” galaxy has no workforce.");
             assessment.addRecommendation("Deploy Galaxy Overseer and initial AI agent team.");
         } else if (workforce.isOverstaffed()) {
             assessment.addFinding(GalaxyAssessment.Severity.MEDIUM,
@@ -353,18 +361,18 @@ public class GalaxyOverseerService {
         assessment.setHyperlaneDensity(hyperlaneDensity);
         if (hyperlaneDensity <= 0) {
             assessment.addFinding(GalaxyAssessment.Severity.MEDIUM,
-                    "Hyperlane density is 0 — no travel routes between systems.");
+                    "Hyperlane density is 0 â€” no travel routes between systems.");
             assessment.addRecommendation("Generate hyperlanes to connect solar systems.");
         }
 
         // Check rules database availability
         if (systemRules.getStarTypes() == null || systemRules.getStarTypes().isEmpty()) {
             assessment.addFinding(GalaxyAssessment.Severity.LOW,
-                    "Star type rules not loaded — celestial body generation may use defaults.");
+                    "Star type rules not loaded â€” celestial body generation may use defaults.");
         }
         if (planetRules.getGovernmentTypes() == null || planetRules.getGovernmentTypes().isEmpty()) {
             assessment.addFinding(GalaxyAssessment.Severity.LOW,
-                    "Government type rules not loaded — planet politics may use defaults.");
+                    "Government type rules not loaded â€” planet politics may use defaults.");
         }
 
         // Calculate overall health score (0-100)
@@ -454,7 +462,7 @@ public class GalaxyOverseerService {
         List<String> ordersCreated = new ArrayList<>();
 
         if (assessment.getFindings().isEmpty()) {
-            log.info("Galaxy '{}' is healthy — no work orders needed.", galaxy.getName());
+            log.info("Galaxy '{}' is healthy â€” no work orders needed.", galaxy.getName());
             return ordersCreated;
         }
 
@@ -511,27 +519,93 @@ public class GalaxyOverseerService {
      * Scheduled health check that runs periodically to assess all galaxies
      * and create work orders for any that need attention.
      * <p>
-     * Runs every 5 minutes. Skips galaxies that are fully healthy (health score >= 90).
+     * Runs every 5 minutes. Each galaxy is assessed asynchronously using the
+     * dedicated health check executor, so one galaxy's assessment doesn't block
+     * others. Skips galaxies that are fully healthy (health score >= 90).
      * </p>
      */
     @Scheduled(fixedRate = 300000)
     public void scheduledGalaxyHealthCheck() {
         List<Galaxy> galaxies = galaxyRepository.findAll();
-        int assessed = 0;
-        int ordersCreated = 0;
+        if (galaxies.isEmpty()) {
+            log.debug("No galaxies to assess");
+            return;
+        }
 
-        for (Galaxy galaxy : galaxies) {
+        log.info("Starting async health check for {} galaxies", galaxies.size());
+
+        // Process each galaxy asynchronously using the dedicated health check executor
+        List<CompletableFuture<HealthCheckResult>> futures = galaxies.stream()
+                .map(galaxy -> CompletableFuture.supplyAsync(
+                        () -> assessSingleGalaxy(galaxy),
+                        galaxyHealthCheckExecutor
+                ))
+                .toList();
+
+        // Wait for all assessments to complete and aggregate results
+        CompletableFuture<Void> allFutures = CompletableFuture.allOf(
+                futures.toArray(new CompletableFuture[0])
+        );
+
+        allFutures.thenRun(() -> {
+            int assessed = 0;
+            int ordersCreated = 0;
+            int failed = 0;
+
+            for (CompletableFuture<HealthCheckResult> future : futures) {
+                try {
+                    HealthCheckResult result = future.get();
+                    assessed += result.assessed;
+                    ordersCreated += result.ordersCreated;
+                } catch (Exception e) {
+                    log.warn("Health check assessment failed: {}", e.getMessage());
+                    failed++;
+                }
+            }
+
+            log.info("Async galaxy health check complete: assessed {} galaxies, created {} orders, {} failed",
+                    assessed, ordersCreated, failed);
+        }).exceptionally(ex -> {
+            log.error("Health check aggregation failed: {}", ex.getMessage(), ex);
+            return null;
+        });
+    }
+
+    /**
+     * Assesses a single galaxy and creates work orders if needed.
+     * Runs asynchronously via the galaxyHealthCheckExecutor.
+     */
+    @Async("galaxyHealthCheckExecutor")
+    public HealthCheckResult assessSingleGalaxy(Galaxy galaxy) {
+        try {
             GalaxyAssessment assessment = assessGalaxyNeeds(galaxy);
-            assessed++;
 
             if (assessment.getHealthScore() < 90) {
                 List<String> newOrders = createWorkOrdersForGalaxy(galaxy);
-                ordersCreated += newOrders.size();
+                log.debug("Galaxy '{}' health score: {}, created {} work orders",
+                        galaxy.getName(), assessment.getHealthScore(), newOrders.size());
+                return new HealthCheckResult(1, newOrders.size());
+            } else {
+                log.debug("Galaxy '{}' is healthy (score: {})", galaxy.getName(), assessment.getHealthScore());
+                return new HealthCheckResult(1, 0);
             }
+        } catch (Exception e) {
+            log.warn("Failed to assess galaxy '{}': {}", galaxy.getName(), e.getMessage());
+            throw e;
         }
+    }
 
-        log.info("Scheduled galaxy health check: assessed {} galaxies, created {} orders",
-                assessed, ordersCreated);
+    /**
+     * Simple result holder for async health check operations.
+     */
+    static class HealthCheckResult {
+        final int assessed;
+        final int ordersCreated;
+
+        HealthCheckResult(int assessed, int ordersCreated) {
+            this.assessed = assessed;
+            this.ordersCreated = ordersCreated;
+        }
     }
 
     /**
@@ -680,7 +754,7 @@ public class GalaxyOverseerService {
     }
 
     /**
-     * DTO holding the galaxy assessment result — the AI Overseer's expert evaluation
+     * DTO holding the galaxy assessment result â€” the AI Overseer's expert evaluation
      * of a galaxy's state against the Earth 2026 rules database.
      */
     public static class GalaxyAssessment {
@@ -844,5 +918,43 @@ public class GalaxyOverseerService {
      */
     public void expandColony(String colonyName, double investment) {
         log.info("Expanding colony {} with investment {}", colonyName, investment);
+    }
+
+    /**
+     * Deploys an AI agent to a galaxy.
+     * <p>
+     * Creates a new AI character assigned to the specified galaxy and publishes
+     * an AI_AGENT_DEPLOYED event so the admin dashboard can track the deployment.
+     * </p>
+     *
+     * @param galaxyName the name of the galaxy to deploy to
+     * @param agentName  the name of the AI agent
+     * @param role       the role of the agent (e.g., "Galaxy Overseer", "Planet Overseer")
+     * @return the created AI character
+     */
+    public AiCharacter deployAiAgent(String galaxyName, String agentName, String role) {
+        log.info("Deploying AI agent '{}' (role: {}) to galaxy '{}'", agentName, role, galaxyName);
+
+        Galaxy galaxy = galaxyRepository.findByName(galaxyName)
+                .orElseThrow(() -> new IllegalArgumentException("Galaxy not found: " + galaxyName));
+
+        AiCharacter agent = new AiCharacter();
+        agent.setName(agentName);
+        agent.setRole(role != null ? role : "General");
+        agent.setEmpireName(galaxyName);
+        agent.setActive(true);
+        agent = aiCharacterRepository.save(agent);
+
+        // Publish AI agent deployed event
+        if (galaxyEventService != null) {
+            galaxyEventService.publish(GalaxyEventType.AI_AGENT_DEPLOYED, galaxyName, galaxy.getId(),
+                    "galaxyName", galaxyName,
+                    "agentId", String.valueOf(agent.getId()),
+                    "agentName", agentName,
+                    "role", agent.getRole());
+        }
+
+        log.info("AI agent '{}' deployed to galaxy '{}' with ID {}", agentName, galaxyName, agent.getId());
+        return agent;
     }
 }

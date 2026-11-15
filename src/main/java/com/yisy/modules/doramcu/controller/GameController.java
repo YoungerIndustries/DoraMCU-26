@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -61,6 +62,22 @@ public class GameController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/ship/{shipType}/module-requirements")
+    public ResponseEntity<Map<String, Object>> getShipModuleRequirements(
+            @PathVariable String sessionId,
+            @PathVariable String shipType,
+            Authentication authentication) {
+        log.debug("User {} requesting module requirements for ship type {} in session: {}",
+                authentication.getName(), shipType, sessionId);
+
+        Long playerId = playerIdExtractor.extract(authentication);
+        Map<String, Object> requirements = gameSessionService.getShipModuleRequirements(playerId, sessionId, shipType);
+        if (requirements == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(requirements);
+    }
+
     @PostMapping("/actions/engage-combat")
     public ResponseEntity<GameStateResponse> engageCombat(@PathVariable String sessionId,
                                                           @Valid @RequestBody EngageCombatRequest request,
@@ -106,6 +123,236 @@ public class GameController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok(details);
+    }
+
+    // ---- Transport Endpoints ----
+
+    @GetMapping("/transports")
+    public ResponseEntity<Map<String, Object>> getTransportSummary(@PathVariable String sessionId,
+                                                                    Authentication authentication) {
+        log.debug("User {} requesting transport summary for session: {}", authentication.getName(), sessionId);
+
+        Long playerId = playerIdExtractor.extract(authentication);
+        Map<String, Object> summary = gameSessionService.getTransportSummary(playerId, sessionId);
+        if (summary == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(summary);
+    }
+
+    @PostMapping("/transports/consolidate")
+    public ResponseEntity<Map<String, Object>> consolidateTransports(@PathVariable String sessionId,
+                                                                      Authentication authentication) {
+        log.debug("User {} consolidating transports in session: {}", authentication.getName(), sessionId);
+
+        Long playerId = playerIdExtractor.extract(authentication);
+        Map<String, Object> result = gameSessionService.consolidateTransports(playerId, sessionId);
+        if (result.containsKey("error")) {
+            return ResponseEntity.badRequest().body(result);
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/transports/optimize")
+    public ResponseEntity<Map<String, Object>> optimizeTransports(@PathVariable String sessionId,
+                                                                   Authentication authentication) {
+        log.debug("User {} optimizing transport routes in session: {}", authentication.getName(), sessionId);
+
+        Long playerId = playerIdExtractor.extract(authentication);
+        Map<String, Object> result = gameSessionService.optimizeTransports(playerId, sessionId);
+        if (result.containsKey("error")) {
+            return ResponseEntity.badRequest().body(result);
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/transports/cancel/{orderId}")
+    public ResponseEntity<Map<String, Object>> cancelTransport(@PathVariable String sessionId,
+                                                                @PathVariable int orderId,
+                                                                Authentication authentication) {
+        log.debug("User {} cancelling transport {} in session: {}", authentication.getName(), orderId, sessionId);
+
+        Long playerId = playerIdExtractor.extract(authentication);
+        Map<String, Object> result = gameSessionService.cancelTransport(playerId, sessionId, orderId);
+        if (!((Boolean) result.get("cancelled"))) {
+            return ResponseEntity.badRequest().body(result);
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/economy")
+    public ResponseEntity<Map<String, Object>> getEconomicState(@PathVariable String sessionId,
+                                                                 Authentication authentication) {
+        log.debug("User {} requesting economic state for session: {}", authentication.getName(), sessionId);
+
+        Long playerId = playerIdExtractor.extract(authentication);
+        Map<String, Object> summary = gameSessionService.getEconomicState(playerId, sessionId);
+        if (summary == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(summary);
+    }
+
+    // ---- Market Board Endpoints ----
+
+    @GetMapping("/market")
+    public ResponseEntity<Map<String, Object>> getMarketBoard(@PathVariable String sessionId,
+                                                               Authentication authentication) {
+        log.debug("User {} requesting market board for session: {}", authentication.getName(), sessionId);
+
+        Long playerId = playerIdExtractor.extract(authentication);
+        Map<String, Object> summary = gameSessionService.getMarketBoard(playerId, sessionId);
+        if (summary == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(summary);
+    }
+
+    @PostMapping("/market/listing")
+    public ResponseEntity<Map<String, Object>> createTradeListing(@PathVariable String sessionId,
+                                                                    @RequestParam String type,
+                                                                    @RequestParam String commodity,
+                                                                    @RequestParam int units,
+                                                                    @RequestParam int pricePerUnit,
+                                                                    @RequestParam(defaultValue = "5") int turnsToLive,
+                                                                    Authentication authentication) {
+        log.debug("User {} creating trade listing in session: {}", authentication.getName(), sessionId);
+
+        Long playerId = playerIdExtractor.extract(authentication);
+        Map<String, Object> result = gameSessionService.createTradeListing(
+                playerId, sessionId, type, commodity, units, pricePerUnit, turnsToLive);
+        if (result.containsKey("error")) {
+            return ResponseEntity.badRequest().body(result);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
+    @DeleteMapping("/market/listing/{listingId}")
+    public ResponseEntity<Map<String, Object>> cancelTradeListing(@PathVariable String sessionId,
+                                                                    @PathVariable int listingId,
+                                                                    Authentication authentication) {
+        log.debug("User {} cancelling trade listing {} in session: {}", authentication.getName(), listingId, sessionId);
+
+        Long playerId = playerIdExtractor.extract(authentication);
+        Map<String, Object> result = gameSessionService.cancelTradeListing(playerId, sessionId, listingId);
+        if (!((Boolean) result.get("cancelled"))) {
+            return ResponseEntity.badRequest().body(result);
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    // ---- Technology Endpoints ----
+
+    @GetMapping("/technology")
+    public ResponseEntity<Map<String, Object>> getTechnologyTree(@PathVariable String sessionId,
+                                                                   Authentication authentication) {
+        log.debug("User {} requesting technology tree for session: {}", authentication.getName(), sessionId);
+
+        Long playerId = playerIdExtractor.extract(authentication);
+        Map<String, Object> summary = gameSessionService.getTechnologyTree(playerId, sessionId);
+        if (summary == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(summary);
+    }
+
+    @PostMapping("/research/{technology}")
+    public ResponseEntity<Map<String, Object>> researchTechnology(@PathVariable String sessionId,
+                                                                    @PathVariable String technology,
+                                                                    Authentication authentication) {
+        log.debug("User {} researching {} in session: {}", authentication.getName(), technology, sessionId);
+
+        Long playerId = playerIdExtractor.extract(authentication);
+        Map<String, Object> result = gameSessionService.researchTechnology(playerId, sessionId, technology);
+        if (result.containsKey("error") && !(Boolean) result.get("success")) {
+            return ResponseEntity.badRequest().body(result);
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    // ---- Recipe Endpoints ----
+
+    @GetMapping("/recipes")
+    public ResponseEntity<Map<String, Object>> getRecipes(@PathVariable String sessionId,
+                                                           Authentication authentication) {
+        log.debug("User {} requesting recipes for session: {}", authentication.getName(), sessionId);
+
+        Long playerId = playerIdExtractor.extract(authentication);
+        Map<String, Object> recipes = gameSessionService.getRecipes(playerId, sessionId);
+        if (recipes == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(recipes);
+    }
+
+    // ---- Tax Endpoints ----
+
+    @GetMapping("/tax")
+    public ResponseEntity<Map<String, Object>> getTaxSummary(@PathVariable String sessionId,
+                                                               Authentication authentication) {
+        log.debug("User {} requesting tax summary for session: {}", authentication.getName(), sessionId);
+
+        Long playerId = playerIdExtractor.extract(authentication);
+        Map<String, Object> summary = gameSessionService.getTaxSummary(playerId, sessionId);
+        if (summary == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(summary);
+    }
+
+    @PutMapping("/tax/policy/{policy}")
+    public ResponseEntity<Map<String, Object>> setTaxPolicy(@PathVariable String sessionId,
+                                                             @PathVariable String policy,
+                                                             Authentication authentication) {
+        log.debug("User {} setting tax policy {} for session: {}", authentication.getName(), policy, sessionId);
+
+        Long playerId = playerIdExtractor.extract(authentication);
+        Map<String, Object> result = gameSessionService.setTaxPolicy(playerId, sessionId, policy);
+        if (result.containsKey("error") && !(Boolean) result.get("success")) {
+            return ResponseEntity.badRequest().body(result);
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    // ---- Economic Dashboard Endpoints ----
+
+    @GetMapping("/economy/dashboard")
+    public ResponseEntity<Map<String, Object>> getEconomicDashboard(@PathVariable String sessionId,
+                                                                     Authentication authentication) {
+        log.debug("User {} requesting economic dashboard for session: {}", authentication.getName(), sessionId);
+
+        Long playerId = playerIdExtractor.extract(authentication);
+        Map<String, Object> dashboard = gameSessionService.getEconomicDashboard(playerId, sessionId);
+        if (dashboard == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(dashboard);
+    }
+
+    @GetMapping("/economy/trade")
+    public ResponseEntity<TradeSummaryDto> getTradeSummary(@PathVariable String sessionId,
+                                                            Authentication authentication) {
+        log.debug("User {} requesting trade summary for session: {}", authentication.getName(), sessionId);
+
+        Long playerId = playerIdExtractor.extract(authentication);
+        TradeSummaryDto summary = gameSessionService.getTradeSummary(playerId, sessionId);
+        if (summary == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(summary);
+    }
+
+    @GetMapping("/economy/income")
+    public ResponseEntity<IncomeProjectionDto> getIncomeProjection(@PathVariable String sessionId,
+                                                                    Authentication authentication) {
+        log.debug("User {} requesting income projection for session: {}", authentication.getName(), sessionId);
+
+        Long playerId = playerIdExtractor.extract(authentication);
+        IncomeProjectionDto projection = gameSessionService.getIncomeProjection(playerId, sessionId);
+        if (projection == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(projection);
     }
 
     // ---- New Empire Action Endpoints ----

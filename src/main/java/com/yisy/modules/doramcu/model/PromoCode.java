@@ -40,7 +40,11 @@ public class PromoCode {
         /** Player registration promo codes — entered on the landing page */
         PLAYER,
         /** Admin action promo codes — used via the admin API to trigger system operations */
-        ADMIN
+        ADMIN,
+        /** Corporation codes — validate to navigate directly to the player's corporation screen */
+        CORPORATION,
+        /** Character codes — validate to land directly on Earth with the associated character */
+        CHARACTER
     }
 
     @Id
@@ -99,6 +103,24 @@ public class PromoCode {
      */
     @Column(length = 1000)
     private String bonuses;
+
+    /**
+     * For PLAYER codes: the ID of the associated player record.
+     */
+    @Column
+    private Long playerId;
+
+    /**
+     * For CORPORATION codes: the ID of the associated corporation (player) record.
+     */
+    @Column
+    private Long corporationId;
+
+    /**
+     * For CHARACTER codes: the ID of the associated Earth 2026 character.
+     */
+    @Column
+    private Long characterId;
 
     public Long getId() {
         return id;
@@ -170,6 +192,30 @@ public class PromoCode {
 
     public void setBonuses(String bonuses) {
         this.bonuses = bonuses;
+    }
+
+    public Long getCorporationId() {
+        return corporationId;
+    }
+
+    public void setCorporationId(Long corporationId) {
+        this.corporationId = corporationId;
+    }
+
+    public Long getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(Long playerId) {
+        this.playerId = playerId;
+    }
+
+    public Long getCharacterId() {
+        return characterId;
+    }
+
+    public void setCharacterId(Long characterId) {
+        this.characterId = characterId;
     }
 
     /**

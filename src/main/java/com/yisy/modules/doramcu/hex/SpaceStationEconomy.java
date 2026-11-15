@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.hex;
 
+import com.yisy.modules.doramcu.hex.manager.EconomicState;
+
 import java.util.Set;
 
 /**
@@ -322,6 +324,7 @@ public class SpaceStationEconomy {
      * <p>
      * If the station is destroyed, no resources are produced and no upkeep is consumed.
      * If modules are insufficient for upkeep, the station's hull degrades.
+     * Station income is also added to the EconomicState if available.
      * </p>
      *
      * @param pipeline the resource pipeline manager for the station's owner
@@ -361,6 +364,33 @@ public class SpaceStationEconomy {
         java.util.Map<RefinedResourceType, Integer> refinedProduction = getRefinedResourceProductionPerTurn();
         for (java.util.Map.Entry<RefinedResourceType, Integer> entry : refinedProduction.entrySet()) {
             pipeline.getRefinedStorage().add(entry.getKey(), entry.getValue());
+        }
+
+        return upkeepPaid;
+    }
+
+    /**
+     * Processes one turn of station economy with EconomicState integration.
+     * <p>
+     * Like {@link #processTurn(ResourcePipelineManager)} but also feeds station
+     * income into the provided EconomicState for unified tracking.
+     * </p>
+     *
+     * @param pipeline the resource pipeline manager for the station's owner
+     * @param economicState the economic state to feed income into (may be null)
+     * @return true if upkeep was successfully paid
+     */
+    public boolean processTurn(ResourcePipelineManager pipeline, EconomicState economicState) {
+        boolean upkeepPaid = processTurn(pipeline);
+
+        // Feed station income into EconomicState
+        if (economicState != null && !station.isDestroyed()) {
+            int income = getIncome();
+            int upkeep = getUpkeepCost();
+            economicState.addCredits(EconomicState.IncomeSource.STATION, income);
+            if (upkeep > 0) {
+                economicState.spendCredits(EconomicState.IncomeSource.STATION, upkeep);
+            }
         }
 
         return upkeepPaid;

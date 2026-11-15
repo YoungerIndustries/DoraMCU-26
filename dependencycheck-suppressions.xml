@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <!-- Suppress known false positives for DL4J native dependencies -->
+    <suppress>
+        <notes><![CDATA[
+            DL4J native libraries use bundled native code that triggers false positives.
+            These are official releases from eclipse.org/deeplearning4j.
+        ]]></notes>
+        <gav regex="true">org\.nd4j:.*</gav>
+        <vulnerabilityName regex="true">.*</vulnerabilityName>
+        <confidenceBelow>HIGH</confidenceBelow>
+    </suppress>
+</suppressions>

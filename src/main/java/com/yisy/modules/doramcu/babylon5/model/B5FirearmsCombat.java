@@ -286,7 +286,7 @@ public class B5FirearmsCombat {
         while (isActive && currentRound < MAX_ROUNDS) {
             resolveRound();
         }
-        if (isActive && currentRound >= MAX_ROUNDS) {
+        if (isActive) {
             outcome = CombatOutcome.DRAW;
             isActive = false;
             combatLog.add("Combat ended: Draw (max rounds reached)");

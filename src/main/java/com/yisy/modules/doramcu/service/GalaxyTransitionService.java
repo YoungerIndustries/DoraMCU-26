@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.earth2026.model.Earth2026Character;
 import com.yisy.modules.doramcu.earth2026.service.Earth2026Service;
@@ -12,10 +13,9 @@ import com.yisy.modules.doramcu.model.CharacterRole;
 import com.yisy.modules.doramcu.repository.PlayerCharacterRegistryRepository;
 import com.yisy.modules.doramcu.repository.PlayerRepository;
 import com.yisy.modules.doramcu.repository.UserRepository;
-import com.yisy.modules.doramcu.unified.GameType;
+import com.yisy.modules.doramcu.gamecore.GameType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -138,9 +138,9 @@ public class GalaxyTransitionService {
      */
     public Map<String, String> getAvailableGalaxies() {
         return Map.of(
-                GalaxyFactory.GAME_GALAXY_NAME, "Game Galaxy — Human interstellar civilization, 4X empire strategy with the Interstellar Alliance (DoraMCU 4X plugin)",
-                GalaxyFactory.VOID_GALAXY_NAME, "The Void — Alien frontier, uncharted territory beyond human space (Traveler plugin)",
-                GalaxyFactory.TEST_GALAXY_NAME, "Test Galaxy — Small galaxy for model development and testing (DoraMCU 4X plugin)"
+                GalaxyFactory.GAME_GALAXY_NAME, "Game Galaxy â€” Human interstellar civilization, 4X empire strategy with the Interstellar Alliance (DoraMCU 4X plugin)",
+                GalaxyFactory.VOID_GALAXY_NAME, "The Void â€” Alien frontier, uncharted territory beyond human space (Traveler plugin)",
+                GalaxyFactory.TEST_GALAXY_NAME, "Test Galaxy â€” Small galaxy for model development and testing (DoraMCU 4X plugin)"
         );
     }
 

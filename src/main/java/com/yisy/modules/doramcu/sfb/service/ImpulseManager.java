@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.sfb.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.sfb.model.SfbShip;
 
@@ -13,6 +14,7 @@ import java.util.*;
  * Speed 32 moves 31 hexes/turn, speed 16 moves 15 hexes/turn, speed 8 moves 4 hexes/turn.
  * </p>
  */
+@Service
 public class ImpulseManager {
 
     // Pre-computed movement chart: speed -> list of impulses when that speed moves

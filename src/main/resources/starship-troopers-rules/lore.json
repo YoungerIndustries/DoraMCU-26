@@ -1,0 +1,305 @@
+{
+  "lore": {
+    "universe": {
+      "title": "Starship Troopers Universe",
+      "description": "The Starship Troopers universe is set in a future where humanity has expanded across the stars and faces existential threats from alien species, primarily the Arachnids (bugs). Society is organized around the Federated Suns, a militaristic democracy where citizenship is earned through Federal Service.",
+      "source_material": [
+        "Starship Troopers novel by Robert A. Heinlein (1959)",
+        "Starship Troopers film by Paul Verhoeven (1997)",
+        "Starship Troopers: Invasion (2012)",
+        "Starship Troopers: Traitor of Mars (2017)",
+        "Starship Troopers: Extermination game (2022)"
+      ]
+    },
+    "federated_suns": {
+      "description": "The Federated Suns is the governing body of human civilization, a constitutional republic where full citizenship and voting rights are granted only after completion of Federal Service (military, civil service, or teaching).",
+      "government": {
+        "type": "Constitutional Republic",
+        "citizenship": "Earned through Federal Service - military, civil service, or teaching in dangerous or remote areas",
+        "branches": {
+          "executive": "President of the Federated Suns, elected by citizen-voters",
+          "legislative": "Congress of the Federated Suns, representing citizen districts",
+          "judicial": "Federal Courts interpreting the Constitution"
+        },
+        "philosophy": "The central philosophical theme of the universe: only those who have served their fellow citizens deserve the right to govern them. 'Only bootstraps can correct the spine!'"
+      },
+      "military_branches": {
+        "mobile_infantry": {
+          "description": "The elite ground combat force of the Federated Suns. Mobile Infantry soldiers use powered armor with jump packs for rapid deployment and fold-space jumps between star systems.",
+          "full_name": "Mobile Infantry (MI)",
+          "motto": "This message was sent by Mobile Infantry",
+          "equipment": {
+            "powered_armor": "Full-body powered armor suit with enhanced strength, protection, and mobility",
+            "jump_pack": "Rocket-powered jump pack enabling short-range aerial movement and planetary insertion",
+            "plasma_rifle": "Standard issue plasma rifle capable of penetrating Arachnid exoskeletons",
+            "communications": "Integrated comms system for squad coordination"
+          },
+          "organization": {
+            "squad": "9 soldiers led by a corporal",
+            "platoon": "3 squads plus platoon leader",
+            "company": "4 platoons",
+            "battalion": "3-4 companies",
+            "regiment": "3-4 battalions"
+          },
+          "notable_units": [
+            "Rasczak's Roughnecks - 3rd Platoon, led by Sergeant Zim Rasczak",
+            "Johnny Rico's unit - Rose's company",
+            "Carmen's Fleet unit - Federal Fleet operations"
+          ]
+        },
+        "federal_fleet": {
+          "description": "Space-based military force responsible for fold-space transport, orbital support, and fleet combat.",
+          "roles": [
+            "Fold-space transport of Mobile Infantry between star systems",
+            "Orbital bombardment and fire support",
+            "Fleet combat against alien threats",
+            "Planetary defense and blockade"
+          ]
+        },
+        "federal_cavalry": {
+          "description": "Armored ground forces operating tanks and mechanized vehicles on planetary surfaces.",
+          "roles": [
+            "Planetary ground assault with armored vehicles",
+            "Mobile fire support for infantry operations",
+            "Territorial defense and patrol"
+          ]
+        },
+        "federal_reserve": {
+          "description": "Training and reserve forces for new recruits and backup units.",
+          "roles": [
+            "Basic training of new recruits",
+            "Reserve forces for emergency mobilization",
+            "Support and logistics"
+          ]
+        }
+      }
+    },
+    "arachnids": {
+      "description": "Also known as 'bugs', Arachnids are an alien species native to Klendathu and other planets in their hive empire. They are a hive-minded species with a caste system and no individual consciousness outside the hive.",
+      "homeworld": "Klendathu",
+      "society": {
+        "type": "Hive mind with caste system",
+        "castes": {
+          "warrior": {
+            "description": "Primary combat caste, equipped with acid spray and powerful mandibles. Most common bug encountered in combat.",
+            "size": "Human-sized to slightly larger",
+            "weapons": ["Acid spray", "Mandibles", "Claws"],
+            "tactics": "Swarm attacks, tunnel warfare, ambush from underground"
+          },
+          "cavalry": {
+            "description": "Larger, faster warriors capable of leaping great distances. More dangerous than standard warriors.",
+            "size": "2-3 times human height",
+            "weapons": ["Acid spray", "Powerful leap attack", "Mandibles"],
+            "tactics": "Long-range leap attacks, flanking maneuvers"
+          },
+          "tanker": {
+            "description": "Massive armored units that serve as mobile artillery platforms. Extremely dangerous at long range.",
+            "size": "Building-sized",
+            "weapons": ["Plasma-like energy beams", "Long-range bombardment"],
+            "tactics": "Long-range artillery support, area denial",
+            "note": "Introduced in Starship Troopers: Extermination (2022)"
+          },
+          "commander": {
+            "description": "Intelligent leaders that coordinate Arachnid forces. Can direct multiple castes and adapt tactics.",
+            "size": "Larger than warriors",
+            "weapons": ["Acid spray", "Tactical coordination"],
+            "tactics": "Directing swarm tactics, adapting to enemy strategies"
+          },
+          "plasma": {
+            "description": "Space-capable Arachnids that can project plasma energy in vacuum. Threaten human space operations.",
+            "size": "Variable",
+            "weapons": ["Plasma energy projection"],
+            "tactics": "Space combat, orbital attacks"
+          },
+          "brain_bug": {
+            "description": "The hive mind itself - the central intelligence controlling all Arachnid activity. Destroying the Brain Bug can cause entire colonies to fall into disarray.",
+            "size": "Massive, immobile",
+            "weapons": ["Psychic control of hive", "Spawning new castes"],
+            "tactics": "Central command and control, reproduction",
+            "importance": "Primary strategic objective - destroying the Brain Bug is the key to winning the war"
+          },
+          "worker": {
+            "description": "Labor caste responsible for tunnel construction, resource gathering, and maintaining the hive infrastructure.",
+            "size": "Small to medium",
+            "weapons": ["None significant"],
+            "tactics": "Tunnel construction, hive maintenance"
+          },
+          "frost": {
+            "description": "Cold-adapted Arachnid variants found in frozen biomes. Specialized for cold-weather combat.",
+            "size": "Variable",
+            "weapons": ["Cold-adapted acid spray", "Camouflage in snow"],
+            "tactics": "Ambush in cold environments, ice tunnel warfare",
+            "note": "Introduced in Starship Troopers: Extermination Frost biome (2022)"
+          }
+        }
+      },
+      "abilities": {
+        "tunnel_network": "Extensive underground tunnel systems allow rapid movement and surprise attacks",
+        "acid_spray": "Corrosive acid that can penetrate armor and burn through materials",
+        "hive_mind": "Shared consciousness enables perfect coordination without communication delays",
+        "regeneration": "Some castes can regenerate lost limbs or repair damage",
+        "swarm_tactics": "Overwhelming numbers and coordinated attacks"
+      }
+    },
+    "technologies": {
+      "fold_space": {
+        "description": "Fold space technology enables instantaneous travel across interstellar distances by folding space-time. This is the cornerstone of human military and civilian space travel.",
+        "mechanics": {
+          "fold_jump": {
+            "description": "Instantaneous jump from one point in space to another via fold space",
+            "requirements": [
+              "Fold space generator on ship",
+              "Precise coordinates of destination",
+              "Sufficient power reserves"
+            ],
+            "risks": [
+              "Navigation errors can strand ships in deep space",
+              "Enemy interference can disrupt fold jumps",
+              "Arachnid plasma bugs can threaten ships during fold preparation"
+            ],
+            "game_mechanic": {
+              "description": "Mobile Infantry units can fold jump to planetary surfaces for rapid deployment",
+              "cooldown_turns": 2,
+              "accuracy": "90 percent chance of accurate deployment",
+              "failure_effect": "Units deploy 2-4 hexes from target location"
+            }
+          },
+          "fold_rifle": {
+            "description": "Experimental weapon that uses fold space principles to bypass armor and deal direct damage to targets",
+            "game_mechanic": {
+              "damage": "Ignores armor, deals direct damage to unit",
+              "range": "Short range, limited ammunition",
+              "rarity": "Rare special weapon"
+            }
+          }
+        }
+      },
+      "powered_armor": {
+        "description": "Advanced powered armor suits worn by Mobile Infantry, providing enhanced strength, protection, and mobility.",
+        "features": [
+          "Enhanced physical strength (10x human baseline)",
+          "Ballistic and energy protection",
+          "Integrated life support for vacuum operations",
+          "Jump pack for aerial mobility",
+          "Targeting and communications systems",
+          "Weapon mounts for plasma rifles and support weapons"
+        ]
+      },
+      "gravity_projection": {
+        "description": "Technology that manipulates gravitational fields for various purposes including ship propulsion and weapon systems.",
+        "applications": [
+          "Ship propulsion and maneuvering",
+          "Planetary terraforming",
+          "Weapon systems that manipulate gravity to crush targets"
+        ]
+      },
+      "nuclear_weapons": {
+        "description": "Nuclear demolition munitions used for area denial and destroying Arachnid hives. Last resort due to collateral damage.",
+        "types": [
+          "Nuclear bombs for orbital bombardment",
+          "Portable nuclear demolition charges for ground use",
+          "Nuclear missiles for long-range strikes"
+        ],
+        "restrictions": "Use restricted by rules of engagement due to collateral damage risk"
+      }
+    },
+    "key_battles": [
+      {
+        "name": "Battle of Klendathu",
+        "description": "The first major human assault on the Arachnid homeworld. A devastating defeat for humanity, with massive casualties and no strategic gain. The 'Bug Hunt' became a symbol of the futility of conventional warfare against the Arachnids.",
+        "outcome": "Tactical failure, strategic lesson learned",
+        "significance": "Taught humanity that brute force alone cannot defeat the Arachnids"
+      },
+      {
+        "name": "Battle of Buenos Aires",
+        "description": "First Arachnid attack on Earth, demonstrating the bugs' capability to strike human homeworld. The plasma bug threat was first revealed.",
+        "outcome": "Human victory, but at great cost",
+        "significance": "Proved Earth was vulnerable, accelerated military expansion"
+      },
+      {
+        "name": "Battle of Wyeworld",
+        "description": "Mobile Infantry operation to destroy an Arachnid Brain Bug on Wyeworld. A successful mission that demonstrated the effectiveness of targeting the hive mind.",
+        "outcome": "Human victory",
+        "significance": "Proved that destroying Brain Bugs is the key to winning the war"
+      },
+      {
+        "name": "Battle of Metal",
+        "description": "Assault on an Arachnid colony world with industrial capabilities. Revealed that Arachnids can adapt and evolve new castes.",
+        "outcome": "Pyrrhic victory",
+        "significance": "Revealed Arachnid adaptability and evolution"
+      }
+    ],
+    "philosophical_themes": {
+      "citizenship_through_service": "Only those who have served their fellow citizens deserve the right to vote and hold office",
+      "military_as_civilizing_force": "The military is the backbone of civilization and the path to true adulthood",
+      "war_as_necessity": "War is inevitable in a universe with hostile aliens; peace is maintained through strength",
+      "individual_vs_collective": "Human individuality contrasts with Arachnid hive mind - a central theme of the conflict",
+      "brain_trust": "The collective intelligence of all citizens, accessible through neural implants, represents the pinnacle of human cooperation"
+    },
+    "notable_characters": [
+      {
+        "name": "Johnny Rico",
+        "role": "Protagonist - Mobile Infantry recruit who rises through the ranks",
+        "arc": "From privileged youth to seasoned soldier and officer"
+      },
+      {
+        "name": "Sergeant Zim Rasczak",
+        "role": "Platoon leader of Rasczak's Roughnecks",
+        "quote": "Welcome to the Meat Grinder",
+        "fate": "Killed in action during the Battle of Wyeworld"
+      },
+      {
+        "name": "Carolina 'Carmen' Ibanez",
+        "role": "Rico's love interest - Federal Fleet pilot",
+        "arc": "From academy cadet to fleet officer"
+      },
+      {
+        "name": "Dizzy Flores",
+        "role": "Mobile Infantry soldier and Rico's friend",
+        "fate": "Killed in action during the Battle of Klendathu"
+      },
+      {
+        "name": "President Juan R. Peron",
+        "role": "President of the Federated Suns",
+        "role_description": "Leader of human civilization during the Arachnid war"
+      }
+    ],
+    "planets": [
+      {
+        "name": "Earth",
+        "description": "Humanity's homeworld and capital of the Federated Suns. Target of Arachnid attacks.",
+        "status": "Heavily defended, capital world"
+      },
+      {
+        "name": "Klendathu",
+        "description": "Arachnid homeworld. Site of the first major human assault and devastating defeat.",
+        "status": "Arachnid-controlled, primary strategic target"
+      },
+      {
+        "name": "Buenos Aires",
+        "description": "Former human colony on Earth, site of first Arachnid attack on the homeworld.",
+        "status": "Damaged but recovered"
+      },
+      {
+        "name": "Wye",
+        "description": "Colony world with an Arachnid Brain Bug. Site of successful Mobile Infantry operation.",
+        "status": "Liberated"
+      },
+      {
+        "name": "Metal",
+        "description": "Colony world with Arachnid industrial capabilities.",
+        "status": "Contested"
+      },
+      {
+        "name": "Mars",
+        "description": "Human colony and training world. Site of Mobile Infantry training facilities.",
+        "status": "Human-controlled, military training center"
+      },
+      {
+        "name": "Isperia",
+        "description": "Human colony world, site of training exercises and deployments.",
+        "status": "Human-controlled"
+      }
+    ]
+  }
+}

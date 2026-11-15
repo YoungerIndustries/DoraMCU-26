@@ -84,4 +84,21 @@ public class GameSessionController {
         List<Map<String, Object>> sessions = gameSessionService.listSessions();
         return ResponseEntity.ok(sessions);
     }
+
+    @GetMapping("/persisted")
+    public ResponseEntity<List<Map<String, Object>>> listPersistedSessions() {
+        List<Map<String, Object>> sessions = gameSessionService.listPersistedSessions();
+        return ResponseEntity.ok(sessions);
+    }
+
+    @PostMapping("/persisted/{sessionId}/restore")
+    public ResponseEntity<Map<String, Object>> restoreSession(@PathVariable String sessionId) {
+        boolean restored = gameSessionService.restoreSession(sessionId);
+        if (restored) {
+            return ResponseEntity.ok(Map.of("success", true, "sessionId", sessionId));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "error", "Session not found or no saved state"));
+        }
+    }
 }

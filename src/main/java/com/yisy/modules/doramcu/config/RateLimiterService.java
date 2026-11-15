@@ -64,33 +64,25 @@ public class RateLimiterService {
         long windowStart = now - (windowSeconds * 1000L);
 
         // Ensure the key exists in the cache for TTL-based eviction
-        cache.get(key, k -> null);
+        // (result intentionally ignored — only ensures key presence for TTL eviction)
+        @SuppressWarnings("unused")
+        Object dummy = cache.get(key, k -> null);
 
         WindowCounter counter = counters.get(key);
         if (counter == null || counter.windowStart < windowStart) {
             // Window expired or first request — reset counter
-            WindowCounter newCounter = new WindowCounter(now, 1);
-            WindowCounter existing = counters.putIfAbsent(key, newCounter);
-            if (existing != null && existing.windowStart >= windowStart) {
-                // Another thread won the race and the window is still valid
-                int newCount = existing.count.incrementAndGet();
-                if (newCount > maxRequests) {
-                    existing.count.decrementAndGet();
-                    log.warn("Rate limit exceeded for key: {} ({} requests in {} seconds)", key, newCount - 1, windowSeconds);
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            // Window still valid — increment atomically
-            int newCount = counter.count.incrementAndGet();
-            if (newCount > maxRequests) {
-                counter.count.decrementAndGet();
-                log.warn("Rate limit exceeded for key: {} ({} requests in {} seconds)", key, newCount - 1, windowSeconds);
-                return false;
-            }
-            return true;
+            WindowCounter newCounter = new WindowCounter(now, 0);
+            counter = counters.putIfAbsent(key, newCounter);
+            if (counter == null) counter = newCounter;
         }
+        // Increment atomically and check rate limit
+        int newCount = counter.count.incrementAndGet();
+        if (newCount > maxRequests) {
+            counter.count.decrementAndGet();
+            log.warn("Rate limit exceeded for key: {} ({} requests in {} seconds)", key, newCount - 1, windowSeconds);
+            return false;
+        }
+        return true;
     }
 
     public int getGeneralRequestsPerMinute() {

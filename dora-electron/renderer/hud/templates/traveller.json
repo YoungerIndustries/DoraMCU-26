@@ -1,0 +1,191 @@
+{
+    "id": "traveller",
+    "name": "Classic Traveller",
+    "icon": "🚀",
+    "gameModule": "traveller",
+
+    "layout": {
+        "leftPanelWidth": 300,
+        "rightPanelWidth": 320,
+        "leftSplitRatio": 0.4,
+        "rightSplitRatio": 0.5
+    },
+
+    "theme": {
+        "cssVariables": {
+            "--hud-accent-primary": "#d97706",
+            "--hud-accent-secondary": "#b45309",
+            "--hud-accent-glow": "rgba(217, 119, 6, 0.15)"
+        },
+        "fontFamily": "'Segoe UI', system-ui, -apple-system, sans-serif",
+        "panelBackground": "#1c1917",
+        "accentColor": "#d97706",
+        "borderColor": "#44403c",
+        "fontColor": "#e7e5e4"
+    },
+
+    "panels": {
+        "info": {
+            "visible": true,
+            "title": "Character Sheet",
+            "components": [
+                {
+                    "type": "selector",
+                    "label": "Select Character...",
+                    "dataBinding": "character-select"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Hit Points",
+                    "dataBinding": "hit-points"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Wealth",
+                    "dataBinding": "wealth"
+                }
+            ]
+        },
+        "prompt": {
+            "visible": true,
+            "title": "Career & Adventure",
+            "components": [
+                {
+                    "type": "narrative-text",
+                    "label": "Select a character to begin your career...",
+                    "dataBinding": "career-narrative"
+                }
+            ]
+        },
+        "responses": {
+            "visible": true,
+            "title": "Actions",
+            "components": [
+                {
+                    "type": "action-button",
+                    "icon": "⚔️",
+                    "label": "Soldier",
+                    "hint": "Serve in the military",
+                    "dataBinding": "career-soldier"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🔭",
+                    "label": "Explorer",
+                    "hint": "Explore new worlds",
+                    "dataBinding": "career-explorer"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🔫",
+                    "label": "Gunner",
+                    "hint": "Ship combat training",
+                    "dataBinding": "career-gunner"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "✈️",
+                    "label": "Pilot",
+                    "hint": "Space and atmospheric flight",
+                    "dataBinding": "career-pilot"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "💰",
+                    "label": "Merchant",
+                    "hint": "Trade and commerce",
+                    "dataBinding": "career-merchant"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🗺️",
+                    "label": "Scout",
+                    "hint": "Sector exploration",
+                    "dataBinding": "career-scout"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🕵️",
+                    "label": "Spy",
+                    "hint": "Intelligence and covert ops",
+                    "dataBinding": "career-spy"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "👑",
+                    "label": "Noble",
+                    "hint": "Political service",
+                    "dataBinding": "career-noble"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🔫",
+                    "label": "Firearms Combat",
+                    "hint": "Engage in firearms combat",
+                    "dataBinding": "action-firearms"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🗡️",
+                    "label": "Melee Combat",
+                    "hint": "Engage in melee combat",
+                    "dataBinding": "action-melee"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🧠",
+                    "label": "Psionic Detect",
+                    "hint": "Detect psionic activity",
+                    "dataBinding": "action-psionic-detect"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "⚡",
+                    "label": "Psionic Power",
+                    "hint": "Attempt psionic power check",
+                    "dataBinding": "action-psionic-power"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🎲",
+                    "label": "Roll 2D6",
+                    "hint": "Roll 2D6 for any check",
+                    "dataBinding": "action-roll-2d6"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🏳️",
+                    "label": "Retire",
+                    "hint": "Retire from career service",
+                    "dataBinding": "action-retire"
+                }
+            ]
+        },
+        "actions": {
+            "visible": true,
+            "title": "Event Log",
+            "components": [
+                {
+                    "type": "dice-roller",
+                    "dataBinding": "dice-results"
+                },
+                {
+                    "type": "event-log",
+                    "dataBinding": "event-log"
+                },
+                {
+                    "type": "chat-input",
+                    "label": "Type a message...",
+                    "dataBinding": "chat-input"
+                }
+            ]
+        }
+    },
+
+    "view3D": {
+        "renderer": "threejs",
+        "cameraMode": "third-person",
+        "showCrosshair": false,
+        "showMinimap": false
+    }
+}

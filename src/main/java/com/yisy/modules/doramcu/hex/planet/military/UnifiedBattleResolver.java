@@ -60,7 +60,7 @@ public class UnifiedBattleResolver {
         final int hexX, hexY, hexZ;
         final TerrainType terrain;
 
-        BattleRequest(String attackerFaction, String defenderFaction,
+        public BattleRequest(String attackerFaction, String defenderFaction,
                       List<ThirdReichGroundUnit> attackerUnits,
                       List<ThirdReichGroundUnit> defenderUnits,
                       BattleType battleType, int hexX, int hexY, int hexZ,
@@ -81,15 +81,15 @@ public class UnifiedBattleResolver {
      * Record of a completed battle.
      */
     public static class BattleRecord {
-        final String battleId;
-        final BattleType battleType;
-        final String attackerFaction;
-        final String defenderFaction;
-        final ThirdReichBattleResult.Outcome outcome;
-        final int attackerCasualties;
-        final int defenderCasualties;
-        final int rounds;
-        final long timestamp;
+        private final String battleId;
+        private final BattleType battleType;
+        private final String attackerFaction;
+        private final String defenderFaction;
+        private final ThirdReichBattleResult.Outcome outcome;
+        private final int attackerCasualties;
+        private final int defenderCasualties;
+        private final int rounds;
+        private final long timestamp;
 
         BattleRecord(String battleId, BattleType battleType,
                      String attackerFaction, String defenderFaction,
@@ -106,6 +106,16 @@ public class UnifiedBattleResolver {
             this.rounds = rounds;
             this.timestamp = timestamp;
         }
+
+        public String getBattleId() { return battleId; }
+        public BattleType getBattleType() { return battleType; }
+        public String getAttackerFaction() { return attackerFaction; }
+        public String getDefenderFaction() { return defenderFaction; }
+        public ThirdReichBattleResult.Outcome getOutcome() { return outcome; }
+        public int getAttackerCasualties() { return attackerCasualties; }
+        public int getDefenderCasualties() { return defenderCasualties; }
+        public int getRounds() { return rounds; }
+        public long getTimestamp() { return timestamp; }
     }
 
     /**
@@ -189,34 +199,31 @@ public class UnifiedBattleResolver {
      * Create a terrain context from planet terrain and battle type.
      */
     private TerrainContext createTerrainContext(TerrainType terrain, BattleType battleType) {
-        TerrainContext.TerrainType trTerrain;
+        com.yisy.modules.doramcu.thirdreich.domain.TerrainType trTerrain;
 
         // Map planet terrain to 3rd Reich terrain
         if (battleType == BattleType.NAVAL) {
-            trTerrain = TerrainContext.TerrainType.WATER;
+            trTerrain = com.yisy.modules.doramcu.thirdreich.domain.TerrainType.SWAMP;
         } else if (battleType == BattleType.SPACE) {
-            trTerrain = TerrainContext.TerrainType.OPEN;
+            trTerrain = com.yisy.modules.doramcu.thirdreich.domain.TerrainType.PLAINS;
         } else {
             // Ground battle — map planet terrain
             switch (terrain) {
                 case MOUNTAIN:
                 case HIGHLAND:
-                    trTerrain = TerrainContext.TerrainType.MOUNTAIN;
+                    trTerrain = com.yisy.modules.doramcu.thirdreich.domain.TerrainType.MOUNTAIN;
                     break;
                 case FOREST:
-                    trTerrain = TerrainContext.TerrainType.FOREST;
+                    trTerrain = com.yisy.modules.doramcu.thirdreich.domain.TerrainType.FOREST;
                     break;
                 case DESERT:
-                    trTerrain = TerrainContext.TerrainType.DESERT;
+                    trTerrain = com.yisy.modules.doramcu.thirdreich.domain.TerrainType.DESERT;
                     break;
                 case SWAMP:
-                    trTerrain = TerrainContext.TerrainType.SWAMP;
-                    break;
-                case URBAN:
-                    trTerrain = TerrainContext.TerrainType.URBAN;
+                    trTerrain = com.yisy.modules.doramcu.thirdreich.domain.TerrainType.SWAMP;
                     break;
                 default:
-                    trTerrain = TerrainContext.TerrainType.OPEN;
+                    trTerrain = com.yisy.modules.doramcu.thirdreich.domain.TerrainType.PLAINS;
                     break;
             }
         }

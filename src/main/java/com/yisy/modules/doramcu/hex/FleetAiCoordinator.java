@@ -191,7 +191,7 @@ public class FleetAiCoordinator {
         if (best == null) {
             return "No AI Cores installed";
         }
-        return String.format("AI Core: %s (Level %d), %d/%d ships equipped",
+        return String.format("AI Core: %s (Level %s), %d/%d ships equipped",
                 best.getTier(), best.getLevel(),
                 getAiCoreShipCount(), fleet.getActiveShipCount());
     }

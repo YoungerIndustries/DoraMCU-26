@@ -85,7 +85,7 @@ data:
       - job_name: 'doramcu-coordinator'
         metrics_path: '/actuator/prometheus'
         static_configs:
-          - targets: ['doramcu-app:8084']
+          - targets: ['doramcu-app:8080']
             labels:
               cluster: 'doramcu'
               service: 'coordinator'

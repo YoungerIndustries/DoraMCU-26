@@ -1,8 +1,12 @@
 package com.yisy.modules.doramcu.hex.manager;
+import org.springframework.stereotype.Component;
 
+import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.hex.ArmyUnit;
 import com.yisy.modules.doramcu.hex.EmpireArmy;
 import com.yisy.modules.doramcu.hex.Planet;
+import com.yisy.modules.doramcu.hex.spi.AiCommanderExperienceSpi;
+import com.yisy.modules.doramcu.hex.spi.AiEntityRegistration;
 import com.yisy.modules.doramcu.traveller.AbstractBattle;
 import com.yisy.modules.doramcu.traveller.MercenaryUnit;
 import com.yisy.modules.doramcu.traveller.MissionType;
@@ -10,6 +14,7 @@ import com.yisy.modules.doramcu.traveller.UnitType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 /**
@@ -34,6 +39,8 @@ public class GroundBattleResolver {
 
     private final GameContext context;
     private final Random random;
+    private AiEntityRegistration aiEntityRegistrationService;
+    private AiCommanderExperienceSpi aiCommanderExperienceService;
 
     /**
      * Creates a new GroundBattleResolver.
@@ -43,6 +50,20 @@ public class GroundBattleResolver {
     public GroundBattleResolver(GameContext context) {
         this.context = context;
         this.random = context.getRandom();
+    }
+
+    /**
+     * Sets the AI entity registration service for looking up vehicle AI characters.
+     */
+    public void setAiEntityRegistrationService(AiEntityRegistration service) {
+        this.aiEntityRegistrationService = service;
+    }
+
+    /**
+     * Sets the AI commander experience service for recording battle experience.
+     */
+    public void setAiCommanderExperienceService(AiCommanderExperienceSpi service) {
+        this.aiCommanderExperienceService = service;
     }
 
     /**
@@ -93,6 +114,9 @@ public class GroundBattleResolver {
         int attackerCasualties = attackForce.getCasualties();
         int defenderCasualties = defendForce.getCasualties();
 
+        // Record battle experience for surviving units' AI characters
+        recordBattleExperienceForArmy(attackingArmy, attackerWon);
+
         return new InvasionResult(
                 attackerWon,
                 attackerCasualties,
@@ -139,11 +163,15 @@ public class GroundBattleResolver {
             morale = Math.max(morale, 8); // Regular army has base morale
         }
 
+        // Calculate AI core bonus from units with AI cores
+        double aiCoreBonus = calculateAiCoreBonus(regularUnits);
+        int efficiency = (int) Math.round(morale * (1.0 + aiCoreBonus));
+
         return new AbstractBattle.BattleForce(
                 missionType,
                 10, // Tech level
                 unitType,
-                morale,
+                efficiency,
                 totalStrength,
                 true // Mercenary (organized force)
         );
@@ -185,6 +213,11 @@ public class GroundBattleResolver {
                 efficiency = Math.min(12, 6 + gov);
             }
         }
+
+        // Note: Defending force AI core bonus would require access to the planet's
+        // garrison army units. Since GameContext does not expose army lookups by planet,
+        // the defending force uses base efficiency. The attacker's AI core bonus is
+        // applied above in buildAttackForce().
 
         return new AbstractBattle.BattleForce(
                 missionType,
@@ -270,6 +303,79 @@ public class GroundBattleResolver {
             return MissionType.COMMANDO; // Evenly matched
         } else {
             return MissionType.STRIKER; // Attacker at disadvantage
+        }
+    }
+
+    /**
+     * Calculates the AI core bonus from army units that have AI cores installed.
+     * The bonus is the average of all AI core damage bonuses, divided by the number
+     * of units to avoid overwhelming bonus from large armies.
+     *
+     * @param units the army units
+     * @return the AI core bonus multiplier (0.0 to 0.15)
+     */
+    private double calculateAiCoreBonus(List<ArmyUnit> units) {
+        if (units == null || units.isEmpty()) {
+            return 0.0;
+        }
+        double totalBonus = 0.0;
+        int aiCoreCount = 0;
+        for (ArmyUnit unit : units) {
+            if (unit.hasAiCore()) {
+                totalBonus += unit.getAiCoreBonus();
+                aiCoreCount++;
+            }
+        }
+        if (aiCoreCount == 0) {
+            return 0.0;
+        }
+        // Average bonus, capped at 0.15 (ELITE tier max)
+        return Math.min(0.15, totalBonus / units.size());
+    }
+
+    /**
+     * Records battle experience for army units with AI cores after a ground battle.
+     *
+     * @param army the army that participated in the battle
+     * @param attackerWon true if the attacker won the battle
+     */
+    private void recordBattleExperienceForArmy(EmpireArmy army, boolean attackerWon) {
+        if (aiCommanderExperienceService == null || aiEntityRegistrationService == null || army == null) {
+            return;
+        }
+        com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome outcome =
+                attackerWon
+                        ? com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.VICTORY
+                        : com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.DEFEAT;
+        for (ArmyUnit unit : army.getUnits()) {
+            if (unit.getCurrentStrength() <= 0) {
+                continue; // Unit destroyed
+            }
+            if (!unit.hasAiCore()) {
+                continue; // No AI core, no AI character
+            }
+            try {
+                // Try to find the AI character linked to this unit by entity ID
+                String entityId = "army_unit_" + unit.getId();
+                Optional<AiCharacter> aiCharOpt = aiEntityRegistrationService.findVehicleAiCharacter(entityId);
+                aiCharOpt.ifPresent(aiChar -> {
+                    try {
+                        aiCommanderExperienceService.recordBattleExperience(
+                                aiChar.getId(),
+                                "TRAVELLER",
+                                "Ground Battle",
+                                outcome,
+                                "Ground battle participation",
+                                null
+                        );
+                        aiCommanderExperienceService.advanceTrainingLevel(aiChar.getId());
+                    } catch (Exception e) {
+                        // Silently ignore if experience recording fails
+                    }
+                });
+            } catch (Exception e) {
+                // Silently ignore if AI character lookup fails
+            }
         }
     }
 

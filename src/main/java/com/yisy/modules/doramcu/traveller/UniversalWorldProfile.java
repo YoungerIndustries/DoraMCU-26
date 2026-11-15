@@ -479,8 +479,8 @@ public class UniversalWorldProfile {
             return TradeCode.CO;
         }
 
-        // Agricultural: Population ≥ 4, gravity 3-6
-        if (population >= 4 && gravity >= 3 && gravity <= 6) {
+        // Agricultural: gravity 3-6 (population already guaranteed ≥ 4)
+        if (gravity >= 3 && gravity <= 6) {
             return TradeCode.AG;
         }
 

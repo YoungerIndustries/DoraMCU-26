@@ -241,6 +241,66 @@ public class Game implements GameContext, GameEngine {
         this.gameEnded = ended;
     }
 
+    /**
+     * Sets the current game time in seconds.
+     * Used for game state restoration from persisted data.
+     *
+     * @param time the current game time in seconds
+     */
+    public void setCurrentTime(long time) {
+        this.currentTime = time;
+    }
+
+    /**
+     * Sets the next planet ID counter.
+     * Used for game state restoration from persisted data.
+     *
+     * @param id the next planet ID to assign
+     */
+    public void setNextPlanetId(int id) {
+        this.nextPlanetId = id;
+    }
+
+    /**
+     * Sets the next fleet ID counter.
+     * Used for game state restoration from persisted data.
+     *
+     * @param id the next fleet ID to assign
+     */
+    public void setNextFleetId(int id) {
+        this.nextFleetId = id;
+    }
+
+    /**
+     * Sets the next ship ID counter.
+     * Used for game state restoration from persisted data.
+     *
+     * @param id the next ship ID to assign
+     */
+    public void setNextShipId(int id) {
+        this.nextShipId = id;
+    }
+
+    /**
+     * Sets the next battle ID counter.
+     * Used for game state restoration from persisted data.
+     *
+     * @param id the next battle ID to assign
+     */
+    public void setNextBattleId(int id) {
+        this.nextBattleId = id;
+    }
+
+    /**
+     * Sets the next solar system ID counter.
+     * Used for game state restoration from persisted data.
+     *
+     * @param id the next solar system ID to assign
+     */
+    public void setNextSolarSystemId(int id) {
+        this.nextSolarSystemId = id;
+    }
+
     @Override
     public void incrementTurn() {
         currentTime += turnDuration;
@@ -1355,6 +1415,20 @@ public class Game implements GameContext, GameEngine {
      */
     public Map<String, Object> serializeGameState() {
         return gameStateSerializer.serialize(this);
+    }
+
+    /**
+     * Deserializes a previously serialized game state map and applies it to this game.
+     * <p>
+     * Delegates to {@link GameStateSerializer} for persistence logic.
+     * Galaxy/solar system data is NOT restored here — it must be loaded separately
+     * from the database by the calling service.
+     * </p>
+     *
+     * @param state the serialized game state map
+     */
+    public void deserializeGameState(Map<String, Object> state) {
+        gameStateSerializer.deserialize(this, state);
     }
 
     /**

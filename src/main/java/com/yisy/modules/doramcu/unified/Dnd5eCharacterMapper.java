@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.unified;
 
 import com.yisy.modules.doramcu.dnd5e.model.Dnd5eCharacter;
+import com.yisy.modules.doramcu.gamecore.GameType;
 import org.springframework.stereotype.Component;
 
 import java.util.*;

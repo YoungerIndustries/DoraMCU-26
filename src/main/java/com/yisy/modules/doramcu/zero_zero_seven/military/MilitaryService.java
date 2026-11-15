@@ -1,8 +1,8 @@
 package com.yisy.modules.doramcu.zero_zero_seven.military;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.zero_zero_seven.model.BondEmpire;
 import com.yisy.modules.doramcu.zero_zero_seven.repository.BondEmpireRepository;
-import org.springframework.stereotype.Service;
 
 /**
  * Service for managing military units and strength.

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogStarship;
@@ -8,7 +9,7 @@ import com.yisy.modules.doramcu.captainslog.repository.CaptainLogStarshipReposit
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogValueRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -19,11 +20,11 @@ import java.util.*;
  * Between missions, characters spend time on activities that prepare them for the next adventure.
  * The downtime phase includes:
  * <ul>
- *   <li><b>Downtime Activities</b> — Maintenance, Leave, Research, Training, Diplomacy, Exploration</li>
- *   <li><b>Threat Resolution</b> — Resolve accumulated threat from the previous mission</li>
- *   <li><b>Value Reflection</b> — Retire used/challenged values and gain new ones</li>
- *   <li><b>Character Recovery</b> — Heal injuries and recover constitution</li>
- *   <li><b>Starship Repairs</b> — Reduce system stress on the assigned starship</li>
+ *   <li><b>Downtime Activities</b> â€” Maintenance, Leave, Research, Training, Diplomacy, Exploration</li>
+ *   <li><b>Threat Resolution</b> â€” Resolve accumulated threat from the previous mission</li>
+ *   <li><b>Value Reflection</b> â€” Retire used/challenged values and gain new ones</li>
+ *   <li><b>Character Recovery</b> â€” Heal injuries and recover constitution</li>
+ *   <li><b>Starship Repairs</b> â€” Reduce system stress on the assigned starship</li>
  * </ul>
  * </p>
  * <p>
@@ -41,6 +42,7 @@ public class DowntimeService {
     private final CaptainLogValueRepository valueRepository;
     private final ProbabilityMatrixService probabilityMatrixService;
     private final InjuryService injuryService;
+    @Qualifier("captainsLogCareerProgressionService")
     private final CareerProgressionService careerProgressionService;
 
     public DowntimeService(CaptainLogCharacterRepository characterRepository,
@@ -48,7 +50,7 @@ public class DowntimeService {
                            CaptainLogValueRepository valueRepository,
                            ProbabilityMatrixService probabilityMatrixService,
                            InjuryService injuryService,
-                           CareerProgressionService careerProgressionService) {
+                           @Qualifier("captainsLogCareerProgressionService") CareerProgressionService careerProgressionService) {
         this.characterRepository = characterRepository;
         this.starshipRepository = starshipRepository;
         this.valueRepository = valueRepository;
@@ -74,7 +76,7 @@ public class DowntimeService {
                         "related task attempt in the next mission. On failure, the research yields inconclusive results."),
         TRAINING("Training", "Practice skills or learn new techniques.",
                 "Insight + Command", "Improve a skill. On success, gain 1 XP toward the next career upgrade. " +
-                        "On failure, the training session is less productive — gain no benefit."),
+                        "On failure, the training session is less productive â€” gain no benefit."),
         DIPLOMACY("Diplomacy", "Engage with allies, superiors, or local contacts.",
                 "Presence + Leadership", "Strengthen relationships. On success, gain a new contact or ally " +
                         "who can provide a boon once during the next mission. On failure, the meeting is unproductive."),
@@ -205,7 +207,7 @@ public class DowntimeService {
                 .map(DowntimeActivity::name)
                 .toList());
 
-        log.info("Downtime started for {} — threat={}, recovery={}, starship={}",
+        log.info("Downtime started for {} â€” threat={}, recovery={}, starship={}",
                 character.getName(), threatResult, recoveryResult,
                 character.getAssignedStarship() != null ? "repaired" : "no ship");
 
@@ -243,7 +245,7 @@ public class DowntimeService {
             case EXPLORATION -> result.putAll(performExploration(character, taskSuccess));
         }
 
-        log.info("{} performed {} downtime activity — success={}",
+        log.info("{} performed {} downtime activity â€” success={}",
                 character.getName(), activity.getName(), taskSuccess);
 
         return result;
@@ -284,7 +286,7 @@ public class DowntimeService {
             result.put("narrative", character.getName() + " takes well-deserved leave and fully recovers. " +
                     "Time off restores energy and resolve.");
         } else {
-            // Partial recovery — just heal 1 damage
+            // Partial recovery â€” just heal 1 damage
             Map<String, Object> healResult = injuryService.healCharacter(characterId, 1);
             result.put("recovery", healResult);
             result.put("narrative", character.getName() + " attempts to relax, but worries about the mission keep " +
@@ -339,7 +341,7 @@ public class DowntimeService {
             result.put("contact", npc);
             result.put("boonToken", true);
             result.put("narrative", character.getName() + " meets with " + npc.get("name") + ", " +
-                    npc.get("role") + ". They offer assistance on the next mission — a single boon on a related task.");
+                    npc.get("role") + ". They offer assistance on the next mission â€” a single boon on a related task.");
         } else {
             result.put("narrative", character.getName() + " attempts to reach out to contacts, but everyone is " +
                     "unavailable or unhelpful. No new alliances are formed.");
@@ -360,7 +362,7 @@ public class DowntimeService {
                     "unexpected: " + encounter.getDescription());
         } else {
             result.put("narrative", character.getName() + " explores the area but finds nothing of interest. " +
-                    "The sector appears quiet — for now.");
+                    "The sector appears quiet â€” for now.");
         }
 
         return result;

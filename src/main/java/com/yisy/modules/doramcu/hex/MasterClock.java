@@ -65,7 +65,7 @@ public class MasterClock {
      * The system time (in nanos) when the master clock was last updated.
      * Used to calculate elapsed time since last update.
      */
-    private volatile long lastUpdateSystemNanos = 0;
+    private volatile long lastUpdateSystemNanos;
 
     /**
      * The ZoneId used for Earth 2026 timestamps (UTC by default).

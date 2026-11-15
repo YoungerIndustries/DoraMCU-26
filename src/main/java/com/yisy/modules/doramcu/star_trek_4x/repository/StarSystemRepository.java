@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
+@Repository("starTrekStarSystemRepository")
 public interface StarSystemRepository extends JpaRepository<StarSystem, Long> {
     List<StarSystem> findByGameSessionId(Long gameSessionId);
     List<StarSystem> findBySectorId(int sectorId);

@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.traveller;
 
+import org.springframework.stereotype.Service;
 import java.util.*;
 
 /**
@@ -13,16 +14,18 @@ import java.util.*;
  * Difficulty levels affect decision quality:
  * </p>
  * <ul>
- *   <li><b>EASY</b> — makes mistakes, poor odds evaluation</li>
- *   <li><b>MEDIUM</b> — reasonable decisions, occasional errors</li>
- *   <li><b>HARD</b> — strong tactical analysis, few mistakes</li>
- *   <li><b>EXPERT</b> — near-optimal decisions</li>
+ *   <li><b>EASY</b> Ã¢â‚¬â€ makes mistakes, poor odds evaluation</li>
+ *   <li><b>MEDIUM</b> Ã¢â‚¬â€ reasonable decisions, occasional errors</li>
+ *   <li><b>HARD</b> Ã¢â‚¬â€ strong tactical analysis, few mistakes</li>
+ *   <li><b>EXPERT</b> Ã¢â‚¬â€ near-optimal decisions</li>
  * </ul>
  * <p>
  * Follows the same pattern as {@link com.yisy.modules.doramcu.sfb.service.SfbAIService}
  * but adapted for fleet-level naval combat.
  * </p>
  */
+
+@Service
 public class NavalBattleAiService {
 
     /**
@@ -208,7 +211,7 @@ public class NavalBattleAiService {
      * Formats the odds ratio for display.
      */
     private String formatOdds(double oddsRatio) {
-        if (oddsRatio == Double.MAX_VALUE) return "∞:1";
+        if (oddsRatio == Double.MAX_VALUE) return "Ã¢Ë†Å¾:1";
         if (oddsRatio >= 6.0) return "6:1";
         if (oddsRatio >= 4.0) return "4:1";
         if (oddsRatio >= 2.0) return "2:1";
@@ -230,12 +233,12 @@ public class NavalBattleAiService {
 
         double caution = difficulty.getCaution();
 
-        // Very unfavorable odds → retreat
+        // Very unfavorable odds Ã¢â€ â€™ retreat
         if (oddsRatio < 0.25) {
             return true;
         }
 
-        // Unfavorable odds → retreat based on caution
+        // Unfavorable odds Ã¢â€ â€™ retreat based on caution
         if (oddsRatio < 0.5) {
             return random.nextDouble() < caution;
         }
@@ -280,7 +283,7 @@ public class NavalBattleAiService {
         double aggression = difficulty.getAggression();
         double awareness = difficulty.getTacticalAwareness();
 
-        // Favorable odds → aggressive attack
+        // Favorable odds Ã¢â€ â€™ aggressive attack
         if (oddsRatio >= 2.0) {
             reasoning.append("Favorable odds. ");
 
@@ -291,7 +294,7 @@ public class NavalBattleAiService {
             return FleetAction.LASER_BARRAGE;
         }
 
-        // Even odds → balanced approach
+        // Even odds Ã¢â€ â€™ balanced approach
         if (oddsRatio >= 1.0) {
             reasoning.append("Even odds. ");
 
@@ -303,7 +306,7 @@ public class NavalBattleAiService {
             return balancedActions[random.nextInt(balancedActions.length)];
         }
 
-        // Unfavorable odds → cautious approach
+        // Unfavorable odds Ã¢â€ â€™ cautious approach
         reasoning.append("Unfavorable odds. ");
 
         if (random.nextDouble() < awareness * 0.5) {
@@ -327,13 +330,13 @@ public class NavalBattleAiService {
             return FleetAction.HOLD;
         }
 
-        // Even odds → hold and counter
+        // Even odds Ã¢â€ â€™ hold and counter
         if (oddsRatio >= 1.0) {
             reasoning.append("Holding position. ");
             return FleetAction.HOLD;
         }
 
-        // Unfavorable → consider retreat or defensive maneuver
+        // Unfavorable Ã¢â€ â€™ consider retreat or defensive maneuver
         if (random.nextDouble() < caution) {
             reasoning.append("Considering retreat. ");
             return FleetAction.RETREAT;
@@ -359,14 +362,8 @@ public class NavalBattleAiService {
         Objects.requireNonNull(aiFleet, "AI fleet must not be null");
         Objects.requireNonNull(enemyFleet, "Enemy fleet must not be null");
 
-        // Determine if AI is attacking or defending
-        boolean isAttacker = true; // Simplified — would need battle context
-
-        if (isAttacker) {
-            return decideAttack(aiFleet, enemyFleet);
-        } else {
-            return decideDefense(aiFleet, enemyFleet);
-        }
+        // AI always attacks Ã¢â‚¬â€ defense logic can be added when battle context is available
+        return decideAttack(aiFleet, enemyFleet);
     }
 
     /**

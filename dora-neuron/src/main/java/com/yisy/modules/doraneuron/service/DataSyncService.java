@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.service;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.config.NeuronConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * conflict resolution.
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class DataSyncService {
 
     private static final Logger log = LoggerFactory.getLogger(DataSyncService.class);
@@ -61,9 +65,13 @@ public class DataSyncService {
         this.serverRegisterUrl = coordinatorUrl + "/api/v1/co-server/register";
         
         // Increment vector clock for this node
-        vectorClock.merge(config.getNodeId(), 1L, Long::sum);
+        String nodeId = config.getNodeId();
+        if (nodeId == null || nodeId.isEmpty()) {
+            nodeId = java.util.UUID.randomUUID().toString();
+        }
+        vectorClock.merge(nodeId, 1L, Long::sum);
         
-        log.info("Data sync service initialized for node: {}", config.getNodeId());
+        log.info("Data sync service initialized for node: {}", nodeId);
         log.info("Server sync URL: {}", serverSyncUrl);
         log.info("Data queue max size: {}", config.getDataQueueMaxSize());
     }

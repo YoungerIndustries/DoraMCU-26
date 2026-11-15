@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Service;
 
 /**
  * Kafka event producer for the Neuron Coordinator (DoraMCU).
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
  *
  * Enabled only when KafkaTemplate bean is present (Kafka configured and connected).
  */
-@Service
 @ConditionalOnBean(KafkaTemplate.class)
 public class CoordinatorEventProducer {
 

@@ -209,13 +209,8 @@ public class HexLayer {
                 continue;
             }
 
-            boolean destroyed = layer.damage(remainingDamage);
+            layer.damage(remainingDamage);
             remainingDamage = Math.max(0, remainingDamage - layer.getMaxHitpoints() + layer.getHitpoints());
-
-            if (destroyed && i < layers.size() - 1) {
-                // Damage propagates to next layer
-                // The remaining damage continues to the next iteration
-            }
         }
 
         // If new layers were destroyed and this cell belongs to a compartment, update compartment integrity

@@ -1,12 +1,17 @@
 package com.yisy.modules.doramcu.hex;
 
 import java.util.*;
+import java.util.PriorityQueue;
 
 /**
  * Generates hyperlane connections between solar systems in a galaxy.
  * <p>
  * Extracted from GalaxyGenerator to separate hyperlane network generation
  * from the rest of the galaxy generation logic.
+ * </p>
+ * <p>
+ * Uses Prim's algorithm with a priority queue for O(n log n) spanning tree
+ * construction, replacing the previous O(n²) nearest-neighbor approach.
  * </p>
  */
 public class HyperlaneGenerator {
@@ -25,8 +30,8 @@ public class HyperlaneGenerator {
     /**
      * Generates hyperlane connections between solar systems in the galaxy.
      * <p>
-     * Uses a nearest-neighbor approach: for each system, connect to nearby systems
-     * based on the hyperlane density setting.
+     * Uses Prim's algorithm with a priority queue for efficient spanning tree
+     * construction, then adds random extra connections based on density.
      * </p>
      *
      * @param galaxy the galaxy to add hyperlanes to
@@ -34,44 +39,58 @@ public class HyperlaneGenerator {
      */
     public void generateHyperlanes(Galaxy galaxy, double hyperlaneDensity) {
         List<SolarSystem> systems = new ArrayList<>(galaxy.getAllSystems().values());
-        if (systems.size() < 2) {
+        int n = systems.size();
+        if (n < 2) {
             return;
         }
 
-        // Ensure all systems are connected (spanning tree)
-        Set<Integer> connected = new HashSet<>();
-        connected.add(systems.get(0).getId());
+        // Prim's algorithm for minimum spanning tree: O(n log n)
+        boolean[] connected = new boolean[n];
+        // Priority queue: (distance, fromIndex, toIndex)
+        PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a[0]));
 
-        for (int i = 0; i < systems.size() && connected.size() < systems.size(); i++) {
-            SolarSystem current = systems.get(i);
-            if (!connected.contains(current.getId())) {
-                // Find nearest connected system
-                int nearestId = -1;
-                int nearestDist = Integer.MAX_VALUE;
+        // Start from the first system
+        connected[0] = true;
+        int connectedCount = 1;
 
-                for (Integer connectedId : connected) {
-                    // Simple distance based on system IDs for spanning tree
-                    int dist = Math.abs(current.getId() - connectedId);
-                    if (dist < nearestDist) {
-                        nearestDist = dist;
-                        nearestId = connectedId;
-                    }
-                }
+        // Add edges from system 0 to all unconnected systems
+        for (int j = 1; j < n; j++) {
+            int dist = Math.abs(systems.get(0).getId() - systems.get(j).getId());
+            pq.offer(new int[]{dist, 0, j});
+        }
 
-                if (nearestId >= 0) {
-                    galaxy.addHyperlane(nearestId, current.getId(), nearestDist);
-                    connected.add(current.getId());
+        // Build spanning tree
+        while (!pq.isEmpty() && connectedCount < n) {
+            int[] edge = pq.poll();
+            int dist = edge[0];
+            int fromIdx = edge[1];
+            int toIdx = edge[2];
+
+            if (connected[toIdx]) {
+                continue; // Already connected
+            }
+
+            // Add this hyperlane
+            galaxy.addHyperlane(systems.get(fromIdx).getId(), systems.get(toIdx).getId(), dist);
+            connected[toIdx] = true;
+            connectedCount++;
+
+            // Add edges from the newly connected system to all unconnected systems
+            for (int j = 0; j < n; j++) {
+                if (!connected[j]) {
+                    int newDist = Math.abs(systems.get(toIdx).getId() - systems.get(j).getId());
+                    pq.offer(new int[]{newDist, toIdx, j});
                 }
             }
         }
 
         // Add additional hyperlanes based on density
-        int extraConnections = (int) (systems.size() * hyperlaneDensity);
+        int extraConnections = (int) (n * hyperlaneDensity);
         for (int i = 0; i < extraConnections; i++) {
-            int fromIdx = random.nextInt(systems.size());
+            int fromIdx = random.nextInt(n);
             int toIdx;
             do {
-                toIdx = random.nextInt(systems.size());
+                toIdx = random.nextInt(n);
             } while (toIdx == fromIdx);
 
             int distance = Math.abs(systems.get(fromIdx).getId() - systems.get(toIdx).getId());

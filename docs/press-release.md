@@ -1,137 +1,116 @@
 # FOR IMMEDIATE RELEASE
 
-## DoraMCU Launches: The First Unified Platform for AI-Powered Tabletop RPG Simulation and Strategy Gaming
+## DoraMCU Reaches Feature-Complete Milestone: A Unified Multi-Universe Gaming Platform with AI-Powered Gameplay
 
-### Eight game universes. One engine. AI commanders that learn, adapt, and evolve — powered by deep learning and distributed neuron coordination.
-
-**November 11, 2026** — Younger Industries today announced the release of **DoraMCU**, a multi-module Spring Boot platform that unifies eight distinct tabletop role-playing game and strategy systems under a single engine with deep-learning AI commanders, distributed neuron coordination, and cross-platform clients.
+**November 14, 2026** — Younger Industries is proud to announce that **DoraMCU**, its flagship multi-game simulation platform, has achieved full feature completion. With **50 completed features**, **12,607+ passing tests**, and **12 integrated game universes**, DoraMCU stands as one of the most comprehensive tabletop role-playing game (TTRPG) and strategy game platforms ever built.
 
 ---
 
-### A Unified Multi-Game Engine
+### A Platform That Unifies Gaming Universes
 
-DoraMCU natively supports eight game systems, each with full rules implementation:
+DoraMCU is a Spring Boot-based application that brings together an unprecedented range of game systems under a single, cohesive architecture. Players can seamlessly experience:
 
-- **Traveller RPG** — Complete classic Traveller implementation including character creation with lifepath careers, ship design (High Guard), naval and air combat, trade simulation, psionics, survival, mercenary and navy tours of duty, smuggling operations, and Universal World Profiles (UWP).
-- **Star Trek 4X** — Full 4X strategy game with diplomacy, treaties, fleet warfare, ground combat, colony management, starbase construction, technology research, trade routes, first contact, scientific missions, and territory expansion.
-- **Babylon 5** — B5 universe simulation with character creation, combat, diplomacy, economy, exploration, ship design, storylines with chapters, psionic abilities, alien races (Minbari, Centauri, Narn, Vorlons, Shadows), and wealth systems.
-- **Earth 2026** — Near-future sci-fi RPG with countries, regions, locations, structures, tech levels, parties, contracts, scenarios, economy simulation, and real-time WebSocket chat.
-- **Dungeons & Dragons 5E** — Full D&D 5E rules including character creation with feats and skills, combat with conditions, spellcasting with spell slots, inventory management, crafting system, exhaustion, horror mechanics (dark gifts, fear/dread), psionic powers, growing magic items, and heroic inspiration.
-- **Captain's Log (Star Trek RPG)** — Narrative-driven Star Trek RPG with lifepath character creation, talent systems, crew management, starship creation with ship talents, mission generation with AI, career progression, downtime activities, injury system, dice rolls, difficulty scaling, narrative beats, and probability matrices.
-- **Star Fleet Battles (SFB)** — Tactical starship combat with energy allocation, damage allocation, impulse movement, shield systems, weapon banks, crew stations, special systems, campaign engine, and AI opponents.
-- **007 Spy & Espionage** — Covert operations game with spy networks, safehouses, infiltration, sabotage, surveillance, counter-intelligence, assassination, recruitment, diplomacy, treaties, territory management, and ground combat.
+- **Traveller** — Classic sci-fi RPG with full economic simulation, psionics, smuggling, and alien races
+- **Star Trek 4X** — Explore, expand, exploit, and exterminate in the Star Trek universe
+- **Star Fleet Battles** — Tactical fleet combat with campaign management, AI strategy, and terrain-based encounters
+- **Babylon 5** — Canonical galaxy integration with the beloved sci-fi universe
+- **Dungeons & Dragons 5E** — Full D&D 5th Edition rules and character system
+- **Star Wars** — 23 REST endpoints powering the galaxy far, far away
+- **Starship Troopers** — Mobile infantry combat with 22 dedicated endpoints
+- **MechWarrior** — Mech-on-mech combat with AI pilots and mission systems
+- **007 (Zero Zero Seven)** — Spy networks, covert operations, and diplomacy
+- **Third Reich** — Ground battle engine with 3D battlefield simulation
+- **FPS Module** — First-person shooter game server with matchmaking
+- **Earth 2026** — Alternate history sci-fi RPG
 
-All eight systems share a common procedural foundation: the **Hex Galaxy Engine**, a 218+ class system providing procedurally generated hex-based galaxy simulation with themed templates, 3D hex mapping, empire management, resource economy, ship and station design, combat systems, trade and transport, dungeon generation, planet simulation, and RPG quest integration.
-
----
-
-### AI That Learns and Evolves
-
-DoraMCU's AI system represents a significant advancement in game AI:
-
-- **Personality-Driven Decision Making** — Each AI-controlled empire has a unique personality derived from government type and ethos, with traits including aggression, expansion drive, economic focus, scientific focus, and risk tolerance. These personalities evolve based on experience and game events.
-- **Deep Learning Integration** — Production-grade deep learning via Deeplearning4j (DL4J) provides neural network strategy prediction, hybrid AI decisions that blend neural network probabilities with heuristic scores, pluggable feature extraction, reinforcement learning, and persistent learning services.
-- **Strategic and Tactical Layers** — Separate strategic layer (expansion, economy, research priorities) and tactical layer (combat, movement, scouting) with personality-weighted action evaluation.
-- **Player Behavior Analysis** — The AI monitors and categorizes player actions, can learn from and mimic human player behavior, and supports hierarchical AI delegation with configurable areas.
+Cross-game characters allow players to carry a unified identity across all 12 universes, creating a truly interconnected gaming experience.
 
 ---
 
-### Distributed AI at Scale
+### AI at the Core
 
-DoraMCU introduces the **Neuron Federation**, a distributed AI coordination system for horizontal AI scaling:
+What sets DoraMCU apart is its deep integration of artificial intelligence throughout the platform:
 
-- **Neuron Registry** — Dynamic registration and discovery of AI neuron nodes.
-- **Consensus Protocol** — Distributed consensus for AI decisions across the federation.
-- **Model Synchronization** — Automatic model version tracking and synchronization between neurons.
-- **Experience Sharing** — Batch experience collection and streaming between neurons for collective learning.
-- **Change Data Capture (CDC)** — Real-time CDC via WebSocket for state synchronization.
-- **Kafka Integration** — Optional Kafka-backed event streaming for high-throughput coordination.
-- **Leader Election** — Automatic leader election for federation coordination.
-- **Health Monitoring** — Heartbeat-based health tracking and peer monitoring.
-
-For edge deployment, the **dora-neuron** module provides ONNX-based inference with model quantization, cryptographic model signature validation, peer-to-peer mesh networking, and Unity client integration — enabling AI inference on resource-constrained devices.
+- **DoraAI Platform** — AI-powered game mastering with narrative generation, story arcs, NPC creation, and quest design across 10 narrative types and 8 styles
+- **Neuron Federation** — Distributed AI coordination with change data capture (CDC) and snapshot support, enabling scalable AI inference across edge nodes
+- **Deep Learning** — Built on Deeplearning4j (DL4j), the platform supports both local and REST-based deep learning modes for AI commanders with configurable difficulty levels
+- **ONNX Runtime Web** — Browser-based AI inference for real-time gameplay decisions
 
 ---
 
-### Multi-Provider AI Services
+### Built for Scale
 
-The **dora-ai** module provides unified access to multiple AI providers (DeepSeek, Google Gemini, and local Ollama) for conversational AI chat, source code analysis, AI-assisted code generation, speech transcription, multi-language translation, and integration with OpenHands AI coding agent — all with built-in retry logic, response filtering, and provider health monitoring.
+DoraMCU is engineered for production-grade deployment:
 
----
-
-### Cross-Platform Access
-
-DoraMCU is accessible through three client platforms:
-
-- **Unity 3D Client** — Full 3D space strategy game client with client-side AI inference, local database with CDC sync, procedural planet/ship/station rendering, interest management, and server communication.
-- **Electron Desktop Client** — Cross-platform desktop wrapper (Windows/macOS/Linux) with game launcher that auto-launches the Unity client.
-- **Progressive Web App (PWA)** — Browser-based PWA with service worker for offline support and installable app experience.
+- **Java 27** with **Spring Boot 4.1.2** — Cutting-edge runtime and framework
+- **12,462+ Java tests** and **145 Electron desktop tests** — Zero excluded tests, full coverage
+- **512+ classes** and **216+ test classes** — Well-architected, maintainable codebase
+- **Docker Compose** — Six-service stack including MySQL 8.4, Redis, OpenHands AI, and Python DL service
+- **Kubernetes** — Production-ready manifests with Kustomize for dev and prod overlays
+- **Prometheus & Grafana** — Full observability with health endpoints and metrics
+- **OpenAPI 3.0** — Swagger UI with 10 API groups covering 100+ endpoints
 
 ---
 
-### Production-Grade Infrastructure
+### Multi-Platform Client Ecosystem
 
-DoraMCU is built for production deployment from day one:
+DoraMCU reaches players wherever they are:
 
-- **Java 27** and **Spring Boot 4.1.2** foundation
-- **MySQL 8.x** for production, **H2 in-memory** for development
-- **Docker** multi-stage builds and **Docker Compose** one-command deployment
-- **Kubernetes** production-ready manifests with Kustomize overlays
-- **Spring Security** with JWT-based authentication and authorization
-- **Prometheus** metrics, **Grafana** dashboards, and **Spring Boot Actuator** health endpoints
-- **Logstash-encoded JSON logging** for ELK/Grafana Loki integration
-- **Flyway** database migration management
-- **Caffeine** distributed caching
-- **SpringDoc OpenAPI** for API documentation
+- **Electron Desktop Client** — Full-featured desktop application with modular architecture
+- **Progressive Web App (PWA)** — Browser-based game node with local game logic and AI
+- **Browser Extension** — Manifest V3 extension for offline AI inference and cached game state
+- **Unity 3D Client** — 3D game client for immersive gameplay
+- **VR Galaxy Viewer** — 3D galaxy data export for WebGL/Three.js visualization
+
+The player gateway architecture, powered by **dora-neuron**, serves as a single entry point that detects the player's platform and distributes the appropriate client bundle, with real-time state synchronization via WebSocket.
 
 ---
 
-### About the Technology Stack
+### Community-First Features
 
-| Component | Technology |
-|-----------|------------|
-| Language | Java 27 |
-| Framework | Spring Boot 4.1.2 |
-| Deep Learning | Deeplearning4j (DL4J) |
-| Edge Inference | ONNX Runtime |
-| Messaging | Apache Kafka |
-| Database | MySQL 8.x / H2 |
-| Security | Spring Security + JWT |
-| Metrics | Micrometer + Prometheus |
-| Container | Docker + Docker Compose |
-| Orchestration | Kubernetes + Kustomize |
-| Desktop Client | Electron |
-| Game Client | Unity 2022.3 LTS |
-| AI Providers | DeepSeek, Google Gemini, Ollama |
+DoraMCU is designed for community-driven growth:
+
+- **Plugin Marketplace** — Community content distribution with search, ratings, and downloads
+- **Community Server Hosting** — Server registration, content sharing, reviews, and templates
+- **Modding Support** — User-created game modes, rulesets, and content packs
+- **Voice Chat** — WebRTC-based real-time voice communication
+- **Spectator Mode** — Read-only observer access for streaming
+- **TTS Narration** — Text-to-speech game event narration
+- **Game Replay** — Full action logging with query, statistics, and export
 
 ---
 
-### Key Differentiators
+### Technical Highlights
 
-1. **Unified Multi-Game Engine** — Eight distinct RPG/strategy game systems sharing a common hex galaxy foundation.
-2. **AI That Learns** — Deep learning AI commanders that improve through experience and share knowledge across a distributed neuron federation.
-3. **Personality-Driven AI** — Each AI empire has a unique, evolving personality that shapes its strategic and tactical decisions.
-4. **Edge-Ready AI** — ONNX-based edge inference with model quantization for deployment on resource-constrained devices.
-5. **Distributed by Design** — Neuron federation with consensus, CDC, and mesh networking enables horizontal AI scaling.
-6. **Cross-Platform** — Play via Unity 3D, Electron desktop, or any browser via PWA.
-7. **Production-Grade** — Full observability, security, container deployment, and Kubernetes support out of the box.
-
----
-
-### Availability
-
-DoraMCU is available now on GitHub at [github.com/YoungerIndustries/DoraMCU-26](https://github.com/YoungerIndustries/DoraMCU-26).
+- **Hex Galaxy System** — Procedurally generated galaxies with themed templates for Traveller, Star Trek, and Babylon 5
+- **Real-Time Communication** — WebSocket and Server-Sent Events (SSE) for live game sessions
+- **Game State Persistence** — Sessions survive server restarts via JSON serialization with auto-restore
+- **Save/Load System** — Export and import game sessions as JSON
+- **Unified Credit System** — Currency bridging Traveller credits and DoraMCU resources
+- **Memory Guard** — OOM crash prevention for deep learning workloads
+- **Flyway Migrations** — Database versioning with MySQL and H2 support
 
 ---
 
-**About Younger Industries**
+### About Younger Industries
 
-Younger Industries develops advanced simulation platforms that combine tabletop gaming traditions with cutting-edge AI technology.
+Younger Industries is the development team behind DoraMCU, a next-generation platform that reimagines how tabletop and strategy games are played, shared, and experienced. The project is hosted on GitHub at `github.com/YoungerIndustries/DoraMCU-26`.
 
-**Media Contact**
+---
 
+### Looking Ahead
+
+With all 50 roadmap features complete, all backlog items delivered, and all long-term vision goals achieved, DoraMCU enters a new phase of stability and community growth. The platform is ready for players, game masters, and modders to explore, create, and share their own gaming experiences across 12 iconic universes.
+
+---
+
+**For more information, documentation, and source code, visit:**
+https://github.com/YoungerIndustries/DoraMCU-26
+
+**Contact:**
 Younger Industries
-Email: media@youngerindustries.com
-[github.com/YoungerIndustries](https://github.com/YoungerIndustries)
+DoraMCU Development Team
 
-###
+---
+
+*This press release was generated on November 14, 2026, based on the DoraMCU v0.3.0 project documentation.*

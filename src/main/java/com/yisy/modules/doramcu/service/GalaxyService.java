@@ -471,7 +471,7 @@ public class GalaxyService {
                 dbPlanet.setPlanetSize(com.yisy.modules.doramcu.model.Planet.PlanetSize.valueOf(planet.getPlanetSize().name()));
                 dbPlanet.setMineralQuality(com.yisy.modules.doramcu.model.Planet.MineralQuality.valueOf(planet.getMineralQuality().name()));
                 dbPlanet.setRadius(planet.getRadius());
-                // Flat resource production removed – use pipeline modules
+                // Flat resource production removed â€“ use pipeline modules
                 dbPlanet.setMineralProduction(0);
                 dbPlanet.setEnergyProduction(0);
                 dbPlanet.setFoodProduction(0);
@@ -714,11 +714,7 @@ public class GalaxyService {
                     if (sizeCompare > 0) {
                         bestPlanet = planet;
                     } else if (sizeCompare == 0) {
-                        int planetTotal = 0; // Flat resources removed
-                        int bestTotal = 0;
-                        if (planetTotal > bestTotal) {
-                            bestPlanet = planet;
-                        }
+                        // Flat resources removed â€” size is the only tiebreaker
                     }
                 }
             }
@@ -875,7 +871,7 @@ public class GalaxyService {
      * Generates remaining sectors in memory for an existing galaxy.
      */
     public void generateRemainingSectorsInMemory(com.yisy.modules.doramcu.hex.Galaxy galaxy, int sectorCount, long seed) {
-        // No-op placeholder — full galaxy is generated at once
+        // No-op placeholder â€” full galaxy is generated at once
     }
 
     /**
@@ -884,7 +880,7 @@ public class GalaxyService {
     @Transactional
     public void persistRemainingSectors(com.yisy.modules.doramcu.model.Galaxy dbGalaxy,
             com.yisy.modules.doramcu.hex.Galaxy inMemoryGalaxy, double hyperlaneDensity) {
-        // No-op placeholder — full galaxy is persisted at once
+        // No-op placeholder â€” full galaxy is persisted at once
     }
 
     /**

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.dnd5e.service;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -7,7 +8,6 @@ import com.yisy.modules.doramcu.dnd5e.model.Dnd5eCampaignTemplate;
 import com.yisy.modules.doramcu.dnd5e.repository.Dnd5eCampaignTemplateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -189,34 +189,34 @@ public class Dnd5eCampaignTemplateService {
                 "3. Configure fear and dread levels for the domain\n" +
                 "4. Create tension pools for different areas of the domain\n" +
                 "5. Populate dungeon rooms with horror-themed traps and encounters\n" +
-                "6. Add NPCs with varying dispositions — some allies, some corrupted\n" +
+                "6. Add NPCs with varying dispositions â€” some allies, some corrupted\n" +
                 "7. Set up Dark Gifts that players can acquire at a cost\n" +
                 "8. Create adventure hooks that draw players into the domain"
         );
         horror.setPacingGuide(
-                "Sessions 1-2: Arrival — Players enter the domain; introduce fear mechanics\n" +
-                "Sessions 3-4: Discovery — Learn about the Darklord and the domain's history\n" +
-                "Sessions 5-6: First Confrontation — Encounter the Darklord's minions; dread rises\n" +
-                "Sessions 7-8: Descent — Explore deeper areas; acquire Dark Gifts\n" +
-                "Sessions 9-10: Revelation — Discover the Darklord's weakness\n" +
-                "Sessions 11-12: Climax — Final confrontation; escape or eternal imprisonment"
+                "Sessions 1-2: Arrival â€” Players enter the domain; introduce fear mechanics\n" +
+                "Sessions 3-4: Discovery â€” Learn about the Darklord and the domain's history\n" +
+                "Sessions 5-6: First Confrontation â€” Encounter the Darklord's minions; dread rises\n" +
+                "Sessions 7-8: Descent â€” Explore deeper areas; acquire Dark Gifts\n" +
+                "Sessions 9-10: Revelation â€” Discover the Darklord's weakness\n" +
+                "Sessions 11-12: Climax â€” Final confrontation; escape or eternal imprisonment"
         );
         horror.setExampleHook(
                 "The party stumbles upon a fog-shrouded village where the sun hasn't shone in decades. " +
                 "The villagers speak in hushed tones of the Darklord who rules from a crumbling castle " +
-                "on the hill. One of the villagers recognizes a party member — from a life they don't remember."
+                "on the hill. One of the villagers recognizes a party member â€” from a life they don't remember."
         );
         horror.setExampleVillain(
-                "Count Varnek the Undying — A lich who rules Barovia-like domain. " +
+                "Count Varnek the Undying â€” A lich who rules Barovia-like domain. " +
                 "CR 21, phylactery hidden in the castle's deepest vault. " +
                 "Motives: Eternal domination, collecting souls to fuel his immortality. " +
                 "Lair actions: summon shadows, cause fear, manipulate the fog."
         );
         horror.setExampleNpcs(
-                "[\"Father Wilhelm — the village priest who knows the domain's history (ally)\", " +
-                "\"Anya the Innkeeper — secretly a spy for the Darklord (unfriendly)\", " +
-                "\"Rudolph van Richten — vampire hunter who offers guidance (ally)\", " +
-                "\"The Mad Hermit — knows the Darklord's weakness but speaks in riddles (indifferent)\"]"
+                "[\"Father Wilhelm â€” the village priest who knows the domain's history (ally)\", " +
+                "\"Anya the Innkeeper â€” secretly a spy for the Darklord (unfriendly)\", " +
+                "\"Rudolph van Richten â€” vampire hunter who offers guidance (ally)\", " +
+                "\"The Mad Hermit â€” knows the Darklord's weakness but speaks in riddles (indifferent)\"]"
         );
         horror.setExampleEncounters(
                 "[\"Wandering zombies in the fog (tension check)\", " +
@@ -265,11 +265,11 @@ public class Dnd5eCampaignTemplateService {
                 "7. Add feats that enhance magical abilities"
         );
         highMagic.setPacingGuide(
-                "Sessions 1-3: Enrollment — Arrive at the academy; choose mentors and rooms\n" +
-                "Sessions 4-6: First Year — Learn basics; receive growing magic items\n" +
-                "Sessions 7-9: Rivalry — Compete with other students; discover ancient secrets\n" +
-                "Sessions 10-12: Crisis — Magical anomaly threatens the academy\n" +
-                "Sessions 13-15: Resolution — Confront the source; defend the academy"
+                "Sessions 1-3: Enrollment â€” Arrive at the academy; choose mentors and rooms\n" +
+                "Sessions 4-6: First Year â€” Learn basics; receive growing magic items\n" +
+                "Sessions 7-9: Rivalry â€” Compete with other students; discover ancient secrets\n" +
+                "Sessions 10-12: Crisis â€” Magical anomaly threatens the academy\n" +
+                "Sessions 13-15: Resolution â€” Confront the source; defend the academy"
         );
         highMagic.setExampleHook(
                 "The party receives letters of acceptance to the Arcane Academy, each chosen for " +
@@ -277,15 +277,15 @@ public class Dnd5eCampaignTemplateService {
                 "magical disturbances suggest something is wrong within the ancient halls."
         );
         highMagic.setExampleVillain(
-                "Archmage Malakor — A former academy master who sought to harness raw planar energy. " +
+                "Archmage Malakor â€” A former academy master who sought to harness raw planar energy. " +
                 "CR 18, legendary actions include spell theft and planar rift creation. " +
                 "Motives: Unleash unlimited magical power, transcend mortal limitations."
         );
         highMagic.setExampleNpcs(
-                "[\"Professor Elara — wise mentor who guides the party (ally)\", " +
-                "\"Kael the Rival — competitive student who challenges the party (unfriendly)\", " +
-                "\"The Librarian — ancient being who guards forbidden knowledge (indifferent)\", " +
-                "\"Headmaster's Familiar — speaks cryptically about the headmaster's fate (helpful)\"]"
+                "[\"Professor Elara â€” wise mentor who guides the party (ally)\", " +
+                "\"Kael the Rival â€” competitive student who challenges the party (unfriendly)\", " +
+                "\"The Librarian â€” ancient being who guards forbidden knowledge (indifferent)\", " +
+                "\"Headmaster's Familiar â€” speaks cryptically about the headmaster's fate (helpful)\"]"
         );
         highMagic.setExampleEncounters(
                 "[\"Magical duel in the training grounds (combat)\", " +
@@ -333,11 +333,11 @@ public class Dnd5eCampaignTemplateService {
                 "7. Design encounters that reflect the war's progression"
         );
         sandbox.setPacingGuide(
-                "Sessions 1-4: Introduction — Explore the kingdoms; establish alliances\n" +
-                "Sessions 5-8: Rising Tensions — Skirmishes begin; build bastions\n" +
-                "Sessions 9-12: Open War — Major battles; NPC relationships tested\n" +
-                "Sessions 13-16: Turning Point — Discover the true mastermind\n" +
-                "Sessions 17-20: Resolution — End the war; shape the new order"
+                "Sessions 1-4: Introduction â€” Explore the kingdoms; establish alliances\n" +
+                "Sessions 5-8: Rising Tensions â€” Skirmishes begin; build bastions\n" +
+                "Sessions 9-12: Open War â€” Major battles; NPC relationships tested\n" +
+                "Sessions 13-16: Turning Point â€” Discover the true mastermind\n" +
+                "Sessions 17-20: Resolution â€” End the war; shape the new order"
         );
         sandbox.setExampleHook(
                 "The party is caught between two warring kingdoms, each offering rewards for " +
@@ -345,15 +345,15 @@ public class Dnd5eCampaignTemplateService {
                 "is for control of an ancient artifact buried beneath the borderlands."
         );
         sandbox.setExampleVillain(
-                "General Voss — A warlord who seeks to unite the kingdoms through conquest. " +
+                "General Voss â€” A warlord who seeks to unite the kingdoms through conquest. " +
                 "CR 15, legendary actions include battlefield command and siege warfare. " +
                 "Motives: Unify the realm under one banner, prove military superiority."
         );
         sandbox.setExampleNpcs(
-                "[\"King Aldric — ruler of the northern kingdom (ally)\", " +
-                "\"Queen Seraphina — ruler of the southern kingdom (indifferent)\", " +
-                "\"Spy Master Kael — offers intelligence for favors (unfriendly)\", " +
-                "\"Merchant Lord — supplies equipment at premium prices (indifferent)\"]"
+                "[\"King Aldric â€” ruler of the northern kingdom (ally)\", " +
+                "\"Queen Seraphina â€” ruler of the southern kingdom (indifferent)\", " +
+                "\"Spy Master Kael â€” offers intelligence for favors (unfriendly)\", " +
+                "\"Merchant Lord â€” supplies equipment at premium prices (indifferent)\"]"
         );
         sandbox.setExampleEncounters(
                 "[\"Ambush on the trade road (combat)\", " +
@@ -396,16 +396,16 @@ public class Dnd5eCampaignTemplateService {
                 "2. Design traps with varying DCs and consequences\n" +
                 "3. Place treasure and growing magic items throughout\n" +
                 "4. Populate encounters with monsters appropriate to each level\n" +
-                "5. Add NPCs — trapped adventurers, dungeon guardians, and guides\n" +
+                "5. Add NPCs â€” trapped adventurers, dungeon guardians, and guides\n" +
                 "6. Set up tension pools for wandering encounters\n" +
                 "7. Include crafting opportunities for consumables"
         );
         dungeonCrawl.setPacingGuide(
-                "Sessions 1-2: Entrance — Explore the upper levels; learn the dungeon's layout\n" +
-                "Sessions 3-4: Descent — Deeper levels; first major boss\n" +
-                "Sessions 5-6: Midpoint — Discover the dungeon's secret; gain growing item\n" +
-                "Sessions 7-8: Depths — Hardest traps and encounters\n" +
-                "Sessions 9-10: Throne Room — Final boss; claim the treasure"
+                "Sessions 1-2: Entrance â€” Explore the upper levels; learn the dungeon's layout\n" +
+                "Sessions 3-4: Descent â€” Deeper levels; first major boss\n" +
+                "Sessions 5-6: Midpoint â€” Discover the dungeon's secret; gain growing item\n" +
+                "Sessions 7-8: Depths â€” Hardest traps and encounters\n" +
+                "Sessions 9-10: Throne Room â€” Final boss; claim the treasure"
         );
         dungeonCrawl.setExampleHook(
                 "An ancient map leads the party to the entrance of a forgotten tomb. " +
@@ -413,15 +413,15 @@ public class Dnd5eCampaignTemplateService {
                 "and the dungeon's traps have claimed every explorer who entered."
         );
         dungeonCrawl.setExampleVillain(
-                "The Forgotten King — An undead monarch who guards his tomb with spectral servants. " +
+                "The Forgotten King â€” An undead monarch who guards his tomb with spectral servants. " +
                 "CR 17, legendary actions include trap activation and spectral summoning. " +
                 "Motives: Protect his treasure, prevent anyone from claiming his legacy."
         );
         dungeonCrawl.setExampleNpcs(
-                "[\"Trapped Explorer — offers dungeon tips for rescue (indifferent)\", " +
-                "\"Dungeon Guardian — ancient construct that tests intruders (hostile)\", " +
-                "\"Ghostly Guide — the king's former advisor who offers warnings (helpful)\", " +
-                "\"Treasure Hoard Dragon — guards the lower levels (hostile)\"]"
+                "[\"Trapped Explorer â€” offers dungeon tips for rescue (indifferent)\", " +
+                "\"Dungeon Guardian â€” ancient construct that tests intruders (hostile)\", " +
+                "\"Ghostly Guide â€” the king's former advisor who offers warnings (helpful)\", " +
+                "\"Treasure Hoard Dragon â€” guards the lower levels (hostile)\"]"
         );
         dungeonCrawl.setExampleEncounters(
                 "[\"Pit trap with falling spikes (trap check)\", " +
@@ -469,12 +469,12 @@ public class Dnd5eCampaignTemplateService {
                 "7. Create puzzles and challenges that reward creativity over combat"
         );
         feywild.setPacingGuide(
-                "Sessions 1-2: Crossing — Enter the Feywild; learn its rules\n" +
-                "Sessions 3-4: First Bargain — Meet a fey lord; make a deal\n" +
-                "Sessions 5-6: Twisted Path — Navigate Feywild's logic puzzles\n" +
-                "Sessions 7-8: Fey Court — Attend a fey gathering; social challenges\n" +
-                "Sessions 9-10: Betrayal — Discover the villain's plot\n" +
-                "Sessions 11-12: Escape — Break free of the Feywild's grip"
+                "Sessions 1-2: Crossing â€” Enter the Feywild; learn its rules\n" +
+                "Sessions 3-4: First Bargain â€” Meet a fey lord; make a deal\n" +
+                "Sessions 5-6: Twisted Path â€” Navigate Feywild's logic puzzles\n" +
+                "Sessions 7-8: Fey Court â€” Attend a fey gathering; social challenges\n" +
+                "Sessions 9-10: Betrayal â€” Discover the villain's plot\n" +
+                "Sessions 11-12: Escape â€” Break free of the Feywild's grip"
         );
         feywild.setExampleHook(
                 "The party follows a mysterious flower into a hidden grove and finds themselves " +
@@ -482,15 +482,15 @@ public class Dnd5eCampaignTemplateService {
                 "be returned home with a boon. Refuse, and they may never leave."
         );
         feywild.setExampleVillain(
-                "Archfey Morwenna — The Lady of Thorns who seeks to expand her domain into the Material Plane. " +
+                "Archfey Morwenna â€” The Lady of Thorns who seeks to expand her domain into the Material Plane. " +
                 "CR 20, legendary actions include reality warping and fey summoning. " +
                 "Motives: Conquer the Material Plane, collect souls through broken bargains."
         );
         feywild.setExampleNpcs(
-                "[\"Fey Lord Thistlewick — whimsical but dangerous (indifferent)\", " +
-                "\"The Lost Child — a human trapped in the Feywild (helpful)\", " +
-                "\"Bargain Keeper — enforces fey contracts (hostile if broken)\", " +
-                "\"Dryad Guide — offers safe passage for a price (friendly)\"]"
+                "[\"Fey Lord Thistlewick â€” whimsical but dangerous (indifferent)\", " +
+                "\"The Lost Child â€” a human trapped in the Feywild (helpful)\", " +
+                "\"Bargain Keeper â€” enforces fey contracts (hostile if broken)\", " +
+                "\"Dryad Guide â€” offers safe passage for a price (friendly)\"]"
         );
         feywild.setExampleEncounters(
                 "[\"Riddle gate that blocks the path (puzzle)\", " +
@@ -538,11 +538,11 @@ public class Dnd5eCampaignTemplateService {
                 "7. Add bastion facilities for crafting and research"
         );
         steampunk.setPacingGuide(
-                "Sessions 1-3: Arrival — Enter the city; learn about magic-tech fusion\n" +
-                "Sessions 4-6: First Invention — Craft initial gadgets; meet mentors\n" +
-                "Sessions 7-9: Conspiracy — Discover the villain's plot\n" +
-                "Sessions 10-12: Escalation — Race to build counter-technology\n" +
-                "Sessions 13-14: Climax — Confront the villain; save the city"
+                "Sessions 1-3: Arrival â€” Enter the city; learn about magic-tech fusion\n" +
+                "Sessions 4-6: First Invention â€” Craft initial gadgets; meet mentors\n" +
+                "Sessions 7-9: Conspiracy â€” Discover the villain's plot\n" +
+                "Sessions 10-12: Escalation â€” Race to build counter-technology\n" +
+                "Sessions 13-14: Climax â€” Confront the villain; save the city"
         );
         steampunk.setExampleHook(
                 "The party arrives in a city where magic powers every machine. But strange " +
@@ -550,15 +550,15 @@ public class Dnd5eCampaignTemplateService {
                 "and the city's greatest inventor has vanished without a trace."
         );
         steampunk.setExampleVillain(
-                "Architect Vex — A mad inventor who seeks to replace all magic with pure machinery. " +
+                "Architect Vex â€” A mad inventor who seeks to replace all magic with pure machinery. " +
                 "CR 16, legendary actions include machine summoning and reality engineering. " +
                 "Motives: Eliminate magic, create a world of pure logic and machinery."
         );
         steampunk.setExampleNpcs(
-                "[\"Inventor Zara — mentor who teaches crafting (ally)\", " +
-                "\"Industrialist Greaves — funds research for profit (indifferent)\", " +
-                "\"Rebel Leader — opposes the industrialists (friendly)\", " +
-                "\"Clockwork Automaton — sentient machine that offers aid (helpful)\"]"
+                "[\"Inventor Zara â€” mentor who teaches crafting (ally)\", " +
+                "\"Industrialist Greaves â€” funds research for profit (indifferent)\", " +
+                "\"Rebel Leader â€” opposes the industrialists (friendly)\", " +
+                "\"Clockwork Automaton â€” sentient machine that offers aid (helpful)\"]"
         );
         steampunk.setExampleEncounters(
                 "[\"Factory sabotage investigation (exploration)\", " +

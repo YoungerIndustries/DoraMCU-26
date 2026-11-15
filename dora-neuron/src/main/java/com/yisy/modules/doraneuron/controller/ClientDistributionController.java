@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.controller;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.config.NeuronConfig;
 import com.yisy.modules.doraneuron.dto.ClientDistributionResponse;
 import org.slf4j.Logger;
@@ -17,6 +19,8 @@ import java.util.Arrays;
  */
 @RestController
 @RequestMapping("/api/v1/player")
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class ClientDistributionController {
 
     private static final Logger log = LoggerFactory.getLogger(ClientDistributionController.class);

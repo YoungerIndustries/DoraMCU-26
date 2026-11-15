@@ -1,13 +1,14 @@
 package com.yisy.modules.doramcu.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.event.GalaxyEventService;
 import com.yisy.modules.doramcu.event.GalaxyEventType;
 import com.yisy.modules.doramcu.hex.BuildObjectType;
+import com.yisy.modules.doramcu.hex.spi.GalaxyStateTracker;
 import com.yisy.modules.doramcu.model.GalaxyObjectState;
 import com.yisy.modules.doramcu.repository.GalaxyObjectStateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
  * </p>
  */
 @Service
-public class GalaxyStateService {
+public class GalaxyStateService implements GalaxyStateTracker {
 
     private static final Logger log = LoggerFactory.getLogger(GalaxyStateService.class);
 

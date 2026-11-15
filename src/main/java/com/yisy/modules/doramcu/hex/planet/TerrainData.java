@@ -46,7 +46,15 @@ public class TerrainData {
         /** Port — water cargo loading/unloading */
         PORT,
         /** Airport — air cargo transport */
-        AIRPORT
+        AIRPORT,
+        /** Monorail track — elevated rail for high-tech planets */
+        MONORAIL,
+        /** Maglev track — magnetic levitation rail for advanced planets */
+        MAGLEV,
+        /** Spaceport — rocket launch and landing facility */
+        SPACEPORT,
+        /** Orbital station — space docking hub for interplanetary transport */
+        ORBITAL_STATION
     }
 
     /**

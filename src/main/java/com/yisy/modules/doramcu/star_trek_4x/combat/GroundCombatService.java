@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.star_trek_4x.combat;
 
+import org.springframework.stereotype.Service;
 import com.yisy.modules.doramcu.earth2026.model.Earth2026BattleEnvironment;
 import com.yisy.modules.doramcu.earth2026.service.PlanetService;
 import com.yisy.modules.doramcu.star_trek_4x.model.PlanetaryBattle;
@@ -11,7 +12,6 @@ import com.yisy.modules.doramcu.thirdreich.domain.TerrainType;
 import com.yisy.modules.doramcu.thirdreich.service.ThirdReichGroundBattleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 

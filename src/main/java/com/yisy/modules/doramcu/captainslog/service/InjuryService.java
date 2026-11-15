@@ -1,10 +1,10 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogCharacterRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
@@ -16,17 +16,17 @@ import java.util.Map;
  * In the Captain's Log / Star Trek Adventures system, characters have a Constitution track
  * that represents their ability to withstand harm. The injury system tracks:
  * <ul>
- *   <li>Constitution value — the character's hit points (from the character sheet)</li>
- *   <li>Injury state — HEALTHY → STUNNED → INJURED → DOWN</li>
- *   <li>Current damage — how many hits the character has taken</li>
+ *   <li>Constitution value â€” the character's hit points (from the character sheet)</li>
+ *   <li>Injury state â€” HEALTHY â†’ STUNNED â†’ INJURED â†’ DOWN</li>
+ *   <li>Current damage â€” how many hits the character has taken</li>
  * </ul>
  * </p>
  * <p>
  * Injury progression:
  * <ul>
- *   <li>When damage reaches Constitution / 2 → STUNNED (adds 1 Threat to task attempts)</li>
- *   <li>When damage reaches Constitution → INJURED (adds 2 Threats to task attempts)</li>
- *   <li>When damage exceeds Constitution → DOWN (character is incapacitated)</li>
+ *   <li>When damage reaches Constitution / 2 â†’ STUNNED (adds 1 Threat to task attempts)</li>
+ *   <li>When damage reaches Constitution â†’ INJURED (adds 2 Threats to task attempts)</li>
+ *   <li>When damage exceeds Constitution â†’ DOWN (character is incapacitated)</li>
  * </ul>
  * </p>
  * <p>

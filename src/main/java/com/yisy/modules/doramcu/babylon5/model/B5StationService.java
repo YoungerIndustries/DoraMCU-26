@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.babylon5.model;
+import org.springframework.stereotype.Service;
 
+import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,10 +12,10 @@ import java.util.List;
  * The service provider handles all ship maintenance operations:
  * </p>
  * <ul>
- *   <li>Refueling — filling fusion fuel tanks for jump travel</li>
- *   <li>Hull repair — restoring damaged hull points</li>
- *   <li>System repair — fixing damaged weapon systems and drives</li>
- *   <li>Maintenance — routine upkeep to prevent future damage</li>
+ *   <li>Refueling Ã¢â‚¬â€ filling fusion fuel tanks for jump travel</li>
+ *   <li>Hull repair Ã¢â‚¬â€ restoring damaged hull points</li>
+ *   <li>System repair Ã¢â‚¬â€ fixing damaged weapon systems and drives</li>
+ *   <li>Maintenance Ã¢â‚¬â€ routine upkeep to prevent future damage</li>
  * </ul>
  * <p>
  * Service costs vary by station type. Major stations like Babylon 5 offer
@@ -24,6 +26,7 @@ import java.util.List;
  * Centauri ports, and Narn military bases.
  * </p>
  */
+
 public class B5StationService {
 
     /**
@@ -55,32 +58,32 @@ public class B5StationService {
      */
     public enum B5StationType {
         /**
-         * Major station like Babylon 5 — best rates, full services.
+         * Major station like Babylon 5 Ã¢â‚¬â€ best rates, full services.
          */
         MAJOR("Major Station", 0.8, 0.8),
 
         /**
-         * Earth Force military station — good rates, military priority.
+         * Earth Force military station Ã¢â‚¬â€ good rates, military priority.
          */
         MILITARY("Military Station", 0.9, 0.9),
 
         /**
-         * Standard commercial station — average rates.
+         * Standard commercial station Ã¢â‚¬â€ average rates.
          */
         COMMERCIAL("Commercial Station", 1.0, 1.0),
 
         /**
-         * Minbari temple station — spiritual focus, limited services.
+         * Minbari temple station Ã¢â‚¬â€ spiritual focus, limited services.
          */
         TEMPLE("Temple Station", 1.2, 1.5),
 
         /**
-         * Remote outpost — expensive, limited services.
+         * Remote outpost Ã¢â‚¬â€ expensive, limited services.
          */
         OUTPOST("Remote Outpost", 1.5, 2.0),
 
         /**
-         * Shadow/Vorlon hidden station — extremely expensive, rare.
+         * Shadow/Vorlon hidden station Ã¢â‚¬â€ extremely expensive, rare.
          */
         HIDDEN("Hidden Station", 2.0, 2.5);
 
@@ -197,8 +200,8 @@ public class B5StationService {
     /**
      * Returns the service rate multiplier for this station.
      * <p>
-     * Lower values mean cheaper services. Major stations have the best rates (0.8×),
-     * while hidden stations have the worst (2.0×).
+     * Lower values mean cheaper services. Major stations have the best rates (0.8Ãƒâ€”),
+     * while hidden stations have the worst (2.0Ãƒâ€”).
      * </p>
      *
      * @return the service rate multiplier

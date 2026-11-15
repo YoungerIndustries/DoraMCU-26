@@ -47,6 +47,18 @@ public class EveCorporation {
     private String ceoPlayerId;
 
     /**
+     * VP display name (e.g., the AI VP of the corporation).
+     */
+    @Column(length = 100)
+    private String vpName;
+
+    /**
+     * VP player ID reference (for AI VPs, this is the AiCharacter ID as a string).
+     */
+    @Column(length = 50)
+    private String vpPlayerId;
+
+    /**
      * Description of the corporation.
      */
     @Column(length = 500)
@@ -63,6 +75,13 @@ public class EveCorporation {
      */
     @Column
     private Long creditBalance;
+
+    /**
+     * Reference to the CORPORATION-type promo code generated for this corporation.
+     * Used as a permanent landing key that routes to the corporation screen.
+     */
+    @Column(name = "promo_code_id")
+    private Long promoCodeId;
 
     public EveCorporation() {
     }
@@ -113,6 +132,22 @@ public class EveCorporation {
         this.ceoPlayerId = ceoPlayerId;
     }
 
+    public String getVpName() {
+        return vpName;
+    }
+
+    public void setVpName(String vpName) {
+        this.vpName = vpName;
+    }
+
+    public String getVpPlayerId() {
+        return vpPlayerId;
+    }
+
+    public void setVpPlayerId(String vpPlayerId) {
+        this.vpPlayerId = vpPlayerId;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -137,9 +172,17 @@ public class EveCorporation {
         this.creditBalance = creditBalance;
     }
 
+    public Long getPromoCodeId() {
+        return promoCodeId;
+    }
+
+    public void setPromoCodeId(Long promoCodeId) {
+        this.promoCodeId = promoCodeId;
+    }
+
     @Override
     public String toString() {
         return "EveCorporation{id=" + id + ", name='" + name + "', ticker='" + ticker +
-                "', ceo='" + ceoName + "'}";
+                "', ceo='" + ceoName + "', vp='" + vpName + "', promoCode=" + promoCodeId + "}";
     }
 }

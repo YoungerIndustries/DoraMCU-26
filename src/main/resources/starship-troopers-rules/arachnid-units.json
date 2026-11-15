@@ -1,0 +1,194 @@
+{
+  "faction": "Arachnids (Bugs)",
+  "description": "Pseudo-Arachnids - insectoid alien species organized in hive minds controlled by Brain Bugs. They possess advanced tunneling capabilities and formidable combat units.",
+  "unit_types": [
+    {
+      "id": "warrior",
+      "name": "Warrior Bug",
+      "type": "Infantry",
+      "attack_strength": 2,
+      "defense_strength": 1,
+      "movement_allowance": 3,
+      "description": "Basic combat unit - four-legged spider-like creatures 2-3 meters in length. Primary frontline fighters.",
+      "abilities": ["Close combat specialist", "Can tunnel"],
+      "victory_points": 1,
+      "counters_per_scenario": 25,
+      "variants": [
+        {
+          "name": "Desert Warrior",
+          "color": "Beige with yellow and black stripes",
+          "description": "Camouflaged for desert environments"
+        },
+        {
+          "name": "Heavy Warrior",
+          "attack_strength": 3,
+          "description": "Larger, more heavily armored variant"
+        }
+      ]
+    },
+    {
+      "id": "worker",
+      "name": "Worker Bug",
+      "type": "Support",
+      "attack_strength": 0,
+      "defense_strength": 1,
+      "movement_allowance": 3,
+      "description": "Non-combat unit used for construction and tunnel maintenance. No offensive capability.",
+      "abilities": ["Tunnel construction", "Tunnel repair", "Can be confused with Warriors"],
+      "victory_points": 1,
+      "counters_per_scenario": 25
+    },
+    {
+      "id": "heavy_weapon_beam",
+      "name": "Heavy Weapon - Beam",
+      "type": "Heavy Weapon",
+      "attack_strength": 6,
+      "defense_strength": 1,
+      "movement_allowance": 3,
+      "range": 6,
+      "description": "Arachnid heavy weapon that fires energy beams at medium range.",
+      "abilities": ["Energy beam attack", "Medium range"],
+      "victory_points": 2,
+      "counters_per_scenario": 5
+    },
+    {
+      "id": "heavy_weapon_missile",
+      "name": "Heavy Weapon - Missile",
+      "type": "Heavy Weapon",
+      "attack_strength": 6,
+      "defense_strength": 1,
+      "movement_allowance": 3,
+      "range": 10,
+      "description": "Arachnid heavy weapon that fires missiles at long range.",
+      "abilities": ["Missile attack", "Long range"],
+      "victory_points": 2,
+      "counters_per_scenario": 5
+    },
+    {
+      "id": "tanker",
+      "name": "Tanker Bug",
+      "type": "Heavy Infantry",
+      "attack_strength": 4,
+      "defense_strength": 3,
+      "movement_allowance": 2,
+      "description": "Large, heavily armored bug that can tunnel beneath enemies and appear behind lines. Orange coloration.",
+      "abilities": ["Heavy armor", "Can tunnel under enemies", "Flank attacks"],
+      "victory_points": 2,
+      "counters_per_scenario": 5
+    },
+    {
+      "id": "crawler",
+      "name": "Crawler Bug",
+      "type": "Siege",
+      "attack_strength": 8,
+      "defense_strength": 6,
+      "movement_allowance": 1,
+      "description": "Massive siege unit with heavy armor and powerful weapons. Very slow but devastating.",
+      "abilities": ["Heavy armor", "Powerful weapons", "Siege capability"],
+      "victory_points": 4,
+      "counters_per_scenario": 2
+    },
+    {
+      "id": "plasma",
+      "name": "Plasma Bug",
+      "type": "Heavy Weapon",
+      "attack_strength": 10,
+      "defense_strength": 4,
+      "movement_allowance": 2,
+      "range": 8,
+      "description": "Fires plasma projectiles at enemy units. High damage but slow reloading.",
+      "abilities": ["Plasma fire", "High damage", "Vulnerable during reload"],
+      "victory_points": 3,
+      "counters_per_scenario": 3
+    },
+    {
+      "id": "brain_bug",
+      "name": "Brain Bug (Master Brain)",
+      "type": "Command",
+      "attack_strength": 0,
+      "defense_strength": 8,
+      "movement_allowance": 0,
+      "description": "The hive mind controller - immobile but essential. Located at the center of the complex. Capturing it is a key objective.",
+      "abilities": ["Controls hive mind", "Coordinates Bug forces", "Victory objective"],
+      "victory_points": 10,
+      "counters_per_scenario": 1,
+      "special": "Must be protected at all costs. Located in the center hex of the Arachnid complex."
+    },
+    {
+      "id": "queen",
+      "name": "Queen Bug",
+      "type": "Command",
+      "attack_strength": 0,
+      "defense_strength": 6,
+      "movement_allowance": 0,
+      "description": "Reproductive unit of the hive. High value target.",
+      "abilities": ["Produces new units", "High value target"],
+      "victory_points": 8,
+      "counters_per_scenario": 1
+    },
+    {
+      "id": "royal_warrior",
+      "name": "Royal Warrior",
+      "type": "Elite Infantry",
+      "attack_strength": 5,
+      "defense_strength": 4,
+      "movement_allowance": 3,
+      "description": "Elite bodyguard for Brain Bugs and Queens. Purple coloration. Essentially invulnerable - eyes must be blasted out first to access nerve stem.",
+      "abilities": ["Elite combat", "Bodyguard", "Heavy armor"],
+      "victory_points": 3,
+      "counters_per_scenario": 2
+    },
+    {
+      "id": "strong_point",
+      "name": "Strong Point",
+      "type": "Fortification",
+      "attack_strength": 0,
+      "defense_strength": 6,
+      "movement_allowance": 0,
+      "description": "Defensive fortification around the Arachnid complex.",
+      "abilities": ["Defensive bonus", "Blocks movement"],
+      "victory_points": 0,
+      "counters_per_scenario": 6
+    },
+    {
+      "id": "decoy",
+      "name": "Decoy",
+      "type": "Deception",
+      "attack_strength": 0,
+      "defense_strength": 0,
+      "movement_allowance": 0,
+      "description": "Fake unit used to deceive the Terran player about Bug positions.",
+      "abilities": ["Deception", "No combat value"],
+      "victory_points": 0,
+      "counters_per_scenario": 3
+    }
+  ],
+  "special_markers": [
+    {
+      "name": "Perimeter Marker",
+      "description": "Marks the perimeter of the Arachnid complex"
+    },
+    {
+      "name": "Breach Marker",
+      "description": "Marks where bugs have surfaced from tunnels"
+    },
+    {
+      "name": "Radiation Area Marker",
+      "description": "Marks areas affected by nuclear weapons"
+    },
+    {
+      "name": "Tunnel Movement Counter",
+      "description": "Tracks underground movement of Bug units"
+    }
+  ],
+  "hive_complex": {
+    "description": "The underground Arachnid hive is hidden from the Terran player. The Arachnid player uses an Alien Control Pad (small paper copy of the map) to track positions.",
+    "components": [
+      "Master Brain hex (center)",
+      "Queen location",
+      "Tunnel network",
+      "Strong points",
+      "Breach points"
+    ]
+  }
+}

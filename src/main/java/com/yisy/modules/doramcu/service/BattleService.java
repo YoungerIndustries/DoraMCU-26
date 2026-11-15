@@ -1,7 +1,10 @@
 package com.yisy.modules.doramcu.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.dto.BattleRequest;
 import com.yisy.modules.doramcu.dto.BattleResponse;
+import com.yisy.modules.doramcu.event.GalaxyEventService;
+import com.yisy.modules.doramcu.event.GalaxyEventType;
 import com.yisy.modules.doramcu.hex.Battle;
 import com.yisy.modules.doramcu.hex.Fleet;
 import com.yisy.modules.doramcu.hex.Hex3D;
@@ -11,7 +14,6 @@ import com.yisy.modules.doramcu.traveller.TravellerFleetBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,12 +37,14 @@ public class BattleService {
     private static final Logger log = LoggerFactory.getLogger(BattleService.class);
 
     private final ShipDesignService shipDesignService;
+    private final GalaxyEventService galaxyEventService;
     private final Map<Integer, Battle> activeBattles = new ConcurrentHashMap<>();
     private final Map<Integer, BattleResponse> completedBattles = new ConcurrentHashMap<>();
     private final AtomicInteger battleIdCounter = new AtomicInteger(1);
 
-    public BattleService(ShipDesignService shipDesignService) {
+    public BattleService(ShipDesignService shipDesignService, GalaxyEventService galaxyEventService) {
         this.shipDesignService = shipDesignService;
+        this.galaxyEventService = galaxyEventService;
     }
 
     /**
@@ -86,6 +90,19 @@ public class BattleService {
 
         // Store completed battle
         completedBattles.put(battleId, response);
+
+        // Publish battle event to news
+        galaxyEventService.publish(
+                GalaxyEventType.BATTLE_COMPLETED,
+                request.getBattleName() != null ? request.getBattleName() : "Galactic Space",
+                null,
+                "attackerName", attackerDesign.getName(),
+                "defenderName", defenderDesign.getName(),
+                "outcome", result.getOutcome().name(),
+                "rounds", String.valueOf(result.getTotalRounds()),
+                "attackerShipsLost", String.valueOf(result.getTotalAttackerShipsLost()),
+                "defenderShipsLost", String.valueOf(result.getTotalDefenderShipsLost())
+        );
 
         log.info("Battle {} completed: {}", battleId, result.getOutcome());
         return response;
@@ -168,6 +185,19 @@ public class BattleService {
             // Move from active to completed
             activeBattles.remove(battleId);
             completedBattles.put(battleId, response);
+
+            // Publish battle event to news
+            galaxyEventService.publish(
+                    GalaxyEventType.BATTLE_COMPLETED,
+                    response.getBattleName() != null ? response.getBattleName() : "Galactic Space",
+                    null,
+                    "attackerName", response.getAttackerShipName(),
+                    "defenderName", response.getDefenderShipName(),
+                    "outcome", response.getOutcome(),
+                    "rounds", String.valueOf(response.getTotalRounds()),
+                    "attackerShipsLost", String.valueOf(response.getAttackerShipsLost()),
+                    "defenderShipsLost", String.valueOf(response.getDefenderShipsLost())
+            );
 
             return response;
         }

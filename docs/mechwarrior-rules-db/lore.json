@@ -1,0 +1,416 @@
+{
+  "lore": {
+    "universe": {
+      "title": "MechWarrior / BattleTech Universe",
+      "description": "The BattleTech universe is set in a future where humanity has expanded across the stars via the K-F Drive. The Inner Sphere is dominated by giant humanoid war machines called BattleMechs, piloted by elite warriors known as MechWarriors. Five Great Houses rule the Successor States, while the Clans threaten from beyond known space.",
+      "source_material": [
+        "BattleTech tabletop game (FASA, Catalyst Game Labs)",
+        "MechWarrior video game series",
+        "MechWarrior: Mercenaries (2009)",
+        "MechWarrior 5: Mercenaries (2019)",
+        "MechWarrior 5: Clans (2021)",
+        "MechWarrior 5: Dark Age (2023)",
+        "BattleTech 2018 video game",
+        "MechCommander series"
+      ]
+    },
+    "inner_sphere": {
+      "description": "The Inner Sphere is the region of space humanity colonized after achieving faster-than-light travel via the K-F Drive. It consists of a spiral arm of star systems stretching from the central star Terra (Earth) outward in a rough spiral pattern.",
+      "history": {
+        "star_league": {
+          "period": "2520-2781",
+          "description": "The Star League was a multinational administrative and peacekeeping treaty. During this era, mankind achieved technological marvels. The Star League Defense Force (SLDF), led by General Aleksandr Kerensky, was the military arm. After the collapse in 2781, Kerensky led Operation Exodus in 2784, taking the bulk of the SLDF beyond known space.",
+          "significance": "Golden age of the Inner Sphere. Kerensky's Exodus led to the formation of the Clans."
+        },
+        "succession_wars": {
+          "period": "2786-3067",
+          "description": "Following the fall of the Star League, the five Great Houses fought four devastating wars. Nearly 300 years of conflict caused unimaginable devastation: hundreds of billions died, hundreds of worlds were rendered lifeless, and technological progress was pushed back centuries.",
+          "wars": [
+            {
+              "name": "First Succession War",
+              "period": "2786-2821"
+            },
+            {
+              "name": "Second Succession War",
+              "period": "2830-2864"
+            },
+            {
+              "name": "Third Succession War",
+              "period": "2866-3025"
+            },
+            {
+              "name": "Fourth Succession War",
+              "period": "3028-3030",
+              "outcome": "Lyran Commonwealth and Federated Suns united to form the Federated Commonwealth"
+            }
+          ]
+        },
+        "clan_invasion": {
+          "period": "3050-3064",
+          "description": "The Clans, descendants of the SLDF, returned to the Inner Sphere with the goal of conquering it. The invasion was ultimately repelled through a combination of Inner Sphere resistance and Clan internal conflicts.",
+          "significance": "Forced the Great Houses to cooperate, leading to the formation of the Star League Addendum"
+        }
+      },
+      "great_houses": {
+        "davion": {
+          "name": "House Davion",
+          "state": "Federated Suns",
+          "capital": "New Avalon",
+          "description": "Known for their military prowess and chivalric traditions, the Davions are considered the most martial of the Great Houses. The Federated Suns excels in combined arms tactics and produces some of the finest MechWarriors in the Inner Sphere.",
+          "motto": "The Sun Rises on the Federated Commonwealth",
+          "characteristics": [
+            "Military excellence",
+            "Frontier spirit",
+            "Chivalric traditions",
+            "Combined arms tactics"
+          ]
+        },
+        "steiner": {
+          "name": "House Steiner",
+          "state": "Lyran Commonwealth",
+          "capital": "Tharkad",
+          "description": "The Lyran Commonwealth is the Inner Sphere's greatest economic power, with advanced technology and a strong industrial base. Known for Germanic cultural influences and the Lyran Combat Group (LCG) doctrine.",
+          "motto": "The Steiner Sun Never Sets",
+          "characteristics": [
+            "Economic power",
+            "Advanced technology",
+            "Lyran Combat Group doctrine",
+            "Industrial capacity"
+          ]
+        },
+        "kurita": {
+          "name": "House Kurita",
+          "state": "Draconis Combine",
+          "capital": "Luthien",
+          "description": "The Draconis Combine embraces 'the way of the warrior' with strong Japanese cultural influence. Personal honor and self-reliance bordering on xenophobia are encouraged. Known for aggressive expansionism and the Bushido code.",
+          "motto": "The Combine is Strength",
+          "characteristics": [
+            "Warrior culture",
+            "Bushido code",
+            "Aggressive expansionism",
+            "Elite Guard units"
+          ]
+        },
+        "marik": {
+          "name": "House Marik",
+          "state": "Free Worlds League",
+          "capital": "Alpheratz",
+          "description": "The Free Worlds League is characterized by its libertarian political culture, where individual worlds enjoy significant autonomy. Known for political intrigue and internal instability ('Marik Madness').",
+          "characteristics": [
+            "Libertarian culture",
+            "Political intrigue",
+            "Internal instability",
+            "Significant industrial capacity"
+          ]
+        },
+        "liao": {
+          "name": "House Liao",
+          "state": "Capellan Confederation",
+          "capital": "Sian",
+          "description": "The Capellan Confederation is characterized by Chinese cultural influences, authoritarian government, and emphasis on espionage and subterfuge. Known for large population and extensive use of infantry and vehicles alongside BattleMechs.",
+          "characteristics": [
+            "Espionage and subterfuge",
+            "Authoritarian rule",
+            "Large population",
+            "Capellan Intelligence Directorate (CID)"
+          ]
+        }
+      },
+      "clans": {
+        "description": "The Clans are descendants of the Star League Defense Force that followed General Kerensky in Operation Exodus. After centuries in the Deep Periphery, they developed unique technologies and a rigid caste-based society. They returned to the Inner Sphere with the goal of conquering it.",
+        "society": {
+          "caste_system": [
+            "Warrior caste - primary fighting force",
+            "Caste Two - scientists and technicians",
+            "Caste Three - administrators and logistics",
+            "Caste Four - laborers and servants",
+            "Bondsmen - conquered peoples"
+          ],
+          "combat_culture": {
+            "description": "Clan combat is governed by strict codes of honor and tradition.",
+            "practices": [
+              "Trial of Possession - conquer territory through combat",
+              "Trial of Annihilation - fight to the death",
+              "Trial of Grievance - personal duel to settle disputes",
+              "Trial of Absolution - prove innocence through combat",
+              "Ghastille - fair combat with matched forces"
+            ]
+          }
+        },
+        "major_clans": [
+          {
+            "name": "Clan Wolf",
+            "characteristics": [
+              "Honorable and disciplined",
+              "Value strength and loyalty",
+              "Led by Hanse Jorgens"
+            ]
+          },
+          {
+            "name": "Clan Jade Falcon",
+            "characteristics": [
+              "Ruthless and expansionist",
+              "Believe in their superiority",
+              "Led by Abith al-Luciani"
+            ]
+          },
+          {
+            "name": "Clan Smoke Jaguar",
+            "characteristics": [
+              "Aggressive and brutal",
+              "Despise the Inner Sphere",
+              "Led by Marthe Fowley"
+            ]
+          },
+          {
+            "name": "Clan Star Adder",
+            "characteristics": [
+              "Deceptive and cunning",
+              "Value intelligence and strategy",
+              "Led by Yffe al-Luciani"
+            ]
+          },
+          {
+            "name": "Clan Ghost Bear",
+            "characteristics": [
+              "Scholars and warriors",
+              "Value knowledge and tradition",
+              "Led by Danna Cook"
+            ]
+          }
+        ],
+        "technology_advantages": [
+          "Superior cooling systems",
+          "More powerful weapons",
+          "Better armor composition",
+          "Improved sensors",
+          "Caseless ammunition",
+          "Endo-steel armor"
+        ]
+      },
+      "comstar": {
+        "name": "ComStar",
+        "description": "The neutral interstellar communications organization that controls Terra and maintains the Star Drive Network. ComStar evolved from the Communications and Electronics Corporation into a powerful religious and political organization.",
+        "roles": [
+          "Maintains the Star Drive Network",
+          "Controls interstellar communication",
+          "Guards the secrets of the K-F Drive",
+          "Officially neutral in conflicts"
+        ],
+        "influence": "ComStar's control of the Star Drive Network gives it de facto control over interstellar travel and communication."
+      }
+    },
+    "battletech": {
+      "description": "BattleMechs are giant humanoid war machines, typically 4 to 10 meters tall and weighing 20 to 100 tons. They are the cornerstone of Inner Sphere military power.",
+      "classifications": {
+        "light": {
+          "weight_range": "20-35 tons",
+          "description": "Limited armor and weapon capacity but superior mobility. Used as scouts and anti-personnel units.",
+          "examples": [
+            "Commando (CMD-1)",
+            "Shadow Hawk (SHD-2H)",
+            "Grasshopper (GRP-2A)",
+            "Jenner (NRB-Nak)"
+          ]
+        },
+        "medium": {
+          "weight_range": "40-55 tons",
+          "description": "The workhorses of most armies. Best combination of speed, armor, and payload.",
+          "examples": [
+            "Wolverine (WVR-6R)",
+            "Griffin (GF-6M)",
+            "Centurion (CTR-A)",
+            "Enforcer (ENC-2A)"
+          ]
+        },
+        "heavy": {
+          "weight_range": "60-75 tons",
+          "description": "Frontline combat with substantial firepower and durability. Can mount heavy weapons.",
+          "examples": [
+            "Atlas (AS7-D)",
+            "Thunderbolt (TB-L)",
+            "Black Knight (BKD-1)"
+          ]
+        },
+        "assault": {
+          "weight_range": "80-100 tons",
+          "description": "Maximum firepower and armor at the cost of speed. Used as spearheads and command units.",
+          "examples": [
+            "Battlemaster (BLK-NT)",
+            "Warhammer (WHM-6A)",
+            "Mad Cat (SHD-2H)"
+          ]
+        }
+      },
+      "weapons": {
+        "energy": {
+          "description": "Fire beams of concentrated energy. No ammunition needed but generate significant heat.",
+          "types": [
+            {
+              "name": "Small Laser",
+              "damage": 5,
+              "tonnage": 1,
+              "heat": 5,
+              "range": "9/18/27"
+            },
+            {
+              "name": "Medium Laser",
+              "damage": 5,
+              "tonnage": 1,
+              "heat": 3,
+              "range": "12/25/37"
+            },
+            {
+              "name": "Large Laser",
+              "damage": 8,
+              "tonnage": 5,
+              "heat": 8,
+              "range": "15/30/45"
+            },
+            {
+              "name": "Particle Projection Cannon (PPC)",
+              "damage": 10,
+              "tonnage": 7,
+              "heat": 10,
+              "range": "15/30/45",
+              "special": "5 rear-facing damage"
+            }
+          ]
+        },
+        "ballistic": {
+          "description": "Fire physical projectiles. Require ammunition but generate minimal heat.",
+          "types": [
+            {
+              "name": "Autocannon/2 (AC/2)",
+              "damage": 2,
+              "tonnage": 6,
+              "heat": 1,
+              "range": "12/24/36",
+              "ammo": "25 rounds/ton"
+            },
+            {
+              "name": "Autocannon/5 (AC/5)",
+              "damage": 5,
+              "tonnage": 8,
+              "heat": 4,
+              "range": "6/12/18",
+              "ammo": "20 rounds/ton"
+            },
+            {
+              "name": "Autocannon/10 (AC/10)",
+              "damage": 10,
+              "tonnage": 12,
+              "heat": 5,
+              "range": "6/12/18",
+              "ammo": "8 rounds/ton"
+            },
+            {
+              "name": "Autocannon/20 (AC/20)",
+              "damage": 20,
+              "tonnage": 14,
+              "heat": 7,
+              "range": "3/9/15",
+              "ammo": "5 rounds/ton"
+            }
+          ]
+        },
+        "missile": {
+          "description": "Fire guided projectiles. Require ammunition and generate moderate heat.",
+          "types": [
+            {
+              "name": "SRM-2",
+              "damage": 2,
+              "tonnage": 2,
+              "heat": 1,
+              "range": "3/6/9"
+            },
+            {
+              "name": "SRM-4",
+              "damage": 4,
+              "tonnage": 3,
+              "heat": 2,
+              "range": "3/6/9"
+            },
+            {
+              "name": "SRM-6",
+              "damage": 6,
+              "tonnage": 4,
+              "heat": 3,
+              "range": "3/6/9"
+            },
+            {
+              "name": "LRM-5",
+              "damage": 5,
+              "tonnage": 2,
+              "heat": 2,
+              "range": "9/18/27"
+            },
+            {
+              "name": "LRM-10",
+              "damage": 10,
+              "tonnage": 4,
+              "heat": 5,
+              "range": "9/18/27"
+            },
+            {
+              "name": "LRM-15",
+              "damage": 15,
+              "tonnage": 7,
+              "heat": 5,
+              "range": "12/24/36"
+            },
+            {
+              "name": "LRM-20",
+              "damage": 20,
+              "tonnage": 10,
+              "heat": 6,
+              "range": "12/24/36"
+            }
+          ]
+        }
+      }
+    },
+    "key_locations": [
+      {
+        "name": "Terra (Earth)",
+        "description": "Capital of ComStar, center of the Inner Sphere.",
+        "significance": "Control of Terra gives control of the Star Drive Network"
+      },
+      {
+        "name": "New Avalon",
+        "description": "Capital of the Federated Suns.",
+        "significance": "Political and military center of House Davion"
+      },
+      {
+        "name": "Tharkad",
+        "description": "Capital of the Lyran Commonwealth.",
+        "significance": "Political and military center of House Steiner"
+      },
+      {
+        "name": "Luthien",
+        "description": "Capital of the Draconis Combine.",
+        "significance": "Political and military center of House Kurita"
+      },
+      {
+        "name": "Alpheratz",
+        "description": "Capital of the Free Worlds League.",
+        "significance": "Political and military center of House Marik"
+      },
+      {
+        "name": "Sian",
+        "description": "Capital of the Capellan Confederation.",
+        "significance": "Political and military center of House Liao"
+      },
+      {
+        "name": "Basilisk",
+        "description": "Homeworld of Clan Wolf.",
+        "significance": "Clan Wolf capital and training world"
+      },
+      {
+        "name": "Ondrea II",
+        "description": "Homeworld of Clan Jade Falcon.",
+        "significance": "Clan Jade Falcon capital"
+      }
+    ]
+  }
+}

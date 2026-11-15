@@ -3,6 +3,7 @@ package com.yisy.modules.doramcu.controller;
 import com.yisy.modules.doramcu.fourx.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +34,8 @@ public class FourxController {
 
     public FourxController(FourxExplorationService explorationService,
                            FourxCombatService combatService,
-                           FourxDiplomacyService diplomacyService,
-                           FourxEconomyService economyService,
+                           @Qualifier("b5DiplomacyService") FourxDiplomacyService diplomacyService,
+                           @Qualifier("b5EconomyService") FourxEconomyService economyService,
                            FourxCharacterService characterService) {
         this.explorationService = explorationService;
         this.combatService = combatService;

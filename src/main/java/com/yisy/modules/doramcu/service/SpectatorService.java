@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.dto.GameEvent;
 import com.yisy.modules.doramcu.dto.GameStateResponse;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
  * </ul>
  * </p>
  */
+@Service
 public class SpectatorService {
 
     private static final Logger log = LoggerFactory.getLogger(SpectatorService.class);
@@ -36,13 +38,13 @@ public class SpectatorService {
 
     private final GameSessionService gameSessionService;
 
-    /** Spectator ID → SpectatorInfo mapping. */
+    /** Spectator ID â†’ SpectatorInfo mapping. */
     private final ConcurrentHashMap<String, SpectatorInfo> spectators = new ConcurrentHashMap<>();
 
-    /** Session ID → list of spectator IDs. */
+    /** Session ID â†’ list of spectator IDs. */
     private final ConcurrentHashMap<String, List<String>> sessionSpectators = new ConcurrentHashMap<>();
 
-    /** Session ID → event history for spectators. */
+    /** Session ID â†’ event history for spectators. */
     private final ConcurrentHashMap<String, Deque<GameEvent>> eventHistory = new ConcurrentHashMap<>();
 
     public SpectatorService(GameSessionService gameSessionService) {
@@ -105,7 +107,7 @@ public class SpectatorService {
     }
 
     /**
-     * Redacted game state for spectators — hides sensitive player information.
+     * Redacted game state for spectators â€” hides sensitive player information.
      */
     public static class SpectatorGameState {
         private final String sessionId;
@@ -252,8 +254,8 @@ public class SpectatorService {
             leaveSession(spectatorId, info.getCurrentSession());
         }
 
-        // Check if session exists
-        GameStateResponse gameState = gameSessionService.getGameState(sessionId);
+        // Check if session exists â€” spectators use null playerId for read-only access
+        GameStateResponse gameState = gameSessionService.getGameState(null, sessionId);
         if (gameState == null) {
             log.warn("Spectator {} attempted to join non-existent session: {}", spectatorId, sessionId);
             return Optional.empty();
@@ -274,10 +276,15 @@ public class SpectatorService {
      * A spectator leaves a game session.
      */
     public void leaveSession(String spectatorId, String sessionId) {
-        sessionSpectators.computeIfPresent(sessionId, (key, list) -> {
+        if (sessionId == null) return;
+
+        List<String> list = sessionSpectators.get(sessionId);
+        if (list != null) {
             list.removeIf(id -> id.equals(spectatorId));
-            return list.isEmpty() ? null : list;
-        });
+            if (list.isEmpty()) {
+                sessionSpectators.remove(sessionId);
+            }
+        }
 
         SpectatorInfo info = spectators.get(spectatorId);
         if (info != null && sessionId.equals(info.getCurrentSession())) {
@@ -291,7 +298,7 @@ public class SpectatorService {
      * Get redacted game state for a session.
      */
     public Optional<SpectatorGameState> getSpectatorGameState(String sessionId) {
-        GameStateResponse gameState = gameSessionService.getGameState(sessionId);
+        GameStateResponse gameState = gameSessionService.getGameState(null, sessionId);
         if (gameState == null) {
             return Optional.empty();
         }

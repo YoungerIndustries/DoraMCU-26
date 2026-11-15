@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.model.RulesTable;
 import com.yisy.modules.doramcu.captainslog.repository.RulesTableRepository;
@@ -9,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -90,7 +90,7 @@ public class RulesService {
                 "05.00 Rules of Play",
                 "DICE_MECHANICS",
                 180,
-                "The Target Number for a task attempt is calculated by adding one Attribute value and one Discipline value. For character task attempts, this is the character's Attribute rating plus their Discipline rating. For starship task attempts, this is the starship's System rating plus the Department rating. The Target Number determines how easy it is to succeed on a roll — higher Target Numbers mean more dice results count as successes.",
+                "The Target Number for a task attempt is calculated by adding one Attribute value and one Discipline value. For character task attempts, this is the character's Attribute rating plus their Discipline rating. For starship task attempts, this is the starship's System rating plus the Department rating. The Target Number determines how easy it is to succeed on a roll â€” higher Target Numbers mean more dice results count as successes.",
                 "Example: A character with Fitness 3 and Security 2 has a Target Number of 5 for Fitness+Security checks."
         ));
 
@@ -109,7 +109,7 @@ public class RulesService {
                 "DICE_MECHANICS",
                 182,
                 "If a character has a Focus (specialty) that applies to the task attempt, any die that rolls equal to or below the Discipline value counts as 2 successes instead of 1. Without a Focus, only a natural 1 counts as 2 successes. Focuses represent specialized training in a narrow area within a Discipline.",
-                "Example: A character with Security 3 and a 'Hand-to-Hand Combat' Focus — any die rolling 3 or below counts as 2 successes during combat checks."
+                "Example: A character with Security 3 and a 'Hand-to-Hand Combat' Focus â€” any die rolling 3 or below counts as 2 successes during combat checks."
         ));
 
         entries.add(createEntry(
@@ -165,7 +165,7 @@ public class RulesService {
                 "THREAT",
                 194,
                 "When you have Threat in the Threat pool, you can spend 1 Threat to gain 1 Boon on a task attempt. This represents using the complications in the narrative to your advantage. Alternatively, you can resolve Threat by rolling on the Complication table, which introduces a new complication to the mission.",
-                "Spending Threat for a Boon is a powerful option — use it when a task attempt is critical to the mission."
+                "Spending Threat for a Boon is a powerful option â€” use it when a task attempt is critical to the mission."
         ));
 
         // Attributes
@@ -233,7 +233,7 @@ public class RulesService {
                 "MISSION_STRUCTURE",
                 226,
                 "Each act contains 5 narrative beats. A beat is a scene or moment in the mission. At each beat, the player narrates what happens, performs a task attempt if the situation calls for it, and resolves the outcome. After 5 beats, the act concludes and the next act begins. The player writes an in-character log entry at the transition between acts.",
-                "Beats help pace the mission. Not every beat requires a dice roll — some are purely narrative."
+                "Beats help pace the mission. Not every beat requires a dice roll â€” some are purely narrative."
         ));
 
         entries.add(createEntry(
@@ -328,7 +328,7 @@ public class RulesService {
                 "01.00 Star Trek Defined",
                 "SETTING",
                 13,
-                "Star Trek envisions a future where humanity has overcome poverty, disease, and prejudice. Post-scarcity society means that material needs are met, and people work for personal growth and the betterment of others. This utopian vision is not perfect — conflicts still arise from ideology, culture, and ambition — but the baseline is hope and progress.",
+                "Star Trek envisions a future where humanity has overcome poverty, disease, and prejudice. Post-scarcity society means that material needs are met, and people work for personal growth and the betterment of others. This utopian vision is not perfect â€” conflicts still arise from ideology, culture, and ambition â€” but the baseline is hope and progress.",
                 "This optimistic vision shapes the tone of Captain's Log missions. Even in dark situations, hope persists."
         ));
 
@@ -701,7 +701,7 @@ public class RulesService {
     public void populateOracleTables() {
         List<RulesTable> tables = new ArrayList<>();
 
-        // Yes/No Probability Matrix — the core oracle tool
+        // Yes/No Probability Matrix â€” the core oracle tool
         // This table encodes the probability levels and their d20 thresholds
         // Very Unlikely: Yes on 1-2, No on 3-20
         // Unlikely: Yes on 1-5, No on 6-20
@@ -716,26 +716,26 @@ public class RulesService {
                 "YES_PLUS", "YES", "YES_MINUS", "NO_MINUS", "NO"
         };
         String[] yesNoDescs = {
-                "Critical Yes — an overwhelming, dramatic success with major consequences.",
-                "Yes+ — Yes, and you gain Momentum.",
-                "Yes — a straightforward affirmative answer.",
-                "Yes- — Yes, but with a complication or cost.",
-                "Both/Neither — both outcomes occur, or neither occurs.",
-                "No- — No, and you gain Threat.",
-                "No — a straightforward negative answer.",
-                "No+ — No, but something helpful happens.",
-                "Critical No — an overwhelming, dramatic failure with major consequences.",
-                "No- — No, and the situation worsens.",
-                "No — the answer is clearly negative.",
-                "No+ — No, but a silver lining appears.",
-                "No — the answer is negative.",
-                "Yes- — Yes, but at a price.",
-                "Both/Neither — an unexpected combination of outcomes.",
-                "Yes+ — Yes, and things go better than expected.",
-                "Yes — a clear affirmative answer.",
-                "Yes- — Yes, but complications follow.",
-                "No- — No, and the consequences are severe.",
-                "No — the answer is negative."
+                "Critical Yes â€” an overwhelming, dramatic success with major consequences.",
+                "Yes+ â€” Yes, and you gain Momentum.",
+                "Yes â€” a straightforward affirmative answer.",
+                "Yes- â€” Yes, but with a complication or cost.",
+                "Both/Neither â€” both outcomes occur, or neither occurs.",
+                "No- â€” No, and you gain Threat.",
+                "No â€” a straightforward negative answer.",
+                "No+ â€” No, but something helpful happens.",
+                "Critical No â€” an overwhelming, dramatic failure with major consequences.",
+                "No- â€” No, and the situation worsens.",
+                "No â€” the answer is clearly negative.",
+                "No+ â€” No, but a silver lining appears.",
+                "No â€” the answer is negative.",
+                "Yes- â€” Yes, but at a price.",
+                "Both/Neither â€” an unexpected combination of outcomes.",
+                "Yes+ â€” Yes, and things go better than expected.",
+                "Yes â€” a clear affirmative answer.",
+                "Yes- â€” Yes, but complications follow.",
+                "No- â€” No, and the consequences are severe.",
+                "No â€” the answer is negative."
         };
         for (int i = 0; i < yesNoResults.length; i++) {
             tables.add(createTableEntry("Yes/No Probability (50/50)", "ORACLE", "Appendix I", 253,
@@ -750,26 +750,26 @@ public class RulesService {
                 "NO", "NO", "NO", "NO", "CRITICAL_NO"
         };
         String[] veryUnlikelyDescs = {
-                "Yes+ — almost impossibly, things go your way.",
-                "Yes — against all odds, the answer is yes.",
-                "No- — no, and the situation is worse than expected.",
-                "No — the expected negative answer.",
-                "No — clearly not.",
-                "No — the answer is no.",
-                "No — no.",
-                "No+ — no, but a small mercy.",
-                "No — no.",
-                "No — no.",
-                "No — no.",
-                "No — no.",
-                "No — no.",
-                "No — no.",
-                "No — no.",
-                "No — no.",
-                "No — no.",
-                "No — no.",
-                "No — no.",
-                "Critical No — an overwhelming and dramatic no."
+                "Yes+ â€” almost impossibly, things go your way.",
+                "Yes â€” against all odds, the answer is yes.",
+                "No- â€” no, and the situation is worse than expected.",
+                "No â€” the expected negative answer.",
+                "No â€” clearly not.",
+                "No â€” the answer is no.",
+                "No â€” no.",
+                "No+ â€” no, but a small mercy.",
+                "No â€” no.",
+                "No â€” no.",
+                "No â€” no.",
+                "No â€” no.",
+                "No â€” no.",
+                "No â€” no.",
+                "No â€” no.",
+                "No â€” no.",
+                "No â€” no.",
+                "No â€” no.",
+                "No â€” no.",
+                "Critical No â€” an overwhelming and dramatic no."
         };
         for (int i = 0; i < veryUnlikelyResults.length; i++) {
             tables.add(createTableEntry("Yes/No Probability (Very Unlikely)", "ORACLE", "Appendix I", 253,
@@ -784,26 +784,26 @@ public class RulesService {
                 "NO", "NO", "NO", "NO_PLUS", "CRITICAL_NO"
         };
         String[] unlikelyDescs = {
-                "Yes+ — surprisingly, things go your way.",
-                "Yes — unlikely but possible.",
-                "Yes- — yes, but barely.",
-                "No- — no, and it's worse than expected.",
-                "No — the expected negative answer.",
-                "No — no.",
-                "No — no.",
-                "No+ — no, but a small mercy.",
-                "No — no.",
-                "No — no.",
-                "No — no.",
-                "No — no.",
-                "No — no.",
-                "No — no.",
-                "No — no.",
-                "No — no.",
-                "No — no.",
-                "No — no.",
-                "No+ — no, but a silver lining.",
-                "Critical No — a dramatic and overwhelming no."
+                "Yes+ â€” surprisingly, things go your way.",
+                "Yes â€” unlikely but possible.",
+                "Yes- â€” yes, but barely.",
+                "No- â€” no, and it's worse than expected.",
+                "No â€” the expected negative answer.",
+                "No â€” no.",
+                "No â€” no.",
+                "No+ â€” no, but a small mercy.",
+                "No â€” no.",
+                "No â€” no.",
+                "No â€” no.",
+                "No â€” no.",
+                "No â€” no.",
+                "No â€” no.",
+                "No â€” no.",
+                "No â€” no.",
+                "No â€” no.",
+                "No â€” no.",
+                "No+ â€” no, but a silver lining.",
+                "Critical No â€” a dramatic and overwhelming no."
         };
         for (int i = 0; i < unlikelyResults.length; i++) {
             tables.add(createTableEntry("Yes/No Probability (Unlikely)", "ORACLE", "Appendix I", 253,
@@ -818,26 +818,26 @@ public class RulesService {
                 "YES", "YES_MINUS", "BOTH_NEITHER", "NO_MINUS", "NO_PLUS"
         };
         String[] likelyDescs = {
-                "Critical Yes — an overwhelming and dramatic yes.",
-                "Yes+ — yes, and things go better than expected.",
-                "Yes — a clear affirmative answer.",
-                "Yes- — yes, but with complications.",
-                "Yes — yes.",
-                "Yes- — yes, but barely.",
-                "Both/Neither — an unexpected combination.",
-                "No- — no, and the situation worsens.",
-                "No — no.",
-                "No — no.",
-                "No+ — no, but a silver lining.",
-                "No — no.",
-                "Yes- — yes, but at a cost.",
-                "Yes — yes.",
-                "Yes+ — yes, with a bonus.",
-                "Yes — yes.",
-                "Yes- — yes, but complications follow.",
-                "Both/Neither — both or neither.",
-                "No- — no, and it's worse.",
-                "No+ — no, but something helpful."
+                "Critical Yes â€” an overwhelming and dramatic yes.",
+                "Yes+ â€” yes, and things go better than expected.",
+                "Yes â€” a clear affirmative answer.",
+                "Yes- â€” yes, but with complications.",
+                "Yes â€” yes.",
+                "Yes- â€” yes, but barely.",
+                "Both/Neither â€” an unexpected combination.",
+                "No- â€” no, and the situation worsens.",
+                "No â€” no.",
+                "No â€” no.",
+                "No+ â€” no, but a silver lining.",
+                "No â€” no.",
+                "Yes- â€” yes, but at a cost.",
+                "Yes â€” yes.",
+                "Yes+ â€” yes, with a bonus.",
+                "Yes â€” yes.",
+                "Yes- â€” yes, but complications follow.",
+                "Both/Neither â€” both or neither.",
+                "No- â€” no, and it's worse.",
+                "No+ â€” no, but something helpful."
         };
         for (int i = 0; i < likelyResults.length; i++) {
             tables.add(createTableEntry("Yes/No Probability (Likely)", "ORACLE", "Appendix I", 253,
@@ -852,26 +852,26 @@ public class RulesService {
                 "YES", "YES_PLUS", "YES", "YES_MINUS", "NO_MINUS"
         };
         String[] veryLikelyDescs = {
-                "Critical Yes — an overwhelming and dramatic yes.",
-                "Yes+ — yes, and things go better than expected.",
-                "Yes — a clear affirmative answer.",
-                "Yes- — yes, but with complications.",
-                "Yes — yes.",
-                "Yes — yes.",
-                "Yes- — yes, but barely.",
-                "Both/Neither — an unexpected combination.",
-                "Yes — yes.",
-                "Yes — yes.",
-                "Yes- — yes, but at a cost.",
-                "Yes — yes.",
-                "Yes — yes.",
-                "Yes — yes.",
-                "Yes — yes.",
-                "Yes — yes.",
-                "Yes+ — yes, with a bonus.",
-                "Yes — yes.",
-                "Yes- — yes, but complications follow.",
-                "No- — almost impossibly, no."
+                "Critical Yes â€” an overwhelming and dramatic yes.",
+                "Yes+ â€” yes, and things go better than expected.",
+                "Yes â€” a clear affirmative answer.",
+                "Yes- â€” yes, but with complications.",
+                "Yes â€” yes.",
+                "Yes â€” yes.",
+                "Yes- â€” yes, but barely.",
+                "Both/Neither â€” an unexpected combination.",
+                "Yes â€” yes.",
+                "Yes â€” yes.",
+                "Yes- â€” yes, but at a cost.",
+                "Yes â€” yes.",
+                "Yes â€” yes.",
+                "Yes â€” yes.",
+                "Yes â€” yes.",
+                "Yes â€” yes.",
+                "Yes+ â€” yes, with a bonus.",
+                "Yes â€” yes.",
+                "Yes- â€” yes, but complications follow.",
+                "No- â€” almost impossibly, no."
         };
         for (int i = 0; i < veryLikelyResults.length; i++) {
             tables.add(createTableEntry("Yes/No Probability (Very Likely)", "ORACLE", "Appendix I", 253,

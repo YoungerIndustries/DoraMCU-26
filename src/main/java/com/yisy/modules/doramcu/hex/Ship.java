@@ -1,6 +1,10 @@
 package com.yisy.modules.doramcu.hex;
 
+import com.yisy.modules.doramcu.hex.Decal;
+import com.yisy.modules.doramcu.hex.Skin;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,6 +35,10 @@ public class Ship {
     private int currentShieldPoints;
     private Planet homePlanet;
     private AiCoreComponent aiCore;
+
+    // ---- Skin support ----
+    private Skin skin;
+    private final List<Decal> decals;
 
     // ---- Delegated helpers ----
 
@@ -72,6 +80,7 @@ public class Ship {
         this.name = shipType.name() + "-" + id;
         this.currentHullPoints = shipType.getBaseHullPoints();
         this.currentShieldPoints = 0;
+        this.decals = new ArrayList<>();
         this.hull = new ShipHull(this);
         this.combatStats = new ShipCombatStats(this);
         this.resourceCosts = new ShipResourceCosts(this);
@@ -350,9 +359,9 @@ public class Ship {
         if (components.size() >= maxComponentSlots) {
             throw new IllegalStateException("No available component slots: " + maxComponentSlots + " slots full");
         }
-        boolean added = components.add(component);
+        components.add(component);
         recalculateStats();
-        return added;
+        return true;
     }
 
     /**
@@ -597,6 +606,87 @@ public class Ship {
     public void fullRepair() {
         currentHullPoints = getMaxHullPoints();
         currentShieldPoints = getMaxShieldPoints();
+    }
+
+    // ---- Skin support ----
+
+    /**
+     * Returns the skin currently applied to this ship, or null if none.
+     *
+     * @return the skin, or null
+     */
+    public Skin getSkin() {
+        return skin;
+    }
+
+    /**
+     * Applies a skin to this ship.
+     * <p>
+     * If the skin has default decals, they will be added to this ship.
+     * </p>
+     *
+     * @param skin the skin to apply
+     */
+    public void setSkin(Skin skin) {
+        this.skin = skin;
+        // Apply default decals from the skin
+        if (skin != null) {
+            for (Decal decal : skin.getDefaultDecals()) {
+                this.decals.add(new Decal(decal.getId() + "_" + id, decal.getType()));
+                Decal d = this.decals.get(this.decals.size() - 1);
+                d.setContent(decal.getContent());
+                d.setPosition(decal.getPosition());
+                d.setSize(decal.getSize());
+                d.setRotation(decal.getRotation());
+                d.setOpacity(decal.getOpacity());
+                d.setColor(decal.getColor());
+            }
+        }
+    }
+
+    /**
+     * Removes the skin from this ship (does not remove decals).
+     */
+    public void removeSkin() {
+        this.skin = null;
+    }
+
+    /**
+     * Returns the list of decals on this ship.
+     *
+     * @return unmodifiable list of decals
+     */
+    public List<Decal> getDecals() {
+        return Collections.unmodifiableList(decals);
+    }
+
+    /**
+     * Adds a decal to this ship.
+     *
+     * @param decal the decal to add
+     */
+    public void addDecal(Decal decal) {
+        if (decal == null) {
+            throw new IllegalArgumentException("Decal must not be null");
+        }
+        decals.add(decal);
+    }
+
+    /**
+     * Removes a decal from this ship.
+     *
+     * @param decal the decal to remove
+     * @return true if the decal was removed
+     */
+    public boolean removeDecal(Decal decal) {
+        return decals.remove(decal);
+    }
+
+    /**
+     * Clears all decals from this ship.
+     */
+    public void clearDecals() {
+        decals.clear();
     }
 
     // ---- Object contract ----

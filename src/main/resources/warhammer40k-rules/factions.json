@@ -1,0 +1,88 @@
+{
+  "factions": [
+    {
+      "id": "imperium",
+      "name": "Imperium of Man",
+      "era": "41st Millennium",
+      "ideology": "Theocratic autocracy, worship of the God-Emperor",
+      "description": "The largest human faction, spanning thousands of worlds. Ruled by the God-Emperor from the Golden Throne of Terra.",
+      "military_branches": ["adeptus_astartes", "imperial_guard", "navy", "adeptus_mechanicus"],
+      "key_leaders": ["The God-Emperor", "Roboute Guilliman", "Dorn", "Sanguinius"],
+      "strengths": ["Vast resources", "Space Marines", "Imperial Guard billions", "Naval superiority"],
+      "weaknesses": ["Bureaucracy", "Inquisition purges", "Warp travel risks", "Rebel worlds"],
+      "home_world": "Terra",
+      "allies": ["Aeldari (sometimes)"],
+      "enemies": ["Chaos", "Orks", "Necrons", "Tyranids"]
+    },
+    {
+      "id": "chaos",
+      "name": "Chaos",
+      "era": "41st Millennium",
+      "ideology": "Service to the Ruinous Powers",
+      "description": "The forces of Chaos, serving Khorne, Tzeentch, Nurgle, and Slaanesh. Corrupted humans and daemonic entities.",
+      "military_branches": ["chaos_space_marines", "daemons", "chaos_guard"],
+      "key_leaders": ["Abaddon the Despoiler", "Angron", "Magnus the Red", "Mortarion"],
+      "strengths": ["Warp powers", "Daemonic support", "Betrayal", "Immortality"],
+      "weaknesses": ["Internal conflict", "Gods' schemes", "Imperial forces", "Eldar"],
+      "home_world": "The Eye of Terror",
+      "allies": [],
+      "enemies": ["Imperium", "Orks", "Necrons", "Tyranids", "Aeldari"]
+    },
+    {
+      "id": "orks",
+      "name": "Orks",
+      "era": "41st Millennium",
+      "ideology": "WAAAGH! - War for war's sake",
+      "description": "Savage green-skinned aliens who thrive on combat. Their WAAAGH! field makes their crude technology work through belief.",
+      "military_branches": ["boyz", "nobs", "weirdboyz", "mekboyz"],
+      "key_leaders": ["Ghazghkull Thraka", "Bad Moons Warboss", "Gork", "Mork"],
+      "strengths": ["Fast healing", "Numbers", "WAAAGH! field", "Simple technology"],
+      "weaknesses": ["Low intelligence", "Internal squabbles", "No strategy", "Crude tech"],
+      "home_world": "Various",
+      "allies": [],
+      "enemies": ["Everyone"]
+    },
+    {
+      "id": "necrons",
+      "name": "Necrons",
+      "era": "41st Millennium",
+      "ideology": "Reclaim the ancient empire",
+      "description": "Ancient alien race of living metal, awakened from tomb worlds. Immortal and wielding gauss technology.",
+      "military_branches": ["warriors", "immortals", "crypteks", "canopteks"],
+      "key_leaders": ["Silent King", "Szarekh", "Overlord Hazeron"],
+      "strengths": ["Immortality", "Regeneration", "Gauss weapons", "Ancient technology"],
+      "weaknesses": ["Slow awakening", "Internal dynastic conflicts", "Stasis locks", "Canoptek repairs"],
+      "home_world": "Tomb Worlds",
+      "allies": [],
+      "enemies": ["Imperium", "Chaos", "Ynnari"]
+    },
+    {
+      "id": "eldar",
+      "name": "Aeldari",
+      "era": "41st Millennium",
+      "ideology": "Survival and the Path",
+      "description": "Ancient and dying race surviving on Craftworlds. Follow spiritual Paths to avoid Slaanesh's attention.",
+      "military_branches": ["guardians", "warriors", "wraithguard", "farseers"],
+      "key_leaders": ["Yvraine", "Saim-Hann", "Maleriel", "Alaitoc"],
+      "strengths": ["Speed", "Precision weapons", "Psychic powers", "Webway access"],
+      "weaknesses": ["Dying race", "Slaanesh threat", "Internal divisions", "Small numbers"],
+      "home_world": "Craftworlds",
+      "allies": ["Imperium (sometimes)"],
+      "enemies": ["Chaos", "Drukhari", "Tyranids"]
+    },
+    {
+      "id": "tyranids",
+      "name": "Tyranids",
+      "era": "41st Millennium",
+      "ideology": "Consume all biomass",
+      "description": "Alien hive mind from the Galaxies' Edge. Biological weapons of mass destruction seeking to consume the Milky Way.",
+      "military_branches": ["termagants", "gaunts", "hormagaunts", "tyrannofex"],
+      "key_leaders": ["The Hive Mind", "Harlequins", "T'au'lar'a"],
+      "strengths": ["Adaptation", "Numbers", "Biomass consumption", "Evolution"],
+      "weaknesses": ["Warp blind", "Dependent on hive mind", "Slow space travel", "Resource needs"],
+      "home_world": "Galaxies' Edge",
+      "allies": [],
+      "enemies": ["Everyone"]
+    }
+  ]
+}

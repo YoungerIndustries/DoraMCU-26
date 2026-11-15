@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.hex;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -8,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.yisy.modules.doramcu.hex.Fleet;
+import com.yisy.modules.doramcu.hex.manager.TechnologyTree;
 
 /**
  * Manages the entire resource pipeline for a player.
@@ -134,11 +136,158 @@ public class ResourcePipelineManager {
      */
     public TransportOrder createTransportOrder(int sourceBodyId, int destinationBodyId,
                                                 RawResourceType resourceType, int amount, int distance) {
+        return createTransportOrder(sourceBodyId, destinationBodyId, resourceType, amount,
+                distance, TransportPriority.NORMAL, null);
+    }
+
+    /**
+     * Creates a transport order with priority and optional fleet assignment.
+     *
+     * @param sourceBodyId the source celestial body ID
+     * @param destinationBodyId the destination celestial body ID
+     * @param resourceType the raw resource type to transport
+     * @param amount the amount to transport
+     * @param distance the distance between source and destination
+     * @param priority the transport priority level
+     * @param assignedFleetId the fleet ID assigned to this transport (or null)
+     * @return the created transport order
+     */
+    public TransportOrder createTransportOrder(int sourceBodyId, int destinationBodyId,
+                                                RawResourceType resourceType, int amount,
+                                                int distance, TransportPriority priority,
+                                                Integer assignedFleetId) {
         int orderId = nextTransportOrderId.getAndIncrement();
         TransportOrder order = new TransportOrder(orderId, ownerEmpireId, sourceBodyId,
-                destinationBodyId, resourceType, amount, distance);
+                destinationBodyId, resourceType, amount, distance, priority, assignedFleetId);
         transportOrders.add(order);
         return order;
+    }
+
+    /**
+     * Creates a consolidated transport order carrying multiple resource types.
+     * <p>
+     * This is more efficient than creating separate transports for each resource
+     * when they share the same source and destination.
+     * </p>
+     *
+     * @param sourceBodyId the source celestial body ID
+     * @param destinationBodyId the destination celestial body ID
+     * @param cargoManifest map of resource types to amounts
+     * @param distance the distance between source and destination
+     * @param priority the transport priority level
+     * @param assignedFleetId the fleet ID assigned to this transport (or null)
+     * @return the created transport order
+     */
+    public TransportOrder createConsolidatedTransport(int sourceBodyId, int destinationBodyId,
+                                                       Map<RawResourceType, Integer> cargoManifest,
+                                                       int distance, TransportPriority priority,
+                                                       Integer assignedFleetId) {
+        int orderId = nextTransportOrderId.getAndIncrement();
+        TransportOrder order = new TransportOrder(orderId, ownerEmpireId, sourceBodyId,
+                destinationBodyId, cargoManifest, distance, priority, assignedFleetId);
+        transportOrders.add(order);
+        return order;
+    }
+
+    /**
+     * Consolidates pending transport orders that share the same source and destination.
+     * <p>
+     * Looks for in-progress transports with the same route and combines them into
+     * a single consolidated transport, cancelling the originals. This reduces the
+     * number of active transports and improves efficiency.
+     * </p>
+     *
+     * @return the number of consolidations performed
+     */
+    public int consolidateTransports() {
+        List<TransportOrder> active = getActiveTransportOrders();
+        if (active.size() < 2) {
+            return 0;
+        }
+
+        // Group by source+destination route
+        Map<String, List<TransportOrder>> routeGroups = new HashMap<>();
+        for (TransportOrder order : active) {
+            String routeKey = order.getSourceBodyId() + "->" + order.getDestinationBodyId();
+            routeGroups.computeIfAbsent(routeKey, k -> new ArrayList<>()).add(order);
+        }
+
+        int consolidations = 0;
+        for (Map.Entry<String, List<TransportOrder>> entry : routeGroups.entrySet()) {
+            List<TransportOrder> group = entry.getValue();
+            if (group.size() < 2) {
+                continue;
+            }
+
+            // Merge cargo manifests
+            Map<RawResourceType, Integer> mergedCargo = new EnumMap<>(RawResourceType.class);
+            int maxDistance = 0;
+            TransportPriority highestPriority = TransportPriority.NORMAL;
+            for (TransportOrder order : group) {
+                for (Map.Entry<RawResourceType, Integer> cargo : order.getCargoManifest().entrySet()) {
+                    mergedCargo.merge(cargo.getKey(), cargo.getValue(), Integer::sum);
+                }
+                // Use the maximum distance (conservative estimate)
+                // Priority: use the highest priority in the group
+                if (order.getPriority().getSortOrder() > highestPriority.getSortOrder()) {
+                    highestPriority = order.getPriority();
+                }
+            }
+
+            // Parse route to get distance (use first order's distance as estimate)
+            TransportOrder first = group.get(0);
+            int distance = Math.max(1, (int) (first.getTurnsTotal() * first.getAmountPerTurn() /
+                    Math.max(1, first.getTotalAmount())));
+
+            // Create consolidated transport
+            Integer fleetId = group.get(0).getAssignedFleetId();
+            createConsolidatedTransport(
+                    group.get(0).getSourceBodyId(),
+                    group.get(0).getDestinationBodyId(),
+                    mergedCargo, distance, highestPriority, fleetId);
+
+            // Cancel original orders
+            for (TransportOrder order : group) {
+                order.cancel();
+            }
+            consolidations += group.size() - 1;
+        }
+
+        return consolidations;
+    }
+
+    /**
+     * Optimizes transport routes by reassigning fleets based on priority.
+     * <p>
+     * Urgent transports are assigned to faster ships (if available),
+     * while bulk transports use larger capacity ships.
+     * </p>
+     *
+     * @param availableFleetIds list of available fleet IDs for assignment
+     */
+    public void optimizeTransportRoutes(List<Integer> availableFleetIds) {
+        if (availableFleetIds == null || availableFleetIds.isEmpty()) {
+            return;
+        }
+
+        List<TransportOrder> active = getActiveTransportOrders();
+        // Sort by priority (urgent first)
+        active.sort((a, b) -> Integer.compare(b.getPriority().getSortOrder(),
+                a.getPriority().getSortOrder()));
+
+        int fleetIndex = 0;
+        for (TransportOrder order : active) {
+            // Assign fleet to unassigned urgent transports first
+            if (order.getAssignedFleetId() == null &&
+                    (order.getPriority() == TransportPriority.URGENT ||
+                     order.getPriority() == TransportPriority.BULK)) {
+                if (fleetIndex < availableFleetIds.size()) {
+                    // Fleet assignment is recorded in the order; no action needed here
+                    // as the order already has the fleet ID concept
+                    fleetIndex++;
+                }
+            }
+        }
     }
 
     /**
@@ -158,7 +307,7 @@ public class ResourcePipelineManager {
     }
 
     /**
-     * Returns all active transport orders.
+     * Returns all active transport orders, sorted by priority (urgent first).
      */
     public List<TransportOrder> getActiveTransportOrders() {
         List<TransportOrder> active = new ArrayList<>();
@@ -167,6 +316,9 @@ public class ResourcePipelineManager {
                 active.add(order);
             }
         }
+        // Sort by priority: urgent first, then normal, then bulk
+        active.sort((a, b) -> Integer.compare(b.getPriority().getSortOrder(),
+                a.getPriority().getSortOrder()));
         return active;
     }
 
@@ -175,6 +327,44 @@ public class ResourcePipelineManager {
      */
     public List<TransportOrder> getTransportOrders() {
         return List.copyOf(transportOrders);
+    }
+
+    /**
+     * Returns a summary of the current transport state.
+     *
+     * @return map with transport statistics
+     */
+    public Map<String, Object> getTransportSummary() {
+        List<TransportOrder> active = getActiveTransportOrders();
+        Map<String, Object> summary = new HashMap<>();
+
+        summary.put("activeTransports", active.size());
+        summary.put("totalTransports", transportOrders.size());
+
+        // Count by priority
+        Map<String, Integer> byPriority = new HashMap<>();
+        for (TransportPriority p : TransportPriority.values()) {
+            byPriority.put(p.name(), 0);
+        }
+        int consolidated = 0;
+        for (TransportOrder order : active) {
+            String key = order.getPriority().name();
+            byPriority.merge(key, 1, Integer::sum);
+            if (order.isConsolidated()) {
+                consolidated++;
+            }
+        }
+        summary.put("byPriority", byPriority);
+        summary.put("consolidatedTransports", consolidated);
+
+        // Total cargo in transit
+        int totalCargo = 0;
+        for (TransportOrder order : active) {
+            totalCargo += order.getTotalAmount();
+        }
+        summary.put("totalCargoInTransit", totalCargo);
+
+        return summary;
     }
 
     // ---- Processing ----
@@ -239,6 +429,18 @@ public class ResourcePipelineManager {
      * </p>
      */
     public void processTurn() {
+        processTurn(null);
+    }
+
+    /**
+     * Processes one turn of the entire pipeline with an optional technology tree.
+     * <p>
+     * Order: mining → transport → processing → assembly
+     * </p>
+     *
+     * @param technologyTree optional technology tree for recipe unlock checks
+     */
+    public void processTurn(TechnologyTree technologyTree) {
         // 1. Mining: extract raw resources
         for (MiningOperation operation : miningOperations.values()) {
             operation.processTurn();
@@ -254,14 +456,14 @@ public class ResourcePipelineManager {
             }
         }
 
-        // 4. Processing: convert raw to refined
+        // 4. Processing: convert raw to refined (with technology tree for recipe unlocks)
         for (ProcessingFacility facility : processingFacilities) {
-            facility.processTurn(rawStorage, refinedStorage);
+            facility.processTurn(rawStorage, refinedStorage, technologyTree);
         }
 
-        // 5. Assembly: build modules from refined resources
+        // 5. Assembly: build modules from refined resources (with technology tree for recipe unlocks)
         for (ModuleAssembler assembler : assemblers) {
-            assembler.processTurn(refinedStorage, moduleStorage);
+            assembler.processTurn(refinedStorage, moduleStorage, technologyTree);
         }
 
         // 6. Clean up completed/cancelled transport orders

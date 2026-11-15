@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.dnd5e.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.dnd5e.dto.CraftingCheckResponse;
 import com.yisy.modules.doramcu.dnd5e.dto.CreateCraftingRecipeRequest;
@@ -15,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -255,7 +255,7 @@ public class Dnd5eCraftingService {
 
         // Build result description
         String result;
-        int hoursToAdd = 0;
+        int hoursToAdd;
         if (roll == 20) {
             result = "Critical Success! Exceptional craftsmanship.";
             hoursToAdd = 2; // Critical success counts as 2 hours
@@ -277,7 +277,7 @@ public class Dnd5eCraftingService {
         // Append check roll history
         String existingRolls = project.getCheckRolls();
         String newRoll = String.format("d20=%d + %d = %d (DC %d) %s",
-                roll, totalModifier, total, recipe.getDc(), success ? "✓" : "✗");
+                roll, totalModifier, total, recipe.getDc(), success ? "âœ“" : "âœ—");
         project.setCheckRolls(existingRolls == null ? newRoll : existingRolls + "; " + newRoll);
         project.setLastCheckResult(result);
 

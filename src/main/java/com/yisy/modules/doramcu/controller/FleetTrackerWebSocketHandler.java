@@ -1,8 +1,10 @@
 package com.yisy.modules.doramcu.controller;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yisy.modules.doramcu.service.Galaxy3DService;
+import com.yisy.modules.doramcu.service.GameStateBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
@@ -15,6 +17,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.Collections;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -41,12 +44,15 @@ import java.util.concurrent.TimeUnit;
  * </ul>
  * </p>
  */
+@Service
 public class FleetTrackerWebSocketHandler extends TextWebSocketHandler {
 
     private static final Logger log = LoggerFactory.getLogger(FleetTrackerWebSocketHandler.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final Galaxy3DService galaxy3DService = new Galaxy3DService();
+    private final GameStateBridge gameStateBridge;
+    private final boolean realDataMode;
 
     // Session management
     private final Map<WebSocketSession, String> sessionPlayerIds = new ConcurrentHashMap<>();
@@ -56,7 +62,8 @@ public class FleetTrackerWebSocketHandler extends TextWebSocketHandler {
     // Simulated fleet data
     private final Map<String, FleetData> fleets = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-    private final Set<ScheduledFuture<?>> scheduledTasks = ConcurrentHashMap.newSetFromMap(new ConcurrentHashMap<>());
+    @SuppressWarnings("unused")
+    private final Set<ScheduledFuture<?>> scheduledTasks = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     /**
      * Simulated fleet data structure.
@@ -74,10 +81,22 @@ public class FleetTrackerWebSocketHandler extends TextWebSocketHandler {
     }
 
     public FleetTrackerWebSocketHandler() {
-        // Start simulation tasks
-        scheduler.scheduleAtFixedRate(this::simulateFleetMovements, 5, 5, TimeUnit.SECONDS);
-        scheduler.scheduleAtFixedRate(this::simulateCombatEvents, 15, 20, TimeUnit.SECONDS);
-        scheduler.scheduleAtFixedRate(this::simulateFleetCreation, 30, 45, TimeUnit.SECONDS);
+        this(null, false);
+    }
+
+    public FleetTrackerWebSocketHandler(GameStateBridge gameStateBridge, boolean realDataMode) {
+        this.gameStateBridge = gameStateBridge;
+        this.realDataMode = realDataMode;
+        // Start simulation tasks only when real data mode is disabled
+        if (!realDataMode) {
+            scheduler.scheduleAtFixedRate(this::simulateFleetMovements, 5, 5, TimeUnit.SECONDS);
+            scheduler.scheduleAtFixedRate(this::simulateFleetUpdates, 8, 8, TimeUnit.SECONDS);
+            scheduler.scheduleAtFixedRate(this::simulateCombatEvents, 15, 20, TimeUnit.SECONDS);
+            scheduler.scheduleAtFixedRate(this::simulateFleetCreation, 30, 45, TimeUnit.SECONDS);
+        } else {
+            log.info("FleetTracker starting in real-data mode with periodic refresh");
+            scheduler.scheduleAtFixedRate(this::refreshRealData, 10, 10, TimeUnit.SECONDS);
+        }
     }
 
     @Override
@@ -264,6 +283,46 @@ public class FleetTrackerWebSocketHandler extends TextWebSocketHandler {
     }
 
     /**
+     * Simulate periodic fleet status updates (health, position snapshots).
+     * Sends 'fleet_update' messages so the frontend can refresh fleet state.
+     */
+    private void simulateFleetUpdates() {
+        Random random = new Random();
+
+        for (FleetData fleet : fleets.values()) {
+            // Simulate small health changes (regeneration or damage from ambient effects)
+            double healthChange = (random.nextDouble() - 0.4) * 2;
+            fleet.health = Math.max(0, Math.min(fleet.maxHealth, fleet.health + healthChange));
+            fleet.lastUpdate = System.currentTimeMillis();
+
+            try {
+                ObjectNode data = objectMapper.createObjectNode();
+                data.put("fleetId", fleet.fleetId);
+                data.put("name", fleet.name);
+                data.put("type", fleet.type);
+
+                ObjectNode position = objectMapper.createObjectNode();
+                position.put("x", fleet.x);
+                position.put("y", fleet.y);
+                position.put("z", fleet.z);
+                data.set("position", position);
+
+                data.put("health", fleet.health);
+                data.put("maxHealth", fleet.maxHealth);
+                data.put("timestamp", System.currentTimeMillis());
+
+                ObjectNode message = objectMapper.createObjectNode();
+                message.put("type", "fleet_update");
+                message.set("data", data);
+
+                broadcast(new TextMessage(objectMapper.writeValueAsString(message)));
+            } catch (IOException e) {
+                log.error("Failed to send fleet update", e);
+            }
+        }
+    }
+
+    /**
      * Simulate combat events.
      */
     private void simulateCombatEvents() {
@@ -445,5 +504,44 @@ public class FleetTrackerWebSocketHandler extends TextWebSocketHandler {
      */
     public Set<String> getActiveSessionIds() {
         return sessionGroups.keySet();
+    }
+
+    /**
+     * Broadcast a galaxy event to all connected sessions.
+     * Called by GalaxyEventBridge when real galaxy events occur.
+     *
+     * @param message the JSON message to broadcast
+     */
+    public void broadcastGalaxyEvent(ObjectNode message) {
+        try {
+            String json = objectMapper.writeValueAsString(message);
+            broadcast(new TextMessage(json));
+        } catch (Exception e) {
+            log.error("Failed to broadcast galaxy event to fleet tracker", e);
+        }
+    }
+
+    /**
+     * Refresh real data from GameStateBridge and broadcast to all connected sessions.
+     */
+    private void refreshRealData() {
+        if (gameStateBridge == null) return;
+        for (String sessionId : sessionGroups.keySet()) {
+            ObjectNode snapshot = gameStateBridge.getFleetSnapshot(sessionId);
+            if (snapshot != null) {
+                try {
+                    broadcast(new TextMessage(objectMapper.writeValueAsString(snapshot)));
+                } catch (Exception e) {
+                    log.warn("Failed to broadcast real fleet data for session {}: {}", sessionId, e.getMessage());
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns whether real data mode is enabled.
+     */
+    public boolean isRealDataMode() {
+        return realDataMode;
     }
 }

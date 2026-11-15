@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.dto.TradeRequest;
 import com.yisy.modules.doramcu.dto.TradeResponse;
@@ -6,7 +7,6 @@ import com.yisy.modules.doramcu.traveller.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -205,7 +205,7 @@ public class TradeService {
             }
         }
 
-        if (bestCommodity == null || bestProfit <= 0) {
+        if (bestCommodity == null) {
             TradeResponse response = new TradeResponse();
             response.setOperation("TRADE_MISSION");
             response.setMessage("No profitable trade found between " +

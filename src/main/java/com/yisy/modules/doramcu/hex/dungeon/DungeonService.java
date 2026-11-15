@@ -1,10 +1,10 @@
 package com.yisy.modules.doramcu.hex.dungeon;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.Compartment;
 import com.yisy.modules.doramcu.hex.CompartmentType;
 import com.yisy.modules.doramcu.hex.HullModule;
 import com.yisy.modules.doramcu.hex.M3space;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 

@@ -1,9 +1,8 @@
 package com.yisy.modules.doramcu.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.*;
 import com.yisy.modules.doramcu.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,26 +27,29 @@ import java.util.stream.Collectors;
 @Service
 public class GameInitializationService {
 
-    @Autowired
-    private PlayerRepository playerRepository;
+    private final PlayerRepository playerRepository;
+    private final GalaxyRepository galaxyRepository;
+    private final SectorRepository sectorRepository;
+    private final SubSectorRepository subSectorRepository;
+    private final SolarSystemRepository solarSystemRepository;
+    private final StarRepository starRepository;
+    private final PlanetRepository planetRepository;
 
-    @Autowired
-    private GalaxyRepository galaxyRepository;
-
-    @Autowired
-    private SectorRepository sectorRepository;
-
-    @Autowired
-    private SubSectorRepository subSectorRepository;
-
-    @Autowired
-    private SolarSystemRepository solarSystemRepository;
-
-    @Autowired
-    private StarRepository starRepository;
-
-    @Autowired
-    private PlanetRepository planetRepository;
+    public GameInitializationService(PlayerRepository playerRepository,
+                                     GalaxyRepository galaxyRepository,
+                                     SectorRepository sectorRepository,
+                                     SubSectorRepository subSectorRepository,
+                                     SolarSystemRepository solarSystemRepository,
+                                     StarRepository starRepository,
+                                     PlanetRepository planetRepository) {
+        this.playerRepository = playerRepository;
+        this.galaxyRepository = galaxyRepository;
+        this.sectorRepository = sectorRepository;
+        this.subSectorRepository = subSectorRepository;
+        this.solarSystemRepository = solarSystemRepository;
+        this.starRepository = starRepository;
+        this.planetRepository = planetRepository;
+    }
 
     /**
      * Initializes a new Game instance from database entities.

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.unified.adapter;
+import org.springframework.stereotype.Component;
 
 import com.yisy.modules.doramcu.hex.Planet;
 import com.yisy.modules.doramcu.hex.PlanetSize;
@@ -29,6 +30,7 @@ import java.util.Set;
  * Based on Classic Traveller Supplement 3: The Spinward Marches world generation rules.
  * </p>
  */
+@Component
 public class WorldProfileAdapter {
 
     /**

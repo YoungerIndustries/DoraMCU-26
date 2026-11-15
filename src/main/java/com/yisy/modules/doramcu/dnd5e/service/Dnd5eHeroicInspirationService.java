@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.dnd5e.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.dnd5e.dto.HeroicInspirationRerollResponse;
 import com.yisy.modules.doramcu.dnd5e.model.Dnd5eCharacter;
@@ -9,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -20,7 +20,7 @@ import java.util.Random;
  * Service for managing D&D 5e Heroic Inspiration.
  * <p>
  * Heroic Inspiration (2024 PHB) replaces the old Inspiration mechanic.
- * It lets a character reroll any die after rolling it — including damage,
+ * It lets a character reroll any die after rolling it â€” including damage,
  * HP on level-up, wild magic surges, and more. The character keeps the
  * higher of the two rolls.
  * </p>

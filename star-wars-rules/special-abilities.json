@@ -1,0 +1,622 @@
+{
+  "special_abilities": {
+    "force_powers": {
+      "description": "Force powers available to Force-sensitive characters. Divided into Light Side and Dark Side powers, with some powers available to both.",
+      "light_side_powers": [
+        {
+          "name": "Force Heal",
+          "description": "Channel the Light Side to heal wounds and restore vitality to oneself or allies.",
+          "rank": 1,
+          "cost": "Action",
+          "effect": "Restore 1-3 shield or hull wounds to a friendly unit within range",
+          "users": ["Yoda", "Luke Skywalker", "Obi-Wan Kenobi", "Rey"]
+        },
+        {
+          "name": "Force Speed",
+          "description": "Enhance physical speed beyond normal limits, appearing as a blur of motion.",
+          "rank": 2,
+          "cost": "Action",
+          "effect": "Unit gains +3 movement for one activation and +1 attack dice",
+          "users": ["Qui-Gon Jinn", "Mace Windu", "Luke Skywalker"]
+        },
+        {
+          "name": "Force Push",
+          "description": "Explosive kinetic blast that knocks back opponents.",
+          "rank": 1,
+          "cost": "Action",
+          "effect": "Target enemy unit is pushed back 2 inches and may be disrupted",
+          "users": ["All Jedi", "All Sith"]
+        },
+        {
+          "name": "Force Pull",
+          "description": "Draw objects or beings toward the user with the Force.",
+          "rank": 1,
+          "cost": "Action",
+          "effect": "Target enemy unit is pulled 2 inches toward the user",
+          "users": ["All Jedi", "All Sith"]
+        },
+        {
+          "name": "Force Sense",
+          "description": "Heightened awareness of the surroundings through the Force. Detect disturbances, emotions, and hidden presences.",
+          "rank": 1,
+          "cost": "Passive",
+          "effect": "Reveal hidden units within range; gain forewarning of attacks",
+          "users": ["All Jedi", "All Sith"]
+        },
+        {
+          "name": "Force Barrier",
+          "description": "Create a protective barrier of Force energy that absorbs incoming attacks.",
+          "rank": 3,
+          "cost": "Action",
+          "effect": "Create a barrier that blocks the next attack against the user or an ally",
+          "users": ["Yoda", "Obi-Wan Kenobi", "Rey"]
+        },
+        {
+          "name": "Force Jump",
+          "description": "Leap great distances or heights using the Force.",
+          "rank": 1,
+          "cost": "Movement",
+          "effect": "Unit can jump over terrain obstacles and difficult terrain",
+          "users": ["All Jedi", "Anakin Skywalker", "Ahsoka Tano"]
+        },
+        {
+          "name": "Jedi Mind Trick",
+          "description": "Influence the thoughts and actions of weak-minded beings through the Force.",
+          "rank": 2,
+          "cost": "Action",
+          "effect": "Target enemy unit is disrupted for 1 round (cannot act)",
+          "users": ["Obi-Wan Kenobi", "Luke Skywalker", "Yoda"]
+        },
+        {
+          "name": "Force Ghost",
+          "description": "After death, project one's consciousness as a Force spirit. A rare ability mastered by only the greatest Jedi.",
+          "rank": "Master",
+          "cost": "After death",
+          "effect": "Character appears as a Force ghost, providing guidance and limited Force abilities",
+          "users": ["Yoda", "Obi-Wan Kenobi", "Qui-Gon Jinn", "Anakin Skywalker"]
+        },
+        {
+          "name": "Force Dyad",
+          "description": "An extremely rare connection between two Force-sensitives who share a bond across any distance. They draw power from each other.",
+          "rank": "Unique",
+          "cost": "Passive",
+          "effect": "Both dyad members gain enhanced Force abilities when near each other; can sense each other across the galaxy",
+          "users": ["Rey and Kylo Ren"]
+        }
+      ],
+      "dark_side_powers": [
+        {
+          "name": "Force Lightning",
+          "description": "Bolt of raw Dark Side energy that inflicts agony and destruction. The signature power of Emperor Palpatine.",
+          "rank": 3,
+          "cost": "Action",
+          "effect": "Deal 2-5 damage to target unit; can chain to multiple targets at higher ranks",
+          "users": ["Emperor Palpatine", "Count Dooku", "Darth Sidious", "Darth Vader (limited, with gloves removed)"]
+        },
+        {
+          "name": "Force Choke",
+          "description": "Crush a target's throat from a distance using the Force. The signature power of Darth Vader.",
+          "rank": 2,
+          "cost": "Action",
+          "effect": "Target unit is choked: cannot act and loses 1 wound per round until released",
+          "users": ["Darth Vader", "Emperor Palpatine", "Kylo Ren", "Darth Maul"]
+        },
+        {
+          "name": "Force Drain",
+          "description": "Drain the life force from a target, transferring their vitality to the user.",
+          "rank": 4,
+          "cost": "Action",
+          "effect": "Target loses 2-4 wounds; user heals an equal amount",
+          "users": ["Emperor Palpatine", "Darth Sidious"]
+        },
+        {
+          "name": "Force Fear",
+          "description": "Instill overwhelming fear in enemies, causing them to flee or freeze.",
+          "rank": 2,
+          "cost": "Action",
+          "effect": "All enemy units within range are disrupted and must pass a morale check or flee",
+          "users": ["Darth Vader", "Emperor Palpatine", "Darth Maul"]
+        },
+        {
+          "name": "Force Domination",
+          "description": "Overpower a target's will and control their actions through the Dark Side.",
+          "rank": 4,
+          "cost": "Action",
+          "effect": "Target unit is controlled by the user for 1 round",
+          "users": ["Emperor Palpatine", "Darth Sidious"]
+        },
+        {
+          "name": "Sith Rage",
+          "description": "Channel Dark Side emotions into a frenzy of power, increasing combat ability at the cost of control.",
+          "rank": 2,
+          "cost": "Action",
+          "effect": "User gains +2 attack and +1 damage for 2 rounds, but cannot defend",
+          "users": ["Darth Vader", "Kylo Ren", "Darth Maul"]
+        },
+        {
+          "name": "Force Drown",
+          "description": "Suffocate a target by filling their lungs with water or air, even in dry environments.",
+          "rank": 3,
+          "cost": "Action",
+          "effect": "Target loses 1-3 wounds over 2 rounds as they suffocate",
+          "users": ["Emperor Palpatine", "Darth Sidious"]
+        },
+        {
+          "name": "Sith Alchemy",
+          "description": "Forbidden Dark Side knowledge to cheat death and return from the dead. The ultimate Dark Side power.",
+          "rank": "Master",
+          "cost": "Ritual",
+          "effect": "User returns from death in a new body, greatly weakened but still powerful",
+          "users": ["Emperor Palpatine (Darth Sidious)"]
+        },
+        {
+          "name": "Dark Side Aura",
+          "description": "Project an aura of Dark Side energy that intimidates and weakens nearby enemies.",
+          "rank": 1,
+          "cost": "Passive",
+          "effect": "Enemy units within range lose 1 attack and 1 defense",
+          "users": ["Darth Vader", "Emperor Palpatine", "Kylo Ren", "Darth Maul"]
+        }
+      ]
+    },
+    "leader_abilities": {
+      "description": "Unique leader abilities from Star Wars: Legion and other games. Each leader has special command cards and passive abilities.",
+      "galactic_empire": [
+        {
+          "leader": "Darth Vader",
+          "abilities": [
+            {
+              "name": "TIE Advanced x1",
+              "type": "Command Card",
+              "effect": "Deploy a TIE Advanced that can attack ground units. Provides orbital strike support."
+            },
+            {
+              "name": "Fear of the Dark Side",
+              "type": "Passive",
+              "effect": "Enemy units within 6 inches of Vader lose 1 attack dice and cannot recover green tokens."
+            },
+            {
+              "name": "Imperial Supremacy",
+              "type": "Command Card",
+              "effect": "All Imperial units gain +1 attack for the activation phase. Vader can activate twice."
+            },
+            {
+              "name": "Force Choke",
+              "type": "Action",
+              "effect": "Target enemy commander within 8 inches is disrupted and cannot issue orders for 1 round."
+            }
+          ]
+        },
+        {
+          "leader": "Grand Moff Tarkin",
+          "abilities": [
+            {
+              "name": "Tarkin Doctrine",
+              "type": "Passive",
+              "effect": "Imperial units in systems with Imperial loyalty gain +1 attack and defense."
+            },
+            {
+              "name": "Orbital Strike",
+              "type": "Command Card",
+              "effect": "Call in a Star Destroyer orbital bombardment on a ground hex. Deals 3 damage to all units in the hex."
+            },
+            {
+              "name": "Governor's Authority",
+              "type": "Command Card",
+              "effect": "All Imperial units gain Standby tokens, allowing them to activate later in the phase."
+            }
+          ]
+        },
+        {
+          "leader": "Grand Admiral Thrawn",
+          "abilities": [
+            {
+              "name": "Tactical Genius",
+              "type": "Passive",
+              "effect": "Thrawn can see enemy command cards before playing his own. Gains +1 defense in all combats."
+            },
+            {
+              "name": "Flank and Destroy",
+              "type": "Command Card",
+              "effect": "All Imperial units gain +2 movement for the activation phase. Units that move gain +1 attack."
+            },
+            {
+              "name": "Art Collection",
+              "type": "Passive",
+              "effect": "Thrawn's units ignore difficult terrain. Imperial units adjacent to Thrawn gain +1 defense."
+            }
+          ]
+        }
+      ],
+      "rebel_alliance": [
+        {
+          "leader": "Luke Skywalker",
+          "abilities": [
+            {
+              "name": "X-Wing Pilot",
+              "type": "Command Card",
+              "effect": "Deploy Luke's X-Wing for orbital support. Can make a single attack against a ground unit."
+            },
+            {
+              "name": "Jedi Training",
+              "type": "Passive",
+              "effect": "Rebel units within 6 inches of Luke gain +1 defense. Luke can use Force Push as a free action."
+            },
+            {
+              "name": "Hope of the Rebellion",
+              "type": "Command Card",
+              "effect": "All Rebel units recover 1 shield wound. Rebel units gain +1 attack for the activation phase."
+            },
+            {
+              "name": "Force Heal",
+              "type": "Action",
+              "effect": "Heal 2 hull wounds on a friendly unit within 4 inches."
+            }
+          ]
+        },
+        {
+          "leader": "Han Solo",
+          "abilities": [
+            {
+              "name": "Incredible Pilot",
+              "type": "Passive",
+              "effect": "Han can deploy the Millennium Falcon for orbital strikes. Falcon arrives after Round 2."
+            },
+            {
+              "name": "Millennium Falcon Run",
+              "type": "Command Card",
+              "effect": "Millennium Falcon makes a bombing run, dealing 4 damage to a target unit or hex."
+            },
+            {
+              "name": "Rebel General",
+              "type": "Command Card",
+              "effect": "All Rebel units gain +1 movement and +1 attack for the activation phase."
+            }
+          ]
+        },
+        {
+          "leader": "Princess Leia Organa",
+          "abilities": [
+            {
+              "name": "Rebel Leadership",
+              "type": "Passive",
+              "effect": "Rebel units within 6 inches of Leia gain +1 defense. Leia cannot be targeted by enemy abilities."
+            },
+            {
+              "name": "Hope and Inspiration",
+              "type": "Command Card",
+              "effect": "All Rebel units gain a Standby token. Rebel units recover 1 shield wound."
+            },
+            {
+              "name": "Diplomatic Immunity",
+              "type": "Passive",
+              "effect": "Leia cannot be targeted by enemy attacks. If Leia is eliminated, Rebels lose 1 victory point."
+            }
+          ]
+        },
+        {
+          "leader": "Wedge Antilles",
+          "abilities": [
+            {
+              "name": "Red Leader",
+              "type": "Passive",
+              "effect": "Rebel units within 6 inches of Wedge gain +1 attack. Wedge can issue orders to units outside command range."
+            },
+            {
+              "name": "Ace Pilot",
+              "type": "Command Card",
+              "effect": "Deploy X-Wing squadron for orbital strike. All Rebel units gain +1 attack dice."
+            },
+            {
+              "name": "Battle-Hardened",
+              "type": "Passive",
+              "effect": "Wedge's units ignore suppression tokens. Wedge gains +1 defense after Round 3."
+            }
+          ]
+        }
+      ],
+      "galactic_republic": [
+        {
+          "leader": "Yoda",
+          "abilities": [
+            {
+              "name": "Jedi Wisdom",
+              "type": "Passive",
+              "effect": "Yoda can use Force Sense to reveal hidden units. Republic units within 6 inches gain +1 defense."
+            },
+            {
+              "name": "Force Mastery",
+              "type": "Command Card",
+              "effect": "Yoda can use Force Push on all enemy units within 8 inches. Republic units gain +1 attack."
+            },
+            {
+              "name": "Ancient Knowledge",
+              "type": "Passive",
+              "effect": "Yoda can reroll 1 attack die per round. Republic units adjacent to Yoda gain +1 defense."
+            }
+          ]
+        },
+        {
+          "leader": "Obi-Wan Kenobi",
+          "abilities": [
+            {
+              "name": "Clone Army Tactics",
+              "type": "Command Card",
+              "effect": "All Clone units gain +1 movement and can issue orders outside command range."
+            },
+            {
+              "name": "Jedi Defense",
+              "type": "Passive",
+              "effect": "Obi-Wan gains +2 defense when defending. Republic units within 4 inches gain +1 defense."
+            },
+            {
+              "name": "Watchful Guardian",
+              "type": "Command Card",
+              "effect": "Obi-Wan can use Force Push. All Republic units recover 1 shield wound."
+            }
+          ]
+        },
+        {
+          "leader": "Anakin Skywalker",
+          "abilities": [
+            {
+              "name": "The Chosen One",
+              "type": "Passive",
+              "effect": "Anakin gains +1 attack and +1 defense. Republic units within 6 inches gain +1 attack."
+            },
+            {
+              "name": "Force Speed",
+              "type": "Command Card",
+              "effect": "Anakin gains +3 movement and can attack twice this activation."
+            },
+            {
+              "name": "General's Authority",
+              "type": "Command Card",
+              "effect": "All Republic units gain +1 attack. Clone units can activate before their normal order."
+            }
+          ]
+        },
+        {
+          "leader": "Mace Windu",
+          "abilities": [
+            {
+              "name": "Vaapad Master",
+              "type": "Passive",
+              "effect": "Mace Windu gains +2 attack when defending. Enemy units within 4 inches lose 1 attack."
+            },
+            {
+              "name": "Jedi Council Authority",
+              "type": "Command Card",
+              "effect": "All Jedi units gain +1 attack and defense. Republic units within 6 inches gain +1 defense."
+            },
+            {
+              "name": "Purple Lightsaber",
+              "type": "Passive",
+              "effect": "Mace Windu's attacks deal 1 extra damage to Dark Side users."
+            }
+          ]
+        }
+      ],
+      "separatist_alliance": [
+        {
+          "leader": "General Grievous",
+          "abilities": [
+            {
+              "name": "Droid Army Surge",
+              "type": "Command Card",
+              "effect": "All droid units gain +1 movement and +1 attack for the activation phase."
+            },
+            {
+              "name": "Lightsaber Collection",
+              "type": "Passive",
+              "effect": "Grievous gains +2 attack in close combat. Can wield 4 lightsabers simultaneously."
+            },
+            {
+              "name": "Tactical Retreat",
+              "type": "Command Card",
+              "effect": "Grievous can retreat through a dropship, removing him from the board and redeploying next round."
+            }
+          ]
+        },
+        {
+          "leader": "Count Dooku",
+          "abilities": [
+            {
+              "name": "Sith Deception",
+              "type": "Passive",
+              "effect": "Dooku can disguise himself as a Jedi. Enemy units cannot target Dooku with abilities."
+            },
+            {
+              "name": "Force Lightning Strike",
+              "type": "Command Card",
+              "effect": "Dooku uses Force Lightning on a target unit within 6 inches, dealing 3 damage."
+            },
+            {
+              "name": "Separatist Command",
+              "type": "Command Card",
+              "effect": "All Separatist units gain +1 attack. Droid units can activate before their normal order."
+            }
+          ]
+        }
+      ],
+      "first_order": [
+        {
+          "leader": "Kylo Ren",
+          "abilities": [
+            {
+              "name": "Dark Side Fury",
+              "type": "Command Card",
+              "effect": "Kylo Ren gains +2 attack and +1 damage for 2 rounds. First Order units within 6 inches gain +1 attack."
+            },
+            {
+              "name": "First Order Command",
+              "type": "Command Card",
+              "effect": "All First Order units gain +1 movement and +1 attack for the activation phase."
+            },
+            {
+              "name": "Sith Inheritance",
+              "type": "Passive",
+              "effect": "Kylo Ren can use Force Choke. Enemy units within 4 inches lose 1 defense."
+            }
+          ]
+        }
+      ],
+      "resistance": [
+        {
+          "leader": "Rey Skywalker",
+          "abilities": [
+            {
+              "name": "Jedi Training",
+              "type": "Command Card",
+              "effect": "Rey gains +1 attack and defense. Resistance units within 6 inches gain +1 defense."
+            },
+            {
+              "name": "Force Dyad",
+              "type": "Passive",
+              "effect": "Rey can sense Kylo Ren across the galaxy. If Kylo Ren is on the board, Rey gains +1 attack and defense."
+            },
+            {
+              "name": "Scavenger Resourcefulness",
+              "type": "Passive",
+              "effect": "Rey can repair 1 hull wound on a friendly unit each round. Resistance units adjacent to Rey gain +1 defense."
+            }
+          ]
+        },
+        {
+          "leader": "Poe Dameron",
+          "abilities": [
+            {
+              "name": "Resistance Ace",
+              "type": "Command Card",
+              "effect": "Deploy Poe's X-Wing for orbital strike. All Resistance units gain +1 attack."
+            },
+            {
+              "name": "Fearless Pilot",
+              "type": "Passive",
+              "effect": "Poe gains +1 attack when attacking from movement. Resistance units within 6 inches gain +1 attack."
+            },
+            {
+              "name": "Modified X-Wing",
+              "type": "Command Card",
+              "effect": "Poe's X-Wing can carry torpedoes. Deals 2 extra damage with torpedo attacks."
+            }
+          ]
+        }
+      ],
+      "sith": [
+        {
+          "leader": "Emperor Palpatine",
+          "abilities": [
+            {
+              "name": "Sith Rule",
+              "type": "Passive",
+              "effect": "All Sith and Imperial units within 8 inches gain +1 attack. Enemy units within 4 inches lose 1 defense."
+            },
+            {
+              "name": "Force Lightning Storm",
+              "type": "Command Card",
+              "effect": "Palpatine uses Force Lightning on all enemy units within 6 inches, dealing 2 damage to each."
+            },
+            {
+              "name": "Emperor's Will",
+              "type": "Command Card",
+              "effect": "All friendly units gain +1 attack and defense. Palpatine can use Force Drain to heal 2 wounds."
+            },
+            {
+              "name": "Immortality",
+              "type": "Passive",
+              "effect": "If Palpatine is eliminated, he can return from death once per game with 1 wound."
+            }
+          ]
+        }
+      ],
+      "scum_villainy": [
+        {
+          "leader": "Boba Fett",
+          "abilities": [
+            {
+              "name": "Mandalorian Armor",
+              "type": "Passive",
+              "effect": "Boba Fett gains +2 defense. Cannot be eliminated by the first hit that would eliminate him."
+            },
+            {
+              "name": "Expert Tracker",
+              "type": "Command Card",
+              "effect": "Reveal all hidden enemy units within 12 inches. Boba Fett gains +1 attack for the activation phase."
+            },
+            {
+              "name": "Slave I",
+              "type": "Command Card",
+              "effect": "Deploy Slave I for orbital strike. Deals 3 damage to a target unit or hex."
+            }
+          ]
+        }
+      ]
+    },
+    "unit_keywords": {
+      "description": "Common unit keywords and abilities found across Star Wars tabletop games.",
+      "keywords": [
+        {
+          "name": "Elite",
+          "effect": "Unit gains +1 attack and +1 defense. Elite units are fewer in number but more capable."
+        },
+        {
+          "name": "Mass Produced",
+          "effect": "Unit can be fielded in larger numbers but has reduced individual stats."
+        },
+        {
+          "name": "Force Sensitive",
+          "effect": "Unit can use Force powers. Gains access to Force abilities based on rank."
+        },
+        {
+          "name": "Heavy Armor",
+          "effect": "Unit gains +2 defense but loses 1 movement. Resistant to suppression."
+        },
+        {
+          "name": "Speed",
+          "effect": "Unit gains +2 movement. Can move through difficult terrain without penalty."
+        },
+        {
+          "name": "Long Range",
+          "effect": "Unit's weapons have extended range. Can attack at Range 3 without penalty."
+        },
+        {
+          "name": "Suppression",
+          "effect": "Unit's attacks can place suppression tokens on enemy units, reducing their effectiveness."
+        },
+        {
+          "name": "Stealth",
+          "effect": "Unit can hide and is not visible to enemies until it attacks or is revealed."
+        },
+        {
+          "name": "Transport",
+          "effect": "Unit can carry other units. Transported units move with the transport."
+        },
+        {
+          "name": "Droid",
+          "effect": "Unit is a droid. Vulnerable to EMP and remote shutdown. Does not feel fear."
+        },
+        {
+          "name": "Clone",
+          "effect": "Unit is a clone trooper. Gains bonuses when near Jedi commanders. Vulnerable to Order 66."
+        },
+        {
+          "name": "Creature",
+          "effect": "Unit is a non-humanoid creature. May have unique movement and attack rules."
+        },
+        {
+          "name": "Walker",
+          "effect": "Unit is a large walker. Can move over difficult terrain. Vulnerable to specific weaknesses."
+        },
+        {
+          "name": "Starfighter",
+          "effect": "Unit is a starfighter. Uses space combat rules. Has firing arcs and maneuver dials."
+        },
+        {
+          "name": "Capital Ship",
+          "effect": "Unit is a capital ship. Has massive hull and shield values. Can deploy starfighters."
+        }
+      ]
+    }
+  }
+}

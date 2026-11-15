@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.hex.manager;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.Battle;
 import com.yisy.modules.doramcu.hex.ConstructionModuleType;
@@ -16,11 +17,19 @@ import com.yisy.modules.doramcu.hex.SpaceStation;
 import com.yisy.modules.doramcu.hex.SolarSystemEntity;
 import com.yisy.modules.doramcu.hex.Player;
 import com.yisy.modules.doramcu.hex.ShipOrder;
+import com.yisy.modules.doramcu.hex.AiCoreComponent;
+import com.yisy.modules.doramcu.hex.Empire;
+import com.yisy.modules.doramcu.hex.PlanetFacility;
+import com.yisy.modules.doramcu.hex.StartingFacility;
+import com.yisy.modules.doramcu.hex.manager.EconomicState;
+import com.yisy.modules.doramcu.hex.spi.AiCommanderExperienceSpi;
+import com.yisy.modules.doramcu.hex.spi.AiEntityRegistration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Manages turn progression and end-of-turn processing.
@@ -37,6 +46,15 @@ public class TurnManager {
     // Resource pipeline managers per empire (lazy initialized)
     private final Map<Integer, ResourcePipelineManager> pipelineManagers = new HashMap<>();
 
+    // Economic state per empire (lazy initialized)
+    private final Map<Integer, EconomicState> economicStates = new HashMap<>();
+
+    /** Optional service for registering entities as AI characters (set via Game). */
+    private AiEntityRegistration aiEntityRegistrationService;
+
+    /** Optional service for recording AI commander experience (set via Game). */
+    private AiCommanderExperienceSpi aiCommanderExperienceService;
+
     /**
      * Creates a new TurnManager.
      *
@@ -44,6 +62,20 @@ public class TurnManager {
      */
     public TurnManager(GameContext context) {
         this.context = context;
+    }
+
+    /**
+     * Sets the AI entity registration service (injected by Game when available).
+     */
+    public void setAiEntityRegistrationService(AiEntityRegistration aiEntityRegistrationService) {
+        this.aiEntityRegistrationService = aiEntityRegistrationService;
+    }
+
+    /**
+     * Sets the AI commander experience service (injected by Game when available).
+     */
+    public void setAiCommanderExperienceService(AiCommanderExperienceSpi aiCommanderExperienceService) {
+        this.aiCommanderExperienceService = aiCommanderExperienceService;
     }
 
     /**
@@ -93,6 +125,9 @@ public class TurnManager {
      *   <li>Ship fuel and maintenance consumption</li>
      *   <li>Active battle resolution</li>
      *   <li>Space station upkeep and resource production</li>
+     *   <li>Trade market fluctuations</li>
+     *   <li>Mercenary income</li>
+     *   <li>Economic state finalization</li>
      * </ul>
      * </p>
      */
@@ -127,6 +162,15 @@ public class TurnManager {
         // Process mercenary income for all empires
         processMercenaryIncome();
 
+        // Process survey missions
+        processSurveyMissions();
+
+        // Process tax collection for all empires
+        processTaxCollection();
+
+        // Finalize economic state for all empires
+        finalizeEconomicTurn();
+
         // Check for game end conditions
         checkGameEndConditions();
     }
@@ -139,12 +183,15 @@ public class TurnManager {
      * Processes trade market fluctuations at end-of-turn.
      * Market conditions change, affecting commodity prices.
      * Delegates to TradeManager which handles: market fluctuation, economic events,
-     * trade route network building, auto-trade, and credit exchange for each empire.
+     * trade route network building, auto-trade, credit exchange, and player trade orders.
      */
     private void processTradeMarkets() {
         if (context instanceof com.yisy.modules.doramcu.hex.Game game) {
             com.yisy.modules.doramcu.hex.manager.TradeManager tradeManager = game.getTradeManager();
             if (tradeManager != null) {
+                // Process player trade orders
+                tradeManager.processTradeOrders();
+                // Process auto-trade and market fluctuations
                 tradeManager.processEndOfTurn(pipelineManagers);
             }
         }
@@ -165,6 +212,41 @@ public class TurnManager {
             if (mercManager != null) {
                 mercManager.processEndOfTurn();
             }
+        }
+    }
+
+    /**
+     * Processes survey missions for all empires.
+     * Advances each mission by one turn and removes completed missions.
+     */
+    private void processSurveyMissions() {
+        if (context instanceof com.yisy.modules.doramcu.hex.Game game) {
+            game.processSurveyMissions();
+        }
+    }
+
+    /**
+     * Processes tax collection for all empires at end-of-turn.
+     * Delegates to TaxManager which handles: calculating tax based on planet
+     * characteristics, applying tax policy, and feeding income into EconomicState.
+     */
+    private void processTaxCollection() {
+        if (context instanceof com.yisy.modules.doramcu.hex.Game game) {
+            com.yisy.modules.doramcu.hex.manager.TaxManager taxManager = game.getTaxManager();
+            if (taxManager != null) {
+                taxManager.processEndOfTurn();
+            }
+        }
+    }
+
+    /**
+     * Finalizes the economic state for all empires at end-of-turn.
+     * Records turn data and resets per-turn counters.
+     */
+    private void finalizeEconomicTurn() {
+        int turn = context.getCurrentTurn();
+        for (EconomicState state : economicStates.values()) {
+            state.finalizeTurn(turn);
         }
     }
 
@@ -208,6 +290,14 @@ public class TurnManager {
         // Apply damage from battle simulation to actual fleets
         applyFleetDamageFromBattle(attacker, battle);
         applyFleetDamageFromBattle(defender, battle);
+
+        // Deactivate AI characters for destroyed ships before removal
+        deactivateAiForDestroyedShips(attacker);
+        deactivateAiForDestroyedShips(defender);
+
+        // Record battle experience for surviving ships' AI characters
+        recordBattleExperienceForFleet(attacker, outcome, true);
+        recordBattleExperienceForFleet(defender, outcome, false);
 
         // Remove destroyed ships
         attacker.removeDestroyedShips();
@@ -323,6 +413,11 @@ public class TurnManager {
             }
         }
 
+        // Remove completed orders from player's ship queue (keep only pending)
+        while (player.getShipQueue().size() > pendingQueue.size()) {
+            player.completeNextShipOrder();
+        }
+
         // Add completed ships to fleets
         for (ShipOrder order : completedOrders) {
             Fleet fleet = context.getFleet(order.getTargetFleetId());
@@ -349,8 +444,12 @@ public class TurnManager {
                 if (order.getShipTemplate().getHomePlanet() != null) {
                     completedShip.setHomePlanet(order.getShipTemplate().getHomePlanet());
                 }
+                // Install AI Core for network connection
+                completedShip.setAiCore(new AiCoreComponent());
                 context.addShip(completedShip);
                 fleet.addShip(completedShip);
+                // Register as AI character
+                registerShipAsAi(completedShip, player.getName());
             }
         }
     }
@@ -387,7 +486,7 @@ public class TurnManager {
      * <p>
      * When first created, the pipeline is initialized with mining operations
      * for all planets owned by the empire, and default processing facilities
-     * and assemblers are added.
+     * and assemblers are added. Also creates the EconomicState for this empire.
      * </p>
      *
      * @param empireId the empire ID
@@ -397,8 +496,55 @@ public class TurnManager {
         return pipelineManagers.computeIfAbsent(empireId, id -> {
             ResourcePipelineManager pipeline = new ResourcePipelineManager(id);
             initializePipeline(pipeline, id);
+            // Create and register EconomicState
+            EconomicState economicState = new EconomicState(id, pipeline);
+            economicStates.put(id, economicState);
+            registerEconomicStateWithServices(economicState);
             return pipeline;
         });
+    }
+
+    /**
+     * Gets or creates the EconomicState for the given empire.
+     *
+     * @param empireId the empire ID
+     * @return the economic state for that empire
+     */
+    public EconomicState getEconomicState(int empireId) {
+        return economicStates.computeIfAbsent(empireId, id -> {
+            // Ensure pipeline exists first
+            ResourcePipelineManager pipeline = getPipelineManager(id);
+            EconomicState state = new EconomicState(id, pipeline);
+            registerEconomicStateWithServices(state);
+            return state;
+        });
+    }
+
+    /**
+     * Registers an EconomicState with all services that need it.
+     *
+     * @param economicState the economic state to register
+     */
+    private void registerEconomicStateWithServices(EconomicState economicState) {
+        if (context instanceof com.yisy.modules.doramcu.hex.Game game) {
+            TradeManager tradeManager = game.getTradeManager();
+            if (tradeManager != null) {
+                CreditExchangeService ces = tradeManager.getCreditExchangeService();
+                if (ces != null) {
+                    ces.registerEconomicState(economicState);
+                }
+                // Wire MercenaryIncomeManager to CreditExchangeService
+                MercenaryIncomeManager mercManager = game.getMercenaryIncomeManager();
+                if (mercManager != null && ces != null) {
+                    mercManager.setCreditExchangeService(ces);
+                }
+                // Wire TaxManager to CreditExchangeService
+                TaxManager taxManager = game.getTaxManager();
+                if (taxManager != null && ces != null) {
+                    taxManager.setCreditExchangeService(ces);
+                }
+            }
+        }
     }
 
     /**
@@ -461,10 +607,147 @@ public class TurnManager {
             }
 
             // Process pipeline turn (mining, transport, processing, assembly)
-            pipeline.processTurn();
+            // Pass technology tree so alternative recipes can be unlocked
+            EconomicState economicState = economicStates.get(player.getEmpireId());
+            com.yisy.modules.doramcu.hex.manager.TechnologyTree technologyTree =
+                    economicState != null ? economicState.getTechnologyTree() : null;
+            pipeline.processTurn(technologyTree);
 
             // Process completed construction orders for this player
             processCompletedConstructionForPlayer(player, pipeline);
+        }
+    }
+
+    /**
+     * Registers a space station as an AI character in the AI character repository.
+     * No-op if the AI entity registration service is not available.
+     */
+    private void registerStationAsAi(SpaceStation station, String empireName) {
+        if (aiEntityRegistrationService != null && station != null) {
+            try {
+                aiEntityRegistrationService.registerStation(station, empireName);
+            } catch (Exception e) {
+                // Silently ignore if registration fails
+            }
+        }
+    }
+
+    /**
+     * Registers a ship as an AI character in the AI character repository.
+     * No-op if the AI entity registration service is not available.
+     */
+    private void registerShipAsAi(Ship ship, String empireName) {
+        if (aiEntityRegistrationService != null && ship != null) {
+            try {
+                aiEntityRegistrationService.registerShip(ship, empireName);
+            } catch (Exception e) {
+                // Silently ignore if registration fails
+            }
+        }
+    }
+
+    /**
+     * Registers a facility as an AI character in the AI character repository.
+     * No-op if the AI entity registration service is not available.
+     */
+    private void registerFacilityAsAi(PlanetFacility facility, String empireName) {
+        if (aiEntityRegistrationService != null && facility != null) {
+            try {
+                aiEntityRegistrationService.registerFacility(facility, empireName);
+            } catch (Exception e) {
+                // Silently ignore if registration fails
+            }
+        }
+    }
+
+    /**
+     * Deactivates AI characters for destroyed ships in a fleet.
+     * No-op if the AI entity registration service is not available.
+     */
+    private void deactivateAiForDestroyedShips(Fleet fleet) {
+        if (aiEntityRegistrationService == null || fleet == null) {
+            return;
+        }
+        for (Ship ship : fleet.getDestroyedShips()) {
+            try {
+                aiEntityRegistrationService.deactivateShipAiCharacter(ship.getId());
+            } catch (Exception e) {
+                // Silently ignore if deactivation fails
+            }
+        }
+    }
+
+    /**
+     * Deactivates AI characters for destroyed stations.
+     * No-op if the AI entity registration service is not available.
+     */
+    private void deactivateAiForDestroyedStations() {
+        if (aiEntityRegistrationService == null) {
+            return;
+        }
+        for (SpaceStation station : context.getSpaceStations()) {
+            if (station.isDestroyed()) {
+                try {
+                    aiEntityRegistrationService.deactivateStationAiCharacter(station.getId());
+                } catch (Exception e) {
+                    // Silently ignore if deactivation fails
+                }
+            }
+        }
+    }
+
+    /**
+     * Records battle experience for surviving ships' AI characters in a fleet.
+     * No-op if the AI commander experience service is not available.
+     *
+     * @param fleet the fleet to process
+     * @param battleOutcome the overall battle outcome
+     * @param isAttacker true if this fleet was the attacker in the battle
+     */
+    private void recordBattleExperienceForFleet(Fleet fleet, Battle.BattleOutcome battleOutcome, boolean isAttacker) {
+        if (aiCommanderExperienceService == null || fleet == null) {
+            return;
+        }
+        // Determine the outcome for this fleet's side
+        com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome outcome;
+        if (battleOutcome == Battle.BattleOutcome.ATTACKER_VICTORY) {
+            outcome = isAttacker
+                ? com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.VICTORY
+                : com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.DEFEAT;
+        } else if (battleOutcome == Battle.BattleOutcome.DEFENDER_VICTORY) {
+            outcome = isAttacker
+                ? com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.DEFEAT
+                : com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.VICTORY;
+        } else {
+            outcome = com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.STALEMATE;
+        }
+        // Record experience for each surviving ship's AI character
+        for (Ship ship : fleet.getShips()) {
+            if (ship.isDestroyed()) {
+                continue;
+            }
+            try {
+                Optional<com.yisy.modules.doramcu.eve.model.AiCharacter> aiCharOpt =
+                    aiEntityRegistrationService.findShipAiCharacter(ship.getId());
+                aiCharOpt.ifPresent(aiChar -> {
+                    try {
+                        aiCommanderExperienceService.recordBattleExperience(
+                            aiChar.getId(),
+                            "TRAVELLER",
+                            "Naval Battle",
+                            outcome,
+                            "Naval battle participation",
+                            null
+                        );
+                        // Advance training level if XP threshold is reached
+                        aiCommanderExperienceService.advanceTrainingLevel(aiChar.getId());
+                    } catch (Exception e) {
+                        // Silently ignore if experience recording fails
+                    }
+                });
+            } catch (Exception e) {
+                // Silently ignore if AI character lookup fails
+            }
         }
     }
 
@@ -487,6 +770,7 @@ public class TurnManager {
                     if (station != null) {
                         // Add station to the solar system at a default position
                         homeSystem.addSpaceStation(station, new Hex3D(0, 0, 0));
+                        registerStationAsAi(station, player.getName());
                     }
                 }
             } else if (order.getConstructionType() == ConstructionOrder.ConstructionType.PLANET_FACILITY) {
@@ -497,6 +781,15 @@ public class TurnManager {
                 }
                 if (planet != null) {
                     facilityManager.completePlanetFacility(order, planet);
+                    // Create PlanetFacility entity with AI core and register as AI character
+                    StartingFacility facility = order.getPlanetFacility();
+                    if (facility != null) {
+                        Empire empire = context.getEmpire(player.getEmpireId());
+                        if (empire != null) {
+                            PlanetFacility pf = empire.getFacilities().buildFacility(planet.getId(), facility);
+                            registerFacilityAsAi(pf, player.getName());
+                        }
+                    }
                 }
             }
         }
@@ -532,7 +825,8 @@ public class TurnManager {
     /**
      * Processes space station upkeep and resource production for all players.
      * Each station consumes construction modules for maintenance and produces
-     * raw/refined resources based on its type.
+     * raw/refined resources based on its type. Station income and expenses
+     * are tracked via EconomicState.
      */
     private void processStationUpkeep() {
         for (Player player : context.getPlayers()) {
@@ -543,6 +837,9 @@ public class TurnManager {
             if (pipeline == null) {
                 continue;
             }
+
+            // Get EconomicState for this empire
+            EconomicState economicState = economicStates.get(player.getEmpireId());
 
             // Collect all stations owned by this player
             List<SpaceStation> stations = new ArrayList<>();
@@ -555,14 +852,19 @@ public class TurnManager {
             // Process each station's economy and AI Core
             for (SpaceStation station : stations) {
                 if (!station.isDestroyed()) {
-                    station.getEconomy().processTurn(pipeline);
+                    station.getEconomy().processTurn(pipeline, economicState);
                     // Process station AI Core if installed
                     if (station.hasAiCore()) {
-                        station.getAiCore().processTurn(null);
+                        com.yisy.modules.doramcu.ai.StationAiCore aiCore =
+                                (com.yisy.modules.doramcu.ai.StationAiCore) station.getAiCore();
+                        aiCore.processTurn(null);
                     }
                 }
             }
         }
+
+        // Deactivate AI characters for any destroyed stations
+        deactivateAiForDestroyedStations();
     }
 
     /**
@@ -570,5 +872,14 @@ public class TurnManager {
      */
     public Map<Integer, ResourcePipelineManager> getPipelineManagers() {
         return Map.copyOf(pipelineManagers);
+    }
+
+    /**
+     * Returns all economic states.
+     *
+     * @return map of empire ID to economic state
+     */
+    public Map<Integer, EconomicState> getEconomicStates() {
+        return Map.copyOf(economicStates);
     }
 }

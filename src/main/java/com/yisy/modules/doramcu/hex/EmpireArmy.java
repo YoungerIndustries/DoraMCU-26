@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.hex;
 
+import com.yisy.modules.doramcu.hex.spi.AiEntityRegistration;
 import com.yisy.modules.doramcu.traveller.MercenaryCareer;
 import com.yisy.modules.doramcu.traveller.MercenaryRank;
 import com.yisy.modules.doramcu.traveller.MercenaryUnit;
@@ -7,6 +8,7 @@ import com.yisy.modules.doramcu.traveller.UnitType;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,6 +35,12 @@ public class EmpireArmy {
     private final List<MercenaryUnit> mercenaryUnits;
     private int nextMercenaryId;
 
+    /** Optional: empire name for AI character registration. */
+    private String empireName;
+
+    /** Optional: AI entity registration service for registering army units as AI characters. */
+    private AiEntityRegistration aiEntityRegistrationService;
+
     /**
      * Creates a new army for the given empire.
      *
@@ -53,6 +61,24 @@ public class EmpireArmy {
         return empireId;
     }
 
+    /**
+     * Sets the empire name for AI character registration.
+     *
+     * @param empireName the name of the owning empire
+     */
+    public void setEmpireName(String empireName) {
+        this.empireName = empireName;
+    }
+
+    /**
+     * Sets the AI entity registration service for registering army units as AI characters.
+     *
+     * @param service the registration service
+     */
+    public void setAiEntityRegistrationService(AiEntityRegistration service) {
+        this.aiEntityRegistrationService = service;
+    }
+
     /** Returns an unmodifiable list of all army units. */
     public List<ArmyUnit> getUnits() {
         return Collections.unmodifiableList(units);
@@ -67,6 +93,7 @@ public class EmpireArmy {
 
     /**
      * Creates a new army unit of the given type.
+     * Installs a BASIC tier AI Core and registers the unit as an AI character if the service is available.
      *
      * @param unitType the type of unit to create
      * @return the newly created unit
@@ -76,28 +103,61 @@ public class EmpireArmy {
             throw new IllegalArgumentException("Unit type must not be null");
         }
         ArmyUnit unit = new ArmyUnit(nextUnitId++, unitType);
+        
+        // Install BASIC tier AI Core component
+        unit.setAiCore(new AiCoreComponent(AiCoreComponent.Tier.BASIC));
+        
+        // Register as AI character if service is available
+        if (aiEntityRegistrationService != null && empireName != null) {
+            try {
+                aiEntityRegistrationService.registerArmyUnit(unit, empireName);
+            } catch (Exception e) {
+                // Gracefully skip registration if it fails
+            }
+        }
+        
         units.add(unit);
         return unit;
     }
 
     /**
-     * Removes a unit from the army.
+     * Removes a unit from the army, deactivating its AI character if it has an AI core.
      *
      * @param unit the unit to remove
      * @return true if the unit was removed
      */
     public boolean removeUnit(ArmyUnit unit) {
+        if (unit != null && unit.hasAiCore() && aiEntityRegistrationService != null) {
+            try {
+                aiEntityRegistrationService.deactivateArmyUnitAiCharacter(unit.getId());
+            } catch (Exception e) {
+                // Gracefully skip deactivation if it fails
+            }
+        }
         return units.remove(unit);
     }
 
     /**
-     * Removes all destroyed units (strength <= 0).
+     * Removes all destroyed units (strength <= 0), deactivating their AI characters first.
      *
      * @return the number of units removed
      */
     public int removeDestroyedUnits() {
         int before = units.size();
-        units.removeIf(u -> u.getCurrentStrength() <= 0);
+        for (Iterator<ArmyUnit> it = units.iterator(); it.hasNext(); ) {
+            ArmyUnit unit = it.next();
+            if (unit.getCurrentStrength() <= 0) {
+                // Deactivate AI character before removing
+                if (unit.hasAiCore() && aiEntityRegistrationService != null) {
+                    try {
+                        aiEntityRegistrationService.deactivateArmyUnitAiCharacter(unit.getId());
+                    } catch (Exception e) {
+                        // Gracefully skip deactivation if it fails
+                    }
+                }
+                it.remove();
+            }
+        }
         return before - units.size();
     }
 

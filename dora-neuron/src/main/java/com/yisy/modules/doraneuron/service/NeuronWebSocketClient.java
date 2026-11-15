@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.service;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,6 +53,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * providing real-time bidirectional channels while HTTP serves as fallback.
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class NeuronWebSocketClient {
 
     private static final Logger log = LoggerFactory.getLogger(NeuronWebSocketClient.class);

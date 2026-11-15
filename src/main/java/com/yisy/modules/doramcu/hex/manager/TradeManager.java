@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.hex.manager;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.Planet;
 import com.yisy.modules.doramcu.hex.Player;
@@ -39,8 +40,6 @@ public class TradeManager {
     private final GameContext context;
     private final Random random;
 
-    /** Maps planet ID to its Traveller world representation for trade. */
-    private final Map<Integer, TravellerWorld> planetWorlds = new HashMap<>();
 
     /** Maps planet ID to its economy profile. */
     private final Map<Integer, WorldEconomy> planetEconomies = new HashMap<>();
@@ -149,11 +148,8 @@ public class TradeManager {
             return true;
         }
 
-        // Create TravellerWorld from Planet UWP data
+        // Create economy profile from planet UWP data
         TravellerWorld world = createTravellerWorld(planet);
-        planetWorlds.put(planet.getId(), world);
-
-        // Create economy profile
         WorldEconomy economy = new WorldEconomy(world);
         planetEconomies.put(planet.getId(), economy);
 
@@ -881,7 +877,7 @@ public class TradeManager {
             TradeRoute route = findBestRouteAmong(ownedPlanets);
             if (route != null && route.profitable) {
                 // Convert profit to resources
-                long profit = route.profitPerUnit * 10; // Assume 10 units per auto-trade
+                long profit = (long) route.profitPerUnit * 10; // Assume 10 units per auto-trade
                 int added = feedTradeProfitToPipeline(pipeline, profit, route.commodity);
                 if (added > 0) {
                     // Record the auto-trade

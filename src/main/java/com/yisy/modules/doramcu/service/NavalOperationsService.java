@@ -106,10 +106,7 @@ public class NavalOperationsService {
                     request.getDefenderFleetId());
         }
 
-        // Create a dummy world for the battle system
-        TravellerWorld battleWorld = null; // Use null for system-agnostic battle
-
-        NavalBattle battle = new NavalBattle(attacker, defender, battleWorld);
+        NavalBattle battle = new NavalBattle(attacker, defender, null);
         // Run battle rounds until completion
         while (battle.isActive()) {
             battle.executeRound(FleetAction.LASER_BARRAGE, FleetAction.HOLD);

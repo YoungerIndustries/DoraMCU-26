@@ -163,33 +163,16 @@ public class SmugglingController {
     }
 
     /**
-     * Advances a smuggling operation to customs check.
+     * Executes a customs check for a smuggling operation.
      *
      * @param id the operation ID
-     * @return the updated operation
+     * @param request the customs check request
+     * @return the updated operation with customs result
      */
     @PostMapping("/operations/{id}/customs-check")
-    public ResponseEntity<Map<String, Object>> customsCheck(@PathVariable int id) {
+    public ResponseEntity<Map<String, Object>> customsCheck(@PathVariable int id,
+                                                            @RequestBody ResolveRequest request) {
         log.debug("POST /api/v1/traveller/smuggling/operations/{}/customs-check", id);
-        SmugglingOperation operation = operations.get(id);
-        if (operation == null) {
-            return ResponseEntity.notFound().build();
-        }
-        operation.advanceToCustoms();
-        return ResponseEntity.ok(toMap(operation));
-    }
-
-    /**
-     * Resolves a customs check for a smuggling operation.
-     *
-     * @param id the operation ID
-     * @param request the resolution request
-     * @return the updated operation
-     */
-    @PostMapping("/operations/{id}/resolve")
-    public ResponseEntity<Map<String, Object>> resolveCustoms(@PathVariable int id,
-                                                              @RequestBody ResolveRequest request) {
-        log.debug("POST /api/v1/traveller/smuggling/operations/{}/resolve", id);
         SmugglingOperation operation = operations.get(id);
         if (operation == null) {
             return ResponseEntity.notFound().build();
@@ -202,9 +185,12 @@ public class SmugglingController {
             return ResponseEntity.badRequest().build();
         }
 
-        CustomsCheck.CustomsResult result = operation.resolveCustoms(
-                action,
-                request.getPilotSkill() != null ? request.getPilotSkill() : 0
+        int pilotSkill = request.getPilotSkill() != null ? request.getPilotSkill() : 0;
+        long credits = request.getCredits() != null ? request.getCredits() : 0;
+
+        CustomsCheck customsCheck = new CustomsCheck();
+        CustomsCheck.CustomsResult result = operation.executeCustomsCheck(
+                customsCheck, action, pilotSkill, credits
         );
         return ResponseEntity.ok(toMap(operation));
     }
@@ -293,11 +279,14 @@ public class SmugglingController {
     public static class ResolveRequest {
         private String action;
         private Integer pilotSkill;
+        private Long credits;
 
         public String getAction() { return action; }
         public void setAction(String action) { this.action = action; }
         public Integer getPilotSkill() { return pilotSkill; }
         public void setPilotSkill(Integer pilotSkill) { this.pilotSkill = pilotSkill; }
+        public Long getCredits() { return credits; }
+        public void setCredits(Long credits) { this.credits = credits; }
     }
 
     public static class EstimateRequest {

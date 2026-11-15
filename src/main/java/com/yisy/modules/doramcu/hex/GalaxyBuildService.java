@@ -1,13 +1,13 @@
 package com.yisy.modules.doramcu.hex;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.event.GalaxyEventService;
 import com.yisy.modules.doramcu.event.GalaxyEventType;
-import com.yisy.modules.doramcu.hex.planet.DefaultPlanetSurfaceBuilder;
+import com.yisy.modules.doramcu.hex.planet.PlanetSurfaceBuilder;
 import com.yisy.modules.doramcu.hex.planet.PlanetSurfacePersistenceService;
-import com.yisy.modules.doramcu.service.GalaxyStateService;
+import com.yisy.modules.doramcu.hex.spi.GalaxyStateTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.*;
@@ -41,14 +41,14 @@ public class GalaxyBuildService implements GalaxyModuleInterface {
 
     private final GalaxyBuildQueue buildQueue;
     private final GalaxyEventService eventService;
-    private final GalaxyStateService stateService;
-    private final DefaultPlanetSurfaceBuilder planetSurfaceBuilder;
+    private final GalaxyStateTracker stateService;
+    private final PlanetSurfaceBuilder planetSurfaceBuilder;
     private final PlanetSurfacePersistenceService persistenceService;
     private final AtomicBoolean processing;
 
     public GalaxyBuildService(GalaxyEventService eventService,
-                               GalaxyStateService stateService,
-                               DefaultPlanetSurfaceBuilder planetSurfaceBuilder,
+                                GalaxyStateTracker stateService,
+                               PlanetSurfaceBuilder planetSurfaceBuilder,
                                PlanetSurfacePersistenceService persistenceService) {
         this.buildQueue = new GalaxyBuildQueue();
         this.eventService = eventService;
@@ -135,6 +135,16 @@ public class GalaxyBuildService implements GalaxyModuleInterface {
 
         BuildRequest request = new BuildRequest(BuildObjectType.CITY_3D, priority, galaxyName, params);
         submitBuildRequest(request);
+
+        // Publish city 3D requested event
+        if (eventService != null) {
+            int districtCount = parameters != null && parameters.containsKey("districtCount")
+                    ? (int) parameters.get("districtCount") : 5;
+            eventService.publish(GalaxyEventType.CITY_3D_REQUESTED, galaxyName, null,
+                    "cityName", cityName, "planetName", planetName, "galaxyName", galaxyName,
+                    "districtCount", String.valueOf(districtCount));
+        }
+
         return request.getRequestId();
     }
 
@@ -147,6 +157,16 @@ public class GalaxyBuildService implements GalaxyModuleInterface {
 
         BuildRequest request = new BuildRequest(BuildObjectType.PLANET, priority, galaxyName, params);
         submitBuildRequest(request);
+
+        // Publish planet build requested event
+        if (eventService != null) {
+            int positionInQueue = buildQueue.getStats().get("totalRequests") != null
+                    ? (int) buildQueue.getStats().get("totalRequests") : 1;
+            eventService.publish(GalaxyEventType.PLANET_BUILD_REQUESTED, galaxyName, null,
+                    "planetName", planetName, "galaxyName", galaxyName,
+                    "positionInQueue", String.valueOf(positionInQueue));
+        }
+
         return request.getRequestId();
     }
 
@@ -186,8 +206,12 @@ public class GalaxyBuildService implements GalaxyModuleInterface {
         Instant startTime = Instant.now();
         List<BuildRequest> requests = new ArrayList<>();
 
-        // Publish galaxy mapping started event
+        // Publish galaxy mapping started events (both canonical and legacy alias)
         if (eventService != null) {
+            int totalSectors = Galaxy.GRID_SIZE * Galaxy.GRID_SIZE;
+            eventService.publish(GalaxyEventType.GALAXY_MAPPING_STARTED, galaxyName, null,
+                    "galaxyName", galaxyName, "systemCount", String.valueOf(config.getSystemCount()),
+                    "totalSectors", String.valueOf(totalSectors));
             eventService.publish(GalaxyEventType.GALAXY_GENERATION_STARTED, galaxyName, null,
                     "galaxyName", galaxyName, "systemCount", String.valueOf(config.getSystemCount()));
         }
@@ -249,9 +273,12 @@ public class GalaxyBuildService implements GalaxyModuleInterface {
         log.info("Galaxy '{}' mapped in {}ms: {} build requests created",
                 galaxyName, java.time.Duration.between(startTime, endTime).toMillis(), requests.size());
 
-        // Publish mapping completed event
+        // Publish mapping completed events (both canonical and legacy alias)
         if (eventService != null) {
             long mappingTimeMs = java.time.Duration.between(startTime, endTime).toMillis();
+            eventService.publish(GalaxyEventType.GALAXY_MAPPING_COMPLETED, galaxyName, null,
+                    "galaxyName", galaxyName, "buildRequestCount", String.valueOf(requests.size()),
+                    "mappingTimeMs", String.valueOf(mappingTimeMs));
             eventService.publish(GalaxyEventType.GALAXY_GENERATION_COMPLETED, galaxyName, null,
                     "galaxyName", galaxyName, "buildRequests", String.valueOf(requests.size()),
                     "mappingTimeMs", String.valueOf(mappingTimeMs));
@@ -274,6 +301,15 @@ public class GalaxyBuildService implements GalaxyModuleInterface {
             throw new IllegalStateException("Build processing is already running");
         }
 
+        // Publish build queue started event
+        if (eventService != null) {
+            Map<String, Object> stats = buildQueue.getStats();
+            eventService.publish(GalaxyEventType.BUILD_QUEUE_STARTED, 
+                    (String) stats.get("galaxyName"), null,
+                    "totalRequests", String.valueOf(stats.get("totalRequests")),
+                    "priorityOrder", "true");
+        }
+
         buildQueue.addListener(new GalaxyBuildQueue.BuildProgressListener() {
             @Override
             public void onBuildStarted(BuildRequest request) {
@@ -281,6 +317,11 @@ public class GalaxyBuildService implements GalaxyModuleInterface {
                     eventService.publish(GalaxyEventType.SECTOR_GENERATED, request.getGalaxyName(), null,
                             "objectType", request.getObjectType().name(),
                             "priority", request.getPriority().name());
+                    eventService.publish(GalaxyEventType.BUILD_REQUEST_STARTED, request.getGalaxyName(), null,
+                            "requestId", request.getRequestId(),
+                            "objectType", request.getObjectType().name(),
+                            "priority", request.getPriority().name(),
+                            "galaxyName", request.getGalaxyName());
                 }
             }
 
@@ -289,18 +330,44 @@ public class GalaxyBuildService implements GalaxyModuleInterface {
                 if (eventService != null) {
                     eventService.publish(GalaxyEventType.BUILD_COMPLETED, result.getRequestId(), null,
                             "objectType", result.getObjectType().name());
+                    String galaxyName = result.getMetadata().containsKey("galaxyName")
+                            ? (String) result.getMetadata().get("galaxyName") : "unknown";
+                    long buildTimeMs = result.getBuildDuration() != null
+                            ? result.getBuildDuration().toMillis() : 0;
+                    eventService.publish(GalaxyEventType.BUILD_REQUEST_COMPLETED, galaxyName, null,
+                            "requestId", result.getRequestId(),
+                            "objectType", result.getObjectType().name(),
+                            "buildTimeMs", String.valueOf(buildTimeMs),
+                            "galaxyName", galaxyName);
                 }
             }
 
             @Override
             public void onBuildFailed(BuildResult result) {
                 log.error("Build failed: {} - {}", result.getObjectType(), result.getErrorMessage());
+                if (eventService != null) {
+                    String galaxyName = result.getMetadata().containsKey("galaxyName")
+                            ? (String) result.getMetadata().get("galaxyName") : "unknown";
+                    eventService.publish(GalaxyEventType.BUILD_REQUEST_FAILED, galaxyName, null,
+                            "requestId", result.getRequestId(),
+                            "objectType", result.getObjectType().name(),
+                            "errorMessage", result.getErrorMessage() != null ? result.getErrorMessage() : "Unknown error",
+                            "galaxyName", galaxyName);
+                }
             }
 
             @Override
             public void onQueueEmpty() {
                 processing.set(false);
                 log.info("All build requests processed");
+                if (eventService != null) {
+                    Map<String, Object> stats = buildQueue.getStats();
+                    eventService.publish(GalaxyEventType.BUILD_QUEUE_COMPLETED,
+                            (String) stats.get("galaxyName"), null,
+                            "totalCompleted", String.valueOf(stats.get("completed")),
+                            "totalFailed", String.valueOf(stats.get("failed")),
+                            "totalTimeMs", String.valueOf(stats.get("totalTimeMs")));
+                }
             }
 
             @Override
@@ -397,7 +464,7 @@ public class GalaxyBuildService implements GalaxyModuleInterface {
         Galaxy.Sector sector = new Galaxy.Sector(row * 100 + col, row, col, "Sector " + row + "," + col);
 
         // Generate systems for this sector
-        Random random = new Random(row * 100 + col);
+        Random random = new Random((long) row * 100 + col);
         int systemsGenerated = 0;
 
         for (int i = 0; i < systemsPerSector; i++) {
@@ -458,7 +525,7 @@ public class GalaxyBuildService implements GalaxyModuleInterface {
             return result;
         }
 
-        // First time — generate procedurally
+        // First time â€” generate procedurally
         log.info("Generating planet {} surface procedurally (seed={})", planetName, seed);
         int hexCount = planetSurfaceBuilder.generateBiomes(planet, seed);
         log.info("Planet {} surface generated: {} hex cells", planetName, hexCount);

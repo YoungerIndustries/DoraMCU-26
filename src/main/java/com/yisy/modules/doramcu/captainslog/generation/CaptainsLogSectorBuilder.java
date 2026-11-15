@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.generation;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.Galaxy;
 import com.yisy.modules.doramcu.hex.SolarSystem;
@@ -34,6 +35,7 @@ import java.util.*;
  * Galaxy.Sector sector = builder.build(0, 0, 0);
  * </pre>
  */
+@Service
 public class CaptainsLogSectorBuilder {
 
     /**
@@ -177,14 +179,18 @@ public class CaptainsLogSectorBuilder {
         if (col < 0 || col >= Galaxy.GRID_SIZE) {
             throw new IllegalArgumentException("Col must be between 0 and " + (Galaxy.GRID_SIZE - 1) + ": " + col);
         }
-        if (row < 5 && col < 5) {
-            return "Alpha Quadrant";
-        } else if (row < 5 && col >= 5) {
-            return "Beta Quadrant";
-        } else if (row >= 5 && col < 5) {
-            return "Gamma Quadrant";
+        if (row < 5) {
+            if (col < 5) {
+                return "Alpha Quadrant";
+            } else {
+                return "Beta Quadrant";
+            }
         } else {
-            return "Delta Quadrant";
+            if (col < 5) {
+                return "Gamma Quadrant";
+            } else {
+                return "Delta Quadrant";
+            }
         }
     }
 
@@ -345,11 +351,7 @@ public class CaptainsLogSectorBuilder {
             throw new IllegalArgumentException("Col must be between 0 and " + (Galaxy.GRID_SIZE - 1) + ": " + col);
         }
         int index = row * Galaxy.GRID_SIZE + col;
-        if (index < SECTOR_NAMES.length) {
-            return SECTOR_NAMES[index] + " Sector";
-        }
-        // Fallback for any unexpected positions
-        return String.format("Sector-%02d%02d", row, col);
+        return SECTOR_NAMES[index] + " Sector";
     }
 
     /**
@@ -368,11 +370,7 @@ public class CaptainsLogSectorBuilder {
             throw new IllegalArgumentException("SubCol must be between 0 and " + (Galaxy.SUBSECTOR_GRID_SIZE - 1) + ": " + subCol);
         }
         int index = subRow * Galaxy.SUBSECTOR_GRID_SIZE + subCol;
-        if (index < SUBSECTOR_NAMES.length) {
-            return SUBSECTOR_NAMES[index];
-        }
-        // Fallback for any unexpected positions
-        return String.format("SS-%02d%02d", subRow, subCol);
+        return SUBSECTOR_NAMES[index];
     }
 
     /**

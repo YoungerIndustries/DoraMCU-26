@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.controller;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.model.NeuronDecision;
 import com.yisy.modules.doraneuron.protocol.ConsensusRequest;
 import com.yisy.modules.doraneuron.protocol.ConsensusResult;
@@ -29,6 +31,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/neuron/consensus")
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class ConsensusController {
 
     private static final Logger log = LoggerFactory.getLogger(ConsensusController.class);

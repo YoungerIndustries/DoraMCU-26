@@ -1,10 +1,13 @@
 package com.yisy.modules.doramcu.shared.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.dto.CreateCharacterRequest;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogFocus;
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogCharacterRepository;
 import com.yisy.modules.doramcu.captainslog.service.CaptainLogService;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Character;
+import com.yisy.modules.doramcu.earth2026.service.Earth2026Service;
 import com.yisy.modules.doramcu.model.Player;
 import com.yisy.modules.doramcu.repository.PlayerRepository;
 import com.yisy.modules.doramcu.traveller.AbilityScore;
@@ -16,11 +19,10 @@ import com.yisy.modules.doramcu.shared.model.SharedCharacterSkill;
 import com.yisy.modules.doramcu.shared.model.SharedCharacterTravelLog;
 import com.yisy.modules.doramcu.shared.repository.SharedCharacterRepository;
 import com.yisy.modules.doramcu.service.CharacterService;
-import com.yisy.modules.doramcu.unified.GameType;
+import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.util.DiceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -42,6 +44,7 @@ public class SharedCharacterService {
     private final CaptainLogCharacterRepository captainLogRepository;
     private final CaptainLogService captainLogService;
     private final CharacterService travellerCharacterService;
+    private final Earth2026Service earth2026Service;
     private final PlayerRepository playerRepository;
 
     public SharedCharacterService(
@@ -49,11 +52,13 @@ public class SharedCharacterService {
             CaptainLogCharacterRepository captainLogRepository,
             CaptainLogService captainLogService,
             CharacterService travellerCharacterService,
+            Earth2026Service earth2026Service,
             PlayerRepository playerRepository) {
         this.sharedCharacterRepository = sharedCharacterRepository;
         this.captainLogRepository = captainLogRepository;
         this.captainLogService = captainLogService;
         this.travellerCharacterService = travellerCharacterService;
+        this.earth2026Service = earth2026Service;
         this.playerRepository = playerRepository;
     }
 
@@ -96,9 +101,9 @@ public class SharedCharacterService {
         } else if (savedCharacter.getOriginSystem() == GameType.TRAVELLER) {
             TravellerCharacter tChar = createTravellerCharacterFromShared(savedCharacter);
             savedCharacter.setTravellerCharacterId(tChar.getId());
-        } else if (savedCharacter.getOriginSystem() == GameType.DORAMCU_4X) {
-            // For 4X, the shared character represents the empire ruler;
-            // the Player record is linked via doramcu4xPlayerId set by the caller
+        } else if (savedCharacter.getOriginSystem() == GameType.EARTH_2026) {
+            Earth2026Character eChar = createEarth2026CharacterFromShared(savedCharacter);
+            savedCharacter.setEarth2026CharacterId(eChar.getId());
         }
 
         return sharedCharacterRepository.save(savedCharacter);
@@ -214,9 +219,9 @@ public class SharedCharacterService {
         } else if (toSystem == GameType.TRAVELLER) {
             TravellerCharacter tChar = createTravellerCharacterFromShared(shared);
             shared.setTravellerCharacterId(tChar.getId());
-        } else if (toSystem == GameType.DORAMCU_4X) {
-            // For 4X, the shared character links to an existing Player record
-            // The doramcu4xPlayerId should be set before calling travelCharacter
+        } else if (toSystem == GameType.EARTH_2026) {
+            Earth2026Character eChar = createEarth2026CharacterFromShared(shared);
+            shared.setEarth2026CharacterId(eChar.getId());
         }
 
         // Update origin to target system
@@ -284,6 +289,43 @@ public class SharedCharacterService {
         shared.setDescription(String.format("Empire: %s (%s, %s)",
                 player.getEmpireName(), player.getGovernmentType(), player.getEthos()));
         shared.setDoramcu4xPlayerId(playerId);
+
+        return sharedCharacterRepository.save(shared);
+    }
+
+    /**
+     * Creates a shared character from an existing Earth 2026 character.
+     * Maps Earth 2026 abilities (STR, DEX, CON, INT, WIS, CHA) to
+     * universal attributes (Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma).
+     */
+    @Transactional
+    public SharedCharacter importFromEarth2026(Long earth2026CharacterId) {
+        Optional<Earth2026Character> earthOpt = earth2026Service.getCharacter(earth2026CharacterId);
+        if (earthOpt.isEmpty()) {
+            throw new IllegalArgumentException("Earth 2026 character not found: " + earth2026CharacterId);
+        }
+
+        Earth2026Character earthChar = earthOpt.get();
+
+        // Check if already imported
+        Optional<SharedCharacter> existing = sharedCharacterRepository.findByEarth2026CharacterId(earth2026CharacterId);
+        if (existing.isPresent()) {
+            return existing.get();
+        }
+
+        SharedCharacter shared = new SharedCharacter(earthChar.getName(), GameType.EARTH_2026);
+        // Map Earth 2026 abilities to universal attributes:
+        // STR -> Strength, DEX -> Dexterity, CON -> Constitution, INT -> Intelligence
+        // WIS -> Wisdom, CHA -> Charisma, Technical defaults to INT
+        shared.setDexterity(earthChar.getDexScore());
+        shared.setStrength(earthChar.getStrScore());
+        shared.setConstitution(earthChar.getConScore());
+        shared.setIntelligence(earthChar.getIntScore());
+        shared.setTechnical(earthChar.getIntScore());
+        shared.setWisdom(earthChar.getWisScore());
+        shared.setCharisma(earthChar.getChaScore());
+        shared.setAge(earthChar.getAge());
+        shared.setEarth2026CharacterId(earth2026CharacterId);
 
         return sharedCharacterRepository.save(shared);
     }
@@ -373,5 +415,26 @@ public class SharedCharacterService {
         // Shared skills are stored in the shared character record for reference.
 
         return tChar;
+    }
+
+    /**
+     * Creates an Earth 2026 character from a shared character's attributes.
+     * Maps universal attributes to Earth 2026 abilities:
+     * Dexterity -> DEX, Strength -> STR, Constitution -> CON,
+     * Intelligence -> INT, Wisdom -> WIS, Charisma -> CHA
+     */
+    private Earth2026Character createEarth2026CharacterFromShared(SharedCharacter shared) {
+        Earth2026Character earthChar = earth2026Service.createCharacter(
+                shared.getName(),
+                shared.getAge() > 0 ? shared.getAge() : 25,
+                shared.getDescription() != null ? shared.getDescription() : "Citizen"
+        );
+        earthChar.setStrScore(shared.getStrength());
+        earthChar.setDexScore(shared.getDexterity());
+        earthChar.setConScore(shared.getConstitution());
+        earthChar.setIntScore(shared.getIntelligence());
+        earthChar.setWisScore(shared.getWisdom());
+        earthChar.setChaScore(shared.getCharisma());
+        return earth2026Service.saveCharacter(earthChar);
     }
 }

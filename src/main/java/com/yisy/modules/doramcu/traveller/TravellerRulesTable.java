@@ -21,7 +21,12 @@ import jakarta.persistence.*;
  * the result label, and a detailed description. This allows the AI and game services
  * to reference the exact table entries used during gameplay.
  * </p>
+ *
+ * @deprecated Use {@link com.yisy.modules.doramcu.shared.model.RulesTable} with
+ * {@code gameSystem = GameSystem.TRAVELLER} instead. The unified entity supports all
+ * game systems in a single table, eliminating schema duplication.
  */
+@Deprecated
 @Entity
 @Table(name = "ct_rules_tables", indexes = {
         @Index(name = "idx_ct_rules_table_name", columnList = "table_name"),

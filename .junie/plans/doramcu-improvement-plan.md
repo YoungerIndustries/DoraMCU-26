@@ -340,7 +340,7 @@ Create ShipTemplate class with S09 Fighting Ships pre-designed naval ship templa
 - Static getAllTemplates() and getByClass() methods for template browsing
 - Verified: compileJava and compileTestJava pass with 0 errors, all tests pass
 
-### Step 11: Wire ShipTemplate into HighGuardService and Controller
+### ✓ Step 11: Wire ShipTemplate into HighGuardService and Controller
 Integrate the S09 ShipTemplate system (created in Step 10) into the service and controller layers so templates are accessible via the REST API.
 
 - Updated HighGuardService.createPresetShip() to use ShipTemplate.getAllTemplates() for S09 template matching

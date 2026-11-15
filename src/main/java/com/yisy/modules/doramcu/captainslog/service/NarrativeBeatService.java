@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogMission;
 import org.slf4j.Logger;
@@ -67,7 +68,7 @@ public class NarrativeBeatService {
      * Each beat: [act][beat] = guidance
      */
     private static final BeatGuidance[][] BEATS = {
-        // Act 1: Opening Log — Establish the situation
+        // Act 1: Opening Log ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Establish the situation
         {
             null, // beat 0 (1-indexed)
             new BeatGuidance(1, 1, "The Call to Action",
@@ -116,7 +117,7 @@ public class NarrativeBeatService {
                 ),
                 false, true)
         },
-        // Act 2: Supplementary Logs — Develop the conflict
+        // Act 2: Supplementary Logs ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Develop the conflict
         {
             null,
             new BeatGuidance(2, 1, "Raising the Stakes",
@@ -129,7 +130,7 @@ public class NarrativeBeatService {
                 ),
                 false, false),
             new BeatGuidance(2, 2, "The Midpoint Crisis",
-                "The heart of the mission. A major challenge or confrontation occurs. This is the turning point — success here gives you the upper hand, failure makes things worse.",
+                "The heart of the mission. A major challenge or confrontation occurs. This is the turning point ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â success here gives you the upper hand, failure makes things worse.",
                 "Perform a critical task attempt. This is the most important roll of the mission. Consider spending Momentum.",
                 Arrays.asList(
                     "Do you succeed in your main objective?",
@@ -165,7 +166,7 @@ public class NarrativeBeatService {
                 ),
                 false, true)
         },
-        // Act 3: Closing Log — Resolve the mission
+        // Act 3: Closing Log ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Resolve the mission
         {
             null,
             new BeatGuidance(3, 1, "The Final Plan",
@@ -361,9 +362,9 @@ public class NarrativeBeatService {
      */
     public String getActDescription(int act) {
         return switch (act) {
-            case 1 -> "Act 1: Opening Log — Establish the situation, gather information, and commit to a course of action.";
-            case 2 -> "Act 2: Supplementary Logs — Develop the conflict, face the midpoint crisis, and find a way forward through darkness.";
-            case 3 -> "Act 3: Closing Log — Execute the final plan, face the climax, and resolve the mission.";
+            case 1 -> "Act 1: Opening Log ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Establish the situation, gather information, and commit to a course of action.";
+            case 2 -> "Act 2: Supplementary Logs ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Develop the conflict, face the midpoint crisis, and find a way forward through darkness.";
+            case 3 -> "Act 3: Closing Log ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Execute the final plan, face the climax, and resolve the mission.";
             default -> "Unknown act.";
         };
     }

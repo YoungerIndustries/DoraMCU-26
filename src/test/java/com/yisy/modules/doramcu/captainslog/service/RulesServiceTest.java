@@ -1,9 +1,10 @@
 package com.yisy.modules.doramcu.captainslog.service;
 
-import com.yisy.modules.doramcu.captainslog.model.RulesEntry;
 import com.yisy.modules.doramcu.captainslog.model.RulesTable;
-import com.yisy.modules.doramcu.captainslog.repository.RulesEntryRepository;
 import com.yisy.modules.doramcu.captainslog.repository.RulesTableRepository;
+import com.yisy.modules.doramcu.shared.model.GameSystem;
+import com.yisy.modules.doramcu.shared.model.RulesEntry;
+import com.yisy.modules.doramcu.shared.repository.UnifiedRulesEntryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,7 @@ import static org.mockito.Mockito.*;
 @DisplayName("RulesService Tests")
 class RulesServiceTest {
 
-    private RulesEntryRepository entryRepository;
+    private UnifiedRulesEntryRepository entryRepository;
     private RulesTableRepository tableRepository;
     private RulesService rulesService;
 
@@ -26,7 +27,7 @@ class RulesServiceTest {
 
     @BeforeEach
     void setUp() {
-        entryRepository = Mockito.mock(RulesEntryRepository.class);
+        entryRepository = Mockito.mock(UnifiedRulesEntryRepository.class);
         tableRepository = Mockito.mock(RulesTableRepository.class);
         rulesService = new RulesService(entryRepository, tableRepository);
 
@@ -320,20 +321,20 @@ class RulesServiceTest {
         // Only active entries should be returned
         List<RulesEntry> activeExpected = List.of(sampleEntries.get(0));
 
-        when(entryRepository.findByCategoryAndActiveTrue("DICE_MECHANICS")).thenReturn(activeExpected);
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "DICE_MECHANICS")).thenReturn(activeExpected);
 
         List<RulesEntry> result = rulesService.getRulesByCategory("DICE_MECHANICS");
 
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("2d20 Task Attempt Core Mechanic", result.get(0).getTitle());
-        verify(entryRepository).findByCategoryAndActiveTrue("DICE_MECHANICS");
+        verify(entryRepository).findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "DICE_MECHANICS");
     }
 
     @Test
     @DisplayName("should return rules for COMBAT category")
     void getRulesByCategory_Combat() {
-        when(entryRepository.findByCategoryAndActiveTrue("COMBAT"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "COMBAT"))
                 .thenReturn(List.of(sampleEntries.get(1)));
 
         List<RulesEntry> result = rulesService.getRulesByCategory("COMBAT");
@@ -346,7 +347,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return empty list for unknown category")
     void getRulesByCategory_Unknown() {
-        when(entryRepository.findByCategoryAndActiveTrue("UNKNOWN_CATEGORY"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "UNKNOWN_CATEGORY"))
                 .thenReturn(Collections.emptyList());
 
         List<RulesEntry> result = rulesService.getRulesByCategory("UNKNOWN_CATEGORY");
@@ -366,7 +367,7 @@ class RulesServiceTest {
                 chapterEntries.add(e);
             }
         }
-        when(entryRepository.findByChapterAndActiveTrue("05.00 Rules of Play"))
+        when(entryRepository.findByGameSystemAndChapterAndActiveTrue(GameSystem.CAPTAINS_LOG, "05.00 Rules of Play"))
                 .thenReturn(chapterEntries);
 
         List<RulesEntry> result = rulesService.getRulesByChapter("05.00 Rules of Play");
@@ -385,7 +386,7 @@ class RulesServiceTest {
                 chapterEntries.add(e);
             }
         }
-        when(entryRepository.findByChapterAndActiveTrue("06.00 Playing Captain's Log"))
+        when(entryRepository.findByGameSystemAndChapterAndActiveTrue(GameSystem.CAPTAINS_LOG, "06.00 Playing Captain's Log"))
                 .thenReturn(chapterEntries);
 
         List<RulesEntry> result = rulesService.getRulesByChapter("06.00 Playing Captain's Log");
@@ -397,7 +398,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return empty list for unknown chapter")
     void getRulesByChapter_Unknown() {
-        when(entryRepository.findByChapterAndActiveTrue("99.00 Nonexistent"))
+        when(entryRepository.findByGameSystemAndChapterAndActiveTrue(GameSystem.CAPTAINS_LOG, "99.00 Nonexistent"))
                 .thenReturn(Collections.emptyList());
 
         List<RulesEntry> result = rulesService.getRulesByChapter("99.00 Nonexistent");
@@ -411,7 +412,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should search rules by keyword 'task'")
     void searchRules_TaskKeyword() {
-        when(entryRepository.searchByKeyword("task"))
+        when(entryRepository.searchByTitle(GameSystem.CAPTAINS_LOG, "task"))
                 .thenReturn(List.of(sampleEntries.get(0))); // "2d20 Task Attempt Core Mechanic"
 
         List<RulesEntry> result = rulesService.searchRules("task");
@@ -424,7 +425,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should search rules by keyword 'combat'")
     void searchRules_CombatKeyword() {
-        when(entryRepository.searchByKeyword("combat"))
+        when(entryRepository.searchByTitle(GameSystem.CAPTAINS_LOG, "combat"))
                 .thenReturn(List.of(sampleEntries.get(1)));
 
         List<RulesEntry> result = rulesService.searchRules("combat");
@@ -437,7 +438,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should search rules case-insensitively")
     void searchRules_CaseInsensitive() {
-        when(entryRepository.searchByKeyword("COMBAT"))
+        when(entryRepository.searchByTitle(GameSystem.CAPTAINS_LOG, "COMBAT"))
                 .thenReturn(List.of(sampleEntries.get(1)));
 
         List<RulesEntry> result = rulesService.searchRules("COMBAT");
@@ -449,7 +450,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return empty list when keyword not found")
     void searchRules_NotFound() {
-        when(entryRepository.searchByKeyword("nonexistentkeyword"))
+        when(entryRepository.searchByTitle(GameSystem.CAPTAINS_LOG, "nonexistentkeyword"))
                 .thenReturn(Collections.emptyList());
 
         List<RulesEntry> result = rulesService.searchRules("nonexistentkeyword");
@@ -463,7 +464,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should search rules within COMBAT category")
     void searchRulesInCategory_Combat() {
-        when(entryRepository.searchByKeywordInCategory("COMBAT", "weapon"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "COMBAT"))
                 .thenReturn(List.of(sampleEntries.get(1)));
 
         List<RulesEntry> result = rulesService.searchRulesInCategory("COMBAT", "weapon");
@@ -476,7 +477,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return empty when keyword not in category")
     void searchRulesInCategory_NotFound() {
-        when(entryRepository.searchByKeywordInCategory("DICE_MECHANICS", "weapon"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "DICE_MECHANICS"))
                 .thenReturn(Collections.emptyList());
 
         List<RulesEntry> result = rulesService.searchRulesInCategory("DICE_MECHANICS", "weapon");
@@ -496,7 +497,8 @@ class RulesServiceTest {
                 "CAREER", "MAINTENANCE", "EQUIPMENT", "CREW",
                 "CAMPAIGN", "INJURY", "WORLD_GENERATION", "SETTING"
         );
-        when(entryRepository.findDistinctCategories()).thenReturn(expectedCategories);
+        when(entryRepository.findByGameSystemAndActiveTrue(GameSystem.CAPTAINS_LOG))
+                .thenReturn(sampleEntries.stream().filter(RulesEntry::isActive).toList());
 
         List<String> result = rulesService.getCategories();
 
@@ -519,7 +521,8 @@ class RulesServiceTest {
                 "05.00 Rules of Play",
                 "06.00 Playing Captain's Log"
         );
-        when(entryRepository.findDistinctChapters()).thenReturn(expectedChapters);
+        when(entryRepository.findByGameSystemAndActiveTrue(GameSystem.CAPTAINS_LOG))
+                .thenReturn(sampleEntries.stream().filter(RulesEntry::isActive).toList());
 
         List<String> result = rulesService.getChapters();
 
@@ -699,13 +702,11 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return summary with all metadata")
     void getRulesSummary() {
-        List<String> categories = List.of("DICE_MECHANICS", "COMBAT", "MOMENTUM");
-        List<String> chapters = List.of("05.00 Rules of Play", "06.00 Playing Captain's Log");
         List<String> tableNames = List.of("Mission Type", "Complication");
         List<String> tableCategories = List.of("MISSION", "ORACLE");
 
-        when(entryRepository.findDistinctCategories()).thenReturn(categories);
-        when(entryRepository.findDistinctChapters()).thenReturn(chapters);
+        when(entryRepository.findByGameSystemAndActiveTrue(GameSystem.CAPTAINS_LOG))
+                .thenReturn(sampleEntries.stream().filter(RulesEntry::isActive).toList());
         when(tableRepository.findDistinctTableNames()).thenReturn(tableNames);
         when(tableRepository.findDistinctCategories()).thenReturn(tableCategories);
         when(entryRepository.count()).thenReturn(17L);
@@ -714,8 +715,17 @@ class RulesServiceTest {
         Map<String, Object> result = rulesService.getRulesSummary();
 
         assertNotNull(result);
-        assertEquals(categories, result.get("categories"));
-        assertEquals(chapters, result.get("chapters"));
+        // Categories are derived from the 16 active sample entries
+        @SuppressWarnings("unchecked")
+        List<String> categories = (List<String>) result.get("categories");
+        assertEquals(16, categories.size());
+        assertTrue(categories.contains("DICE_MECHANICS"));
+        assertTrue(categories.contains("COMBAT"));
+        assertTrue(categories.contains("SETTING"));
+        // Chapters are derived from the sample entries
+        @SuppressWarnings("unchecked")
+        List<String> chapters = (List<String>) result.get("chapters");
+        assertEquals(5, chapters.size());
         assertEquals(tableNames, result.get("tableNames"));
         assertEquals(tableCategories, result.get("tableCategories"));
         assertEquals(17L, result.get("totalEntries"));
@@ -725,8 +735,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return summary with empty data when no rules populated")
     void getRulesSummary_Empty() {
-        when(entryRepository.findDistinctCategories()).thenReturn(Collections.emptyList());
-        when(entryRepository.findDistinctChapters()).thenReturn(Collections.emptyList());
+        when(entryRepository.findByGameSystemAndActiveTrue(GameSystem.CAPTAINS_LOG)).thenReturn(Collections.emptyList());
         when(tableRepository.findDistinctTableNames()).thenReturn(Collections.emptyList());
         when(tableRepository.findDistinctCategories()).thenReturn(Collections.emptyList());
         when(entryRepository.count()).thenReturn(0L);
@@ -745,7 +754,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return DICE_MECHANICS rules for 'roll' action")
     void getRulesForAction_Roll() {
-        when(entryRepository.findByCategoryAndActiveTrue("DICE_MECHANICS"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "DICE_MECHANICS"))
                 .thenReturn(List.of(sampleEntries.get(0)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("roll");
@@ -758,7 +767,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return DICE_MECHANICS rules for 'task' action")
     void getRulesForAction_Task() {
-        when(entryRepository.findByCategoryAndActiveTrue("DICE_MECHANICS"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "DICE_MECHANICS"))
                 .thenReturn(List.of(sampleEntries.get(0)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("task attempt");
@@ -770,7 +779,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return DICE_MECHANICS rules for 'check' action")
     void getRulesForAction_Check() {
-        when(entryRepository.findByCategoryAndActiveTrue("DICE_MECHANICS"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "DICE_MECHANICS"))
                 .thenReturn(List.of(sampleEntries.get(0)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("check");
@@ -782,7 +791,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return COMBAT rules for 'combat' action")
     void getRulesForAction_Combat() {
-        when(entryRepository.findByCategoryAndActiveTrue("COMBAT"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "COMBAT"))
                 .thenReturn(List.of(sampleEntries.get(1)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("combat");
@@ -795,7 +804,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return COMBAT rules for 'attack' action")
     void getRulesForAction_Attack() {
-        when(entryRepository.findByCategoryAndActiveTrue("COMBAT"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "COMBAT"))
                 .thenReturn(List.of(sampleEntries.get(1)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("attack");
@@ -807,7 +816,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return MOMENTUM rules for 'momentum' action")
     void getRulesForAction_Momentum() {
-        when(entryRepository.findByCategoryAndActiveTrue("MOMENTUM"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "MOMENTUM"))
                 .thenReturn(List.of(sampleEntries.get(2)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("spend momentum");
@@ -820,7 +829,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return THREAT rules for 'threat' action")
     void getRulesForAction_Threat() {
-        when(entryRepository.findByCategoryAndActiveTrue("THREAT"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "THREAT"))
                 .thenReturn(List.of(sampleEntries.get(3)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("resolve threat");
@@ -833,7 +842,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return MISSION_STRUCTURE rules for 'mission' action")
     void getRulesForAction_Mission() {
-        when(entryRepository.findByCategoryAndActiveTrue("MISSION_STRUCTURE"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "MISSION_STRUCTURE"))
                 .thenReturn(List.of(sampleEntries.get(4)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("mission generation");
@@ -846,7 +855,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return ORACLE rules for 'oracle' action")
     void getRulesForAction_Oracle() {
-        when(entryRepository.findByCategoryAndActiveTrue("ORACLE"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "ORACLE"))
                 .thenReturn(List.of(sampleEntries.get(5)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("oracle query");
@@ -859,7 +868,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return STARSHIP rules for 'starship' action")
     void getRulesForAction_Starship() {
-        when(entryRepository.findByCategoryAndActiveTrue("STARSHIP"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "STARSHIP"))
                 .thenReturn(List.of(sampleEntries.get(6)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("starship creation");
@@ -872,7 +881,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return CHARACTER_CREATION rules for 'character' action")
     void getRulesForAction_Character() {
-        when(entryRepository.findByCategoryAndActiveTrue("CHARACTER_CREATION"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "CHARACTER_CREATION"))
                 .thenReturn(List.of(sampleEntries.get(7)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("character creation");
@@ -885,7 +894,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return CAREER rules for 'career' action")
     void getRulesForAction_Career() {
-        when(entryRepository.findByCategoryAndActiveTrue("CAREER"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "CAREER"))
                 .thenReturn(List.of(sampleEntries.get(8)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("career progression");
@@ -898,7 +907,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return MAINTENANCE rules for 'maintenance' action")
     void getRulesForAction_Maintenance() {
-        when(entryRepository.findByCategoryAndActiveTrue("MAINTENANCE"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "MAINTENANCE"))
                 .thenReturn(List.of(sampleEntries.get(9)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("maintenance downtime");
@@ -911,7 +920,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return EQUIPMENT rules for 'equipment' action")
     void getRulesForAction_Equipment() {
-        when(entryRepository.findByCategoryAndActiveTrue("EQUIPMENT"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "EQUIPMENT"))
                 .thenReturn(List.of(sampleEntries.get(10)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("equipment management");
@@ -924,7 +933,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return CREW rules for 'crew' action")
     void getRulesForAction_Crew() {
-        when(entryRepository.findByCategoryAndActiveTrue("CREW"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "CREW"))
                 .thenReturn(List.of(sampleEntries.get(11)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("crew management");
@@ -937,7 +946,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return CAMPAIGN rules for 'campaign' action")
     void getRulesForAction_Campaign() {
-        when(entryRepository.findByCategoryAndActiveTrue("CAMPAIGN"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "CAMPAIGN"))
                 .thenReturn(List.of(sampleEntries.get(12)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("campaign tracking");
@@ -950,7 +959,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return INJURY rules for 'injury' action")
     void getRulesForAction_Injury() {
-        when(entryRepository.findByCategoryAndActiveTrue("INJURY"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "INJURY"))
                 .thenReturn(List.of(sampleEntries.get(13)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("injury recovery");
@@ -963,7 +972,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return WORLD_GENERATION rules for 'world' action")
     void getRulesForAction_World() {
-        when(entryRepository.findByCategoryAndActiveTrue("WORLD_GENERATION"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "WORLD_GENERATION"))
                 .thenReturn(List.of(sampleEntries.get(14)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("world generation");
@@ -976,7 +985,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return SETTING rules for 'setting' action")
     void getRulesForAction_Setting() {
-        when(entryRepository.findByCategoryAndActiveTrue("SETTING"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "SETTING"))
                 .thenReturn(List.of(sampleEntries.get(15)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("setting lore");
@@ -989,9 +998,9 @@ class RulesServiceTest {
     @Test
     @DisplayName("should return multiple categories when action matches multiple keywords")
     void getRulesForAction_MultipleCategories() {
-        when(entryRepository.findByCategoryAndActiveTrue("DICE_MECHANICS"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "DICE_MECHANICS"))
                 .thenReturn(List.of(sampleEntries.get(0)));
-        when(entryRepository.findByCategoryAndActiveTrue("COMBAT"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "COMBAT"))
                 .thenReturn(List.of(sampleEntries.get(1)));
 
         // "roll combat" should match both DICE_MECHANICS and COMBAT
@@ -1007,7 +1016,7 @@ class RulesServiceTest {
     @DisplayName("should return empty list when action matches no keywords")
     void getRulesForAction_NoMatch() {
         // Mock all categories to return empty lists (in case any keyword partially matches)
-        when(entryRepository.findByCategoryAndActiveTrue(anyString()))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(eq(GameSystem.CAPTAINS_LOG), anyString()))
                 .thenReturn(Collections.emptyList());
 
         List<RulesEntry> result = rulesService.getRulesForAction("xyz unrelated action");
@@ -1019,7 +1028,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should handle case-insensitive action matching")
     void getRulesForAction_CaseInsensitive() {
-        when(entryRepository.findByCategoryAndActiveTrue("DICE_MECHANICS"))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, "DICE_MECHANICS"))
                 .thenReturn(List.of(sampleEntries.get(0)));
 
         List<RulesEntry> result = rulesService.getRulesForAction("ROLL");
@@ -1130,7 +1139,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should handle null-safe category lookup")
     void getRulesByCategory_NullSafe() {
-        when(entryRepository.findByCategoryAndActiveTrue(null))
+        when(entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.CAPTAINS_LOG, null))
                 .thenThrow(NullPointerException.class);
 
         assertThrows(NullPointerException.class, () ->
@@ -1140,7 +1149,7 @@ class RulesServiceTest {
     @Test
     @DisplayName("should handle empty string keyword search")
     void searchRules_EmptyKeyword() {
-        when(entryRepository.searchByKeyword(""))
+        when(entryRepository.searchByTitle(GameSystem.CAPTAINS_LOG, ""))
                 .thenReturn(Collections.emptyList());
 
         List<RulesEntry> result = rulesService.searchRules("");

@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.hex;
 
+import com.yisy.modules.doramcu.hex.DamageTier;
+
 import java.util.*;
 
 /**
@@ -313,6 +315,46 @@ public class Compartment {
         }
         clearSecondaryEffects();
         return count;
+    }
+
+    // ---- Skin / Damage summary integration ----
+
+    /**
+     * Aggregates the damage tiers of all cells in this compartment.
+     * <p>
+     * Returns a map from {@link DamageTier} to the count of cells at that tier.
+     * This provides a quick summary of the compartment's overall damage state
+     * for skin rendering purposes.
+     * </p>
+     *
+     * @return map of damage tier to cell count
+     */
+    public Map<DamageTier, Integer> getDamageSummary() {
+        Map<DamageTier, Integer> summary = new EnumMap<>(DamageTier.class);
+        for (DamageTier tier : DamageTier.values()) {
+            summary.put(tier, 0);
+        }
+        for (M3space cell : cells) {
+            DamageTier tier = cell.getDamageTier();
+            summary.merge(tier, 1, Integer::sum);
+        }
+        return Map.copyOf(summary);
+    }
+
+    /**
+     * Returns the worst (most severe) damage tier among all cells in this compartment.
+     *
+     * @return the worst damage tier, or PRISTINE if the compartment has no cells
+     */
+    public DamageTier getWorstDamageTier() {
+        DamageTier worst = DamageTier.PRISTINE;
+        for (M3space cell : cells) {
+            DamageTier tier = cell.getDamageTier();
+            if (tier.ordinal() > worst.ordinal()) {
+                worst = tier;
+            }
+        }
+        return worst;
     }
 
     // ---- Object contract ----

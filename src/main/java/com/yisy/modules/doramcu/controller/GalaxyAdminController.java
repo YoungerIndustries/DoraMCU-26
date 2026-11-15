@@ -1166,16 +1166,23 @@ public class GalaxyAdminController {
 
         // ---- Player Population Section ----
         List<Player> allPlayers = playerRepository.findAll();
-        List<AiCharacter> allAiCharacters = aiCharacterRepository.findAll();
+        // Exclude entity-linked AI characters (SHIP, STATION, VEHICLE, FACILITY) from player counts
+        List<AiCharacter> playerAiCharacters = aiCharacterRepository.findByCharacterTypeNotIn(
+                Arrays.asList(
+                        AiCharacter.CharacterType.SHIP,
+                        AiCharacter.CharacterType.STATION,
+                        AiCharacter.CharacterType.VEHICLE,
+                        AiCharacter.CharacterType.FACILITY
+                ));
 
         // Count AI characters as AI players, human players as those with email
-        int aiPlayerCount = allAiCharacters.size();
+        int aiPlayerCount = playerAiCharacters.size();
         int humanPlayerCount = (int) allPlayers.stream().filter(p -> p.getEmail() != null).count();
         dto.setAiPlayerCount(aiPlayerCount);
         dto.setHumanPlayerCount(humanPlayerCount);
         dto.setPlayerCount(aiPlayerCount + humanPlayerCount);
 
-        // Collect player names
+        // Collect player names (exclude entity-linked AI characters)
         List<String> playerNames = new ArrayList<>();
         for (Player p : allPlayers) {
             if (p.getDisplayName() != null && !p.getDisplayName().isBlank()) {
@@ -1184,7 +1191,7 @@ public class GalaxyAdminController {
                 playerNames.add(p.getEmpireName());
             }
         }
-        for (AiCharacter ac : allAiCharacters) {
+        for (AiCharacter ac : playerAiCharacters) {
             playerNames.add(ac.getName());
         }
         dto.setPlayerNames(playerNames);
@@ -1208,8 +1215,15 @@ public class GalaxyAdminController {
         List<GalaxyDashboardSummaryDto> summaries = new ArrayList<>();
 
         List<Player> allPlayers = playerRepository.findAll();
-        List<AiCharacter> allAiCharacters = aiCharacterRepository.findAll();
-        int totalPlayers = allPlayers.size() + allAiCharacters.size();
+        // Exclude entity-linked AI characters (SHIP, STATION, VEHICLE, FACILITY) from player counts
+        List<AiCharacter> playerAiCharacters = aiCharacterRepository.findByCharacterTypeNotIn(
+                Arrays.asList(
+                        AiCharacter.CharacterType.SHIP,
+                        AiCharacter.CharacterType.STATION,
+                        AiCharacter.CharacterType.VEHICLE,
+                        AiCharacter.CharacterType.FACILITY
+                ));
+        int totalPlayers = allPlayers.size() + playerAiCharacters.size();
 
         for (com.yisy.modules.doramcu.model.Galaxy galaxy : galaxyService.getAllGalaxies()) {
             String name = galaxy.getName();

@@ -206,7 +206,6 @@ public class MercenaryRecruiting {
     public int skillTraining(int students, int instructionLevel, int skillLevel) {
         if (instructionLevel < 2 || skillLevel < 2) return 0;
         int maxLevel = Math.min(instructionLevel, skillLevel) - 1;
-        if (maxLevel < 1) return 0;
 
         int successful = 0;
         int normalSize = 6;

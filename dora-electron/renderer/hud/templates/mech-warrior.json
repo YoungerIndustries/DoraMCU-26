@@ -1,0 +1,213 @@
+{
+    "id": "mech-warrior",
+    "name": "Mech Warrior Combat",
+    "icon": "🤖",
+    "gameModule": "mech-warrior",
+
+    "layout": {
+        "leftPanelWidth": 300,
+        "rightPanelWidth": 320,
+        "leftSplitRatio": 0.4,
+        "rightSplitRatio": 0.5
+    },
+
+    "theme": {
+        "cssVariables": {
+            "--hud-accent-primary": "#ea580c",
+            "--hud-accent-secondary": "#f97316",
+            "--hud-accent-glow": "rgba(234, 88, 12, 0.15)"
+        },
+        "fontFamily": "'Segoe UI', system-ui, -apple-system, sans-serif",
+        "panelBackground": "#1a0a00",
+        "accentColor": "#ea580c",
+        "borderColor": "#5c2d0e",
+        "fontColor": "#fbbf24"
+    },
+
+    "panels": {
+        "info": {
+            "visible": true,
+            "title": "Mech Status",
+            "components": [
+                {
+                    "type": "selector",
+                    "label": "Select Mission...",
+                    "dataBinding": "mission-select"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Heat",
+                    "dataBinding": "heat-gauge"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Armor",
+                    "dataBinding": "armor-integrity"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Fuel",
+                    "dataBinding": "fuel-gauge"
+                }
+            ]
+        },
+        "prompt": {
+            "visible": true,
+            "title": "Battle Feed",
+            "components": [
+                {
+                    "type": "narrative-text",
+                    "label": "Select a mission to begin...",
+                    "dataBinding": "battle-feed"
+                }
+            ]
+        },
+        "responses": {
+            "visible": true,
+            "title": "Combat Actions",
+            "components": [
+                {
+                    "type": "action-button",
+                    "icon": "📋",
+                    "label": "Browse Missions",
+                    "hint": "Browse available missions",
+                    "dataBinding": "action-browse-missions"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "✅",
+                    "label": "Accept Mission",
+                    "hint": "Accept selected mission",
+                    "dataBinding": "action-accept-mission"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🚀",
+                    "label": "Start Mission",
+                    "hint": "Start mission and create session",
+                    "dataBinding": "action-start-mission"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🔫",
+                    "label": "Fire LL",
+                    "hint": "Fire Left Light weapon",
+                    "dataBinding": "action-fire-ll"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🔫",
+                    "label": "Fire LR",
+                    "hint": "Fire Left Medium weapon",
+                    "dataBinding": "action-fire-lr"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🔫",
+                    "label": "Fire RL",
+                    "hint": "Fire Right Light weapon",
+                    "dataBinding": "action-fire-rl"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "⚡",
+                    "label": "Fire ER PPC",
+                    "hint": "Fire ER PPC weapon",
+                    "dataBinding": "action-fire-erppc"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🚀",
+                    "label": "Fire LRM",
+                    "hint": "Fire Long Range Missiles",
+                    "dataBinding": "action-fire-lrm"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "💥",
+                    "label": "Fire AC/20",
+                    "hint": "Fire Autocannon 20",
+                    "dataBinding": "action-fire-ac20"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🦘",
+                    "label": "Jump Jets",
+                    "hint": "Use jump jets for movement",
+                    "dataBinding": "action-jump-jets"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🔥",
+                    "label": "Heat Override",
+                    "hint": "Toggle heat override for extra power",
+                    "dataBinding": "action-heat-override"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "⬅️",
+                    "label": "Face Left",
+                    "hint": "Rotate mech facing left",
+                    "dataBinding": "action-face-left"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "➡️",
+                    "label": "Face Right",
+                    "hint": "Rotate mech facing right",
+                    "dataBinding": "action-face-right"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🏃",
+                    "label": "Walk/Run",
+                    "hint": "Toggle walk or run speed",
+                    "dataBinding": "action-walk-run"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "⏭️",
+                    "label": "Process Tick",
+                    "hint": "Process game tick for heat cooldown",
+                    "dataBinding": "action-process-tick"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🏁",
+                    "label": "Complete Mission",
+                    "hint": "Mark mission as completed",
+                    "dataBinding": "action-complete-mission"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "❌",
+                    "label": "Abandon Mission",
+                    "hint": "Abandon current mission",
+                    "dataBinding": "action-abandon-mission"
+                }
+            ]
+        },
+        "actions": {
+            "visible": true,
+            "title": "Combat Log",
+            "components": [
+                {
+                    "type": "event-log",
+                    "dataBinding": "combat-log"
+                },
+                {
+                    "type": "chat-input",
+                    "label": "Enter command or comms...",
+                    "dataBinding": "chat-input"
+                }
+            ]
+        }
+    },
+
+    "view3D": {
+        "renderer": "threejs",
+        "cameraMode": "third-person",
+        "showCrosshair": true,
+        "showMinimap": true
+    }
+}

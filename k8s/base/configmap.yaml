@@ -52,9 +52,9 @@ metadata:
     app.kubernetes.io/part-of: doramcu-neuron-network
 data:
   # Coordinator connection
-  NEURON_COORDINATOR_URL: "http://doramcu-app:8084"
+  NEURON_COORDINATOR_URL: "http://doramcu-app:8080"
   # Game server URL
-  NEURON_GAME_SERVER_URL: "http://doramcu-app:8084"
+  NEURON_GAME_SERVER_URL: "http://doramcu-app:8080"
   # Neuron identity
   NEURON_NODE_NAME: "Neuron-Default"
   NEURON_NODE_REGION: "default"

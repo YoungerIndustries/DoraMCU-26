@@ -44,6 +44,8 @@ public class GameStateResponse {
     private String currentDateString;
     private String currentFormattedDate;
     private int elapsedDays;
+    // Corporation state for CEO/VP integration
+    private Map<String, Object> corporationState;
 
     public GameStateResponse() {
     }
@@ -224,5 +226,13 @@ public class GameStateResponse {
 
     public void setElapsedDays(int elapsedDays) {
         this.elapsedDays = elapsedDays;
+    }
+
+    public Map<String, Object> getCorporationState() {
+        return corporationState;
+    }
+
+    public void setCorporationState(Map<String, Object> corporationState) {
+        this.corporationState = corporationState;
     }
 }

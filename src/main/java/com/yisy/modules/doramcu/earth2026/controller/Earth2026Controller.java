@@ -8,8 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * REST API for Earth 2026 gameplay.
@@ -46,6 +48,11 @@ public class Earth2026Controller {
     @GetMapping("/characters")
     public ResponseEntity<List<Earth2026Character>> getCharactersOnEarth() {
         return ResponseEntity.ok(earth2026Service.getCharactersOnEarth());
+    }
+
+    @GetMapping("/characters/player/{playerId}")
+    public ResponseEntity<List<Earth2026Character>> getCharactersByPlayer(@PathVariable Long playerId) {
+        return ResponseEntity.ok(earth2026Service.getCharactersByPlayer(playerId));
     }
 
     @GetMapping("/characters/{id}")
@@ -108,8 +115,21 @@ public class Earth2026Controller {
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
         } catch (IllegalStateException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage(), "status", "IN_PROGRESS"));
         }
+    }
+
+    @PostMapping("/scenarios/{id}/reset")
+    public ResponseEntity<?> resetScenario(@PathVariable Long id) {
+        return earth2026Service.resetScenario(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/scenarios/reset-all")
+    public ResponseEntity<?> resetAllScenarios() {
+        earth2026Service.resetAllScenarios();
+        return ResponseEntity.ok(Map.of("message", "All scenarios reset to AVAILABLE"));
     }
 
     @PostMapping("/scenarios/{id}/complete")
@@ -177,5 +197,100 @@ public class Earth2026Controller {
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
+    }
+
+    // ==================== Game Start ====================
+
+    @PostMapping("/characters/{id}/start-game")
+    public ResponseEntity<?> startGame(@PathVariable Long id) {
+        return earth2026Service.startGame(id)
+                .map(result -> ResponseEntity.ok(result))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/starting-location")
+    public ResponseEntity<?> getStartingLocation() {
+        return earth2026Service.getStartingLocation()
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/first-scenario/{level}")
+    public ResponseEntity<?> getFirstScenario(@PathVariable int level) {
+        Optional<Earth2026Scenario> scenario = earth2026Service.getFirstAvailableScenario(level);
+        if (scenario.isPresent()) {
+            return ResponseEntity.ok(scenario.get());
+        }
+        return ResponseEntity.ok(Map.of("message", "No scenarios available for level " + level));
+    }
+
+    // ==================== Landing ====================
+
+    @PostMapping("/characters/land")
+    public ResponseEntity<?> landAtLocation(@RequestBody Map<String, Object> request) {
+        Object locationIdObj = request.get("locationId");
+        if (locationIdObj == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "locationId is required"));
+        }
+        Long locationId;
+        try {
+            locationId = locationIdObj instanceof Number
+                    ? ((Number) locationIdObj).longValue()
+                    : Long.parseLong(locationIdObj.toString());
+        } catch (NumberFormatException e) {
+            // Treat as location name lookup
+            return landAtLocationByName(request);
+        }
+
+        // Find the first character for the player and land them at the location
+        List<Earth2026Character> characters = earth2026Service.getCharactersOnEarth();
+        if (characters.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "No character found. Create a character first."));
+        }
+        Earth2026Character character = characters.get(characters.size() - 1);
+
+        // Move the character to the location
+        Optional<Earth2026Location> location = earth2026Service.getLocation(locationId);
+        String locationName = location.map(Earth2026Location::getName).orElse("Unknown Location");
+
+        Optional<Earth2026Character> moved = earth2026Service.moveCharacter(character.getId(), locationName);
+        if (!moved.isPresent()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Failed to move character to location"));
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", true);
+        result.put("characterId", character.getId());
+        result.put("characterName", character.getName());
+        result.put("location", locationName);
+        result.put("message", character.getName() + " has landed at " + locationName);
+        return ResponseEntity.ok(result);
+    }
+
+    private ResponseEntity<?> landAtLocationByName(Map<String, Object> request) {
+        Object locationIdObj = request.get("locationId");
+        if (locationIdObj == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "locationId is required"));
+        }
+        String locationName = locationIdObj.toString();
+
+        List<Earth2026Character> characters = earth2026Service.getCharactersOnEarth();
+        if (characters.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "No character found. Create a character first."));
+        }
+        Earth2026Character character = characters.get(characters.size() - 1);
+
+        Optional<Earth2026Character> moved = earth2026Service.moveCharacter(character.getId(), locationName);
+        if (!moved.isPresent()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Failed to move character to location"));
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", true);
+        result.put("characterId", character.getId());
+        result.put("characterName", character.getName());
+        result.put("location", locationName);
+        result.put("message", character.getName() + " has landed at " + locationName);
+        return ResponseEntity.ok(result);
     }
 }

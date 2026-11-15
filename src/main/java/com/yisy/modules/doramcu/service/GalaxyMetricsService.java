@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.event.GalaxyEventType;
 import com.yisy.modules.doramcu.admin.repository.AiAdminOrderRepository;
@@ -11,7 +12,6 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
@@ -100,7 +100,7 @@ public class GalaxyMetricsService {
 
     @PostConstruct
     public void init() {
-        log.info("Initializing GalaxyMetricsService — registering Prometheus metrics");
+        log.info("Initializing GalaxyMetricsService â€” registering Prometheus metrics");
 
         // ---- Counters ----
         galaxiesCreatedCounter = Counter.builder("dora.galaxy.created")
@@ -191,7 +191,7 @@ public class GalaxyMetricsService {
             final String finalStatus = status;
             Gauge.builder("dora.galaxy.workorders.count", aiAdminOrderRepository, (AiAdminOrderRepository repo) -> {
                 long count = repo.findBySubmittedByContaining("GalaxyOverseer:").stream()
-                        .filter(o -> finalStatus.equals(o.getStatus()))
+                        .filter(o -> finalStatus.equals(o.getStatus().name()))
                         .count();
                 return (double) count;
             })
@@ -206,7 +206,7 @@ public class GalaxyMetricsService {
                 .description("Total number of work orders across all galaxies")
                 .register(meterRegistry);
 
-        log.info("GalaxyMetricsService initialized — all Prometheus metrics registered");
+        log.info("GalaxyMetricsService initialized â€” all Prometheus metrics registered");
     }
 
     // ---- Counter increment methods ----

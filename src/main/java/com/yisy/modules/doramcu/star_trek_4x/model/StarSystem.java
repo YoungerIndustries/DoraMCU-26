@@ -14,7 +14,7 @@ import java.util.List;
  * Links to Earth 2026 planet data via earth2026PlanetId.
  * </p>
  */
-@Entity
+@Entity(name = "ST4xStarSystem")
 @Table(name = "st4x_star_systems")
 public class StarSystem {
 

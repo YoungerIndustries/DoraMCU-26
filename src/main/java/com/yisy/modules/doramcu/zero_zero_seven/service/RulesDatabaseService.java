@@ -1,7 +1,7 @@
 package com.yisy.modules.doramcu.zero_zero_seven.service;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.stereotype.Service;
 
 /**
  * Provides access to game rules and data from the lore database.

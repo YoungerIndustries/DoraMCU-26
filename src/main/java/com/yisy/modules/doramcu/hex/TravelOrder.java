@@ -271,13 +271,11 @@ public class TravelOrder {
         this.actualArrivalTime = LocalDateTime.now();
 
         // Update fleet position
-        if (destination != null) {
-            fleet.setPosition(new Hex3D(
-                    destination.getX(),
-                    destination.getY(),
-                    destination.getZ()
-            ));
-        }
+        fleet.setPosition(new Hex3D(
+                destination.getX(),
+                destination.getY(),
+                destination.getZ()
+        ));
     }
 
     /**
@@ -397,8 +395,8 @@ public class TravelOrder {
     public String toString() {
         return String.format("TravelOrder#%d{%s → %s, %s, %s, %s, %s}",
                 id,
-                origin != null ? origin.getSystem().getId() : "N/A",
-                destination != null ? destination.getSystem().getId() : "N/A",
+                origin.getSystem().getId(),
+                destination.getSystem().getId(),
                 mode.getDisplayName(),
                 getSpeedFormatted(),
                 getDistanceFormatted(),

@@ -192,7 +192,7 @@ public class SfbCharacterBridge {
             case CREW:
                 if (station != null) {
                     // Station-specific bonuses
-                    int stationBonus = 0;
+                    int stationBonus;
                     switch (station) {
                         case HELM:
                             stationBonus = character.getOperations();

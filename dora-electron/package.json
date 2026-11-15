@@ -1,26 +1,31 @@
 {
   "name": "dora-electron",
-  "version": "1.0.0",
-  "description": "DoraMCU Base Node - Electron Desktop App",
+  "version": "0.4.0",
+  "description": "DoraMCU Desktop - Multi-Universe Tabletop RPG Platform",
   "main": "main.js",
   "author": "DoraMCU Team",
   "license": "MIT",
   "dependencies": {
-    "electron": "^28.3.3"
+    "electron": "^45.3.2",
+    "onnxruntime-node": "^1.17.0"
   },
   "devDependencies": {
-    "electron-builder": "^24.0.0"
+    "electron-builder": "^24.0.0",
+    "jest": "^30.5.2",
+    "jsdom": "^24.0.0"
   },
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder",
-    "build:win": "electron-builder --win",
-    "build:mac": "electron-builder --mac",
-    "build:linux": "electron-builder --linux"
+    "build": "npm run copy-jar && electron-builder",
+    "build:win": "npm run copy-jar && electron-builder --win",
+    "build:mac": "npm run copy-jar && electron-builder --mac",
+    "build:linux": "npm run copy-jar && electron-builder --linux",
+    "copy-jar": "node -e \"const fs=require('fs');const path=require('path');const libs=path.join(__dirname,'..','build','libs');if(fs.existsSync(libs)){const jar=fs.readdirSync(libs).filter(f=>f.endsWith('.jar')&&!f.endsWith('.sources.jar')&&!f.endsWith('.javadoc.jar')&&!f.includes('-plain.jar')).sort((a,b)=>{try{const sa=fs.statSync(path.join(libs,a)).size;const sb=fs.statSync(path.join(libs,b)).size;return sb-sa;}catch{return 0;}})[0];if(jar){const dest=path.join(__dirname,'server');if(!fs.existsSync(dest))fs.mkdirSync(dest,{recursive:true});fs.copyFileSync(path.join(libs,jar),path.join(dest,jar));console.log('Copied',jar,'to server/');}else console.warn('No executable JAR found in build/libs');}else console.warn('build/libs not found, run gradle bootJar first')\"",
+    "test": "jest --no-coverage"
   },
   "build": {
-    "appId": "com.yisy.doramcu.base-node",
-    "productName": "DoraMCU Base Node",
+    "appId": "com.yisy.doramcu.desktop",
+    "productName": "DoraMCU Desktop",
     "directories": {
       "output": "dist"
     },
@@ -28,7 +33,8 @@
       "main.js",
       "preload.js",
       "renderer/**/*",
-      "resources/**/*"
+      "resources/**/*",
+      "server/**/*"
     ],
     "win": {
       "target": "nsis",

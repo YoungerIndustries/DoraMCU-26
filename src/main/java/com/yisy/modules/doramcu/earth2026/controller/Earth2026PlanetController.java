@@ -7,7 +7,12 @@ import com.yisy.modules.doramcu.earth2026.model.Earth2026Economy;
 import com.yisy.modules.doramcu.earth2026.model.Earth2026Job;
 import com.yisy.modules.doramcu.earth2026.model.Earth2026Planet;
 import com.yisy.modules.doramcu.earth2026.model.Earth2026Region;
+import com.yisy.modules.doramcu.earth2026.service.CountryDiplomacyService;
+import com.yisy.modules.doramcu.earth2026.service.EspionageService;
+import com.yisy.modules.doramcu.earth2026.service.G20CountryInitializer;
 import com.yisy.modules.doramcu.earth2026.service.PlanetService;
+import com.yisy.modules.doramcu.fourx.FourxDiplomaticRelation;
+import com.yisy.modules.doramcu.fourx.FourxFaction;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.hex.PlanetPopulationProgress;
 import org.slf4j.Logger;
@@ -44,6 +49,9 @@ public class Earth2026PlanetController {
     private static final long EMITTER_TIMEOUT = 30 * 60 * 1000L; // 30 minutes
 
     private final PlanetService planetService;
+    private final G20CountryInitializer g20Initializer;
+    private final CountryDiplomacyService diplomacyService;
+    private final EspionageService espionageService;
 
     /**
      * Dedicated thread pool for async planet creation via SSE streaming.
@@ -55,8 +63,12 @@ public class Earth2026PlanetController {
         return t;
     });
 
-    public Earth2026PlanetController(PlanetService planetService) {
+    public Earth2026PlanetController(PlanetService planetService, G20CountryInitializer g20Initializer,
+                                     CountryDiplomacyService diplomacyService, EspionageService espionageService) {
         this.planetService = planetService;
+        this.g20Initializer = g20Initializer;
+        this.diplomacyService = diplomacyService;
+        this.espionageService = espionageService;
     }
 
     // ------------------------------------------------------------------
@@ -149,6 +161,38 @@ public class Earth2026PlanetController {
     public ResponseEntity<List<Earth2026Country>> getCountriesByContinent(
             @PathVariable String continent) {
         return ResponseEntity.ok(planetService.getCountriesByContinent(continent));
+    }
+
+    /**
+     * GET /api/v1/earth2026/regions/countries/g20
+     * List all G20 country configurations (pre-defined templates).
+     */
+    @GetMapping("/countries/g20")
+    public ResponseEntity<List<G20CountryInitializer.G20CountryConfig>> getG20Countries() {
+        return ResponseEntity.ok(g20Initializer.getG20Countries());
+    }
+
+    /**
+     * POST /api/v1/earth2026/regions/countries/init-g20
+     * Initialize G20 countries on a specific planet.
+     */
+    @PostMapping("/countries/init-g20")
+    public ResponseEntity<?> initializeG20Countries(@RequestParam Long planetId) {
+        try {
+            List<Earth2026Country> created = g20Initializer.initializeG20OnPlanet(planetId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("created", created.size());
+            response.put("countries", created.stream().map(c -> Map.of(
+                    "id", c.getId(),
+                    "name", c.getName(),
+                    "isoCode", c.getIsoCode()
+            )).toList());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Failed to initialize G20 countries: {}", e.getMessage(), e);
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 
     // ------------------------------------------------------------------
@@ -645,5 +689,177 @@ public class Earth2026PlanetController {
         emitter.send(SseEmitter.event()
                 .name(name)
                 .data(data));
+    }
+
+    // ========== Diplomacy Endpoints ==========
+
+    /**
+     * Get all diplomacy factions (G20 countries).
+     */
+    @GetMapping("/diplomacy/factions")
+    public ResponseEntity<List<FourxFaction>> getDiplomacyFactions() {
+        return ResponseEntity.ok(diplomacyService.getAllFactions());
+    }
+
+    /**
+     * Get diplomatic relations for a country.
+     */
+    @GetMapping("/diplomacy/relations/{countryIso}")
+    public ResponseEntity<List<FourxDiplomaticRelation>> getDiplomacyRelations(@PathVariable String countryIso) {
+        return ResponseEntity.ok(diplomacyService.getRelations(countryIso));
+    }
+
+    /**
+     * Declare war on another country.
+     */
+    @PostMapping("/diplomacy/declare-war")
+    public ResponseEntity<Map<String, Object>> declareWar(@RequestBody Map<String, String> request) {
+        String attacker = request.get("attackerIso");
+        String defender = request.get("defenderIso");
+        if (attacker == null || defender == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "attackerIso and defenderIso are required"));
+        }
+        FourxDiplomaticRelation relation = diplomacyService.declareWar(attacker, defender);
+        return ResponseEntity.ok(Map.of(
+                "attacker", attacker,
+                "defender", defender,
+                "atWar", relation.isAtWar(),
+                "relationScore", relation.getRelationScore()
+        ));
+    }
+
+    /**
+     * Establish peace between two countries.
+     */
+    @PostMapping("/diplomacy/establish-peace")
+    public ResponseEntity<Map<String, Object>> establishPeace(@RequestBody Map<String, String> request) {
+        String f1 = request.get("faction1Iso");
+        String f2 = request.get("faction2Iso");
+        if (f1 == null || f2 == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "faction1Iso and faction2Iso are required"));
+        }
+        FourxDiplomaticRelation relation = diplomacyService.establishPeace(f1, f2);
+        return ResponseEntity.ok(Map.of(
+                "faction1", f1,
+                "faction2", f2,
+                "atWar", relation.isAtWar(),
+                "relationScore", relation.getRelationScore()
+        ));
+    }
+
+    /**
+     * Add a treaty between two countries.
+     */
+    @PostMapping("/diplomacy/add-treaty")
+    public ResponseEntity<Map<String, Object>> addTreaty(@RequestBody Map<String, String> request) {
+        String f1 = request.get("faction1Iso");
+        String f2 = request.get("faction2Iso");
+        String treatyType = request.getOrDefault("treatyType", "TRADE");
+        if (f1 == null || f2 == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "faction1Iso and faction2Iso are required"));
+        }
+        FourxDiplomaticRelation relation = diplomacyService.addTreaty(f1, f2, treatyType);
+        return ResponseEntity.ok(Map.of(
+                "faction1", f1,
+                "faction2", f2,
+                "treatyType", treatyType,
+                "treaties", relation.getActiveTreaties(),
+                "relationScore", relation.getRelationScore()
+        ));
+    }
+
+    /**
+     * Generate a random diplomatic event for a country.
+     */
+    @PostMapping("/diplomacy/event/{countryIso}")
+    public ResponseEntity<Map<String, Object>> generateDiplomaticEvent(@PathVariable String countryIso) {
+        Map<String, Object> event = diplomacyService.generateDiplomaticEvent(countryIso);
+        return ResponseEntity.ok(event);
+    }
+
+    /**
+     * Check if two countries are at war.
+     */
+    @GetMapping("/diplomacy/is-at-war")
+    public ResponseEntity<Map<String, Object>> isAtWar(
+            @RequestParam String faction1, @RequestParam String faction2) {
+        boolean atWar = diplomacyService.isAtWar(faction1, faction2);
+        return ResponseEntity.ok(Map.of(
+                "faction1", faction1,
+                "faction2", faction2,
+                "atWar", atWar
+        ));
+    }
+
+    // ------------------------------------------------------------------
+    // Espionage operations
+    // ------------------------------------------------------------------
+
+    /**
+     * Deploy a spy to a target country.
+     */
+    @PostMapping("/espionage/deploy-spy")
+    public ResponseEntity<EspionageService.SpyDeploymentResult> deploySpy(
+            @RequestParam String deployerIso,
+            @RequestParam String targetIso,
+            @RequestParam(defaultValue = "INFILTRATOR") EspionageService.SpyType spyType) {
+        EspionageService.SpyDeploymentResult result = espionageService.deploySpy(deployerIso, targetIso, spyType);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Execute sabotage operation on a target country.
+     */
+    @PostMapping("/espionage/sabotage")
+    public ResponseEntity<EspionageService.SabotageResult> executeSabotage(
+            @RequestParam String targetIso,
+            @RequestParam(defaultValue = "INDUSTRY") EspionageService.SabotageType sabotageType) {
+        EspionageService.SabotageResult result = espionageService.executeSabotage(targetIso, sabotageType);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Gather intelligence on a target country.
+     */
+    @GetMapping("/espionage/intelligence/{targetIso}")
+    public ResponseEntity<EspionageService.IntelReport> gatherIntelligence(@PathVariable String targetIso) {
+        EspionageService.IntelReport report = espionageService.gatherIntelligence(targetIso);
+        return ResponseEntity.ok(report);
+    }
+
+    /**
+     * Run counter-espionage operation to detect and capture enemy spies.
+     */
+    @PostMapping("/espionage/counter-espionage/{countryIso}")
+    public ResponseEntity<EspionageService.CounterEspionageResult> runCounterEspionage(@PathVariable String countryIso) {
+        EspionageService.CounterEspionageResult result = espionageService.runCounterEspionage(countryIso);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Get all active spies deployed by a country.
+     */
+    @GetMapping("/espionage/spies/deployer/{deployerIso}")
+    public ResponseEntity<List<EspionageService.Spy>> getSpiesByDeployer(@PathVariable String deployerIso) {
+        List<EspionageService.Spy> spies = espionageService.getSpiesByDeployer(deployerIso);
+        return ResponseEntity.ok(spies);
+    }
+
+    /**
+     * Get all spies deployed in a target country.
+     */
+    @GetMapping("/espionage/spies/target/{targetIso}")
+    public ResponseEntity<List<EspionageService.Spy>> getSpiesInTarget(@PathVariable String targetIso) {
+        List<EspionageService.Spy> spies = espionageService.getSpiesInTarget(targetIso);
+        return ResponseEntity.ok(spies);
+    }
+
+    /**
+     * Get intelligence reports for a target country.
+     */
+    @GetMapping("/espionage/intelligence-reports/{targetIso}")
+    public ResponseEntity<List<EspionageService.IntelReport>> getIntelligenceReports(@PathVariable String targetIso) {
+        List<EspionageService.IntelReport> reports = espionageService.getIntelligenceReports(targetIso);
+        return ResponseEntity.ok(reports);
     }
 }

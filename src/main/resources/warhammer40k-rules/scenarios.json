@@ -1,0 +1,107 @@
+{
+  "scenarios": [
+    {
+      "id": "defense_of_terra",
+      "name": "Defense of Terra",
+      "description": "Defend the Imperial Palace against Abaddon's Black Crusade during the 13th Black Crusade",
+      "factions": ["imperium", "chaos"],
+      "difficulty": 9,
+      "objectives": [
+        "Hold the Imperial Palace for 10 turns",
+        "Destroy Chaos warlords",
+        "Protect the Golden Throne"
+      ],
+      "terrain": ["urban", "fortifications", "ruins"],
+      "units": {
+        "imperium": ["space_marine_interceptor", "imperial_guard_veteran", "leman_russ", "dreadnought"],
+        "chaos": ["chaos_marine", "chaos_champion"]
+      }
+    },
+    {
+      "id": "waaagh_invasion",
+      "name": "WAAAGH! Invasion",
+      "description": "An Ork WAAAGH! descends upon an Imperial world. Hold the line until reinforcements arrive.",
+      "factions": ["imperium", "orks"],
+      "difficulty": 6,
+      "objectives": [
+        "Survive 8 turns",
+        "Destroy Ork Warboss",
+        "Hold key positions"
+      ],
+      "terrain": ["open_ground", "difficult_terrain"],
+      "units": {
+        "imperium": ["imperial_guard_veteran", "leman_russ"],
+        "orks": ["ork_boy", "ork_dreadnought"]
+      }
+    },
+    {
+      "id": "necron_awakening",
+      "name": "Necron Awakening",
+      "description": "A Necron tomb world awakens. Race to secure the ancient artifacts before the Necrons fully activate.",
+      "factions": ["imperium", "necrons"],
+      "difficulty": 7,
+      "objectives": [
+        "Secure 3 artifacts",
+        "Destroy Necron Overlord",
+        "Escape before tomb fully awakens"
+      ],
+      "terrain": ["ruins", "difficult_terrain"],
+      "units": {
+        "imperium": ["space_marine_interceptor", "space_marine_librarian"],
+        "necrons": ["necron_warrior", "necron_immortal"]
+      }
+    },
+    {
+      "id": "eldar_prophecy",
+      "name": "Eldar Prophecy",
+      "description": "The Eldar Farseers foresee a great threat. Aid the Craftworld in defending against a Tyranid incursion.",
+      "factions": ["eldar", "tyranids"],
+      "difficulty": 8,
+      "objectives": [
+        "Hold the Webway portal",
+        "Destroy Tyranid Hive Tyrant",
+        "Protect the Farseer Encampment"
+      ],
+      "terrain": ["open_ground", "difficult_terrain"],
+      "units": {
+        "eldar": ["eldar_guardian", "eldar_wraithguard"],
+        "tyranids": ["tyranid_termagant", "tyranid_tyrannofex"]
+      }
+    },
+    {
+      "id": "heresy_battle",
+      "name": "Heresy Battle",
+      "description": "Relive the Horus Heresy - a battle between loyalist and traitor Space Marines",
+      "factions": ["imperium", "chaos"],
+      "difficulty": 8,
+      "objectives": [
+        "Destroy enemy champion",
+        "Control the battlefield center",
+        "Survive 10 turns"
+      ],
+      "terrain": ["ruins", "open_ground"],
+      "units": {
+        "imperium": ["space_marine_interceptor", "space_marine_librarian", "dreadnought"],
+        "chaos": ["chaos_marine", "chaos_champion"]
+      }
+    },
+    {
+      "id": "tyranid_hive_fleet",
+      "name": "Tyranid Hive Fleet",
+      "description": "A Tyranid Hive Fleet arrives. All factions must unite to survive the biomass consumption.",
+      "factions": ["imperium", "eldar", "tyranids"],
+      "difficulty": 10,
+      "objectives": [
+        "Survive 12 turns",
+        "Destroy Hive Mind node",
+        "Evacuate civilians"
+      ],
+      "terrain": ["open_ground", "difficult_terrain", "urban"],
+      "units": {
+        "imperium": ["space_marine_interceptor", "imperial_guard_veteran", "leman_russ"],
+        "eldar": ["eldar_guardian", "eldar_wraithguard"],
+        "tyranids": ["tyranid_termagant", "tyranid_tyrannofex"]
+      }
+    }
+  ]
+}

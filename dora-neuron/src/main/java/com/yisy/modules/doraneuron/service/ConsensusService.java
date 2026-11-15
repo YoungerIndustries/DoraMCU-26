@@ -37,6 +37,7 @@ import org.springframework.web.client.RestTemplate;
  * weighted predictions from many neurons to produce a more robust decision.
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
 @ConditionalOnProperty(prefix = "neuron", name = "enable-consensus", havingValue = "true", matchIfMissing = true)
 public class ConsensusService {
 

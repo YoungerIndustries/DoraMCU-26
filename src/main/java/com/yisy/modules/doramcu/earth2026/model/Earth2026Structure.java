@@ -101,6 +101,47 @@ public class Earth2026Structure {
     @Column(nullable = false)
     private boolean active = true;
 
+    // ---- 3D Spatial Coordinates for Battlefield Layout ----
+
+    /**
+     * X coordinate within the location's local coordinate system (meters from origin).
+     * Used for 3D battlefield positioning and building layouts.
+     */
+    @Column(name = "spatial_x")
+    private Double x;
+
+    /**
+     * Y coordinate within the location's local coordinate system (meters from origin).
+     * Used for 3D battlefield positioning and building layouts.
+     */
+    @Column(name = "spatial_y")
+    private Double y;
+
+    /**
+     * Z coordinate (elevation in meters above ground level).
+     * Represents the building's height or floor level for 3D positioning.
+     */
+    @Column(name = "spatial_z")
+    private Double z;
+
+    /**
+     * Building width in meters for 3D geometry generation.
+     */
+    @Column(name = "building_width")
+    private Double buildingWidth;
+
+    /**
+     * Building depth in meters for 3D geometry generation.
+     */
+    @Column(name = "building_depth")
+    private Double buildingDepth;
+
+    /**
+     * Building height in meters for 3D geometry generation.
+     */
+    @Column(name = "building_height")
+    private Double buildingHeight;
+
     public Earth2026Structure() {
     }
 
@@ -250,6 +291,33 @@ public class Earth2026Structure {
         int removed = Math.min(units, currentCapacity);
         currentCapacity -= removed;
         return removed;
+    }
+
+    // ---- 3D Spatial Coordinate Accessors ----
+
+    public Double getX() { return x; }
+    public void setX(Double x) { this.x = x; }
+
+    public Double getY() { return y; }
+    public void setY(Double y) { this.y = y; }
+
+    public Double getZ() { return z; }
+    public void setZ(Double z) { this.z = z; }
+
+    public Double getBuildingWidth() { return buildingWidth; }
+    public void setBuildingWidth(Double buildingWidth) { this.buildingWidth = buildingWidth; }
+
+    public Double getBuildingDepth() { return buildingDepth; }
+    public void setBuildingDepth(Double buildingDepth) { this.buildingDepth = buildingDepth; }
+
+    public Double getBuildingHeight() { return buildingHeight; }
+    public void setBuildingHeight(Double buildingHeight) { this.buildingHeight = buildingHeight; }
+
+    /**
+     * Check if this structure has 3D spatial coordinates set.
+     */
+    public boolean hasSpatialCoordinates() {
+        return x != null && y != null && z != null;
     }
 
     @Override

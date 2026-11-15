@@ -125,6 +125,27 @@ public class Earth2026Character {
     private String earthLocation;
 
     /**
+     * Reference to the character's home structure (e.g., an apartment in San Diego).
+     * Assigned during onboarding when the character first lands on Earth 2026.
+     */
+    @Column(name = "home_structure_id")
+    private Long homeStructureId;
+
+    /**
+     * Reference to the character's office in Younger Industries HQ.
+     * Assigned when the character lands at HQ and gets their first office.
+     */
+    @Column(name = "office_id")
+    private Long officeId;
+
+    /**
+     * Reference to the CHARACTER-type promo code that lands this character on Earth.
+     * Generated when the character is created during onboarding.
+     */
+    @Column(name = "promo_code_id")
+    private Long promoCodeId;
+
+    /**
      * When the character arrived on Earth (real-world arrival date/time).
      */
     @Column(name = "arrival_date_time", nullable = false)
@@ -334,6 +355,30 @@ public class Earth2026Character {
         this.earthLocation = earthLocation;
     }
 
+    public Long getHomeStructureId() {
+        return homeStructureId;
+    }
+
+    public void setHomeStructureId(Long homeStructureId) {
+        this.homeStructureId = homeStructureId;
+    }
+
+    public Long getOfficeId() {
+        return officeId;
+    }
+
+    public void setOfficeId(Long officeId) {
+        this.officeId = officeId;
+    }
+
+    public Long getPromoCodeId() {
+        return promoCodeId;
+    }
+
+    public void setPromoCodeId(Long promoCodeId) {
+        this.promoCodeId = promoCodeId;
+    }
+
     public LocalDateTime getArrivalDateTime() {
         return arrivalDateTime;
     }
@@ -410,6 +455,6 @@ public class Earth2026Character {
     public String toString() {
         return "Earth2026Character{id=" + id + ", playerId=" + playerId + ", name='" + name + "', age=" + age +
                 ", occupation='" + occupation + "', location='" + earthLocation +
-                "', level=" + level + ", transitioned=" + hasTransitioned + "}";
+                "', homeStructure=" + homeStructureId + ", promoCode=" + promoCodeId + ", level=" + level + ", transitioned=" + hasTransitioned + "}";
     }
 }

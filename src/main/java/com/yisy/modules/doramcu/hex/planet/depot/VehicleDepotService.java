@@ -135,7 +135,7 @@ public class VehicleDepotService {
         vehicleRegistry.put(vehicleId, vehicle);
         vehicleToDepot.put(vehicleId, depotId);
         depot.addAvailableVehicle(vehicleId);
-        corporation.addOwnedVehicle(vehicleId);
+        corporation.addVehicle(vehicleId);
 
         log.info("Purchased {} {} for {} at depot {}",
                 vehicleType.getDisplayName(), vehicleId, corporation.getName(), depotId);
@@ -231,7 +231,7 @@ public class VehicleDepotService {
         }
 
         // Remove from corporation
-        corporation.removeOwnedVehicle(vehicleId);
+        corporation.removeVehicle(vehicleId);
 
         // Remove from registry
         vehicleRegistry.remove(vehicleId);
@@ -269,7 +269,7 @@ public class VehicleDepotService {
         }
 
         // Remove from corporation
-        corporation.removeOwnedVehicle(vehicleId);
+        corporation.removeVehicle(vehicleId);
 
         // Keep in registry for history but mark as inactive
         log.info("Retired vehicle {} from {}", vehicleId, corporation.getName());

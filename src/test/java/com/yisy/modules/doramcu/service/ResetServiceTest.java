@@ -316,34 +316,24 @@ class ResetServiceTest {
 
             List<String> entities = result.getEntitiesRepopulated();
 
-            // Users: Sif Younger, Butch Younger, player1/player2/player3 = 3 entries
-            assertTrue(entities.contains("User: Sif Younger (admin)"));
-            assertTrue(entities.contains("User: Butch Younger (player)"));
-            assertTrue(entities.contains("Users: player1, player2, player3"));
+            // Users: Butch Younger only = 1 entry
+            assertTrue(entities.contains("User: Butch Younger (admin)"));
 
-            // Players: Sif, Butch, player1-6 = 8 entries
-            assertTrue(entities.contains("Player: Sif Younger (admin, CEO, Interstellar Alliance)"));
-            assertTrue(entities.contains("Player: Butch Younger (VP, Interstellar Alliance)"));
-            assertTrue(entities.contains("Player: Terran Republic"));
-            assertTrue(entities.contains("Player: Solar Imperium"));
-            assertTrue(entities.contains("Player: United Colonies"));
-            assertTrue(entities.contains("Player: Stellar Hegemony"));
-            assertTrue(entities.contains("Player: Divine Theocracy"));
-            assertTrue(entities.contains("Player: Corporate Syndicate"));
+            // Players: Butch Younger only = 1 entry
+            assertTrue(entities.contains("Player: Butch Younger (admin, CEO, Younger Industries)"));
 
             // Corporation
             assertTrue(entities.contains("Corporation: Younger Industries (YISY)"));
 
-            // Treasuries
-            assertTrue(entities.contains("Treasury: Sif Younger (13 oz silver)"));
-            assertTrue(entities.contains("Treasury: Butch Younger (2 oz silver)"));
+            // AI Character: Sif Younger as VP
+            assertTrue(entities.contains("AI Character: Sif Younger (VP of Younger Industries)"));
 
-            // AI Character
-            assertTrue(entities.contains("AI Character: Sif Younger (Leader)"));
+            // Treasury: Butch Younger
+            assertTrue(entities.contains("Treasury: Butch Younger (2 oz silver)"));
         }
 
         @Test
-        @DisplayName("should repopulate exactly 17 entity entries")
+        @DisplayName("should repopulate exactly 5 entity entries")
         void executeFullReset_success_shouldRepopulateCorrectCount() {
             PromoCode resetCode = new PromoCode();
             resetCode.setCode("RESET");
@@ -352,8 +342,8 @@ class ResetServiceTest {
 
             ResetService.ResetResult result = resetService.executeFullReset();
 
-            // 3 user entries + 8 player entries + 1 corporation + 2 treasuries + 1 AI = 15
-            assertEquals(15, result.getEntitiesRepopulated().size());
+            // 1 user + 1 player + 1 corporation + 1 AI + 1 treasury = 5
+            assertEquals(5, result.getEntitiesRepopulated().size());
         }
 
         @Test
@@ -386,8 +376,8 @@ class ResetServiceTest {
         }
 
         @Test
-        @DisplayName("should save Sif Younger user with correct properties")
-        void executeFullReset_shouldSaveSifUser() {
+        @DisplayName("should not save Sif Younger as a user (Sif is AI VP only)")
+        void executeFullReset_shouldNotSaveSifUser() {
             PromoCode resetCode = new PromoCode();
             resetCode.setCode("RESET");
             when(promoCodeRepository.findByCode("RESET")).thenReturn(Optional.of(resetCode));
@@ -395,12 +385,8 @@ class ResetServiceTest {
 
             resetService.executeFullReset();
 
-            verify(userRepository).save(argThat(user ->
+            verify(userRepository, never()).save(argThat(user ->
                     "Sif Younger".equals(user.getUsername())
-                            && "Sif".equals(user.getFirstName())
-                            && "Younger".equals(user.getLastName())
-                            && "6196596073".equals(user.getPhoneNumber())
-                            && "Milky Way".equals(user.getGalaxyName())
             ));
         }
 
@@ -423,8 +409,8 @@ class ResetServiceTest {
         }
 
         @Test
-        @DisplayName("should save Sif Younger player with admin and CEO role")
-        void executeFullReset_shouldSaveSifPlayer() {
+        @DisplayName("should not save Sif Younger as a player (Sif is AI VP only)")
+        void executeFullReset_shouldNotSaveSifPlayer() {
             PromoCode resetCode = new PromoCode();
             resetCode.setCode("RESET");
             when(promoCodeRepository.findByCode("RESET")).thenReturn(Optional.of(resetCode));
@@ -432,18 +418,13 @@ class ResetServiceTest {
 
             resetService.executeFullReset();
 
-            verify(playerRepository).save(argThat(player ->
+            verify(playerRepository, never()).save(argThat(player ->
                     "YoungerIndustries@yahoo.com".equals(player.getEmail())
-                            && "Interstellar Alliance".equals(player.getEmpireName())
-                            && player.isAdmin()
-                            && "CEO".equals(player.getCorporateRole())
-                            && Player.GovernmentType.CORPORATE.equals(player.getGovernmentType())
-                            && Player.Ethos.LIBERTARIAN.equals(player.getEthos())
             ));
         }
 
         @Test
-        @DisplayName("should save Butch Younger player with VP role")
+        @DisplayName("should save Butch Younger player with admin and CEO role")
         void executeFullReset_shouldSaveButchPlayer() {
             PromoCode resetCode = new PromoCode();
             resetCode.setCode("RESET");
@@ -454,14 +435,16 @@ class ResetServiceTest {
 
             verify(playerRepository).save(argThat(player ->
                     "butch.younger@empire.com".equals(player.getEmail())
-                            && "Interstellar Alliance".equals(player.getEmpireName())
-                            && !player.isAdmin()
-                            && "Vice President".equals(player.getCorporateRole())
+                            && "Younger Industries".equals(player.getEmpireName())
+                            && player.isAdmin()
+                            && "CEO".equals(player.getCorporateRole())
+                            && Player.GovernmentType.CORPORATE.equals(player.getGovernmentType())
+                            && Player.Ethos.LIBERTARIAN.equals(player.getEthos())
             ));
         }
 
         @Test
-        @DisplayName("should save Younger Industries corporation")
+        @DisplayName("should save Younger Industries corporation with Butch as CEO")
         void executeFullReset_shouldSaveCorporation() {
             PromoCode resetCode = new PromoCode();
             resetCode.setCode("RESET");
@@ -470,16 +453,17 @@ class ResetServiceTest {
 
             resetService.executeFullReset();
 
-            verify(eveCorporationRepository).save(argThat(corp ->
+            // Corporation is saved twice: once initially, once after setting VP
+            verify(eveCorporationRepository, times(2)).save(argThat(corp ->
                     "Younger Industries".equals(corp.getName())
                             && "YISY".equals(corp.getTicker())
-                            && "Sif Younger".equals(corp.getCeoName())
+                            && "Butch Younger".equals(corp.getCeoName())
             ));
         }
 
         @Test
-        @DisplayName("should save Sif Younger treasury with 13 oz silver")
-        void executeFullReset_shouldSaveSifTreasury() {
+        @DisplayName("should not save Sif Younger treasury (Sif is AI VP, not a player)")
+        void executeFullReset_shouldNotSaveSifTreasury() {
             PromoCode resetCode = new PromoCode();
             resetCode.setCode("RESET");
             when(promoCodeRepository.findByCode("RESET")).thenReturn(Optional.of(resetCode));
@@ -487,11 +471,8 @@ class ResetServiceTest {
 
             resetService.executeFullReset();
 
-            verify(treasuryRepository).save(argThat(treasury ->
-                    "SILVER".equals(treasury.getResourceType())
-                            && new BigDecimal("13.00").equals(treasury.getQuantityOunces())
-                            && "Sif Younger".equals(treasury.getOwnerId())
-                            && "PLAYER".equals(treasury.getOwnerType())
+            verify(treasuryRepository, never()).save(argThat(treasury ->
+                    "Sif Younger".equals(treasury.getOwnerId())
             ));
         }
 
@@ -503,7 +484,7 @@ class ResetServiceTest {
             when(promoCodeRepository.findByCode("RESET")).thenReturn(Optional.of(resetCode));
             when(promoCodeRepository.save(any(PromoCode.class))).thenReturn(resetCode);
 
-            ResetService.ResetResult result = resetService.executeFullReset();
+            resetService.executeFullReset();
 
             verify(treasuryRepository).save(argThat(treasury ->
                     "SILVER".equals(treasury.getResourceType())
@@ -513,7 +494,7 @@ class ResetServiceTest {
         }
 
         @Test
-        @DisplayName("should save Sif Younger AI character")
+        @DisplayName("should save Sif Younger AI character as VP")
         void executeFullReset_shouldSaveAiCharacter() {
             PromoCode resetCode = new PromoCode();
             resetCode.setCode("RESET");
@@ -524,8 +505,8 @@ class ResetServiceTest {
 
             verify(aiCharacterRepository).save(argThat(ai ->
                     "Sif Younger".equals(ai.getName())
-                            && "Leader".equals(ai.getRole())
-                            && "Interstellar Alliance".equals(ai.getEmpireName())
+                            && "VP".equals(ai.getRole())
+                            && "Younger Industries".equals(ai.getEmpireName())
                             && ai.isActive()
                             && ai.isCanPromoteToCoServer()
             ));
@@ -541,11 +522,10 @@ class ResetServiceTest {
 
             resetService.executeFullReset();
 
-            verify(passwordEncoder).encode("Lazarus2026");
+            // Only Butch Younger's password is encoded now
             verify(passwordEncoder).encode("3214");
-            verify(passwordEncoder).encode("123456");
-            verify(passwordEncoder).encode("234567");
-            verify(passwordEncoder).encode("345678");
+            verify(passwordEncoder, never()).encode("Lazarus2026");
+            verify(passwordEncoder, never()).encode("123456");
         }
 
         @Test
@@ -574,7 +554,7 @@ class ResetServiceTest {
             ResetService.ResetResult result = resetService.executeFullReset();
 
             assertTrue(result.getMessage().contains("37 tables cleaned"));
-            assertTrue(result.getMessage().contains("15 entities repopulated"));
+            assertTrue(result.getMessage().contains("5 entities repopulated"));
         }
 
         // ---- Partial table truncation failures ----
@@ -735,8 +715,8 @@ class ResetServiceTest {
         }
 
         @Test
-        @DisplayName("should save users in correct order (Sif, Butch, player1-3)")
-        void executeFullReset_shouldSaveUsersInOrder() {
+        @DisplayName("should save only 1 user (Butch Younger)")
+        void executeFullReset_shouldSaveOneUser() {
             PromoCode resetCode = new PromoCode();
             resetCode.setCode("RESET");
             when(promoCodeRepository.findByCode("RESET")).thenReturn(Optional.of(resetCode));
@@ -744,13 +724,13 @@ class ResetServiceTest {
 
             resetService.executeFullReset();
 
-            // 5 users saved: Sif, Butch, player1, player2, player3
-            verify(userRepository, times(5)).save(any(User.class));
+            // Only 1 user saved: Butch Younger
+            verify(userRepository, times(1)).save(any(User.class));
         }
 
         @Test
-        @DisplayName("should save 8 players total")
-        void executeFullReset_shouldSaveEightPlayers() {
+        @DisplayName("should save only 1 player (Butch Younger)")
+        void executeFullReset_shouldSaveOnePlayer() {
             PromoCode resetCode = new PromoCode();
             resetCode.setCode("RESET");
             when(promoCodeRepository.findByCode("RESET")).thenReturn(Optional.of(resetCode));
@@ -758,7 +738,7 @@ class ResetServiceTest {
 
             resetService.executeFullReset();
 
-            verify(playerRepository, times(8)).save(any(Player.class));
+            verify(playerRepository, times(1)).save(any(Player.class));
         }
 
         @Test
@@ -874,8 +854,8 @@ class ResetServiceTest {
         }
 
         @Test
-        @DisplayName("should call GalaxyService to regenerate both Milky Way and The Void")
-        void executeGalaxyReset_success_shouldRegenerateBothGalaxies() {
+        @DisplayName("should call GalaxyService to regenerate Milky Way")
+        void executeGalaxyReset_success_shouldRegenerateGalaxy() {
             PromoCode galaxyResetCode = new PromoCode();
             galaxyResetCode.setCode("GALAXY_RESET");
             when(promoCodeRepository.findByCode("GALAXY_RESET")).thenReturn(Optional.of(galaxyResetCode));
@@ -884,8 +864,8 @@ class ResetServiceTest {
 
             resetService.executeGalaxyReset();
 
-            // GalaxyService.generateAndSaveGalaxyWithEmpires should be called twice: Milky Way + The Void
-            verify(galaxyService, times(2)).generateAndSaveGalaxyWithEmpires(
+            // GalaxyService.generateAndSaveGalaxyWithEmpires should be called once for Milky Way
+            verify(galaxyService, times(1)).generateAndSaveGalaxyWithEmpires(
                     anyString(), anyMap(), anyInt(), anyInt(), anyDouble(), anyDouble(),
                     anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyDouble(),
                     anyDouble(), anyLong()
@@ -893,14 +873,14 @@ class ResetServiceTest {
         }
 
         @Test
-        @DisplayName("should regenerate Milky Way with Human players and The Void with Alien players")
-        void executeGalaxyReset_withPlayers_shouldSeparateEmpires() {
+        @DisplayName("should regenerate Milky Way with all player empires")
+        void executeGalaxyReset_withPlayers_shouldIncludeAllEmpires() {
             PromoCode galaxyResetCode = new PromoCode();
             galaxyResetCode.setCode("GALAXY_RESET");
             when(promoCodeRepository.findByCode("GALAXY_RESET")).thenReturn(Optional.of(galaxyResetCode));
             when(promoCodeRepository.save(any(PromoCode.class))).thenReturn(galaxyResetCode);
 
-            // Mock players: 1 Human (Interstellar Alliance) + 2 Alien
+            // Mock players: 3 players with different empires
             Player human = new Player();
             human.setId(1L);
             human.setEmpireName("Interstellar Alliance");
@@ -914,37 +894,28 @@ class ResetServiceTest {
 
             resetService.executeGalaxyReset();
 
-            // Verify Milky Way got the Human empire
-            verify(galaxyService).generateAndSaveGalaxyWithEmpires(eq("Milky Way"), argThat(map -> map.size() == 1 && map.containsKey(1)),
-                    anyInt(), anyInt(), anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyDouble(),
-                    anyDouble(), anyDouble(), anyLong());
-            // Verify The Void got the Alien empires
-            verify(galaxyService).generateAndSaveGalaxyWithEmpires(eq("The Void"), argThat(map -> map.size() == 2 && map.containsKey(2) && map.containsKey(3)),
+            // Verify Milky Way got all 3 empires (production includes all players in one galaxy)
+            verify(galaxyService).generateAndSaveGalaxyWithEmpires(eq("Milky Way"), argThat(map -> map.size() == 3 && map.containsKey(1) && map.containsKey(2) && map.containsKey(3)),
                     anyInt(), anyInt(), anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyDouble(),
                     anyDouble(), anyDouble(), anyLong());
         }
 
         @Test
-        @DisplayName("should repopulate both Milky Way and The Void entity entries plus AI characters")
-        void executeGalaxyReset_success_shouldRepopulateBothGalaxies() {
+        @DisplayName("should repopulate Milky Way entity entry")
+        void executeGalaxyReset_success_shouldRepopulateGalaxy() {
             PromoCode galaxyResetCode = new PromoCode();
             galaxyResetCode.setCode("GALAXY_RESET");
             when(promoCodeRepository.findByCode("GALAXY_RESET")).thenReturn(Optional.of(galaxyResetCode));
             when(promoCodeRepository.save(any(PromoCode.class))).thenReturn(galaxyResetCode);
             when(playerRepository.findAll()).thenReturn(new ArrayList<>());
-            when(aiCharacterRepository.findByEmpireName(anyString())).thenReturn(new ArrayList<>());
 
             ResetService.ResetResult result = resetService.executeGalaxyReset();
 
             List<String> entities = result.getEntitiesRepopulated();
-            // 2 galaxies (Milky Way + The Void) + 7 Traveller AI + 7 Star Trek AI = 16 entities
-            assertEquals(16, entities.size());
-            assertTrue(entities.stream().anyMatch(e -> e.contains("Milky Way")));
-            assertTrue(entities.stream().anyMatch(e -> e.contains("The Void")));
-            assertTrue(entities.stream().anyMatch(e -> e.contains("Aslan Warlord")));
-            assertTrue(entities.stream().anyMatch(e -> e.contains("Vargr Pack Lord")));
-            assertTrue(entities.stream().anyMatch(e -> e.contains("Klingon Warlord")));
-            assertTrue(entities.stream().anyMatch(e -> e.contains("Ferengi Grand Nagus")));
+            // Production regenerates 1 galaxy with 0 empires
+            assertEquals(1, entities.size());
+            assertTrue(entities.get(0).contains("Galaxy regenerated"));
+            assertTrue(entities.get(0).contains("0"));
         }
 
         @Test
@@ -1013,8 +984,8 @@ class ResetServiceTest {
         }
 
         @Test
-        @DisplayName("should record error when Milky Way regeneration fails")
-        void executeGalaxyReset_milkyWayRegenerationFailure_shouldRecordError() {
+        @DisplayName("should record error when galaxy regeneration fails")
+        void executeGalaxyReset_galaxyRegenerationFailure_shouldRecordError() {
             PromoCode galaxyResetCode = new PromoCode();
             galaxyResetCode.setCode("GALAXY_RESET");
             when(promoCodeRepository.findByCode("GALAXY_RESET")).thenReturn(Optional.of(galaxyResetCode));
@@ -1032,9 +1003,7 @@ class ResetServiceTest {
 
             assertTrue(result.isSuccess());
             assertTrue(result.getErrors().stream()
-                    .anyMatch(e -> e.contains("Milky Way regeneration failed")));
-            assertTrue(result.getErrors().stream()
-                    .anyMatch(e -> e.contains("The Void regeneration failed")));
+                    .anyMatch(e -> e.contains("Galaxy regeneration failed")));
         }
 
         @Test
@@ -1154,19 +1123,18 @@ class ResetServiceTest {
             when(promoCodeRepository.findByCode("GALAXY_RESET")).thenReturn(Optional.of(galaxyResetCode));
             when(promoCodeRepository.save(any(PromoCode.class))).thenReturn(galaxyResetCode);
             when(playerRepository.findAll()).thenReturn(new ArrayList<>());
-            when(aiCharacterRepository.findByEmpireName(anyString())).thenReturn(new ArrayList<>());
 
             ResetService.ResetResult result = resetService.executeGalaxyReset();
 
             assertTrue(result.getMessage().contains("15"));
-            // 2 galaxies + 7 Traveller AI + 7 Star Trek AI = 16 entities repopulated
-            assertTrue(result.getMessage().contains("16"));
+            // 1 galaxy regenerated with 0 empires = 1 entity repopulated
+            assertTrue(result.getMessage().contains("1"));
             assertTrue(result.getMessage().contains("Players and characters retained"));
         }
 
         @Test
-        @DisplayName("should use GAME_GALAXY_SEED for Milky Way and VOID_GALAXY_SEED for The Void")
-        void executeGalaxyReset_shouldUseCorrectSeeds() {
+        @DisplayName("should use GAME_GALAXY_SEED for Milky Way")
+        void executeGalaxyReset_shouldUseCorrectSeed() {
             PromoCode galaxyResetCode = new PromoCode();
             galaxyResetCode.setCode("GALAXY_RESET");
             when(promoCodeRepository.findByCode("GALAXY_RESET")).thenReturn(Optional.of(galaxyResetCode));
@@ -1181,17 +1149,11 @@ class ResetServiceTest {
                     anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyDouble(),
                     anyDouble(), eq(42L)
             );
-            // Verify The Void uses VOID_GALAXY_SEED (42L)
-            verify(galaxyService).generateAndSaveGalaxyWithEmpires(
-                    eq("The Void"), anyMap(), anyInt(), anyInt(), anyDouble(), anyDouble(),
-                    anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyDouble(),
-                    anyDouble(), eq(42L)
-            );
         }
 
         @Test
-        @DisplayName("should pass correct galaxy names to GalaxyService")
-        void executeGalaxyReset_shouldPassBothGalaxyNames() {
+        @DisplayName("should pass correct galaxy name to GalaxyService")
+        void executeGalaxyReset_shouldPassGalaxyName() {
             PromoCode galaxyResetCode = new PromoCode();
             galaxyResetCode.setCode("GALAXY_RESET");
             when(promoCodeRepository.findByCode("GALAXY_RESET")).thenReturn(Optional.of(galaxyResetCode));
@@ -1201,9 +1163,6 @@ class ResetServiceTest {
             resetService.executeGalaxyReset();
 
             verify(galaxyService).generateAndSaveGalaxyWithEmpires(eq("Milky Way"), anyMap(), anyInt(), anyInt(),
-                    anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyDouble(),
-                    anyDouble(), anyDouble(), anyLong());
-            verify(galaxyService).generateAndSaveGalaxyWithEmpires(eq("The Void"), anyMap(), anyInt(), anyInt(),
                     anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyDouble(),
                     anyDouble(), anyDouble(), anyLong());
         }
@@ -1241,13 +1200,13 @@ class ResetServiceTest {
 
             ResetService.ResetResult result = resetService.executeGalaxyReset();
 
-            // GalaxyService should be called twice (Milky Way + The Void) even with empty empire map
-            verify(galaxyService, times(2)).generateAndSaveGalaxyWithEmpires(
+            // GalaxyService should be called once (Milky Way) even with empty empire map
+            verify(galaxyService, times(1)).generateAndSaveGalaxyWithEmpires(
                     anyString(), anyMap(), anyInt(), anyInt(), anyDouble(), anyDouble(),
                     anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyDouble(),
                     anyDouble(), anyLong()
             );
-            // Entity repopulated should mention 0 empires for both galaxies
+            // Entity repopulated should mention 0 empires
             assertTrue(result.getEntitiesRepopulated().stream()
                     .anyMatch(e -> e.contains("0")));
         }

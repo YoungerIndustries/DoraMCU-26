@@ -1,8 +1,12 @@
 package com.yisy.modules.doramcu.hex;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.dungeon.FacilityModuleTemplate;
 import com.yisy.modules.doramcu.hex.dungeon.FacilityModuleTemplateRepository;
-import org.springframework.stereotype.Service;
+import com.yisy.modules.doramcu.hex.spi.AssetRegistrySpi;
+import com.yisy.modules.doramcu.hex.Skin;
+import com.yisy.modules.doramcu.hex.spi.SkinLookupSpi;
+import com.yisy.modules.doramcu.hex.SkinType;
 
 import java.util.*;
 
@@ -18,14 +22,22 @@ import java.util.*;
 public class FacilityService {
 
     private final FacilityModuleTemplateRepository templateRepository;
+    private final AssetRegistrySpi AssetRegistrySpi;
+    private final SkinLookupSpi SkinLookupSpi;
 
     /**
      * Creates a new FacilityService.
      *
      * @param templateRepository the JPA repository for module templates
+     * @param AssetRegistrySpi the central asset registry for skin assignment
+     * @param SkinLookupSpi the service for skin management
      */
-    public FacilityService(FacilityModuleTemplateRepository templateRepository) {
+    public FacilityService(FacilityModuleTemplateRepository templateRepository,
+                           AssetRegistrySpi AssetRegistrySpi,
+                           SkinLookupSpi SkinLookupSpi) {
         this.templateRepository = templateRepository;
+        this.AssetRegistrySpi = AssetRegistrySpi;
+        this.SkinLookupSpi = SkinLookupSpi;
     }
 
     // ---- Module Template CRUD ----
@@ -132,7 +144,27 @@ public class FacilityService {
             }
         }
 
+        // Register with asset registry and assign default skin
+        registerBuilding(building);
+
         return building;
+    }
+
+    /**
+     * Registers a building with the asset registry and assigns a default skin.
+     */
+    private void registerBuilding(BuildingHull building) {
+        if (AssetRegistrySpi == null) {
+            return;
+        }
+        int id = building.hashCode();
+        AssetRegistrySpi.register(SkinType.BUILDING, id, building);
+        if (SkinLookupSpi != null && building.getSkin() == null) {
+            Skin defaultSkin = SkinLookupSpi.getSkin("modern-building");
+            if (defaultSkin != null) {
+                building.setSkin(defaultSkin);
+            }
+        }
     }
 
     // ---- Pre-population ----

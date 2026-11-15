@@ -1,0 +1,316 @@
+{
+  "game_info": {
+    "title": "Star Wars Rules & Lore Database",
+    "description": "Synthesized rules from major Star Wars tabletop games: Legion, X-Wing, Rebellion, Force & Destiny RPG, and Star Wars: Unlimited",
+    "source_games": [
+      "Star Wars: Legion (Atomic Mass Games, 2015, Refresh 2024)",
+      "Star Wars: X-Wing Miniatures Game (FFG, 2012, 2nd Ed 2018)",
+      "Star Wars: Rebellion (FFG, 2016)",
+      "Star Wars: Force and Destiny RPG (FFG, 2015)",
+      "Star Wars: Unlimited (FFG, 2024)"
+    ]
+  },
+  "ground_combat": {
+    "source": "Star Wars: Legion",
+    "description": "Miniatures-based ground combat with alternating activations and command cards",
+    "game_rounds": 6,
+    "phases": {
+      "command_phase": {
+        "description": "Both players secretly select a command card, then reveal and resolve effects. Priority is determined by comparing pip values.",
+        "steps": [
+          "Each player selects a command card from their hand and places it face-down",
+          "Both players reveal command cards simultaneously",
+          "Resolve command card effects",
+          "Compare pip values to determine priority",
+          "The priority player issues orders first"
+        ]
+      },
+      "activation_phase": {
+        "description": "Units are activated in order determined by command cards and order pools. Each activation includes movement and attacks.",
+        "steps": [
+          "Draw order tokens from order pools",
+          "Activate units based on order tokens: Move, then Attack",
+          "Units with Standby tokens wait for later activation",
+          "Continue until all order pools are depleted and all units have face-down order tokens"
+        ]
+      },
+      "end_phase": {
+        "description": "Cleanup and victory point scoring.",
+        "steps": [
+          "Resolve start of end phase effects",
+          "Score victory points from objective cards",
+          "Discard revealed command cards",
+          "Remove green tokens (Aim, Dodge, Observation, Surge, Standby)",
+          "Remove one suppression token from each unit",
+          "Advance round counter"
+        ]
+      }
+    },
+    "unit_ranks": {
+      "commander": "Elite leaders with unique command cards",
+      "corps": "Standard line units forming the backbone of armies",
+      "special_forces": "Specialized units with unique abilities",
+      "support": "Support units providing buffs and utility",
+      "heavy": "Heavy weapons and vehicles with high firepower"
+    },
+    "attack_rules": {
+      "description": "Attacks use dice pools modified by range, cover, and unit abilities",
+      "steps": [
+        "Attacker declares target unit within range and line of sight",
+        "Roll attack dice based on weapon profile and range band",
+        "Defender rolls defense dice based on Agility stat",
+        "Resolve results: Hits and Glances cause damage, Crits cause extra effects",
+        "Apply damage to shields first, then hull"
+      ],
+      "dice_types": {
+        "red": "Attack dice — produces Hits, Glances, Crits, and Blanks",
+        "yellow": "Defense dice — produces Evades, Shields, and Blanks",
+        "green": "Special dice for certain abilities"
+      }
+    },
+    "movement": {
+      "description": "Units move up to their Speed stat in inches per activation",
+      "terrain": {
+        "light_cover": "Grants +1 defense dice",
+        "heavy_cover": "Grants +2 defense dice and blocks line of sight",
+        "difficult": "Hinders movement; units must stop if they end in difficult terrain"
+      }
+    },
+    "suppression": {
+      "description": "Units can be suppressed, reducing their effectiveness. Suppression tokens are removed during the end phase.",
+      "effects": "Suppressed units may have reduced attack or defense capabilities"
+    }
+  },
+  "space_combat": {
+    "source": "Star Wars: X-Wing",
+    "description": "Tactical ship-to-ship dogfighting with secret maneuver planning",
+    "game_round": {
+      "phases": {
+        "planning_phase": {
+          "description": "Each player secretly chooses one maneuver for each ship using its maneuver dial, placing dials face-down.",
+          "steps": [
+            "For each ship, select a maneuver from the ship's dial",
+            "Place the dial face-down next to the ship"
+          ]
+        },
+        "activation_phase": {
+          "description": "Ships move and perform one action, in ascending order of pilot skill.",
+          "steps": [
+            "Reveal each ship's maneuver dial in ascending pilot skill order",
+            "Execute the chosen maneuver",
+            "Ship may perform one action (barrel roll, boost, evade, focus, lock, reload, etc.)"
+          ]
+        },
+        "combat_phase": {
+          "description": "Each ship may perform one attack, in descending order of pilot skill.",
+          "steps": [
+            "Attacker declares target within firing arc and range",
+            "Roll attack dice modified by range and abilities",
+            "Defender rolls defense dice modified by Agility and actions",
+            "Resolve hits: assign damage cards to defending ship",
+            "Critical hits reveal damage cards face-up for ongoing effects"
+          ]
+        },
+        "end_phase": {
+          "description": "Cleanup: remove unused action tokens (except target locks) and resolve end phase abilities.",
+          "steps": [
+            "Remove focus, evade, and reload tokens",
+            "Resolve end phase card abilities"
+          ]
+        }
+      }
+    },
+    "ship_statistics": {
+      "pilot_skill": "Determines activation and combat order (1-210+)",
+      "attack": "Number of attack dice rolled",
+      "agility": "Number of defense dice the target rolls",
+      "hull": "Structural integrity; absorbs damage after shields are depleted",
+      "shields": "Energy barrier; absorbs damage before hull",
+      "firing_arc": "Front arc (most ships) or full arc (some ships)"
+    },
+    "firing_arcs": {
+      "front_arc": "120-degree arc in front of the ship",
+      "full_arc": "360-degree arc around the ship"
+    },
+    "ranges": {
+      "range_1": "0-3 inches (close range)",
+      "range_2": "3-9 inches (medium range)",
+      "range_3": "9-18 inches (long range)"
+    },
+    "damage_system": {
+      "description": "Ships receive damage cards when hit. Face-down cards are stress or hidden damage; face-up cards are critical hits with ongoing effects.",
+      "critical_hit": "Reveals a damage card face-up, imposing a lasting penalty until repaired"
+    }
+  },
+  "galaxy_control": {
+    "source": "Star Wars: Rebellion",
+    "description": "Asymmetric galaxy-scale strategy game for two players",
+    "game_round": {
+      "phases": {
+        "assignment_phase": {
+          "description": "Players assign leaders to missions secretly.",
+          "steps": [
+            "Each player assigns leaders to mission cards",
+            "Leaders are placed face-down on missions"
+          ]
+        },
+        "command_phase": {
+          "description": "Players take turns resolving missions or placing leaders on the board to move units and start combats.",
+          "steps": [
+            "Players alternate taking actions",
+            "Actions include: resolve missions, place leaders, move ships, move ground units, initiate combat",
+            "Phase ends when both players pass consecutively"
+          ]
+        },
+        "refresh_phase": {
+          "description": "Cleanup steps: retrieve leaders, draw missions, launch probe droids, draw objectives, recruit leaders, build units.",
+          "steps": [
+            "Retrieve leaders from the board and missions",
+            "Draw mission cards (2 per player)",
+            "Imperial player launches probe droids (2 probe cards)",
+            "Rebel player draws 1 objective card",
+            "Recruit new leaders if time track allows",
+            "Build new units if time track allows"
+          ]
+        }
+      }
+    },
+    "victory_conditions": {
+      "imperial_win": [
+        "Conquer the Rebel base system (Imperial units present, no Rebel units)",
+        "Death Star destroys the system containing the Rebel base"
+      ],
+      "rebel_win": [
+        "Reputation marker meets or passes the time marker on the time track",
+        "Time track reaches its end without the Empire finding the base"
+      ]
+    },
+    "time_track": {
+      "description": "16 spaces maximum. Time marker starts at 1 and advances each round. Reputation marker starts at 14 and moves toward time as Rebels complete objectives.",
+      "rebel_mechanic": "Rebels gain reputation by fulfilling objective card requirements",
+      "imperial_mechanic": "Empire advances time by completing projects and building superweapons"
+    },
+    "probe_droids": {
+      "description": "Imperial player draws probe cards each round to eliminate possible Rebel base locations. Each probe reveals 1 system where the base is NOT located.",
+      "purpose": "Gradually narrow down the hidden Rebel base location"
+    },
+    "combat": {
+      "space_combat": {
+        "description": "Dice-based combat using tactic cards. Players draw or play tactic cards to modify dice rolls.",
+        "steps": [
+          "Attacker declares combat",
+          "Both players draw or play tactic cards",
+          "Roll dice based on ship attack values",
+          "Apply hits to ship shields and hull"
+        ]
+      },
+      "ground_combat": {
+        "description": "Dice-based combat using ground tactic cards to determine system loyalty.",
+        "steps": [
+          "Attacker declares ground combat",
+          "Both players draw or play ground tactic cards",
+          "Roll dice based on ground unit values",
+          "Winner gains loyalty in the system"
+        ]
+      }
+    }
+  },
+  "rpg_mechanics": {
+    "source": "Star Wars: Force and Destiny (FFG Narrative Dice)",
+    "description": "Narrative dice pool system for roleplaying adventures",
+    "core_mechanic": {
+      "description": "Build and roll a dice pool. Results are interpreted using four symbol pairs.",
+      "symbol_pairs": {
+        "success_failure": "Determines whether the action succeeds or fails",
+        "advantage_threat": "Side effects — Advantage helps the actor, Threat helps the opponent",
+        "triumph_despair": "Major narrative effects — Triumph is a huge bonus, Despair is a severe setback"
+      },
+      "dice_types": {
+        "ability": "Blue dice representing character skill",
+        "difficulty": "Red dice representing task difficulty",
+        "proficiency": "Light blue upgrade dice",
+        "challenge": "Dark red upgrade dice",
+        "boost": "White dice for helpful circumstances",
+        "advantage": "Green dice for favorable conditions",
+        "despair": "Black dice for dangerous situations"
+      }
+    },
+    "force_powers": {
+      "description": "Force-sensitive characters use the Force through ranked powers with light and dark side options.",
+      "light_side": "Healing, protection, enhancement, telekinesis for defense",
+      "dark_side": "Mind control, force lightning, choke, fear, domination"
+    },
+    "destiny_tokens": {
+      "description": "A shared pool of light and dark side tokens that players can spend to modify dice pools, driving the narrative.",
+      "light_side": "Spent to add success, advantage, or boost dice",
+      "dark_side": "Spent to add threat, challenge, or despair dice"
+    }
+  },
+  "card_game_mechanics": {
+    "source": "Star Wars: Unlimited",
+    "description": "Trading card game with resource management and aspect system",
+    "deck_building": {
+      "minimum_cards": 50,
+      "leader": 1,
+      "base": 1,
+      "max_copies": 3
+    },
+    "aspects": {
+      "vigilance": {
+        "color": "blue",
+        "description": "Defense, control, and manipulation"
+      },
+      "command": {
+        "color": "green",
+        "description": "Strategy, resource management, and support"
+      },
+      "aggression": {
+        "color": "red",
+        "description": "Direct damage and offensive power"
+      },
+      "cunning": {
+        "color": "yellow",
+        "description": "Deception, tricks, and resource denial"
+      },
+      "heroism": {
+        "color": "white",
+        "description": "Altruism, healing, and protection of allies"
+      },
+      "villainy": {
+        "color": "black",
+        "description": "Cruelty, domination, and fear"
+      }
+    },
+    "game_round": {
+      "action_phase": {
+        "description": "Players alternate taking actions: play units, events, upgrades, attack with units, or use card abilities. Phase ends when both players pass consecutively.",
+        "actions": [
+          "Play a unit from hand",
+          "Play an event from hand",
+          "Play an upgrade on a unit",
+          "Attack with a ready unit",
+          "Use an ability",
+          "Pass"
+        ]
+      },
+      "regroup_phase": {
+        "description": "Draw cards, place resources, and ready exhausted cards.",
+        "steps": [
+          "Draw cards to return hand to starting size",
+          "Place one card from hand face-down as a resource",
+          "Ready all exhausted cards"
+        ]
+      }
+    },
+    "card_types": {
+      "leader": "Double-sided key figure; starts as leader, can deploy as unit",
+      "base": "Starting structure with ~30 HP; if reduced to 0 HP, player loses",
+      "unit": "Characters and vehicles that can attack and defend",
+      "event": "One-time effects that resolve when played",
+      "upgrade": "Cards attached to units to enhance their abilities"
+    },
+    "aspect_penalty": {
+      "description": "When playing a card, for each aspect icon on the card not provided by your leader or base, pay 2 extra resources."
+    }
+  }
+}

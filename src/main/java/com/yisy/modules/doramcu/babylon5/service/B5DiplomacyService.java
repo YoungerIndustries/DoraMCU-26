@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.babylon5.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.babylon5.model.B5Race;
 import com.yisy.modules.doramcu.fourx.FourxDiplomaticRelation;
@@ -8,7 +9,6 @@ import com.yisy.modules.doramcu.hex.GalaxyServiceRegistry;
 import com.yisy.modules.doramcu.hex.GalaxyTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
 import java.util.*;
@@ -184,7 +184,7 @@ public class B5DiplomacyService implements FourxDiplomacyService, GalaxyServiceR
         // Generate event type based on current relation
         FourxDiplomaticRelation relation = getOrCreateRelation(factionId, otherId);
         String eventType;
-        int relationChange = 0;
+        int relationChange;
 
         if (relation != null && relation.isAtWar()) {
             eventType = chooseFrom(

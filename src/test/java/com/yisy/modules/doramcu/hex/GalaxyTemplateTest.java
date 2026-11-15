@@ -16,9 +16,9 @@ class GalaxyTemplateTest {
     class EnumValues {
 
         @Test
-        @DisplayName("Has 8 templates")
-        void hasEightTemplates() {
-            assertEquals(8, GalaxyTemplate.values().length);
+        @DisplayName("Has 9 templates")
+        void hasNineTemplates() {
+            assertEquals(9, GalaxyTemplate.values().length);
         }
 
         @Test
@@ -33,6 +33,7 @@ class GalaxyTemplateTest {
                             GalaxyTemplate.BABYLON5,
                             GalaxyTemplate.SINGLE_SYSTEM_RPG,
                             GalaxyTemplate.SUBSECTOR_RPG,
+                            GalaxyTemplate.EARTH_2026_TEMPLATE,
                             GalaxyTemplate.CUSTOM
                     },
                     GalaxyTemplate.values()

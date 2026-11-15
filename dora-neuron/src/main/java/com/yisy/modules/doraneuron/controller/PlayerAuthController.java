@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.controller;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.dto.PlayerLoginRequest;
 import com.yisy.modules.doraneuron.dto.PlayerRegistrationRequest;
 import com.yisy.modules.doraneuron.security.JwtTokenProvider;
@@ -18,6 +20,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/player")
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class PlayerAuthController {
 
     private static final Logger log = LoggerFactory.getLogger(PlayerAuthController.class);

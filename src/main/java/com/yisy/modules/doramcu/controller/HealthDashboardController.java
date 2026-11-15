@@ -134,9 +134,7 @@ public class HealthDashboardController {
                 Map<String, Object> component = new HashMap<>();
                 component.put("name", indicator.getClass().getSimpleName().replace("HealthIndicator", ""));
                 component.put("status", health.getStatus());
-                if (health.getDetails() != null) {
-                    component.put("details", health.getDetails());
-                }
+                component.put("details", health.getDetails());
                 components.add(component);
             } catch (Exception e) {
                 Map<String, Object> component = new HashMap<>();
@@ -320,12 +318,13 @@ public class HealthDashboardController {
             ProcessBuilder pb = new ProcessBuilder("powershell.exe", "-Command",
                     "Get-Process -Name junie* -ErrorAction SilentlyContinue | Select-Object -First 1");
             pb.redirectErrorStream(true);
-            Process p = pb.start();
-            p.waitFor(2, TimeUnit.SECONDS);
-            java.io.BufferedReader reader = new java.io.BufferedReader(
-                    new java.io.InputStreamReader(p.getInputStream()));
-            String output = reader.lines().reduce("", (a, b) -> a + b);
-            cliRunning = !output.trim().isEmpty();
+            try (Process p = pb.start()) {
+                p.waitFor(2, TimeUnit.SECONDS);
+                java.io.BufferedReader reader = new java.io.BufferedReader(
+                        new java.io.InputStreamReader(p.getInputStream()));
+                String output = reader.lines().reduce("", (a, b) -> a + b);
+                cliRunning = !output.trim().isEmpty();
+            }
         } catch (Exception ignored) {
             // If we can't check, assume not running
         }

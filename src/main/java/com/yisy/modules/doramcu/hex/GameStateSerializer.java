@@ -98,4 +98,173 @@ public class GameStateSerializer {
         }
         return fleetStates;
     }
+
+    /**
+     * Deserializes a previously serialized game state map and applies it to a new Game instance.
+     * <p>
+     * This method reconstructs the essential game state: players, planets, and fleets.
+     * Galaxy/solar system data is NOT restored here — it must be loaded separately from
+     * the database by the calling service (e.g., {@code loadGalaxyToGame}).
+     * </p>
+     * <p>
+     * Ships are referenced by ID only during serialization; during deserialization,
+     * ships that no longer exist in the game are skipped gracefully.
+     * </p>
+     *
+     * @param game the new game instance to populate (must have the same name as the serialized state)
+     * @param state the serialized game state map
+     */
+    public void deserialize(Game game, Map<String, Object> state) {
+        // Restore top-level game state
+        if (state.containsKey("currentTime")) {
+            game.setCurrentTime(toLong(state.get("currentTime")));
+        }
+        if (state.containsKey("turnDuration")) {
+            game.setTurnDuration(toLong(state.get("turnDuration")));
+        }
+        if (state.containsKey("currentPlayerIndex")) {
+            game.setCurrentPlayerIndex(toInt(state.get("currentPlayerIndex")));
+        }
+        if (state.containsKey("gameEnded")) {
+            game.setGameEnded(toBoolean(state.get("gameEnded")));
+        }
+        if (state.containsKey("nextPlanetId")) {
+            game.setNextPlanetId(toInt(state.get("nextPlanetId")));
+        }
+        if (state.containsKey("nextFleetId")) {
+            game.setNextFleetId(toInt(state.get("nextFleetId")));
+        }
+        if (state.containsKey("nextShipId")) {
+            game.setNextShipId(toInt(state.get("nextShipId")));
+        }
+        if (state.containsKey("nextBattleId")) {
+            game.setNextBattleId(toInt(state.get("nextBattleId")));
+        }
+        if (state.containsKey("nextSolarSystemId")) {
+            game.setNextSolarSystemId(toInt(state.get("nextSolarSystemId")));
+        }
+
+        // Restore players
+        Object playersObj = state.get("players");
+        if (playersObj instanceof List) {
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> playerStates = (List<Map<String, Object>>) playersObj;
+            for (Map<String, Object> ps : playerStates) {
+                deserializePlayer(game, ps);
+            }
+        }
+
+        // Restore planets
+        Object planetsObj = state.get("planets");
+        if (planetsObj instanceof List) {
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> planetStates = (List<Map<String, Object>>) planetsObj;
+            for (Map<String, Object> pl : planetStates) {
+                deserializePlanet(game, pl);
+            }
+        }
+
+        // Restore fleets (after players and planets so references are valid)
+        Object fleetsObj = state.get("fleets");
+        if (fleetsObj instanceof List) {
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> fleetStates = (List<Map<String, Object>>) fleetsObj;
+            for (Map<String, Object> fl : fleetStates) {
+                deserializeFleet(game, fl);
+            }
+        }
+    }
+
+    private void deserializePlayer(Game game, Map<String, Object> ps) {
+        int id = toInt(ps.get("id"));
+        String name = (String) ps.get("name");
+
+        // Find existing player or create a new one
+        Player player = game.getPlayer(id);
+        if (player == null) {
+            // Create player with the serialized name
+            player = new Player(id, name != null ? name : "Player" + id);
+            game.addPlayer(player);
+        }
+        // Note: eliminated state and home location are derived from game state
+        // (planets, fleets) rather than stored separately
+    }
+
+    private void deserializePlanet(Game game, Map<String, Object> pl) {
+        int id = toInt(pl.get("id"));
+        String name = (String) pl.get("name");
+        String sizeStr = (String) pl.get("size");
+        String mineralStr = (String) pl.get("mineralQuality");
+
+        // Find existing planet or create a new one directly in the map
+        Planet planet = game.getPlanet(id);
+        if (planet == null) {
+            PlanetSize size = PlanetSize.valueOf(sizeStr != null ? sizeStr : "MEDIUM");
+            MineralQuality mineral = MineralQuality.valueOf(mineralStr != null ? mineralStr : "POOR");
+            planet = new Planet(id, size, mineral);
+            game.getPlanets().put(id, planet);
+        }
+    }
+
+    private void deserializeFleet(Game game, Map<String, Object> fl) {
+        int id = toInt(fl.get("id"));
+        String name = (String) fl.get("name");
+        Integer ownerId = fl.containsKey("ownerId") ? toInt(fl.get("ownerId")) : null;
+        Double positionX = fl.containsKey("positionX") ? toDouble(fl.get("positionX")) : null;
+        Double positionY = fl.containsKey("positionY") ? toDouble(fl.get("positionY")) : null;
+        Double positionZ = fl.containsKey("positionZ") ? toDouble(fl.get("positionZ")) : null;
+
+        // Find existing fleet or create a new one
+        Fleet fleet = game.getFleet(id);
+        if (fleet == null) {
+            fleet = new Fleet(id, name != null ? name : "Fleet" + id);
+            // Add directly to map; owner tracking is handled by the player object
+            game.getFleets().put(id, fleet);
+            Player owner = ownerId != null ? game.getPlayer(ownerId) : null;
+            if (owner != null) {
+                owner.addFleet(id);
+            }
+        }
+
+        // Set position if available (Fleet uses Hex3D for position)
+        if (positionX != null && positionY != null && positionZ != null) {
+            fleet.setPosition(new Hex3D(positionX.intValue(), positionY.intValue(), positionZ.intValue()));
+        }
+
+        // Restore ships (only ships that still exist in the game)
+        @SuppressWarnings("unchecked")
+        List<Integer> shipIds = (List<Integer>) fl.get("shipIds");
+        if (shipIds != null) {
+            for (Integer shipId : shipIds) {
+                Ship ship = game.getShip(shipId);
+                if (ship != null && !fleet.getShips().contains(ship)) {
+                    fleet.addShip(ship);
+                }
+            }
+        }
+    }
+
+    private int toInt(Object value) {
+        if (value == null) return 0;
+        if (value instanceof Number) return ((Number) value).intValue();
+        return Integer.parseInt(value.toString());
+    }
+
+    private long toLong(Object value) {
+        if (value == null) return 0L;
+        if (value instanceof Number) return ((Number) value).longValue();
+        return Long.parseLong(value.toString());
+    }
+
+    private double toDouble(Object value) {
+        if (value == null) return 0.0;
+        if (value instanceof Number) return ((Number) value).doubleValue();
+        return Double.parseDouble(value.toString());
+    }
+
+    private boolean toBoolean(Object value) {
+        if (value == null) return false;
+        if (value instanceof Boolean) return (Boolean) value;
+        return Boolean.parseBoolean(value.toString());
+    }
 }

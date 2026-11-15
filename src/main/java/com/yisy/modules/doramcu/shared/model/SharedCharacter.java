@@ -1,6 +1,6 @@
 package com.yisy.modules.doramcu.shared.model;
 
-import com.yisy.modules.doramcu.unified.GameType;
+import com.yisy.modules.doramcu.gamecore.GameType;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

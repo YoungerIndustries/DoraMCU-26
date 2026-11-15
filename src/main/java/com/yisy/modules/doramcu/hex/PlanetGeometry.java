@@ -277,6 +277,7 @@ public class PlanetGeometry {
     }
 
     public List<Hex3D> getSurface() {
+        ensureGeometryGenerated();
         Hex3D center = new Hex3D(0, 0, 0);
         return map.getAll().stream()
                 .filter(h -> center.distance(h) == radius)

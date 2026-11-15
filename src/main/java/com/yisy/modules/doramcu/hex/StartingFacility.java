@@ -71,7 +71,25 @@ public enum StartingFacility {
      * Agricultural center for food production.
      * Provides +4 food production per turn.
      */
-    AGRICULTURAL_CENTER("Agricultural Center", 0, 0, 4, 0, 0, "Produces food");
+    AGRICULTURAL_CENTER("Agricultural Center", 0, 0, 4, 0, 0, "Produces food"),
+
+    /**
+     * Warehouse for expanding raw resource storage.
+     * Increases raw storage capacity by 100 units per level.
+     */
+    WAREHOUSE("Warehouse", 0, 0, 0, 0, 0, "Expands raw resource storage"),
+
+    /**
+     * Refinery for expanding refined resource storage.
+     * Increases refined storage capacity by 50 units per level.
+     */
+    REFINERY("Refinery", 0, 0, 0, 0, 0, "Expands refined resource storage"),
+
+    /**
+     * Module Bay for expanding construction module storage.
+     * Increases module storage capacity by 10 units per level.
+     */
+    MODULE_BAY("Module Bay", 0, 0, 0, 0, 0, "Expands module storage");
 
     /** Base credit income per turn for this facility */
     public static final int BASE_CREDIT_INCOME = 1000;

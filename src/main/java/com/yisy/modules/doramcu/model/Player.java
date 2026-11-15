@@ -47,11 +47,11 @@ public class Player {
     private String empireName;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20, columnDefinition = "varchar(20)")
     private GovernmentType governmentType;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20, columnDefinition = "varchar(20)")
     private Ethos ethos;
 
     @Column(length = 100)
@@ -69,6 +69,21 @@ public class Player {
     @Column(length = 200)
     private String displayName;
 
+    /**
+     * Current active corporate role: CEO (full control) or VP (delegated to AI assistant).
+     * Part of the dual-identity system — defaults to CEO at character creation.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "\"current_role\"", nullable = false, length = 10, columnDefinition = "varchar(10)")
+    private CorporateRole currentRole = CorporateRole.CEO;
+
+    /**
+     * Reference to the AI assistant player session ID.
+     * Populated when the player switches to VP mode and an AI clone is created.
+     */
+    @Column(name = "ai_assistant_id")
+    private Long aiAssistantId;
+
     @ManyToOne
     private User user;
 
@@ -78,6 +93,13 @@ public class Player {
      */
     @Column(nullable = false)
     private boolean isAdmin = false;
+
+    /**
+     * Reference to the PLAYER-type promo code generated for this player.
+     * Used as a permanent landing key that routes back to this player's corporation or characters.
+     */
+    @Column(name = "promo_code_id")
+    private Long promoCodeId;
 
     /**
      * Government types available for an Empire.
@@ -184,6 +206,14 @@ public class Player {
         isAdmin = admin;
     }
 
+    public Long getPromoCodeId() {
+        return promoCodeId;
+    }
+
+    public void setPromoCodeId(Long promoCodeId) {
+        this.promoCodeId = promoCodeId;
+    }
+
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
 
@@ -195,6 +225,20 @@ public class Player {
 
     public String getCorporateRole() { return corporateRole; }
     public void setCorporateRole(String corporateRole) { this.corporateRole = corporateRole; }
+
+    public CorporateRole getCurrentRole() { return currentRole; }
+    public void setCurrentRole(CorporateRole currentRole) { this.currentRole = currentRole; }
+
+    public Long getAiAssistantId() { return aiAssistantId; }
+    public void setAiAssistantId(Long aiAssistantId) { this.aiAssistantId = aiAssistantId; }
+
+    /**
+     * Checks if the player has an active role (not null).
+     * Always true since currentRole defaults to CEO, but useful for API responses.
+     */
+    public boolean isRoleActive() {
+        return currentRole != null;
+    }
 
     /** Returns display name, or falls back to first/last name or empire name */
     public String getDisplayName() {
@@ -232,6 +276,7 @@ public class Player {
     @Override
     public String toString() {
         return "Player{id=" + id + ", email='" + email + "', empire='" + empireName +
-                "', government=" + governmentType + ", ethos=" + ethos + ", admin=" + isAdmin + "}";
+                "', government=" + governmentType + ", ethos=" + ethos + ", admin=" + isAdmin +
+                ", promoCode=" + promoCodeId + ", currentRole=" + currentRole + ", aiAssistantId=" + aiAssistantId + "}";
     }
 }

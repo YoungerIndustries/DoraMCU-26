@@ -21,6 +21,7 @@ public class E26NameDatabase {
     private List<String> aiLeaderTitles;
     private List<String> aiGovernorTitles;
     private List<String> aiCaptainTitles;
+    private List<String> companionNames;
 
     public E26NameDatabase() {
     }
@@ -48,4 +49,7 @@ public class E26NameDatabase {
 
     public List<String> getAiCaptainTitles() { return aiCaptainTitles; }
     public void setAiCaptainTitles(List<String> aiCaptainTitles) { this.aiCaptainTitles = aiCaptainTitles; }
+
+    public List<String> getCompanionNames() { return companionNames; }
+    public void setCompanionNames(List<String> companionNames) { this.companionNames = companionNames; }
 }

@@ -1,0 +1,296 @@
+{
+  "game_info": {
+    "title": "OpenTTD Transport Tycoon Cargo Database",
+    "description": "Complete cargo type database including raw materials, processed goods, advanced goods, and special cargo",
+    "source": "DoraMCU Transport Tycoon Biodome Database"
+  },
+  "cargo_types": {
+    "raw_materials": [
+      {
+        "id": "ore",
+        "name": "Ore",
+        "category": "raw_materials",
+        "color": "#8B8682",
+        "perishable": false,
+        "base_value": 10,
+        "description": "Raw metal ore mined from deposits. Primary input for steel production.",
+        "produced_by": ["mine"],
+        "consumed_by": ["steel_mill"]
+      },
+      {
+        "id": "coal",
+        "name": "Coal",
+        "category": "raw_materials",
+        "color": "#2C2C2C",
+        "perishable": false,
+        "base_value": 12,
+        "description": "Fossil fuel mined from coal deposits. Used for energy and steel production.",
+        "produced_by": ["coal_mine"],
+        "consumed_by": ["steel_mill", "refinery"]
+      },
+      {
+        "id": "oil",
+        "name": "Crude Oil",
+        "category": "raw_materials",
+        "color": "#1A1A2E",
+        "perishable": false,
+        "base_value": 15,
+        "description": "Raw petroleum extracted from oil wells. Feedstock for refined products.",
+        "produced_by": ["oil_well"],
+        "consumed_by": ["refinery", "chemical_plant"]
+      },
+      {
+        "id": "wood",
+        "name": "Wood",
+        "category": "raw_materials",
+        "color": "#8B4513",
+        "perishable": false,
+        "base_value": 8,
+        "description": "Raw timber from logging operations. Used for lumber and construction.",
+        "produced_by": ["logging_camp"],
+        "consumed_by": ["sawmill"]
+      },
+      {
+        "id": "grain",
+        "name": "Grain",
+        "category": "raw_materials",
+        "color": "#DAA520",
+        "perishable": true,
+        "base_value": 6,
+        "description": "Harvested grain from farms. Perishable — must be delivered quickly.",
+        "produced_by": ["farm"],
+        "consumed_by": ["bakery"]
+      },
+      {
+        "id": "livestock",
+        "name": "Livestock",
+        "category": "raw_materials",
+        "color": "#8FBC8F",
+        "perishable": true,
+        "base_value": 10,
+        "description": "Live animals from ranches. Perishable — requires timely delivery.",
+        "produced_by": ["ranch"],
+        "consumed_by": ["slaughterhouse"]
+      },
+      {
+        "id": "fish",
+        "name": "Fish",
+        "category": "raw_materials",
+        "color": "#4682B4",
+        "perishable": true,
+        "base_value": 9,
+        "description": "Fresh catch from fishing ports. Highly perishable.",
+        "produced_by": ["fishing_port"],
+        "consumed_by": []
+      },
+      {
+        "id": "fruit",
+        "name": "Fruit",
+        "category": "raw_materials",
+        "color": "#FF6347",
+        "perishable": true,
+        "base_value": 7,
+        "description": "Fresh fruit from orchards. Perishable — must be delivered quickly.",
+        "produced_by": ["orchard"],
+        "consumed_by": ["luxury_factory"]
+      },
+      {
+        "id": "mail",
+        "name": "Mail",
+        "category": "raw_materials",
+        "color": "#FFD700",
+        "perishable": true,
+        "base_value": 5,
+        "description": "Postal mail from settlements. Perishable — time-sensitive delivery.",
+        "produced_by": ["village", "town", "city", "metropolis"],
+        "consumed_by": []
+      }
+    ],
+    "processed_materials": [
+      {
+        "id": "steel",
+        "name": "Steel",
+        "category": "processed_materials",
+        "color": "#708090",
+        "perishable": false,
+        "base_value": 25,
+        "description": "Processed steel from mills. Key input for advanced manufacturing.",
+        "produced_by": ["steel_mill"],
+        "consumed_by": ["electronics_factory", "machine_shop"]
+      },
+      {
+        "id": "concrete",
+        "name": "Concrete",
+        "category": "processed_materials",
+        "color": "#A9A9A9",
+        "perishable": false,
+        "base_value": 15,
+        "description": "Construction material from cement plants.",
+        "produced_by": ["cement_plant"],
+        "consumed_by": []
+      },
+      {
+        "id": "glass",
+        "name": "Glass",
+        "category": "processed_materials",
+        "color": "#87CEEB",
+        "perishable": false,
+        "base_value": 18,
+        "description": "Manufactured glass for electronics and construction.",
+        "produced_by": ["glass_factory"],
+        "consumed_by": ["electronics_factory"]
+      },
+      {
+        "id": "lumber",
+        "name": "Lumber",
+        "category": "processed_materials",
+        "color": "#DEB887",
+        "perishable": false,
+        "base_value": 12,
+        "description": "Processed wood from sawmills. Used for construction.",
+        "produced_by": ["sawmill"],
+        "consumed_by": []
+      },
+      {
+        "id": "bread",
+        "name": "Bread",
+        "category": "processed_materials",
+        "color": "#F5DEB3",
+        "perishable": true,
+        "base_value": 10,
+        "description": "Baked goods from bakeries. Perishable food product.",
+        "produced_by": ["bakery"],
+        "consumed_by": []
+      },
+      {
+        "id": "meat",
+        "name": "Meat",
+        "category": "processed_materials",
+        "color": "#CD5C5C",
+        "perishable": true,
+        "base_value": 14,
+        "description": "Processed meat from slaughterhouses. Perishable food product.",
+        "produced_by": ["slaughterhouse"],
+        "consumed_by": []
+      },
+      {
+        "id": "refined_oil",
+        "name": "Refined Oil",
+        "category": "processed_materials",
+        "color": "#4A4A6A",
+        "perishable": false,
+        "base_value": 30,
+        "description": "Refined petroleum products. Fuel and feedstock for advanced goods.",
+        "produced_by": ["refinery"],
+        "consumed_by": ["machine_shop", "advanced_chemicals"]
+      },
+      {
+        "id": "plastic",
+        "name": "Plastic",
+        "category": "processed_materials",
+        "color": "#FF6B6B",
+        "perishable": false,
+        "base_value": 22,
+        "description": "Synthetic plastic from chemical plants. Used in electronics and luxury goods.",
+        "produced_by": ["chemical_plant"],
+        "consumed_by": ["electronics_factory", "luxury_factory", "advanced_chemicals"]
+      }
+    ],
+    "advanced_goods": [
+      {
+        "id": "electronics",
+        "name": "Electronics",
+        "category": "advanced_goods",
+        "color": "#00CED1",
+        "perishable": false,
+        "base_value": 45,
+        "description": "High-tech electronic components. Highest value cargo for advanced planets.",
+        "produced_by": ["electronics_factory"],
+        "consumed_by": []
+      },
+      {
+        "id": "machinery",
+        "name": "Machinery",
+        "category": "advanced_goods",
+        "color": "#696969",
+        "perishable": false,
+        "base_value": 40,
+        "description": "Industrial machinery and equipment. High-value manufactured goods.",
+        "produced_by": ["machine_shop"],
+        "consumed_by": []
+      },
+      {
+        "id": "luxury",
+        "name": "Luxury Goods",
+        "category": "advanced_goods",
+        "color": "#FFD700",
+        "perishable": false,
+        "base_value": 55,
+        "description": "Premium luxury items. Highest base value cargo type.",
+        "produced_by": ["luxury_factory"],
+        "consumed_by": []
+      },
+      {
+        "id": "chemicals",
+        "name": "Chemicals",
+        "category": "advanced_goods",
+        "color": "#9370DB",
+        "perishable": false,
+        "base_value": 35,
+        "description": "Advanced chemical compounds for industrial use.",
+        "produced_by": ["advanced_chemicals"],
+        "consumed_by": []
+      }
+    ],
+    "special": [
+      {
+        "id": "passengers",
+        "name": "Passengers",
+        "category": "special",
+        "color": "#FF69B4",
+        "perishable": true,
+        "base_value": 20,
+        "description": "People traveling between settlements. Time-sensitive — passengers lose patience.",
+        "produced_by": ["village", "town", "city", "metropolis"],
+        "consumed_by": []
+      }
+    ]
+  },
+  "cargo_flow_chains": {
+    "steel_chain": {
+      "name": "Steel Production Chain",
+      "stages": [
+        {"stage": 1, "cargo": "ore", "industry": "mine", "value": 10},
+        {"stage": 2, "cargo": "coal", "industry": "coal_mine", "value": 12},
+        {"stage": 3, "cargo": "steel", "industry": "steel_mill", "value": 25}
+      ]
+    },
+    "electronics_chain": {
+      "name": "Electronics Production Chain",
+      "stages": [
+        {"stage": 1, "cargo": "ore", "industry": "mine", "value": 10},
+        {"stage": 2, "cargo": "steel", "industry": "steel_mill", "value": 25},
+        {"stage": 3, "cargo": "glass", "industry": "glass_factory", "value": 18},
+        {"stage": 4, "cargo": "plastic", "industry": "chemical_plant", "value": 22},
+        {"stage": 5, "cargo": "electronics", "industry": "electronics_factory", "value": 45}
+      ]
+    },
+    "food_chain": {
+      "name": "Food Production Chain",
+      "stages": [
+        {"stage": 1, "cargo": "grain", "industry": "farm", "value": 6},
+        {"stage": 2, "cargo": "bread", "industry": "bakery", "value": 10}
+      ]
+    },
+    "space_chain": {
+      "name": "Space Rocket Production Chain",
+      "stages": [
+        {"stage": 1, "cargo": "ore", "industry": "mine", "value": 10},
+        {"stage": 2, "cargo": "steel", "industry": "steel_mill", "value": 25},
+        {"stage": 3, "cargo": "electronics", "industry": "electronics_factory", "value": 45},
+        {"stage": 4, "cargo": "rocket_parts", "industry": "rocket_parts_factory", "value": 80},
+        {"stage": 5, "cargo": "spacecraft", "industry": "spacecraft_assembly", "value": 150}
+      ]
+    }
+  }
+}

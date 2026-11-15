@@ -1,0 +1,405 @@
+package com.yisy.modules.doramcu.starshiptroopers.config;
+
+import com.yisy.modules.doramcu.gamecore.*;
+import com.yisy.modules.doramcu.starshiptroopers.model.Unit;
+import com.yisy.modules.doramcu.starshiptroopers.service.StarshipTroopersService;
+import com.yisy.modules.doramcu.thirdreich.adapter.GroundCombatAdapter;
+import com.yisy.modules.doramcu.thirdreich.adapter.StarshipTroopersTo3R4Adapter;
+import com.yisy.modules.doramcu.unified.GameType;
+import com.yisy.modules.doramcu.util.DiceUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
+
+/**
+ * Starship Troopers Game Module adapter.
+ * <p>
+ * Implements the {@link GameModule} interface to register Starship Troopers features
+ * with the {@link GameModuleRegistry}. This allows other modules to access
+ * Starship Troopers mechanics through the shared game-core interfaces.
+ * </p>
+ * <p>
+ * Starship Troopers provides:
+ * <ul>
+ *   <li>Dice: d6-based combat resolution</li>
+ *   <li>Combat: Hex-based tactical combat with Terran vs Arachnid forces</li>
+ *   <li>Ground Combat: 3R4 adapter for cross-module battles</li>
+ *   <li>Encounters: Scenario-based missions</li>
+ *   <li>Rules: Board game rules database</li>
+ * </ul>
+ * </p>
+ */
+@Component
+public class StarshipTroopersGameModule implements GameModule {
+
+    private static final Logger log = LoggerFactory.getLogger(StarshipTroopersGameModule.class);
+
+    private final StarshipTroopersService starshipTroopersService;
+    private final GameModuleRegistry gameModuleRegistry;
+    private final GroundCombatAdapter groundCombatAdapter;
+
+    public StarshipTroopersGameModule(
+            StarshipTroopersService starshipTroopersService,
+            GameModuleRegistry gameModuleRegistry) {
+        this.starshipTroopersService = starshipTroopersService;
+        this.gameModuleRegistry = gameModuleRegistry;
+        this.groundCombatAdapter = new StarshipTroopersTo3R4Adapter();
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void register() {
+        gameModuleRegistry.registerModule(this);
+        log.info("Starship Troopers module registered with GameModuleRegistry");
+    }
+
+    @Override
+    public GameType getGameType() {
+        return GameType.STARSHIP_TROOPERS;
+    }
+
+    @Override
+    public String getModuleName() {
+        return "Starship Troopers";
+    }
+
+    @Override
+    public DiceService getDiceService() {
+        return new StarshipTroopersDiceAdapter();
+    }
+
+    @Override
+    public CombatService getCombatService() {
+        return new StarshipTroopersCombatAdapter(starshipTroopersService);
+    }
+
+    @Override
+    public InventoryService getInventoryService() {
+        return null;
+    }
+
+    @Override
+    public CraftingService getCraftingService() {
+        return null;
+    }
+
+    @Override
+    public DungeonRoomService getDungeonRoomService() {
+        return null;
+    }
+
+    @Override
+    public SpellService getSpellService() {
+        return null;
+    }
+
+    @Override
+    public PsionicsService getPsionicsService() {
+        return null;
+    }
+
+    @Override
+    public EncounterService getEncounterService() {
+        return new StarshipTroopersEncounterAdapter(starshipTroopersService);
+    }
+
+    @Override
+    public CharacterService getCharacterService() {
+        return null;
+    }
+
+    @Override
+    public CampaignService getCampaignService() {
+        return null;
+    }
+
+    @Override
+    public RulesService getRulesService() {
+        return new StarshipTroopersRulesAdapter(starshipTroopersService);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    public GroundCombatAdapter getGroundCombatAdapter() {
+        return groundCombatAdapter;
+    }
+
+    // ==================== Inner Adapter Implementations ====================
+
+    /**
+     * Adapts Starship Troopers d6-based dice rolling to the unified DiceService.
+     */
+    private static class StarshipTroopersDiceAdapter implements DiceService {
+
+        @Override
+        public DiceRollResult rollDSides(int sides) {
+            int result = DiceUtil.rollDSides(sides);
+            return new DiceRollResult("d" + sides, List.of(result), result, "Rolled d" + sides);
+        }
+
+        @Override
+        public DiceRollResult rollNdX(int count, int sides) {
+            List<Integer> rolls = new ArrayList<>();
+            int total = 0;
+            for (int i = 0; i < count; i++) {
+                int roll = DiceUtil.rollDSides(sides);
+                rolls.add(roll);
+                total += roll;
+            }
+            return new DiceRollResult(count + "d" + sides, rolls, total, count + "d" + sides + " total");
+        }
+
+        @Override
+        public DiceRollResult rollFormula(String formula) {
+            int result = DiceUtil.rollDice(formula);
+            return new DiceRollResult(formula, List.of(result), result, "Rolled " + formula);
+        }
+
+        @Override
+        public DiceRollResult rollWithAdvantage(String formula) {
+            int r1 = DiceUtil.rollDice(formula);
+            int r2 = DiceUtil.rollDice(formula);
+            int result = Math.max(r1, r2);
+            return new DiceRollResult(formula + " (adv)", List.of(r1, r2), result, "Advantage roll");
+        }
+
+        @Override
+        public DiceRollResult rollWithDisadvantage(String formula) {
+            int r1 = DiceUtil.rollDice(formula);
+            int r2 = DiceUtil.rollDice(formula);
+            int result = Math.min(r1, r2);
+            return new DiceRollResult(formula + " (dis)", List.of(r1, r2), result, "Disadvantage roll");
+        }
+
+        @Override
+        public DiceRollResult roll2D6WithModifier(int modifier) {
+            int roll = DiceUtil.roll2D6() + modifier;
+            return new DiceRollResult("2d6+" + modifier, List.of(roll), roll, "2D6 with modifier");
+        }
+    }
+
+    /**
+     * Adapts Starship Troopers combat to the unified CombatService.
+     * Delegates to 3R4 engine for cross-module battles.
+     */
+    private static class StarshipTroopersCombatAdapter implements CombatService {
+        private final StarshipTroopersService service;
+        private final java.util.concurrent.atomic.AtomicLong combatIdCounter = new java.util.concurrent.atomic.AtomicLong(1);
+        private final Map<Long, CombatInfo> combats = new java.util.concurrent.ConcurrentHashMap<>();
+
+        StarshipTroopersCombatAdapter(StarshipTroopersService service) {
+            this.service = service;
+        }
+
+        @Override
+        public Long createCombat(String encounterName) {
+            Long id = combatIdCounter.getAndIncrement();
+            CombatInfo info = new CombatInfo();
+            info.setId(id);
+            info.setEncounterName(encounterName);
+            info.setStatus("ACTIVE");
+            info.setCurrentRound(0);
+            info.setCombatants(new ArrayList<>());
+            combats.put(id, info);
+            return id;
+        }
+
+        @Override
+        public CombatInfo getCombat(Long combatId) {
+            return combats.get(combatId);
+        }
+
+        @Override
+        public CombatantInfo addCombatant(Long combatId, String name, int armorClass, int maxHp, boolean isCharacter) {
+            CombatInfo info = combats.get(combatId);
+            if (info == null) return null;
+            CombatantInfo ci = new CombatantInfo();
+            ci.setName(name);
+            ci.setArmorClass(armorClass);
+            ci.setCurrentHp(maxHp);
+            ci.setMaxHp(maxHp);
+            ci.setAlive(true);
+            ci.setCharacter(isCharacter);
+            info.getCombatants().add(ci);
+            return ci;
+        }
+
+        @Override
+        public CombatInfo rollInitiative(Long combatId, Map<String, Integer> dexModifiers) {
+            return combats.get(combatId);
+        }
+
+        @Override
+        public AttackResult makeAttack(Long combatId, AttackRequest request) {
+            // Starship Troopers uses CRT-based resolution
+            // For cross-module use, delegate to 3R4 engine
+            AttackResult result = new AttackResult();
+            result.setAttackerName(request.getAttackerName());
+            result.setTargetName(request.getTargetName());
+            result.setHit(false);
+            result.setMessage("Use 3R4 engine via GroundCombatAdapter for cross-module battles");
+            return result;
+        }
+
+        @Override
+        public CombatantInfo healCombatant(Long combatId, String name, int amount) {
+            CombatInfo info = combats.get(combatId);
+            if (info == null) return null;
+            for (CombatantInfo ci : info.getCombatants()) {
+                if (ci.getName().equals(name)) {
+                    ci.setCurrentHp(Math.min(ci.getMaxHp(), ci.getCurrentHp() + amount));
+                    return ci;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public CombatInfo endCombat(Long combatId, String status) {
+            CombatInfo info = combats.get(combatId);
+            if (info != null) info.setStatus(status);
+            return info;
+        }
+    }
+
+    /**
+     * Adapts Starship Troopers scenarios to the unified EncounterService.
+     */
+    private static class StarshipTroopersEncounterAdapter implements EncounterService {
+        private final StarshipTroopersService service;
+
+        StarshipTroopersEncounterAdapter(StarshipTroopersService service) {
+            this.service = service;
+        }
+
+        @Override
+        public List<Encounter> listEncounters() {
+            List<Encounter> encounters = new ArrayList<>();
+            int id = 1;
+            for (var scenario : service.getScenarios()) {
+                Encounter e = new Encounter();
+                e.setId((long) id++);
+                e.setName(scenario.name());
+                e.setDescription(scenario.description());
+                e.setDifficulty("Medium");
+                e.setXpReward(100);
+                e.setEncounterType("Scenario");
+                encounters.add(e);
+            }
+            return encounters;
+        }
+
+        @Override
+        public Encounter getEncounter(Long encounterId) {
+            var scenarios = service.getScenarios();
+            if (encounterId > 0 && encounterId <= scenarios.size()) {
+                var scenario = scenarios.get(encounterId.intValue() - 1);
+                Encounter e = new Encounter();
+                e.setId(encounterId);
+                e.setName(scenario.name());
+                e.setDescription(scenario.description());
+                e.setEncounterType("Scenario");
+                return e;
+            }
+            return null;
+        }
+
+        @Override
+        public Encounter generateRandomEncounter(String areaId, int level) {
+            var scenarios = service.getScenarios();
+            if (scenarios.isEmpty()) return null;
+            var scenario = scenarios.get(new Random().nextInt(scenarios.size()));
+            Encounter e = new Encounter();
+            e.setName(scenario.name());
+            e.setDescription(scenario.description());
+            e.setEncounterType("Scenario");
+            e.setAreaId(areaId);
+            return e;
+        }
+
+        @Override
+        public EncounterResult resolveEncounter(Long encounterId, List<Long> characterIds) {
+            return new EncounterResult(encounterId, "Starship Troopers Scenario", true, "Resolved via 3R4 engine", 100);
+        }
+    }
+
+    /**
+     * Adapts Starship Troopers rules to the unified RulesService.
+     */
+    private static class StarshipTroopersRulesAdapter implements RulesService {
+        private final StarshipTroopersService service;
+
+        StarshipTroopersRulesAdapter(StarshipTroopersService service) {
+            this.service = service;
+        }
+
+        @Override
+        public List<RulesEntry> listRules() {
+            List<RulesEntry> rules = new ArrayList<>();
+            long id = 1;
+
+            // Combat outcomes
+            RulesEntry combatEntry = new RulesEntry();
+            combatEntry.setId(id++);
+            combatEntry.setTitle("Combat Outcomes");
+            combatEntry.setCategory("Combat");
+            combatEntry.setContent(String.valueOf(service.getCombatOutcomes()));
+            combatEntry.setSource("StarshipTroopers");
+            rules.add(combatEntry);
+
+            // Turn phases
+            RulesEntry phaseEntry = new RulesEntry();
+            phaseEntry.setId(id++);
+            phaseEntry.setTitle("Turn Phases");
+            phaseEntry.setCategory("Turn Sequence");
+            phaseEntry.setContent(String.valueOf(service.getTerranTurnPhases()));
+            phaseEntry.setSource("StarshipTroopers");
+            rules.add(phaseEntry);
+
+            // Units
+            for (Unit unit : service.getTerranUnits()) {
+                RulesEntry entry = new RulesEntry();
+                entry.setId(id++);
+                entry.setTitle(unit.name());
+                entry.setCategory("Terran Unit");
+                entry.setContent(unit.description());
+                entry.setSource("StarshipTroopers");
+                rules.add(entry);
+            }
+            for (Unit unit : service.getArachnidUnits()) {
+                RulesEntry entry = new RulesEntry();
+                entry.setId(id++);
+                entry.setTitle(unit.name());
+                entry.setCategory("Arachnid Unit");
+                entry.setContent(unit.description());
+                entry.setSource("StarshipTroopers");
+                rules.add(entry);
+            }
+
+            return rules;
+        }
+
+        @Override
+        public List<RulesEntry> searchRules(String keyword) {
+            return listRules().stream()
+                    .filter(r -> r.getTitle().toLowerCase().contains(keyword.toLowerCase())
+                            || r.getContent().toLowerCase().contains(keyword.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        @Override
+        public RulesEntry getRule(Long id) {
+            return listRules().stream()
+                    .filter(r -> r.getId().equals(id))
+                    .findFirst()
+                    .orElse(null);
+        }
+    }
+}

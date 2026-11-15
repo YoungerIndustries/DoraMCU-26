@@ -7,6 +7,56 @@
     <link rel="stylesheet" href="css/shell.css">
 </head>
 <body>
+    <!-- Login View - D&D Themed Portal -->
+    <div id="login-view" class="login-container">
+      <div class="portal-frame">
+        <div class="portal-arch"></div>
+        <div class="login-card">
+          <div class="warning-sign">
+            <div class="sign-nails">
+              <span class="nail top-left"></span>
+              <span class="nail top-right"></span>
+              <span class="nail bottom-left"></span>
+              <span class="nail bottom-right"></span>
+            </div>
+            <div class="sign-header">⚠ WARNING ⚠</div>
+            <p class="sign-text">
+              YOU STAND AT THE ENTRANCE<br>
+              TO ANOTHER UNIVERSE.<br><br>
+              ONCE YOU WALK THRU THIS DOOR<br>
+              YOU WILL BECOME IMMORTAL.<br><br>
+              STEP THRU THIS DOOR AND THERE<br>
+              BE NOT JUST DRAGONS BUT<br>
+              FAR FAR WORSE.<br><br>
+              <strong>You have been warned</strong>
+            </p>
+          </div>
+
+          <h1 class="login-title">⚔ DoraMCU ⚔</h1>
+          <p class="login-subtitle">Enter the Realm, Adventurer</p>
+
+          <form id="login-form" class="login-form">
+            <div class="form-group">
+              <label for="serverUrl">🌐 Server Realm</label>
+              <input type="text" id="serverUrl" placeholder="http://localhost:8080" class="parchment-input" />
+            </div>
+            <div class="form-group">
+              <label for="username">📜 Adventurer's Name</label>
+              <input type="text" id="username" required placeholder="Enter your username" class="parchment-input" />
+            </div>
+            <div class="form-group">
+              <label for="password">🔮 Secret Incantation</label>
+              <input type="password" id="password" required placeholder="Enter your password" class="parchment-input" />
+            </div>
+            <button type="submit" id="login-btn" class="btn-portal">
+              <span class="btn-text">🚪 Step Through the Portal</span>
+            </button>
+            <p id="login-error" class="login-error hidden">⚠ </p>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <div class="app-container">
         <!-- Sidebar Navigation -->
         <nav class="sidebar">
@@ -26,6 +76,9 @@
                 </li>
                 <li class="nav-item" data-tab="galaxy">
                     <span class="nav-icon">🌌</span> Galaxy
+                </li>
+                <li class="nav-item" data-tab="hud">
+                    <span class="nav-icon">🎯</span> Game HUD
                 </li>
                 <li class="nav-item" data-tab="settings">
                     <span class="nav-icon">⚙️</span> Settings
@@ -186,6 +239,194 @@
                 </div>
             </div>
 
+            <!-- Game HUD Tab -->
+            <div class="tab-content" id="hud">
+                <div class="hud-container" id="hudContainer">
+                    <!-- Top Bar -->
+                    <div class="hud-topbar" id="hudTopBar">
+                        <div class="hud-topbar-left">
+                            <span class="hud-topbar-title">🌐 Unified World</span>
+                            <select class="hud-theme-selector" id="hudThemeSelector" style="display:none">
+                                <option value="">Select Theme...</option>
+                            </select>
+                        </div>
+                        <div class="hud-topbar-right">
+                            <div class="hud-topbar-controls">
+                                <!-- Panel Visibility Toggles -->
+                                <div class="hud-toggle-group">
+                                    <button class="hud-toggle-btn" id="hudToggleLeft" title="Toggle Left Panel">📊</button>
+                                    <button class="hud-toggle-btn" id="hudToggleRight" title="Toggle Right Panel">🎯</button>
+                                    <button class="hud-toggle-btn" id="hudToggleFullscreen3D" title="Fullscreen 3D View">🖥️</button>
+                                </div>
+                                <!-- Voice Control -->
+                                <button class="hud-voice-button" id="hudVoiceButton" title="Voice Command (click to record)">🎤</button>
+                                <!-- Preset Controls -->
+                                <div class="hud-preset-controls">
+                                    <select class="hud-preset-selector" id="hudPresetSelector">
+                                        <option value="">Presets...</option>
+                                    </select>
+                                    <button class="hud-preset-btn" id="hudSavePreset" title="Save Layout Preset">💾</button>
+                                    <button class="hud-preset-btn" id="hudDeletePreset" title="Delete Selected Preset">🗑️</button>
+                                </div>
+                                <!-- Reset Button -->
+                                <button class="hud-reset-btn" id="hudResetLayout" title="Reset to Default Layout">↺</button>
+                            </div>
+                            <span id="hudSessionInfo" style="font-size:12px;color:var(--hud-text-muted)"></span>
+                        </div>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div class="hud-main">
+                        <!-- Left Panel -->
+                        <div class="hud-left-panel" id="hudLeftPanel">
+                            <div class="hud-panel-section">
+                                <div class="hud-panel-header">
+                                    <span>Info</span>
+                                </div>
+                                <div class="hud-panel-body" id="hudInfoPanelBody">
+                                    <div class="hud-empty-state">
+                                        <span class="empty-icon">📊</span>
+                                        <span>Select a theme to begin</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hud-split-handle" id="hudLeftSplit"></div>
+                            <div class="hud-panel-section">
+                                <div class="hud-panel-header">
+                                    <span>Prompt</span>
+                                </div>
+                                <div class="hud-panel-body" id="hudPromptPanelBody">
+                                    <div class="hud-empty-state">
+                                        <span class="empty-icon">💬</span>
+                                        <span>Waiting for prompts...</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hud-resize-handle hud-resize-left" id="hudLeftResize"></div>
+                        </div>
+
+                        <!-- Center 3D View -->
+                        <div class="hud-center-view" id="hud3DView">
+                            <div class="hud-3d-placeholder" id="hud3DPlaceholder">
+                                <span class="placeholder-icon">🖥️</span>
+                                <span>3D view will appear here when a game module is loaded</span>
+                            </div>
+                            <div class="hud-3d-loading" id="hud3DLoading">
+                                <div class="hud-3d-spinner"></div>
+                                <span>Loading 3D view...</span>
+                            </div>
+                            <div class="hud-crosshair" id="hudCrosshair"></div>
+                            <!-- World Map Overlay -->
+                            <div class="hud-world-map-overlay" id="hudWorldMap" style="display:none;">
+                                <canvas id="hudWorldMapCanvas"></canvas>
+                                <div class="hud-world-map-controls">
+                                    <button class="hud-world-map-btn" id="hudWorldMapZoomIn">+</button>
+                                    <button class="hud-world-map-btn" id="hudWorldMapZoomOut">-</button>
+                                    <button class="hud-world-map-btn" id="hudWorldMapReset">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel -->
+                        <div class="hud-right-panel" id="hudRightPanel">
+                            <!-- Module Toggle Panel -->
+                            <div class="hud-panel-section">
+                                <div class="hud-panel-header">
+                                    <span>Module Layers</span>
+                                </div>
+                                <div class="hud-panel-body" id="hudModulesPanelBody">
+                                    <div class="hud-module-toggles" id="hudModuleToggles">
+                                        <!-- Module toggles rendered by unified-world-adapter.js -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hud-split-handle" id="hudRightSplit"></div>
+                            <div class="hud-panel-section">
+                                <div class="hud-panel-header">
+                                    <span>Unified Actions</span>
+                                </div>
+                                <div class="hud-panel-body" id="hudResponsesPanelBody">
+                                    <div class="hud-empty-state">
+                                        <span class="empty-icon">🎯</span>
+                                        <span>Enable modules to see actions</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Event Notifications -->
+                            <div class="hud-panel-section">
+                                <div class="hud-panel-header">
+                                    <span>🔔 Cross-Module Events</span>
+                                </div>
+                                <div class="hud-panel-body" id="hudEventNotifications">
+                                    <div class="hud-empty-state">
+                                        <span class="empty-icon">🔔</span>
+                                        <span>No cross-module events yet</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Quest Log -->
+                            <div class="hud-panel-section">
+                                <div class="hud-panel-header">
+                                    <span>📜 Quest Log</span>
+                                </div>
+                                <div class="hud-panel-body" id="hudQuestLog">
+                                    <div class="hud-empty-state">
+                                        <span class="empty-icon">📜</span>
+                                        <span>No quests available</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hud-panel-section">
+                                <div class="hud-panel-header">
+                                    <span>Event Log</span>
+                                </div>
+                                <div class="hud-panel-body" id="hudActionsPanelBody">
+                                    <div class="hud-empty-state">
+                                        <span class="empty-icon">📜</span>
+                                        <span>No events yet</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Chat Input -->
+                            <div class="hud-panel-section">
+                                <div class="hud-panel-header">
+                                    <span>💬 Command Input</span>
+                                </div>
+                                <div class="hud-panel-body">
+                                    <input type="text" id="hudChatInput" class="hud-chat-input" placeholder="Type a command...">
+                                </div>
+                            </div>
+                            <div class="hud-resize-handle hud-resize-right" id="hudRightResize"></div>
+                        </div>
+                    </div>
+
+                    <!-- Narrative Bottom Bar -->
+                    <div class="hud-narrative-bar" id="hudNarrativeBar">
+                        <div class="hud-narrative-text" id="hudNarrativeText">
+                            <span style="color:var(--hud-text-muted)">The unified world awaits. Enable modules to begin your adventure...</span>
+                        </div>
+                        <div class="hud-narrative-actions">
+                            <button class="hud-action-button" id="hudGenerateNarrative" data-action="generate-narrative">
+                                <span class="hud-action-icon">✨</span>
+                                <span class="hud-action-label">Generate Narrative</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Bar -->
+                    <div class="hud-bottombar" id="hudBottomBar">
+                        <div class="hud-bottombar-left">
+                            <span id="hudStatusText">Ready</span>
+                            <span class="hud-recording-indicator" id="hudRecordingIndicator" style="display:none;"><span class="recording-dot"></span> Recording</span>
+                        </div>
+                        <div class="hud-bottombar-right">
+                            <span class="hud-voice-status" id="hudVoiceStatus"></span>
+                            <span id="hudConnectionStatus">Disconnected</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Settings Tab -->
             <div class="tab-content" id="settings">
                 <div class="tab-header">
@@ -214,6 +455,103 @@
                         <button class="btn btn-danger" id="stopClientBtn">Stop Client</button>
                     </div>
                 </div>
+
+                <!-- Voice Settings Panel -->
+                <div class="card settings-card voice-settings-card" id="voiceSettingsCard">
+                    <h3>🎤 Voice Settings</h3>
+
+                    <!-- Microphone Settings -->
+                    <div class="voice-settings-section">
+                        <h4>Microphone</h4>
+                        <div class="form-group">
+                            <label for="voiceMicSensitivity">Sensitivity</label>
+                            <input type="range" id="voiceMicSensitivity" class="form-range" min="0" max="100" value="50">
+                            <span class="form-range-value" id="voiceMicSensitivityValue">50%</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="voiceMicDevice">Microphone Device</label>
+                            <select id="voiceMicDevice" class="form-select">
+                                <option value="">Default</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-secondary" id="voiceTestMicBtn">🎤 Test Microphone</button>
+                        <span class="voice-status-text" id="voiceMicStatus"></span>
+                    </div>
+
+                    <!-- TTS Settings -->
+                    <div class="voice-settings-section">
+                        <h4>Text-to-Speech</h4>
+                        <div class="form-group">
+                            <label for="voiceTtsVoice">TTS Voice</label>
+                            <select id="voiceTtsVoice" class="form-select">
+                                <option value="">Default</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="voiceTtsVolume">Volume</label>
+                            <input type="range" id="voiceTtsVolume" class="form-range" min="0" max="100" value="80">
+                            <span class="form-range-value" id="voiceTtsVolumeValue">80%</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="voiceTtsSpeed">Speech Speed</label>
+                            <input type="range" id="voiceTtsSpeed" class="form-range" min="50" max="200" value="100">
+                            <span class="form-range-value" id="voiceTtsSpeedValue">1.0x</span>
+                        </div>
+                        <button class="btn btn-secondary" id="voiceTestTtsBtn">🔊 Test TTS</button>
+                        <span class="voice-status-text" id="voiceTtsStatus"></span>
+                    </div>
+
+                    <!-- Voice Profile Selection -->
+                    <div class="voice-settings-section">
+                        <h4>Character Voice Profile</h4>
+                        <div class="form-group">
+                            <label for="voiceProfileSelect">Voice Profile</label>
+                            <select id="voiceProfileSelect" class="form-select">
+                                <option value="">Default Profile</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-secondary" id="voiceLoadProfilesBtn">🔄 Load Profiles</button>
+                        <span class="voice-status-text" id="voiceProfileStatus"></span>
+                    </div>
+
+                    <!-- Feature Toggles -->
+                    <div class="voice-settings-section">
+                        <h4>Features</h4>
+                        <div class="voice-toggle-group">
+                            <label class="voice-toggle-item">
+                                <input type="checkbox" id="voiceEnableCommands" checked>
+                                <span class="voice-toggle-label">Voice Commands</span>
+                                <span class="voice-toggle-desc">Enable voice command recognition</span>
+                            </label>
+                            <label class="voice-toggle-item">
+                                <input type="checkbox" id="voiceEnableTts" checked>
+                                <span class="voice-toggle-label">Auto TTS Playback</span>
+                                <span class="voice-toggle-desc">Automatically speak AI responses</span>
+                            </label>
+                            <label class="voice-toggle-item">
+                                <input type="checkbox" id="voiceEnableWebSocket">
+                                <span class="voice-toggle-label">WebSocket Mode</span>
+                                <span class="voice-toggle-desc">Use WebSocket for lower latency (requires Web Speech API)</span>
+                            </label>
+                            <label class="voice-toggle-item">
+                                <input type="checkbox" id="voiceEnableLocalStt">
+                                <span class="voice-toggle-label">Local STT</span>
+                                <span class="voice-toggle-desc">Use browser speech recognition instead of server</span>
+                            </label>
+                            <label class="voice-toggle-item">
+                                <input type="checkbox" id="voiceEnableCharacterTts" checked>
+                                <span class="voice-toggle-label">Auto-Speak Character Dialogue</span>
+                                <span class="voice-toggle-desc">Automatically play character voice responses in chat</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="voice-settings-actions">
+                        <button class="btn btn-primary" id="voiceSaveSettingsBtn">💾 Save Settings</button>
+                        <button class="btn btn-secondary" id="voiceResetSettingsBtn">↺ Reset to Defaults</button>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -231,7 +569,54 @@
         </div>
     </div>
 
+    <link rel="stylesheet" href="hud/hud.css">
+    <!-- Three.js for 3D scenes -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Electron Desktop Bridge -->
+    <script src="electron-bridge.js"></script>
     <script src="js/auth-service.js"></script>
+    <script src="js/websocket-manager.js"></script>
     <script src="js/game-launcher.js"></script>
+    <script src="hud/hud-controller.js"></script>
+    <script src="hud/3d-scene-renderer.js"></script>
+    <script src="hud/galaxy-map-renderer.js"></script>
+    <script src="hud/fleet-tracker.js"></script>
+    <script src="hud/planet-renderer.js"></script>
+    <script src="hud/presence-manager.js"></script>
+    <script src="hud/resource-pipeline-viz.js"></script>
+    <script src="hud/narrative-viz.js"></script>
+    <script src="hud/performance-monitor.js"></script>
+    <script src="hud/battle-viz.js"></script>
+    <script src="hud/replay-viz.js"></script>
+    <script src="hud/spectator-mode.js"></script>
+    <script src="hud/ship-viewer.js"></script>
+    <script src="hud/economy-viz.js"></script>
+    <script src="hud/scene-persistence.js"></script>
+    <script src="hud/multi-galaxy-nav.js"></script>
+    <script src="hud/spatial-audio.js"></script>
+    <script src="hud/music-player.js"></script>
+    <script src="hud/station-viz.js"></script>
+    <script src="hud/game-ui-profile.js"></script>
+    <script src="hud/unified-game-template.js"></script>
+    <script src="hud/adaptive-3d-view.js"></script>
+    <script src="hud/achievement-manager.js"></script>
+    <script src="hud/game-state-client.js"></script>
+    <script src="hud/unified-game-shell.js"></script>
+    <script src="hud/session-browser.js"></script>
+    <script src="hud/adapters/adapter-base.js"></script>
+    <script src="hud/adapters/earth-2026-adapter.js"></script>
+    <script src="hud/adapters/fps-adapter.js"></script>
+    <script src="hud/adapters/captains-log-adapter.js"></script>
+    <script src="hud/adapters/dnd-adapter.js"></script>
+    <script src="hud/adapters/traveller-adapter.js"></script>
+    <script src="hud/adapters/babylon5-adapter.js"></script>
+    <script src="hud/adapters/star-trek-4x-adapter.js"></script>
+    <script src="hud/adapters/mech-warrior-adapter.js"></script>
+    <script src="hud/adapters/zero-zero-seven-adapter.js"></script>
+    <script src="hud/adapters/star-wars-adapter.js"></script>
+    <script src="hud/adapters/ai-narrative-service.js"></script>
+    <script src="hud/adapters/unified-world-adapter.js"></script>
+    <script src="js/voice-service.js"></script>
+    <script src="js/voice-settings.js"></script>
 </body>
 </html>

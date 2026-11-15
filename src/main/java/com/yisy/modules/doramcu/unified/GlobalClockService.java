@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.unified;
 
+import com.yisy.modules.doramcu.gamecore.GameType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

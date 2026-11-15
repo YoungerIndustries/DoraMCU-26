@@ -1,0 +1,234 @@
+{
+    "id": "zero-zero-seven",
+    "name": "Zero Zero Seven — Spy Operations",
+    "icon": "🕵️",
+    "gameModule": "zero-zero-seven",
+
+    "layout": {
+        "leftPanelWidth": 300,
+        "rightPanelWidth": 320,
+        "leftSplitRatio": 0.4,
+        "rightSplitRatio": 0.5
+    },
+
+    "theme": {
+        "cssVariables": {
+            "--hud-accent-primary": "#dc2626",
+            "--hud-accent-secondary": "#ef4444",
+            "--hud-accent-glow": "rgba(220, 38, 38, 0.15)"
+        },
+        "fontFamily": "'Courier New', 'Lucida Console', monospace",
+        "panelBackground": "#1a0a0a",
+        "accentColor": "#dc2626",
+        "borderColor": "#5f1e1e",
+        "fontColor": "#e2e8f0"
+    },
+
+    "panels": {
+        "info": {
+            "visible": true,
+            "title": "CLASSIFIED — Empire Status",
+            "components": [
+                {
+                    "type": "selector",
+                    "label": "Select Session...",
+                    "dataBinding": "session-select"
+                },
+                {
+                    "type": "selector",
+                    "label": "Select Empire...",
+                    "dataBinding": "empire-select"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Turn",
+                    "dataBinding": "turn-counter"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Intelligence",
+                    "dataBinding": "intelligence-level"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Surveillance",
+                    "dataBinding": "surveillance-coverage"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Active Operations",
+                    "dataBinding": "active-operations"
+                }
+            ]
+        },
+        "prompt": {
+            "visible": true,
+            "title": "Mission Briefing",
+            "components": [
+                {
+                    "type": "narrative-text",
+                    "label": "Select a session to begin your covert operations...",
+                    "dataBinding": "mission-briefing"
+                }
+            ]
+        },
+        "responses": {
+            "visible": true,
+            "title": "Covert Operations",
+            "components": [
+                {
+                    "type": "action-button",
+                    "icon": "🎮",
+                    "label": "Create Session",
+                    "hint": "Start a new spy operations game",
+                    "dataBinding": "action-create-session"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "⏭️",
+                    "label": "Advance Turn",
+                    "hint": "Process operations and diplomacy",
+                    "dataBinding": "action-advance-turn"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "💣",
+                    "label": "Launch Sabotage",
+                    "hint": "Sabotage enemy infrastructure",
+                    "dataBinding": "action-sabotage"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🔫",
+                    "label": "Launch Assassination",
+                    "hint": "Assassinate enemy leader",
+                    "dataBinding": "action-assassination"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🕵️",
+                    "label": "Launch Infiltration",
+                    "hint": "Infiltrate enemy organization",
+                    "dataBinding": "action-infiltration"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "📡",
+                    "label": "Gather Intelligence",
+                    "hint": "Collect intelligence on enemies",
+                    "dataBinding": "action-gather-intel"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🔍",
+                    "label": "Detect Networks",
+                    "hint": "Detect enemy spy networks",
+                    "dataBinding": "action-detect-networks"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🚫",
+                    "label": "Neutralize Network",
+                    "hint": "Destroy detected spy network",
+                    "dataBinding": "action-neutralize-network"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🏢",
+                    "label": "Establish Network",
+                    "hint": "Build spy network in location",
+                    "dataBinding": "action-establish-network"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🏠",
+                    "label": "Build Safehouse",
+                    "hint": "Construct safehouse for network",
+                    "dataBinding": "action-build-safehouse"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "⚔️",
+                    "label": "Declare War",
+                    "hint": "Declare war on enemy empire",
+                    "dataBinding": "action-declare-war"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🕊️",
+                    "label": "Establish Peace",
+                    "hint": "Establish peace with enemy",
+                    "dataBinding": "action-establish-peace"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🤝",
+                    "label": "Create Alliance",
+                    "hint": "Form alliance with another empire",
+                    "dataBinding": "action-create-alliance"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "📋",
+                    "label": "Trade Agreement",
+                    "hint": "Create trade agreement",
+                    "dataBinding": "action-trade-agreement"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "👤",
+                    "label": "Recruit Agent",
+                    "hint": "Recruit a new spy agent",
+                    "dataBinding": "action-recruit-agent"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "📖",
+                    "label": "View Agents",
+                    "hint": "View your agent roster",
+                    "dataBinding": "action-view-agents"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "✨",
+                    "label": "Generate Narrative",
+                    "hint": "AI spy narrative",
+                    "dataBinding": "action-generate-narrative"
+                }
+            ]
+        },
+        "actions": {
+            "visible": true,
+            "title": "Operation Log",
+            "components": [
+                {
+                    "type": "event-log",
+                    "label": "Operation results and intelligence reports",
+                    "dataBinding": "operation-log"
+                },
+                {
+                    "type": "chat-input",
+                    "label": "Enter command (status, operations, intelligence, networks, diplomacy, agents)...",
+                    "dataBinding": "command-input"
+                }
+            ]
+        }
+    },
+
+    "view3D": {
+        "renderer": "threejs",
+        "cameraMode": "third-person",
+        "showCrosshair": false,
+        "showMinimap": false,
+        "sceneConfig": {
+            "theme": "zero-zero-seven",
+            "backgroundColor": 0x0a0a0a,
+            "ambient": { "intensity": 0.2, "color": 0xff4444 },
+            "directional": { "intensity": 0.5, "color": 0xff6644, "x": 3, "y": 8, "z": 3 },
+            "pointLights": [
+                { "color": 0xff2200, "intensity": 1.5, "distance": 15, "x": 0, "y": 4, "z": 0 }
+            ],
+            "camera": { "x": 0, "y": 3, "z": 8, "target": { "x": 0, "y": 1.5, "z": 0 } }
+        }
+    }
+}

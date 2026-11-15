@@ -55,6 +55,13 @@ class AiAdminPersistenceTest {
     private GameSessionService gameSessionService;
     private GalaxyEventService galaxyEventService;
     private GalaxyMetricsService galaxyMetricsService;
+    private PlanetBuilderBridge planetBuilderBridge;
+    private EconomyBridge economyBridge;
+    private TransportBridge transportBridge;
+    private Earth2026CompanionService companionService;
+    private Earth2026FamilyService familyService;
+    private Earth2026ConnectionService connectionService;
+    private Earth2026OrganizationService organizationService;
     private Earth2026Service earth2026Service;
 
     @BeforeEach
@@ -75,13 +82,21 @@ class AiAdminPersistenceTest {
         gameSessionService = mock(GameSessionService.class);
         galaxyEventService = mock(GalaxyEventService.class);
         galaxyMetricsService = mock(GalaxyMetricsService.class);
+        planetBuilderBridge = mock(PlanetBuilderBridge.class);
+        economyBridge = mock(EconomyBridge.class);
+        transportBridge = mock(TransportBridge.class);
+        companionService = mock(Earth2026CompanionService.class);
+        familyService = mock(Earth2026FamilyService.class);
+        connectionService = mock(Earth2026ConnectionService.class);
+        organizationService = mock(Earth2026OrganizationService.class);
 
         earth2026Service = new Earth2026Service(
                 characterRepository, locationRepository, scenarioRepository, structureRepository,
                 countryRepository, regionRepository, economyRepository,
                 jobRepository, contractRepository, planetRepository, aiCharacterRepository,
                 rulesDatabaseService, aiPlayerService, gameSessionService, galaxyEventService,
-                galaxyMetricsService
+                galaxyMetricsService, planetBuilderBridge, economyBridge, transportBridge,
+                companionService, familyService, connectionService, organizationService
         );
     }
 

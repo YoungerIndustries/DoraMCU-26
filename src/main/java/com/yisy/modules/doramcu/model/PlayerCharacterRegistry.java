@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.model;
+import org.springframework.stereotype.Component;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,6 +35,7 @@ import java.time.LocalDateTime;
         @UniqueConstraint(name = "uq_pcr_player_character", columnNames = {"player_id", "character_type", "character_id"})
 })
 @EntityListeners(CdcEntityListener.class)
+@Component
 public class PlayerCharacterRegistry {
 
     @Id

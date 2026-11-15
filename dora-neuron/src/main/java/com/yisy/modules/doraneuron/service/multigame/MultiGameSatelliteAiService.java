@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.service.multigame;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.config.NeuronConfig;
 import com.yisy.modules.doraneuron.config.NeuronPrometheusMetrics;
 import com.yisy.modules.doraneuron.model.NeuronDecision;
@@ -23,6 +25,8 @@ import java.util.Optional;
  * gameId is specified.
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class MultiGameSatelliteAiService {
 
     private static final Logger log = LoggerFactory.getLogger(MultiGameSatelliteAiService.class);

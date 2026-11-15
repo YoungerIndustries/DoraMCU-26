@@ -1,0 +1,152 @@
+{
+  "combat_tables": {
+    "description": "Attack resolution tables for Star Wars tabletop games. Adapted from Legion (ground), X-Wing (space), and Rebellion (galaxy-scale) mechanics.",
+    "ground_combat": {
+      "source": "Star Wars: Legion",
+      "description": "Ground combat uses red (attack) and yellow (defense) dice. Results are modified by range, cover, and unit abilities.",
+      "attack_dice_results": {
+        "hit": "Deals 1 damage to the target. Applied to shields first, then hull.",
+        "glance": "Deals 1 damage, but can be blocked by certain abilities. Less reliable than a hit.",
+        "crit": "Deals 1 damage and triggers a critical effect (e.g., suppression, disruption, or extra damage).",
+        "blank": "No effect."
+      },
+      "defense_dice_results": {
+        "evade": "Removes 1 Hit or Glance from the attack.",
+        "shield": "Removes 1 Hit or Glance. Some units have limited shield tokens.",
+        "blank": "No effect."
+      },
+      "range_modifiers": {
+        "range_1": "Close range — full attack dice, no penalty",
+        "range_2": "Medium range — full attack dice, no penalty (most weapons)",
+        "range_3": "Long range — may reduce attack dice or add penalties"
+      },
+      "cover_modifiers": {
+        "light_cover": "+1 yellow defense dice",
+        "heavy_cover": "+2 yellow defense dice; may block line of sight"
+      },
+      "damage_resolution": {
+        "shields_first": "Damage is applied to shield wounds first. Shield wounds heal during the end phase.",
+        "hull_second": "Once shields are depleted, damage is applied to hull wounds. Hull wounds are permanent until the unit is removed.",
+        "unit_eliminated": "When a unit's hull wounds reach its wound threshold, it is eliminated."
+      }
+    },
+    "space_combat": {
+      "source": "Star Wars: X-Wing",
+      "description": "Space combat uses red (attack) and green (defense) dice. Critical hits impose lasting damage cards.",
+      "attack_dice_results": {
+        "hit": "Deals 1 damage. Assign a face-down damage card to the defending ship.",
+        "crit": "Deals 1 damage and reveals the damage card face-up (critical hit with ongoing effect).",
+        "focus": "Can be converted to a Hit, or used to add 1 green defense dice to a friendly ship.",
+        "blank": "No effect."
+      },
+      "defense_dice_results": {
+        "evade": "Removes 1 Hit or Crit from the attack.",
+        "shield": "If the ship has shields, removes 1 Hit or Crit and does not assign a damage card (shield absorbs it).",
+        "blank": "No effect."
+      },
+      "damage_cards": {
+        "stress": "Ship cannot perform actions next activation (most common face-down result)",
+        "hit": "No ongoing effect — just damage absorption (face-down)",
+        "critical_hits": [
+          "Engine Damage — ship loses maneuverability",
+          "Hull Breach — ship takes extra damage",
+          "Shield Modulator Failure — shields cannot regenerate",
+          "Weapon Malfunction — ship loses attack dice",
+          "Pilot Wounded — pilot skill reduced"
+        ]
+      },
+      "firing_arc_rules": {
+        "front_arc": "Most ships can only attack in their front 120-degree arc",
+        "full_arc": "Some ships (e.g., TIE Defenders, Millennium Falcon) can attack in any direction",
+        "overlap": "Ships cannot overlap at the end of a maneuver; if they do, the later ship is pushed back"
+      }
+    },
+    "galaxy_scale_combat": {
+      "source": "Star Wars: Rebellion",
+      "description": "Galaxy-scale combat uses standard six-sided dice (d6) with tactic card modifiers.",
+      "space_combat": {
+        "description": "Ship-to-ship combat in a star system. Uses attack values from ships and tactic card modifiers.",
+        "steps": [
+          "Attacker declares space combat in a system",
+          "Both players draw or play a space tactic card",
+          "Each player rolls d6s equal to their total ship attack values",
+          "Results of 4, 5, 6 are hits",
+          "Hits are assigned to opposing ships' shields first, then hull",
+          "Destroyed ships are removed"
+        ],
+        "tactic_card_effects": [
+          "Add +1 to all dice rolls",
+          "Reroll 1 die",
+          "Add 1 additional die",
+          "Prevent opponent from rolling certain values",
+          "One in a Million: auto-hit (special card)"
+        ]
+      },
+      "ground_combat": {
+        "description": "Ground combat to determine system loyalty. Winner gains loyalty markers.",
+        "steps": [
+          "Attacker declares ground combat in a system",
+          "Both players draw or play a ground tactic card",
+          "Each player rolls d6s equal to their total ground unit attack values",
+          "Results of 4, 5, 6 are hits",
+          "Player with more hits gains loyalty in the system",
+          "Tie: no change in loyalty"
+        ]
+      },
+      "loyalty_system": {
+        "description": "Systems have loyalty to either the Rebels or the Empire. Loyalty is gained through ground combat and mission completion.",
+        "rebel_system": "System with Rebel loyalty marker — Rebels gain benefits when operating there",
+        "imperial_system": "System with Imperial loyalty marker — Empire gains benefits when operating there",
+        "neutral_system": "System with no loyalty marker — no faction benefits",
+        "subjugated_system": "System fully controlled by one faction — enhanced benefits"
+      }
+    },
+    "rpg_combat": {
+      "source": "Star Wars: Force and Destiny (FFG Narrative Dice)",
+      "description": "RPG combat uses narrative dice pools with success/failure, advantage/threat, and triumph/despair.",
+      "attack_resolution": {
+        "steps": [
+          "Attacker builds a dice pool: Ability dice + weapon proficiency vs Difficulty dice + challenge dice",
+          "Modifiers add boost, advantage, challenge, or despair dice",
+          "Roll the pool and count results",
+          "Success/Failure determines if the attack hits",
+          "Advantage/Threat determines side effects (positioning, openings, danger)",
+          "Triumph/Despair determines major narrative effects"
+        ],
+        "damage": {
+          "lethal": "Blasters and energy weapons — damage strain and health",
+          "force_damage": "Force powers — often bypass strain and deal direct health damage",
+          "strain": "Stress from combat — too much strain causes incapacitation",
+          "health": "Physical wounds — too much health damage causes death"
+        }
+      },
+      "soak_mechanic": {
+        "description": "Defenders can roll soak dice (based on armor and abilities) to reduce damage after a hit.",
+        "steps": [
+          "Attacker's attack deals damage",
+          "Defender rolls soak dice (Ability + armor rating)",
+          "Each Success on soak removes 1 damage",
+          "Armor provides automatic soak (no roll needed)"
+        ]
+      }
+    },
+    "card_game_combat": {
+      "source": "Star Wars: Unlimited",
+      "description": "Card game combat uses unit attack values vs opponent's base HP or unit defense.",
+      "attack_resolution": {
+        "steps": [
+          "Attacker declares attack with a ready unit",
+          "Choose target: opponent's base or a unit",
+          "Deal damage equal to attacker's attack value",
+          "If attacking a unit, defender may assign a blocker",
+          "Damage is applied to base HP or unit HP",
+          "If base HP reaches 0, that player loses the game"
+        ]
+      },
+      "base_hp": {
+        "starting_hp": 30,
+        "description": "Each base starts with approximately 30 HP. Some base cards have abilities that modify this."
+      }
+    }
+  }
+}

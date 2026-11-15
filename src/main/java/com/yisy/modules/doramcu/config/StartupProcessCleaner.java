@@ -5,11 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.lang.ProcessHandle;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Detects and terminates any previously running DoraMCU server instances
@@ -51,7 +51,7 @@ public class StartupProcessCleaner {
         long currentPid = ProcessHandle.current().pid();
         log.info("Current process PID: {}", currentPid);
 
-        int killedCount = 0;
+        final int[] killedCount = {0};
         try {
             ProcessHandle.allProcesses().forEach(process -> {
                 long pid = process.pid();
@@ -62,17 +62,17 @@ public class StartupProcessCleaner {
                 if (isDoraMcuProcess(process)) {
                     log.info("Found DoraMCU process (PID: {}) - attempting graceful shutdown", pid);
                     if (killProcess(process, pid)) {
-                        killedCount++;
+                        killedCount[0]++;
                     }
                 }
             });
 
-            if (killedCount > 0) {
+            if (killedCount[0] > 0) {
                 startupProgressService.completeStep(
                     "process_cleanup",
-                    "Terminated " + killedCount + " previous DoraMCU process(es)"
+                    "Terminated " + killedCount[0] + " previous DoraMCU process(es)"
                 );
-                log.info("Process cleanup complete: terminated {} process(es)", killedCount);
+                log.info("Process cleanup complete: terminated {} process(es)", killedCount[0]);
             } else {
                 startupProgressService.completeStep(
                     "process_cleanup",
@@ -103,7 +103,7 @@ public class StartupProcessCleaner {
 
         // Fallback: check process arguments
         if (info.arguments().isPresent()) {
-            List<String> args = info.arguments().orElse(List.of());
+            String[] args = info.arguments().orElseGet(() -> new String[0]);
             for (String arg : args) {
                 String lower = arg.toLowerCase();
                 if (lower.contains("doramcu")
@@ -132,26 +132,34 @@ public class StartupProcessCleaner {
 
         // Step 2: Wait up to 5 seconds for graceful exit
         try {
-            boolean stopped = process.onExit().await(5, TimeUnit.SECONDS);
-            if (stopped) {
-                log.info("PID {} stopped gracefully", pid);
-                return true;
-            }
+            process.onExit().get(5, TimeUnit.SECONDS);
+            log.info("PID {} stopped gracefully", pid);
+            return true;
+        } catch (TimeoutException e) {
+            // Process didn't stop in time, will force kill below
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.warn("Interrupted while waiting for PID {} to stop", pid);
+        } catch (java.util.concurrent.ExecutionException e) {
+            log.warn("Execution exception waiting for PID {}", pid, e);
         }
 
         // Step 3: Force kill
         log.warn("PID {} did not stop gracefully - force killing", pid);
         process.destroyForcibly();
         try {
-            process.onExit().await(5, TimeUnit.SECONDS);
+            process.onExit().get(5, TimeUnit.SECONDS);
             log.info("PID {} force killed successfully", pid);
             return true;
+        } catch (TimeoutException e) {
+            log.error("PID {} did not terminate even after force kill", pid);
+            return false;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("Failed to force kill PID: {}", pid);
+            return false;
+        } catch (java.util.concurrent.ExecutionException e) {
+            log.error("Execution exception force killing PID: {}", pid, e);
             return false;
         }
     }

@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.sfb.service;
 
+import org.springframework.stereotype.Service;
 import com.yisy.modules.doramcu.sfb.model.*;
 import com.yisy.modules.doramcu.util.DiceUtil;
 
@@ -12,6 +13,8 @@ import java.util.*;
  * targeting, and special system usage.
  * </p>
  */
+
+@Service
 public class SfbAIService {
 
     /**

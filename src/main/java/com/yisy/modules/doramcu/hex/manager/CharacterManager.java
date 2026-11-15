@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.hex.manager;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.Player;
 import com.yisy.modules.doramcu.traveller.AbilityScore;

@@ -1,5 +1,120 @@
 // Client Loader Module for DoraMCU
 // Dynamically loads the appropriate client module based on platform detection
+// Also handles Service Worker registration for PWA offline support
+
+/**
+ * Register the Service Worker for offline-first PWA support.
+ * Handles update detection and prompts the user to reload when a new version is available.
+ */
+async function registerServiceWorker() {
+    if (!('serviceWorker' in navigator)) {
+        console.log('Service Worker not supported in this browser');
+        return;
+    }
+
+    try {
+        const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+        console.log('Service Worker registered with scope:', registration.scope);
+
+        // Check for updates periodically
+        registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+            if (!newWorker) return;
+
+            newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // New Service Worker available — prompt user to reload
+                    showUpdateAvailable();
+                }
+            });
+        });
+
+        // Handle messages from the Service Worker
+        navigator.serviceWorker.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'CACHE_STATUS_RESPONSE') {
+                console.log('Service Worker caches:', event.data.caches);
+            }
+        });
+
+        return registration;
+    } catch (error) {
+        console.warn('Service Worker registration failed:', error);
+        return null;
+    }
+}
+
+/**
+ * Show a notification when a new version is available
+ */
+function showUpdateAvailable() {
+    // Check if notification already exists
+    if (document.getElementById('pwa-update-notification')) {
+        return;
+    }
+
+    const notification = document.createElement('div');
+    notification.id = 'pwa-update-notification';
+    notification.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #2a2a4a;
+        border: 1px solid #00d4ff;
+        border-radius: 8px;
+        padding: 12px 20px;
+        z-index: 10000;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+        color: #e0e6ff;
+    `;
+
+    notification.innerHTML = `
+        <span>🔄 New version available!</span>
+        <button id="reload-update" style="
+            background: #00d4ff;
+            color: #1a1a2e;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        ">Reload</button>
+        <button id="dismiss-update" style="
+            background: transparent;
+            color: #a0a0a0;
+            border: 1px solid #a0a0a0;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        ">Later</button>
+    `;
+
+    document.body.appendChild(notification);
+
+    // Reload button — sends skipWaiting message and reloads
+    document.getElementById('reload-update').addEventListener('click', () => {
+        if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+        }
+        window.location.reload();
+    });
+
+    // Dismiss button
+    document.getElementById('dismiss-update').addEventListener('click', () => {
+        notification.remove();
+    });
+
+    // Auto-dismiss after 30 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 30000);
+}
 
 const ClientLoader = {
     
@@ -157,6 +272,7 @@ const ClientLoader = {
                 font-weight: bold;
                 font-size: 12px;
             ">Download for ${osName}</a>
+            <p id="download-status" style="font-size: 11px; color: #ff6b6b; margin-top: 8px; display: none;"></p>
         `;
         
         document.body.appendChild(offer);
@@ -164,6 +280,39 @@ const ClientLoader = {
         // Close button handler
         document.getElementById('close-offer').addEventListener('click', () => {
             offer.remove();
+        });
+        
+        // Intercept download link to handle errors gracefully
+        document.getElementById('download-native').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const statusEl = document.getElementById('download-status');
+            statusEl.style.display = 'block';
+            statusEl.textContent = 'Checking availability...';
+            
+            try {
+                const response = await fetch(downloadUrl);
+                if (response.ok) {
+                    // Download available — trigger actual download
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `DoraMCU-${os}.exe`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    statusEl.style.display = 'none';
+                } else {
+                    // Server returned error — show message
+                    const errorData = await response.json().catch(() => null);
+                    statusEl.textContent = errorData?.message || 'Client not available yet. Try the web client instead.';
+                    statusEl.style.color = '#ff6b6b';
+                }
+            } catch (err) {
+                statusEl.textContent = 'Network error. Please try again or use the web client.';
+                statusEl.style.color = '#ff6b6b';
+            }
         });
         
         // Auto-hide after 10 seconds

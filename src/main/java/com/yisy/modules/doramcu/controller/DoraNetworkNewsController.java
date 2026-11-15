@@ -121,34 +121,12 @@ public class DoraNetworkNewsController {
         Map<String, Object> item = new java.util.HashMap<>();
         item.put("id", event.getTimestamp().toEpochMilli());
         item.put("type", event.getType().name());
-        item.put("title", formatEventTitle(event));
+        item.put("title", event.getType().formatTitle(event.getGalaxyName()));
         item.put("galaxyName", event.getGalaxyName());
         item.put("timestamp", event.getTimestamp().toString());
         if (!event.getPayload().isEmpty()) {
             item.put("details", event.getPayload());
         }
         return item;
-    }
-
-    /**
-     * Format a human-readable title for an event.
-     */
-    private String formatEventTitle(GalaxyEvent event) {
-        String galaxy = event.getGalaxyName() != null ? event.getGalaxyName() : "Unknown";
-        return switch (event.getType()) {
-            case BUILD_STARTED -> "Galaxy Build Initiated: " + galaxy;
-            case BUILD_COMPLETED -> "Galaxy Build Complete: " + galaxy;
-            case BUILD_FAILED -> "Build Failure Detected: " + galaxy;
-            case SECTOR_GENERATED -> "New Sector Generated in " + galaxy;
-            case GALAXY_CREATED -> "New Galaxy Discovered: " + galaxy;
-            case HEALTH_THRESHOLD_CROSSED -> "Health Alert: " + galaxy;
-            case CHARACTER_TRANSITIONED -> "Character Transitioned to " + galaxy;
-            case WORK_ORDER_CREATED -> "Work Order Created for " + galaxy;
-            case AI_AGENT_DEPLOYED -> "AI Agent Deployed to " + galaxy;
-            case ASSESSMENT_COMPLETED -> "Assessment Complete: " + galaxy;
-            case WORMHOLE_CREATED -> "Wormhole Established: " + galaxy;
-            case WORMHOLE_TRAVEL -> "Wormhole Travel Detected via " + galaxy;
-            case WORMHOLE_TOGGLED -> "Wormhole Status Changed: " + galaxy;
-        };
     }
 }

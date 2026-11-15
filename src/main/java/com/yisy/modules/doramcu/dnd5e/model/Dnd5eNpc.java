@@ -179,6 +179,13 @@ public class Dnd5eNpc {
     @Column(columnDefinition = "TEXT")
     private String dmNotes;
 
+    /**
+     * Whether this NPC is fictional (true) or a real-world animal (false).
+     * Defaults to true for backward compatibility with existing NPCs.
+     */
+    @Column(name = "is_fictional", nullable = false)
+    private boolean isFictional = true;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -400,6 +407,14 @@ public class Dnd5eNpc {
 
     public void setDmNotes(String dmNotes) {
         this.dmNotes = dmNotes;
+    }
+
+    public boolean isFictional() {
+        return isFictional;
+    }
+
+    public void setFictional(boolean fictional) {
+        isFictional = fictional;
     }
 
     public LocalDateTime getCreatedAt() {

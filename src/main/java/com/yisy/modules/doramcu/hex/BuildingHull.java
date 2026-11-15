@@ -1,5 +1,8 @@
 package com.yisy.modules.doramcu.hex;
 
+import com.yisy.modules.doramcu.hex.Decal;
+import com.yisy.modules.doramcu.hex.Skin;
+
 import java.util.*;
 
 /**
@@ -34,6 +37,10 @@ public class BuildingHull {
     private final Map<String, HullModule> floorIdMap;
     private final List<BuildingConnection> connections;
 
+    // ---- Skin support ----
+    private Skin skin;
+    private final List<Decal> decals;
+
     /**
      * Creates a new BuildingHull with the given name.
      *
@@ -46,6 +53,7 @@ public class BuildingHull {
         this.doorways = new HashMap<>();
         this.floorIdMap = new LinkedHashMap<>();
         this.connections = new ArrayList<>();
+        this.decals = new ArrayList<>();
     }
 
     // ---- Accessors ----
@@ -609,6 +617,83 @@ public class BuildingHull {
      */
     public boolean isConnected(String fromFloorId, String toFloorId) {
         return findPath(fromFloorId, toFloorId) != null;
+    }
+
+    // ---- Skin support ----
+
+    /**
+     * Returns the skin currently applied to this building, or null if none.
+     *
+     * @return the skin, or null
+     */
+    public Skin getSkin() {
+        return skin;
+    }
+
+    /**
+     * Applies a skin to this building.
+     *
+     * @param skin the skin to apply
+     */
+    public void setSkin(Skin skin) {
+        this.skin = skin;
+        if (skin != null) {
+            for (Decal decal : skin.getDefaultDecals()) {
+                this.decals.add(new Decal(decal.getId() + "_" + name, decal.getType()));
+                Decal d = this.decals.get(this.decals.size() - 1);
+                d.setContent(decal.getContent());
+                d.setPosition(decal.getPosition());
+                d.setSize(decal.getSize());
+                d.setRotation(decal.getRotation());
+                d.setOpacity(decal.getOpacity());
+                d.setColor(decal.getColor());
+            }
+        }
+    }
+
+    /**
+     * Removes the skin from this building (does not remove decals).
+     */
+    public void removeSkin() {
+        this.skin = null;
+    }
+
+    /**
+     * Returns the list of decals on this building.
+     *
+     * @return unmodifiable list of decals
+     */
+    public List<Decal> getDecals() {
+        return Collections.unmodifiableList(decals);
+    }
+
+    /**
+     * Adds a decal to this building.
+     *
+     * @param decal the decal to add
+     */
+    public void addDecal(Decal decal) {
+        if (decal == null) {
+            throw new IllegalArgumentException("Decal must not be null");
+        }
+        decals.add(decal);
+    }
+
+    /**
+     * Removes a decal from this building.
+     *
+     * @param decal the decal to remove
+     * @return true if the decal was removed
+     */
+    public boolean removeDecal(Decal decal) {
+        return decals.remove(decal);
+    }
+
+    /**
+     * Clears all decals from this building.
+     */
+    public void clearDecals() {
+        decals.clear();
     }
 
     // ---- Object contract ----

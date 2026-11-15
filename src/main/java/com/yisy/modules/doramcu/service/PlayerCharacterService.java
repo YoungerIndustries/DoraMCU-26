@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCrewMember;
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogCrewMemberRepository;
@@ -12,7 +13,6 @@ import com.yisy.modules.doramcu.repository.UserRepository;
 import com.yisy.modules.doramcu.traveller.TravellerCharacter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;

@@ -3,6 +3,7 @@ package com.yisy.modules.doramcu.starshiptroopers.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yisy.modules.doramcu.starshiptroopers.model.*;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,9 +17,10 @@ import java.util.stream.Collectors;
  * and provides typed access to units, scenarios, combat rules, and combat tables.
  * </p>
  */
+@Service
 public class StarshipTroopersService {
 
-    private static final String RESOURCE_PREFIX = "";
+    private static final String RESOURCE_PREFIX = "starship-troopers-rules/";
 
     private final ObjectMapper objectMapper;
     private final List<Unit> terranUnits;
@@ -218,8 +220,7 @@ public class StarshipTroopersService {
                 return labels[i];
             }
         }
-        if (ratio >= 7.0)
-            return "7:1+";
+        // ratio >= 7.0 is unreachable — already caught by ratio >= 6.0 in the loop above
         return "1:6";
     }
 
@@ -317,12 +318,16 @@ public class StarshipTroopersService {
         JsonNode root = loadJson(RESOURCE_PREFIX + "scenarios.json");
         List<Scenario> scenarios = new ArrayList<>();
         for (JsonNode node : root.path("scenarios")) {
+            int id = node.path("id").asInt(0);
+            if (id <= 0) continue; // skip invalid entries
+            String name = node.path("name").asText("");
+            if (name.isBlank()) continue; // skip entries without a name
             scenarios.add(new Scenario(
-                    node.path("id").asInt(),
-                    node.path("name").asText(),
+                    id,
+                    name,
                     node.path("description").asText(""),
                     node.path("difficulty").asText(""),
-                    node.path("turns").asInt(),
+                    node.path("turns").asInt(0),
                     parseStringList(node.path("special_rules")),
                     parseForceMap(node.path("terran_forces")),
                     parseForceMap(node.path("arachnid_forces")),
@@ -342,8 +347,8 @@ public class StarshipTroopersService {
 
     private VictoryConditions parseVictoryConditions(JsonNode node) {
         return new VictoryConditions(
-                node.path("terran_victory").asText(""),
-                node.path("arachnid_victory").asText("")
+                node.path("terran_victory").asText("Defeat all arachnid forces"),
+                node.path("arachnid_victory").asText("Overwhelm human defenses")
         );
     }
 

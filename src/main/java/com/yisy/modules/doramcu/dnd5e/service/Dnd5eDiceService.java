@@ -86,8 +86,7 @@ public class Dnd5eDiceService {
         DiceRollResponse roll2 = rollDice(formula);
 
         int total = Math.max(roll1.getTotal(), roll2.getTotal());
-        List<Integer> allRolls = new ArrayList<>();
-        allRolls.addAll(roll1.getIndividualRolls());
+        List<Integer> allRolls = new ArrayList<>(roll1.getIndividualRolls());
         allRolls.add(roll2.getTotal()); // Add the second roll total for comparison
 
         String description = roll1.getDescription() + " (advantage: " + total + ")";
@@ -102,8 +101,7 @@ public class Dnd5eDiceService {
         DiceRollResponse roll2 = rollDice(formula);
 
         int total = Math.min(roll1.getTotal(), roll2.getTotal());
-        List<Integer> allRolls = new ArrayList<>();
-        allRolls.addAll(roll1.getIndividualRolls());
+        List<Integer> allRolls = new ArrayList<>(roll1.getIndividualRolls());
         allRolls.add(roll2.getTotal());
 
         String description = roll1.getDescription() + " (disadvantage: " + total + ")";

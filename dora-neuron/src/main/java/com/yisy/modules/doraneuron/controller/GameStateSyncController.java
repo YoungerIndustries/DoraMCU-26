@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.controller;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/game-sync")
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class GameStateSyncController {
 
     private static final Logger log = LoggerFactory.getLogger(GameStateSyncController.class);

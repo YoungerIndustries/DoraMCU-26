@@ -1,0 +1,460 @@
+/* Corporation Module Styles - Matches the main client dark theme */
+
+/* Corporation sub-navigation */
+.corp-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.corp-nav-btn {
+  padding: 8px 16px;
+  background: var(--bg-secondary, #1a1a2e);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 6px;
+  color: var(--text-primary, #e0e0e0);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.corp-nav-btn:hover {
+  background: var(--bg-tertiary, #16213e);
+  border-color: var(--accent-color, #0f3460);
+}
+
+.corp-nav-btn.active {
+  background: var(--accent-color, #0f3460);
+  border-color: var(--accent-color, #0f3460);
+  color: #fff;
+}
+
+/* Corporation sections */
+.corp-section {
+  display: none;
+}
+
+.corp-section.active {
+  display: block;
+}
+
+/* Stats grid */
+.corp-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.corp-stat-card {
+  background: var(--bg-secondary, #1a1a2e);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.corp-stat-card .stat-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--accent-color, #0f3460);
+  margin-bottom: 4px;
+}
+
+.corp-stat-card .stat-label {
+  font-size: 12px;
+  color: var(--text-secondary, #888);
+  text-transform: uppercase;
+}
+
+.corp-stat-card.credits .stat-value { color: #2ecc71; }
+.corp-stat-card.salary .stat-value { color: #e74c3c; }
+.corp-stat-card.contracts .stat-value { color: #3498db; }
+.corp-stat-card.crew .stat-value { color: #9b59b6; }
+.corp-stat-card.insolvent .stat-value { color: #e74c3c; }
+
+/* Contract cards */
+.contract-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contract-card {
+  background: var(--bg-secondary, #1a1a2e);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.contract-card .contract-info h4 {
+  margin: 0 0 4px 0;
+  color: var(--text-primary, #e0e0e0);
+}
+
+.contract-card .contract-info .contract-meta {
+  font-size: 12px;
+  color: var(--text-secondary, #888);
+}
+
+.contract-card .contract-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.contract-difficulty {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.contract-difficulty.easy { background: #27ae60; color: #fff; }
+.contract-difficulty.medium { background: #f39c12; color: #fff; }
+.contract-difficulty.hard { background: #e74c3c; color: #fff; }
+
+/* Crew cards */
+.crew-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.crew-card {
+  background: var(--bg-secondary, #1a1a2e);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.crew-card .crew-info h4 {
+  margin: 0 0 4px 0;
+  color: var(--text-primary, #e0e0e0);
+}
+
+.crew-card .crew-info .crew-meta {
+  font-size: 12px;
+  color: var(--text-secondary, #888);
+}
+
+.crew-card .crew-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.crew-position {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+  background: #3498db;
+  color: #fff;
+}
+
+/* Hire form */
+.hire-form {
+  background: var(--bg-secondary, #1a1a2e);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.hire-form h4 {
+  margin: 0 0 12px 0;
+  color: var(--text-primary, #e0e0e0);
+}
+
+.hire-form .form-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.hire-form select,
+.hire-form input {
+  padding: 8px;
+  background: var(--bg-primary, #0a0a1a);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 4px;
+  color: var(--text-primary, #e0e0e0);
+  flex: 1;
+  min-width: 150px;
+}
+
+/* Finance section */
+.finance-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.finance-card {
+  background: var(--bg-secondary, #1a1a2e);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.finance-card .finance-value {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.finance-card .finance-label {
+  font-size: 12px;
+  color: var(--text-secondary, #888);
+  text-transform: uppercase;
+}
+
+.finance-card.revenue .finance-value { color: #2ecc71; }
+.finance-card.expenses .finance-value { color: #e74c3c; }
+.finance-card.profit .finance-value { color: #3498db; }
+
+/* Transaction table */
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+.transaction-table th,
+.transaction-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color, #333);
+}
+
+.transaction-table th {
+  background: var(--bg-secondary, #1a1a2e);
+  color: var(--text-secondary, #888);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.transaction-table td {
+  color: var(--text-primary, #e0e0e0);
+  font-size: 14px;
+}
+
+.transaction-table .credit { color: #2ecc71; }
+.transaction-table .debit { color: #e74c3c; }
+
+/* AI Actions */
+.ai-action-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ai-action-item {
+  background: var(--bg-secondary, #1a1a2e);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ai-action-item .action-info {
+  flex: 1;
+}
+
+.ai-action-item .action-info h4 {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  color: var(--text-primary, #e0e0e0);
+}
+
+.ai-action-item .action-info .action-desc {
+  font-size: 12px;
+  color: var(--text-secondary, #888);
+}
+
+.ai-action-item .action-time {
+  font-size: 11px;
+  color: var(--text-secondary, #888);
+}
+
+.ai-result {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.ai-result.success { background: #27ae60; color: #fff; }
+.ai-result.failed { background: #e74c3c; color: #fff; }
+.ai-result.skipped { background: #7f8c8d; color: #fff; }
+.ai-result.pending { background: #f39c12; color: #fff; }
+
+/* Character stats */
+.character-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.char-stat-card {
+  background: var(--bg-secondary, #1a1a2e);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+
+.char-stat-card .char-stat-value {
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--accent-color, #0f3460);
+}
+
+.char-stat-card .char-stat-label {
+  font-size: 11px;
+  color: var(--text-secondary, #888);
+  text-transform: uppercase;
+}
+
+/* Role switch */
+.role-switch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.role-card {
+  background: var(--bg-secondary, #1a1a2e);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.role-card:hover {
+  border-color: var(--accent-color, #0f3460);
+  transform: translateY(-2px);
+}
+
+.role-card.active {
+  border-color: var(--accent-color, #0f3460);
+  background: var(--bg-tertiary, #16213e);
+}
+
+.role-card .role-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.role-card .role-name {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--text-primary, #e0e0e0);
+}
+
+/* Buttons */
+.btn-sm {
+  padding: 4px 12px;
+  font-size: 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-accept { background: #27ae60; color: #fff; }
+.btn-accept:hover { background: #2ecc71; }
+.btn-fire { background: #e74c3c; color: #fff; }
+.btn-fire:hover { background: #c0392b; }
+.btn-promote { background: #3498db; color: #fff; }
+.btn-promote:hover { background: #2980b9; }
+.btn-demote { background: #f39c12; color: #fff; }
+.btn-demote:hover { background: #e67e22; }
+.btn-hire { background: #9b59b6; color: #fff; }
+.btn-hire:hover { background: #8e44ad; }
+
+/* Loading state */
+.corp-loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary, #888);
+}
+
+/* Empty state */
+.corp-empty {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary, #888);
+  font-style: italic;
+}
+
+/* Notification toast */
+.corp-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+  max-width: 300px;
+}
+
+.corp-toast.success { background: #27ae60; }
+.corp-toast.error { background: #e74c3c; }
+.corp-toast.info { background: #3498db; }
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .corp-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .contract-card,
+  .crew-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .contract-card .contract-actions,
+  .crew-card .crew-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .finance-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .hire-form .form-row {
+    flex-direction: column;
+  }
+}

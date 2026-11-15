@@ -1,0 +1,233 @@
+{
+    "id": "star-wars",
+    "name": "Star Wars — Galaxy at War",
+    "icon": "⭐",
+    "gameModule": "star-wars",
+
+    "layout": {
+        "leftPanelWidth": 300,
+        "rightPanelWidth": 320,
+        "leftSplitRatio": 0.4,
+        "rightSplitRatio": 0.5
+    },
+
+    "theme": {
+        "cssVariables": {
+            "--hud-accent-primary": "#eab308",
+            "--hud-accent-secondary": "#facc15",
+            "--hud-accent-glow": "rgba(234, 179, 8, 0.15)"
+        },
+        "fontFamily": "'Segoe UI', system-ui, -apple-system, sans-serif",
+        "panelBackground": "#0a0a1a",
+        "accentColor": "#eab308",
+        "borderColor": "#3b3b5c",
+        "fontColor": "#f0f0ff"
+    },
+
+    "panels": {
+        "info": {
+            "visible": true,
+            "title": "Galactic Command",
+            "components": [
+                {
+                    "type": "selector",
+                    "label": "Select Faction...",
+                    "dataBinding": "faction-select"
+                },
+                {
+                    "type": "selector",
+                    "label": "Select Unit...",
+                    "dataBinding": "unit-select"
+                },
+                {
+                    "type": "selector",
+                    "label": "Select Scenario...",
+                    "dataBinding": "scenario-select"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Attack",
+                    "dataBinding": "unit-attack"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Defense",
+                    "dataBinding": "unit-defense"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Hull",
+                    "dataBinding": "unit-hull"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Shields",
+                    "dataBinding": "unit-shields"
+                }
+            ]
+        },
+        "prompt": {
+            "visible": true,
+            "title": "Battle Report",
+            "components": [
+                {
+                    "type": "narrative-text",
+                    "label": "Select a scenario to begin...",
+                    "dataBinding": "battle-report"
+                }
+            ]
+        },
+        "responses": {
+            "visible": true,
+            "title": "Galactic Actions",
+            "components": [
+                {
+                    "type": "action-button",
+                    "icon": "🏴",
+                    "label": "Browse Factions",
+                    "hint": "Browse Star Wars factions",
+                    "dataBinding": "action-browse-factions"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "⚔️",
+                    "label": "Browse Units",
+                    "hint": "Browse ground units and starships",
+                    "dataBinding": "action-browse-units"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🗺️",
+                    "label": "Browse Scenarios",
+                    "hint": "Browse battle scenarios",
+                    "dataBinding": "action-browse-scenarios"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "📖",
+                    "label": "Browse Lore",
+                    "hint": "Browse planets, eras, species, events",
+                    "dataBinding": "action-browse-lore"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "✨",
+                    "label": "Force Powers",
+                    "hint": "Browse Light and Dark Side powers",
+                    "dataBinding": "action-browse-force-powers"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🎯",
+                    "label": "Task Attempt",
+                    "hint": "d20 task attempt (DC 12)",
+                    "dataBinding": "action-task-attempt"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "⚔️",
+                    "label": "Attack",
+                    "hint": "Combat round attack",
+                    "dataBinding": "action-attack"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🛡️",
+                    "label": "Defend",
+                    "hint": "Defensive stance",
+                    "dataBinding": "action-defend"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🌀",
+                    "label": "Use Force Power",
+                    "hint": "Force power with modifier",
+                    "dataBinding": "action-force-power"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🎲",
+                    "label": "Roll d6",
+                    "hint": "Roll a d6 die",
+                    "dataBinding": "action-roll-d6"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🎲",
+                    "label": "Roll d20",
+                    "hint": "Roll a d20 die",
+                    "dataBinding": "action-roll-d20"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🎲",
+                    "label": "Roll 2d6",
+                    "hint": "Roll 2d6 dice",
+                    "dataBinding": "action-roll-2d6"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🎬",
+                    "label": "Start Scenario",
+                    "hint": "Begin selected scenario",
+                    "dataBinding": "action-start-scenario"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "⏭️",
+                    "label": "Next Turn",
+                    "hint": "Advance to next turn",
+                    "dataBinding": "action-next-turn"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🎲",
+                    "label": "Generate Encounter",
+                    "hint": "Random encounter",
+                    "dataBinding": "action-generate-encounter"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "✨",
+                    "label": "Generate Narrative",
+                    "hint": "AI Star Wars narrative",
+                    "dataBinding": "action-generate-narrative"
+                }
+            ]
+        },
+        "actions": {
+            "visible": true,
+            "title": "Combat Log",
+            "components": [
+                {
+                    "type": "event-log",
+                    "label": "Combat results and battle events",
+                    "dataBinding": "combat-log"
+                },
+                {
+                    "type": "chat-input",
+                    "label": "Enter command (status, factions, units, scenarios, lore, combat)...",
+                    "dataBinding": "command-input"
+                }
+            ]
+        }
+    },
+
+    "view3D": {
+        "renderer": "threejs",
+        "cameraMode": "third-person",
+        "showCrosshair": false,
+        "showMinimap": false,
+        "sceneConfig": {
+            "theme": "star-wars",
+            "backgroundColor": 0x050510,
+            "ambient": { "intensity": 0.3, "color": 0x4444ff },
+            "directional": { "intensity": 0.6, "color": 0xffffee, "x": 5, "y": 10, "z": 5 },
+            "pointLights": [
+                { "color": 0xffaa00, "intensity": 2.0, "distance": 20, "x": 0, "y": 5, "z": 0 },
+                { "color": 0x00aaff, "intensity": 1.5, "distance": 15, "x": -5, "y": 3, "z": 5 }
+            ],
+            "camera": { "x": 0, "y": 8, "z": 15, "target": { "x": 0, "y": 2, "z": 0 } }
+        }
+    }
+}

@@ -1,0 +1,230 @@
+{
+    "id": "star-trek-4x",
+    "name": "Star Trek 4X Empire Strategy",
+    "icon": "🚀",
+    "gameModule": "star-trek-4x",
+
+    "layout": {
+        "leftPanelWidth": 300,
+        "rightPanelWidth": 320,
+        "leftSplitRatio": 0.4,
+        "rightSplitRatio": 0.5
+    },
+
+    "theme": {
+        "cssVariables": {
+            "--hud-accent-primary": "#1e40af",
+            "--hud-accent-secondary": "#3b82f6",
+            "--hud-accent-glow": "rgba(30, 64, 175, 0.15)"
+        },
+        "fontFamily": "'Segoe UI', system-ui, -apple-system, sans-serif",
+        "panelBackground": "#0a1628",
+        "accentColor": "#1e40af",
+        "borderColor": "#1e3a5f",
+        "fontColor": "#e2e8f0"
+    },
+
+    "panels": {
+        "info": {
+            "visible": true,
+            "title": "Empire Status",
+            "components": [
+                {
+                    "type": "selector",
+                    "label": "Select Session...",
+                    "dataBinding": "session-select"
+                },
+                {
+                    "type": "selector",
+                    "label": "Select Faction...",
+                    "dataBinding": "faction-select"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Turn",
+                    "dataBinding": "turn-counter"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Credits",
+                    "dataBinding": "credits"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Minerals",
+                    "dataBinding": "minerals"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Energy",
+                    "dataBinding": "energy"
+                }
+            ]
+        },
+        "prompt": {
+            "visible": true,
+            "title": "Mission Briefing",
+            "components": [
+                {
+                    "type": "narrative-text",
+                    "label": "Select a session to begin your empire strategy...",
+                    "dataBinding": "mission-briefing"
+                }
+            ]
+        },
+        "responses": {
+            "visible": true,
+            "title": "4X Actions",
+            "components": [
+                {
+                    "type": "action-button",
+                    "icon": "🎮",
+                    "label": "Create Session",
+                    "hint": "Start a new 4X game session",
+                    "dataBinding": "action-create-session"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "⏭️",
+                    "label": "Advance Turn",
+                    "hint": "Process economy, colony growth, and diplomacy",
+                    "dataBinding": "action-advance-turn"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🔭",
+                    "label": "Scan Sector",
+                    "hint": "Scan current sector for systems",
+                    "dataBinding": "action-scan-sector"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "👽",
+                    "label": "First Contact",
+                    "hint": "Initiate first contact with alien species",
+                    "dataBinding": "action-first-contact"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🔬",
+                    "label": "Scientific Mission",
+                    "hint": "Launch scientific research mission",
+                    "dataBinding": "action-scientific-mission"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🏗️",
+                    "label": "Establish Colony",
+                    "hint": "Build a new colony on a system",
+                    "dataBinding": "action-establish-colony"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🏰",
+                    "label": "Build Starbase",
+                    "hint": "Construct a starbase in a system",
+                    "dataBinding": "action-build-starbase"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🚩",
+                    "label": "Claim Sector",
+                    "hint": "Claim ownership of a sector",
+                    "dataBinding": "action-claim-sector"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🚢",
+                    "label": "Establish Trade",
+                    "hint": "Create a trade route between systems",
+                    "dataBinding": "action-establish-trade"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "📚",
+                    "label": "Start Research",
+                    "hint": "Begin technology research",
+                    "dataBinding": "action-start-research"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "⚔️",
+                    "label": "Deploy Fleet",
+                    "hint": "Deploy fleet to a system",
+                    "dataBinding": "action-deploy-fleet"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "💥",
+                    "label": "Engage Fleet",
+                    "hint": "Engage enemy fleet in combat",
+                    "dataBinding": "action-engage-fleet"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🪖",
+                    "label": "Planetary Invasion",
+                    "hint": "Launch ground invasion on a system",
+                    "dataBinding": "action-planetary-invasion"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🔴",
+                    "label": "Declare War",
+                    "hint": "Declare war on another faction",
+                    "dataBinding": "action-declare-war"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🕊️",
+                    "label": "Establish Peace",
+                    "hint": "Establish peace with another faction",
+                    "dataBinding": "action-establish-peace"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "📜",
+                    "label": "Create Treaty",
+                    "hint": "Create a treaty with another faction",
+                    "dataBinding": "action-create-treaty"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "👤",
+                    "label": "Create Character",
+                    "hint": "Create a new SFB character",
+                    "dataBinding": "action-create-character"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "📥",
+                    "label": "Import Character",
+                    "hint": "Import character from Captain's Log",
+                    "dataBinding": "action-import-character"
+                }
+            ]
+        },
+        "actions": {
+            "visible": true,
+            "title": "Event Log",
+            "components": [
+                {
+                    "type": "event-log",
+                    "dataBinding": "event-log"
+                },
+                {
+                    "type": "chat-input",
+                    "label": "Enter command or search...",
+                    "dataBinding": "chat-input"
+                }
+            ]
+        }
+    },
+
+    "view3D": {
+        "renderer": "threejs",
+        "cameraMode": "third-person",
+        "showCrosshair": false,
+        "showMinimap": false
+    }
+}

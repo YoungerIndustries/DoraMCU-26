@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.hex;
+import org.springframework.stereotype.Component;
 
 /**
  * Factory for creating galaxy configurations in DoraMCU.

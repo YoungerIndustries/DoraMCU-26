@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.dto.GenerateMissionRequest;
 import com.yisy.modules.doramcu.captainslog.dto.GeneratedMissionResponse;
@@ -66,8 +67,13 @@ public class AIMissionService {
                 .orElseThrow(() -> new IllegalArgumentException("Character not found: " + request.getCharacterId()));
 
         // Force lazy initialization of collections while still in transaction
-        if (character.getFocuses() != null) character.getFocuses().size();
-        if (character.getValues() != null) character.getValues().size();
+        // (size() result intentionally ignored ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â only triggers Hibernate loading)
+        if (character.getFocuses() != null) {
+            character.getFocuses().size();
+        }
+        if (character.getValues() != null) {
+            character.getValues().size();
+        }
 
         // Fetch mission history
         List<CaptainLogMission> missionHistory = missionRepository

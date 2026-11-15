@@ -295,7 +295,6 @@ public class MarineUnit {
         if (casualties <= 0) return 0;
         int actual = Math.min(casualties, remainingMarines);
         remainingMarines -= actual;
-        if (remainingMarines < 0) remainingMarines = 0;
         return actual;
     }
 

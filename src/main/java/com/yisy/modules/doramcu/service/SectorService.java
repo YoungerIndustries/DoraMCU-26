@@ -4,6 +4,7 @@ import com.yisy.modules.doramcu.dto.SectorRequest;
 import com.yisy.modules.doramcu.dto.SectorResponse;
 import com.yisy.modules.doramcu.traveller.*;
 
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,135 @@ public class SectorService {
     private final Map<Integer, TravellerSector> sectors = new HashMap<>();
     private final Map<Integer, TravellerWorld> allWorlds = new HashMap<>();
     private final AtomicInteger sectorIdCounter = new AtomicInteger(1);
+
+    @PostConstruct
+    public void init() {
+        log.info("Initializing SectorService with seed sectors...");
+        generateSeedSectors();
+        log.info("SectorService initialized with {} seed sectors", sectors.size());
+    }
+
+    /**
+     * Generates seed sectors including the Earth solar system and other key sectors.
+     */
+    private void generateSeedSectors() {
+        Random random = new Random(42);
+        SectorGenerator generator = new SectorGenerator(random);
+
+        // Generate the Core Sphere sectors (Traveller's Core Sphere)
+        String[] coreSphereSectors = {
+            "Albion", "Argo", "Core", "Deneb", "Far Space",
+            "Flaming Sword", "Gor", "Lone Mountain", "Magellan", "Mayen",
+            "Olin", "Rokuga", "Sparta", "Spinward Marches", "Third Pride",
+            "Vland", "Witch Space", "Yukon", "Zoo"
+        };
+
+        // Generate Core Sphere sectors
+        for (String sectorName : coreSphereSectors) {
+            int sectorId = sectorIdCounter.getAndIncrement();
+            TravellerSector sector = generator.generate(sectorName, sectorId);
+            sectors.put(sectorId, sector);
+            for (TravellerWorld world : sector.getAllWorlds()) {
+                allWorlds.put(world.getId(), world);
+            }
+        }
+        log.info("Generated {} Core Sphere sectors", coreSphereSectors.length);
+
+        // Generate the Sol System (Earth's Solar System) - real planets, not random
+        int solSectorId = sectorIdCounter.getAndIncrement();
+        TravellerSector solSector = new TravellerSector(solSectorId, "Sol");
+        int worldIdCounter = 10000; // Start Sol system worlds at ID 10000
+
+        // Sun - G2V yellow dwarf star
+        TravellerWorld sun = new TravellerWorld(
+            worldIdCounter++, "Sol (Sun)", UniversalWorldProfile.parse("00000000"), 5, 5, false, false
+        );
+        solSector.addWorld(sun);
+
+        // Mercury - small, no atmosphere, no population
+        TravellerWorld mercury = new TravellerWorld(
+            worldIdCounter++, "Mercury", UniversalWorldProfile.parse("00000000"), 3, 4, false, false
+        );
+        solSector.addWorld(mercury);
+
+        // Venus - thick toxic atmosphere, no population
+        TravellerWorld venus = new TravellerWorld(
+            worldIdCounter++, "Venus", UniversalWorldProfile.parse("38000000"), 4, 3, false, false
+        );
+        solSector.addWorld(venus);
+
+        // Earth - our home world, terran, breathable, 1G, high population, democratic
+        TravellerWorld earth = new TravellerWorld(
+            worldIdCounter++, "Earth", UniversalWorldProfile.parse("34565432"), 5, 5, true, true
+        );
+        solSector.addWorld(earth);
+
+        // Mars - thin atmosphere, low gravity, some population
+        TravellerWorld mars = new TravellerWorld(
+            worldIdCounter++, "Mars", UniversalWorldProfile.parse("23443210"), 6, 6, false, false
+        );
+        solSector.addWorld(mars);
+
+        // Jupiter - gas giant
+        TravellerWorld jupiter = new TravellerWorld(
+            worldIdCounter++, "Jupiter", UniversalWorldProfile.parse("A0000000"), 7, 7, false, false
+        );
+        solSector.addWorld(jupiter);
+
+        // Saturn - gas giant with rings
+        TravellerWorld saturn = new TravellerWorld(
+            worldIdCounter++, "Saturn", UniversalWorldProfile.parse("A0000000"), 8, 8, false, false
+        );
+        solSector.addWorld(saturn);
+
+        // Uranus - ice giant
+        TravellerWorld uranus = new TravellerWorld(
+            worldIdCounter++, "Uranus", UniversalWorldProfile.parse("90000000"), 3, 7, false, false
+        );
+        solSector.addWorld(uranus);
+
+        // Neptune - ice giant
+        TravellerWorld neptune = new TravellerWorld(
+            worldIdCounter++, "Neptune", UniversalWorldProfile.parse("90000000"), 2, 8, false, false
+        );
+        solSector.addWorld(neptune);
+
+        // Pluto - dwarf planet
+        TravellerWorld pluto = new TravellerWorld(
+            worldIdCounter++, "Pluto", UniversalWorldProfile.parse("00000000"), 1, 9, false, false
+        );
+        solSector.addWorld(pluto);
+
+        // Add hyperlanes between adjacent planets
+        TravellerWorld[] solWorlds = {sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, pluto};
+        for (int i = 0; i < solWorlds.length - 1; i++) {
+            solSector.addHyperlane(solWorlds[i], solWorlds[i + 1]);
+        }
+
+        sectors.put(solSectorId, solSector);
+        for (TravellerWorld world : solSector.getAllWorlds()) {
+            allWorlds.put(world.getId(), world);
+        }
+        log.info("Generated Sol System with {} real planets (Earth as capital)", solSector.getWorldCount());
+
+        // Generate additional sectors for the galaxy map
+        String[] additionalSectors = {
+            "Crucis", "Hypatia", "Krescent", "Lagrange", "Mongrels",
+            "Nikopol", "Oltua", "Rozzz", "Segin", "Tauri",
+            "Urantia", "Vargr", "Wyrden", "Xincob", "Yarman",
+            "Zenu", "Alducard", "Bellerophon", "Cataleya", "Denebola"
+        };
+
+        for (String sectorName : additionalSectors) {
+            int sectorId = sectorIdCounter.getAndIncrement();
+            TravellerSector sector = generator.generate(sectorName, sectorId);
+            sectors.put(sectorId, sector);
+            for (TravellerWorld world : sector.getAllWorlds()) {
+                allWorlds.put(world.getId(), world);
+            }
+        }
+        log.info("Generated {} additional sectors", additionalSectors.length);
+    }
 
     /**
      * Generates a new random sector.
@@ -85,6 +215,12 @@ public class SectorService {
             response.setHyperlaneCount(sector.getHyperlaneCount());
             TravellerWorld capital = sector.getCapitalWorld();
             response.setCapitalWorld(capital != null ? capital.getName() : null);
+            // Include world summaries for drill-down capability
+            List<SectorResponse.WorldSummary> worldSummaries = new ArrayList<>();
+            for (TravellerWorld world : sector.getAllWorlds()) {
+                worldSummaries.add(toWorldSummary(world));
+            }
+            response.setWorlds(worldSummaries);
             responses.add(response);
         }
         return responses;

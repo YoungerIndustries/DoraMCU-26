@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.dto.*;
 import com.yisy.modules.doramcu.captainslog.model.*;
@@ -17,14 +18,14 @@ import java.util.concurrent.atomic.AtomicLong;
  * <p>
  * The lifepath guides the player through 8 narrative steps that build the character:
  * <ol>
- *   <li><b>Name & Species</b> — Who are you?</li>
- *   <li><b>Background</b> — Where did you grow up? (Environment)</li>
- *   <li><b>Outlook</b> — How do you see the world?</li>
- *   <li><b>Education</b> — What training did you receive?</li>
- *   <li><b>Attributes</b> — Roll and assign your core stats.</li>
- *   <li><b>Disciplines</b> — Choose your area of expertise.</li>
- *   <li><b>Focuses</b> — Specialize within your disciplines.</li>
- *   <li><b>Values</b> — What principles guide you?</li>
+ *   <li><b>Name & Species</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Who are you?</li>
+ *   <li><b>Background</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Where did you grow up? (Environment)</li>
+ *   <li><b>Outlook</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â How do you see the world?</li>
+ *   <li><b>Education</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â What training did you receive?</li>
+ *   <li><b>Attributes</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Roll and assign your core stats.</li>
+ *   <li><b>Disciplines</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Choose your area of expertise.</li>
+ *   <li><b>Focuses</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Specialize within your disciplines.</li>
+ *   <li><b>Values</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â What principles guide you?</li>
  * </ol>
  * </p>
  * <p>
@@ -721,7 +722,7 @@ public class LifepathService {
     private LifepathStepResponse buildStep8(LifepathSession session) {
         String narrative = String.format(
             "Finally, %s must define the core values that guide your actions. " +
-            "Choose one value — these principles will shape your decisions throughout your career.", session.name
+            "Choose one value ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â these principles will shape your decisions throughout your career.", session.name
         );
 
         List<LifepathChoice> choices = new ArrayList<>();

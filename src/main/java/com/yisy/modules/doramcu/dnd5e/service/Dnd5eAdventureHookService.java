@@ -1,11 +1,11 @@
 package com.yisy.modules.doramcu.dnd5e.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.dnd5e.model.Dnd5eAdventureHook;
 import com.yisy.modules.doramcu.dnd5e.model.Dnd5eCharacter;
 import com.yisy.modules.doramcu.dnd5e.repository.Dnd5eAdventureHookRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -41,7 +41,7 @@ public class Dnd5eAdventureHookService {
 
     // ==================== Hook CRUD ====================
 
-    @Transactional
+    // Called from @Transactional methods â€” relies on their transaction
     public Dnd5eAdventureHook createHook(Dnd5eAdventureHook hook) {
         log.info("Creating adventure hook: {}", hook.getName());
         return hookRepository.save(hook);
@@ -334,7 +334,7 @@ public class Dnd5eAdventureHookService {
 
         hooks.add(createHook("The Forgotten Oath", "Personal", "High Magic", "Eventual",
                 null, null, "Cleric",
-                "In your dreams, your deity speaks to you of an oath you swore long ago — or perhaps one you will " +
+                "In your dreams, your deity speaks to you of an oath you swore long ago â€” or perhaps one you will " +
                 "swear. A sacred relic has been stolen from your temple, and only you can sense its fading power. " +
                 "The relic's trail leads through places of great magical significance.",
                 "The relic was stolen by a rival faith or a cult seeking to corrupt its power. " +
@@ -343,14 +343,14 @@ public class Dnd5eAdventureHookService {
         hooks.add(createHook("Family Secrets", "Personal", "Mystery", "Soon",
                 "Noble", null, null,
                 "Your family's ancestral home has been sealed for generations, but a recent earthquake has cracked " +
-                "the doors open. Inside, you find evidence that your family's wealth and power were built on a lie — " +
+                "the doors open. Inside, you find evidence that your family's wealth and power were built on a lie â€” " +
                 "or a secret pact with something that is now demanding payment.",
                 "The family secret involves a pact with a fey, devil, or ancient entity. " +
                 "The debt is coming due, and the family must either pay or find a way to break the pact.", 3, 15));
 
         hooks.add(createHook("The Stolen Name", "Personal", "Supernatural", "Immediate",
                 null, "Elf", null,
-                "You wake to find that your true elven name — the one only your kindred know — has been stolen. " +
+                "You wake to find that your true elven name â€” the one only your kindred know â€” has been stolen. " +
                 "Without it, you feel incomplete, your magic weakened. A shadowy figure was seen near your dwelling, " +
                 "whispering in the Old Tongue. Someone is collecting elven names for a ritual.",
                 "A rival elf or outsider is collecting true names to bind elven spirits. " +
@@ -363,7 +363,7 @@ public class Dnd5eAdventureHookService {
                 "The king summons you to court with a secret mission: a neighboring kingdom is plotting invasion, " +
                 "and you're to infiltrate their court and gather intelligence. But the real danger is the traitor " +
                 "within your own kingdom who is feeding information to the enemy.",
-                "The traitor is someone close to the noble — a mentor, sibling, or trusted advisor. " +
+                "The traitor is someone close to the noble â€” a mentor, sibling, or trusted advisor. " +
                 "The neighboring kingdom's plans are more complex than a simple invasion.", 5, 20));
 
         hooks.add(createHook("Guild Wars", "Political", "Combat", "Immediate",
@@ -377,8 +377,8 @@ public class Dnd5eAdventureHookService {
         hooks.add(createHook("The Merchant's Plight", "Political", "Exploration", "Eventual",
                 "Merchant", null, null,
                 "A wealthy merchant offers a fortune to escort a caravan through the Wildlands. But the route passes " +
-                "through territories controlled by rival factions, and the merchant's cargo is far more valuable — " +
-                "and dangerous — than they've let on.",
+                "through territories controlled by rival factions, and the merchant's cargo is far more valuable â€” " +
+                "and dangerous â€” than they've let on.",
                 "The cargo contains magical artifacts, stolen goods, or something alive. " +
                 "Each faction along the route has their own agenda and will stop at nothing to claim the cargo.", 1, 10));
 
@@ -386,7 +386,7 @@ public class Dnd5eAdventureHookService {
 
         hooks.add(createHook("The Vanishing Village", "Mystery", "Horror", "Immediate",
                 null, null, null,
-                "An entire village has disappeared overnight. No bodies, no signs of struggle — just empty homes " +
+                "An entire village has disappeared overnight. No bodies, no signs of struggle â€” just empty homes " +
                 "with meals still warm on the tables. The only clue is a strange symbol carved into the town square, " +
                 "pulsing with faint magical energy. Other villages along the same trade route are reporting nightmares.",
                 "A fey entity or planar rift is consuming the villages. The symbol is a beacon. " +
@@ -394,10 +394,10 @@ public class Dnd5eAdventureHookService {
 
         hooks.add(createHook("The Alchemist's Formula", "Mystery", "High Magic", "Soon",
                 null, null, "Wizard",
-                "A renowned alchemist is found dead in their laboratory, and their life's work — a formula for a " +
-                "potion that could cure any disease — is missing. Multiple parties are searching for the formula, " +
+                "A renowned alchemist is found dead in their laboratory, and their life's work â€” a formula for a " +
+                "potion that could cure any disease â€” is missing. Multiple parties are searching for the formula, " +
                 "including the alchemist's apprentices, a rival guild, and a shadowy organization that funded the research.",
-                "The formula was never completed — the alchemist discovered it required a terrible ingredient. " +
+                "The formula was never completed â€” the alchemist discovered it required a terrible ingredient. " +
                 "The real mystery is who killed the alchemist and why.", 3, 15));
 
         hooks.add(createHook("The Whispering Library", "Mystery", "High Magic", "Eventual",
@@ -420,16 +420,16 @@ public class Dnd5eAdventureHookService {
 
         hooks.add(createHook("The Dragon's Wake", "Combat", "Sandbox", "Immediate",
                 null, "Dragonborn", null,
-                "A dragon has been sighted in the region, and villages are burning. But this dragon is different — " +
+                "A dragon has been sighted in the region, and villages are burning. But this dragon is different â€” " +
                 "it speaks your language, and it's calling for Dragonborn to come to it. It claims to have a message " +
                 "from Tiamat herself, and it offers power to those who listen.",
-                "The dragon is either a true messenger of Tiamat or an imposter — a dracolich or doppelganger. " +
+                "The dragon is either a true messenger of Tiamat or an imposter â€” a dracolich or doppelganger. " +
                 "Other Dragonborn have already gone, and their fate is uncertain.", 5, 20));
 
         hooks.add(createHook("The Undead Army", "Combat", "Horror", "Immediate",
                 null, null, "Paladin",
                 "The dead are rising across the countryside, and your order has been called to defend the living. " +
-                "But the undead aren't mindless — they're organized, led by commanders who were once your allies. " +
+                "But the undead aren't mindless â€” they're organized, led by commanders who were once your allies. " +
                 "Something is turning the fallen into weapons, and it's spreading.",
                 "A necromancer of immense power is raising the dead, but the source is a corrupted holy relic. " +
                 "The paladin's own order may have inadvertently caused the outbreak.", 3, 15));
@@ -440,7 +440,7 @@ public class Dnd5eAdventureHookService {
                 "too strong for infantry, and it seems to learn from every battle. The military needs adventurers " +
                 "who can track and kill the beast before it reaches the nearest city.",
                 "The beast is a mutated creature, a construct, or something from another plane. " +
-                "It may be connected to a larger threat — a weapon, an experiment, or an invasion.", 1, 12));
+                "It may be connected to a larger threat â€” a weapon, an experiment, or an invasion.", 1, 12));
 
         // ==================== Exploration Hooks ====================
 
@@ -449,7 +449,7 @@ public class Dnd5eAdventureHookService {
                 "Ancient maps speak of a city that sank beneath the waves centuries ago, filled with treasures " +
                 "beyond imagination. Recently, divers have reported seeing lights beneath the surface, and fishermen " +
                 "speak of a song that draws them underwater. The city is waking up.",
-                "The city was sealed for a reason — an ancient evil or a powerful artifact. " +
+                "The city was sealed for a reason â€” an ancient evil or a powerful artifact. " +
                 "The lights and song are a lure, drawing victims to awaken whatever sleeps below.", 1, 15));
 
         hooks.add(createHook("The Feywild Border", "Exploration", "Feywild", "Soon",
@@ -465,7 +465,7 @@ public class Dnd5eAdventureHookService {
                 "An expedition into the uncharted wilderness has gone silent. Their last message mentioned ancient " +
                 "ruins, strange creatures, and a discovery that could change the world. A rescue party is needed, " +
                 "but the wilderness itself seems to be fighting back.",
-                "The expedition found something they shouldn't have — a portal, an artifact, or a sleeping entity. " +
+                "The expedition found something they shouldn't have â€” a portal, an artifact, or a sleeping entity. " +
                 "The wilderness is protected by ancient wards and creatures.", 1, 10));
 
         // ==================== Social Hooks ====================
@@ -480,7 +480,7 @@ public class Dnd5eAdventureHookService {
 
         hooks.add(createHook("The Diplomatic Crisis", "Social", "Sandbox", "Soon",
                 "Noble", null, null,
-                "An ambassador from a distant kingdom has arrived with an offer of peace — or so they claim. " +
+                "An ambassador from a distant kingdom has arrived with an offer of peace â€” or so they claim. " +
                 "But their entourage includes spies, assassins, and agents of chaos. The ambassador's true goal " +
                 "is to destabilize the kingdom from within, and they're using the diplomatic proceedings as cover.",
                 "The ambassador is either a master manipulator or a pawn of a larger power. " +
@@ -489,7 +489,7 @@ public class Dnd5eAdventureHookService {
         hooks.add(createHook("The Heist of the Century", "Social", "Steampunk", "Immediate",
                 "Criminal", null, null,
                 "A legendary artifact is being transported through the city, and every criminal organization wants it. " +
-                "The job is impossible — or so everyone says. But you've been hired by someone who knows the route, " +
+                "The job is impossible â€” or so everyone says. But you've been hired by someone who knows the route, " +
                 "the guards, and the secrets of the artifact. The catch: your employer may be working for the enemy.",
                 "The artifact is a magical or technological device of immense power. " +
                 "Multiple factions are planning heists simultaneously, creating chaos and opportunity.", 3, 15));
@@ -516,7 +516,7 @@ public class Dnd5eAdventureHookService {
                 null, null, "Cleric",
                 "A god has descended to the Material Plane, but not in their true form. They appear as a mortal, " +
                 "seeking help for a problem that even divine power cannot solve. Other gods are watching, and their " +
-                "agents — both allies and enemies — will interfere with your quest to help the fallen deity.",
+                "agents â€” both allies and enemies â€” will interfere with your quest to help the fallen deity.",
                 "The god was wounded or trapped by a greater power. Their mortal form is vulnerable. " +
                 "Other gods have conflicting agendas, and the characters must navigate divine politics.", 5, 20));
 
@@ -532,15 +532,15 @@ public class Dnd5eAdventureHookService {
 
         hooks.add(createHook("The Deep Delve", "Exploration", "Dungeon Crawl", "Eventual",
                 null, "Dwarf", null,
-                "Dwarven legends speak of a deep delve — a mine that goes deeper than any other, reaching the " +
+                "Dwarven legends speak of a deep delve â€” a mine that goes deeper than any other, reaching the " +
                 "heart of the mountain where the first dwarves forged their weapons. Recently, tremors have opened " +
-                "a new passage, and the sounds of machinery — ancient machinery — can be heard from below.",
+                "a new passage, and the sounds of machinery â€” ancient machinery â€” can be heard from below.",
                 "The deep delve contains ancient dwarven technology, traps, and guardians. " +
                 "Something woke the machinery, and it's not friendly.", 1, 15));
 
         hooks.add(createHook("The Tomb of the Forgotten King", "Exploration", "Dungeon Crawl", "Soon",
                 "Sage", null, null,
-                "Historical records mention a king who was erased from history — no monuments, no descendants, " +
+                "Historical records mention a king who was erased from history â€” no monuments, no descendants, " +
                 "no mention in any chronicle. But you've found evidence of a tomb, hidden beneath a ruined temple. " +
                 "The king was forgotten for a reason, and his tomb is protected by wards that have held for millennia.",
                 "The king was a tyrant, a warlock, or a vessel for an ancient evil. " +
@@ -550,7 +550,7 @@ public class Dnd5eAdventureHookService {
                 null, null, "Wizard",
                 "Rumors speak of a lich who has been gathering power in a hidden lair. The undead in the region " +
                 "are growing bolder, and magic itself feels corrupted near the lair's location. Other adventurers " +
-                "have entered — none have returned. The lich is close to completing a ritual that will change everything.",
+                "have entered â€” none have returned. The lich is close to completing a ritual that will change everything.",
                 "The lich's lair is a dungeon of magical traps, undead guardians, and planar anomalies. " +
                 "The ritual will open a portal, raise an army, or transform the lich into something greater.", 5, 20));
 
@@ -559,15 +559,15 @@ public class Dnd5eAdventureHookService {
         hooks.add(createHook("The Airship Heist", "Combat", "Steampunk", "Immediate",
                 null, null, null,
                 "A luxury airship carrying the region's elite is flying a route through dangerous skies. " +
-                "You've been hired to protect it — or to board it and steal the most valuable passenger. " +
+                "You've been hired to protect it â€” or to board it and steal the most valuable passenger. " +
                 "Either way, the skies are filled with enemies, and the airship's secrets run deep.",
-                "The airship carries more than passengers — experimental weapons, stolen artifacts, or a captive entity. " +
+                "The airship carries more than passengers â€” experimental weapons, stolen artifacts, or a captive entity. " +
                 "Sky pirates, rival nations, and supernatural threats all want what's on board.", 3, 15));
 
         hooks.add(createHook("The Clockwork City", "Exploration", "Steampunk", "Eventual",
                 null, null, null,
                 "Legends speak of a city built entirely of clockwork and steam, hidden in a valley shrouded in perpetual fog. " +
-                "Recently, the fog has lifted, revealing the city's spires — and the fact that it's still running, " +
+                "Recently, the fog has lifted, revealing the city's spires â€” and the fact that it's still running, " +
                 "manned by automatons that have been waiting centuries for visitors.",
                 "The city was abandoned after a catastrophe, but its systems still function. " +
                 "The automatons follow their last orders, and the city's core holds a power source of immense potential.", 1, 15));
@@ -576,7 +576,7 @@ public class Dnd5eAdventureHookService {
 
         hooks.add(createHook("The Fey Bargain", "Social", "Feywild", "Soon",
                 null, "Elf", null,
-                "A fey noble offers you a boon — power, wealth, or knowledge beyond mortal comprehension. " +
+                "A fey noble offers you a boon â€” power, wealth, or knowledge beyond mortal comprehension. " +
                 "The price seems small: a simple task, a trinket, a promise. But fey bargains are never what they seem, " +
                 "and the true cost will only become clear when it's too late to back out.",
                 "The fey noble's true goal is to use the characters as pawns in a fey conflict. " +
@@ -584,7 +584,7 @@ public class Dnd5eAdventureHookService {
 
         hooks.add(createHook("The Wild Hunt", "Combat", "Feywild", "Immediate",
                 null, null, null,
-                "The Wild Hunt has been sighted in the region — a spectral procession of riders on horseback, " +
+                "The Wild Hunt has been sighted in the region â€” a spectral procession of riders on horseback, " +
                 "led by a horned figure who hunts anything in their path. Those caught in the Hunt are dragged to " +
                 "the Feywild, never to return. The Hunt is growing bolder, and the material world is in danger.",
                 "The Wild Hunt has crossed into the material plane due to a breach or a summons. " +
@@ -594,7 +594,7 @@ public class Dnd5eAdventureHookService {
 
         hooks.add(createHook("The Plague Bearer", "Personal", "Horror", "Immediate",
                 null, null, "Cleric",
-                "A plague is spreading through the region, and the local clergy blame you — or your order — for bringing it. " +
+                "A plague is spreading through the region, and the local clergy blame you â€” or your order â€” for bringing it. " +
                 "The plague's symptoms are unnatural: victims speak in tongues, their eyes glow, and they don't die. " +
                 "You must find the source and clear your name before the mob comes for you.",
                 "The plague is a magical or divine curse, not a natural disease. " +
@@ -610,7 +610,7 @@ public class Dnd5eAdventureHookService {
 
         hooks.add(createHook("The Monster's Lure", "Combat", "Horror", "Soon",
                 "Folk Hero", null, null,
-                "A monster has been attacking travelers on the road, but the attacks follow a pattern — " +
+                "A monster has been attacking travelers on the road, but the attacks follow a pattern â€” " +
                 "the monster is herding victims toward a specific location. The local militia is overwhelmed, " +
                 "and the monster's lair is a place of darkness and dread.",
                 "The monster is collecting victims for a ritual, a meal, or a greater purpose. " +
@@ -634,7 +634,7 @@ public class Dnd5eAdventureHookService {
 
         hooks.add(createHook("The War's End", "Political", "Sandbox", "Immediate",
                 "Soldier", null, null,
-                "The war that defined your life has ended — but the peace treaty is a lie. Both sides are preparing " +
+                "The war that defined your life has ended â€” but the peace treaty is a lie. Both sides are preparing " +
                 "for a final, devastating strike, and only a handful of people know the truth. You're one of them, " +
                 "and you must stop the war from reigniting before millions die.",
                 "The peace treaty is a ruse by leaders on both sides who profit from war. " +
@@ -645,20 +645,20 @@ public class Dnd5eAdventureHookService {
                 "A spirit appears to you in your sleep, begging for help. It was once a mortal, but now it's trapped " +
                 "between life and death, and the thing that killed it is still hunting. The spirit knows the killer's " +
                 "identity and location, but it can only communicate through dreams.",
-                "The spirit was murdered by a powerful entity — a vampire, a lich, or a demon. " +
+                "The spirit was murdered by a powerful entity â€” a vampire, a lich, or a demon. " +
                 "Freeing the spirit requires finding and destroying the killer.", 1, 12));
 
         hooks.add(createHook("The Champion's Trial", "Combat", "Sandbox", "Eventual",
                 null, null, "Fighter",
                 "A legendary champion's armor has been discovered, and legend says it chooses its wielder. " +
-                "To claim it, you must pass a series of trials — physical, mental, and moral. " +
+                "To claim it, you must pass a series of trials â€” physical, mental, and moral. " +
                 "Other warriors are competing, and the trials are deadly.",
                 "The trials test the warrior's worthiness and reveal the champion's legacy. " +
                 "The armor's power is tied to the champion's spirit, which still guards it.", 3, 15));
 
         hooks.add(createHook("The Oracle's Prophecy", "Mystery", "Supernatural", "Soon",
                 null, null, null,
-                "An oracle has delivered a prophecy that predicts the end of the world — or the birth of a new age. " +
+                "An oracle has delivered a prophecy that predicts the end of the world â€” or the birth of a new age. " +
                 "The prophecy is cryptic, and different factions interpret it differently. Some want to fulfill it; " +
                 "others want to prevent it. You're caught in the middle, and the oracle has chosen you as the key.",
                 "The prophecy is self-fulfilling or self-negating depending on the characters' actions. " +
@@ -666,7 +666,7 @@ public class Dnd5eAdventureHookService {
 
         hooks.add(createHook("The Shadow Market", "Social", "Steampunk", "Eventual",
                 "Criminal", null, null,
-                "Whispers speak of a market that exists in the shadows, where anything can be bought or sold — " +
+                "Whispers speak of a market that exists in the shadows, where anything can be bought or sold â€” " +
                 "including memories, souls, and futures. The market appears only to those who know how to find it, " +
                 "and its wares are both miraculous and dangerous.",
                 "The market is run by fey, devils, or planar traders. " +

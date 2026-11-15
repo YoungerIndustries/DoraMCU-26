@@ -1,0 +1,344 @@
+{
+  "game_info": {
+    "title": "OpenTTD Transport Tycoon Station Database",
+    "description": "Complete station database from OpenTTD and NewGRF mods, including bus stops, rail stations, ports, airports, and spaceports",
+    "source_mods": [
+      "OpenTTD Core (GPL v2)",
+      "NewStations by Michael Blunck (GPL)",
+      "Maglev Station Set (GPL v2)",
+      "Community Spaceport Designs"
+    ]
+  },
+  "stations": {
+    "road_stations": [
+      {
+        "id": "bus_stop",
+        "name": "Bus Stop",
+        "source": "OpenTTD Core",
+        "tech_level_min": 1,
+        "tech_level_max": 10,
+        "category": "road",
+        "infrastructure_type": "STATION",
+        "description": "Simple shelter with bench for passenger pickup. The most basic station type.",
+        "stats": {
+          "build_cost": 10,
+          "maintenance_cost": 1,
+          "catchment_radius": 2,
+          "max_passengers": 50,
+          "max_cargo": 0
+        },
+        "interior_rooms": [
+          {"room": "Waiting Area", "theme": "Social"},
+          {"room": "Ticket Booth", "theme": "Social"}
+        ],
+        "3d_model": "Simple shelter with bench and signpost"
+      }
+    ],
+    "rail_stations": [
+      {
+        "id": "rail_station",
+        "name": "Rail Station",
+        "source": "OpenTTD Core",
+        "tech_level_min": 1,
+        "tech_level_max": 8,
+        "category": "rail",
+        "infrastructure_type": "STATION",
+        "description": "Platform with tracks for train services. Handles both cargo and passengers.",
+        "stats": {
+          "build_cost": 50,
+          "maintenance_cost": 3,
+          "catchment_radius": 4,
+          "max_passengers": 200,
+          "max_cargo": 200
+        },
+        "interior_rooms": [
+          {"room": "Waiting Hall", "theme": "Social"},
+          {"room": "Ticket Office", "theme": "Social"},
+          {"room": "Platform", "theme": "Social"},
+          {"room": "Control Room", "theme": "Social"},
+          {"room": "Storage", "theme": "Social"}
+        ],
+        "3d_model": "Platform with tracks, waiting area, and station building",
+        "variants": [
+          {"name": "NewStations Animated", "specialty": "Animated platforms with passengers gathering as cargo waits"},
+          {"name": "Maglev Station", "specialty": "Modern sleek design for maglev lines"}
+        ]
+      },
+      {
+        "id": "monorail_station",
+        "name": "Monorail Station",
+        "source": "OpenTTD Core",
+        "tech_level_min": 4,
+        "tech_level_max": 8,
+        "category": "rail",
+        "infrastructure_type": "STATION",
+        "description": "Elevated station for monorail trains. Modern design with glass and steel.",
+        "stats": {
+          "build_cost": 100,
+          "maintenance_cost": 5,
+          "catchment_radius": 5,
+          "max_passengers": 300,
+          "max_cargo": 300
+        },
+        "interior_rooms": [
+          {"room": "Waiting Hall", "theme": "Social"},
+          {"room": "Ticket Office", "theme": "Social"},
+          {"room": "Elevated Platform", "theme": "Social"},
+          {"room": "Control Room", "theme": "Social"}
+        ],
+        "3d_model": "Elevated platform with glass enclosure and monorail track"
+      },
+      {
+        "id": "maglev_station",
+        "name": "Maglev Station",
+        "source": "Maglev Station Set",
+        "tech_level_min": 5,
+        "tech_level_max": 9,
+        "category": "rail",
+        "infrastructure_type": "STATION",
+        "description": "Futuristic station for maglev trains. Designs inspired by Chinese maglev lines and Braunschweig test track.",
+        "stats": {
+          "build_cost": 200,
+          "maintenance_cost": 8,
+          "catchment_radius": 6,
+          "max_passengers": 500,
+          "max_cargo": 500
+        },
+        "interior_rooms": [
+          {"room": "Grand Concourse", "theme": "Social"},
+          {"room": "Automated Ticketing", "theme": "Social"},
+          {"room": "Maglev Platform", "theme": "Social"},
+          {"room": "Control Center", "theme": "Social"},
+          {"room": "Observation Deck", "theme": "Social"}
+        ],
+        "3d_model": "Sleek modern station with magnetic levitation track and glass facade",
+        "variants": [
+          {"name": "Chinese Maglev Station", "origin": "China", "specialty": "High-speed terminal"},
+          {"name": "Braunschweig Test Track", "origin": "Germany", "specialty": "Research facility"}
+        ]
+      }
+    ],
+    "water_stations": [
+      {
+        "id": "boat_dock",
+        "name": "Boat Dock",
+        "source": "OpenTTD Core",
+        "tech_level_min": 1,
+        "tech_level_max": 8,
+        "category": "water",
+        "infrastructure_type": "PORT",
+        "description": "Waterfront dock for small boats and ferries. Basic water transport hub.",
+        "stats": {
+          "build_cost": 30,
+          "maintenance_cost": 2,
+          "catchment_radius": 3,
+          "max_passengers": 100,
+          "max_cargo": 100
+        },
+        "interior_rooms": [
+          {"room": "Dock Office", "theme": "Social"},
+          {"room": "Cargo Warehouse", "theme": "Social"},
+          {"room": "Passenger Terminal", "theme": "Social"},
+          {"room": "Captain's Quarters", "theme": "Social"}
+        ],
+        "3d_model": "Wooden dock with small building and mooring posts"
+      },
+      {
+        "id": "port",
+        "name": "Port",
+        "source": "OpenTTD Core",
+        "tech_level_min": 3,
+        "tech_level_max": 9,
+        "category": "water",
+        "infrastructure_type": "PORT",
+        "description": "Large seaport with cranes and warehouses. Major hub for cargo ships.",
+        "stats": {
+          "build_cost": 150,
+          "maintenance_cost": 8,
+          "catchment_radius": 6,
+          "max_passengers": 300,
+          "max_cargo": 500
+        },
+        "interior_rooms": [
+          {"room": "Port Authority Office", "theme": "Social"},
+          {"room": "Cargo Warehouse", "theme": "Social"},
+          {"room": "Passenger Terminal", "theme": "Social"},
+          {"room": "Crane Control Room", "theme": "Social"},
+          {"room": "Customs House", "theme": "Social"},
+          {"room": "Captain's Quarters", "theme": "Social"}
+        ],
+        "3d_model": "Large waterfront complex with cranes, warehouses, and terminal building"
+      }
+    ],
+    "air_stations": [
+      {
+        "id": "airport",
+        "name": "Airport",
+        "source": "OpenTTD Core",
+        "tech_level_min": 5,
+        "tech_level_max": 10,
+        "category": "air",
+        "infrastructure_type": "AIRPORT",
+        "description": "Runway with terminal building for aircraft. Fast long-distance transport hub.",
+        "stats": {
+          "build_cost": 500,
+          "maintenance_cost": 20,
+          "catchment_radius": 8,
+          "max_passengers": 500,
+          "max_cargo": 200
+        },
+        "interior_rooms": [
+          {"room": "Check-in Hall", "theme": "Social"},
+          {"room": "Security", "theme": "Social"},
+          {"room": "Gate Area", "theme": "Social"},
+          {"room": "Control Tower", "theme": "Social"},
+          {"room": "Hangar", "theme": "Social"},
+          {"room": "Maintenance Bay", "theme": "Social"}
+        ],
+        "3d_model": "Runway with terminal building, control tower, and hangars"
+      },
+      {
+        "id": "heliport",
+        "name": "Heliport",
+        "source": "OpenTTD Core",
+        "tech_level_min": 4,
+        "tech_level_max": 7,
+        "category": "air",
+        "infrastructure_type": "AIRPORT",
+        "description": "Small landing pad for helicopters. Compact air transport option.",
+        "stats": {
+          "build_cost": 100,
+          "maintenance_cost": 5,
+          "catchment_radius": 4,
+          "max_passengers": 50,
+          "max_cargo": 50
+        },
+        "interior_rooms": [
+          {"room": "Waiting Area", "theme": "Social"},
+          {"room": "Control Room", "theme": "Social"}
+        ],
+        "3d_model": "Small landing pad with helipad marking and shelter"
+      }
+    ],
+    "space_stations": [
+      {
+        "id": "spaceport",
+        "name": "Space Port",
+        "source": "Community / DoraMCU",
+        "tech_level_min": 8,
+        "tech_level_max": 10,
+        "category": "space",
+        "infrastructure_type": "AIRPORT",
+        "description": "Advanced space docking facility for rockets and spacecraft. Gateway to interplanetary travel.",
+        "stats": {
+          "build_cost": 2000,
+          "maintenance_cost": 50,
+          "catchment_radius": 10,
+          "max_passengers": 1000,
+          "max_cargo": 1000
+        },
+        "interior_rooms": [
+          {"room": "Check-in", "theme": "Social"},
+          {"room": "Customs", "theme": "Social"},
+          {"room": "Docking Bay", "theme": "Social"},
+          {"room": "Hangar", "theme": "Social"},
+          {"room": "Command Center", "theme": "Social"},
+          {"room": "Fuel Station", "theme": "Social"},
+          {"room": "Launch Control", "theme": "Social"},
+          {"room": "Crew Quarters", "theme": "Social"}
+        ],
+        "3d_model": "Advanced space docking facility with launch pads, fueling stations, and command center",
+        "variants": [
+          {"name": "Rocket Launch Pad", "specialty": "Apollo-style launch complex"},
+          {"name": "Orbital Elevator Base", "specialty": "Future space elevator terminal"}
+        ]
+      },
+      {
+        "id": "orbital_station",
+        "name": "Orbital Station",
+        "source": "Community / DoraMCU",
+        "tech_level_min": 10,
+        "tech_level_max": 10,
+        "category": "space",
+        "infrastructure_type": "ORBITAL_STATION",
+        "description": "Space station in orbit serving as interplanetary transport hub. The ultimate station type.",
+        "stats": {
+          "build_cost": 10000,
+          "maintenance_cost": 200,
+          "catchment_radius": 15,
+          "max_passengers": 5000,
+          "max_cargo": 5000
+        },
+        "interior_rooms": [
+          {"room": "Command Module", "theme": "Social"},
+          {"room": "Docking Bays", "theme": "Social"},
+          {"room": "Life Support", "theme": "Social"},
+          {"room": "Crew Quarters", "theme": "Social"},
+          {"room": "Observation Deck", "theme": "Social"},
+          {"room": "Cargo Hold", "theme": "Social"},
+          {"room": "Research Lab", "theme": "Social"},
+          {"room": "Medical Bay", "theme": "Social"}
+        ],
+        "3d_model": "Rotating space station with multiple docking ports and modules"
+      }
+    ],
+    "cargo_stations": [
+      {
+        "id": "cargo_station",
+        "name": "Cargo Station",
+        "source": "OpenTTD Core",
+        "tech_level_min": 2,
+        "tech_level_max": 10,
+        "category": "cargo",
+        "infrastructure_type": "STATION",
+        "description": "Industrial loading dock for cargo-only operations. No passenger facilities.",
+        "stats": {
+          "build_cost": 80,
+          "maintenance_cost": 4,
+          "catchment_radius": 5,
+          "max_passengers": 0,
+          "max_cargo": 400
+        },
+        "interior_rooms": [
+          {"room": "Loading Bay", "theme": "Social"},
+          {"room": "Warehouse", "theme": "Social"},
+          {"room": "Office", "theme": "Social"},
+          {"room": "Security Room", "theme": "Social"}
+        ],
+        "3d_model": "Industrial loading dock with warehouse and forklifts"
+      }
+    ]
+  },
+  "station_categories": {
+    "road": {
+      "description": "Road-based stations for buses and trucks",
+      "infrastructure_type": "STATION",
+      "tech_level_range": [1, 10]
+    },
+    "rail": {
+      "description": "Rail stations from basic platforms to futuristic maglev terminals",
+      "infrastructure_type": "STATION",
+      "tech_level_range": [1, 9]
+    },
+    "water": {
+      "description": "Water-based stations for ships and ferries",
+      "infrastructure_type": "PORT",
+      "tech_level_range": [1, 9]
+    },
+    "air": {
+      "description": "Air stations for aircraft and helicopters",
+      "infrastructure_type": "AIRPORT",
+      "tech_level_range": [4, 10]
+    },
+    "space": {
+      "description": "Space stations for rockets and interplanetary travel",
+      "infrastructure_type": ["AIRPORT", "ORBITAL_STATION"],
+      "tech_level_range": [8, 10]
+    },
+    "cargo": {
+      "description": "Dedicated cargo stations for freight operations",
+      "infrastructure_type": "STATION",
+      "tech_level_range": [2, 10]
+    }
+  }
+}

@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.service.multigame;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.config.NeuronConfig;
 import com.yisy.modules.doraneuron.model.multigame.GameProfile;
 import com.yisy.modules.doraneuron.model.multigame.GameStatus;
@@ -30,6 +32,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * InferenceEngine instance for each game that has an ONNX model configured.
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class GameRegistryService {
 
     private static final Logger log = LoggerFactory.getLogger(GameRegistryService.class);

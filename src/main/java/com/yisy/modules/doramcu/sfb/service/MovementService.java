@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.sfb.service;
 
+import org.springframework.stereotype.Service;
 import com.yisy.modules.doramcu.sfb.model.SfbHexPosition;
 import com.yisy.modules.doramcu.sfb.model.SfbShip;
 
@@ -11,6 +12,8 @@ import com.yisy.modules.doramcu.sfb.model.SfbShip;
  * Each impulse move is 1 hex, so total hexes per turn equals the number of movement impulses.
  * </p>
  */
+
+@Service
 public class MovementService {
 
     private final ImpulseManager impulseManager;

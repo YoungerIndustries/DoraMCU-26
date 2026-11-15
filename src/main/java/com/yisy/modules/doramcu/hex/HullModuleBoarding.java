@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.hex;
 
 import com.yisy.modules.doramcu.traveller.*;
+import com.yisy.modules.doramcu.unified.UnifiedShip;
 import com.yisy.modules.doramcu.util.DiceUtil;
 
 import java.util.*;
@@ -97,7 +98,6 @@ public class HullModuleBoarding {
     private final MarineUnit defenderMarines;
     private final int pointDefense;
     private final List<Room> criticalRooms;
-    private final List<Room> allRooms;
     private final List<String> eventLog;
     private BoardingAction.Outcome outcome;
     private int combatRounds;
@@ -121,7 +121,6 @@ public class HullModuleBoarding {
         this.defenderMarines = defenderMarines;
         this.pointDefense = Math.max(1, Math.min(12, pointDefense));
         this.criticalRooms = new ArrayList<>();
-        this.allRooms = new ArrayList<>();
         this.eventLog = new ArrayList<>();
         this.outcome = null;
         this.combatRounds = 0;
@@ -146,7 +145,6 @@ public class HullModuleBoarding {
                             Room room = new Room(module, x, y, z);
                             room.setCritical(true);
                             criticalRooms.add(room);
-                            allRooms.add(room);
                         }
                     }
                 }
@@ -159,7 +157,6 @@ public class HullModuleBoarding {
                 Room centerRoom = new Room(module, 4, 4, 4);
                 centerRoom.setCritical(true);
                 criticalRooms.add(centerRoom);
-                allRooms.add(centerRoom);
             }
         }
 

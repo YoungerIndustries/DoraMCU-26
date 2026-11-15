@@ -165,6 +165,31 @@ public class ResourceStorage<T extends Enum<T>> {
     }
 
     /**
+     * Increases the capacity for a specific resource type by the given amount.
+     * Used for storage upgrades (e.g., Warehouse, Refinery, Module Bay facilities).
+     *
+     * @param type the resource type
+     * @param increase the amount to increase capacity by
+     */
+    public void increaseCapacity(T type, int increase) {
+        if (increase <= 0) return;
+        int currentCapacity = getCapacity(type);
+        setCapacity(type, currentCapacity + increase);
+    }
+
+    /**
+     * Increases the capacity for all resource types by the given amount.
+     *
+     * @param increase the amount to increase capacity by for each type
+     */
+    public void increaseAllCapacity(int increase) {
+        if (increase <= 0) return;
+        for (T type : capacity.keySet()) {
+            increaseCapacity(type, increase);
+        }
+    }
+
+    /**
      * Returns the total amount of all resources in the storage.
      */
     public int getTotalAmount() {

@@ -1,0 +1,418 @@
+{
+  "lore": {
+    "the_force": {
+      "description": "The Force is an energy field created by all living things. It surrounds us, penetrates us, and binds the galaxy together. It has two primary aspects: the Light Side and the Dark Side.",
+      "philosophy": {
+        "light_side": {
+          "description": "The Light Side represents peace, knowledge, tranquility, selflessness, and defense. Jedi use the Light Side for knowledge and defense, never for attack.",
+          "tenets": [
+            "There is no emotion, there is peace",
+            "There is no passion, there is serenity",
+            "There is no chaos, there is harmony",
+            "There is no death, there is the Force"
+          ],
+          "practices": [
+            "Meditation and mindfulness",
+            "Selfless service to others",
+            "Detachment from personal desire",
+            "Acceptance of the natural order"
+          ]
+        },
+        "dark_side": {
+          "description": "The Dark Side represents passion, aggression, power, fear, and hatred. It is quicker, easier, and more seductive, but leads to corruption and destruction.",
+          "tenets": [
+            "Passion, which the light side does not understand, leads to power",
+            "Power leads to strength",
+            "Strength leads to victory",
+            "Victory destroys the Republic",
+            "Only then can the Republic be rebuilt"
+          ],
+          "practices": [
+            "Channeling negative emotions into power",
+            "Domination and control over others",
+            "Pursuit of personal power at any cost",
+            "Rejection of death through forbidden knowledge"
+          ],
+          "warning": "Fear leads to anger. Anger leads to hate. Hate leads to suffering. This is the path to the Dark Side."
+        }
+      },
+      "force_abilities": {
+        "telekinesis": "Moving objects with the mind — push, pull, lift, throw",
+        "force_push": "Explosive kinetic blast to knock back opponents",
+        "force_pull": "Drawing objects or beings toward the user",
+        "force_choke": "Crushing a target's throat from a distance (Dark Side)",
+        "force_lightning": "Bolt of raw Dark Side energy that inflicts agony (Dark Side)",
+        "force_heal": "Healing wounds and ailments through the Light Side",
+        "force_speed": "Enhancing physical speed beyond normal limits",
+        "force_jump": "Leaping great distances or heights",
+        "force_sense": "Sensing disturbances, emotions, and presences in the Force",
+        "force_vision": "Seeing possible futures or distant events",
+        "force_ghost": "Projecting one's consciousness after death (mastered by Yoda, Obi-Wan, Qui-Gon)",
+        "mind_trick": "Influencing the weak-minded with suggestions",
+        "force_barrier": "Creating a protective barrier of Force energy",
+        "force_drown": "Suffocating a target by filling their lungs with water (Dark Side)",
+        "sith_alchemy": "Forbidden Dark Side knowledge to cheat death (Darth Plagueis)",
+        "force_dyad": "An extremely rare connection between two Force-sensitives who share a bond across any distance (Rey and Kylo Ren)"
+      },
+      "midichlorians": {
+        "description": "Microscopic lifeforms that reside within all cells and communicate the will of the Force. The concentration of midichlorians in one's blood measures Force sensitivity.",
+        "notable_counts": {
+          "ananin_skywalker": 20000,
+          "yoda": 17000,
+          "obi_wan_kenobi": 3722,
+          "average_human": 2500
+        }
+      }
+    },
+    "eras": [
+      {
+        "name": "The Old Republic",
+        "period": "25,000 BBY - 1000 BBY",
+        "description": "The ancient era of the Jedi-Sith Wars. The Republic and the Jedi Order fought against the Sith for millennia. The Mandalorian Wars and the Jedi Civil War (Jedi vs Sith under Darth Malak) occurred during this period.",
+        "key_events": [
+          "Rising of the Sith (c. 6900 BBY)",
+          "New Sith Wars (c. 2000-1000 BBY)",
+          "HolocronEra"
+        ],
+        "jedi_status": "Jedi Order at its height, thousands of Jedi",
+        "sith_status": "Multiple Sith Lords, not yet following Rule of Two"
+      },
+      {
+        "name": "The High Republic",
+        "period": "232 BBY - 148 BBY",
+        "description": "A golden age of the Jedi Order and the Republic. The Jedi were explorers and heroes. The Nihil pirates and the ancient Sith Eternal cult under Darth Sidious threatened this era.",
+        "key_events": [
+          "Starlight Beacon construction",
+          "Nihil pirate attacks",
+          "Fall of the Jedi Temple (Great Hyperspace Disaster)",
+          "Darth Bane's Rule of Two established in shadows"
+        ],
+        "jedi_status": "Golden age — Jedi at their most numerous and confident",
+        "sith_status": "Darth Sidious begins his rise; Sith Eternal hidden on Exegol"
+      },
+      {
+        "name": "The Prequel Era (Clone Wars)",
+        "period": "32 BBY - 19 BBY",
+        "description": "The era of the Clone Wars between the Galactic Republic and the Separatist Alliance. Secretly orchestrated by Darth Sidious (Palpatine) to destroy the Jedi and seize power. Began with the Battle of Geonosis and ended with Order 66.",
+        "key_events": [
+          "Battle of Geonosis (32 BBY) — Start of the Clone Wars",
+          "Battle of Christophsis (21 BBY)",
+          "Battle of Utapau (19 BBY) — Death of General Grievous",
+          "Battle of Mustafar (19 BBY) — Anakin's fall, death of Dooku",
+          "Order 66 (19 BBY) — Near-extinction of the Jedi",
+          "Rise of the Galactic Empire (19 BBY)"
+        ],
+        "jedi_status": "Nearly exterminated by Order 66",
+        "sith_status": "Darth Sidious becomes Emperor; Darth Vader as apprentice"
+      },
+      {
+        "name": "The Original Trilogy Era",
+        "period": "19 BBY - 25 ABY",
+        "description": "The era of the Galactic Empire's rule and the Rebel Alliance's fight for freedom. Darth Vader hunts the remaining Jedi while the Rebellion grows. Culminates in the destruction of the Empire at Endor.",
+        "key_events": [
+          "Construction of the Death Star (18 BBY - 0 BBY)",
+          "Battle of Yavin (0 BBY) — Destruction of the first Death Star",
+          "Construction of Echo Base on Hoth (3 ABY)",
+          "Battle of Hoth (3 ABY) — Rebel retreat",
+          "Rescue of Han Solo from Jabba (4 ABY)",
+          "Battle of Endor (4 ABY) — Destruction of the second Death Star, death of Vader and Palpatine",
+          "Birth of the New Republic (5 ABY)"
+        ],
+        "jedi_status": "Luke Skywalker begins Jedi training; Order nearly extinct",
+        "sith_status": "Darth Vader and Palpatine destroyed at Endor"
+      },
+      {
+        "name": "The New Republic Era",
+        "period": "5 ABY - 34 ABY",
+        "description": "The period after the Empire's fall. The New Republic is established, but political complacency leads to military disarmament. Luke attempts to restore the Jedi Order but abandons it after Ben Solo's fall. The First Order rises in secret.",
+        "key_events": [
+          "Establishment of the New Republic (5 ABY)",
+          "Luke Skywalker begins Jedi Academy (18 ABY)",
+          "Ben Solo's fall to the Dark Side (25 ABY)",
+          "Destruction of Luke's Jedi Temple (25 ABY)",
+          "Rise of the First Order in secret (25-34 ABY)",
+          "Leia Organa founds the Resistance (34 ABY)"
+        ],
+        "jedi_status": "Luke's new Jedi Order destroyed; Luke goes into exile",
+        "sith_status": "Sith appear extinct; First Order uses Dark Side acolytes"
+      },
+      {
+        "name": "The Sequel Trilogy Era",
+        "period": "34 ABY - 35 ABY",
+        "description": "The era of the First Order's rise and the Resistance's fight against them. Rey discovers her connection to the Force and the Skywalker legacy. Palpatine returns from the dead via the Sith Eternal.",
+        "key_events": [
+          "Starkiller Base destroys the Hosnian System (34 ABY)",
+          "Battle of Starkiller Base (34 ABY)",
+          "Search for Luke Skywalker (34 ABY)",
+          "Battle of Crait (34 ABY)",
+          "Ben Solo's redemption and death (34 ABY)",
+          "Rise of the Resistance (35 ABY)",
+          "Return of Emperor Palpatine via Sith Eternal (35 ABY)",
+          "Battle of Exegol (35 ABY) — Final defeat of Palpatine and the Sith Eternal",
+          "Rey burns the Skywalker lightsabers and is acknowledged as Rey Skywalker"
+        ],
+        "jedi_status": "Rey begins to restore the Jedi Order",
+        "sith_status": "Palpatine and the Sith Eternal destroyed at Exegol"
+      }
+    ],
+    "planets": [
+      {
+        "name": "Tatooine",
+        "region": "Outer Rim — Arid Region",
+        "description": "A twin-sunned desert planet and a crossroads of the Outer Rim. Home to the Skywalker family and a hub for smugglers and slavers.",
+        "notable_locations": ["Mos Eisley Spaceport", "Jabba's Palace", "Lars Homestead", "Mos Espa"],
+        "inhabitants": ["Humans", "Tusken Raiders", "Jawas", "Gamorreans"],
+        "significance": "Birthplace of Anakin Skywalker; hiding place of Luke; where Obi-Wan watched over Luke"
+      },
+      {
+        "name": "Coruscant",
+        "region": "Core Worlds",
+        "description": "The capital world of the galaxy. A completely urbanized planet serving as the seat of the Republic, the Empire, and later the New Republic.",
+        "notable_locations": ["Republic/Imperial Palace", "Jedi Temple", "Senate Building", "Underworld levels"],
+        "inhabitants": ["Trillions of diverse species"],
+        "significance": "Galactic capital; home of the Jedi Temple; center of political power"
+      },
+      {
+        "name": "Naboo",
+        "region": "Core Worlds",
+        "description": "A peaceful, beautiful planet with lush grasslands, oceans, and Gungan underwater cities. Home of Queen/Senator Leia Organa's political mentor, Queen Amidala.",
+        "notable_locations": ["Theed Palace", "Otoh Gunga (Gungan city)", "Lake Paonga"],
+        "inhabitants": ["Naboo (humans)", "Gungans"],
+        "significance": "Homeworld of Palpatine (secretly) and Queen Amidala; site of the Trade Federation invasion"
+      },
+      {
+        "name": "Hoth",
+        "region": "Outer Rim — Frozen Region",
+        "description": "A frozen ice planet where the Rebel Alliance established Echo Base. The harsh environment provided cover but also vulnerability.",
+        "notable_locations": ["Echo Base", "Taun Taun (Wampa) caves"],
+        "inhabitants": ["Wampas", "Taun Tauns (giant space whales)"],
+        "significance": "Site of the Battle of Hoth; Rebel evacuation led to the search for a new base"
+      },
+      {
+        "name": "Dagobah",
+        "region": "Outer Rim — Swamps",
+        "description": "A dark, swampy planet hidden in a nebula. Yoda's place of exile for 1,000 years. Luke Skywalker trained here to become a Jedi.",
+        "notable_locations": ["Yoda's hut", "The cave of trials", "The ancient Jedi temple (ruins)"],
+        "inhabitants": ["Yoda (exile)", "Various swamp creatures"],
+        "significance": "Luke's Jedi training ground; Yoda's exile; site of Luke's cave trial"
+      },
+      {
+        "name": "Endor",
+        "region": "Outer Rim",
+        "description": "A forest moon with a primitive Ewok population. The second Death Star was constructed in orbit above it.",
+        "notable_locations": ["Ewok village", "Shield generator bunker", "Battlefield"],
+        "inhabitants": ["Ewoks", "Wookiees (allies)"],
+        "significance": "Site of the final battle of the Original Trilogy; death of Palpatine and Vader"
+      },
+      {
+        "name": "Mustafar",
+        "region": "Outer Rim",
+        "description": "A volcanic lava world and mining planet. Site of the duel between Obi-Wan and Anakin, where Anakin was burned and became Darth Vader.",
+        "notable_locations": ["Lava rivers", "Separatist flagship", "Mining facilities"],
+        "inhabitants": ["Mining droids", "No native species"],
+        "significance": "Anakin's fall to the Dark Side; birth of Darth Vader; end of the Clone Wars"
+      },
+      {
+        "name": "Kashyyyk",
+        "region": "Outer Rim",
+        "description": "A forested planet and homeworld of the Wookiees. Loyal to the Republic during the Clone Wars. Suffered a massacre under the Empire.",
+        "notable_locations": ["Wookiee tree-cities", "Chommell Downs"],
+        "inhabitants": ["Wookiees (Chewbacca's species)"],
+        "significance": "Homeworld of Chewbacca; site of Imperial massacre; Wookiee alliance with the Rebellion"
+      },
+      {
+        "name": "Geonosis",
+        "region": "Outer Rim",
+        "description": "A desert planet and the birthplace of the Clone Wars. Home to the Geonosians who manufactured droids for the Separatists.",
+        "notable_locations": ["Petranaki Arena", "Droid foundries", "Geonosian hives"],
+        "inhabitants": ["Geonosians", "Various arena creatures"],
+        "significance": "First battle of the Clone Wars; where the Jedi were nearly killed in the arena"
+      },
+      {
+        "name": "Yavin 4",
+        "region": "Outer Rim",
+        "description": "A gas giant whose fourth moon houses the ancient Massassi Temple. The Rebel Alliance established its first major base here after escaping the Death Star.",
+        "notable_locations": ["Massassi Temple (Rebel Base)", "Massassi caves"],
+        "inhabitants": ["Massassi (ancient, mostly extinct)"],
+        "significance": "First major Rebel base; site of planning for the Battle of Yavin"
+      },
+      {
+        "name": "Ahch-To",
+        "region": "Unknown Regions",
+        "description": "A remote ocean planet where the first Jedi Temple was built. Luke Skywalker went into exile here after the fall of Ben Solo.",
+        "notable_locations": ["First Jedi Temple", "Luke's exile hut", "Ahsoka Tano's lightsaber burial site"],
+        "inhabitants": ["Crystals (sentient beings)", "Various creatures"],
+        "significance": "The first Jedi Temple; Luke's exile; where Rey found Luke to ask him to restore the Jedi"
+      },
+      {
+        "name": "Exegol",
+        "region": "Unknown Regions",
+        "description": "A dark, remote planet where the Sith Eternal cult survived for centuries. Emperor Palpatine's place of resurrection and final stand.",
+        "notable_locations": ["Sith Wayfinder", "Palpatine's throne", "Sith Eternal shipyards"],
+        "inhabitants": ["Sith Eternal cultists", "Sith loyalists"],
+        "significance": "Palpatine's return; the final battle of the Sequel Trilogy; destruction of the Sith Eternal"
+      },
+      {
+        "name": "Jakku",
+        "region": "Outer Rim",
+        "description": "A desert planet covered in wreckage from the Battle of Jakku. Rey grew up as a scavenger here before discovering her Force sensitivity.",
+        "notable_locations": ["Scavenger village", "Wreckage of the Finalizer", "Maz Kanata's beacon site"],
+        "inhabitants": ["Scavengers", "Salvagers"],
+        "significance": "Site of the last major battle between the First Order and Resistance; Rey's homeworld"
+      },
+      {
+        "name": "Kamino",
+        "region": "Outer Rim — Ocean World",
+        "description": "An ocean planet where the clone army was created from Jango Fett's DNA. Hidden from the Republic until the Jedi discovered it.",
+        "notable_locations": ["Tipoca City (clone facilities)", "Kamino water temples"],
+        "inhabitants": ["Kaminoans (tall, amphibious humans)"],
+        "significance": "Creation of the Clone Army; Jango Fett's death; origin of Boba Fett"
+      }
+    ],
+    "species": [
+      {
+        "name": "Humans",
+        "description": "The most widespread species in the galaxy. Dominant in politics and military. Include the Skywalker, Organa, and Solo families.",
+        "homeworld": "Coruscant (mythological Origin planet)",
+        "notable_members": ["Anakin Skywalker", "Luke Skywalker", "Leia Organa", "Han Solo", "Palpatine", "Obi-Wan Kenobi"]
+      },
+      {
+        "name": "Wookiees",
+        "description": "Tall, hairy humanoids from Kashyyyk. Known for their strength, loyalty, and honor. Bound by a ancient pact to the Humans of Corellia.",
+        "homeworld": "Kashyyyk",
+        "notable_members": ["Chewbacca", "Attichitcuk", "Rotpuka"]
+      },
+      {
+        "name": "Yoda's Species",
+        "description": "A small, long-lived species with immense Force sensitivity. Yoda is the only named member. Their homeworld and species name are unknown.",
+        "homeworld": "Unknown",
+        "notable_members": ["Yoda", "Yaddle (Jedi Master)"]
+      },
+      {
+        "name": "Twileks",
+        "description": "Humanoids with distinctive head-tails (lekku). Often found as slaves or in the entertainment industry, but also as warriors and leaders.",
+        "homeworld": "Iridonia",
+        "notable_members": ["Hera Syndulla", "Ahsoka Tano (Togruta, similar)", "Sabine Wren (Mandalorian)"]
+      },
+      {
+        "name": "Togruta",
+        "description": "Humanoids with colorful skin patterns and head-tufts (krayt). Strong Force sensitivity. Ahsoka Tano is the most famous.",
+        "homeworld": "Shili",
+        "notable_members": ["Ahsoka Tano", "Rahm Kota"]
+      },
+      {
+        "name": "Droids",
+        "description": "Sentient mechanical beings ranging from simple astromechs to complex battle droids. Their sentience is debated and often denied by their creators.",
+        "homeworld": "Various (mass-produced)",
+        "notable_members": ["C-3PO (Protocol Droid)", "R2-D2 (Astromech Droid)", "BB-8 (Resistance Astromech)", "General Grievous (cyborg)"]
+      },
+      {
+        "name": "Ewoks",
+        "description": "Small, primitive but clever forest dwellers of Endor. Used primitive weapons and traps to help the Rebels defeat the Empire.",
+        "homeworld": "Endor (forest moon)",
+        "notable_members": ["Wicket W. Warrick", "Latara", "Chieftain Modd"]
+      },
+      {
+        "name": "Hutts",
+        "description": "Massive, slug-like crime lords who rule vast criminal empires from the Outer Rim. Known for their gluttony, cruelty, and wealth.",
+        "homeworld": "Nal Hutta",
+        "notable_members": ["Jabba Desilijic Tiure", "Bib Fortuna (courier, not Hutt)"]
+      },
+      {
+        "name": "Trandoshans",
+        "description": "Reptilian humanoids known for their hunting skills and bounty hunting. Cold-blooded and ruthless.",
+        "homeworld": "Trandosha",
+        "notable_members": ["Bossk", "Gamorreans (different species)"]
+      },
+      {
+        "name": "Gungans",
+        "description": "Amphibious humanoids who live in underwater cities on Naboo. Initially at odds with Naboo humans but later allied.",
+        "homeworld": "Naboo",
+        "notable_members": ["Jar Jar Binks", "Boss Nass", "Ratts Tyerell"]
+      },
+      {
+        "name": "Zabrak",
+        "description": "Humanoids with horn-like protrusions and sometimes tattooed skin. Known for their resilience and pain tolerance.",
+        "homeworld": "Iridonia",
+        "notable_members": ["Darth Maul", "Sabine Wren (Mandalorian Zabrak)"]
+      },
+      {
+        "name": "Mandalorians",
+        "description": "A warrior culture (not a species) known for their armor, combat skills, and code. Wear distinctive beskar armor.",
+        "homeworld": "Mandalore",
+        "notable_members": ["Boba Fett", "Jango Fett", "Din Djarin (The Mandalorian)", "Bo-Katan Kryze", "Sabine Wren"]
+      }
+    ],
+    "key_events": [
+      {
+        "name": "The Creation of the Sith",
+        "date": "c. 6900 BBY",
+        "description": "Force-sensitive exiles from the Jedi Order discovered the Dark Side and created the Sith order, beginning millennia of Jedi-Sith conflict."
+      },
+      {
+        "name": "Darth Bane's Rule of Two",
+        "date": "c. 1000 BBY",
+        "description": "Darth Bane reformed the Sith after near-extinction, establishing the Rule of Two: only one Master and one Apprentice at a time."
+      },
+      {
+        "name": "The Clone Wars",
+        "date": "22 BBY - 19 BBY",
+        "description": "A galaxy-wide conflict between the Republic and the Separatists, secretly orchestrated by Darth Sidious to destroy both the Jedi and the Republic."
+      },
+      {
+        "name": "Order 66",
+        "date": "19 BBY",
+        "description": "The kill order that turned the Clone Army against the Jedi, nearly exterminating the order. Executed through inhibitor chips in clone troopers."
+      },
+      {
+        "name": "Rise of the Galactic Empire",
+        "date": "19 BBY",
+        "description": "Palpatine transformed the Republic into the Galactic Empire, declaring himself Emperor and beginning decades of tyranny."
+      },
+      {
+        "name": "The Destruction of the First Death Star",
+        "date": "0 BBY",
+        "description": "Luke Skywalker, guided by the Force, fired proton torpedoes into the Death Star's thermal exhaust port, destroying the superweapon."
+      },
+      {
+        "name": "The Battle of Hoth",
+        "date": "3 ABY",
+        "description": "The Empire destroyed Echo Base, forcing the Rebels into a desperate retreat. Han Solo and Leia fled on the Millennium Falcon."
+      },
+      {
+        "name": "The Battle of Endor",
+        "date": "4 ABY",
+        "description": "The Rebels destroyed the second Death Star, killed Emperor Palpatine, and saw Darth Vader redeem himself by saving Luke. The Empire fell."
+      },
+      {
+        "name": "The Return of Palpatine",
+        "date": "35 ABY",
+        "description": "Emperor Palpatine returned from the dead via Sith alchemy on Exegol, leading the Sith Eternal and the Final Order fleet."
+      },
+      {
+        "name": "The Battle of Exegol",
+        "date": "35 ABY",
+        "description": "Rey, with the help of the Resistance and the Force ghosts of past Jedi, defeated Palpatine and destroyed the Sith Eternal fleet. The Sith were finally vanquished."
+      }
+    ],
+    "lightsabers": {
+      "description": "A lightsaber is a weapon that produces a blade of pure energy from a Kyber crystal. It is the signature weapon of the Jedi and Sith.",
+      "kyber_crystals": {
+        "description": "Sentient crystals that bond with their Force-sensitive wielder. Naturally clear, they 'turn' green or blue when bonded with a Jedi. Sith must force-bind a crystal, causing it to 'bleed' red.",
+        "colors": {
+          "blue": "Jedi Guardian — balance of combat and Force abilities",
+          "green": "Jedi Consular — stronger connection to the Force",
+          "red": "Sith/Dark Side — forced crystal 'bleeding' through pain and hatred",
+          "yellow": "Jedi Temple Guard / Rey — balance of Guardian and Consular",
+          "purple": "Mace Windu — unique, representing his use of Dark Side techniques (Vaapad) while remaining Light Side",
+          "white": "Ahsoka Tano — purified crystals, neither Light nor Dark",
+          "black": "Sith Holocron — rare, associated with the Darksaber (Mandalorian weapon)"
+        }
+      },
+      "darksaber": {
+        "description": "A unique black-bladed lightsaber created by Tarre Vizsla, the first Mandalorian Jedi. Its ownership is determined by Mandalorian custom — it must be won in combat, not given.",
+        "notable_wielders": ["Tarre Vizsla", "Darth Maul", "Bo-Katan Kryze", "Moff Gideon", "Din Djarin (temporarily)"]
+      }
+    }
+  }
+}

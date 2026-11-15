@@ -90,4 +90,15 @@ public class NeuronCoordinatorController {
         Map<String, Object> stats = neuronRegistry.getStats();
         return ResponseEntity.ok(stats);
     }
+
+    /**
+     * Peer discovery — returns all registered neurons so peers can connect directly.
+     * Used by dora-neuron's NeuronMeshService for P2P mesh formation.
+     * Returns a Map with "peers" key to match the neuron client's expected format.
+     */
+    @GetMapping("/discover")
+    public ResponseEntity<Map<String, Object>> discover() {
+        List<NeuronIdentity> neurons = neuronRegistry.getAllNeurons();
+        return ResponseEntity.ok(Map.of("peers", neurons));
+    }
 }

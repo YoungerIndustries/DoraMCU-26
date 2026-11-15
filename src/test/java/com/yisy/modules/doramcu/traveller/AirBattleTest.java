@@ -115,8 +115,8 @@ class AirBattleTest {
             AirBattleResult result = battle.resolveAbstract();
 
             assertTrue(result.getOdds() >= 1 && result.getOdds() <= 9);
-            // 2 + random.nextInt(6) + random.nextInt(6) = range 2-11
-            assertTrue(result.getDiceRoll() >= 2 && result.getDiceRoll() <= 11);
+            // 2 + random.nextInt(6) + random.nextInt(6) = range 2-12
+            assertTrue(result.getDiceRoll() >= 2 && result.getDiceRoll() <= 12);
         }
 
         @Test

@@ -1,318 +1,520 @@
 package com.yisy.modules.doramcu.sfb.service;
 
-import com.yisy.modules.doramcu.fourx.FourxDiplomaticRelation;
-import com.yisy.modules.doramcu.fourx.FourxDiplomacyService;
-import com.yisy.modules.doramcu.hex.GalaxyServiceRegistry;
-import com.yisy.modules.doramcu.hex.GalaxyTemplate;
-import com.yisy.modules.doramcu.fourx.FourxFaction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-
-import jakarta.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
- * SFB implementation of the Diplomacy 4X pillar.
+ * Diplomacy service for SFB campaign AI.
  * <p>
- * Manages faction relations, treaties, war/peace declarations, and diplomatic events
- * between SFB empires (Federation, Klingon, Romulan, Gorn, Tholian, etc.).
+ * Manages relationships between factions, including diplomatic relations,
+ * treaties, declarations of war, and diplomatic actions.
+ * </p>
+ * <p>
+ * Relations are tracked on a scale from -100 (total war) to +100 (allies).
+ * Treaties provide bonuses and restrictions based on the treaty type.
  * </p>
  */
+
 @Service
-@Primary
-public class SfbDiplomacyService implements FourxDiplomacyService, GalaxyServiceRegistry.ServiceProvider {
+public class SfbDiplomacyService {
 
-    private static final Logger log = LoggerFactory.getLogger(SfbDiplomacyService.class);
+    /**
+     * Types of diplomatic relations between factions.
+     */
+    public enum RelationType {
+        HOSTILE(-100, -76, "Total war, all-out conflict"),
+        ENEMY(-75, -51, "Active hostility, military conflict"),
+        UNFRIENDLY(-50, -26, "Distrustful, limited cooperation"),
+        NEUTRAL(-25, 25, "No strong feelings, trade possible"),
+        FRIENDLY(26, 50, "Cooperative, trade bonuses"),
+        ALLIED(51, 75, "Strong alliance, mutual defense"),
+        VASSAL(76, 100, "Complete loyalty, shared resources");
 
-    /** All factions in the game. */
-    private final Map<String, FourxFaction> factions = new ConcurrentHashMap<>();
+        private final int minScore;
+        private final int maxScore;
+        private final String description;
 
-    /** Diplomatic relations keyed by "faction1:faction2" (sorted). */
-    private final Map<String, FourxDiplomaticRelation> relations = new ConcurrentHashMap<>();
-
-    private final Random random = new Random();
-
-    @PostConstruct
-    public void initFactions() {
-        // Alpha Octant empires
-        addFaction("FEDERATION", "United Federation of Planets", "DIPLOMATIC", FourxFaction.DiplomaticStance.FRIENDLY, 50);
-        addFaction("KLINGON", "Klingon Empire", "AGGRESSIVE", FourxFaction.DiplomaticStance.NEUTRAL, 45);
-        addFaction("ROMULAN", "Romulan Star Empire", "DEFENSIVE", FourxFaction.DiplomaticStance.NEUTRAL, 40);
-        addFaction("GORN", "Gorn Empire", "AGGRESSIVE", FourxFaction.DiplomaticStance.HOSTILE, 30);
-        addFaction("THOLIAN", "Tholian Assembly", "DEFENSIVE", FourxFaction.DiplomaticStance.NEUTRAL, 25);
-        addFaction("SULIBAN", "Suliban", "GUERRILLA", FourxFaction.DiplomaticStance.HOSTILE, 15);
-        addFaction("TALOSIAN", "Talosians", "DEFENSIVE", FourxFaction.DiplomaticStance.NEUTRAL, 20);
-
-        // Andromeda empires
-        addFaction("M'HAARI", "M'Haari Empire", "AGGRESSIVE", FourxFaction.DiplomaticStance.NEUTRAL, 35);
-        addFaction("PEOPLIAN", "Peoples of Andromeda", "DIPLOMATIC", FourxFaction.DiplomaticStance.FRIENDLY, 30);
-        addFaction("ANDROMEDAN", "Andromedan Empire", "AGGRESSIVE", FourxFaction.DiplomaticStance.HOSTILE, 40);
-
-        // Set up initial relations based on SFB lore
-        modifyRelation("FEDERATION", "KLINGON", 10); // Fragile alliance
-        modifyRelation("FEDERATION", "ROMULAN", -20); // Cold war
-        modifyRelation("FEDERATION", "GORN", -40); // Hostile
-        modifyRelation("FEDERATION", "THOLIAN", -10); // Tense
-        modifyRelation("KLINGON", "ROMULAN", -30); // Rivals
-        modifyRelation("KLINGON", "GORN", -50); // Enemies
-        modifyRelation("ROMULAN", "SULIBAN", -35); // Hostile
-        modifyRelation("M'HAARI", "ANDROMEDAN", -45); // Enemies
-        modifyRelation("M'HAARI", "PEOPLIAN", 15); // Allies
-
-        log.info("Initialized {} SFB factions with {} initial relations",
-                factions.size(), relations.size());
-    }
-
-    private void addFaction(String id, String name, String combatStyle,
-                            FourxFaction.DiplomaticStance stance,
-                            int fleetStrength) {
-        FourxFaction faction = new FourxFaction();
-        faction.setId(id);
-        faction.setName(name);
-        faction.setGameModule("SFB");
-        faction.setCombatStyle(combatStyle);
-        faction.setDefaultStance(stance);
-        faction.setFleetStrength(fleetStrength);
-        faction.setControlledSectors(new ArrayList<>());
-        factions.put(id, faction);
-    }
-
-    private String relationKey(String faction1Id, String faction2Id) {
-        String f1 = faction1Id.toUpperCase();
-        String f2 = faction2Id.toUpperCase();
-        return f1.compareTo(f2) < 0 ? f1 + ":" + f2 : f2 + ":" + f1;
-    }
-
-    @Override
-    public GalaxyTemplate getSupportedTemplate() {
-        return GalaxyTemplate.CUSTOM;
-    }
-
-    @Override
-    public FourxDiplomaticRelation getOrCreateRelation(String faction1Id, String faction2Id) {
-        String key = relationKey(faction1Id, faction2Id);
-        return relations.computeIfAbsent(key, k -> {
-            FourxDiplomaticRelation relation = new FourxDiplomaticRelation();
-            relation.setFaction1Name(faction1Id.toUpperCase());
-            relation.setFaction2Name(faction2Id.toUpperCase());
-            relation.setRelationScore(0);
-            relation.setAtWar(false);
-            relation.setActiveTreaties(new ArrayList<>());
-            return relation;
-        });
-    }
-
-    @Override
-    public FourxDiplomaticRelation modifyRelation(String faction1Id, String faction2Id, int delta) {
-        FourxDiplomaticRelation relation = getOrCreateRelation(faction1Id, faction2Id);
-        int newScore = Math.max(-100, Math.min(100, relation.getRelationScore() + delta));
-        relation.setRelationScore(newScore);
-
-        // Auto-declare war if relation drops below threshold
-        if (newScore <= -80 && !relation.isAtWar()) {
-            relation.setAtWar(true);
-            log.info("Auto-war declared: {} vs {} (relation: {})",
-                    faction1Id, faction2Id, newScore);
+        RelationType(int minScore, int maxScore, String description) {
+            this.minScore = minScore;
+            this.maxScore = maxScore;
+            this.description = description;
         }
 
-        // Auto-peace if relation rises above threshold
-        if (newScore >= 20 && relation.isAtWar()) {
-            relation.setAtWar(false);
-            log.info("Auto-peace: {} vs {} (relation: {})",
-                    faction1Id, faction2Id, newScore);
+        public int getMinScore() { return minScore; }
+        public int getMaxScore() { return maxScore; }
+        public String getDescription() { return description; }
+
+        public static RelationType fromScore(int score) {
+            for (RelationType type : values()) {
+                if (score >= type.minScore && score <= type.maxScore) {
+                    return type;
+                }
+            }
+            return NEUTRAL;
+        }
+    }
+
+    /**
+     * Types of treaties between factions.
+     */
+    public enum TreatyType {
+        NON_AGGRESSION("Non-Aggression Pact", "No military action against each other", 10),
+        TRADE_AGREEMENT("Trade Agreement", "Trade bonuses between factions", 5),
+        MUTUAL_DEFENSE("Mutual Defense Pact", "Defend each other if attacked", 15),
+        MILITARY_ALLIANCE("Military Alliance", "Full military cooperation", 20),
+        VASSALAGE("Vassalage", "One faction serves the other", 25),
+        CEASEFIRE("Ceasefire", "Temporary halt to hostilities", 8);
+
+        private final String name;
+        private final String description;
+        private final int relationBonus;
+
+        TreatyType(String name, String description, int relationBonus) {
+            this.name = name;
+            this.description = description;
+            this.relationBonus = relationBonus;
         }
 
-        return relation;
+        public String getName() { return name; }
+        public String getDescription() { return description; }
+        public int getRelationBonus() { return relationBonus; }
     }
 
-    @Override
-    public FourxDiplomaticRelation declareWar(String attackerId, String defenderId) {
-        FourxDiplomaticRelation relation = getOrCreateRelation(attackerId, defenderId);
-        relation.setAtWar(true);
-        relation.setRelationScore(Math.min(relation.getRelationScore(), -80));
-        log.info("War declared: {} vs {}", attackerId, defenderId);
-        return relation;
-    }
+    /**
+     * A treaty between two factions.
+     */
+    public static class Treaty {
+        private final String id;
+        private final String factionA;
+        private final String factionB;
+        private final TreatyType type;
+        private final int turnsRemaining;
+        private final int turnsTotal;
+        private final long signedAt;
 
-    @Override
-    public FourxDiplomaticRelation establishPeace(String faction1Id, String faction2Id) {
-        FourxDiplomaticRelation relation = getOrCreateRelation(faction1Id, faction2Id);
-        relation.setAtWar(false);
-        relation.setRelationScore(Math.max(relation.getRelationScore(), -20));
-        log.info("Peace established: {} vs {}", faction1Id, faction2Id);
-        return relation;
-    }
-
-    @Override
-    public FourxDiplomaticRelation addTreaty(String faction1Id, String faction2Id, String treatyType) {
-        FourxDiplomaticRelation relation = getOrCreateRelation(faction1Id, faction2Id);
-        List<String> treaties = relation.getActiveTreaties();
-        if (!treaties.contains(treatyType)) {
-            treaties.add(treatyType);
+        private Treaty(Builder builder) {
+            this.id = builder.id;
+            this.factionA = builder.factionA;
+            this.factionB = builder.factionB;
+            this.type = builder.type;
+            this.turnsRemaining = builder.turnsTotal;
+            this.turnsTotal = builder.turnsTotal;
+            this.signedAt = System.currentTimeMillis();
         }
-        // Treaties improve relations
-        modifyRelation(faction1Id, faction2Id, 10);
-        log.info("Treaty added: {} - {} ({})", faction1Id, faction2Id, treatyType);
-        return relation;
-    }
 
-    @Override
-    public FourxDiplomaticRelation removeTreaty(String faction1Id, String faction2Id, String treatyType) {
-        FourxDiplomaticRelation relation = getOrCreateRelation(faction1Id, faction2Id);
-        relation.getActiveTreaties().remove(treatyType);
-        modifyRelation(faction1Id, faction2Id, -10);
-        log.info("Treaty removed: {} - {} ({})", faction1Id, faction2Id, treatyType);
-        return relation;
-    }
+        public String getId() { return id; }
+        public String getFactionA() { return factionA; }
+        public String getFactionB() { return factionB; }
+        public TreatyType getType() { return type; }
+        public int getTurnsRemaining() { return turnsRemaining; }
+        public int getTurnsTotal() { return turnsTotal; }
+        public long getSignedAt() { return signedAt; }
+        public boolean isExpired() { return turnsRemaining <= 0; }
 
-    @Override
-    public List<FourxDiplomaticRelation> getRelations(String factionId) {
-        String id = factionId.toUpperCase();
-        List<FourxDiplomaticRelation> result = new ArrayList<>();
-        for (FourxDiplomaticRelation relation : relations.values()) {
-            if (relation.getFaction1Name().equals(id) || relation.getFaction2Name().equals(id)) {
-                result.add(relation);
+        public void advanceTurn() {
+            if (turnsRemaining > 0) {
+                // No-op Ã¢â‚¬â€ turns are decremented externally
             }
         }
+
+        public static Builder builder() { return new Builder(); }
+
+        public static class Builder {
+            private String id;
+            private String factionA;
+            private String factionB;
+            private TreatyType type;
+            private int turnsTotal = 10;
+
+            public Builder id(String id) { this.id = id; return this; }
+            public Builder factionA(String factionA) { this.factionA = factionA; return this; }
+            public Builder factionB(String factionB) { this.factionB = factionB; return this; }
+            public Builder type(TreatyType type) { this.type = type; return this; }
+            public Builder turnsTotal(int turnsTotal) { this.turnsTotal = turnsTotal; return this; }
+
+            public Treaty build() {
+                if (this.id == null) this.id = UUID.randomUUID().toString().substring(0, 8);
+                return new Treaty(this);
+            }
+        }
+    }
+
+    /**
+     * Diplomatic action between factions.
+     */
+    public enum DiplomaticAction {
+        IMPROVE_RELATIONS("Improve Relations", 10, "Diplomatic overture to improve relations"),
+        INSULT("Insult", -15, "Diplomatic insult worsens relations"),
+        TRADE_OFFER("Trade Offer", 5, "Offer trade deal to improve relations"),
+        MILITARY_THREAT("Military Threat", -20, "Threaten military action"),
+        BORDER_SKIRMISH("Border Skirmish", -10, "Minor military conflict"),
+        ALL_OFFER("Alliance Offer", 15, "Propose alliance"),
+        DECLARATION_OF_WAR("Declaration of War", -50, "Formal declaration of war"),
+        PEACE_OFFER("Peace Offer", 25, "Offer peace terms"),
+        AID_OFFER("Aid Offer", 8, "Offer military or economic aid"),
+        SPY_ACTIVITY("Spy Activity", -5, "Discovered espionage worsens relations slightly");
+
+        private final String name;
+        private final int relationChange;
+        private final String description;
+
+        DiplomaticAction(String name, int relationChange, String description) {
+            this.name = name;
+            this.relationChange = relationChange;
+            this.description = description;
+        }
+
+        public String getName() { return name; }
+        public int getRelationChange() { return relationChange; }
+        public String getDescription() { return description; }
+    }
+
+    /**
+     * Result of a diplomatic action.
+     */
+    public static class DiplomaticResult {
+        private final String actionName;
+        private final String factionA;
+        private final String factionB;
+        private final int relationBefore;
+        private final int relationAfter;
+        private final RelationType relationTypeBefore;
+        private final RelationType relationTypeAfter;
+        private final boolean success;
+        private final String message;
+
+        private DiplomaticResult(Builder builder) {
+            this.actionName = builder.actionName;
+            this.factionA = builder.factionA;
+            this.factionB = builder.factionB;
+            this.relationBefore = builder.relationBefore;
+            this.relationAfter = builder.relationAfter;
+            this.relationTypeBefore = RelationType.fromScore(builder.relationBefore);
+            this.relationTypeAfter = RelationType.fromScore(builder.relationAfter);
+            this.success = builder.success;
+            this.message = builder.message;
+        }
+
+        public String getActionName() { return actionName; }
+        public String getFactionA() { return factionA; }
+        public String getFactionB() { return factionB; }
+        public int getRelationBefore() { return relationBefore; }
+        public int getRelationAfter() { return relationAfter; }
+        public RelationType getRelationTypeBefore() { return relationTypeBefore; }
+        public RelationType getRelationTypeAfter() { return relationTypeAfter; }
+        public boolean isSuccess() { return success; }
+        public String getMessage() { return message; }
+
+        public static Builder builder() { return new Builder(); }
+
+        public static class Builder {
+            private String actionName;
+            private String factionA;
+            private String factionB;
+            private int relationBefore;
+            private int relationAfter;
+            private boolean success;
+            private String message;
+
+            public Builder actionName(String actionName) { this.actionName = actionName; return this; }
+            public Builder factionA(String factionA) { this.factionA = factionA; return this; }
+            public Builder factionB(String factionB) { this.factionB = factionB; return this; }
+            public Builder relationBefore(int relationBefore) { this.relationBefore = relationBefore; return this; }
+            public Builder relationAfter(int relationAfter) { this.relationAfter = relationAfter; return this; }
+            public Builder success(boolean success) { this.success = success; return this; }
+            public Builder message(String message) { this.message = message; return this; }
+
+            public DiplomaticResult build() { return new DiplomaticResult(this); }
+        }
+    }
+
+    /**
+     * Faction diplomatic profile.
+     */
+    public static class FactionProfile {
+        private final String name;
+        private final int diplomacySkill; // 0-10, affects diplomatic action success
+        private final int aggression; // 0-10, affects likelihood of hostile actions
+        private final int tradeFocus; // 0-10, affects trade-related actions
+        private final Map<String, Integer> relations; // faction name -> relation score
+
+        private FactionProfile(Builder builder) {
+            this.name = builder.name;
+            this.diplomacySkill = Math.max(0, Math.min(10, builder.diplomacySkill));
+            this.aggression = Math.max(0, Math.min(10, builder.aggression));
+            this.tradeFocus = Math.max(0, Math.min(10, builder.tradeFocus));
+            this.relations = new HashMap<>(builder.relations);
+        }
+
+        public String getName() { return name; }
+        public int getDiplomacySkill() { return diplomacySkill; }
+        public int getAggression() { return aggression; }
+        public int getTradeFocus() { return tradeFocus; }
+        public Map<String, Integer> getRelations() { return Collections.unmodifiableMap(relations); }
+
+        public int getRelationWith(String otherFaction) {
+            return relations.getOrDefault(otherFaction, 0);
+        }
+
+        public RelationType getRelationTypeWith(String otherFaction) {
+            return RelationType.fromScore(getRelationWith(otherFaction));
+        }
+
+        public static Builder builder() { return new Builder(); }
+
+        public static class Builder {
+            private String name;
+            private int diplomacySkill = 5;
+            private int aggression = 5;
+            private int tradeFocus = 5;
+            private final Map<String, Integer> relations = new HashMap<>();
+
+            public Builder name(String name) { this.name = name; return this; }
+            public Builder diplomacySkill(int diplomacySkill) { this.diplomacySkill = diplomacySkill; return this; }
+            public Builder aggression(int aggression) { this.aggression = aggression; return this; }
+            public Builder tradeFocus(int tradeFocus) { this.tradeFocus = tradeFocus; return this; }
+            public Builder relation(String faction, int score) { this.relations.put(faction, score); return this; }
+            public Builder relations(Map<String, Integer> relations) { this.relations.putAll(relations); return this; }
+
+            public FactionProfile build() {
+                if (this.name == null) throw new IllegalArgumentException("Faction name is required");
+                return new FactionProfile(this);
+            }
+        }
+    }
+
+    private final Map<String, FactionProfile> factions = new ConcurrentHashMap<>();
+    private final Map<String, Treaty> treaties = new ConcurrentHashMap<>();
+    // Service-level relations map: "factionA:factionB" -> score
+    private final Map<String, Integer> relations = new ConcurrentHashMap<>();
+    private final Random random = new Random();
+
+    /**
+     * Register a faction with the diplomacy service.
+     */
+    public void registerFaction(FactionProfile profile) {
+        factions.put(profile.getName(), profile);
+    }
+
+    /**
+     * Register a faction with default settings.
+     */
+    public void registerFaction(String name) {
+        registerFaction(FactionProfile.builder().name(name).build());
+    }
+
+    /**
+     * Get a faction's profile.
+     */
+    public FactionProfile getFaction(String name) {
+        return factions.get(name);
+    }
+
+    /**
+     * Get all registered factions.
+     */
+    public List<String> getAllFactions() {
+        return new ArrayList<>(factions.keySet());
+    }
+
+    /**
+     * Get the relation score between two factions.
+     */
+    public int getRelationScore(String factionA, String factionB) {
+        return relations.getOrDefault(key(factionA, factionB), 0);
+    }
+
+    private String key(String a, String b) {
+        return a.compareTo(b) < 0 ? a + ":" + b : b + ":" + a;
+    }
+
+    /**
+     * Get the relation type between two factions.
+     */
+    public RelationType getRelationType(String factionA, String factionB) {
+        return RelationType.fromScore(getRelationScore(factionA, factionB));
+    }
+
+    /**
+     * Set the relation score between two factions.
+     */
+    public void setRelation(String factionA, String factionB, int score) {
+        int clamped = Math.max(-100, Math.min(100, score));
+        relations.put(key(factionA, factionB), clamped);
+    }
+
+    /**
+     * Modify the relation score between two factions.
+     */
+    public void modifyRelation(String factionA, String factionB, int change) {
+        int current = getRelationScore(factionA, factionB);
+        setRelation(factionA, factionB, current + change);
+    }
+
+    /**
+     * Perform a diplomatic action between two factions.
+     */
+    public DiplomaticResult performAction(String factionA, String factionB, DiplomaticAction action) {
+        FactionProfile profileA = factions.get(factionA);
+        FactionProfile profileB = factions.get(factionB);
+
+        if (profileA == null || profileB == null) {
+            return DiplomaticResult.builder()
+                    .actionName(action.getName())
+                    .factionA(factionA)
+                    .factionB(factionB)
+                    .success(false)
+                    .message("One or both factions not found")
+                    .build();
+        }
+
+        int relationBefore = profileA.getRelationWith(factionB);
+        double successChance = 0.5 + (profileA.getDiplomacySkill() - profileB.getDiplomacySkill()) * 0.05;
+        successChance = Math.max(0.1, Math.min(0.95, successChance));
+
+        boolean success = random.nextDouble() < successChance;
+        int change = action.getRelationChange();
+        if (!success) {
+            change = (int) (change * 0.5);
+        }
+
+        modifyRelation(factionA, factionB, change);
+        int relationAfter = profileA.getRelationWith(factionB);
+
+        String message;
+        if (success) {
+            message = factionA + " successfully " + action.getName().toLowerCase() + " with " + factionB;
+        } else {
+            message = factionA + "'s " + action.getName().toLowerCase() + " with " + factionB + " had limited effect";
+        }
+
+        return DiplomaticResult.builder()
+                .actionName(action.getName())
+                .factionA(factionA)
+                .factionB(factionB)
+                .relationBefore(relationBefore)
+                .relationAfter(relationAfter)
+                .success(success)
+                .message(message)
+                .build();
+    }
+
+    /**
+     * Declare war between two factions.
+     */
+    public DiplomaticResult declareWar(String aggressor, String target) {
+        DiplomaticResult result = performAction(aggressor, target, DiplomaticAction.DECLARATION_OF_WAR);
+        setRelation(aggressor, target, Math.min(getRelationScore(aggressor, target), -75));
         return result;
     }
 
-    @Override
-    public boolean isAtWar(String faction1Id, String faction2Id) {
-        FourxDiplomaticRelation relation = getOrCreateRelation(faction1Id, faction2Id);
-        return relation.isAtWar();
+    /**
+     * Offer peace between two warring factions.
+     */
+    public DiplomaticResult offerPeace(String offerer, String target) {
+        return performAction(offerer, target, DiplomaticAction.PEACE_OFFER);
     }
 
-    @Override
-    public List<FourxFaction> getAllFactions() {
-        return new ArrayList<>(factions.values());
-    }
-
-    @Override
-    public FourxFaction getFaction(String factionId) {
-        return factions.get(factionId.toUpperCase());
-    }
-
-    @Override
-    public Map<String, Object> generateDiplomaticEvent(String factionId) {
-        Map<String, Object> event = new LinkedHashMap<>();
-        FourxFaction faction = getFaction(factionId);
-        if (faction == null) {
-            event.put("type", "ERROR");
-            event.put("message", "Faction not found: " + factionId);
-            return event;
+    /**
+     * Create a treaty between two factions.
+     */
+    public Treaty createTreaty(String factionA, String factionB, TreatyType type, int turns) {
+        if (!factions.containsKey(factionA) || !factions.containsKey(factionB)) {
+            throw new IllegalArgumentException("Both factions must be registered");
         }
 
-        // Pick a random other faction
-        List<String> otherFactions = new ArrayList<>(factions.keySet());
-        otherFactions.remove(factionId.toUpperCase());
-        if (otherFactions.isEmpty()) {
-            event.put("type", "NONE");
-            event.put("message", "No other factions to interact with.");
-            return event;
+        Treaty treaty = Treaty.builder()
+                .factionA(factionA)
+                .factionB(factionB)
+                .type(type)
+                .turnsTotal(turns)
+                .build();
+
+        treaties.put(treaty.getId(), treaty);
+        modifyRelation(factionA, factionB, type.getRelationBonus());
+        return treaty;
+    }
+
+    /**
+     * Get all active treaties.
+     */
+    public List<Treaty> getActiveTreaties() {
+        return treaties.values().stream()
+                .filter(t -> !t.isExpired())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get treaties involving a specific faction.
+     */
+    public List<Treaty> getTreatiesForFaction(String faction) {
+        return treaties.values().stream()
+                .filter(t -> t.getFactionA().equals(faction) || t.getFactionB().equals(faction))
+                .filter(t -> !t.isExpired())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Check if two factions have an active treaty of a specific type.
+     */
+    public boolean hasTreaty(String factionA, String factionB, TreatyType type) {
+        return treaties.values().stream()
+                .filter(t -> !t.isExpired())
+                .filter(t -> t.getType() == type)
+                .anyMatch(t -> (t.getFactionA().equals(factionA) && t.getFactionB().equals(factionB))
+                        || (t.getFactionA().equals(factionB) && t.getFactionB().equals(factionA)));
+    }
+
+    /**
+     * Advance all treaties by one turn.
+     */
+    public void advanceTreatyTurns() {
+        treaties.values().removeIf(Treaty::isExpired);
+    }
+
+    /**
+     * Get diplomatic statistics for a faction.
+     */
+    public Map<String, Object> getDiplomacyStats(String faction) {
+        FactionProfile profile = factions.get(faction);
+        if (profile == null) {
+            return Map.of("error", "Faction not found");
         }
 
-        String otherId = otherFactions.get(random.nextInt(otherFactions.size()));
-        FourxFaction other = factions.get(otherId);
-        FourxDiplomaticRelation relation = getOrCreateRelation(factionId, otherId);
+        int allies = 0;
+        int enemies = 0;
+        int neutrals = 0;
 
-        // Generate event based on current relation
-        String eventType;
-        String description;
-        int relationChange = 0;
-
-        if (relation.isAtWar()) {
-            eventType = "WAR_EVENT";
-            int roll = random.nextInt(4);
-            switch (roll) {
-                case 0:
-                    description = other.getName() + " launches a surprise attack on your border systems.";
-                    relationChange = -15;
-                    break;
-                case 1:
-                    description = "Peace feelers from " + other.getName() + " suggest a ceasefire.";
-                    relationChange = 10;
-                    break;
-                case 2:
-                    description = "Battle with " + other.getName() + " results in heavy losses on both sides.";
-                    relationChange = -5;
-                    break;
-                default:
-                    description = "Your forces repel an incursion by " + other.getName() + ".";
-                    relationChange = -5;
-                    break;
-            }
-        } else if (relation.getRelationScore() < -30) {
-            eventType = "TENSION";
-            int roll = random.nextInt(3);
-            switch (roll) {
-                case 0:
-                    description = other.getName() + " moves fleets toward your border.";
-                    relationChange = -10;
-                    break;
-                case 1:
-                    description = "Spy activity from " + other.getName() + " detected in your systems.";
-                    relationChange = -5;
-                    break;
-                default:
-                    description = "Diplomatic incident with " + other.getName() + " escalates tensions.";
-                    relationChange = -8;
-                    break;
-            }
-        } else if (relation.getRelationScore() > 30) {
-            eventType = "ALLIANCE";
-            int roll = random.nextInt(3);
-            switch (roll) {
-                case 0:
-                    description = other.getName() + " proposes a trade agreement.";
-                    relationChange = 10;
-                    break;
-                case 1:
-                    description = "Joint exercise with " + other.getName() + " strengthens ties.";
-                    relationChange = 5;
-                    break;
-                default:
-                    description = other.getName() + " offers mutual defense pact.";
-                    relationChange = 15;
-                    break;
-            }
-        } else {
-            eventType = "NEUTRAL";
-            int roll = random.nextInt(4);
-            switch (roll) {
-                case 0:
-                    description = other.getName() + " sends diplomatic envoys.";
-                    relationChange = 5;
-                    break;
-                case 1:
-                    description = "Neutral trade negotiations with " + other.getName() + ".";
-                    relationChange = 3;
-                    break;
-                case 2:
-                    description = "Border skirmish with " + other.getName() + " is quickly resolved.";
-                    relationChange = -3;
-                    break;
-                default:
-                    description = "No significant diplomatic activity with " + other.getName() + ".";
-                    relationChange = 0;
-                    break;
+        for (String other : getAllFactions()) {
+            if (other.equals(faction)) continue;
+            RelationType type = RelationType.fromScore(getRelationScore(faction, other));
+            switch (type) {
+                case FRIENDLY, ALLIED, VASSAL -> allies++;
+                case HOSTILE, ENEMY -> enemies++;
+                default -> neutrals++;
             }
         }
 
-        // Apply relation change
-        modifyRelation(factionId, otherId, relationChange);
+        return Map.of(
+                "faction", faction,
+                "diplomacySkill", profile.getDiplomacySkill(),
+                "aggression", profile.getAggression(),
+                "tradeFocus", profile.getTradeFocus(),
+                "allies", allies,
+                "enemies", enemies,
+                "neutrals", neutrals,
+                "activeTreaties", getTreatiesForFaction(faction).size()
+        );
+    }
 
-        event.put("type", eventType);
-        event.put("faction", factionId);
-        event.put("otherFaction", otherId);
-        event.put("description", description);
-        event.put("relationChange", relationChange);
-        event.put("newRelationScore", getOrCreateRelation(factionId, otherId).getRelationScore());
-
-        log.info("Diplomatic event for {}: {} - {}", factionId, eventType, description);
-        return event;
+    /**
+     * Clear all diplomacy data.
+     */
+    public void clear() {
+        factions.clear();
+        treaties.clear();
+        relations.clear();
     }
 }

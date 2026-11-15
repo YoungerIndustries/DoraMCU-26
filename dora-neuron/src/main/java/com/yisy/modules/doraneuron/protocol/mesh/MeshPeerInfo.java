@@ -48,6 +48,33 @@ public class MeshPeerInfo implements Serializable {
     /** CPU capability profile for task routing. */
     private String cpuProfile;
 
+    /** Number of CPU cores available on this peer. */
+    private int cpuCores;
+
+    /** Available memory in MB on this peer. */
+    private long availableMemoryMb;
+
+    /** Whether this peer has GPU acceleration available. */
+    private boolean hasGpu;
+
+    /** Current inference queue depth (pending tasks). */
+    private int inferenceQueueDepth;
+
+    /** Average inference latency in milliseconds. */
+    private double avgInferenceLatencyMs;
+
+    /** Client type: UNITY, ELECTRON, PWA, FPS_SERVER, NEURON_NODE. */
+    private String clientType;
+
+    /** Whether this peer supports local ONNX inference. */
+    private boolean supportsInference;
+
+    /** Whether this peer can act as a co-server. */
+    private boolean canBeCoServer;
+
+    /** Network latency to this peer in milliseconds (set by discoverer). */
+    private double networkLatencyMs;
+
     // ── Getters and Setters ───────────────────────────────────────────────────
 
     public String getNodeId() {
@@ -144,6 +171,108 @@ public class MeshPeerInfo implements Serializable {
 
     public void setCpuProfile(String cpuProfile) {
         this.cpuProfile = cpuProfile;
+    }
+
+    public int getCpuCores() {
+        return cpuCores;
+    }
+
+    public void setCpuCores(int cpuCores) {
+        this.cpuCores = cpuCores;
+    }
+
+    public long getAvailableMemoryMb() {
+        return availableMemoryMb;
+    }
+
+    public void setAvailableMemoryMb(long availableMemoryMb) {
+        this.availableMemoryMb = availableMemoryMb;
+    }
+
+    public boolean isHasGpu() {
+        return hasGpu;
+    }
+
+    public void setHasGpu(boolean hasGpu) {
+        this.hasGpu = hasGpu;
+    }
+
+    public int getInferenceQueueDepth() {
+        return inferenceQueueDepth;
+    }
+
+    public void setInferenceQueueDepth(int inferenceQueueDepth) {
+        this.inferenceQueueDepth = inferenceQueueDepth;
+    }
+
+    public double getAvgInferenceLatencyMs() {
+        return avgInferenceLatencyMs;
+    }
+
+    public void setAvgInferenceLatencyMs(double avgInferenceLatencyMs) {
+        this.avgInferenceLatencyMs = avgInferenceLatencyMs;
+    }
+
+    public String getClientType() {
+        return clientType;
+    }
+
+    public void setClientType(String clientType) {
+        this.clientType = clientType;
+    }
+
+    public boolean isSupportsInference() {
+        return supportsInference;
+    }
+
+    public void setSupportsInference(boolean supportsInference) {
+        this.supportsInference = supportsInference;
+    }
+
+    public boolean isCanBeCoServer() {
+        return canBeCoServer;
+    }
+
+    public void setCanBeCoServer(boolean canBeCoServer) {
+        this.canBeCoServer = canBeCoServer;
+    }
+
+    public double getNetworkLatencyMs() {
+        return networkLatencyMs;
+    }
+
+    public void setNetworkLatencyMs(double networkLatencyMs) {
+        this.networkLatencyMs = networkLatencyMs;
+    }
+
+    /**
+     * Calculate a capability score for task distribution weighting.
+     * Higher score = more capable peer for AI inference tasks.
+     */
+    public double getCapabilityScore() {
+        if (!supportsInference) {
+            return 0;
+        }
+        double score = 0;
+        // CPU cores contribute up to 40 points
+        score += Math.min(cpuCores, 16) * 2.5;
+        // Memory contributes up to 20 points
+        score += Math.min(availableMemoryMb, 8192) / 8192.0 * 20;
+        // GPU bonus: 20 points
+        if (hasGpu) {
+            score += 20;
+        }
+        // Queue depth penalty: up to -20 points for deep queues
+        score -= Math.min(inferenceQueueDepth, 20);
+        // Latency penalty: up to -10 points for high latency
+        if (avgInferenceLatencyMs > 0) {
+            score -= Math.min(avgInferenceLatencyMs / 100.0, 10);
+        }
+        // Network latency penalty: up to -10 points
+        if (networkLatencyMs > 0) {
+            score -= Math.min(networkLatencyMs / 50.0, 10);
+        }
+        return Math.max(0, score);
     }
 
     /**

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.ai.*;
 import com.yisy.modules.doramcu.config.AiDifficultyConfig;
@@ -9,9 +10,9 @@ import com.yisy.modules.doradl.dl.service.DoraAiLearningService;
 import com.yisy.modules.doradl.model.ActionReward;
 import com.yisy.modules.doramcu.hex.Player;
 import com.yisy.modules.doramcu.model.GameSession;
+import com.yisy.modules.doramcu.service.AiNetworkService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 
@@ -26,9 +27,9 @@ import java.util.*;
  * <p>
  * Difficulty levels affect the AI's strategic decisions:
  * <ul>
- *   <li>EASY — Random actions, poor resource management</li>
- *   <li>MEDIUM — Neural network + heuristic blend, balanced strategy</li>
- *   <li>HARD — Neural network + heuristic blend, aggressive expansion</li>
+ *   <li>EASY â€” Random actions, poor resource management</li>
+ *   <li>MEDIUM â€” Neural network + heuristic blend, balanced strategy</li>
+ *   <li>HARD â€” Neural network + heuristic blend, aggressive expansion</li>
  * </ul>
  * </p>
  */
@@ -58,6 +59,7 @@ public class AiPlayerService {
     }
 
     private final AiDifficultyConfig aiDifficultyConfig;
+    private final AiNetworkService aiNetworkService;
 
     /** Map from session player ID to their EmpireAiCore instance. */
     private final Map<Long, EmpireAiCore> aiCoreMap = new HashMap<>();
@@ -66,7 +68,8 @@ public class AiPlayerService {
                            AiDifficultyConfig aiDifficultyConfig, GameChatService gameChatService,
                            DoraAiLearningService doraAiLearningService,
                            PlayerActionAnalyzer playerActionAnalyzer,
-                           PlayerCloneService playerCloneService) {
+                           PlayerCloneService playerCloneService,
+                           AiNetworkService aiNetworkService) {
         this.gameSessionService = gameSessionService;
         this.dlGameAiService = dlGameAiService;
         this.aiDifficultyConfig = aiDifficultyConfig;
@@ -74,6 +77,7 @@ public class AiPlayerService {
         this.doraAiLearningService = doraAiLearningService;
         this.playerActionAnalyzer = playerActionAnalyzer;
         this.playerCloneService = playerCloneService;
+        this.aiNetworkService = aiNetworkService;
         this.random = new Random();
     }
 
@@ -288,6 +292,7 @@ public class AiPlayerService {
                 .energy(energy)
                 .food(food)
                 .credits(credits)
+                .aiNetworkService(aiNetworkService)
                 .build();
     }
 
@@ -416,7 +421,7 @@ public class AiPlayerService {
                 }
             }
         } catch (IllegalStateException e) {
-            // AI action failed (e.g., cannot afford ship, out of range) — log and continue
+            // AI action failed (e.g., cannot afford ship, out of range) â€” log and continue
             log.debug("AI action {} failed for player {}: {}", decision.getActionType(), aiPlayer.getName(), e.getMessage());
         } catch (Exception e) {
             log.warn("Unexpected error executing AI action {} for player {}: {}",
@@ -462,7 +467,7 @@ public class AiPlayerService {
             // Record the action for learning
             doraAiLearningService.recordAction(dlStateBefore, sessionPlayerId, action, reward);
 
-            log.debug("Recorded AI action for learning: {} (reward: {:.3f})", action, reward);
+            log.debug("Recorded AI action for learning: {} (reward: {})", action, reward);
         } catch (Exception e) {
             log.warn("Failed to record AI action for learning: {}", e.getMessage());
         }

@@ -91,9 +91,11 @@ public class SpectatorController {
     @PostMapping("/join/{spectatorId}/{sessionId}")
     public ResponseEntity<?> joinSession(@PathVariable String spectatorId,
                                          @PathVariable String sessionId) {
-        return spectatorService.joinSession(spectatorId, sessionId)
-                .map(state -> ResponseEntity.ok(buildSpectatorGameStateResponse(state)))
-                .orElse(ResponseEntity.notFound().body(Map.of("error", "Session not found or spectator not registered")));
+        Optional<SpectatorGameState> result = spectatorService.joinSession(spectatorId, sessionId);
+        if (result.isPresent()) {
+            return ResponseEntity.ok(buildSpectatorGameStateResponse(result.get()));
+        }
+        return ResponseEntity.notFound().build();
     }
 
     /**
@@ -118,9 +120,11 @@ public class SpectatorController {
      */
     @GetMapping("/state/{sessionId}")
     public ResponseEntity<?> getSpectatorGameState(@PathVariable String sessionId) {
-        return spectatorService.getSpectatorGameState(sessionId)
-                .map(state -> ResponseEntity.ok(buildSpectatorGameStateResponse(state)))
-                .orElse(ResponseEntity.notFound().body(Map.of("error", "Session not found")));
+        Optional<SpectatorGameState> result = spectatorService.getSpectatorGameState(sessionId);
+        if (result.isPresent()) {
+            return ResponseEntity.ok(buildSpectatorGameStateResponse(result.get()));
+        }
+        return ResponseEntity.notFound().build();
     }
 
     /**
@@ -237,12 +241,12 @@ public class SpectatorController {
      */
     @PostMapping("/heartbeat/{spectatorId}")
     public ResponseEntity<?> heartbeat(@PathVariable String spectatorId) {
-        return spectatorService.getSpectator(spectatorId)
-                .map(info -> {
-                    info.heartbeat();
-                    return ResponseEntity.ok(Map.of("message", "Heartbeat received", "timestamp", info.getLastHeartbeat().toString()));
-                })
-                .orElse(ResponseEntity.notFound().body(Map.of("error", "Spectator not found")));
+        Optional<SpectatorInfo> opt = spectatorService.getSpectator(spectatorId);
+        if (opt.isPresent()) {
+            opt.get().heartbeat();
+            return ResponseEntity.ok(Map.of("message", "Heartbeat received", "timestamp", opt.get().getLastHeartbeat().toString()));
+        }
+        return ResponseEntity.notFound().build();
     }
 
     /**

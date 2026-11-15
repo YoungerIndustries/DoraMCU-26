@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.sfb.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.sfb.model.*;
 import com.yisy.modules.doramcu.util.DiceUtil;
@@ -12,6 +13,8 @@ import java.util.*;
  * system damage, excess damage, and crippled/self-destruction checks.
  * </p>
  */
+
+@Service
 public class DamageAllocationService {
 
     /**

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.dnd5e.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.dnd5e.model.Dnd5eVillain;
 import com.yisy.modules.doramcu.dnd5e.model.Dnd5eVillainPower;
@@ -6,7 +7,6 @@ import com.yisy.modules.doramcu.dnd5e.repository.Dnd5eVillainPowerRepository;
 import com.yisy.modules.doramcu.dnd5e.repository.Dnd5eVillainRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -459,7 +459,7 @@ public class Dnd5eVillainService {
         volothamp.setName("Volothamp Geddarm");
         volothamp.setVillainType("Archfey");
         volothamp.setChallengeRating(15);
-        volothamp.setDescription("The self-proclaimed greatest adventurer in Faerûn, who hides dark secrets beneath his charming exterior.");
+        volothamp.setDescription("The self-proclaimed greatest adventurer in FaerÃ»n, who hides dark secrets beneath his charming exterior.");
         volothamp.setMotive("To uncover and exploit the greatest adventure of all time, regardless of the cost to others.");
         volothamp.setHitPoints(240);
         volothamp.setArmorClass(17);

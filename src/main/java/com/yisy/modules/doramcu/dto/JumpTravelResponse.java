@@ -161,7 +161,7 @@ public class JumpTravelResponse {
     }
 
     public void setHasEnoughFuel(boolean hasEnoughFuel) {
-        hasEnoughFuel = hasEnoughFuel;
+        this.hasEnoughFuel = hasEnoughFuel;
     }
 
     public String getTravelState() {

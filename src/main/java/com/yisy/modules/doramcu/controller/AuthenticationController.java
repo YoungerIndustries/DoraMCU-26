@@ -181,9 +181,9 @@ public class AuthenticationController {
                 }
                 userRepository.save(user);
                 player.setUser(user);
-                if (playerRepository != null) {
-                    playerRepository.save(player);
-                }
+            }
+            if (playerRepository != null) {
+                playerRepository.save(player);
             }
         }
 

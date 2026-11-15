@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.security;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +21,8 @@ import java.io.IOException;
  * authentication to prevent brute-force attacks on the auth endpoints.
  */
 @Component
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class RateLimiterFilter extends OncePerRequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(RateLimiterFilter.class);

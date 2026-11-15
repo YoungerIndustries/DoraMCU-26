@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.shared.service;
 
+import org.springframework.stereotype.Service;
+
 import com.yisy.modules.doramcu.shared.model.GameSystem;
 import com.yisy.modules.doramcu.shared.model.RulesEntry;
 import com.yisy.modules.doramcu.shared.model.RulesTable;
@@ -7,7 +9,8 @@ import com.yisy.modules.doramcu.shared.repository.UnifiedRulesEntryRepository;
 import com.yisy.modules.doramcu.shared.repository.UnifiedRulesTableRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -43,6 +46,7 @@ public class RulesService {
      * Find all active rule entries for a specific game system.
      */
     @Transactional(readOnly = true)
+    @Cacheable(value = "rulesEntries", key = "'system:' + #gameSystem")
     public List<RulesEntry> getEntriesByGameSystem(GameSystem gameSystem) {
         return entryRepository.findByGameSystemAndActiveTrue(gameSystem);
     }
@@ -51,6 +55,7 @@ public class RulesService {
      * Find entries by category within a game system.
      */
     @Transactional(readOnly = true)
+    @Cacheable(value = "rulesEntries", key = "'category:' + #gameSystem + ':' + #category")
     public List<RulesEntry> getEntriesByCategory(GameSystem gameSystem, String category) {
         return entryRepository.findByGameSystemAndCategoryAndActiveTrue(gameSystem, category);
     }
@@ -59,6 +64,7 @@ public class RulesService {
      * Find entries by chapter within a game system.
      */
     @Transactional(readOnly = true)
+    @Cacheable(value = "rulesEntries", key = "'chapter:' + #gameSystem + ':' + #chapter")
     public List<RulesEntry> getEntriesByChapter(GameSystem gameSystem, String chapter) {
         return entryRepository.findByGameSystemAndChapterAndActiveTrue(gameSystem, chapter);
     }
@@ -67,6 +73,7 @@ public class RulesService {
      * Find entries by source book within a game system.
      */
     @Transactional(readOnly = true)
+    @Cacheable(value = "rulesEntries", key = "'source:' + #gameSystem + ':' + #source")
     public List<RulesEntry> getEntriesBySource(GameSystem gameSystem, String source) {
         return entryRepository.findByGameSystemAndSourceAndActiveTrue(gameSystem, source);
     }
@@ -75,6 +82,7 @@ public class RulesService {
      * Search entries by title keyword within a game system.
      */
     @Transactional(readOnly = true)
+    @Cacheable(value = "rulesEntries", key = "'search_title:' + #gameSystem + ':' + #keyword")
     public List<RulesEntry> searchEntriesByTitle(GameSystem gameSystem, String keyword) {
         return entryRepository.searchByTitle(gameSystem, keyword);
     }
@@ -83,6 +91,7 @@ public class RulesService {
      * Search entries by text content within a game system.
      */
     @Transactional(readOnly = true)
+    @Cacheable(value = "rulesEntries", key = "'search_text:' + #gameSystem + ':' + #keyword")
     public List<RulesEntry> searchEntriesByText(GameSystem gameSystem, String keyword) {
         return entryRepository.searchByText(gameSystem, keyword);
     }
@@ -91,6 +100,7 @@ public class RulesService {
      * Save or update a rule entry.
      */
     @Transactional
+    @CacheEvict(value = "rulesEntries", allEntries = true)
     public RulesEntry saveEntry(RulesEntry entry) {
         log.debug("Saving rule entry: {} ({})", entry.getTitle(), entry.getGameSystem());
         return entryRepository.save(entry);
@@ -100,6 +110,7 @@ public class RulesService {
      * Delete a rule entry by ID.
      */
     @Transactional
+    @CacheEvict(value = "rulesEntries", allEntries = true)
     public void deleteEntry(Long id) {
         log.debug("Deleting rule entry: {}", id);
         entryRepository.deleteById(id);
@@ -111,6 +122,7 @@ public class RulesService {
      * Find all active table entries for a specific game system.
      */
     @Transactional(readOnly = true)
+    @Cacheable(value = "rulesTables", key = "'system:' + #gameSystem")
     public List<RulesTable> getTablesByGameSystem(GameSystem gameSystem) {
         return tableRepository.findByGameSystemAndActiveTrue(gameSystem);
     }
@@ -119,6 +131,7 @@ public class RulesService {
      * Find table entries by name within a game system.
      */
     @Transactional(readOnly = true)
+    @Cacheable(value = "rulesTables", key = "'table:' + #gameSystem + ':' + #tableName")
     public List<RulesTable> getTableEntries(GameSystem gameSystem, String tableName) {
         return tableRepository.findByGameSystemAndTableNameAndActiveTrue(gameSystem, tableName);
     }
@@ -127,6 +140,7 @@ public class RulesService {
      * Find table entries by category within a game system.
      */
     @Transactional(readOnly = true)
+    @Cacheable(value = "rulesTables", key = "'category:' + #gameSystem + ':' + #category")
     public List<RulesTable> getTablesByCategory(GameSystem gameSystem, String category) {
         return tableRepository.findByGameSystemAndCategoryAndActiveTrue(gameSystem, category);
     }
@@ -135,6 +149,7 @@ public class RulesService {
      * Find table entry by roll value within a game system and table.
      */
     @Transactional(readOnly = true)
+    @Cacheable(value = "rulesTables", key = "'roll:' + #gameSystem + ':' + #tableName + ':' + #rollValue")
     public List<RulesTable> getTableEntryByRoll(GameSystem gameSystem, String tableName, int rollValue) {
         return tableRepository.findByGameSystemAndTableNameAndRollValueAndActiveTrue(
                 gameSystem, tableName, rollValue);
@@ -144,6 +159,7 @@ public class RulesService {
      * Save or update a table entry.
      */
     @Transactional
+    @CacheEvict(value = "rulesTables", allEntries = true)
     public RulesTable saveTableEntry(RulesTable table) {
         log.debug("Saving table entry: {} ({})", table.getTableName(), table.getGameSystem());
         return tableRepository.save(table);
@@ -153,6 +169,7 @@ public class RulesService {
      * Delete a table entry by ID.
      */
     @Transactional
+    @CacheEvict(value = "rulesTables", allEntries = true)
     public void deleteTableEntry(Long id) {
         log.debug("Deleting table entry: {}", id);
         tableRepository.deleteById(id);

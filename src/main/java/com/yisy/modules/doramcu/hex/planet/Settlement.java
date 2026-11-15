@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.hex.planet;
+import org.springframework.stereotype.Component;
 
 import com.yisy.modules.doramcu.hex.Hex3D;
 
@@ -35,6 +36,7 @@ public class Settlement {
     private int passengerProduction;
     private boolean active;
     private String ownerEmpireId;
+    private List<String> dungeonIds;
 
     /**
      * Settlement size categories that determine max population and growth.
@@ -99,6 +101,7 @@ public class Settlement {
         this.passengerProduction = 0;
         this.active = true;
         this.ownerEmpireId = null;
+        this.dungeonIds = new ArrayList<>();
         initializeCargoGoals();
     }
 
@@ -305,6 +308,34 @@ public class Settlement {
      */
     public void setOwnerEmpireId(String empireId) {
         this.ownerEmpireId = empireId;
+    }
+
+    /**
+     * @return the list of dungeon IDs for interior rooms of this settlement's buildings
+     */
+    public List<String> getDungeonIds() {
+        return Collections.unmodifiableList(dungeonIds);
+    }
+
+    /**
+     * Sets the dungeon IDs for interior rooms.
+     * Called after BuildingInteriorGenerator creates the rooms.
+     *
+     * @param dungeonIds the list of dungeon IDs
+     */
+    public void setDungeonIds(List<String> dungeonIds) {
+        this.dungeonIds = dungeonIds != null ? new ArrayList<>(dungeonIds) : new ArrayList<>();
+    }
+
+    /**
+     * Adds a dungeon ID for an interior room.
+     *
+     * @param dungeonId the dungeon ID to add
+     */
+    public void addDungeonId(String dungeonId) {
+        if (dungeonId != null && !dungeonId.isEmpty()) {
+            this.dungeonIds.add(dungeonId);
+        }
     }
 
     /**

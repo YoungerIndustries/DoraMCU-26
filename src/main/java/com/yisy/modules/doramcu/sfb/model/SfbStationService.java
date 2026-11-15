@@ -1,4 +1,6 @@
 package com.yisy.modules.doramcu.sfb.model;
+import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Service;
 
 /**
  * Station services for SFB.
@@ -7,6 +9,7 @@ package com.yisy.modules.doramcu.sfb.model;
  * cargo handling, and crew quarters at starbases and stations.
  * </p>
  */
+
 public class SfbStationService {
 
     private final String stationName;

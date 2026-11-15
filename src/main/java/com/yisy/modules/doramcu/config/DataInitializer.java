@@ -1,22 +1,39 @@
 package com.yisy.modules.doramcu.config;
 
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Character;
+import com.yisy.modules.doramcu.earth2026.repository.Earth2026CharacterRepository;
+import com.yisy.modules.doramcu.eve.model.AiCharacter;
+import com.yisy.modules.doramcu.eve.model.EveCorporation;
 import com.yisy.modules.doramcu.hex.Empire;
 import com.yisy.modules.doramcu.hex.GalaxyFactory;
 import com.yisy.modules.doramcu.hex.GalaxyGenerationProgress;
 import com.yisy.modules.doramcu.hex.GalaxyGenerator;
+import com.yisy.modules.doramcu.model.CareerLevel;
+import com.yisy.modules.doramcu.corporation.model.CorporateContract;
+import com.yisy.modules.doramcu.corporation.model.CorporateHiring;
+import com.yisy.modules.doramcu.corporation.model.CorporatePosition;
+import com.yisy.modules.doramcu.corporation.model.CorporationRelationship;
 import com.yisy.modules.doramcu.model.Device;
 import com.yisy.modules.doramcu.model.Player;
 import com.yisy.modules.doramcu.model.PromoCode;
 import com.yisy.modules.doramcu.model.User;
+import com.yisy.modules.doramcu.repository.AiCharacterRepository;
+import com.yisy.modules.doramcu.corporation.repository.CorporateContractRepository;
+import com.yisy.modules.doramcu.corporation.repository.CorporateHiringRepository;
+import com.yisy.modules.doramcu.corporation.repository.CorporationRelationshipRepository;
 import com.yisy.modules.doramcu.repository.DeviceRepository;
+import com.yisy.modules.doramcu.repository.EveCorporationRepository;
 import com.yisy.modules.doramcu.repository.PlayerRepository;
 import com.yisy.modules.doramcu.repository.PromoCodeRepository;
 import com.yisy.modules.doramcu.repository.UserRepository;
 import com.yisy.modules.doramcu.service.AiPlayerService;
+import com.yisy.modules.doramcu.service.CharacterService;
 import com.yisy.modules.doramcu.service.GalaxyCreationService;
 import com.yisy.modules.doramcu.service.GalaxyProgressService;
 import com.yisy.modules.doramcu.service.GalaxyService;
 import com.yisy.modules.doramcu.service.GameSessionService;
+import com.yisy.modules.doramcu.traveller.AbilityScore;
+import com.yisy.modules.doramcu.traveller.TravellerCharacter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -25,7 +42,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -38,7 +58,14 @@ public class DataInitializer {
     @ConditionalOnProperty(name = "app.seed-data", havingValue = "true", matchIfMissing = false)
     CommandLineRunner initBasicData(DeviceRepository deviceRepository, UserRepository userRepository,
                                     PlayerRepository playerRepository, PasswordEncoder passwordEncoder,
-                                    PromoCodeRepository promoCodeRepository) {
+                                    PromoCodeRepository promoCodeRepository,
+                                    Earth2026CharacterRepository earth2026CharacterRepository,
+                                    EveCorporationRepository eveCorporationRepository,
+                                    AiCharacterRepository aiCharacterRepository,
+                                    CorporateContractRepository corporateContractRepository,
+                                    CorporateHiringRepository corporateHiringRepository,
+                                    CorporationRelationshipRepository corporationRelationshipRepository,
+                                    CharacterService travellerCharacterService) {
         return args -> {
             log.warn("SEED DATA IS ENABLED - This should only be used in development environments!");
             log.info("Initializing database with seed data...");
@@ -46,11 +73,7 @@ public class DataInitializer {
             if (userRepository.count() == 0) {
                 // Admin user: Butch Younger with admin rights
                 userRepository.save(new User(null, "Butch Younger", passwordEncoder.encode("3214")));
-                // Game users
-                userRepository.save(new User(null, "player1", passwordEncoder.encode("123456")));
-                userRepository.save(new User(null, "player2", passwordEncoder.encode("234567")));
-                userRepository.save(new User(null, "player3", passwordEncoder.encode("345678")));
-                log.info("4 default users created (Butch Younger, player1, player2, player3)");
+                log.info("1 default user created (Butch Younger)");
             }
             if (deviceRepository.count() == 0) {
                 deviceRepository.save(new Device(null, "Sensor-001", "active", "Building A"));
@@ -65,68 +88,38 @@ public class DataInitializer {
                 Player butchPlayer = new Player();
                 butchPlayer.setEmail("butch.younger@empire.com");
                 butchPlayer.setLoginPin("3214");
-                butchPlayer.setEmpireName("Interstellar Alliance");
-                butchPlayer.setGovernmentType(Player.GovernmentType.DEMOCRACY);
+                butchPlayer.setEmpireName("Younger Industries");
+                butchPlayer.setGovernmentType(Player.GovernmentType.CORPORATE);
                 butchPlayer.setEthos(Player.Ethos.LIBERTARIAN);
                 butchPlayer.setAdmin(true);
                 Optional<User> butchUserOpt = userRepository.findByUsername("Butch Younger");
                 butchUserOpt.ifPresent(butchPlayer::setUser);
                 playerRepository.save(butchPlayer);
-                log.info("Admin player 'Butch Younger' created with PIN 3214, empire 'Interstellar Alliance', democracy, libertarian");
+                log.info("Admin player 'Butch Younger' created with PIN 3214, empire 'Younger Industries', corporate, libertarian");
 
-                // Terran Republic - Democratic materialist empire
-                Player player1 = new Player();
-                player1.setEmail("player1@empire.com");
-                player1.setLoginPin("123456");
-                player1.setEmpireName("Terran Republic");
-                player1.setGovernmentType(Player.GovernmentType.DEMOCRACY);
-                player1.setEthos(Player.Ethos.MATERIALIST);
-                playerRepository.save(player1);
+                // Create Butch Younger as the first Earth 2026 character (linked to the Butch Younger player)
+                // Butch is an Earth2026 character, NOT a Traveller character
+                if (earth2026CharacterRepository.count() == 0) {
+                    Earth2026Character butchCharacter = new Earth2026Character("Butch Younger", 35, "CEO");
+                    butchCharacter.setPlayerId(butchPlayer.getId());
+                    butchCharacter.setStrScore(12);
+                    butchCharacter.setDexScore(10);
+                    butchCharacter.setConScore(11);
+                    butchCharacter.setIntScore(10);
+                    butchCharacter.setWisScore(9);
+                    butchCharacter.setChaScore(12);
+                    butchCharacter.setHitPoints(35);
+                    butchCharacter.setMaxHitPoints(35);
+                    butchCharacter.setExperiencePoints(0);
+                    butchCharacter.setEarthLocation("San Diego, CA");
+                    butchCharacter.setCreatedAt(LocalDateTime.now());
+                    butchCharacter.setUpdatedAt(LocalDateTime.now());
+                    butchCharacter.setHasTransitioned(false);
+                    earth2026CharacterRepository.save(butchCharacter);
+                    log.info("Earth2026 character 'Butch Younger' created (age=35, occupation=CEO, playerId={})", butchPlayer.getId());
+                }
 
-                // Solar Imperium - Monarchist militarist empire
-                Player player2 = new Player();
-                player2.setEmail("player2@empire.com");
-                player2.setLoginPin("234567");
-                player2.setEmpireName("Solar Imperium");
-                player2.setGovernmentType(Player.GovernmentType.MONARCHY);
-                player2.setEthos(Player.Ethos.MILITARIST);
-                playerRepository.save(player2);
-
-                // United Colonies - Libertarian confederation
-                Player player3 = new Player();
-                player3.setEmail("player3@empire.com");
-                player3.setLoginPin("345678");
-                player3.setEmpireName("United Colonies");
-                player3.setGovernmentType(Player.GovernmentType.CONFEDERATION);
-                player3.setEthos(Player.Ethos.LIBERTARIAN);
-                playerRepository.save(player3);
-
-                // Additional players for multiplayer scenarios
-                Player player4 = new Player();
-                player4.setEmail("player4@empire.com");
-                player4.setLoginPin("456789");
-                player4.setEmpireName("Stellar Hegemony");
-                player4.setGovernmentType(Player.GovernmentType.OLIGARCHY);
-                player4.setEthos(Player.Ethos.EQUALIST);
-                playerRepository.save(player4);
-
-                Player player5 = new Player();
-                player5.setEmail("player5@empire.com");
-                player5.setLoginPin("567890");
-                player5.setEmpireName("Divine Theocracy");
-                player5.setGovernmentType(Player.GovernmentType.THEOCRACY);
-                player5.setEthos(Player.Ethos.SPIRITUALIST);
-                playerRepository.save(player5);
-
-                Player player6 = new Player();
-                player6.setEmail("player6@empire.com");
-                player6.setLoginPin("678901");
-                player6.setEmpireName("Corporate Syndicate");
-                player6.setGovernmentType(Player.GovernmentType.CORPORATE);
-                player6.setEthos(Player.Ethos.PACIFIST);
-                playerRepository.save(player6);
-
-                log.info("8 default players created (including admin)");
+                log.info("1 default player created (Butch Younger admin)");
             }
             // Seed promo codes for onboarding flow testing
             if (promoCodeRepository.count() == 0) {
@@ -149,6 +142,135 @@ public class DataInitializer {
                 promoCodeRepository.save(dragons);
 
                 log.info("2 default promo codes created (IMMORTAL, DRAGONS)");
+            }
+            // Seed corporation data for the corporation dashboard
+            if (eveCorporationRepository.count() == 0) {
+                // Create Butch Younger's corporation - Younger Industries
+                EveCorporation corporation = new EveCorporation("Younger Industries", "YISY", "Butch Younger");
+                corporation.setCeoPlayerId("1");
+                corporation.setDescription("Interstellar trading and exploration corporation founded by Butch Younger. " +
+                        "CEO position is switchable between Butch Younger (human) and Sif Younger (AI VP).");
+                corporation.setCreditBalance(50000L);
+                eveCorporationRepository.save(corporation);
+                log.info("Corporation 'Younger Industries' created with 50,000 credits");
+
+                // Create Sif Younger as the AI VP of Younger Industries
+                // Sif is an AiCharacter (HUMAN_LEADER type) who serves as VP and can switch to CEO
+                AiCharacter sifYounger = new AiCharacter();
+                sifYounger.setName("Sif Younger");
+                sifYounger.setRole("VP");
+                sifYounger.setEmpireName("Younger Industries");
+                sifYounger.setActive(true);
+                sifYounger.setHirable(false);
+                sifYounger.setHiringStatus(AiCharacter.HiringStatus.UNAVAILABLE);
+                sifYounger.setTotalExperience(500);
+                sifYounger.setLeadershipRating(9);
+                sifYounger.setTotalBattles(0);
+                sifYounger.setTotalVictories(0);
+                sifYounger.setDescription("AI Vice President of Younger Industries. " +
+                        "Sif Younger is the AI co-founder who can assume the CEO role when Butch Younger is unavailable. " +
+                        "Serves as the intelligent operations manager and strategic advisor.");
+                sifYounger.setCharacterType(AiCharacter.CharacterType.HUMAN_LEADER);
+                sifYounger.setCanPromoteToCoServer(true);
+                AiCharacter savedSif = aiCharacterRepository.save(sifYounger);
+                log.info("AI character 'Sif Younger' created as VP of Younger Industries (id={})", savedSif.getId());
+
+                // Set Sif Younger as the VP of Younger Industries
+                corporation.setVpName("Sif Younger");
+                corporation.setVpPlayerId(String.valueOf(savedSif.getId()));
+                eveCorporationRepository.save(corporation);
+                log.info("Sif Younger set as VP of Younger Industries. CEO can switch between Butch Younger and Sif Younger.");
+
+                // Create AI characters for hiring
+                String[] aiNames = {"Zara-7", "Kael-3", "Nova-9", "Orion-5", "Lyra-2"};
+                String[] aiRoles = {"Navigator", "Tactician", "Engineer", "Diplomat", "Scientist"};
+
+                List<AiCharacter> aiCharacters = new ArrayList<>();
+                for (int i = 0; i < 5; i++) {
+                    AiCharacter ai = new AiCharacter();
+                    ai.setName(aiNames[i]);
+                    ai.setRole(aiRoles[i]);
+                    ai.setEmpireName("Younger Industries");
+                    ai.setActive(true);
+                    ai.setHirable(true);
+                    ai.setHiringStatus(AiCharacter.HiringStatus.AVAILABLE);
+                    ai.setTotalExperience(100 + i * 50);
+                    ai.setLeadershipRating(5 + i);
+                    ai.setTotalBattles(i * 3);
+                    ai.setTotalVictories(i * 2);
+                    aiCharacters.add(aiCharacterRepository.save(ai));
+                }
+                log.info("5 AI characters created for hiring");
+
+                // Hire 2 AI characters for the corporation
+                AiCharacter hired1 = aiCharacters.get(0); // Zara-7 Navigator
+                hired1.setHiringStatus(AiCharacter.HiringStatus.HIRED);
+                aiCharacterRepository.save(hired1);
+
+                AiCharacter hired2 = aiCharacters.get(1); // Kael-3 Tactician
+                hired2.setHiringStatus(AiCharacter.HiringStatus.HIRED);
+                aiCharacterRepository.save(hired2);
+
+                CorporateHiring hiring1 = new CorporateHiring(
+                        corporation.getId(), hired1.getId(), CorporatePosition.CFO, 500L);
+                hiring1.setPerformanceRating(4.5);
+                hiring1.setCareerLevel(CareerLevel.JUNIOR);
+                hiring1.setXpEarned(150);
+                hiring1.setExpiryDate(LocalDateTime.now().plusDays(90));
+                corporateHiringRepository.save(hiring1);
+
+                CorporateHiring hiring2 = new CorporateHiring(
+                        corporation.getId(), hired2.getId(), CorporatePosition.SECURITY_CHIEF, 450L);
+                hiring2.setPerformanceRating(4.2);
+                hiring2.setCareerLevel(CareerLevel.JUNIOR);
+                hiring2.setXpEarned(100);
+                hiring2.setExpiryDate(LocalDateTime.now().plusDays(90));
+                corporateHiringRepository.save(hiring2);
+
+                log.info("2 AI characters hired: Zara-7 (CFO), Kael-3 (Security Chief)");
+
+                // Create available contracts
+                String[] contractTitles = {
+                        "Spice Trade Route Alpha", "Convoy Escort Mission",
+                        "Supply Chain Optimization", "Corporate Espionage", "Market Analysis"
+                };
+                CorporateContract.ContractType[] contractTypes = {
+                        CorporateContract.ContractType.TRADE, CorporateContract.ContractType.SECURITY,
+                        CorporateContract.ContractType.LOGISTICS, CorporateContract.ContractType.MISSION,
+                        CorporateContract.ContractType.TRADE
+                };
+
+                for (int i = 0; i < 5; i++) {
+                    CorporateContract contract = new CorporateContract();
+                    contract.setTitle(contractTitles[i]);
+                    contract.setType(contractTypes[i]);
+                    contract.setDescription("A " + contractTypes[i].name().toLowerCase() + " contract for the corporation.");
+                    contract.setPaymentCredits(2000 + i * 1000);
+                    contract.setXpReward(50 + i * 25);
+                    contract.setDifficulty(1 + i);
+                    contract.setDurationTurns(1 + i / 2);
+                    contract.setStatus(CorporateContract.Status.AVAILABLE);
+                    contract.setCorporationId(corporation.getId());
+                    contract.setCreatedAt(LocalDateTime.now());
+                    contract.setExpiryDate(LocalDateTime.now().plusDays(30));
+                    corporateContractRepository.save(contract);
+                }
+                log.info("5 available contracts created for Younger Industries");
+
+                log.info("Younger Industries corporation setup complete with CEO Butch Younger and AI VP Sif Younger");
+            }
+            // Seed Traveller character for Butch Younger (in-memory, for unified login)
+            TravellerCharacter existing = travellerCharacterService.getCharacter(1);
+            if (existing == null) {
+                TravellerCharacter butchTraveller = travellerCharacterService.createCharacter("Butch Younger");
+                butchTraveller.setAbility(AbilityScore.DEX, 10);
+                butchTraveller.setAbility(AbilityScore.ST, 12);
+                butchTraveller.setAbility(AbilityScore.END, 11);
+                butchTraveller.setAbility(AbilityScore.INT, 10);
+                butchTraveller.setAbility(AbilityScore.EDU, 9);
+                butchTraveller.setAbility(AbilityScore.SOC, 12);
+                butchTraveller.setAbility(AbilityScore.APP, 8);
+                log.info("Traveller character 'Butch Younger' created (id=1, DEX:10, ST:12, END:11, INT:10, EDU:9, SOC:12, APP:8)");
             }
             log.info("Basic database initialization completed");
         };
@@ -264,7 +386,7 @@ public class DataInitializer {
 
     /**
      * Generates the game galaxy synchronously with the given progress listener.
-     * Used by GameLauncher to show the startup modal while generating.
+     * Used by the desktop launcher to show the startup modal while generating.
      *
      * @param galaxyService the galaxy service
      * @param progressListener the progress listener (e.g., GalaxyStartupModal)
@@ -292,7 +414,8 @@ public class DataInitializer {
 
     /**
      * Last CommandLineRunner: signals that all server-side initialization is complete.
-     * The GUI is launched by GameLauncher after SpringApplication.run() returns,
+     * GameLauncher waits for this runner to finish before launching the desktop app.
+     * The desktop app is launched by GameLauncher.launchDesktopApp() after SpringApplication.run() returns,
      * so this runner only logs the completion status.
      */
     @Bean

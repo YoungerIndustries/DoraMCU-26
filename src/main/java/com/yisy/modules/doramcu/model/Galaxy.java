@@ -53,6 +53,13 @@ public class Galaxy {
     private String timezone;
     private java.time.LocalDateTime createdAt;
 
+    // Game Creator integration: links galaxy to its source lore and selected game modes
+    @Column(name = "lore_slug", length = 100)
+    private String loreSlug;
+
+    @Column(name = "game_modes", length = 500)
+    private String gameModes;  // Comma-separated GameMode names (e.g., "RPG,4X,TACTICAL")
+
     @OneToMany(mappedBy = "galaxy", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SolarSystem> solarSystems = new ArrayList<>();
 
@@ -183,6 +190,14 @@ public class Galaxy {
 
     public java.time.LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(java.time.LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    // Game Creator integration accessors
+
+    public String getLoreSlug() { return loreSlug; }
+    public void setLoreSlug(String loreSlug) { this.loreSlug = loreSlug; }
+
+    public String getGameModes() { return gameModes; }
+    public void setGameModes(String gameModes) { this.gameModes = gameModes; }
 
     /** Returns the corporation that owns this galaxy — always null for model.Galaxy */
     public com.yisy.modules.doramcu.eve.model.EveCorporation getOwnedByCorporation() {

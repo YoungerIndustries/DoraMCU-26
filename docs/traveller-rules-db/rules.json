@@ -1,0 +1,437 @@
+{
+  "game_info": {
+    "title": "Traveller Roleplaying Game Rules",
+    "description": "Core rules from Traveller including character creation, combat, and subsector trading.",
+    "source": [
+      "Traveller Core Game (2016)",
+      "Traveller Companion (2024)",
+      "Traveller 5th Edition (Mongoose Publishing)"
+    ]
+  },
+  "character_creation": {
+    "description": "Traveller character creation is a unique process where characters age during service, gaining skills, wealth, and potentially injuries or death.",
+    "attributes": {
+      "strength": {
+        "abbreviation": "STR",
+        "description": "Physical power and endurance.",
+        "modifier_range": "-3 to +3 (based on 2D6+6 result)",
+        "effects": ["Melee damage", "Lifting capacity", "Resistance to being pushed"]
+      },
+      "dexterity": {
+        "abbreviation": "DEX",
+        "description": "Agility, reflexes, and coordination.",
+        "modifier_range": "-3 to +3 (based on 2D6+6 result)",
+        "effects": ["Ranged attack accuracy", "Piloting", "Stealth", "Initiative"]
+      },
+      "endurance": {
+        "abbreviation": "END",
+        "description": "Health, stamina, and resistance to damage.",
+        "modifier_range": "-3 to +3 (based on 2D6+6 result)",
+        "effects": ["Hit points", "Resistance to disease and poison", "Stamina"]
+      },
+      "intelligence": {
+        "abbreviation": "INT",
+        "description": "Reason, memory, and analytical ability.",
+        "modifier_range": "-3 to +3 (based on 2D6+6 result)",
+        "effects": ["Skill learning", "Technical skills", "Science skills"]
+      },
+      "education": {
+        "abbreviation": "EDU",
+        "description": "Formal education and training.",
+        "modifier_range": "-3 to +3 (based on 2D6+6 result)",
+        "effects": ["Skill bonuses", "Social standing", "Access to certain careers"]
+      },
+      "socialstanding": {
+        "abbreviation": "SOC",
+        "description": "Social status and influence.",
+        "modifier_range": "-3 to +3 (based on 2D6+6 result)",
+        "effects": ["Social interactions", "Access to certain careers", "Wealth generation"]
+      }
+    },
+    "careers": {
+      "description": "Characters serve in various careers for 2-6 terms of 5 years each. Each term provides skill training, wealth, and potential injuries.",
+      "available_careers": [
+        {
+          "name": "Army",
+          "description": "Ground combat forces.",
+          "skills": ["Combat", "Heavy Weapons", "Leadership", "Survival"],
+          "enlistment_roll": "2D6+STR",
+          "minimum": 9,
+          "hazard_rating": "High"
+        },
+        {
+          "name": "Navy",
+          "description": "Space-based military forces.",
+          "skills": ["Piloting (Ship)", "Gunnery (Ship)", "Electronics", "Navigation"],
+          "enlistment_roll": "2D6+DEX",
+          "minimum": 9,
+          "hazard_rating": "High"
+        },
+        {
+          "name": "Marines",
+          "description": "Elite space-borne infantry.",
+          "skills": ["Combat", "Heavy Weapons", "Piloting (Fighter)", "Gunnery (Fighter)"],
+          "enlistment_roll": "2D6+STR",
+          "minimum": 10,
+          "hazard_rating": "Very High"
+        },
+        {
+          "name": "Rangers",
+          "description": "Frontier law enforcement and exploration.",
+          "skills": ["Combat", "Pistols", "Rifles", "Survival", "Navigation"],
+          "enlistment_roll": "2D6+END",
+          "minimum": 9,
+          "hazard_rating": "Very High"
+        },
+        {
+          "name": "Merchant Service",
+          "description": "Space merchant and trade.",
+          "skills": ["Piloting (Ship)", "Navigation", "Electronics", "Trade"],
+          "enlistment_roll": "2D6+INT",
+          "minimum": 8,
+          "hazard_rating": "Medium"
+        },
+        {
+          "name": "Exploration Service",
+          "description": "Planetary and space exploration.",
+          "skills": ["Science", "Survival", "Pistols", "Navigation"],
+          "enlistment_roll": "2D6+INT",
+          "minimum": 8,
+          "hazard_rating": "Medium"
+        },
+        {
+          "name": "Secret Service",
+          "description": "Intelligence and espionage.",
+          "skills": ["Stealth", "Deception", "Pistols", "Electronics"],
+          "enlistment_roll": "2D6+SOC",
+          "minimum": 9,
+          "hazard_rating": "High"
+        },
+        {
+          "name": "Pirate",
+          "description": "Space piracy and raiding (new in Traveller Companion 2024).",
+          "skills": ["Combat", "Pistols", "Piloting (Ship)", "Gunnery (Ship)"],
+          "enlistment_roll": "2D6+DEX",
+          "minimum": 9,
+          "hazard_rating": "Very High"
+        },
+        {
+          "name": "Scholar",
+          "description": "Academic research and study (new in Traveller Companion 2024).",
+          "skills": ["Science", "Administration", "Computers", "Language"],
+          "enlistment_roll": "2D6+INT",
+          "minimum": 8,
+          "hazard_rating": "Low"
+        },
+        {
+          "name": "Outfit",
+          "description": "Corporate and mercenary organizations (new in Traveller Companion 2024).",
+          "skills": ["Combat", "Pistols", "Rifles", "Leadership"],
+          "enlistment_roll": "2D6+STR",
+          "minimum": 9,
+          "hazard_rating": "High"
+        }
+      ]
+    },
+    "skill_training": {
+      "description": "Each career term provides skill training. Characters roll 2D6 and consult the career's skill training table.",
+      "skill_types": {
+        "general": "Available to all characters, based on attributes.",
+        "career": "Specific to the career, learned during service.",
+        "bonus": "Extra skills learned through duty performance or special events."
+      },
+      "skill_modifiers": {
+        "description": "Skill checks use the skill level + attribute modifier vs a target number.",
+        "target_number": "10 (standard difficulty)",
+        "modifiers": {
+          "easy": -2,
+          "standard": 0,
+          "hard": +2,
+          "very_hard": +4,
+          "impossible": +6
+        }
+      }
+    },
+    "wealth": {
+      "description": "Characters earn wealth during each career term based on rank and duty performance. Wealth is spent at the end of each term.",
+      "wealth_table": "2D6 x 1,000 credits per die, based on rank",
+      "spending_options": [
+        "Equipment and weapons",
+        "Vehicles and ships",
+        "Property and real estate",
+        "Education and training",
+        "Social connections",
+        "Savings for retirement"
+      ]
+    },
+    "mustering_out": {
+      "description": "When a character leaves a career, they receive mustering-out benefits based on their reason for leaving.",
+      "benefits": {
+        "honorable_discharge": "Full pension, bonus wealth, and possible ship or vehicle.",
+        "dishonorable_discharge": "No pension, possible legal troubles.",
+        "retirement": "Full pension, bonus wealth, and possible ship or vehicle.",
+        "death": "Character dies during service, create a new character."
+      },
+      "new_2024_benefits": [
+        "Extended service bonuses for longer terms",
+        "Career-specific mustering-out benefits",
+        "Bonus skills for exceptional duty performance",
+        "Wealth bonuses for high-ranking officers"
+      ]
+    }
+  },
+  "combat_rules": {
+    "description": "Traveller combat uses a d20 system with initiative, movement, and attack resolution.",
+    "initiative": {
+      "description": "Each combatant rolls 2D6 + DEX modifier. Highest goes first, ties go to the attacker.",
+      "combat_rounds": "Each round represents 5 seconds of combat."
+    },
+    "movement": {
+      "description": "Characters can move up to their movement allowance (based on STR and END) each round.",
+      "movement_allowance": "STR + END meters per round",
+      "actions": [
+        "Move and attack (with penalty)",
+        "Move only",
+        "Attack only",
+        "Defensive maneuver (bonus to defense)"
+      ]
+    },
+    "attack_resolution": {
+      "description": "Attack rolls use 2D6 + skill level + attribute modifier vs a target number.",
+      "melee": {
+        "target_number": 10,
+        "damage": "Weapon die + STR modifier",
+        "skills": ["Combat", "Melee weapon skill"]
+      },
+      "ranged": {
+        "target_number": 10,
+        "damage": "Weapon die + DEX modifier",
+        "skills": ["Pistols", "Rifles", "Heavy Weapons"],
+        "range_modifiers": {
+          "short": 0,
+          "medium": +2,
+          "long": +4,
+          "extreme": +6
+        }
+      }
+    },
+    "damage": {
+      "description": "Damage is tracked in terms of hit points. When hit points reach zero, the character is incapacitated.",
+      "hit_points": "END x 2 + END modifier",
+      "armor": {
+        "description": "Armor reduces incoming damage.",
+        "types": {
+          "light": "Armor Class 1, -1 to DEX-based skills",
+          "medium": "Armor Class 2, -2 to DEX-based skills",
+          "heavy": "Armor Class 3, -3 to DEX-based skills",
+          "powered": "Armor Class 4, -2 to DEX-based skills"
+        }
+      },
+      "injuries": {
+        "description": "Severe damage can cause injuries that impair the character.",
+        "types": [
+          "Bruised: -1 to all rolls",
+          "Injured: -2 to all rolls",
+          "Wounded: -3 to all rolls, cannot take actions",
+          "Incapacitated: Unconscious, requires medical attention"
+        ]
+      }
+    },
+    "ship_combat": {
+      "description": "Ship combat is resolved in a series of impulses, with each ship taking turns to move and fire.",
+      "impulses": "Each turn is divided into 12 impulses. Ships move based on their thrust rating.",
+      "thrust": {
+        "description": "Ship thrust is measured in Gs. Higher thrust means faster acceleration.",
+        "movement": "Ships accelerate at their thrust rating each impulse."
+      },
+      "weapons": {
+        "laser": {
+          "description": "Energy weapons that fire instantly.",
+          "damage": "Based on laser rating (1-10)",
+          "range": "Short range, no travel time"
+        },
+        "missile": {
+          "description": "Projectile weapons that fire warheads.",
+          "damage": "Based on missile rating (1-10)",
+          "range": "Long range, travel time based on distance"
+        },
+        "pdd": {
+          "description": "Point Defense Devices intercept incoming missiles.",
+          "damage": "N/A, intercepts missiles",
+          "range": "Short range"
+        }
+      },
+      "hit_locations": {
+        "description": "Ships have hit locations that correspond to different parts of the ship.",
+        "locations": [
+          "Hull: General ship structure",
+          "Engines: Ship propulsion",
+          "Life Support: Ship atmosphere and pressure",
+          "Power Plant: Ship energy generation",
+          "Computer: Ship navigation and control",
+          "Shields: Ship defensive shields"
+        ]
+      }
+    }
+  },
+  "subsector_trading": {
+    "description": "Subsector trading is a core activity in Traveller. Characters buy and sell goods between worlds to make a profit.",
+    "trade_goods": {
+      "description": "Trade goods vary by world type and availability. Prices fluctuate based on supply and demand.",
+      "categories": [
+        {
+          "name": "Food",
+          "examples": ["Grain", "Meat", "Fruit", "Vegetables"],
+          "price_range": "100-10,000 credits per ton"
+        },
+        {
+          "name": "Raw Materials",
+          "examples": ["Metals", "Minerals", "Timber", "Water"],
+          "price_range": "1,000-100,000 credits per ton"
+        },
+        {
+          "name": "Manufactured Goods",
+          "examples": ["Electronics", "Machinery", "Weapons", "Vehicles"],
+          "price_range": "10,000-1,000,000 credits per ton"
+        },
+        {
+          "name": "Luxury Goods",
+          "examples": ["Jewelry", "Art", "Antiques", "Rare Items"],
+          "price_range": "100,000-10,000,000 credits per ton"
+        }
+      ]
+    },
+    "world_types": {
+      "description": "Worlds are classified by their environment and development level, which affects trade goods availability.",
+      "types": [
+        {
+          "name": "Agricultural",
+          "description": "Worlds focused on food production.",
+          "goods": ["Food", "Raw Materials"],
+          "price_modifier": "Food is cheaper, other goods are more expensive"
+        },
+        {
+          "name": "Industrial",
+          "description": "Worlds focused on manufacturing.",
+          "goods": ["Manufactured Goods", "Raw Materials"],
+          "price_modifier": "Manufactured goods are cheaper, other goods are more expensive"
+        },
+        {
+          "name": "Commercial",
+          "description": "Worlds focused on trade and commerce.",
+          "goods": ["All categories"],
+          "price_modifier": "Prices are stable, trade is profitable"
+        },
+        {
+          "name": "Tourist",
+          "description": "Worlds focused on tourism and leisure.",
+          "goods": ["Luxury Goods", "Food"],
+          "price_modifier": "Luxury goods are cheaper, other goods are more expensive"
+        }
+      ]
+    },
+    "trade_mechanics": {
+      "description": "Trading involves buying goods at one world and selling them at another for a profit.",
+      "steps": [
+        {
+          "name": "Assess Market",
+          "description": "Determine the availability and prices of goods at the current world."
+        },
+        {
+          "name": "Buy Goods",
+          "description": "Purchase goods at the current world's prices."
+        },
+        {
+          "name": "Travel",
+          "description": "Travel to another world, paying for fuel and maintenance."
+        },
+        {
+          "name": "Sell Goods",
+          "description": "Sell goods at the new world's prices."
+        },
+        {
+          "name": "Calculate Profit",
+          "description": "Profit = Selling Price - Buying Price - Travel Costs"
+        }
+      ],
+      "price_modifiers": {
+        "description": "Prices are modified by world type, government, and law level.",
+        "modifiers": {
+          "government": {
+            "feudal": "Prices are higher due to lack of competition",
+            "democracy": "Prices are stable due to free market",
+            "autocracy": "Prices are controlled by the government",
+            "anarchy": "Prices are volatile due to instability"
+          },
+          "law_level": {
+            "high": "Prices are higher due to regulation",
+            "medium": "Prices are stable",
+            "low": "Prices are lower due to lack of regulation",
+            "none": "Prices are volatile due to lawlessness"
+          }
+        }
+      }
+    },
+    "ship_requirements": {
+      "description": "Trading requires a ship with sufficient cargo capacity and jump capability.",
+      "cargo_capacity": "Measured in tons, determines how much can be carried.",
+      "jump_capability": "Determines how far the ship can travel in one jump.",
+      "fuel_capacity": "Determines how many jumps can be made without refueling.",
+      "crew_requirements": "Minimum crew based on ship size and complexity."
+    }
+  },
+  "starship_design": {
+    "description": "Starships are designed using a point-based system. Each ship has a hull, engines, life support, power plant, and computer.",
+    "ship_components": {
+      "hull": {
+        "description": "The physical structure of the ship. Determines cargo capacity and armor.",
+        "size": "Measured in tons, determines the ship's size."
+      },
+      "engines": {
+        "description": "Ship propulsion. Determines thrust and maneuverability.",
+        "types": {
+          "maneuvering": "For movement within a star system.",
+          "jump": "For faster-than-light travel between star systems."
+        }
+      },
+      "life_support": {
+        "description": "Maintains atmosphere and pressure. Determines how many crew can be supported.",
+        "rating": "Based on the number of crew and passengers."
+      },
+      "power_plant": {
+        "description": "Generates energy for the ship's systems and weapons.",
+        "rating": "Based on the ship's energy requirements."
+      },
+      "computer": {
+        "description": "Controls navigation, weapons, and other systems.",
+        "rating": "Based on the ship's complexity."
+      }
+    },
+    "ship_types": {
+      "freighter": {
+        "description": "Cargo ships designed for trade.",
+        "cargo_capacity": "High",
+        "crew": "Small",
+        "weapons": "Minimal"
+      },
+      "scout": {
+        "description": "Fast ships designed for exploration.",
+        "cargo_capacity": "Low",
+        "crew": "Small",
+        "weapons": "Minimal"
+      },
+      "warship": {
+        "description": "Military ships designed for combat.",
+        "cargo_capacity": "Low",
+        "crew": "Large",
+        "weapons": "Heavy"
+      },
+      "patrol": {
+        "description": "Multi-purpose ships designed for patrol and escort.",
+        "cargo_capacity": "Medium",
+        "crew": "Medium",
+        "weapons": "Moderate"
+      }
+    }
+  }
+}

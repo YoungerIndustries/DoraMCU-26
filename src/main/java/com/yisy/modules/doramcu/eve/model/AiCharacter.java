@@ -121,6 +121,156 @@ public class AiCharacter {
     @Column(name = "ai_admin", nullable = false)
     private boolean aiAdmin = false;
 
+    // --- Polymorphic fields for non-human AI entities ---
+
+    /**
+     * Type of AI character: human leader, companion, monster, or NPC.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "character_type", length = 20)
+    private CharacterType characterType = CharacterType.HUMAN_LEADER;
+
+    /**
+     * Species identifier (e.g., "DOG", "CAT", "WOLF", "HUMAN").
+     */
+    @Column(name = "species_id", length = 50)
+    private String speciesId;
+
+    /**
+     * Companion type for non-human AI entities (Pet, Service Animal, Familiar, Mount, Working Animal).
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "companion_type", length = 20)
+    private CompanionType companionType;
+
+    /**
+     * Reference to an E26Monster if this AI controls a monster.
+     */
+    @Column(name = "linked_monster_id")
+    private Long linkedMonsterId;
+
+    /**
+     * Reference to an E26Npc if this AI controls an NPC.
+     */
+    @Column(name = "linked_npc_id")
+    private Long linkedNpcId;
+
+    // --- Linked entity references for non-human AI entities ---
+
+    /**
+     * Reference to a Ship if this AI character represents a ship's computer.
+     */
+    @Column(name = "linked_ship_id")
+    private Long linkedShipId;
+
+    /**
+     * Reference to a SpaceStation if this AI character represents a station's computer.
+     */
+    @Column(name = "linked_station_id")
+    private Long linkedStationId;
+
+    /**
+     * Reference to a GroundVehicle if this AI character represents a vehicle's computer.
+     */
+    @Column(name = "linked_vehicle_id")
+    private Long linkedVehicleId;
+
+    /**
+     * Reference to a PlanetFacility if this AI character represents a facility's computer.
+     */
+    @Column(name = "linked_facility_id")
+    private Long linkedFacilityId;
+
+    /**
+     * The entity identifier (e.g., vehicle ID string) for non-numeric entity references.
+     */
+    @Column(name = "linked_entity_id", length = 100)
+    private String linkedEntityId;
+
+    /**
+     * Bond score with owner (0-100). Higher means stronger relationship.
+     */
+    @Column(name = "bond_score")
+    private int bondScore = 0;
+
+    /**
+     * Training level of the AI character (Untrained, Basic, Advanced, Master).
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "training_level", length = 20)
+    private TrainingLevel trainingLevel = TrainingLevel.UNTRAINED;
+
+    /**
+     * Reference to the owner's Earth2026Character.
+     */
+    @Column(name = "owner_character_id")
+    private Long ownerCharacterId;
+
+    /**
+     * Personality traits as a JSON array (e.g., ["loyal", "playful", "aggressive"]).
+     */
+    @Column(name = "personality_traits", length = 500)
+    private String personalityTraits;
+
+    /**
+     * Reference to a VoiceProfile for TTS configuration.
+     * Multiple characters can share the same profile.
+     */
+    @Column(name = "voice_profile_id")
+    private Long voiceProfileId;
+
+    /**
+     * Type of AI character entity.
+     */
+    public enum CharacterType {
+        /** Human empire leader or governor. */
+        HUMAN_LEADER,
+        /** Companion animal, pet, or familiar. */
+        COMPANION,
+        /** Monster with AI-driven behavior. */
+        MONSTER,
+        /** Non-player character with AI-driven behavior. */
+        NPC,
+        /** Ship computer — AI character representing a ship's connection to the AI network. */
+        SHIP,
+        /** Space station computer — AI character representing a station's connection to the AI network. */
+        STATION,
+        /** Ground vehicle computer — AI character representing a vehicle's connection to the AI network. */
+        VEHICLE,
+        /** Facility computer — AI character representing a facility's connection to the AI network. */
+        FACILITY
+    }
+
+    /**
+     * Type of companion for non-human AI entities.
+     */
+    public enum CompanionType {
+        /** Pet: Dog, Cat, Bird, Fish, Reptile — provides morale bonus, small utility. */
+        PET,
+        /** Service Animal: Guide dog, hearing dog, medical alert — provides mechanical bonuses. */
+        SERVICE_ANIMAL,
+        /** Familiar: Magical companion with spell-casting proxy. */
+        FAMILIAR,
+        /** Mount: Horse, motorcycle sidecar pet — transportation bonus. */
+        MOUNT,
+        /** Working Animal: Guard dog, farm animal — economic/utility bonus. */
+        WORKING_ANIMAL
+    }
+
+    /**
+     * Training level of the AI character.
+     */
+    public enum TrainingLevel {
+        /** No training, wild or untrained behavior. */
+        UNTRAINED,
+        /** Basic obedience and simple commands. */
+        BASIC,
+        /** Advanced training with complex commands and tactics. */
+        ADVANCED,
+        /** Master-level training with autonomous decision-making. */
+        MASTER
+    }
+
     /**
      * Hiring status of the AI character.
      */
@@ -276,6 +426,130 @@ public class AiCharacter {
 
     public void setAiAdmin(boolean aiAdmin) {
         this.aiAdmin = aiAdmin;
+    }
+
+    // --- Getters and setters for polymorphic fields ---
+
+    public CharacterType getCharacterType() {
+        return characterType;
+    }
+
+    public void setCharacterType(CharacterType characterType) {
+        this.characterType = characterType;
+    }
+
+    public String getSpeciesId() {
+        return speciesId;
+    }
+
+    public void setSpeciesId(String speciesId) {
+        this.speciesId = speciesId;
+    }
+
+    public CompanionType getCompanionType() {
+        return companionType;
+    }
+
+    public void setCompanionType(CompanionType companionType) {
+        this.companionType = companionType;
+    }
+
+    public Long getLinkedMonsterId() {
+        return linkedMonsterId;
+    }
+
+    public void setLinkedMonsterId(Long linkedMonsterId) {
+        this.linkedMonsterId = linkedMonsterId;
+    }
+
+    public Long getLinkedNpcId() {
+        return linkedNpcId;
+    }
+
+    public void setLinkedNpcId(Long linkedNpcId) {
+        this.linkedNpcId = linkedNpcId;
+    }
+
+    // --- Getters and setters for linked entity fields ---
+
+    public Long getLinkedShipId() {
+        return linkedShipId;
+    }
+
+    public void setLinkedShipId(Long linkedShipId) {
+        this.linkedShipId = linkedShipId;
+    }
+
+    public Long getLinkedStationId() {
+        return linkedStationId;
+    }
+
+    public void setLinkedStationId(Long linkedStationId) {
+        this.linkedStationId = linkedStationId;
+    }
+
+    public Long getLinkedVehicleId() {
+        return linkedVehicleId;
+    }
+
+    public void setLinkedVehicleId(Long linkedVehicleId) {
+        this.linkedVehicleId = linkedVehicleId;
+    }
+
+    public Long getLinkedFacilityId() {
+        return linkedFacilityId;
+    }
+
+    public void setLinkedFacilityId(Long linkedFacilityId) {
+        this.linkedFacilityId = linkedFacilityId;
+    }
+
+    public String getLinkedEntityId() {
+        return linkedEntityId;
+    }
+
+    public void setLinkedEntityId(String linkedEntityId) {
+        this.linkedEntityId = linkedEntityId;
+    }
+
+    public int getBondScore() {
+        return bondScore;
+    }
+
+    public void setBondScore(int bondScore) {
+        this.bondScore = Math.max(0, Math.min(100, bondScore));
+    }
+
+    public TrainingLevel getTrainingLevel() {
+        return trainingLevel;
+    }
+
+    public void setTrainingLevel(TrainingLevel trainingLevel) {
+        this.trainingLevel = trainingLevel;
+    }
+
+    public Long getOwnerCharacterId() {
+        return ownerCharacterId;
+    }
+
+    public void setOwnerCharacterId(Long ownerCharacterId) {
+        this.ownerCharacterId = ownerCharacterId;
+    }
+
+    public String getPersonalityTraits() {
+        return personalityTraits;
+    }
+
+    public void setPersonalityTraits(String personalityTraits) {
+        this.personalityTraits = personalityTraits;
+    }
+
+    public Long getVoiceProfileId() {
+        return voiceProfileId;
+    }
+
+    public void setVoiceProfileId(Long voiceProfileId) {
+        this.voiceProfileId = voiceProfileId;
     }
 
     /**

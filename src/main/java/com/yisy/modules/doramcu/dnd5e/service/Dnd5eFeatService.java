@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.dnd5e.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.dnd5e.model.Dnd5eCharacter;
 import com.yisy.modules.doramcu.dnd5e.model.Dnd5eCharacterFeat;
@@ -10,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -228,9 +228,9 @@ public class Dnd5eFeatService {
 
         // Check prerequisite
         if (feat.getPrerequisite() != null && !feat.getPrerequisite().equals("None")) {
-            boolean hasPrerequisite = characterFeatRepository
+            boolean hasPrerequisite = !characterFeatRepository
                     .findByCharacterIdAndFeatName(characterId, feat.getPrerequisite())
-                    .isEmpty() == false;
+                    .isEmpty();
             if (!hasPrerequisite) {
                 throw new IllegalArgumentException(
                         "Character does not meet prerequisite: " + feat.getPrerequisite());

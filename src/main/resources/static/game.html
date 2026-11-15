@@ -585,8 +585,19 @@
                     </div>
                 </div>
                 <div class="galaxy-view-body hex-grid-body">
+                    <!-- View Toggle: 2D/3D Switch -->
+                    <div class="view-toggle-container" id="viewToggleContainer" style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center;">
+                        <button class="btn-small" id="view2DBtn" style="background: var(--accent-cyan); color: white;">2D Isometric</button>
+                        <button class="btn-small" id="view3DBtn" style="background: var(--accent-purple); color: white;">3D View</button>
+                        <span id="viewModeLabel" style="font-size: 0.75rem; color: var(--text-secondary);">Mode: 2D</span>
+                    </div>
+                    <!-- 2D Hex Grid Canvas -->
                     <div class="hex-grid-container" id="hexGridContainer">
                         <canvas id="subsectorHexGridCanvas"></canvas>
+                    </div>
+                    <!-- 3D Babylon.js Canvas (hidden by default) -->
+                    <div class="hex-grid-container" id="tycoon3DContainer" style="display: none;">
+                        <canvas id="tycoon3DCanvas" style="width: 100%; height: 100%;"></canvas>
                     </div>
                     <div class="hex-grid-legend" id="hexGridLegend">
                         <!-- Dynamically populated -->
@@ -1275,6 +1286,9 @@
     <script src="js/trade-ui.js?v=2"></script>
     <script src="js/psionic-ui.js?v=1"></script>
     <script src="js/game-ui-main.js?v=33"></script>
+
+    <!-- Tycoon 3D Renderer - Lazy loaded Babylon.js -->
+    <script src="js/tycoon-view-controller.js?v=1"></script>
 
     <noscript>
         <style>

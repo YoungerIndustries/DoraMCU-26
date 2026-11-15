@@ -1,0 +1,339 @@
+{
+  "game_info": {
+    "title": "OpenTTD Transport Tycoon Tech Level Progression",
+    "description": "Tech level progression mapping vehicles, stations, and industries to planet development stages",
+    "source": "DoraMCU Transport Tycoon Biodome Database"
+  },
+  "tech_levels": [
+    {
+      "level": 1,
+      "name": "Primitive",
+      "description": "Early industrial planet with basic transport. Steam power and animal-drawn vehicles.",
+      "era": "1830s-1850s equivalent",
+      "available_vehicles": [
+        "truck", "bus", "steam_locomotive", "cargo_ship", "passenger_ferry"
+      ],
+      "available_stations": [
+        "bus_stop", "rail_station", "boat_dock", "cargo_station"
+      ],
+      "available_infrastructure": [
+        "road", "rail", "water"
+      ],
+      "available_industries": [
+        "mine", "coal_mine", "logging_camp", "farm", "ranch", "fishing_port", "orchard"
+      ],
+      "cargo_types": [
+        "ore", "coal", "wood", "grain", "livestock", "fish", "fruit", "mail", "passengers"
+      ],
+      "planet_examples": [
+        "Agricultural colony worlds",
+        "Mining outposts",
+        "Frontier planets"
+      ]
+    },
+    {
+      "level": 2,
+      "name": "Early Industrial",
+      "description": "Diesel power emerges. Oil extraction begins. Basic processing industries.",
+      "era": "1850s-1920s equivalent",
+      "available_vehicles": [
+        "truck", "bus", "express_truck", "steam_locomotive", "diesel_locomotive",
+        "cargo_ship", "passenger_ferry"
+      ],
+      "available_stations": [
+        "bus_stop", "rail_station", "boat_dock", "cargo_station"
+      ],
+      "available_infrastructure": [
+        "road", "rail", "water"
+      ],
+      "available_industries": [
+        "mine", "coal_mine", "oil_well", "logging_camp", "farm", "ranch", "fishing_port", "orchard",
+        "sawmill", "bakery", "slaughterhouse"
+      ],
+      "cargo_types": [
+        "ore", "coal", "oil", "wood", "grain", "livestock", "fish", "fruit", "mail", "passengers",
+        "lumber", "bread", "meat"
+      ],
+      "planet_examples": [
+        "Developing colonies",
+        "Resource extraction worlds"
+      ]
+    },
+    {
+      "level": 3,
+      "name": "Industrial",
+      "description": "Electric trains and heavy industry. Steel mills, refineries, and chemical plants.",
+      "era": "1920s-1960s equivalent",
+      "available_vehicles": [
+        "truck", "bus", "express_truck", "steam_locomotive", "diesel_locomotive", "electric_locomotive",
+        "cargo_ship", "passenger_ferry", "advanced_cargo_liner"
+      ],
+      "available_stations": [
+        "bus_stop", "rail_station", "port", "cargo_station"
+      ],
+      "available_infrastructure": [
+        "road", "rail", "water"
+      ],
+      "available_industries": [
+        "mine", "coal_mine", "oil_well", "logging_camp", "farm", "ranch", "fishing_port", "orchard",
+        "sawmill", "bakery", "slaughterhouse", "steel_mill", "cement_plant", "glass_factory", "refinery"
+      ],
+      "cargo_types": [
+        "ore", "coal", "oil", "wood", "grain", "livestock", "fish", "fruit", "mail", "passengers",
+        "lumber", "bread", "meat", "steel", "concrete", "glass", "refined_oil"
+      ],
+      "planet_examples": [
+        "Industrial worlds",
+        "Manufacturing colonies"
+      ]
+    },
+    {
+      "level": 4,
+      "name": "Advanced Industrial",
+      "description": "Monorail and helicopters. Chemical plants and advanced processing.",
+      "era": "1960s-1990s equivalent",
+      "available_vehicles": [
+        "truck", "bus", "express_truck", "steam_locomotive", "diesel_locomotive", "electric_locomotive",
+        "monorail_train", "cargo_ship", "passenger_ferry", "advanced_cargo_liner", "helicopter"
+      ],
+      "available_stations": [
+        "bus_stop", "rail_station", "monorail_station", "port", "heliport", "cargo_station"
+      ],
+      "available_infrastructure": [
+        "road", "rail", "monorail", "water"
+      ],
+      "available_industries": [
+        "mine", "coal_mine", "oil_well", "logging_camp", "farm", "ranch", "fishing_port", "orchard",
+        "sawmill", "bakery", "slaughterhouse", "steel_mill", "cement_plant", "glass_factory",
+        "refinery", "chemical_plant"
+      ],
+      "cargo_types": [
+        "ore", "coal", "oil", "wood", "grain", "livestock", "fish", "fruit", "mail", "passengers",
+        "lumber", "bread", "meat", "steel", "concrete", "glass", "refined_oil", "plastic"
+      ],
+      "planet_examples": [
+        "Developed industrial worlds",
+        "Trade hub planets"
+      ]
+    },
+    {
+      "level": 5,
+      "name": "Advanced",
+      "description": "Maglev trains and aircraft. Electronics and luxury goods production begins.",
+      "era": "1990s-2020s equivalent",
+      "available_vehicles": [
+        "truck", "bus", "express_truck", "diesel_locomotive", "electric_locomotive",
+        "monorail_train", "maglev_train", "cargo_ship", "passenger_ferry", "advanced_cargo_liner",
+        "helicopter", "aircraft"
+      ],
+      "available_stations": [
+        "bus_stop", "rail_station", "monorail_station", "maglev_station", "port", "airport", "heliport", "cargo_station"
+      ],
+      "available_infrastructure": [
+        "road", "rail", "monorail", "maglev", "water", "airport"
+      ],
+      "available_industries": [
+        "mine", "coal_mine", "oil_well", "logging_camp", "farm", "ranch", "fishing_port", "orchard",
+        "sawmill", "bakery", "slaughterhouse", "steel_mill", "cement_plant", "glass_factory",
+        "refinery", "chemical_plant", "machine_shop", "luxury_factory"
+      ],
+      "cargo_types": [
+        "ore", "coal", "oil", "wood", "grain", "livestock", "fish", "fruit", "mail", "passengers",
+        "lumber", "bread", "meat", "steel", "concrete", "glass", "refined_oil", "plastic",
+        "machinery", "luxury"
+      ],
+      "planet_examples": [
+        "High-tech worlds",
+        "Corporate headquarters planets"
+      ]
+    },
+    {
+      "level": 6,
+      "name": "High Tech",
+      "description": "Futuristic maglev and electronics factories. Full advanced goods production.",
+      "era": "2020s-2050s equivalent",
+      "available_vehicles": [
+        "truck", "bus", "express_truck", "electric_locomotive", "monorail_train",
+        "maglev_train", "frims_maglev", "cargo_ship", "passenger_ferry", "advanced_cargo_liner",
+        "helicopter", "aircraft"
+      ],
+      "available_stations": [
+        "bus_stop", "rail_station", "monorail_station", "maglev_station", "port", "airport", "cargo_station"
+      ],
+      "available_infrastructure": [
+        "road", "rail", "monorail", "maglev", "water", "airport"
+      ],
+      "available_industries": [
+        "mine", "coal_mine", "oil_well", "logging_camp", "farm", "ranch", "fishing_port", "orchard",
+        "sawmill", "bakery", "slaughterhouse", "steel_mill", "cement_plant", "glass_factory",
+        "refinery", "chemical_plant", "machine_shop", "luxury_factory",
+        "electronics_factory", "advanced_chemicals"
+      ],
+      "cargo_types": [
+        "ore", "coal", "oil", "wood", "grain", "livestock", "fish", "fruit", "mail", "passengers",
+        "lumber", "bread", "meat", "steel", "concrete", "glass", "refined_oil", "plastic",
+        "machinery", "luxury", "electronics", "chemicals"
+      ],
+      "planet_examples": [
+        "Post-industrial worlds",
+        "Research and development planets"
+      ]
+    },
+    {
+      "level": 7,
+      "name": "Space-faring",
+      "description": "Fictional aircraft and early rockets. Space industry begins to develop.",
+      "era": "2050s-2100s equivalent",
+      "available_vehicles": [
+        "truck", "bus", "express_truck", "monorail_train", "maglev_train", "frims_maglev",
+        "advanced_cargo_liner", "aircraft", "fictional_aircraft", "helicopter"
+      ],
+      "available_stations": [
+        "bus_stop", "monorail_station", "maglev_station", "port", "airport", "cargo_station"
+      ],
+      "available_infrastructure": [
+        "road", "monorail", "maglev", "water", "airport"
+      ],
+      "available_industries": [
+        "mine", "oil_well", "farm", "ranch", "fishing_port", "orchard",
+        "steel_mill", "glass_factory", "refinery", "chemical_plant",
+        "machine_shop", "luxury_factory", "electronics_factory", "advanced_chemicals"
+      ],
+      "cargo_types": [
+        "ore", "oil", "grain", "livestock", "fish", "fruit", "mail", "passengers",
+        "steel", "glass", "refined_oil", "plastic", "machinery", "luxury", "electronics", "chemicals"
+      ],
+      "planet_examples": [
+        "Space-faring civilizations",
+        "Planets with space programs"
+      ]
+    },
+    {
+      "level": 8,
+      "name": "Interplanetary",
+      "description": "Rockets and spaceports. Rocket parts factories and space logistics.",
+      "era": "2100s-2200s equivalent",
+      "available_vehicles": [
+        "truck", "bus", "express_truck", "maglev_train", "frims_maglev",
+        "advanced_cargo_liner", "aircraft", "fictional_aircraft", "rocket"
+      ],
+      "available_stations": [
+        "bus_stop", "maglev_station", "port", "airport", "spaceport", "cargo_station"
+      ],
+      "available_infrastructure": [
+        "road", "maglev", "water", "airport", "spaceport"
+      ],
+      "available_industries": [
+        "mine", "oil_well", "farm", "ranch", "fishing_port", "orchard",
+        "steel_mill", "glass_factory", "refinery", "chemical_plant",
+        "machine_shop", "luxury_factory", "electronics_factory", "advanced_chemicals",
+        "rocket_parts_factory"
+      ],
+      "cargo_types": [
+        "ore", "oil", "grain", "livestock", "fish", "fruit", "mail", "passengers",
+        "steel", "glass", "refined_oil", "plastic", "machinery", "luxury", "electronics", "chemicals",
+        "rocket_parts"
+      ],
+      "planet_examples": [
+        "Interplanetary trade hubs",
+        "Space industry worlds"
+      ]
+    },
+    {
+      "level": 9,
+      "name": "Galactic",
+      "description": "Full space logistics with Apollo rockets. Spacecraft assembly and launch facilities.",
+      "era": "2200s-2500s equivalent",
+      "available_vehicles": [
+        "truck", "bus", "express_truck", "frims_maglev",
+        "advanced_cargo_liner", "aircraft", "fictional_aircraft", "rocket", "apollo_rocket"
+      ],
+      "available_stations": [
+        "bus_stop", "maglev_station", "port", "airport", "spaceport", "cargo_station"
+      ],
+      "available_infrastructure": [
+        "road", "maglev", "water", "airport", "spaceport"
+      ],
+      "available_industries": [
+        "mine", "oil_well", "farm", "ranch", "fishing_port", "orchard",
+        "steel_mill", "glass_factory", "refinery", "chemical_plant",
+        "machine_shop", "luxury_factory", "electronics_factory", "advanced_chemicals",
+        "rocket_parts_factory", "spacecraft_assembly", "lander_factory", "rocket_launch_pad"
+      ],
+      "cargo_types": [
+        "ore", "oil", "grain", "livestock", "fish", "fruit", "mail", "passengers",
+        "steel", "glass", "refined_oil", "plastic", "machinery", "luxury", "electronics", "chemicals",
+        "rocket_parts", "spacecraft", "landers"
+      ],
+      "planet_examples": [
+        "Galactic civilization worlds",
+        "Spacefaring empire capitals"
+      ]
+    },
+    {
+      "level": 10,
+      "name": "Transcendent",
+      "description": "Orbital stations and interplanetary travel. The pinnacle of transport technology.",
+      "era": "2500s+ equivalent",
+      "available_vehicles": [
+        "truck", "bus", "express_truck", "frims_maglev",
+        "advanced_cargo_liner", "aircraft", "fictional_aircraft", "rocket", "apollo_rocket",
+        "space_station"
+      ],
+      "available_stations": [
+        "bus_stop", "maglev_station", "port", "airport", "spaceport", "orbital_station", "cargo_station"
+      ],
+      "available_infrastructure": [
+        "road", "maglev", "water", "airport", "spaceport", "orbital_station"
+      ],
+      "available_industries": [
+        "mine", "oil_well", "farm", "ranch", "fishing_port", "orchard",
+        "steel_mill", "glass_factory", "refinery", "chemical_plant",
+        "machine_shop", "luxury_factory", "electronics_factory", "advanced_chemicals",
+        "rocket_parts_factory", "spacecraft_assembly", "lander_factory", "rocket_launch_pad"
+      ],
+      "cargo_types": [
+        "ore", "oil", "grain", "livestock", "fish", "fruit", "mail", "passengers",
+        "steel", "glass", "refined_oil", "plastic", "machinery", "luxury", "electronics", "chemicals",
+        "rocket_parts", "spacecraft", "landers"
+      ],
+      "planet_examples": [
+        "Type I+ civilizations",
+        "Galactic capital worlds",
+        "Orbital habitat systems"
+      ]
+    }
+  ],
+  "recommended_combos": {
+    "tech_1_2": {
+      "train_set": "NUTS (steam/diesel)",
+      "aircraft": "None",
+      "landscape": "Default Earth-like",
+      "stations": "Default"
+    },
+    "tech_3_4": {
+      "train_set": "NUTS (electric)",
+      "aircraft": "None",
+      "landscape": "Default Earth-like",
+      "stations": "NewStations"
+    },
+    "tech_5_6": {
+      "train_set": "FRIMS Maglevs",
+      "aircraft": "Default",
+      "landscape": "Default Earth-like",
+      "stations": "Maglev Station Set"
+    },
+    "tech_7_8": {
+      "train_set": "FRIMS Maglevs",
+      "aircraft": "Fictional Aircraft",
+      "landscape": "Default Earth-like",
+      "stations": "Maglev Station Set"
+    },
+    "tech_9_10": {
+      "train_set": "FRIMS Maglevs",
+      "aircraft": "SpaceY Rockets",
+      "landscape": "OpenGFX Mars",
+      "stations": "Maglev Station Set + Spaceports"
+    }
+  }
+}

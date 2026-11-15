@@ -118,7 +118,7 @@ public class CustomsCheck {
     public boolean checkInspection(int lawLevel, char starportClass) {
         int roll = DiceUtil.roll2D6();
         // Higher law = more inspections; better starport = more inspections
-        int threshold = 8;
+        int threshold;
         if (lawLevel >= 8) threshold = 10; // Strict law
         else if (lawLevel >= 5) threshold = 8; // Normal
         else if (lawLevel >= 2) threshold = 6; // Lax
@@ -177,7 +177,7 @@ public class CustomsCheck {
      */
     private CustomsResult resolveBribe(ContrabandCommodity contraband, int lawLevel, long credits) {
         // Bribe cost scales with risk and law level
-        long bribeCost = contraband.getBasePrice() * (lawLevel + 1) / 2;
+        long bribeCost = (long) contraband.getBasePrice() * (lawLevel + 1) / 2;
         int roll = DiceUtil.roll2D6();
 
         if (credits >= bribeCost && roll <= 8) {
@@ -215,7 +215,7 @@ public class CustomsCheck {
      * Calculates the fine for being caught with contraband.
      */
     public long calculateFine(ContrabandCommodity contraband, int quantity, int lawLevel) {
-        long baseFine = contraband.getBasePrice() * quantity;
+        long baseFine = (long) contraband.getBasePrice() * quantity;
         // Law level multiplier: strict law = higher fines
         double multiplier = 1.0 + (lawLevel * 0.2);
         return (long) (baseFine * multiplier);

@@ -1,10 +1,10 @@
 package com.yisy.modules.doramcu.ai;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.babylon5.model.B5Personality;
 import com.yisy.modules.doramcu.hex.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

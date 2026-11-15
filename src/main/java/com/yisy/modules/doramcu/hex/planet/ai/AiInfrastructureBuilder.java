@@ -130,8 +130,8 @@ public class AiInfrastructureBuilder {
         if (ownedStations.size() < 2) return;
 
         // Check if corporation has enough credits for a vehicle
-        VehicleType vehicleType = VehicleType.TRUCK;
-        if (strategy.getSpendingFactor() > 0.6) vehicleType = VehicleType.FREIGHT_TRAIN;
+        VehicleType vehicleType = (strategy.getPersonality() == AiCorporationStrategy.AiPersonality.AGGRESSIVE)
+                ? VehicleType.FREIGHT_TRAIN : VehicleType.TRUCK;
         if (corporation.getCredits() < vehicleType.getConstructionCost()) return;
 
         // Find a route without vehicles
@@ -174,6 +174,6 @@ public class AiInfrastructureBuilder {
      */
     private AiCorporationStrategy getStrategy(TransportCorporation corporation) {
         // Default to balanced strategy
-        return new AiCorporationStrategy(AiCorporationStrategy.AiPersonality.BALANCED);
+        return new AiCorporationStrategy(AiCorporationStrategy.AiPersonality.BALANCED, System.nanoTime());
     }
 }

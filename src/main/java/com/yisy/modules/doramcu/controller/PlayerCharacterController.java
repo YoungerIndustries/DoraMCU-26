@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -45,7 +46,7 @@ public class PlayerCharacterController {
      */
     @GetMapping("/crew")
     public ResponseEntity<List<PlayerCharacterEntryDto>> listCrew(@PathVariable Long playerId,
-                                                                   @PathVariable(required = false) String galaxyName) {
+                                                                   @RequestParam(required = false) String galaxyName) {
         User player = userRepository.findById(playerId)
                 .orElseThrow(() -> new IllegalArgumentException("Player not found: " + playerId));
 
@@ -78,6 +79,7 @@ public class PlayerCharacterController {
     /**
      * Promote a character to crew role.
      */
+    @SuppressWarnings("MVCPathVariableInspection")
     @PutMapping("/{registryId}/promote")
     public ResponseEntity<PlayerCharacterEntryDto> promoteToCrew(@PathVariable Long registryId) {
         PlayerCharacterEntryDto result = playerCharacterService.promoteToCrew(registryId);
@@ -87,6 +89,7 @@ public class PlayerCharacterController {
     /**
      * Demote a crew member to owned role.
      */
+    @SuppressWarnings("MVCPathVariableInspection")
     @PutMapping("/{registryId}/demote")
     public ResponseEntity<PlayerCharacterEntryDto> demoteFromCrew(@PathVariable Long registryId) {
         PlayerCharacterEntryDto result = playerCharacterService.demoteFromCrew(registryId);
@@ -96,6 +99,7 @@ public class PlayerCharacterController {
     /**
      * Set a character as the player's commander.
      */
+    @SuppressWarnings("MVCPathVariableInspection")
     @PutMapping("/{registryId}/commander")
     public ResponseEntity<PlayerCharacterEntryDto> setCommander(@PathVariable Long registryId) {
         PlayerCharacterEntryDto result = playerCharacterService.setCommander(registryId);

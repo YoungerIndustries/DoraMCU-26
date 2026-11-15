@@ -1,0 +1,435 @@
+{
+  "lore": {
+    "universe": {
+      "title": "Star Trek 4X Universe",
+      "description": "The Star Trek 4X universe encompasses the Alpha and Beta Quadrants of the Milky Way galaxy, featuring the major powers of the Star Trek universe in a grand strategy context. Players explore, expand, exploit, and exterminate across the stars while navigating the complex political landscape of the Federation, Klingons, Romulans, and other factions.",
+      "source_material": [
+        "Star Trek original series and films",
+        "Star Trek: The Next Generation",
+        "Star Trek: Deep Space Nine",
+        "Star Trek: Voyager",
+        "Star Trek: Enterprise",
+        "Star Trek: Discovery",
+        "Star Trek 4X game modules"
+      ]
+    },
+    "prime_directive": {
+      "description": "The Prime Directive, also known as General Order 1, is the most fundamental rule governing Starfleet's interactions with alien civilizations. It prohibits interference with the normal development of pre-warp civilizations.",
+      "general_order_1": {
+        "text": "Starfleet personnel are prohibited from interfering with the normal and natural development of alien worlds and cultures.",
+        "rationale": "Interference with developing civilizations can cause irreversible harm to their cultural and technological development, potentially destroying their chance to reach the stars on their own terms.",
+        "scope": [
+          "Pre-warp civilizations must not be contacted",
+          "Advanced technology must not be given to less developed cultures",
+          "Political systems must not be influenced",
+          "Religious beliefs must not be challenged or confirmed"
+        ],
+        "exceptions": {
+          "description": "Rare exceptions to the Prime Directive are permitted under specific circumstances.",
+          "conditions": [
+            "When the civilization has already achieved warp capability",
+            "When the civilization explicitly requests assistance",
+            "When a greater threat endangers both the civilization and Starfleet",
+            "When the Prime Directive itself would cause greater harm",
+            "When the civilization has already been contacted by another faction"
+          ],
+          "approval_required": "Fleet Admiral or Starfleet Command authorization required for any exception"
+        },
+        "violation_consequences": {
+          "description": "Violating the Prime Directive is a serious offense with severe consequences.",
+          "penalties": [
+            "Court-martial and dismissal from Starfleet",
+            "Loss of commission and security clearance",
+            "Imprisonment for severe violations",
+            "Permanent damage to the affected civilization"
+          ]
+        },
+        "game_mechanic": {
+          "description": "The Prime Directive affects diplomacy and exploration in the 4X game.",
+          "effects": [
+            "Contacting pre-warp civilizations generates negative reputation",
+            "Violating the Prime Directive alerts other factions to your actions",
+            "Upholding the Prime Directive improves diplomatic standing with peaceful factions",
+            "Pre-warp civilizations can be observed but not directly interacted with"
+          ]
+        }
+      }
+    },
+    "federation_history": {
+      "description": "The United Federation of Planets is a democratic interstellar federation founded on principles of peace, exploration, and mutual prosperity.",
+      "founding": {
+        "date": "2161",
+        "founders": [
+          "Earth (United Earth Government)",
+          "Vulcan",
+          "Andoria",
+          "Tellarite"
+        ],
+        "context": "After the Earth-Romulan war and the development of warp drive, Earth sought allies to ensure peace and stability in the region.",
+        "first_president": "Lucy Yao"
+      },
+      "key_eras": [
+        {
+          "name": "Pre-Federation Era",
+          "period": "Before 2161",
+          "description": "Earth develops warp drive, contacts Vulcans, and experiences the Xindi threat and Romulan conflicts.",
+          "events": [
+            "First contact with Vulcans (2063, Zefram Cochrane)",
+            "Earth-Romulan war (2150s)",
+            "Formation of Starfleet",
+            "Xindi extinction threat (2150s)"
+          ]
+        },
+        {
+          "name": "Early Federation",
+          "period": "2161-2256",
+          "description": "The Federation expands, establishes Starfleet, and faces threats from the Klingons and Romulans.",
+          "events": [
+            "Founding of the Federation (2161)",
+            "First contact with Klingons",
+            "Tholian incident",
+            "Gorn conflict",
+            "Klingon-Federation border wars"
+          ]
+        },
+        {
+          "name": "Original Series Era",
+          "period": "2256-2293",
+          "description": "The era of the USS Enterprise (NCC-1701) under Captain Kirk. The Federation expands its influence and faces numerous threats.",
+          "events": [
+            "Five-Year Mission of the Enterprise",
+            "Klingon-Federation conflicts",
+            "Romulan Neutral Zone incidents",
+            "Death of Spock",
+            "Khitomer Accords negotiations"
+          ]
+        },
+        {
+          "name": "Next Generation Era",
+          "period": "2364-2379",
+          "description": "The era of the USS Enterprise-D and E. The Federation faces the Borg, Dominion, and internal challenges.",
+          "events": [
+            "First contact with the Borg",
+            "Battle of Wolf 359",
+            "Dominion War",
+            "Cardassian withdrawal from occupied space",
+            "Federation-Klingon alliance"
+          ]
+        },
+        {
+          "name": "Modern Era",
+          "period": "2380-present",
+          "description": "The Federation continues to explore and defend against new threats, including the Emerald Chain and Burn-related anomalies.",
+          "events": [
+            "The Burn - sudden disappearance of dilithium",
+            "Discovery of the Mirror Universe",
+            "Section 31 conflicts",
+            "Red Angel mystery"
+          ]
+        }
+      ],
+      "government": {
+        "type": "Democratic Federation",
+        "branches": {
+          "executive": "President of the Federation, elected by the Federation Council",
+          "legislative": "Federation Council, representing member worlds",
+          "judicial": "Federation courts and legal system",
+          "military": "Starfleet Command, under civilian oversight"
+        },
+        "member_worlds": [
+          "Earth (capital)",
+          "Vulcan",
+          "Andoria",
+          "Tellar",
+          "Beta Cygnus Space Colony",
+          "Many others across the Alpha and Beta Quadrants"
+        ]
+      }
+    },
+    "major_conflicts": [
+      {
+        "name": "Klingon-Federation Border Wars",
+        "period": "22nd-23rd century",
+        "description": "A series of conflicts along the Federation-Klingon border, driven by territorial disputes and ideological differences.",
+        "belligerents": ["United Federation of Planets", "Klingon Empire"],
+        "outcome": "Khitomer Accords established peace, though tensions remain",
+        "significance": "Defined the relationship between the two major powers"
+      },
+      {
+        "name": "Dominion War",
+        "period": "2373-2375",
+        "description": "A galactic-scale conflict between the Dominion (led by the Founders) and the Federation-Klingon-Romulan alliance.",
+        "belligerents": {
+          "dominion": ["Founders", "Changelings", "Jem'Hadar", "Vorta"],
+          "alliance": ["Federation", "Klingon Empire", "Romulan Star Empire", "Cardassian Union (initially)"]
+        },
+        "outcome": "Alliance victory, Dominion retreats to the Gamma Quadrant",
+        "significance": "Major shift in galactic politics, strengthened Federation-Klingon alliance"
+      },
+      {
+        "name": "Borg Incursions",
+        "period": "Ongoing",
+        "description": "Repeated attacks by the Borg Collective, a cybernetic species that assimilates other races.",
+        "belligerents": ["United Federation of Planets", "Borg Collective"],
+        "key_battles": [
+          "Battle of Wolf 359 (Federation defeat)",
+          "Battle of Sector 001 (Federation victory with help)",
+          "Voyager encounters (various outcomes)"
+        ],
+        "significance": "The Borg represent an existential threat to all sentient life"
+      },
+      {
+        "name": "Cardassian-Federation Border Conflict",
+        "period": "24th century",
+        "description": "Tensions and conflicts along the Federation-Cardassian border, including the occupation of Bajor.",
+        "belligerents": ["United Federation of Planets", "Cardassian Union"],
+        "outcome": "Cardassian withdrawal from Bajor, establishment of Cardassian Federation",
+        "significance": "Led to the creation of Deep Space Nine as a diplomatic outpost"
+      },
+      {
+        "name": "Romulan-Federation Tensions",
+        "period": "Ongoing",
+        "description": "Cold war-style tensions between the Federation and Romulan Star Empire, with proxy conflicts and espionage.",
+        "belligerents": ["United Federation of Planets", "Romulan Star Empire"],
+        "outcome": "Neutral Zone agreement, periodic violations",
+        "significance": "Defined the boundary between Federation and Romulan space"
+      }
+    ],
+    "factions": {
+      "federation": {
+        "name": "United Federation of Planets",
+        "description": "A democratic interstellar federation dedicated to peace, exploration, and scientific discovery.",
+        "strengths": [
+          "Diplomatic influence",
+          "Scientific research",
+          "Alliance building",
+          "Technological innovation"
+        ],
+        "weaknesses": [
+          "Bureaucratic decision-making",
+          "Prime Directive restrictions",
+          "Reluctance to engage in preemptive warfare"
+        ]
+      },
+      "klingon_empire": {
+        "name": "Klingon Empire",
+        "description": "A warrior culture that values honor, strength, and martial prowess.",
+        "strengths": [
+          "Military prowess",
+          "Aggressive expansion",
+          "Honor-bound alliances",
+          "Fearless warriors"
+        ],
+        "weaknesses": [
+          "Internal political strife",
+          "Honor can be exploited",
+          "Limited diplomatic flexibility"
+        ]
+      },
+      "romulan_star_empire": {
+        "name": "Romulan Star Empire",
+        "description": "A secretive empire that values deception, espionage, and strategic planning.",
+        "strengths": [
+          "Cloaking technology",
+          "Espionage network",
+          "Strategic planning",
+          "Defensive capabilities"
+        ],
+        "weaknesses": [
+          "Paranoia and distrust",
+          "Internal security state",
+          "Limited expansion"
+        ]
+      },
+      "dominion": {
+        "name": "The Dominion",
+        "description": "A ruthless empire controlled by the Founders (Changelings), using the Vorta as administrators and the Jem'Hadar as soldiers.",
+        "strengths": [
+          "Unstoppable Jem'Hadar warriors",
+          "Changeling infiltrators",
+          "Wormhole access to Gamma Quadrant",
+          "Totalitarian control"
+        ],
+        "weaknesses": [
+          "Jem'Hadar dependency on Ketracel-white",
+          "Vorta can be turned",
+          "Changelings are vulnerable to specific weapons"
+        ]
+      },
+      "borg": {
+        "name": "Borg Collective",
+        "description": "A cybernetic hive mind that assimilates other species, adding their technology and biology to the Collective.",
+        "strengths": [
+          "Assimilation technology",
+          "Hive mind coordination",
+          "Transwarp network",
+          "Adaptive shields"
+        ],
+        "weaknesses": [
+          "Vulnerable to internal sabotage",
+          "Individuals can resist assimilation",
+          "Transwarp hubs can be destroyed"
+        ]
+      },
+      "cardassian_union": {
+        "name": "Cardassian Union",
+        "description": "A militaristic empire that values order, discipline, and expansion through occupation.",
+        "strengths": [
+          "Military occupation experience",
+          "Industrial capacity",
+          "Strategic planning",
+          "Occupied territory resources"
+        ],
+        "weaknesses": [
+          "Internal dissent",
+          "Overextension",
+          "Resistance movements"
+        ]
+      },
+      "ferengi_alliance": {
+        "name": "Ferengi Alliance",
+        "description": "A profit-driven society that values commerce above all else.",
+        "strengths": [
+          "Economic power",
+          "Trade networks",
+          "Commercial espionage",
+          "Adaptability"
+        ],
+        "weaknesses": [
+          "Greedy and short-sighted",
+          "Weak military",
+          "Internal competition"
+        ]
+      },
+      "bajor": {
+        "name": "Bajor",
+        "description": "A small but strategically important world that recently gained independence from Cardassian occupation.",
+        "strengths": [
+          "Strategic location near the wormhole",
+          "Religious unity",
+          "Resistance experience",
+          "Federation alliance"
+        ],
+        "weaknesses": [
+          "Small population",
+          "Limited resources",
+          "Rebuilding from occupation"
+        ]
+      }
+    },
+    "technologies": {
+      "warp_drive": {
+        "description": "Faster-than-light propulsion system that enables interstellar travel.",
+        "levels": {
+          "warp_1": "Speed of light",
+          "warp_4": "16 times light speed (cruising speed)",
+          "warp_6": "216 times light speed (cruising speed for Constitution-class)",
+          "warp_8": "512 times light speed (maximum sustained)",
+          "warp_9": "1000+ times light speed (theoretical maximum)",
+          "transwarp": "Beyond warp 9, used by Borg and some experimental drives"
+        }
+      },
+      "cloaking_device": {
+        "description": "Technology that renders ships invisible to sensors and visual observation.",
+        "users": ["Romulan Star Empire", "Cardassian Union", "Section 31"],
+        "limitations": [
+          "Cannot fire weapons while cloaked (without decloaking)",
+          "Requires significant power",
+          "Detectable by subspace residue"
+        ]
+      },
+      "transporter": {
+        "description": "Technology that dematerializes matter and transmits it to another location for rematerialization.",
+        "uses": [
+          "Beam personnel to/from planets",
+          "Beam weapons and equipment",
+          "Emergency beam-outs",
+          "Matter transmission between ships"
+        ],
+        "limitations": [
+          "Range limited by power and atmospheric conditions",
+          "Cannot transport living beings through planetary shields",
+          "Heisenberg compensator required for accurate rematerialization"
+        ]
+      },
+      "replicator": {
+        "description": "Technology that converts energy into matter, allowing the creation of food, objects, and materials.",
+        "uses": [
+          "Food and beverage production",
+          "Tool and equipment creation",
+          "Medical supplies",
+          "Emergency materials"
+        ],
+        "limitations": [
+          "Cannot replicate living beings",
+          "Cannot replicate certain complex materials (e.g., dilithium)",
+          "Requires energy and raw materials"
+        ]
+      },
+      "shields": {
+        "description": "Energy barriers that protect ships from weapons fire.",
+        "types": {
+          "deflector_shields": "Primary protection, can be directed to specific arcs",
+          "inertial_dampeners": "Reduce effects of acceleration and deceleration",
+          "force_fields": "Secondary protection for specific areas",
+          "adaptive_shields": "Borg technology that adapts to weapon frequencies"
+        }
+      },
+      "weapons": {
+        "phasers": "Energy weapons that can be set to stun or kill",
+        "photon_torpedoes": "Antimatter warheads that explode on impact",
+        "plasma_torpedoes": "Romulan variant of photon torpedoes",
+        "disruptors": "Klingon and Cardassian energy weapons",
+        "quantum_torpedoes": "More powerful variant of photon torpedoes",
+        "polaron": "Less common energy weapon, effective against certain shields"
+      }
+    },
+    "key_locations": [
+      {
+        "name": "Earth",
+        "description": "Capital of the Federation, home to Starfleet Headquarters.",
+        "significance": "Political and military center of the Federation"
+      },
+      {
+        "name": "Deep Space Nine",
+        "description": "Space station near a stable wormhole to the Gamma Quadrant.",
+        "significance": "Strategic trade hub and diplomatic outpost"
+      },
+      {
+        "name": "Vulcan",
+        "description": "Homeworld of the Vulcans, founding member of the Federation.",
+        "significance": "Center of Vulcan logic and science"
+      },
+      {
+        "name": "Qo'noS",
+        "description": "Capital of the Klingon Empire.",
+        "significance": "Political and military center of the Klingon Empire"
+      },
+      {
+        "name": "Romulus",
+        "description": "Capital of the Romulan Star Empire.",
+        "significance": "Political and military center of the Romulan Star Empire"
+      },
+      {
+        "name": "Bajor",
+        "description": "Small world near the wormhole, recently freed from Cardassian occupation.",
+        "significance": "Strategic location, religious significance"
+      },
+      {
+        "name": "Cardassia Prime",
+        "description": "Capital of the Cardassian Union.",
+        "significance": "Political and military center of the Cardassian Union"
+      },
+      {
+        "name": "Wormhole",
+        "description": "Stable wormhole connecting the Alpha and Gamma Quadrants.",
+        "significance": "Gateway to the Gamma Quadrant and the Dominion"
+      },
+      {
+        "name": "Borg Cube",
+        "description": "Massive cubic starship of the Borg Collective.",
+        "significance": "Symbol of the Borg threat"
+      }
+    ]
+  }
+}

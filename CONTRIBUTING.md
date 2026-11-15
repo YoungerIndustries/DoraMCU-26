@@ -27,14 +27,12 @@ Create a MySQL database and run the Flyway migrations:
 CREATE DATABASE doramcu CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-Update `src/main/resources/application.yml` with your database credentials:
+Update `src/main/resources/application-mysql.properties` with your database credentials:
 
-```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/doramcu
-    username: your_username
-    password: your_password
+```
+spring.datasource.url=jdbc:mysql://localhost:3306/doramcu
+spring.datasource.username=your_username
+spring.datasource.password=your_password
 ```
 
 ### 3. Build the Project
@@ -82,9 +80,9 @@ DoraMCU/
 │   ├── neuron/          # AI neuron federation
 │   ├── unified/         # Cross-game adapters
 │   └── shared/          # Universal identity
-├── dora-ai/             # AI chat and code analysis
-├── dora-dl-core/        # Deep learning core (DL4J)
-├── dora-neuron/         # Edge AI node
+├── src/main/java/com/yisy/modules/doraai/   # AI chat and code analysis (inline package)
+├── src/main/java/com/yisy/modules/doradl/   # Deep learning core — DL4J (inline package)
+├── dora-neuron/         # Player gateway, client distribution, game sync (Gradle subproject)
 ├── dora-electron/       # Electron desktop client
 ├── dora-pwa/            # Progressive Web App
 ├── unity-client/        # Unity 3D game client
@@ -166,4 +164,4 @@ kubectl apply -f k8s/overlays/prod/ -n doramcu-prod
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under All rights reserved.

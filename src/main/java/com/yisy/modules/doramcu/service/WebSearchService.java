@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doraai.service.AiProvider;
 import com.yisy.modules.doramcu.dto.DuckDuckGoSearchResult;
@@ -8,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
@@ -368,7 +368,7 @@ public class WebSearchService {
                     text = text.substring(0, 50).trim();
                 }
                 // Remove trailing ellipsis or punctuation
-                text = text.replaceAll("[\\.\\.,]+$", "").trim();
+                text = text.replaceAll("[.,]+$", "").trim();
                 if (!text.isEmpty() && factions.size() < 6) {
                     factions.add(text);
                 }
@@ -436,10 +436,10 @@ public class WebSearchService {
      */
     protected String extractTechnologyLevel(String response) {
         String lower = response.toLowerCase();
-        if (lower.contains("advanced")) return "Advanced — space travel and energy weapons";
-        if (lower.contains("intermediate")) return "Intermediate — limited FTL capability";
-        if (lower.contains("primitive")) return "Primitive — early space exploration";
-        return "Intermediate — space travel available";
+        if (lower.contains("advanced")) return "Advanced â€” space travel and energy weapons";
+        if (lower.contains("intermediate")) return "Intermediate â€” limited FTL capability";
+        if (lower.contains("primitive")) return "Primitive â€” early space exploration";
+        return "Intermediate â€” space travel available";
     }
 
     /**
@@ -488,13 +488,13 @@ public class WebSearchService {
     protected String determineTechnologyLevel(String text) {
         String lower = text.toLowerCase();
         if (lower.contains("warp") || lower.contains("hyperdrive") || lower.contains("advanced")) {
-            return "Advanced — warp drive, energy weapons, AI";
+            return "Advanced â€” warp drive, energy weapons, AI";
         } else if (lower.contains("jump") || lower.contains("ftl") || lower.contains("intermediate")) {
-            return "Intermediate — faster-than-light travel available";
+            return "Intermediate â€” faster-than-light travel available";
         } else if (lower.contains("rocket") || lower.contains("sublight") || lower.contains("primitive")) {
-            return "Primitive — sublight space travel";
+            return "Primitive â€” sublight space travel";
         }
-        return "Intermediate — space travel available";
+        return "Intermediate â€” space travel available";
     }
 
     /**
@@ -535,7 +535,7 @@ public class WebSearchService {
                     theme,
                     "United Federation of Planets, 24th century space exploration",
                     List.of("Federation", "Romulan Star Empire", "Cardassian Union", "Klingon Empire", "Cardassian Union"),
-                    "Advanced — warp drive, transporters, phasers",
+                    "Advanced â€” warp drive, transporters, phasers",
                     "Exploration, diplomacy, first contact",
                     "astronomical",
                     4,
@@ -548,7 +548,7 @@ public class WebSearchService {
                     theme,
                     "Post-war independent space, Outer Planets",
                     List.of("Independent", "Alliance", "Rebels"),
-                    "Intermediate — faster-than-light travel via Jump drive",
+                    "Intermediate â€” faster-than-light travel via Jump drive",
                     "Gritty, survival, space western",
                     "western",
                     2,
@@ -561,7 +561,7 @@ public class WebSearchService {
                     theme,
                     "Space station diplomacy, Shadow War era",
                     List.of("Earth", "Minbari", "Centauri", "Narn", "Vorlon"),
-                    "Advanced — FTL, psionics, ancient technology",
+                    "Advanced â€” FTL, psionics, ancient technology",
                     "Political intrigue, war, prophecy",
                     "mythological",
                     5,
@@ -574,7 +574,7 @@ public class WebSearchService {
                     theme,
                     "Feudal interstellar empire, desert worlds",
                     List.of("Atreides", "Harkonnen", "Bene Gesserit", "Spice Guild"),
-                    "Advanced — foldspace travel, no AI (Butlerian Jihad)",
+                    "Advanced â€” foldspace travel, no AI (Butlerian Jihad)",
                     "Political, ecological, messianic",
                     "arabic",
                     4,
@@ -587,7 +587,7 @@ public class WebSearchService {
                     theme,
                     "Human-Covenant war, ancient Forerunner relics",
                     List.of("UNSC", "Covenant", "Flood", "Forerunners"),
-                    "Advanced — slipspace, energy shields, AI",
+                    "Advanced â€” slipspace, energy shields, AI",
                     "Military sci-fi, survival, ancient mysteries",
                     "military",
                     3,
@@ -600,7 +600,7 @@ public class WebSearchService {
                     theme,
                     "Citadel galaxy, interspecies council",
                     List.of("Turians", "Asari", "Humans", "Salarians", "Krogens"),
-                    "Advanced — mass effect fields, FTL relays",
+                    "Advanced â€” mass effect fields, FTL relays",
                     "Diplomacy, exploration, Reaper threat",
                     "astronomical",
                     5,
@@ -611,9 +611,9 @@ public class WebSearchService {
         // Generic fallback for unknown themes
         return new ThemeResearchResult(
                 theme,
-                "Unknown theme — generic sci-fi setting",
+                "Unknown theme â€” generic sci-fi setting",
                 List.of("Faction A", "Faction B"),
-                "Intermediate — space travel available",
+                "Intermediate â€” space travel available",
                 "Exploration and adventure",
                 "astronomical",
                 2,

@@ -3,6 +3,8 @@ package com.yisy.modules.doramcu.sfb.service;
 import com.yisy.modules.doramcu.sfb.model.*;
 
 import java.util.*;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Strategic campaign management for SFB.
@@ -49,13 +51,25 @@ public class SfbCampaignEngine {
     private final Map<String, SfbScenario> activeBattles = new HashMap<>();
     private final Map<String, SfbShip> shipyard = new HashMap<>(); // Available ships by ID
     private final SfbShipLoader shipLoader;
+    private final SfbCampaignHistory campaignHistory;
 
     public SfbCampaignEngine() {
         this.shipLoader = new SfbShipLoader();
+        this.campaignHistory = new SfbCampaignHistory();
     }
 
     public SfbCampaignEngine(SfbShipLoader shipLoader) {
         this.shipLoader = shipLoader;
+        this.campaignHistory = new SfbCampaignHistory();
+    }
+
+    /**
+     * Get the campaign history service.
+     *
+     * @return the campaign history tracker
+     */
+    public SfbCampaignHistory getCampaignHistory() {
+        return campaignHistory;
     }
 
     /**
@@ -164,18 +178,30 @@ public class SfbCampaignEngine {
 
     /**
      * Complete a battle and process results.
-     * Removes destroyed ships from fleets and tracks battle outcome.
+     * Removes destroyed ships from fleets and tracks battle outcome in campaign history.
      *
      * @param battleId The battle ID
      * @param winningSide The winning side (0 or 1), -1 for stalemate
+     * @return the recorded battle outcome
      */
-    public void completeBattle(String battleId, int winningSide) {
+    public SfbBattleOutcome completeBattle(String battleId, int winningSide) {
         SfbScenario scenario = activeBattles.remove(battleId);
-        if (scenario == null) return;
+        if (scenario == null) return null;
 
-        // Remove destroyed ships from fleets
+        // Count destroyed ships per side
+        int shipsLostSide0 = 0;
+        int shipsLostSide1 = 0;
+        List<String> destroyedShipIds = new ArrayList<>();
+
         for (SfbShip ship : scenario.getShips()) {
             if (ship.isDestroyed()) {
+                destroyedShipIds.add(ship.getId());
+                if (ship.getSide() == 0) {
+                    shipsLostSide0++;
+                } else {
+                    shipsLostSide1++;
+                }
+                // Remove from fleets
                 for (Fleet fleet : fleets.values()) {
                     if (fleet.getOwnerSide() == ship.getSide()) {
                         fleet.removeShip(ship.getId());
@@ -184,6 +210,165 @@ public class SfbCampaignEngine {
                 shipyard.remove(ship.getId());
             }
         }
+
+        // Determine result
+        SfbBattleOutcome.Result result;
+        if (winningSide == -1) {
+            result = SfbBattleOutcome.Result.STALEMATE;
+        } else if (shipsLostSide0 > 0 && shipsLostSide1 > 0) {
+            result = SfbBattleOutcome.Result.MUTUAL_DESTRUCTION;
+        } else if (winningSide == 0) {
+            result = SfbBattleOutcome.Result.SIDE_0_VICTORY;
+        } else {
+            result = SfbBattleOutcome.Result.SIDE_1_VICTORY;
+        }
+
+        // Get sector position from attacker fleet for terrain tracking
+        int sectorRow = 0;
+        int sectorCol = 0;
+        String terrainEffect = "NONE";
+        if (!scenario.getShips().isEmpty()) {
+            SfbShip firstShip = scenario.getShips().get(0);
+            if (firstShip.getPosition() != null) {
+                sectorRow = firstShip.getPosition().getQ();
+                sectorCol = firstShip.getPosition().getR();
+            }
+        }
+
+        // Build and record the battle outcome
+        SfbBattleOutcome.Builder outcomeBuilder = SfbBattleOutcome.builder()
+                .battleId(battleId)
+                .result(result)
+                .winningSide(winningSide)
+                .sectorPosition(sectorRow, sectorCol)
+                .terrainEffect(terrainEffect)
+                .shipsLostSide0(shipsLostSide0)
+                .shipsLostSide1(shipsLostSide1);
+
+        for (String destroyedId : destroyedShipIds) {
+            outcomeBuilder.destroyedShipId(destroyedId);
+        }
+
+        SfbBattleOutcome outcome = outcomeBuilder.build();
+        campaignHistory.recordBattleOutcome(outcome);
+        return outcome;
+    }
+
+    /**
+     * Get fleet composition summary for a fleet.
+     * Returns the breakdown of ship classes and their counts.
+     *
+     * @param fleetId the fleet ID
+     * @return map of ship class to count, or empty map if fleet not found
+     */
+    public Map<String, Integer> getFleetComposition(String fleetId) {
+        Fleet fleet = fleets.get(fleetId);
+        if (fleet == null) {
+            return Collections.emptyMap();
+        }
+
+        return fleet.getShipIds().stream()
+                .map(shipyard::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.groupingBy(
+                        SfbShip::getShipClass,
+                        Collectors.summingInt(s -> 1)
+                ));
+    }
+
+    /**
+     * Get fleet composition summary for all fleets of a side.
+     *
+     * @param side the side (0 or 1)
+     * @return map of fleet ID to composition map
+     */
+    public Map<String, Map<String, Integer>> getAllFleetCompositions(int side) {
+        Map<String, Map<String, Integer>> compositions = new HashMap<>();
+        for (Fleet fleet : getFleets(side)) {
+            compositions.put(fleet.getId(), getFleetComposition(fleet.getId()));
+        }
+        return compositions;
+    }
+
+    /**
+     * Transfer ships from one fleet to another.
+     *
+     * @param sourceFleetId the source fleet
+     * @param targetFleetId the target fleet
+     * @param shipIds the ship IDs to transfer
+     * @return the number of ships transferred
+     */
+    public int transferShips(String sourceFleetId, String targetFleetId, List<String> shipIds) {
+        Fleet source = fleets.get(sourceFleetId);
+        Fleet target = fleets.get(targetFleetId);
+
+        if (source == null || target == null) {
+            throw new IllegalArgumentException("Fleet not found");
+        }
+
+        int transferred = 0;
+        for (String shipId : shipIds) {
+            if (source.getShipIds().remove(shipId)) {
+                target.getShipIds().add(shipId);
+                transferred++;
+            }
+        }
+        return transferred;
+    }
+
+    /**
+     * Split a fleet into two fleets, distributing ships evenly.
+     *
+     * @param sourceFleetId the fleet to split
+     * @param newFleetId the ID for the new fleet
+     * @param newFleetName the name for the new fleet
+     * @return the newly created fleet
+     */
+    public Fleet splitFleet(String sourceFleetId, String newFleetId, String newFleetName) {
+        Fleet source = fleets.get(sourceFleetId);
+        if (source == null) {
+            throw new IllegalArgumentException("Source fleet not found: " + sourceFleetId);
+        }
+
+        if (source.getShipIds().size() < 2) {
+            throw new IllegalStateException("Cannot split fleet with fewer than 2 ships");
+        }
+
+        Fleet newFleet = createFleet(newFleetId, newFleetName, source.getOwnerSide());
+        newFleet.setSectorPosition(source.getSectorRow(), source.getSectorCol());
+        newFleet.setInDockyard(source.isInDockyard());
+
+        // Move half the ships to the new fleet
+        int halfSize = source.getShipIds().size() / 2;
+        List<String> shipsToMove = new ArrayList<>(source.getShipIds().subList(0, halfSize));
+        source.getShipIds().removeAll(shipsToMove);
+        newFleet.getShipIds().addAll(shipsToMove);
+
+        return newFleet;
+    }
+
+    /**
+     * Merge two fleets into one.
+     *
+     * @param primaryFleetId the fleet to keep
+     * @param secondaryFleetId the fleet to merge into the primary
+     * @return the merged fleet
+     */
+    public Fleet mergeFleets(String primaryFleetId, String secondaryFleetId) {
+        Fleet primary = fleets.get(primaryFleetId);
+        Fleet secondary = fleets.get(secondaryFleetId);
+
+        if (primary == null || secondary == null) {
+            throw new IllegalArgumentException("Fleet not found");
+        }
+
+        // Move all ships from secondary to primary
+        primary.getShipIds().addAll(secondary.getShipIds());
+
+        // Remove the secondary fleet
+        fleets.remove(secondaryFleetId);
+
+        return primary;
     }
 
     /**

@@ -276,10 +276,9 @@ public class AbstractBattle {
         // Firing DM from matrix
         int dm = firingUnit.ordinal() - targetUnit.ordinal();
 
-        // Attacker DM: -2
+        // Attacker DM: -2 (simplified: always apply -2 for attacker)
         if (firingForce == ownForce) {
-            // Check if own is attacking
-            // (simplified: always apply -2 for attacker)
+            dm -= 2;
         }
 
         // Tech level difference

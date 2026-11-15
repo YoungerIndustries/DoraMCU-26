@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.event.GalaxyEventService;
 import com.yisy.modules.doramcu.event.GalaxyEventType;
@@ -10,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -84,7 +84,7 @@ public class BackgroundGalaxyBuilder {
      * <p>
      * This method is the main entry point called after Earth Hub generation. It loads
      * the existing partial galaxy from the database, generates the remaining sectors in
-     * memory, and persists them — all running asynchronously.
+     * memory, and persists them â€” all running asynchronously.
      * </p>
      *
      * @return the build status tracking object for monitoring progress
@@ -97,7 +97,7 @@ public class BackgroundGalaxyBuilder {
      * Starts background generation of remaining galaxy sectors for a specific galaxy.
      * <p>
      * This method loads the existing partial galaxy from the database, generates the
-     * remaining sectors in memory, and persists them — all running asynchronously.
+     * remaining sectors in memory, and persists them â€” all running asynchronously.
      * Supports per-galaxy generation using the galaxy's stored seed and config.
      * </p>
      *
@@ -158,7 +158,7 @@ public class BackgroundGalaxyBuilder {
                         GalaxyTemplate.TRAVELLER_CLASSIC.getConfig().getSystemCount();
                 double hyperlaneDensity = dbGalaxy.getHyperlaneDensity();
 
-                // Generate remaining sectors in memory — use a single galaxy instance
+                // Generate remaining sectors in memory â€” use a single galaxy instance
                 com.yisy.modules.doramcu.hex.Galaxy inMemoryGalaxy =
                         new com.yisy.modules.doramcu.hex.Galaxy(1, galaxyName);
                 galaxyService.generateRemainingSectorsInMemory(
@@ -290,7 +290,7 @@ public class BackgroundGalaxyBuilder {
         if (galaxyOpt.isPresent()) {
             int completionPercent = galaxyService.getGalaxyCompletionPercent(galaxyName);
             if (completionPercent < 100) {
-                log.info("Galaxy '{}' is {}% complete. Background generation not running — consider starting manually.",
+                log.info("Galaxy '{}' is {}% complete. Background generation not running â€” consider starting manually.",
                         galaxyName, completionPercent);
             }
         }

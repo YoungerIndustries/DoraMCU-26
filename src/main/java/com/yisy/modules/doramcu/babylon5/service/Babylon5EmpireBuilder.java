@@ -1,12 +1,13 @@
 package com.yisy.modules.doramcu.babylon5.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.babylon5.model.B5Location;
 import com.yisy.modules.doramcu.babylon5.model.B5Race;
 import com.yisy.modules.doramcu.hex.*;
+import com.yisy.modules.doramcu.service.AiEntityRegistrationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,7 @@ public class Babylon5EmpireBuilder {
 
     private final Babylon5DatabaseService databaseService;
     private final Random random;
+    private AiEntityRegistrationService aiEntityRegistrationService;
 
     @Autowired
     public Babylon5EmpireBuilder(Babylon5DatabaseService databaseService) {
@@ -52,6 +54,14 @@ public class Babylon5EmpireBuilder {
     public Babylon5EmpireBuilder(Babylon5DatabaseService databaseService, long seed) {
         this.databaseService = databaseService;
         this.random = new Random(seed);
+    }
+
+    /**
+     * Sets the AI entity registration service (injected by Spring).
+     */
+    @Autowired(required = false)
+    public void setAiEntityRegistrationService(AiEntityRegistrationService aiEntityRegistrationService) {
+        this.aiEntityRegistrationService = aiEntityRegistrationService;
     }
 
     /**
@@ -176,8 +186,10 @@ public class Babylon5EmpireBuilder {
             Fleet fleet = game.createFleet(race.getName() + " Defense Fleet", player);
             Ship frigate = game.createMilitaryFrigate(race.getName() + " Frigate");
             fleet.addShip(frigate);
+            registerShipAsAi(frigate, race.getName());
             Ship destroyer = game.createMilitaryDestroyer(race.getName() + " Destroyer");
             fleet.addShip(destroyer);
+            registerShipAsAi(destroyer, race.getName());
             game.addFleet(fleet, player);
             log.debug("Assigned military fleet to aggressive race '{}'", race.getName());
         } else {
@@ -185,6 +197,7 @@ public class Babylon5EmpireBuilder {
             Fleet fleet = game.createFleet(race.getName() + " Exploration Fleet", player);
             Ship miningFrigate = game.createMiningFrigate(race.getName() + " Miner");
             fleet.addShip(miningFrigate);
+            registerShipAsAi(miningFrigate, race.getName());
             game.addFleet(fleet, player);
             log.debug("Assigned mining fleet to non-aggressive race '{}'", race.getName());
         }
@@ -194,8 +207,24 @@ public class Babylon5EmpireBuilder {
             Fleet secondFleet = game.createFleet(race.getName() + " Reserve Fleet", player);
             Ship frigate = game.createMilitaryFrigate(race.getName() + " Reserve Frigate");
             secondFleet.addShip(frigate);
+            registerShipAsAi(frigate, race.getName());
             game.addFleet(secondFleet, player);
             log.debug("Assigned reserve fleet to high-armor race '{}'", race.getName());
+        }
+    }
+
+    /**
+     * Registers a ship as an AI character in the AI character repository.
+     * No-op if the AI entity registration service is not available.
+     */
+    private void registerShipAsAi(Ship ship, String empireName) {
+        if (aiEntityRegistrationService != null && ship != null) {
+            try {
+                aiEntityRegistrationService.registerShip(ship, empireName);
+                log.debug("Registered ship '{}' as AI character for empire '{}'", ship.getName(), empireName);
+            } catch (Exception e) {
+                log.warn("Failed to register ship '{}' as AI character: {}", ship.getName(), e.getMessage());
+            }
         }
     }
 

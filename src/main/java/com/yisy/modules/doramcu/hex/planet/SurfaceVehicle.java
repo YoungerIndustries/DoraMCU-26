@@ -31,6 +31,20 @@ public class SurfaceVehicle {
     private boolean active;
     private String ownerEmpireId;
 
+    // ---- Reliability and Maintenance ----
+
+    /** Age of the vehicle in turns */
+    private int age;
+
+    /** Reliability percentage (0-100) */
+    private double reliability;
+
+    /** Last service turn number */
+    private int lastServiceTurn;
+
+    /** Whether the vehicle has broken down */
+    private boolean brokenDown;
+
     /**
      * Creates a new surface vehicle.
      *
@@ -60,6 +74,10 @@ public class SurfaceVehicle {
         this.totalPassengersDelivered = 0;
         this.active = true;
         this.ownerEmpireId = null;
+        this.age = 0;
+        this.reliability = 100.0;
+        this.lastServiceTurn = 0;
+        this.brokenDown = false;
     }
 
     /** @return the unique vehicle ID */
@@ -134,6 +152,119 @@ public class SurfaceVehicle {
      */
     public void setOwnerEmpireId(String empireId) {
         this.ownerEmpireId = empireId;
+    }
+
+    // ---- Reliability and Maintenance ----
+
+    /** @return the age of the vehicle in turns */
+    public int getAge() {
+        return age;
+    }
+
+    /** @return the reliability percentage (0-100) */
+    public double getReliability() {
+        return reliability;
+    }
+
+    /** @return the last service turn number */
+    public int getLastServiceTurn() {
+        return lastServiceTurn;
+    }
+
+    /** @return true if the vehicle has broken down */
+    public boolean isBrokenDown() {
+        return brokenDown;
+    }
+
+    /**
+     * Updates vehicle reliability and age for a turn.
+     *
+     * @param currentTurn the current turn number
+     */
+    public void updateReliability(int currentTurn) {
+        age++;
+
+        // Reliability decreases with age and usage
+        double agePenalty = Math.min(5.0, age * 0.1);
+        double usagePenalty = Math.min(3.0, totalDistance / 100.0);
+        reliability = Math.max(0, reliability - agePenalty - usagePenalty);
+
+        // Check for breakdown
+        if (reliability < 10 && Math.random() < 0.3) {
+            brokenDown = true;
+            active = false;
+        }
+    }
+
+    /**
+     * Services the vehicle at a depot, restoring reliability.
+     *
+     * @param currentTurn the current turn number
+     */
+    public void service(int currentTurn) {
+        reliability = 100.0;
+        lastServiceTurn = currentTurn;
+        brokenDown = false;
+        active = true;
+    }
+
+    /**
+     * Repairs a broken down vehicle.
+     */
+    public void repair() {
+        brokenDown = false;
+        reliability = 50.0;
+        active = true;
+    }
+
+    /**
+     * Sets the current route index.
+     * Used during persistence load to restore route state.
+     *
+     * @param index the route index
+     */
+    public void setCurrentRouteIndex(int index) {
+        this.currentRouteIndex = index;
+    }
+
+    /**
+     * Sets the passenger count directly.
+     * Used during persistence load to restore passenger state.
+     *
+     * @param count the number of passengers
+     */
+    public void setPassengerCount(int count) {
+        this.passengerCount = Math.max(0, count);
+    }
+
+    /**
+     * Sets the total distance traveled.
+     * Used during persistence load to restore stats.
+     *
+     * @param distance the total distance
+     */
+    public void setTotalDistance(int distance) {
+        this.totalDistance = distance;
+    }
+
+    /**
+     * Sets the total cargo delivered.
+     * Used during persistence load to restore stats.
+     *
+     * @param cargo the total cargo delivered
+     */
+    public void setTotalCargoDelivered(int cargo) {
+        this.totalCargoDelivered = cargo;
+    }
+
+    /**
+     * Sets the total passengers delivered.
+     * Used during persistence load to restore stats.
+     *
+     * @param passengers the total passengers delivered
+     */
+    public void setTotalPassengersDelivered(int passengers) {
+        this.totalPassengersDelivered = passengers;
     }
 
     /**

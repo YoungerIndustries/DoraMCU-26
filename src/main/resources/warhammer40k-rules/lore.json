@@ -1,0 +1,127 @@
+{
+  "lore": {
+    "universe": {
+      "title": "Warhammer 40,000",
+      "description": "The grimdark future of the 41st millennium, where humanity clings to survival amidst endless war against alien races, chaos, and mutation. The Imperium of Man spans thousands of worlds, ruled by the god-emperor on the Golden Throne of Terra.",
+      "source_material": ["Warhammer 40,000 Rulebook", "Codex: Adeptus Astartes", "Codex: Imperial Guard", "Codex: Chaos", "Codex: Orks", "Codex: Necrons", "Codex: Aeldari", "Codex: Tyranids"]
+    },
+    "factions": {
+      "imperium": {
+        "description": "The Imperium of Man, spanning 1,000+ worlds, ruled by the God-Emperor from Terra. The most powerful human faction, comprising the Adeptus Astartes, Imperial Guard, Adeptus Mechanicus, and countless other organizations.",
+        "government": {
+          "type": "Theocratic autocracy",
+          "ruler": "The God-Emperor of Mankind",
+          "administrative_body": "High Lords of Terra"
+        },
+        "military_branches": {
+          "adeptus_astartes": "Space Marines - genetically enhanced superhuman warriors",
+          "imperial_guard": "Imperial Army - billions of human soldiers",
+          "navy": "Imperial Navy - space fleet",
+          "adeptus_mechanicus": "Tech-priests of Mars"
+        }
+      },
+      "chaos": {
+        "description": "The forces of Chaos, serving the Ruinous Powers: Khorne (blood and battle), Tzeentch (change and magic), Nurgle (decay and disease), and Slaanesh (excess and pleasure). Corrupted humans, traitor legions, and daemonic entities.",
+        "government": {
+          "type": "Chaotic hierarchy",
+          "rulers": ["Abaddon the Despoiler", "Angron", "Magnus the Red", "Mortarion", "Sanguinius (fallen)"]
+        },
+        "military_branches": {
+          "chaos_space_marines": "Traitor legions",
+          "daemons": "Daemonic entities from the Warp",
+          "chaos_guard": "Corrupted Imperial Guard"
+        }
+      },
+      "orks": {
+        "description": "A savage, warlike alien race that thrives on combat. Orks grow like fungi, are fast-healing, and fight with crude but effective technology. Their WAAAGH! field allows their technology to function through belief.",
+        "government": {
+          "type": "Warboss hierarchy",
+          "structure": "Might makes right - strongest Ork leads"
+        },
+        "military_branches": {
+          "boyz": "Standard Ork infantry",
+          "nobs": "Elite Ork warriors",
+          "weirdboyz": "Ork shamans",
+          "mekboyz": "Ork engineers"
+        }
+      },
+      "necrons": {
+        "description": "Ancient alien race of living metal, awakened from their tomb worlds. Immortal, regenerating, wielding gauss technology that disintegrates matter at the molecular level. Seek to reclaim their ancient empire.",
+        "government": {
+          "type": "Dynastic hierarchy",
+          "rulers": ["Silent King", "Necron Overlords", "Canoptek Wizards"]
+        },
+        "military_branches": {
+          "warriors": "Standard Necron infantry",
+          "immortals": "Elite Necron warriors",
+          "crypteks": "Necron tech-priests",
+          "canopteks": "Repair drones"
+        }
+      },
+      "eldar": {
+        "description": "The Aeldari, an ancient and dying race. Once masters of the galaxy, they now survive on Craftworlds connected by the Webway, trying to avoid Slaanesh's attention while fighting for survival.",
+        "government": {
+          "type": "Fae'yr council",
+          "spiritual_leaders": "Farseers and Spiritseers"
+        },
+        "military_branches": {
+          "guardians": "Standard Aeldari infantry",
+          "warriors": "Elite Aeldari warriors",
+          "wraithguard": "Wraithbone constructs",
+          "farseers": "Psychic seers"
+        }
+      },
+      "tyranids": {
+        "description": "An alien hive mind from the Galaxies' Edge, consuming all biomass. Tyranids are a biological weapon of mass destruction, evolving new organisms to counter any threat. The Hive Fleet seeks to consume the Milky Way.",
+        "government": {
+          "type": "Hive mind",
+          "controller": "The Great Devourer"
+        },
+        "military_branches": {
+          "termagants": "Basic bio-forms",
+          "gaunts": "Fast bio-forms",
+          "hormagaunts": "Assault bio-forms",
+          "tyrannofex": "Titan bio-forms"
+        }
+      }
+    },
+    "eras": [
+      {
+        "name": "Age of Strife",
+        "period": "Pre-Imperial",
+        "description": "The Dark Age of Technology when humanity reached its zenith before the Warp storms destroyed much of the Imperium",
+        "key_events": ["The Great Crusade begins", "Warp storms devastate human space", "The Emperor rises on Terra"]
+      },
+      {
+        "name": "The Great Crusade",
+        "period": "M30-M31",
+        "description": "The Emperor's campaign to reunite humanity across the stars using the Space Marine Legions",
+        "key_events": ["Reunification of Terra", "Conquest of distant worlds", "Heresy of the Primarchs"]
+      },
+      {
+        "name": "Horus Heresy",
+        "period": "M31",
+        "description": "The greatest betrayal in human history as Horus Lupercal and half the Legions turned to Chaos",
+        "key_events": ["Fall of Primaris", "Siege of Terra", "Death of Horus", "Emperor enthroned"]
+      },
+      {
+        "name": "Age of Apostasy",
+        "period": "M32",
+        "description": "Calderean Heresy and the rise of the Inquisition",
+        "key_events": ["Calderean Heresy", "Formation of Inquisition", "First Black Crusade"]
+      },
+      {
+        "name": "Age of Darkness",
+        "period": "M33-M38",
+        "description": "Centuries of decline, the Indomitus Crusade begins to turn the tide",
+        "key_events": ["Fall of Macragge", "Necron awakening", "Tyranid arrival", "Indomitus Crusade"]
+      },
+      {
+        "name": "41st Millennium",
+        "period": "M41",
+        "description": "The current era - the grimdark future where war is all",
+        "key_events": ["Hive Fleet Behemoth", "Abaddon's Black Crusades", "Necron wars", "Eldar prophecies"]
+      }
+    ]
+  }
+}

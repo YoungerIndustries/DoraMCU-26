@@ -86,7 +86,7 @@ public class MiningOperation {
             rate.put(RawResourceType.DUST, 2 * miningBonus);
         } else if (body instanceof Star) {
             // Stars produce crystals (energy harvesting)
-            rate.put(RawResourceType.CRYSTAL, 1 * miningBonus);
+            rate.put(RawResourceType.CRYSTAL, miningBonus);
         }
 
         return Map.copyOf(rate);
@@ -144,15 +144,30 @@ public class MiningOperation {
 
     /**
      * Processes one turn of mining, adding produced resources to storage.
+     * Applies resource depletion mechanics: yield is reduced as the body depletes,
+     * and the body slowly recovers when not mined.
      *
      * @return the total amount of resources mined this turn
      */
     public int processTurn() {
         int totalMined = 0;
         for (Map.Entry<RawResourceType, Integer> entry : productionRate.entrySet()) {
-            int added = storage.add(entry.getKey(), entry.getValue());
+            // Apply depletion-based yield reduction
+            double effectiveYield = celestialBody.getMiningYield()
+                    * (celestialBody.getResourceLevel() / 100.0);
+            int adjustedAmount = Math.max(0, (int) (entry.getValue() * effectiveYield));
+            int added = storage.add(entry.getKey(), adjustedAmount);
             totalMined += added;
         }
+
+        // Record mining for depletion tracking
+        if (totalMined > 0) {
+            celestialBody.recordMining(totalMined, maxStorageCapacity);
+        } else {
+            // No mining this turn, allow recovery
+            celestialBody.processRecoveryTurn();
+        }
+
         return totalMined;
     }
 

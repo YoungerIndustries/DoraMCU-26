@@ -202,7 +202,7 @@ public class TravelCalculator {
             return 1.0;
         }
         // Linear mapping: JDrive 1-8 → Warp 2.0-9.0
-        return 2.0 + (jDriveSpeed - 1) * (7.0 / 7.0);
+        return 2.0 + (jDriveSpeed - 1);
     }
 
     /**

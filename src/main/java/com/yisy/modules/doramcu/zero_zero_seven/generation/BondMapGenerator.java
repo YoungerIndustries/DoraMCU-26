@@ -1,11 +1,11 @@
 package com.yisy.modules.doramcu.zero_zero_seven.generation;
+import org.springframework.stereotype.Component;
 
 import com.yisy.modules.doramcu.earth2026.model.TechLevel;
 import com.yisy.modules.doramcu.zero_zero_seven.model.BondGameSession;
 import com.yisy.modules.doramcu.zero_zero_seven.model.BondTerritory;
 import com.yisy.modules.doramcu.zero_zero_seven.repository.BondGameSessionRepository;
 import com.yisy.modules.doramcu.zero_zero_seven.repository.BondTerritoryRepository;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.Random;
  * North America, Asia, Middle East, Africa, South America, and Oceania.
  * </p>
  */
-@Service
+@Component
 public class BondMapGenerator {
 
     private final BondTerritoryRepository territoryRepository;

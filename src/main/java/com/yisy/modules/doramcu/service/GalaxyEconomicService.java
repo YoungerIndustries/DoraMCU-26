@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.eve.model.EveCorporation;
 import com.yisy.modules.doramcu.eve.model.Treasury;
@@ -17,7 +18,6 @@ import com.yisy.modules.doramcu.repository.GalaxyTreasuryRepository;
 import com.yisy.modules.doramcu.repository.TreasuryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -30,15 +30,15 @@ import java.util.*;
  * Each cycle performs the following steps:
  * </p>
  * <ol>
- *   <li><b>Collect Taxes</b> — Each empire calculates its total revenue from planets, stations,
+ *   <li><b>Collect Taxes</b> â€” Each empire calculates its total revenue from planets, stations,
  *       and trade. 5% of that revenue is paid to the Galaxy Treasury.</li>
- *   <li><b>Empire Expenses</b> — Empires pay their own bills, payroll, and upkeep from the
+ *   <li><b>Empire Expenses</b> â€” Empires pay their own bills, payroll, and upkeep from the
  *       remaining 95% of their revenue.</li>
- *   <li><b>Galaxy Improvements</b> — The Galaxy Treasury pays for galaxy-wide improvements
+ *   <li><b>Galaxy Improvements</b> â€” The Galaxy Treasury pays for galaxy-wide improvements
  *       resulting from planet operations and infrastructure needs.</li>
- *   <li><b>Surplus Transfer</b> — Any remaining balance in the Galaxy Treasury is transferred
+ *   <li><b>Surplus Transfer</b> â€” Any remaining balance in the Galaxy Treasury is transferred
  *       to the owning Corporation's treasury.</li>
- *   <li><b>Deficit Bonds</b> — If the Galaxy Treasury cannot cover all improvement costs,
+ *   <li><b>Deficit Bonds</b> â€” If the Galaxy Treasury cannot cover all improvement costs,
  *       the shortfall is issued as Galaxy Bonds at 10% interest until the deficit is corrected.</li>
  * </ol>
  * <p>
@@ -131,7 +131,7 @@ public class GalaxyEconomicService {
         log.info("Cycle {}: Collected {} credits in taxes from {} empires",
                 cycleNumber, totalTaxCollected, empires.size());
 
-        // Step 2: Empires pay their own expenses (handled externally — empires manage their own budgets)
+        // Step 2: Empires pay their own expenses (handled externally â€” empires manage their own budgets)
         // The 95% remaining after tax is available for empire expenses
 
         // Step 3: Pay galaxy improvements
@@ -151,12 +151,12 @@ public class GalaxyEconomicService {
         // Step 6: Transfer surplus or issue deficit bonds
         BigDecimal balanceAfterImprovements = treasury.getBalance();
         if (balanceAfterImprovements.compareTo(BigDecimal.ZERO) > 0) {
-            // Surplus — transfer to corporation
+            // Surplus â€” transfer to corporation
             transferSurplusToCorporation(treasury, galaxy, balanceAfterImprovements, cycle);
             log.info("Cycle {}: Transferred {} credits surplus to corporation",
                     cycleNumber, balanceAfterImprovements);
         } else if (balanceAfterImprovements.compareTo(BigDecimal.ZERO) < 0) {
-            // Deficit — issue bonds
+            // Deficit â€” issue bonds
             issueDeficitBonds(treasury, galaxy, balanceAfterImprovements.abs(), cycleNumber, cycle);
             log.info("Cycle {}: Issued {} credits in deficit bonds",
                     cycleNumber, balanceAfterImprovements.abs());
@@ -222,7 +222,7 @@ public class GalaxyEconomicService {
 
         // Revenue from planets
         int planetCount = empire.getPlanetCount();
-        revenue = revenue.add(BigDecimal.valueOf(planetCount * BASE_PLANET_TAX));
+        revenue = revenue.add(BigDecimal.valueOf((long) planetCount * BASE_PLANET_TAX));
 
         // Revenue from space stations (if accessible)
         // Note: Space stations are tracked in the galaxy, not directly in the empire
@@ -269,15 +269,15 @@ public class GalaxyEconomicService {
 
         // Army upkeep: count of army units * cost per unit
         int armyCount = empire.getArmy().getUnitCount();
-        expenses = expenses.add(BigDecimal.valueOf(armyCount * ARMY_UPKEEP_COST));
+        expenses = expenses.add(BigDecimal.valueOf((long) armyCount * ARMY_UPKEEP_COST));
 
         // Navy upkeep: count of navy ships * cost per ship
         int navyCount = empire.getNavy().getTotalShipCount();
-        expenses = expenses.add(BigDecimal.valueOf(navyCount * NAVY_UPKEEP_COST));
+        expenses = expenses.add(BigDecimal.valueOf((long) navyCount * NAVY_UPKEEP_COST));
 
         // Facility upkeep: count of space stations * cost per facility
         int facilityCount = empire.getFacilities().getSpaceStationCount();
-        expenses = expenses.add(BigDecimal.valueOf(facilityCount * FACILITY_UPKEEP_COST));
+        expenses = expenses.add(BigDecimal.valueOf((long) facilityCount * FACILITY_UPKEEP_COST));
 
         return expenses;
     }
@@ -329,7 +329,7 @@ public class GalaxyEconomicService {
                 totalImprovements = totalImprovements.add(cost);
 
                 if (!withdrew) {
-                    // Treasury went negative — this will be handled as deficit bonds later
+                    // Treasury went negative â€” this will be handled as deficit bonds later
                     log.warn("Galaxy treasury insufficient for improvement: {} (cost: {})", description, cost);
                 }
             }
@@ -353,7 +353,7 @@ public class GalaxyEconomicService {
 
         // Infrastructure maintenance based on galaxy size
         int systemCount = galaxy.getSystemCount() != null ? galaxy.getSystemCount() : 100;
-        BigDecimal infrastructureCost = BigDecimal.valueOf(systemCount * SYSTEM_IMPROVEMENT_COST);
+        BigDecimal infrastructureCost = BigDecimal.valueOf((long) systemCount * SYSTEM_IMPROVEMENT_COST);
 
         costs.put("Infrastructure Maintenance", infrastructureCost);
         return costs;
@@ -441,7 +441,7 @@ public class GalaxyEconomicService {
         // Find the owning corporation
         EveCorporation corporation = galaxy.getOwnedByCorporation();
         if (corporation == null) {
-            log.warn("Galaxy {} has no owning corporation — surplus retained in galaxy treasury", galaxy.getId());
+            log.warn("Galaxy {} has no owning corporation â€” surplus retained in galaxy treasury", galaxy.getId());
             return;
         }
 

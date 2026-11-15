@@ -1,10 +1,13 @@
 package com.yisy.modules.doramcu.traveller;
 
+import org.springframework.stereotype.Service;
 import java.util.*;
 
 /**
  * Service for converting Third Reich aircraft to Traveller equivalents.
  */
+
+@Service
 public class AircraftConversionService {
     private final Map<String, AircraftConversion> conversions = new HashMap<>();
 

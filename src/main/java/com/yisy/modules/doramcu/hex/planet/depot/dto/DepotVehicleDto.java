@@ -22,7 +22,7 @@ public class DepotVehicleDto {
     private final boolean active;
     private final boolean inService;
     private final List<String> routeStationIds;
-    private final Map<String, Integer> cargoInventory;
+    private final Map<CargoType, Integer> cargoInventory;
     private final int passengerCount;
     private final int totalDistance;
     private final int totalCargoDelivered;
@@ -98,7 +98,7 @@ public class DepotVehicleDto {
     }
 
     /** @return the cargo inventory */
-    public Map<String, Integer> getCargoInventory() {
+    public Map<CargoType, Integer> getCargoInventory() {
         return Collections.unmodifiableMap(cargoInventory);
     }
 

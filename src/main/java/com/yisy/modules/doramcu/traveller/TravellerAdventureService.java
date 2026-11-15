@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.traveller;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.*;
 import com.yisy.modules.doramcu.hex.manager.CharacterLogManager;
@@ -7,7 +8,6 @@ import com.yisy.modules.doramcu.service.CharacterService;
 import com.yisy.modules.doramcu.service.GameSessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -105,7 +105,7 @@ public class TravellerAdventureService {
             throw new IllegalStateException("Character " + character.getName() + " is dead");
         }
 
-        // Check if already in an adventure (before status check — TRAVELLING chars can re-enter)
+        // Check if already in an adventure (before status check â€” TRAVELLING chars can re-enter)
         if (adventures.containsKey(characterId)) {
             log.info("Character {} already has an active adventure", character.getName());
             return adventures.get(characterId);
@@ -320,6 +320,7 @@ public class TravellerAdventureService {
         int shipId = game.getNextShipIdAndIncrement();
         Ship ship = new Ship(shipId, shipType);
         ship.setName(characterService.getCharacter(characterId).getName() + "'s " + shipType.name());
+        ship.setAiCore(new AiCoreComponent());
         game.addShip(ship);
 
         // Add to fleet
@@ -612,6 +613,7 @@ public class TravellerAdventureService {
         int shipId = game.getNextShipIdAndIncrement();
         Ship ship = new Ship(shipId, TravellerAdventure.DEFAULT_STARTING_SHIP);
         ship.setName(character.getName() + "'s Ship");
+        ship.setAiCore(new AiCoreComponent());
         game.addShip(ship);
 
         fleet.addShip(ship);

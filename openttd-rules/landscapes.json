@@ -1,0 +1,253 @@
+{
+  "game_info": {
+    "title": "OpenTTD Transport Tycoon Landscape Database",
+    "description": "Planet landscapes and climate variations including Mars and other environments",
+    "source_mods": [
+      "OpenGFX Mars Landscape (GPL v2)",
+      "Martian Industries (GPL v2)",
+      "Toyland to Mars (GPL v2)",
+      "Wasteland Town Names (GPL v2)",
+      "Martian Town Names (CC-BY v3.0)"
+    ]
+  },
+  "landscapes": {
+    "default": {
+      "id": "default",
+      "name": "Default Earth-like",
+      "source": "OpenTTD Core",
+      "description": "Standard Earth-like landscape with four climates.",
+      "climates": [
+        {
+          "id": "temperate",
+          "name": "Temperate",
+          "description": "Mild climate with balanced terrain. Default starting climate.",
+          "terrain_types": ["grassland", "forest", "mountain", "deep_ocean", "shallow_water"],
+          "temperature_range": [-10, 30],
+          "moisture_range": [0.3, 0.8]
+        },
+        {
+          "id": "arctic",
+          "name": "Arctic",
+          "description": "Frozen climate with ice and snow-covered terrain.",
+          "terrain_types": ["ice", "tundra", "deep_ocean", "shallow_water"],
+          "temperature_range": [-40, -5],
+          "moisture_range": [0.1, 0.4]
+        },
+        {
+          "id": "tropic",
+          "name": "Tropic",
+          "description": "Hot climate with deserts and jungles.",
+          "terrain_types": ["desert", "jungle", "savanna", "deep_ocean", "shallow_water"],
+          "temperature_range": [20, 50],
+          "moisture_range": [0.1, 0.9]
+        },
+        {
+          "id": "toyland",
+          "name": "Toyland",
+          "description": "Whimsical toy-themed landscape for casual play.",
+          "terrain_types": ["grassland", "forest", "mountain", "deep_ocean"],
+          "temperature_range": [0, 25],
+          "moisture_range": [0.3, 0.7]
+        }
+      ]
+    },
+    "mars": {
+      "id": "mars",
+      "name": "Mars Landscape",
+      "source": "OpenGFX Mars",
+      "description": "Martian landscape with red terrain and thin atmosphere. Transforms all climates into Mars-like environments.",
+      "climates": [
+        {
+          "id": "mars_equatorial",
+          "name": "Equatorial Mars",
+          "mapping": "Temperate → Equatorial Mars",
+          "description": "Red desert terrain with rocky outcrops. The most habitable Mars region.",
+          "terrain_types": ["desert", "wasteland", "volcanic"],
+          "temperature_range": [-40, 20],
+          "moisture_range": [0.0, 0.1],
+          "atmosphere": "thin_co2",
+          "gravity": 0.38
+        },
+        {
+          "id": "mars_northern",
+          "name": "Northern Mars",
+          "mapping": "Arctic → Northern/Southern Mars",
+          "description": "Frozen polar regions with ice caps and dust storms.",
+          "terrain_types": ["ice", "wasteland", "desert"],
+          "temperature_range": [-100, -40],
+          "moisture_range": [0.0, 0.05],
+          "atmosphere": "thin_co2",
+          "gravity": 0.38
+        },
+        {
+          "id": "mars_desert",
+          "name": "Equatorial with Desert",
+          "mapping": "Tropic → Equatorial with Desert",
+          "description": "Extreme desert with volcanic features and canyons.",
+          "terrain_types": ["desert", "volcanic", "wasteland"],
+          "temperature_range": [-30, 30],
+          "moisture_range": [0.0, 0.05],
+          "atmosphere": "thin_co2",
+          "gravity": 0.38
+        },
+        {
+          "id": "mars_arctic",
+          "name": "Arctic Frozen Mars",
+          "mapping": "Toyland → Arctic (Perpetually Frozen)",
+          "description": "Permanently frozen Mars with no liquid water.",
+          "terrain_types": ["ice", "wasteland"],
+          "temperature_range": [-120, -60],
+          "moisture_range": [0.0, 0.02],
+          "atmosphere": "thin_co2",
+          "gravity": 0.38
+        }
+      ],
+      "special_features": {
+        "dust_storms": {
+          "description": "Periodic dust storms that reduce visibility and affect vehicle speed",
+          "frequency": "random",
+          "duration_turns": [5, 20],
+          "speed_penalty": 0.5
+        },
+        "low_gravity": {
+          "description": "38% Earth gravity — vehicles have extended range",
+          "fuel_efficiency_bonus": 0.38,
+          "vehicle_speed_bonus": 0.1
+        },
+        "thin_atmosphere": {
+          "description": "Thin CO2 atmosphere — aircraft have reduced performance",
+          "aircraft_speed_penalty": 0.7,
+          "aircraft_capacity_penalty": 0.5
+        }
+      }
+    },
+    "ocean_world": {
+      "id": "ocean_world",
+      "name": "Ocean World",
+      "source": "Community / DoraMCU",
+      "description": "Planet covered mostly in water with small islands. Ideal for water transport.",
+      "climates": [
+        {
+          "id": "oceanic",
+          "name": "Oceanic",
+          "description": "Vast oceans with scattered islands and archipelagos.",
+          "terrain_types": ["deep_ocean", "shallow_water", "beach", "grassland"],
+          "temperature_range": [10, 30],
+          "moisture_range": [0.7, 1.0],
+          "water_coverage": 0.85
+        }
+      ],
+      "special_features": {
+        "island_hopping": {
+          "description": "Settlements on islands require water or air transport",
+          "min_island_size": 3,
+          "max_island_size": 15
+        }
+      }
+    },
+    "desert_planet": {
+      "id": "desert_planet",
+      "name": "Desert Planet",
+      "source": "Community / DoraMCU",
+      "description": "Arid planet with vast deserts and minimal water. Like Tatooine.",
+      "climates": [
+        {
+          "id": "arid",
+          "name": "Arid",
+          "description": "Endless desert with occasional oases.",
+          "terrain_types": ["desert", "wasteland", "volcanic"],
+          "temperature_range": [0, 50],
+          "moisture_range": [0.0, 0.15],
+          "water_coverage": 0.02
+        }
+      ],
+      "special_features": {
+        "sand_storms": {
+          "description": "Sand storms reduce visibility and damage vehicles",
+          "frequency": "random",
+          "duration_turns": [3, 15],
+          "speed_penalty": 0.6
+        },
+        "oasis_bonus": {
+          "description": "Oases provide bonus cargo and passenger generation",
+          "cargo_bonus": 1.5,
+          "passenger_bonus": 2.0
+        }
+      }
+    },
+    "ice_world": {
+      "id": "ice_world",
+      "name": "Ice World",
+      "source": "Community / DoraMCU",
+      "description": "Frozen planet with ice sheets and frozen oceans. Like Hoth.",
+      "climates": [
+        {
+          "id": "frozen",
+          "name": "Frozen",
+          "description": "Permanently frozen with ice sheets and glaciers.",
+          "terrain_types": ["ice", "tundra", "snow"],
+          "temperature_range": [-80, -20],
+          "moisture_range": [0.1, 0.3],
+          "water_coverage": 0.3
+        }
+      ],
+      "special_features": {
+        "blizzards": {
+          "description": "Blizzards halt all surface transport temporarily",
+          "frequency": "random",
+          "duration_turns": [2, 10],
+          "speed_penalty": 0.3
+        },
+        "ice_roads": {
+          "description": "Frozen water can be used as road surface",
+          "allows_road_on_ice": true,
+          "speed_on_ice": 2
+        }
+      }
+    },
+    "jungle_world": {
+      "id": "jungle_world",
+      "name": "Jungle World",
+      "source": "Community / DoraMCU",
+      "description": "Dense jungle planet with thick vegetation. Like Endor's forest moon.",
+      "climates": [
+        {
+          "id": "tropical",
+          "name": "Tropical",
+          "description": "Dense jungle with rivers and swamps.",
+          "terrain_types": ["jungle", "swamp", "forest", "shallow_water"],
+          "temperature_range": [20, 40],
+          "moisture_range": [0.7, 1.0],
+          "water_coverage": 0.4
+        }
+      ],
+      "special_features": {
+        "dense_vegetation": {
+          "description": "Thick vegetation increases road construction cost",
+          "road_cost_multiplier": 1.5,
+          "rail_cost_multiplier": 2.0
+        },
+        "river_transport": {
+          "description": "Rivers provide natural water routes through jungle",
+          "river_density": "high"
+        }
+      }
+    }
+  },
+  "town_name_sets": {
+    "wasteland": {
+      "id": "wasteland",
+      "name": "Wasteland Town Names",
+      "source": "Wasteland Town Names NewGRF",
+      "description": "Post-apocalyptic/wasteland-themed town names for desolate planets",
+      "sample_names": ["Rustwater", "Dusthaven", "Scorch", "Boneyard", "Ashfall"]
+    },
+    "martian": {
+      "id": "martian",
+      "name": "Martian Town Names",
+      "source": "Martian Town Names NewGRF",
+      "description": "Mars-themed town names for planet colonization scenarios",
+      "sample_names": ["Olympus Base", "Valles Colony", "Tharsis Outpost", "Cydonia Station", "Mare Acidalium"]
+    }
+  }
+}

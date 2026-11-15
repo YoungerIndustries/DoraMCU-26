@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.ai;
 
 import com.yisy.modules.doramcu.hex.Fleet;
+import com.yisy.modules.doramcu.hex.FleetAiCoordinator;
 import com.yisy.modules.doramcu.hex.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,9 @@ public class StrategicAiCore {
         int fleetCount = context.getOwnedFleets().size();
         if (fleetCount < 5 && context.getMinerals() >= 30 && context.getEnergy() >= 20) {
             double buildScore = empireCore.evaluateAction(AiDecision.ActionType.BUILD_SHIP, context);
+            // Boost build score if AI network has gaps (few AI-equipped ships)
+            double networkGapBonus = empireCore.getNetworkGapBonus(context);
+            buildScore = Math.min(1.0, buildScore + networkGapBonus);
             if (buildScore > 0.3) {
                 Fleet fleet = empireCore.selectBestFleet(context);
                 if (fleet != null) {
@@ -95,5 +99,39 @@ public class StrategicAiCore {
 
         // No strategic priority — defer to tactical layer
         return null;
+    }
+
+    /**
+     * Calculates a bonus for building ships when the AI network has gaps.
+     * <p>
+     * If fewer than half of the owned fleets have AI Core-equipped ships,
+     * returns a bonus to encourage building more AI-connected ships.
+     * </p>
+     *
+     * @param context the current decision context
+     * @return the network gap bonus (0.0 to 0.2)
+     */
+    public double calculateNetworkGapBonus(AiDecisionContext context) {
+        if (context == null || context.getOwnedFleets().isEmpty()) {
+            return 0.0;
+        }
+
+        int totalFleets = context.getOwnedFleets().size();
+        int aiEquippedFleets = 0;
+
+        for (Fleet fleet : context.getOwnedFleets()) {
+            FleetAiCoordinator coordinator = new FleetAiCoordinator(fleet);
+            if (coordinator.getAiCoreShipCount() > 0) {
+                aiEquippedFleets++;
+            }
+        }
+
+        // If fewer than half have AI cores, boost build priority
+        double ratio = (double) aiEquippedFleets / totalFleets;
+        if (ratio < 0.5) {
+            // The larger the gap, the higher the bonus (up to 0.2)
+            return (0.5 - ratio) * 0.4;
+        }
+        return 0.0;
     }
 }

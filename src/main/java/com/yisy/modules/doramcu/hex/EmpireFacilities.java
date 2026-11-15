@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.hex;
 
+import com.yisy.modules.doramcu.hex.spi.AiEntityRegistration;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +28,9 @@ public class EmpireFacilities {
     private final Map<Integer, List<PlanetFacility>> planetFacilities;
     private final List<SpaceStation> spaceStations;
     private int nextFacilityId;
+
+    /** Optional: service for deactivating AI characters when facilities are removed. */
+    private AiEntityRegistration aiEntityRegistrationService;
 
     /**
      * Creates a new facilities manager for the given empire.
@@ -70,6 +75,7 @@ public class EmpireFacilities {
             throw new IllegalArgumentException("Facility type must not be null");
         }
         PlanetFacility facility = new PlanetFacility(nextFacilityId++, facilityType);
+        facility.setAiCore(new AiCoreComponent());
         planetFacilities.computeIfAbsent(planetId, k -> new ArrayList<>()).add(facility);
         return facility;
     }
@@ -100,14 +106,35 @@ public class EmpireFacilities {
     }
 
     /**
-     * Removes all facilities on a planet (e.g., when planet is lost).
+     * Removes all facilities on a planet (e.g., when planet is lost),
+     * deactivating their AI characters first.
      *
      * @param planetId the planet ID
      * @return the number of facilities removed
      */
     public int removeFacilitiesOnPlanet(int planetId) {
         List<PlanetFacility> removed = planetFacilities.remove(planetId);
+        if (removed != null && aiEntityRegistrationService != null) {
+            for (PlanetFacility facility : removed) {
+                if (facility.hasAiCore()) {
+                    try {
+                        aiEntityRegistrationService.deactivateFacilityAiCharacter(facility.getId());
+                    } catch (Exception e) {
+                        // Gracefully skip deactivation if it fails
+                    }
+                }
+            }
+        }
         return removed != null ? removed.size() : 0;
+    }
+
+    /**
+     * Sets the AI entity registration service for deactivating facility AI characters.
+     *
+     * @param service the registration service
+     */
+    public void setAiEntityRegistrationService(AiEntityRegistration service) {
+        this.aiEntityRegistrationService = service;
     }
 
     /**

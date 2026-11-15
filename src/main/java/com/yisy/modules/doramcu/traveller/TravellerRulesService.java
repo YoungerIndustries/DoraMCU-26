@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.traveller;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.shared.model.GameSystem;
 import com.yisy.modules.doramcu.shared.model.RulesEntry;
@@ -7,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.List;
  * This service populates the rules database on application startup with all the
  * official rules extracted from 12 Classic Traveller PDFs:
  * <ul>
- *   <li>The Traveller Book (Vol. I) — Core rules</li>
+ *   <li>The Traveller Book (Vol. I) â€” Core rules</li>
  *   <li>B01: Characters &amp; Combat (1981)</li>
  *   <li>B02: Starships (1981)</li>
  *   <li>B03: Worlds &amp; Adventures</li>
@@ -96,7 +96,7 @@ public class TravellerRulesService {
         List<RulesEntry> entries = new ArrayList<>();
 
         // ============================================================
-        // THE TRAVELLER BOOK — Core Rules
+        // THE TRAVELLER BOOK â€” Core Rules
         // ============================================================
 
         // --- DICE MECHANICS ---
@@ -127,7 +127,7 @@ public class TravellerRulesService {
 
         // --- SKILLS ---
         entries.add(createEntry("Skill Acquisition During Careers", "The Traveller Book", "Character Creation", "SKILLS", 3,
-                "Skills are acquired during career service. Each term, a character may have a chance to gain a new skill based on their career and branch of service. Skills are binary — a character either has a skill or does not. There are no skill levels in Classic Traveller.",
+                "Skills are acquired during career service. Each term, a character may have a chance to gain a new skill based on their career and branch of service. Skills are binary â€” a character either has a skill or does not. There are no skill levels in Classic Traveller.",
                 "Some skills are career-specific. General skills can be acquired in multiple careers."));
 
         entries.add(createEntry("Classic Traveller Skills List", "The Traveller Book", "Character Creation", "SKILLS", 3,
@@ -136,7 +136,7 @@ public class TravellerRulesService {
 
         entries.add(createEntry("Skill Modifiers", "The Traveller Book", "Gameplay", "SKILLS", 4,
                 "Having a relevant skill gives a +1 DM to related checks. For combat, having the appropriate Fight skill is required to use a weapon effectively. Without the skill, the character suffers a -2 DM to hit.",
-                "Multiple relevant skills do not stack — only the most applicable skill provides its bonus."));
+                "Multiple relevant skills do not stack â€” only the most applicable skill provides its bonus."));
 
         // --- ENCUMBRANCE ---
         entries.add(createEntry("Encumbrance System", "The Traveller Book", "Equipment", "ENCUMBRANCE", 5,
@@ -367,7 +367,7 @@ public class TravellerRulesService {
 
         entries.add(createEntry("Merchant Skills", "B07 Merchant Prince", "Skills", "SKILLS", 29,
                 "Deck: Navigation, Astrogation, Ship's Boat, Pilot (Space). Engineering: Engineering, Electronics, Computer, Gravitics, Drive. Purser: Gunnery, Steward, Security Admin. Sales: Broker, Trader, Admin. Free Trader: Streetwise, Carousing, Guns (Pistol/Rifle). General: Merchant Life, Shipboard Life, Officer Skills, Mercantile, Master.",
-                "Skills are binary — no levels in Classic Traveller."));
+                "Skills are binary â€” no levels in Classic Traveller."));
 
         entries.add(createEntry("Merchant Ranks and Promotions", "B07 Merchant Prince", "Ranks", "CAREER_MERCHANT", 21,
                 "Enlisted: E1 through E7 (based on terms of service). Commissioned: 00 (no rank), 01 (Junior), 02 (Assistant), 03 (Senior), 04 (Chief), 05 (Executive), 06 (Director), 07 (Captain). Promotion requires passing department test. Officers auto-transfer to Deck at rank 04 after one term.",

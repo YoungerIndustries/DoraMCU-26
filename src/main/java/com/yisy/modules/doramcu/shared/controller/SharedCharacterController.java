@@ -6,7 +6,7 @@ import com.yisy.modules.doramcu.shared.model.SharedCharacter;
 import com.yisy.modules.doramcu.shared.model.SharedCharacterSkill;
 import com.yisy.modules.doramcu.shared.model.SharedCharacterTravelLog;
 import com.yisy.modules.doramcu.shared.service.SharedCharacterService;
-import com.yisy.modules.doramcu.unified.GameType;
+import com.yisy.modules.doramcu.gamecore.GameType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -107,6 +107,25 @@ public class SharedCharacterController {
             return ResponseEntity.status(HttpStatus.CREATED).body(character);
         } catch (IllegalArgumentException e) {
             log.warn("Failed to import 4X Player: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    /**
+     * Imports an existing Earth 2026 character into the shared database.
+     *
+     * @param earth2026CharacterId the Earth 2026 character ID
+     * @return the created shared character
+     */
+    @PostMapping("/import/earth2026")
+    public ResponseEntity<SharedCharacter> importFromEarth2026(
+            @RequestParam Long earth2026CharacterId) {
+        log.debug("POST /api/v1/shared-characters/import/earth2026?earth2026CharacterId={}", earth2026CharacterId);
+        try {
+            SharedCharacter character = sharedCharacterService.importFromEarth2026(earth2026CharacterId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(character);
+        } catch (IllegalArgumentException e) {
+            log.warn("Failed to import Earth 2026 character: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }

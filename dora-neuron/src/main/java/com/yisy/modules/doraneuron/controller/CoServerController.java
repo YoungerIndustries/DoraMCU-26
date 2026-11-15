@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.controller;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.service.LeaderElectionService;
 import com.yisy.modules.doraneuron.service.TaskDistributionService;
 import com.yisy.modules.doraneuron.service.DataSyncService;
@@ -18,6 +20,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/co-server")
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class CoServerController {
 
     private static final Logger log = LoggerFactory.getLogger(CoServerController.class);

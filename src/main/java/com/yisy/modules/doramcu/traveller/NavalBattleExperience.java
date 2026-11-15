@@ -251,7 +251,7 @@ public class NavalBattleExperience extends CharacterExperience {
         }
         sb.append("the enemy fleet");
         if (!seaZone.isEmpty()) {
-            sb.append(" in the waters of the " + seaZone);
+            sb.append(" in the waters of the ").append(seaZone);
         }
         sb.append(".\n\n");
 

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.babylon5.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.babylon5.model.B5Location;
 import com.yisy.modules.doramcu.fourx.FourxExplorationService;
@@ -6,7 +7,6 @@ import com.yisy.modules.doramcu.hex.GalaxyServiceRegistry;
 import com.yisy.modules.doramcu.hex.GalaxyTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

@@ -2,6 +2,7 @@ package com.yisy.modules.doramcu.shared.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -74,6 +75,14 @@ public class RulesEntry {
     /** Whether this rule is active/applicable (for versioning or era-specific rules). */
     @Column(nullable = false)
     private boolean active = true;
+
+    /** Version number for this rule entry (supports tracking rule changes across editions). */
+    @Column(nullable = false)
+    private int version = 1;
+
+    /** The date from which this version of the rule is effective (for temporal queries). */
+    @Column
+    private LocalDate effectiveDate;
 
     // --- Getters and Setters ---
 
@@ -155,6 +164,22 @@ public class RulesEntry {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public LocalDate getEffectiveDate() {
+        return effectiveDate;
+    }
+
+    public void setEffectiveDate(LocalDate effectiveDate) {
+        this.effectiveDate = effectiveDate;
     }
 
     @Override

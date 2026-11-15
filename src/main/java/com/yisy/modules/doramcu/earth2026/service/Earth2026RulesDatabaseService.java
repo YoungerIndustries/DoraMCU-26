@@ -385,4 +385,116 @@ public class Earth2026RulesDatabaseService {
     public List<E26PlanetRules.E26WorldModifier> getWorldModifiers() {
         return planetRules != null ? planetRules.getWorldModifiers() : List.of();
     }
+
+    // ==========================================
+    // Animal & Companion Name Generation
+    // ==========================================
+
+    /**
+     * Generate a name for an animal or companion.
+     * Uses the companionNames array if available, otherwise falls back to first names.
+     *
+     * @param speciesId the species ID (e.g., "DOG", "CAT", "HORSE", "WOLF", "BEAR", "EAGLE")
+     * @return a generated animal name
+     */
+    public String generateAnimalName(String speciesId) {
+        E26Species sp = species.stream()
+                .filter(s -> speciesId.equalsIgnoreCase(s.getId()))
+                .findFirst()
+                .orElse(null);
+
+        if (sp == null || sp.getNameDatabase() == null) {
+            // Fallback to generic animal names
+            return generateGenericAnimalName(speciesId);
+        }
+
+        E26NameDatabase db = sp.getNameDatabase();
+
+        // Try companionNames first
+        if (db.getCompanionNames() != null && !db.getCompanionNames().isEmpty()) {
+            return db.getCompanionNames().get(random.nextInt(db.getCompanionNames().size()));
+        }
+
+        // Fall back to first names
+        List<String> maleNames = db.getMaleFirstNames();
+        List<String> femaleNames = db.getFemaleFirstNames();
+
+        if (maleNames != null && !maleNames.isEmpty() && random.nextBoolean()) {
+            return maleNames.get(random.nextInt(maleNames.size()));
+        } else if (femaleNames != null && !femaleNames.isEmpty()) {
+            return femaleNames.get(random.nextInt(femaleNames.size()));
+        } else if (maleNames != null && !maleNames.isEmpty()) {
+            return maleNames.get(random.nextInt(maleNames.size()));
+        }
+
+        return generateGenericAnimalName(speciesId);
+    }
+
+    /**
+     * Generate a name for a companion with a specific type.
+     * Adds companion-type-specific prefixes for familiars and service animals.
+     *
+     * @param speciesId the species ID (e.g., "DOG", "CAT", "HORSE")
+     * @param companionType the companion type (e.g., "FAMILIAR", "SERVICE_ANIMAL", "PET")
+     * @return a generated companion name
+     */
+    public String generateCompanionName(String speciesId, String companionType) {
+        String baseName = generateAnimalName(speciesId);
+
+        // Add type-specific prefixes for certain companion types
+        if ("FAMILIAR".equalsIgnoreCase(companionType)) {
+            String[] familiarPrefixes = {"Mystic", "Arcane", "Shadow", "Spirit", "Ethereal"};
+            if (random.nextBoolean()) {
+                return familiarPrefixes[random.nextInt(familiarPrefixes.length)] + " " + baseName;
+            }
+        } else if ("SERVICE_ANIMAL".equalsIgnoreCase(companionType)) {
+            String[] servicePrefixes = {"Guardian", "Helper", "Guide", "Alert", "Support"};
+            if (random.nextBoolean()) {
+                return servicePrefixes[random.nextInt(servicePrefixes.length)] + " " + baseName;
+            }
+        } else if ("MOUNT".equalsIgnoreCase(companionType)) {
+            String[] mountPrefixes = {"Noble", "Swift", "Steady", "Powerful", "Gentle"};
+            if (random.nextBoolean()) {
+                return mountPrefixes[random.nextInt(mountPrefixes.length)] + " " + baseName;
+            }
+        }
+
+        return baseName;
+    }
+
+    /**
+     * Generate a generic animal name when species-specific data is not available.
+     */
+    private String generateGenericAnimalName(String speciesId) {
+        if (speciesId == null) {
+            return "Unknown";
+        }
+
+        String[] genericAnimalNames = {
+                "Spot", "Rex", "Buddy", "Max", "Bella", "Luna", "Shadow", "Whiskers",
+                "Mittens", "Spirit", "Thunder", "Storm", "Blaze", "Fang", "Claw",
+                "Frost", "Ember", "Ash", "Coal", "Dusty", "Patches", "Spot",
+                "Nibbles", "Squeaky", "Wiggles", "Bubbles", "Feathers", "Wings"
+        };
+
+        return genericAnimalNames[random.nextInt(genericAnimalNames.length)];
+    }
+
+    /**
+     * Get all animal species (species marked with isAnimal=true).
+     */
+    public List<E26Species> getAnimalSpecies() {
+        return species.stream()
+                .filter(E26Species::isAnimal)
+                .toList();
+    }
+
+    /**
+     * Get an animal species by ID.
+     */
+    public Optional<E26Species> getAnimalSpecies(String speciesId) {
+        return species.stream()
+                .filter(s -> speciesId.equalsIgnoreCase(s.getId()) && s.isAnimal())
+                .findFirst();
+    }
 }

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.hex.manager;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.Empire;
 import com.yisy.modules.doramcu.hex.EmpireArmy;
@@ -45,6 +46,9 @@ public class MercenaryIncomeManager {
     /** Ticket holder profit percentage (50% deducted by ticket holder). */
     public static final double TICKET_HOLDER_PROFIT_RATE = 0.5;
 
+    /** Reference to CreditExchangeService for EconomicState access. */
+    private CreditExchangeService creditExchangeService;
+
     /**
      * Creates a new MercenaryIncomeManager.
      *
@@ -53,6 +57,15 @@ public class MercenaryIncomeManager {
     public MercenaryIncomeManager(GameContext context) {
         this.context = context;
         this.random = context.getRandom();
+    }
+
+    /**
+     * Sets the CreditExchangeService for EconomicState integration.
+     *
+     * @param service the credit exchange service
+     */
+    public void setCreditExchangeService(CreditExchangeService service) {
+        this.creditExchangeService = service;
     }
 
     // ============================================================
@@ -178,7 +191,7 @@ public class MercenaryIncomeManager {
             case SECURITY -> 20000;
         };
         // Scale with force size
-        return baseRate + (long) (strength * 100);
+        return baseRate + (long) strength * 100;
     }
 
     // ============================================================
@@ -365,6 +378,7 @@ public class MercenaryIncomeManager {
      *   <li>Auto-assigns units to the best available ticket</li>
      *   <li>Resolves active contracts</li>
      *   <li>Applies casualties to units</li>
+     *   <li>Feeds mercenary profits into EconomicState</li>
      * </ul>
      */
     public void processEndOfTurn() {
@@ -383,6 +397,13 @@ public class MercenaryIncomeManager {
                 applyCasualties(empire.getArmy(), result.casualties);
             }
 
+            // Feed mercenary profits into EconomicState
+            for (ContractResult result : results) {
+                if (result.profit > 0) {
+                    feedMercenaryProfit(empire.getId(), result.profit);
+                }
+            }
+
             // Generate new tickets for next turn
             List<MercenaryTicket> tickets = generateTickets(empire);
 
@@ -390,10 +411,23 @@ public class MercenaryIncomeManager {
             if (!tickets.isEmpty()) {
                 MercenaryTicket bestTicket = tickets.stream()
                         .max(Comparator.comparingLong(MercenaryTicket::getTotalPotentialPayment))
-                        .orElse(null);
-                if (bestTicket != null) {
-                    assignToTicket(empire, bestTicket);
-                }
+                        .orElseThrow();
+                assignToTicket(empire, bestTicket);
+            }
+        }
+    }
+
+    /**
+     * Feeds mercenary profit into the empire's EconomicState.
+     *
+     * @param empireId the empire ID
+     * @param profit the profit in credits
+     */
+    private void feedMercenaryProfit(int empireId, long profit) {
+        if (creditExchangeService != null) {
+            EconomicState state = creditExchangeService.getEconomicState(empireId);
+            if (state != null) {
+                state.addCredits(EconomicState.IncomeSource.MERCENARY, profit);
             }
         }
     }

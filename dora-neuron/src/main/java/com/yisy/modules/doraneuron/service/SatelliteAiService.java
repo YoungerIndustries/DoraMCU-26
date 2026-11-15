@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.service;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.config.NeuronConfig;
 import com.yisy.modules.doraneuron.config.NeuronPrometheusMetrics;
 import com.yisy.modules.doraneuron.model.NeuronDecision;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @ConditionalOnBean(InferenceEngine.class)
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class SatelliteAiService {
 
     private static final Logger log = LoggerFactory.getLogger(SatelliteAiService.class);

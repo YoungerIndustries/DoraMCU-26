@@ -1,10 +1,10 @@
 package com.yisy.modules.doramcu.earth2026.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.earth2026.model.Earth2026Chat;
 import com.yisy.modules.doramcu.earth2026.repository.Earth2026ChatRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -15,9 +15,9 @@ import java.util.List;
  * <p>
  * Supports three message types:
  * <ul>
- *   <li>public — location-based messages visible to all characters at a location</li>
- *   <li>private — direct messages between two characters</li>
- *   <li>party — messages visible to all party members</li>
+ *   <li>public â€” location-based messages visible to all characters at a location</li>
+ *   <li>private â€” direct messages between two characters</li>
+ *   <li>party â€” messages visible to all party members</li>
  * </ul>
  * </p>
  */

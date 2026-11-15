@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.hex;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.fourx.FourxCharacterService;
 import com.yisy.modules.doramcu.fourx.FourxCombatService;
@@ -39,7 +40,7 @@ public class GalaxyServiceRegistry {
     private static final Logger log = LoggerFactory.getLogger(GalaxyServiceRegistry.class);
 
     /**
-     * Maps GalaxyTemplate → list of 4X service beans.
+     * Maps GalaxyTemplate ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ list of 4X service beans.
      */
     private static final Map<GalaxyTemplate, List<Object>> serviceMap = new EnumMap<>(GalaxyTemplate.class);
 

@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.traveller;
 
+import org.springframework.stereotype.Service;
 import java.util.*;
 
 /**
@@ -15,17 +16,19 @@ import java.util.*;
  * </p>
  * <ul>
  *   <li>WWII-era vessels (1939-1945) are rated TL7-9</li>
- *   <li>Battleships → Traveller Battleship or Dreadnought</li>
- *   <li>Carriers → Traveller Carrier</li>
- *   <li>Cruisers → Traveller Cruiser</li>
- *   <li>Destroyers → Traveller Destroyer</li>
- *   <li>Submarines → Traveller Submarine</li>
+ *   <li>Battleships Ã¢â€ â€™ Traveller Battleship or Dreadnought</li>
+ *   <li>Carriers Ã¢â€ â€™ Traveller Carrier</li>
+ *   <li>Cruisers Ã¢â€ â€™ Traveller Cruiser</li>
+ *   <li>Destroyers Ã¢â€ â€™ Traveller Destroyer</li>
+ *   <li>Submarines Ã¢â€ â€™ Traveller Submarine</li>
  * </ul>
  * <p>
  * The service also provides a factory for creating Traveller naval vessels
  * based on TL and world type.
  * </p>
  */
+
+@Service
 public class NavalVesselConversionService {
 
     private final Map<String, NavalVesselConversion> conversionCache;

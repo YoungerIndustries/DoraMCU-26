@@ -225,6 +225,19 @@ public class EmpireAiCore {
     }
 
     /**
+     * Calculates a bonus for building ships when the AI network has gaps.
+     * <p>
+     * Delegates to StrategicAiCore to check how many fleets have AI cores.
+     * </p>
+     *
+     * @param context the current decision context
+     * @return the network gap bonus (0.0 to 0.2)
+     */
+    public double getNetworkGapBonus(AiDecisionContext context) {
+        return strategicCore.calculateNetworkGapBonus(context);
+    }
+
+    /**
      * Calculates hex distance between two positions.
      */
     private int hexDistance(Hex3D a, Hex3D b) {

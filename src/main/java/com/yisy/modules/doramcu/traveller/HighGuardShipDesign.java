@@ -280,11 +280,11 @@ public class HighGuardShipDesign {
         cost += (long) (totalTonnage * 0.8);
 
         // Drive cost
-        cost += maneuverDrive * totalTonnage / 10;
-        cost += jumpDrive * totalTonnage / 5;
+        cost += (long) maneuverDrive * totalTonnage / 10;
+        cost += (long) jumpDrive * totalTonnage / 5;
 
         // Power plant cost
-        cost += powerPlantRating * totalTonnage / 20;
+        cost += (long) powerPlantRating * totalTonnage / 20;
 
         // Armor cost
         if (armor != HighGuardArmor.NONE) {
@@ -293,10 +293,10 @@ public class HighGuardShipDesign {
 
         // Weapon cost (simplified)
         for (WeaponMount mount : turretWeapons) {
-            cost += mount.getWeapon().getTurretTonnage(HighGuardWeapon.TurretSize.SINGLE) * 10;
+            cost += (long) mount.getWeapon().getTurretTonnage(HighGuardWeapon.TurretSize.SINGLE) * 10;
         }
         for (WeaponMount mount : bayWeapons) {
-            cost += mount.getBaySize().getTons() * 100;
+            cost += (long) mount.getBaySize().getTons() * 100;
         }
 
         return cost;

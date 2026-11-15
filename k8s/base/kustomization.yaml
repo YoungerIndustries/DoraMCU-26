@@ -13,6 +13,9 @@ resources:
   - mysql.yaml
   - redis.yaml
   - dl-service.yaml
+  - openhands.yaml
+  - api-gateway.yaml
+  - galaxy-worker-deployment.yaml
   - prometheus.yaml
   - grafana.yaml
   - ingress.yaml

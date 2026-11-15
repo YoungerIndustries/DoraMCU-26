@@ -62,4 +62,14 @@ public interface Dnd5eNpcRepository extends JpaRepository<Dnd5eNpc, Long> {
     @Query("SELECT n FROM Dnd5eNpc n WHERE n.active = true AND " +
            "n.enemies IS NOT NULL AND n.enemies != ''")
     List<Dnd5eNpc> FindEnemies();
+
+    /**
+     * Find NPCs by fictional/real flag.
+     */
+    List<Dnd5eNpc> findByIsFictional(boolean isFictional);
+
+    /**
+     * Find NPCs by type and fictional/real flag.
+     */
+    List<Dnd5eNpc> findByNpcTypeAndIsFictional(String npcType, boolean isFictional);
 }

@@ -5,6 +5,7 @@ import com.yisy.modules.doraneuron.model.NeuronDecision;
 import com.yisy.modules.doraneuron.protocol.ModelUpdateNotification;
 import com.yisy.modules.doraneuron.service.ModelSyncService;
 import com.yisy.modules.doraneuron.service.SatelliteAiService;
+import com.yisy.modules.doraneuron.util.InferenceEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -25,7 +26,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/neuron")
-@ConditionalOnBean(SatelliteAiService.class)
+@ConditionalOnBean({InferenceEngine.class, SatelliteAiService.class})
 public class NeuronApiController {
 
     private static final Logger log = LoggerFactory.getLogger(NeuronApiController.class);

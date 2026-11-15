@@ -13,4 +13,6 @@ public interface GalaxyRepository extends JpaRepository<Galaxy, Long> {
     List<Galaxy> findByNameContainingIgnoreCase(String name);
 
     Optional<Galaxy> findByName(String name);
+
+    List<Galaxy> findByLoreSlug(String loreSlug);
 }

@@ -1,0 +1,445 @@
+{
+  "scenarios": [
+    {
+      "id": "battle_of_yavin",
+      "name": "Battle of Yavin — Destroy the Death Star",
+      "source_game": "Star Wars: X-Wing / Rebellion",
+      "era": "Original Trilogy (0 BBY)",
+      "description": "The Rebel Alliance launches a desperate attack on the Imperial Death Star superweapon. Starfighter squadrons must penetrate TIE fighter defenses and fire proton torpedoes into the thermal exhaust port.",
+      "map": "Space combat around the Death Star station",
+      "players": 2,
+      "factions": {
+        "player_1": "Rebel Alliance",
+        "player_2": "Galactic Empire"
+      },
+      "objective": {
+        "rebel": "Destroy the Death Star by firing proton torpedoes into the thermal exhaust port (200-meter targeting post). Requires Force-assisted shot or precise targeting computer.",
+        "imperial": "Defend the Death Star and destroy all Rebel starfighters. Prevent torpedo strikes on the exhaust port."
+      },
+      "setup": {
+        "rebel_forces": [
+          "Red Squadron: 4 X-Wings (Luke Skywalker, Biggs, Wedge, Jek)",
+          "Gold Squadron: 4 Y-Wings (Garven Dreis leader)",
+          "Green Squadron: 4 Y-Wings",
+          "Millennium Falcon (Han Solo — arrives late)"
+        ],
+        "imperial_forces": [
+          "TIE Fighter Squadron: 8 TIE/ln Fighters",
+          "TIE Fighter Squadron: 6 TIE/ln Fighters",
+          "Darth Vader's TIE Advanced x1",
+          "Death Star defenses (turbolaser batteries)"
+        ]
+      },
+      "special_rules": [
+        "The Death Star's superlaser can be fired once per game, destroying any ship in its path",
+        "Han Solo arrives after Round 3 with the Millennium Falcon",
+        "Thermal exhaust port requires Range 1 torpedo attack with no defense dice",
+        "Darth Vader has superior pilot skill and attacks first in combat phase"
+      ],
+      "victory_conditions": {
+        "rebel_victory": "Death Star destroyed (thermal exhaust port hit with torpedoes)",
+        "imperial_victory": "All Rebel starfighters destroyed or Death Star survives 6 rounds"
+      },
+      "difficulty": "Hard",
+      "playtime": "60-90 minutes"
+    },
+    {
+      "id": "battle_of_hoth",
+      "name": "Battle of Hoth — Defense of Echo Base",
+      "source_game": "Star Wars: Legion",
+      "era": "Original Trilogy (3 ABY)",
+      "description": "Imperial forces under Darth Vader discover the Rebel Echo Base on the ice planet Hoth. AT-AT walkers advance across the frozen terrain while Rebel snowspeeders and ground forces mount a desperate defense.",
+      "map": "Ice planet terrain with light snow cover, difficult terrain (ice crevasses), and Echo Base trench",
+      "players": 2,
+      "factions": {
+        "player_1": "Rebel Alliance",
+        "player_2": "Galactic Empire"
+      },
+      "objective": {
+        "rebel": "Survive 6 rounds and evacuate Echo Base. Destroy as many AT-ATs as possible to delay the Imperial advance.",
+        "imperial": "Destroy Echo Base by reaching and overrunning the trench defenses. Eliminate Rebel forces."
+      },
+      "setup": {
+        "rebel_forces": [
+          "Rebel Commando Squads: 3 units",
+          "Rebel Artillery Teams: 2 units (Z9 Artillery Pieces)",
+          "Snowspeeder Squadrons: 2 units (T-47 Airspeeders)",
+          "Speeder Bike Squadron: 1 unit",
+          "Princess Leia (evacuation target)"
+        ],
+        "imperial_forces": [
+          "AT-AT Walkers: 4 units",
+          "AT-ST Walkers: 3 units",
+          "Stormtrooper Squads: 3 units",
+          "Scout Trooper on Speeder: 1 unit",
+          "Darth Vader (commander)"
+        ]
+      },
+      "special_rules": [
+        "Snowspeeders can use tow-cables to trip AT-ATs, making them vulnerable for 1 round",
+        "Artillery has long range but cannot move and fire in the same activation",
+        "Echo Base trench provides heavy cover to defending units",
+        "Rebels win if they survive 6 rounds (evacuation completes)",
+        "Difficult terrain (ice) slows walker movement"
+      ],
+      "victory_conditions": {
+        "rebel_victory": "Survive 6 rounds OR destroy 3+ AT-ATs and evacuate Leia",
+        "imperial_victory": "Destroy Echo Base (reach trench with walkers) OR eliminate all Rebel forces"
+      },
+      "difficulty": "Medium",
+      "playtime": "60-90 minutes"
+    },
+    {
+      "id": "battle_of_endor",
+      "name": "Battle of Endor — Assault on the Second Death Star",
+      "source_game": "Star Wars: X-Wing / Rebellion",
+      "era": "Original Trilogy (4 ABY)",
+      "description": "The Rebel Alliance launches a two-pronged assault: ground forces attack the shield generator on Endor's forest moon while starfighters wait in orbit. Once the shield drops, the fleet attacks the second Death Star.",
+      "map": "Two theaters: Forest moon of Endor (ground) and Space above Endor (orbital)",
+      "players": 2,
+      "factions": {
+        "player_1": "Rebel Alliance",
+        "player_2": "Galactic Empire"
+      },
+      "objective": {
+        "rebel": "Destroy the shield generator on Endor, then destroy the second Death Star in orbit.",
+        "imperial": "Defend the shield generator and the Death Star. Destroy Rebel forces on both fronts."
+      },
+      "setup": {
+        "rebel_forces": [
+          "Ground: Ewoks, Rebel Commandos, Speeder Bikes, 2-Wheeled Speeders",
+          "Space: Red Squadron (X-Wings), Gold Squadron (Y-Wings), Blue Squadron (X-Wings)",
+          "Rebel Fleet: Home One flagship, CR90 Corvettes (arrives after shield drops)"
+        ],
+        "imperial_forces": [
+          "Ground: Stormtroopers, AT-STs, Shield Generator Tower",
+          "Space: TIE Defender Squadron, TIE Fighter Squadrons, Death Star II (partial)",
+          "Darth Vader (TIE Advanced, space combat)",
+          "Emperor Palpatine (Death Star command center)"
+        ]
+      },
+      "special_rules": [
+        "Two-theater battle: ground and space phases resolved each round",
+        "Shield generator must be destroyed before Rebel fleet can engage",
+        "Ewoks are weak individually but powerful in numbers with traps",
+        "Death Star II is incomplete — can fire superlaser once to destroy Rebel flagship",
+        "Sith duel: Luke Skywalker vs Darth Vader vs Emperor Palpatine resolves separately"
+      ],
+      "victory_conditions": {
+        "rebel_victory": "Destroy shield generator AND Death Star II",
+        "imperial_victory": "Destroy Rebel fleet OR hold shield generator for 6 rounds"
+      },
+      "difficulty": "Hard",
+      "playtime": "90-120 minutes"
+    },
+    {
+      "id": "battle_of_geonosis",
+      "name": "Battle of Geonosis — First Battle of the Clone Wars",
+      "source_game": "Star Wars: Legion",
+      "era": "Prequel (32 BBY)",
+      "description": "Jedi Knights Obi-Wan, Anakin, and Mace Windu are captured in the Petranaki Arena on Geonosis. The Republic launches a rescue mission as the Clone Army makes its debut against the Separatist droid army.",
+      "map": "Petranaki Arena and surrounding Geonosian terrain with construction sites for the Separatist fleet",
+      "players": 2,
+      "factions": {
+        "player_1": "Galactic Republic",
+        "player_2": "Separatist Alliance"
+      },
+      "objective": {
+        "republic": "Rescue the Jedi from the arena and destroy the Separatist fleet under construction.",
+        "separatist": "Defend the arena, eliminate the Jedi, and protect the droid fleet construction."
+      },
+      "setup": {
+        "republic_forces": [
+          "Jedi: Obi-Wan Kenobi, Anakin Skywalker, Mace Windu (start in arena)",
+          "Clone Trooper Squadrons: 4 units (arrive via Acclamator)",
+          "Clone Commandos: 1 unit",
+          "Republic Gunships: 2 units",
+          "ARC-170 Starfighter Squadron (space)"
+        ],
+        "separatist_forces": [
+          "B1 Battle Droid Squads: 6 units",
+          "B2 Super Battle Droids: 2 units",
+          "OOM Commando Droids: 2 units",
+          "General Grievous (commander)",
+          "Count Dooku (commander, starts in arena)",
+          "Devastator Tanks: 2 units",
+          "Vulture Droid Squadron (space)"
+        ]
+      },
+      "special_rules": [
+        "Jedi start in the Petranaki Arena and must escape before clones arrive",
+        "Clone forces arrive after Round 2 via Acclamator-class transport",
+        "Arena is difficult terrain with creature threats (Lampy, Nexu, Catbird)",
+        "Count Dooku and Mace Windu duel in the arena (special combat resolution)",
+        "Separatist fleet under construction provides bonus points if destroyed"
+      ],
+      "victory_conditions": {
+        "republic_victory": "Rescue all 3 Jedi AND destroy Separatist fleet construction",
+        "separatist_victory": "Eliminate all Jedi OR survive 6 rounds with fleet intact"
+      },
+      "difficulty": "Medium",
+      "playtime": "60-90 minutes"
+    },
+    {
+      "id": "battle_of_christophsis",
+      "name": "Battle of Christophsis — Siege of the Republic",
+      "source_game": "Star Wars: Legion",
+      "era": "Prequel (21 BBY)",
+      "description": "A Separatist blockade traps Republic forces on Christophsis. Obi-Wan and Anakin lead a desperate defense while waiting for reinforcements from the Venator-class fleet.",
+      "map": "Urban terrain with ruined buildings and Republic supply depot",
+      "players": 2,
+      "factions": {
+        "player_1": "Galactic Republic",
+        "player_2": "Separatist Alliance"
+      },
+      "objective": {
+        "republic": "Hold the supply depot until reinforcements arrive (Round 5).",
+        "separatist": "Capture the supply depot and eliminate Republic forces before reinforcements arrive."
+      },
+      "setup": {
+        "republic_forces": [
+          "Jedi: Obi-Wan Kenobi, Anakin Skywalker",
+          "Clone Trooper Squads: 3 units",
+          "Clone Commandos: 1 unit (Captain Rex)",
+          "Heavy Weapons Team: 1 unit"
+        ],
+        "separatist_forces": [
+          "B1 Battle Droid Squads: 5 units",
+          "B2 Super Battle Droids: 2 units",
+          "Tank Droids: 2 units",
+          "General Grievous (arrives Round 3)"
+        ]
+      },
+      "special_rules": [
+        "Republic reinforcements (Venator fleet) arrive at Round 5",
+        "Supply depot provides cover and healing to adjacent Republic units",
+        "General Grievous arrives by dropship at Round 3",
+        "Urban terrain provides light and heavy cover"
+      ],
+      "victory_conditions": {
+        "republic_victory": "Hold supply depot until Round 5 ends",
+        "separatist_victory": "Capture supply depot OR eliminate all Republic forces"
+      },
+      "difficulty": "Medium",
+      "playtime": "45-60 minutes"
+    },
+    {
+      "id": "race_on_kessel",
+      "name": "The Kessel Run — Smuggler's Gambit",
+      "source_game": "Star Wars: X-Wing",
+      "era": "Between Prequel and Original Trilogy",
+      "description": "Han Solo and Chewbacca pilot the Millennium Falcon through the dangerous Kessel Run, evading Imperial TIE fighters and navigating the Maw Black Hole cluster while delivering cargo for Jabba the Hutt.",
+      "map": "Space combat near Kessel with asteroid fields and the Maw black hole cluster",
+      "players": 2,
+      "factions": {
+        "player_1": "Scum & Villainy (Han Solo)",
+        "player_2": "Galactic Empire"
+      },
+      "objective": {
+        "han_solo": "Navigate through the Maw and exit the play area with cargo intact while evading Imperial pursuit.",
+        "imperial": "Destroy or capture the Millennium Falcon before it escapes through the Maw."
+      },
+      "setup": {
+        "han_solo_forces": [
+          "Millennium Falcon (Han Solo + Chewbacca)",
+          "Cargo: Carbonite Luke (must be delivered)"
+        ],
+        "imperial_forces": [
+          "TIE Fighter Squadron: 6 TIE/ln Fighters",
+          "TIE Interceptor Squadron: 3 TIE/in Interceptors",
+          "Imperial Star Destroyer (long-range support)"
+        ]
+      },
+      "special_rules": [
+        "Asteroid fields create difficult terrain and block line of sight",
+        "The Maw black hole cluster pulls ships inward — ships entering must pass a navigation check",
+        "Millennium Falcon has superior speed and can use the 'Coward's Flip' maneuver",
+        "Imperial Star Destroyer can fire turbolasers but is slow to target",
+        "Han wins if Falcon exits through the Maw zone"
+      ],
+      "victory_conditions": {
+        "han_victory": "Millennium Falcon exits through the Maw with cargo",
+        "imperial_victory": "Destroy Millennium Falcon OR hold it for 3 rounds"
+      },
+      "difficulty": "Medium",
+      "playtime": "30-45 minutes"
+    },
+    {
+      "id": "battle_of_jakku",
+      "name": "Battle of Jakku — Last Stand Against the First Order",
+      "source_game": "Star Wars: Legion",
+      "era": "Sequel Trilogy (35 ABY)",
+      "description": "The final confrontation between the Resistance and the First Order on the desert planet Jakku. Rey faces Palpatine while Poe and Finn lead the ground assault against overwhelming First Order forces.",
+      "map": "Desert terrain with wreckage of the Supremas-class Star Destroyer Finalizer",
+      "players": 2,
+      "factions": {
+        "player_1": "Resistance",
+        "player_2": "First Order"
+      },
+      "objective": {
+        "resistance": "Destroy First Order transports preventing Palpatine's escape and hold the line.",
+        "first_order": "Escape with the transports and eliminate Resistance forces."
+      },
+      "setup": {
+        "resistance_forces": [
+          "Resistance Troopers: 3 units",
+          "Poe Dameron (commander)",
+          "Finn (commander)",
+          "Rey (Force user — special rules)",
+          "Resistance X-Wing Squadron (orbital support)"
+        ],
+        "first_order_forces": [
+          "First Order Stormtroopers: 4 units",
+          "Flank Troopers: 2 units",
+          "Kylo Ren (commander)",
+          "First Order Transports: 3 units (escape targets)",
+          "TIE Silencer Squadron (orbital support)"
+        ]
+      },
+      "special_rules": [
+        "First Order transports must reach the edge of the play area to escape",
+        "Rey and Kylo Ren have a Force duel that affects nearby units",
+        "Palpatine's presence on the Supremas provides Dark Side buffs to First Order",
+        "Wreckage of the Finalizer provides heavy cover",
+        "Resistance has orbital X-Wing strike capability"
+      ],
+      "victory_conditions": {
+        "resistance_victory": "Destroy all 3 First Order transports",
+        "first_order_victory": "Escape with 2+ transports OR eliminate all Resistance forces"
+      },
+      "difficulty": "Hard",
+      "playtime": "60-90 minutes"
+    },
+    {
+      "id": "blockade_of_naboo",
+      "name": "Blockade of Naboo — Liberation of the Royal Planet",
+      "source_game": "Star Wars: X-Wing",
+      "era": "Prequel (32 BBY)",
+      "description": "The Trade Federation blockades and invades Naboo. Young Padawan Qui-Gon Jinn and Obi-Wan Kenobi seek help from Jedi Master Yoda, while Captain Panaka and the Gungan army fight to liberate their world.",
+      "map": "Space above Naboo (blockade) and Theed Palace grounds (ground)",
+      "players": 2,
+      "factions": {
+        "player_1": "Naboo / Gungan Alliance",
+        "player_2": "Trade Federation"
+      },
+      "objective": {
+        "naboo": "Break the Trade Federation blockade and liberate Theed Palace.",
+        "trade_federation": "Maintain the blockade and hold Theed Palace against the liberation force."
+      },
+      "setup": {
+        "naboo_forces": [
+          "Naboo Starfighters: 4 units (blue starfighters)",
+          "Queen Amidala and Captain Panaka (ground)",
+          "Gungan Army: 3 units (Bongos, Bosses)",
+          "Jar Jar Binks (Gungan General — special ability)"
+        ],
+        "trade_federation_forces": [
+          "Muuth's Claw (Droid Control Ship)",
+          "Saak'ak (Droid Control Ship)",
+          "B1 Battle Droid Squads: 4 units",
+          "Probe Droids: 2 units",
+          "Tactical Droid (commander)"
+        ]
+      },
+      "special_rules": [
+        "Destroying Droid Control Ships shuts down all battle droids in that theater",
+        "Gungan submersible fighters can surprise-attack from below",
+        "Theed Palace provides heavy cover",
+        "Queen Amidala's surrender is a ruse — Gungan attack begins at Round 3"
+      ],
+      "victory_conditions": {
+        "naboo_victory": "Destroy both Droid Control Ships AND liberate Theed Palace",
+        "trade_federation_victory": "Hold Theed Palace for 6 rounds OR destroy all Naboo starfighters"
+      },
+      "difficulty": "Medium",
+      "playtime": "45-60 minutes"
+    },
+    {
+      "id": "battle_of_mustafar",
+      "name": "Battle of Mustafar — Fall of a Jedi",
+      "source_game": "Star Wars: Legion",
+      "era": "Prequel (19 BBY)",
+      "description": "The Clone Wars end on the lava world of Mustafar. Anakin Skywalker, now Darth Vader, turns on the Republic. Obi-Wan Kenobi pursues him to a final duel on the banks of a lava river.",
+      "map": "Lava river terrain with Separatist flagship and mining facilities",
+      "players": 2,
+      "factions": {
+        "player_1": "Jedi (Obi-Wan Kenobi)",
+        "player_2": "Sith (Darth Vader/Anakin)"
+      },
+      "objective": {
+        "obi_wan": "Reach the Separatist flagship and activate the clone trooper chip deactivation code. Survive the duel with Anakin.",
+        "darth_vader": "Eliminate Obi-Wan and secure the Separatist leadership for the Emperor."
+      },
+      "setup": {
+        "obi_wan_forces": [
+          "Obi-Wan Kenobi (Jedi Master — starts at landing zone)",
+          "Clone Troopers (turn on Vader at Round 3): 2 units"
+        ],
+        "darth_vader_forces": [
+          "Darth Vader/Anakin Skywalker (Sith Lord — starts at flagship)",
+          "Remaining Separatist Droids: 2 units (B1 Battle Droids)",
+          "Tactical Droid: 1 unit"
+        ]
+      },
+      "special_rules": [
+        "Lava terrain: units ending movement adjacent to lava lose 1 wound",
+        "Clone troopers switch sides at Round 3 (Obi-Wan's clones turn on Vader)",
+        "Final duel: when Obi-Wan and Vader are in the same hex, special duel resolution",
+        "Separatist flagship provides cover to Vader",
+        "Lightning storm affects both players equally"
+      ],
+      "victory_conditions": {
+        "obi_wan_victory": "Reach flagship AND survive duel with Vader",
+        "vader_victory": "Eliminate Obi-Wan OR destroy flagship before Obi-Wan reaches it"
+      },
+      "difficulty": "Hard",
+      "playtime": "30-45 minutes"
+    },
+    {
+      "id": "battle_of_starkiller_base",
+      "name": "Battle of Starkiller Base — Resistance Against the First Order",
+      "source_game": "Star Wars: X-Wing / Legion",
+      "era": "Sequel Trilogy (34 ABY)",
+      "description": "The Resistance launches a desperate mission to destroy Starkiller Base, the First Order's planet-converted superweapon. Poe Dameron leads the bombing run while Finn and Rose infiltrate the shield generator.",
+      "map": "Snow-covered planet surface (ground) and space above Starkiller Base",
+      "players": 2,
+      "factions": {
+        "player_1": "Resistance",
+        "player_2": "First Order"
+      },
+      "objective": {
+        "resistance": "Disable the shield generator and destroy Starkiller Base's energy relay.",
+        "first_order": "Defend the shield generator and energy relay. Destroy Resistance forces before the superlaser fires again."
+      },
+      "setup": {
+        "resistance_forces": [
+          "Poe Dameron (modified X-Wing — bomber)",
+          "Resistance X-Wing Squadron: 3 units",
+          "Black Squadron: 3 units",
+          "Finn and Rose (ground infiltration team)",
+          "General Leia (Millennium Falcon — support)"
+        ],
+        "first_order_forces": [
+          "TIE Silencer Squadron: 6 units",
+          "TIE Rafier Squadron: 3 units (capable of atmospheric flight)",
+          "First Order Stormtroopers: 3 units",
+          "Kylo Ren (ground — hunts Resistance)",
+          "Starkiller Base Superlaser (fires once per game)"
+        ]
+      },
+      "special_rules": [
+        "Shield generator must be disabled before bombers can reach the energy relay",
+        "TIE Rafiers are the only TIEs capable of atmospheric flight",
+        "Starkiller Base superlaser can destroy one Resistance ship per game",
+        "Holding pattern: Resistance bombers must orbit while waiting for shield to drop",
+        "Finn and Rose's ground mission runs parallel to the space battle"
+      ],
+      "victory_conditions": {
+        "resistance_victory": "Destroy the energy relay with torpedoes",
+        "first_order_victory": "Destroy all Resistance bombers OR hold for 6 rounds"
+      },
+      "difficulty": "Hard",
+      "playtime": "60-90 minutes"
+    }
+  ]
+}

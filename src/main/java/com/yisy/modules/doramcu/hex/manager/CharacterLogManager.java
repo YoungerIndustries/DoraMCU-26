@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.hex.manager;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.Player;
 import com.yisy.modules.doramcu.traveller.*;
@@ -137,7 +138,7 @@ public class CharacterLogManager {
 
         int terms = random.nextInt(CharacterManager.MIN_TERMS, CharacterManager.MAX_TERMS + 1);
         String rank = "Enlisted";
-        String oldRank = rank;
+        String oldRank;
 
         // Log career start
         log.logCareerStart(career);
@@ -230,7 +231,7 @@ public class CharacterLogManager {
         log.logCareerStart(career);
 
         String rank = "Enlisted";
-        String oldRank = rank;
+        String oldRank;
 
         for (int i = 0; i < terms; i++) {
             if (random.nextInt(20) == 0 && i < terms - 1) {

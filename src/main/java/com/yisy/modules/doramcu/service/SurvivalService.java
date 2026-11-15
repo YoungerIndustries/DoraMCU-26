@@ -1,9 +1,9 @@
 package com.yisy.modules.doramcu.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.traveller.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -116,7 +116,7 @@ public class SurvivalService {
     public void setTemperatureCelsius(int characterId, int celsius) {
         Survival surv = getSurvival(characterId);
         surv.setTemperatureCelsius(celsius);
-        log.info("Set temperature for {} to {}°C", surv.getCharacter().getName(), celsius);
+        log.info("Set temperature for {} to {}Â°C", surv.getCharacter().getName(), celsius);
     }
 
     /**

@@ -1,11 +1,11 @@
 package com.yisy.modules.doramcu.ai;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.*;
 import com.yisy.modules.doraai.service.AiChatService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.*;
@@ -21,9 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * Chat modes supported:
  * <ul>
- *   <li>{@code chat} — General game questions</li>
- *   <li>{@code game-advice} — Empire-specific strategic advice</li>
- *   <li>{@code tactical-analysis} — Combat and fleet analysis</li>
+ *   <li>{@code chat} â€” General game questions</li>
+ *   <li>{@code game-advice} â€” Empire-specific strategic advice</li>
+ *   <li>{@code tactical-analysis} â€” Combat and fleet analysis</li>
  * </ul>
  * </p>
  */

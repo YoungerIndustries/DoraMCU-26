@@ -1,7 +1,9 @@
 package com.yisy.modules.doramcu.controller;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.yisy.modules.doramcu.service.GameStateBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
@@ -42,11 +44,14 @@ import java.util.concurrent.TimeUnit;
  * </ul>
  * </p>
  */
+@Component
 public class PresenceWebSocketHandler extends TextWebSocketHandler {
 
     private static final Logger log = LoggerFactory.getLogger(PresenceWebSocketHandler.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final GameStateBridge gameStateBridge;
+    private final boolean realDataMode;
 
     // Player data
     private final Map<String, PlayerData> players = new ConcurrentHashMap<>();
@@ -72,8 +77,18 @@ public class PresenceWebSocketHandler extends TextWebSocketHandler {
     }
 
     public PresenceWebSocketHandler() {
-        // Simulate bot players
-        scheduler.scheduleAtFixedRate(this::simulateBotActivity, 10, 8, TimeUnit.SECONDS);
+        this(null, false);
+    }
+
+    public PresenceWebSocketHandler(GameStateBridge gameStateBridge, boolean realDataMode) {
+        this.gameStateBridge = gameStateBridge;
+        this.realDataMode = realDataMode;
+        if (!realDataMode) {
+            scheduler.scheduleAtFixedRate(this::simulateBotActivity, 10, 8, TimeUnit.SECONDS);
+        } else {
+            log.info("PresenceManager starting in real-data mode with periodic refresh");
+            scheduler.scheduleAtFixedRate(this::refreshRealData, 10, 10, TimeUnit.SECONDS);
+        }
     }
 
     @Override
@@ -335,7 +350,7 @@ public class PresenceWebSocketHandler extends TextWebSocketHandler {
 
             ObjectNode data = objectMapper.createObjectNode();
             data.putPOJO("players", players.values().stream()
-                    .filter(PlayerData::online)
+                    .filter(p -> p.online)
                     .map(p -> {
                         ObjectNode node = objectMapper.createObjectNode();
                         node.put("playerId", p.playerId);
@@ -516,7 +531,7 @@ public class PresenceWebSocketHandler extends TextWebSocketHandler {
      * Get online player count.
      */
     public int getOnlinePlayerCount() {
-        return (int) players.values().stream().filter(PlayerData::online).count();
+        return (int) players.values().stream().filter(p -> p.online).count();
     }
 
     /**
@@ -524,5 +539,26 @@ public class PresenceWebSocketHandler extends TextWebSocketHandler {
      */
     public Collection<PlayerData> getPlayers() {
         return players.values();
+    }
+
+    /**
+     * Refresh real player data from GameStateBridge.
+     */
+    private void refreshRealData() {
+        if (gameStateBridge == null) return;
+        for (String sessionId : sessionGroups.keySet()) {
+            ObjectNode snapshot = gameStateBridge.getPlayerSnapshot(sessionId);
+            if (snapshot != null) {
+                try {
+                    broadcast(new TextMessage(objectMapper.writeValueAsString(snapshot)));
+                } catch (Exception e) {
+                    log.warn("Failed to broadcast real player data for session {}: {}", sessionId, e.getMessage());
+                }
+            }
+        }
+    }
+
+    public boolean isRealDataMode() {
+        return realDataMode;
     }
 }

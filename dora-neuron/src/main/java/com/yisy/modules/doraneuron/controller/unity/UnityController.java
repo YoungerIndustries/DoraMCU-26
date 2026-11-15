@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.controller.unity;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.protocol.unity.*;
 import com.yisy.modules.doraneuron.service.unity.UnityIntegrationService;
 import org.slf4j.Logger;
@@ -22,6 +24,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/unity")
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class UnityController {
 
     private static final Logger log = LoggerFactory.getLogger(UnityController.class);

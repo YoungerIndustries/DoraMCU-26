@@ -1,6 +1,8 @@
 package com.yisy.modules.doramcu.hex;
 
-import com.yisy.modules.doramcu.ai.StationAiCore;
+import com.yisy.modules.doramcu.hex.spi.StationAiCoreSpi;
+import com.yisy.modules.doramcu.hex.Decal;
+import com.yisy.modules.doramcu.hex.Skin;
 
 import java.util.*;
 
@@ -61,7 +63,11 @@ public class SpaceStation {
     private SpaceStationDefense defense;
 
     // AI Core integration
-    private StationAiCore aiCore;
+    private StationAiCoreSpi aiCore;
+
+    // ---- Skin support ----
+    private Skin skin;
+    private final List<Decal> decals;
 
     /**
      * Creates a new space station with the given ID and default type (MILITARY).
@@ -100,6 +106,7 @@ public class SpaceStation {
         this.startingFacilities = new HashSet<>();
         this.maxDockedShips = stationType.getBaseShipBayCapacity();
         this.compartments = new HashMap<>();
+        this.decals = new ArrayList<>();
     }
 
     // ---- Helper Delegates ----
@@ -141,27 +148,38 @@ public class SpaceStation {
      *
      * @return the AI Core, or null
      */
-    public StationAiCore getAiCore() {
-        if (aiCore == null) {
-            aiCore = new StationAiCore(this);
-        }
+    public StationAiCoreSpi getAiCore() {
         return aiCore;
+    }
+
+    /**
+     * Sets the AI Core for this station.
+     * <p>
+     * Called by the AI package to inject the StationAiCore instance,
+     * avoiding a circular dependency between hex and ai packages.
+     * </p>
+     *
+     * @param aiCore the AI Core to install
+     */
+    public void setAiCore(StationAiCoreSpi aiCore) {
+        this.aiCore = aiCore;
     }
 
     /**
      * Sets the AI Core level for this station.
      * <p>
-     * Creates a new StationAiCore if one doesn't exist, or updates the level
-     * of the existing one.
+     * If no AI Core is installed, this method does nothing.
      * </p>
      *
      * @param level the AI Core level to install
      */
-    public void setAiCoreLevel(StationAiCore.Level level) {
+    public void setAiCoreLevel(StationAiCoreSpi.Level level) {
         if (level == null) {
             throw new IllegalArgumentException("AI Core level must not be null");
         }
-        getAiCore().setAiCoreLevel(level);
+        if (aiCore != null) {
+            aiCore.setAiCoreLevel(level);
+        }
     }
 
     /**
@@ -170,7 +188,7 @@ public class SpaceStation {
      * @return true if an AI Core is installed
      */
     public boolean hasAiCore() {
-        return getAiCore().hasAiCore();
+        return aiCore != null && aiCore.hasAiCore();
     }
 
     /**
@@ -179,7 +197,7 @@ public class SpaceStation {
      * @return the AI Core level value
      */
     public int getAiCoreLevel() {
-        return getAiCore().getLevelValue();
+        return aiCore != null ? aiCore.getLevelValue() : 0;
     }
 
     /**
@@ -192,7 +210,7 @@ public class SpaceStation {
      * @return the support radius in hexes (0 if no AI Core)
      */
     public int getAiSupportRadius() {
-        return getAiCore().getSupportRadius();
+        return aiCore != null ? aiCore.getSupportRadius() : 0;
     }
 
     /**
@@ -201,7 +219,7 @@ public class SpaceStation {
      * @return the defense bonus multiplier (0.0 if no AI Core)
      */
     public double getAiDefenseBonus() {
-        return getAiCore().getDefenseBonus();
+        return aiCore != null ? aiCore.getDefenseBonus() : 0.0;
     }
 
     // ---- Pipeline Bonuses ----
@@ -292,10 +310,28 @@ public class SpaceStation {
     }
 
     /**
+     * Sets the maximum hull points.
+     *
+     * @param hullPoints the new maximum hull points
+     */
+    public void setHullPoints(int hullPoints) {
+        this.hullPoints = hullPoints;
+    }
+
+    /**
      * @return the current hull points
      */
     public int getCurrentHullPoints() {
         return currentHullPoints;
+    }
+
+    /**
+     * Sets the current hull points.
+     *
+     * @param currentHullPoints the new current hull points
+     */
+    public void setCurrentHullPoints(int currentHullPoints) {
+        this.currentHullPoints = Math.max(0, Math.min(this.hullPoints, currentHullPoints));
     }
 
     /**
@@ -306,10 +342,28 @@ public class SpaceStation {
     }
 
     /**
+     * Sets the maximum shield points.
+     *
+     * @param shieldPoints the new maximum shield points
+     */
+    public void setShieldPoints(int shieldPoints) {
+        this.shieldPoints = shieldPoints;
+    }
+
+    /**
      * @return the current shield points
      */
     public int getCurrentShieldPoints() {
         return currentShieldPoints;
+    }
+
+    /**
+     * Sets the current shield points.
+     *
+     * @param currentShieldPoints the new current shield points
+     */
+    public void setCurrentShieldPoints(int currentShieldPoints) {
+        this.currentShieldPoints = Math.max(0, Math.min(this.shieldPoints, currentShieldPoints));
     }
 
     /**
@@ -1047,6 +1101,83 @@ public class SpaceStation {
         getDefense().repairStationedFleets();
     }
 
+    // ---- Skin support ----
+
+    /**
+     * Returns the skin currently applied to this station, or null if none.
+     *
+     * @return the skin, or null
+     */
+    public Skin getSkin() {
+        return skin;
+    }
+
+    /**
+     * Applies a skin to this station.
+     *
+     * @param skin the skin to apply
+     */
+    public void setSkin(Skin skin) {
+        this.skin = skin;
+        if (skin != null) {
+            for (Decal decal : skin.getDefaultDecals()) {
+                this.decals.add(new Decal(decal.getId() + "_" + id, decal.getType()));
+                Decal d = this.decals.get(this.decals.size() - 1);
+                d.setContent(decal.getContent());
+                d.setPosition(decal.getPosition());
+                d.setSize(decal.getSize());
+                d.setRotation(decal.getRotation());
+                d.setOpacity(decal.getOpacity());
+                d.setColor(decal.getColor());
+            }
+        }
+    }
+
+    /**
+     * Removes the skin from this station (does not remove decals).
+     */
+    public void removeSkin() {
+        this.skin = null;
+    }
+
+    /**
+     * Returns the list of decals on this station.
+     *
+     * @return unmodifiable list of decals
+     */
+    public List<Decal> getDecals() {
+        return Collections.unmodifiableList(decals);
+    }
+
+    /**
+     * Adds a decal to this station.
+     *
+     * @param decal the decal to add
+     */
+    public void addDecal(Decal decal) {
+        if (decal == null) {
+            throw new IllegalArgumentException("Decal must not be null");
+        }
+        decals.add(decal);
+    }
+
+    /**
+     * Removes a decal from this station.
+     *
+     * @param decal the decal to remove
+     * @return true if the decal was removed
+     */
+    public boolean removeDecal(Decal decal) {
+        return decals.remove(decal);
+    }
+
+    /**
+     * Clears all decals from this station.
+     */
+    public void clearDecals() {
+        decals.clear();
+    }
+
     // ---- Object Contract ----
 
     @Override
@@ -1073,7 +1204,7 @@ public class SpaceStation {
                 currentShieldPoints, shieldPoints,
                 getTotalDamage(), getOccupiedSlots(), moduleSlots,
                 getDockedShipCount(), maxDockedShips, getStationedFleetCount(), startingFacilities,
-                getAiCore().getAiCoreLevel());
+                aiCore != null ? aiCore.getAiCoreLevel() : "none");
     }
 
 }

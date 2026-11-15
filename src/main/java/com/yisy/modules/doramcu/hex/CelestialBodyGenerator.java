@@ -1,5 +1,10 @@
 package com.yisy.modules.doramcu.hex;
 
+import com.yisy.modules.doramcu.hex.Skin;
+import com.yisy.modules.doramcu.hex.SkinType;
+import com.yisy.modules.doramcu.hex.spi.AssetRegistrySpi;
+import com.yisy.modules.doramcu.hex.spi.SkinLookupSpi;
+import com.yisy.modules.doramcu.hex.spi.SkinProviders;
 import com.yisy.modules.doramcu.traveller.SectorGenerator;
 import com.yisy.modules.doramcu.traveller.TradeCode;
 import com.yisy.modules.doramcu.traveller.UniversalWorldProfile;
@@ -227,8 +232,8 @@ public class CelestialBodyGenerator {
             codes.add(TradeCode.NI);
         }
 
-        // Agricultural: population >= 4, not vacuum
-        if (population >= 4 && atmosphere != 0) {
+        // Agricultural: population >= 4 (atmosphere already guaranteed non-zero)
+        if (population >= 4) {
             codes.add(TradeCode.AG);
         }
 
@@ -443,7 +448,26 @@ public class CelestialBodyGenerator {
             station.addModule(module);
         }
 
+        registerStation(station);
         return station;
+    }
+
+    /**
+     * Registers a space station with the asset registry and assigns a default skin.
+     */
+    private void registerStation(SpaceStation station) {
+        AssetRegistrySpi registry = SkinProviders.getAssetRegistry();
+        if (registry == null) {
+            return;
+        }
+        registry.register(SkinType.SPACE_STATION, station.getId(), station);
+        SkinLookupSpi skinLookup = SkinProviders.getSkinLookup();
+        if (skinLookup != null && station.getSkin() == null) {
+            Skin defaultSkin = skinLookup.getSkin("industrial-station");
+            if (defaultSkin != null) {
+                station.setSkin(defaultSkin);
+            }
+        }
     }
 
     /**

@@ -32,6 +32,7 @@ namespace DoraMCU.Client.Input
         public event Action OnScan;
         public event Action OnInteract;
         public event Action<int, int, int, int> OnNavigateToSystem;
+        public event Action<long, string, string> OnNavigateToBattlefield;
 
         protected override void Awake()
         {
@@ -126,6 +127,12 @@ namespace DoraMCU.Client.Input
                 {
                     OnNavigateToSystem?.Invoke(0, 0, 0, i);
                 }
+            }
+
+            // Enter battlefield mode (B key)
+            if (Input.GetKeyDown(KeyCode.B))
+            {
+                OnNavigateToBattlefield?.Invoke(1, "WWII", "URBAN");
             }
 
             // Controller support

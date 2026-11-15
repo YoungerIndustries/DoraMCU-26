@@ -3,9 +3,8 @@ package com.yisy.modules.doramcu.service;
 import com.yisy.modules.doramcu.dto.CreateSessionResponse;
 import com.yisy.modules.doramcu.dto.JoinSessionResponse;
 import com.yisy.modules.doramcu.hex.Empire;
-import com.yisy.modules.doramcu.model.Player;
+import com.yisy.modules.doramcu.hex.GalaxyBuildService;
 import com.yisy.modules.doramcu.repository.EveCorporationRepository;
-import com.yisy.modules.doramcu.repository.PlayerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,8 +24,9 @@ class GalaxyCreationServiceTest {
     private GalaxyProgressService galaxyProgressService;
     private GameSessionService gameSessionService;
     private AiPlayerService aiPlayerService;
-    private PlayerRepository playerRepository;
     private EveCorporationRepository corporationRepository;
+    private com.yisy.modules.doramcu.earth2026.repository.PlanetTemplateRepository planetTemplateRepository;
+    private GalaxyBuildService galaxyBuildService;
     private GalaxyCreationService galaxyCreationService;
 
     @BeforeEach
@@ -35,16 +35,18 @@ class GalaxyCreationServiceTest {
         galaxyProgressService = Mockito.mock(GalaxyProgressService.class);
         gameSessionService = Mockito.mock(GameSessionService.class);
         aiPlayerService = Mockito.mock(AiPlayerService.class);
-        playerRepository = Mockito.mock(PlayerRepository.class);
         corporationRepository = Mockito.mock(EveCorporationRepository.class);
+        planetTemplateRepository = Mockito.mock(com.yisy.modules.doramcu.earth2026.repository.PlanetTemplateRepository.class);
+        galaxyBuildService = Mockito.mock(GalaxyBuildService.class);
 
         galaxyCreationService = new GalaxyCreationService(
                 galaxyService,
                 galaxyProgressService,
                 gameSessionService,
                 aiPlayerService,
-                playerRepository,
-                corporationRepository
+                corporationRepository,
+                planetTemplateRepository,
+                galaxyBuildService
         );
     }
 
@@ -54,12 +56,6 @@ class GalaxyCreationServiceTest {
     @DisplayName("createGalaxyWithAiPlayers - should return result with session ID and name")
     void createGalaxyWithAiPlayers_shouldReturnResultWithSessionIdAndName() {
         // Arrange
-        setupMockPlayers(List.of(
-                new Player(1L, "p1@test.com", "111111", "Empire Alpha",
-                        Player.GovernmentType.DEMOCRACY, Player.Ethos.MATERIALIST),
-                new Player(2L, "p2@test.com", "222222", "Empire Beta",
-                        Player.GovernmentType.AUTHORITARIAN, Player.Ethos.MILITARIST)
-        ));
         setupMockGalaxyService(false);
         setupMockSessionService("test-session", "Test Galaxy");
         setupMockAiPlayers();
@@ -78,10 +74,6 @@ class GalaxyCreationServiceTest {
     @DisplayName("createGalaxyWithAiPlayers - should return 3 AI players")
     void createGalaxyWithAiPlayers_shouldReturnThreeAiPlayers() {
         // Arrange
-        setupMockPlayers(List.of(
-                new Player(1L, "p1@test.com", "111111", "Empire Alpha",
-                        Player.GovernmentType.DEMOCRACY, Player.Ethos.MATERIALIST)
-        ));
         setupMockGalaxyService(false);
         setupMockSessionService("test-session", "Test Galaxy");
         setupMockAiPlayers();
@@ -99,10 +91,6 @@ class GalaxyCreationServiceTest {
     @DisplayName("createGalaxyWithAiPlayers - should create AI players with correct difficulties")
     void createGalaxyWithAiPlayers_shouldCreateAiPlayersWithCorrectDifficulties() {
         // Arrange
-        setupMockPlayers(List.of(
-                new Player(1L, "p1@test.com", "111111", "Empire Alpha",
-                        Player.GovernmentType.DEMOCRACY, Player.Ethos.MATERIALIST)
-        ));
         setupMockGalaxyService(false);
         setupMockSessionService("test-session", "Test Galaxy");
         setupMockAiPlayers();
@@ -132,10 +120,6 @@ class GalaxyCreationServiceTest {
     @DisplayName("createGalaxyWithAiPlayers - should call createDefaultSession with session name")
     void createGalaxyWithAiPlayers_shouldCallCreateDefaultSession() {
         // Arrange
-        setupMockPlayers(List.of(
-                new Player(1L, "p1@test.com", "111111", "Empire Alpha",
-                        Player.GovernmentType.DEMOCRACY, Player.Ethos.MATERIALIST)
-        ));
         setupMockGalaxyService(false);
         setupMockSessionService("test-session", "Test Galaxy");
         setupMockAiPlayers();
@@ -151,10 +135,6 @@ class GalaxyCreationServiceTest {
     @DisplayName("createGalaxyWithAiPlayers - should set progress listener on galaxy service")
     void createGalaxyWithAiPlayers_shouldSetProgressListener() {
         // Arrange
-        setupMockPlayers(List.of(
-                new Player(1L, "p1@test.com", "111111", "Empire Alpha",
-                        Player.GovernmentType.DEMOCRACY, Player.Ethos.MATERIALIST)
-        ));
         setupMockGalaxyService(false);
         setupMockSessionService("test-session", "Test Galaxy");
         setupMockAiPlayers();
@@ -167,14 +147,9 @@ class GalaxyCreationServiceTest {
     }
 
     @Test
-    @DisplayName("createGalaxyWithAiPlayers - should generate galaxy with empires from players")
+    @DisplayName("createGalaxyWithAiPlayers - should generate galaxy with 6 NPC empires")
     void createGalaxyWithAiPlayers_shouldGenerateGalaxyWithEmpires() {
         // Arrange
-        Player player1 = new Player(1L, "p1@test.com", "111111", "Empire Alpha",
-                Player.GovernmentType.DEMOCRACY, Player.Ethos.MATERIALIST);
-        Player player2 = new Player(2L, "p2@test.com", "222222", "Empire Beta",
-                Player.GovernmentType.AUTHORITARIAN, Player.Ethos.MILITARIST);
-        setupMockPlayers(List.of(player1, player2));
         setupMockGalaxyService(false);
         setupMockSessionService("test-session", "Test Galaxy");
         setupMockAiPlayers();
@@ -185,7 +160,7 @@ class GalaxyCreationServiceTest {
         // Assert
         verify(galaxyService).generateAndSaveGalaxyWithEmpires(
                 eq(com.yisy.modules.doramcu.hex.GalaxyFactory.GAME_GALAXY_NAME),
-                argThat(empires -> empires.size() == 2),
+                argThat(empires -> empires.size() == 6),
                 anyInt(), anyInt(), anyDouble(), anyDouble(), anyDouble(),
                 anyDouble(), anyDouble(), anyDouble(), anyDouble(),
                 anyDouble(), anyLong()
@@ -196,10 +171,6 @@ class GalaxyCreationServiceTest {
     @DisplayName("createGalaxyWithAiPlayers - should skip galaxy generation if galaxy already exists")
     void createGalaxyWithAiPlayers_shouldSkipGalaxyGenerationIfExists() {
         // Arrange
-        setupMockPlayers(List.of(
-                new Player(1L, "p1@test.com", "111111", "Empire Alpha",
-                        Player.GovernmentType.DEMOCRACY, Player.Ethos.MATERIALIST)
-        ));
         // Galaxy already exists
         when(galaxyService.hasGalaxies()).thenReturn(true);
         setupMockSessionService("test-session", "Test Galaxy");
@@ -219,9 +190,6 @@ class GalaxyCreationServiceTest {
     @DisplayName("createGalaxyWithAiPlayers - should create empires with AI ruler ID (-1)")
     void createGalaxyWithAiPlayers_shouldCreateEmpiresWithAiRulerId() {
         // Arrange
-        Player player = new Player(1L, "p1@test.com", "111111", "Empire Alpha",
-                Player.GovernmentType.DEMOCRACY, Player.Ethos.MATERIALIST);
-        setupMockPlayers(List.of(player));
         setupMockGalaxyService(false);
         setupMockSessionService("test-session", "Test Galaxy");
         setupMockAiPlayers();
@@ -242,33 +210,11 @@ class GalaxyCreationServiceTest {
         );
     }
 
-    @Test
-    @DisplayName("createGalaxyWithAiPlayers - should handle empty player list")
-    void createGalaxyWithAiPlayers_shouldHandleEmptyPlayerList() {
-        // Arrange
-        setupMockPlayers(List.of());
-        setupMockGalaxyService(false);
-        setupMockSessionService("test-session", "Test Galaxy");
-        setupMockAiPlayers();
-
-        // Act
-        GalaxyCreationService.GalaxyCreationResult result =
-                galaxyCreationService.createGalaxyWithAiPlayers("Test Galaxy");
-
-        // Assert
-        assertNotNull(result);
-        assertEquals("test-session", result.getSessionId());
-        assertEquals(3, result.getAiPlayers().size());
-    }
 
     @Test
     @DisplayName("createGalaxyWithAiPlayers - should call AI player service for all 3 difficulties")
     void createGalaxyWithAiPlayers_shouldCallAiPlayerServiceForAllDifficulties() {
         // Arrange
-        setupMockPlayers(List.of(
-                new Player(1L, "p1@test.com", "111111", "Empire Alpha",
-                        Player.GovernmentType.DEMOCRACY, Player.Ethos.MATERIALIST)
-        ));
         setupMockGalaxyService(false);
         setupMockSessionService("test-session", "Test Galaxy");
         setupMockAiPlayers();
@@ -452,10 +398,6 @@ class GalaxyCreationServiceTest {
     }
 
     // ---- Helper methods ----
-
-    private void setupMockPlayers(List<Player> players) {
-        when(playerRepository.findAll()).thenReturn(players);
-    }
 
     private void setupMockGalaxyService(boolean hasGalaxies) {
         when(galaxyService.hasGalaxies()).thenReturn(hasGalaxies);

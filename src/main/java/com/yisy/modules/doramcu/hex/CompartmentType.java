@@ -86,6 +86,26 @@ public enum CompartmentType {
     /** Communications array — signal transmission */
     COMMS_ARRAY,
 
+    // ---- Ground Combat Vehicle compartments ----
+
+    /** Rotating weapon platform — main gun or turret mount */
+    TURRET,
+
+    /** Engine and drivetrain compartment */
+    ENGINE_BAY,
+
+    /** Entry/exit hatch for crew access */
+    CREW_HATCH,
+
+    /** Fuel storage — vulnerable to explosions */
+    FUEL_TANK,
+
+    /** Radar, targeting, and electronic warfare systems */
+    SENSOR_ARRAY,
+
+    /** Missile or rocket launcher rails */
+    LAUNCHER,
+
     /** Empty or unassigned space — no specific function */
     EMPTY;
 

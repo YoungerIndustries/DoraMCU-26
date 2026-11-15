@@ -14,6 +14,7 @@ import com.yisy.modules.doramcu.service.PromoCodeService;
 import com.yisy.modules.doramcu.service.ResetService;
 import com.yisy.modules.doramcu.service.TurnScheduler;
 import com.yisy.modules.doradl.dl.service.DoraAiLearningService;
+import com.yisy.modules.doramcu.repository.AiCharacterRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -77,6 +78,9 @@ class AdminControllerPromoCodeTest {
     @Mock
     private ResetService resetService;
 
+    @Mock
+    private AiCharacterRepository aiCharacterRepository;
+
     private AdminController controller;
 
     @BeforeEach
@@ -84,7 +88,7 @@ class AdminControllerPromoCodeTest {
         controller = new AdminController(
                 userRepository, passwordEncoder, galaxyRepository, sectorRepository, subSectorRepository,
                 galaxyService, galaxyProgressService, playerRepository, turnScheduler,
-                gameSessionService, doraAiLearningService, promoCodeService
+                gameSessionService, doraAiLearningService, promoCodeService, aiCharacterRepository
         );
     }
 

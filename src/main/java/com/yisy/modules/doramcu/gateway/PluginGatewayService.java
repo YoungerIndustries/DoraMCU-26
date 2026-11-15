@@ -1,7 +1,7 @@
 package com.yisy.modules.doramcu.gateway;
 
 import com.yisy.modules.doramcu.hex.GalaxyFactory;
-import com.yisy.modules.doramcu.unified.GameType;
+import com.yisy.modules.doramcu.gamecore.GameType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

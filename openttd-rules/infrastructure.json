@@ -1,0 +1,167 @@
+{
+  "game_info": {
+    "title": "OpenTTD Transport Tycoon Infrastructure Database",
+    "description": "Complete infrastructure database including roads, rails, monorail, maglev, and their properties",
+    "source_mods": [
+      "OpenTTD Core (GPL v2)",
+      "NUTS - Unrealistic Train Set (GPL v3)",
+      "Maglev Track Set (CC-BY v3.0)"
+    ]
+  },
+  "infrastructure": {
+    "road": {
+      "id": "road",
+      "name": "Road",
+      "tech_level_min": 1,
+      "tech_level_max": 10,
+      "description": "Basic road network for trucks and buses. Available from the start of the game.",
+      "stats": {
+        "build_cost_per_tile": 5,
+        "maintenance_cost_per_tile": 1,
+        "max_speed": 5,
+        "can_carry_cargo": true,
+        "can_carry_passengers": true
+      },
+      "compatible_vehicles": ["truck", "bus", "express_truck"],
+      "variants": [
+        {"name": "Paved Road", "build_cost_per_tile": 5, "max_speed": 5},
+        {"name": "Expressway", "build_cost_per_tile": 10, "max_speed": 6, "tech_level_min": 3}
+      ]
+    },
+    "rail": {
+      "id": "rail",
+      "name": "Normal Railway",
+      "tech_level_min": 1,
+      "tech_level_max": 8,
+      "description": "Standard railway for steam and diesel trains. The first rail type available.",
+      "stats": {
+        "build_cost_per_tile": 10,
+        "maintenance_cost_per_tile": 2,
+        "max_speed": 8,
+        "can_carry_cargo": true,
+        "can_carry_passengers": true
+      },
+      "compatible_vehicles": ["steam_locomotive", "diesel_locomotive", "electric_locomotive"],
+      "electrification": {
+        "available_from_year": 1965,
+        "tech_level_min": 3,
+        "cost_per_tile": 20,
+        "description": "Electrified railway for electric trains"
+      }
+    },
+    "monorail": {
+      "id": "monorail",
+      "name": "Monorail",
+      "tech_level_min": 4,
+      "tech_level_max": 8,
+      "availability_year": 1999,
+      "description": "Elevated monorail track for advanced transport. Requires separate construction from normal rail.",
+      "stats": {
+        "build_cost_per_tile": 20,
+        "maintenance_cost_per_tile": 4,
+        "max_speed": 10,
+        "can_carry_cargo": true,
+        "can_carry_passengers": true
+      },
+      "compatible_vehicles": ["monorail_train"]
+    },
+    "maglev": {
+      "id": "maglev",
+      "name": "Maglev Track",
+      "tech_level_min": 5,
+      "tech_level_max": 10,
+      "availability_year": 2022,
+      "description": "Magnetic levitation track for the fastest conventional rail transport. Requires separate construction.",
+      "stats": {
+        "build_cost_per_tile": 30,
+        "maintenance_cost_per_tile": 6,
+        "max_speed": 15,
+        "can_carry_cargo": true,
+        "can_carry_passengers": true
+      },
+      "compatible_vehicles": ["maglev_train", "frims_maglev"],
+      "variants": [
+        {"name": "Standard Maglev", "build_cost_per_tile": 30, "max_speed": 15},
+        {"name": "FRIMS Maglev Track", "build_cost_per_tile": 40, "max_speed": 20, "source": "FRIMS"}
+      ]
+    },
+    "water": {
+      "id": "water",
+      "name": "Water Route",
+      "tech_level_min": 1,
+      "tech_level_max": 8,
+      "description": "Natural water routes for ships and ferries. No construction cost, but limited to water tiles.",
+      "stats": {
+        "build_cost_per_tile": 0,
+        "maintenance_cost_per_tile": 0,
+        "max_speed": 3,
+        "can_carry_cargo": true,
+        "can_carry_passengers": true
+      },
+      "compatible_vehicles": ["cargo_ship", "passenger_ferry", "advanced_cargo_liner"],
+      "notes": "Requires water tiles; no construction needed"
+    },
+    "airport": {
+      "id": "airport",
+      "name": "Airport",
+      "tech_level_min": 5,
+      "tech_level_max": 10,
+      "description": "Airport infrastructure for aircraft. Built as a station, not a tile-by-tile network.",
+      "stats": {
+        "build_cost": 500,
+        "maintenance_cost": 20,
+        "max_speed": 10,
+        "can_carry_cargo": true,
+        "can_carry_passengers": true
+      },
+      "compatible_vehicles": ["aircraft", "helicopter"],
+      "notes": "Built as a single station; aircraft fly point-to-point"
+    },
+    "spaceport": {
+      "id": "spaceport",
+      "name": "Space Port",
+      "tech_level_min": 8,
+      "tech_level_max": 10,
+      "description": "Advanced space docking facility for rockets and spacecraft. Gateway to interplanetary travel.",
+      "stats": {
+        "build_cost": 2000,
+        "maintenance_cost": 50,
+        "max_speed": 25,
+        "can_carry_cargo": true,
+        "can_carry_passengers": true
+      },
+      "compatible_vehicles": ["rocket", "apollo_rocket", "fictional_aircraft"],
+      "notes": "Built as a single station; rockets travel between spaceports"
+    },
+    "orbital_station": {
+      "id": "orbital_station",
+      "name": "Orbital Station",
+      "tech_level_min": 10,
+      "tech_level_max": 10,
+      "description": "Space station in orbit serving as interplanetary transport hub.",
+      "stats": {
+        "build_cost": 10000,
+        "maintenance_cost": 200,
+        "max_speed": 0,
+        "can_carry_cargo": true,
+        "can_carry_passengers": true
+      },
+      "compatible_vehicles": ["space_station"],
+      "notes": "Stationary orbital hub; vehicles dock and undock"
+    }
+  },
+  "infrastructure_categories": {
+    "ground_network": {
+      "description": "Tile-by-tile network infrastructure",
+      "types": ["road", "rail", "monorail", "maglev"]
+    },
+    "natural": {
+      "description": "Natural routes requiring no construction",
+      "types": ["water"]
+    },
+    "station_based": {
+      "description": "Station-based infrastructure for point-to-point travel",
+      "types": ["airport", "spaceport", "orbital_station"]
+    }
+  }
+}

@@ -4,6 +4,7 @@ import com.yisy.modules.doramcu.hex.Fleet;
 import com.yisy.modules.doramcu.hex.Game;
 import com.yisy.modules.doramcu.hex.Player;
 import com.yisy.modules.doramcu.hex.SpaceStation;
+import com.yisy.modules.doramcu.service.AiNetworkService;
 
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ public class AiDecisionContext {
     private final int credits;
     private final List<SpaceStation> stations;
     private final Map<String, Integer> resources;
+    private final AiNetworkService aiNetworkService;
 
     private AiDecisionContext(Builder builder) {
         this.player = builder.player;
@@ -39,6 +41,7 @@ public class AiDecisionContext {
         this.credits = builder.credits;
         this.stations = builder.stations != null ? builder.stations : List.of();
         this.resources = builder.resources != null ? builder.resources : Map.of();
+        this.aiNetworkService = builder.aiNetworkService;
     }
 
     /**
@@ -91,6 +94,14 @@ public class AiDecisionContext {
     }
 
     /**
+     * Returns the AI network service for querying network connectivity.
+     * May be null if the service is not available.
+     */
+    public AiNetworkService getAiNetworkService() {
+        return aiNetworkService;
+    }
+
+    /**
      * Builder for {@link AiDecisionContext}.
      */
     public static class Builder {
@@ -104,6 +115,7 @@ public class AiDecisionContext {
         private int credits;
         private List<SpaceStation> stations;
         private Map<String, Integer> resources;
+        private AiNetworkService aiNetworkService;
 
         public Builder player(Player player) {
             this.player = player;
@@ -152,6 +164,11 @@ public class AiDecisionContext {
 
         public Builder resources(Map<String, Integer> resources) {
             this.resources = resources;
+            return this;
+        }
+
+        public Builder aiNetworkService(AiNetworkService aiNetworkService) {
+            this.aiNetworkService = aiNetworkService;
             return this;
         }
 

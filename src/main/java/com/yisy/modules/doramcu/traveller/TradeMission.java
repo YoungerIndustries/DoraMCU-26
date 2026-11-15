@@ -385,15 +385,9 @@ public class TradeMission {
             return status;
         }
 
-        if (!loadCargo(originEconomy, destinationEconomy)) {
-            return status;
-        }
-
-        if (!travel()) {
-            return status;
-        }
-
-        if (!unloadCargo(destinationEconomy)) {
+        if (!loadCargo(originEconomy, destinationEconomy)
+                || !travel()
+                || !unloadCargo(destinationEconomy)) {
             return status;
         }
 

@@ -1,9 +1,12 @@
 package com.yisy.modules.doramcu.hex.manager;
+import org.springframework.stereotype.Component;
 
 import com.yisy.modules.doramcu.hex.Battle;
 import com.yisy.modules.doramcu.hex.Fleet;
+import com.yisy.modules.doramcu.hex.spi.StationAiSupportSpi;
 import com.yisy.modules.doramcu.hex.Hex3D;
 import com.yisy.modules.doramcu.hex.Planet;
+import com.yisy.modules.doramcu.hex.SpaceStation;
 import com.yisy.modules.doramcu.traveller.AbstractBattle;
 import com.yisy.modules.doramcu.traveller.HighGuardRangeBand;
 import com.yisy.modules.doramcu.traveller.HighGuardShipCombat;
@@ -28,6 +31,7 @@ import java.util.stream.Collectors;
 public class CombatResolver {
 
     private final GameContext context;
+    private StationAiSupportSpi stationAiSupportService;
 
     /**
      * Creates a new CombatResolver.
@@ -36,6 +40,15 @@ public class CombatResolver {
      */
     public CombatResolver(GameContext context) {
         this.context = context;
+    }
+
+    /**
+     * Sets the station AI support service for calculating station bonuses during battles.
+     *
+     * @param service the support service instance
+     */
+    public void setStationAiSupportService(StationAiSupportSpi service) {
+        this.stationAiSupportService = service;
     }
 
     /**
@@ -74,7 +87,38 @@ public class CombatResolver {
         }
         int battleId = context.getNextBattleIdAndIncrement();
         Battle battle = new Battle(battleId, attacker, defender, location);
+        // Wire up station AI support if available
+        wireStationAiSupport(battle);
         return context.addBattle(battle);
+    }
+
+    /**
+     * Wires station AI support into a battle by finding nearby stations
+     * and setting the support service.
+     */
+    private void wireStationAiSupport(Battle battle) {
+        if (stationAiSupportService == null) {
+            return;
+        }
+        if (battle.getLocation() == null) {
+            return;
+        }
+        // Find stations near the battle location
+        List<SpaceStation> nearby = new ArrayList<>();
+        Hex3D location = battle.getLocation();
+        for (SpaceStation station : context.getSpaceStations()) {
+            if (station.getPosition() != null) {
+                // Check if station is within support range (same or adjacent hex)
+                if (station.getPosition().equals(location) ||
+                    station.getPosition().distance(location) <= 1) {
+                    nearby.add(station);
+                }
+            }
+        }
+        if (!nearby.isEmpty()) {
+            battle.setNearbyStations(nearby);
+            battle.setStationAiSupportService(stationAiSupportService);
+        }
     }
 
     /**

@@ -1,0 +1,129 @@
+package com.yisy.modules.doramcu.controller;
+
+import com.yisy.modules.doramcu.service.Galaxy3DService;
+import com.yisy.modules.doramcu.service.Galaxy3DService.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
+
+/**
+ * REST controller for 3D galaxy visualization data.
+ * <p>
+ * Provides endpoints for WebGL/Three.js clients to fetch galaxy data
+ * for immersive 3D galaxy exploration.
+ * </p>
+ */
+@RestController
+@RequestMapping("/api/v1/galaxy-3d")
+public class Galaxy3DController {
+
+    private final Galaxy3DService galaxy3DService;
+
+    public Galaxy3DController(Galaxy3DService galaxy3DService) {
+        this.galaxy3DService = galaxy3DService;
+    }
+
+    /**
+     * Get all available body types.
+     */
+    @GetMapping("/body-types")
+    public List<Galaxy3DService.BodyType> getBodyTypes() {
+        return galaxy3DService.getBodyTypes();
+    }
+
+    /**
+     * Get all available color schemes.
+     */
+    @GetMapping("/color-schemes")
+    public List<Galaxy3DService.ColorScheme> getColorSchemes() {
+        return galaxy3DService.getColorSchemes();
+    }
+
+    /**
+     * Get 3D galaxy data for a specific galaxy.
+     */
+    @GetMapping("/galaxy/{galaxyName}")
+    public ResponseEntity<?> getGalaxy3DData(@PathVariable String galaxyName,
+                                              @RequestParam(defaultValue = "realistic") String colorScheme) {
+        if (galaxyName == null || galaxyName.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Galaxy name is required"));
+        }
+
+        Galaxy3DService.ColorScheme scheme;
+        try {
+            scheme = Galaxy3DService.ColorScheme.valueOf(colorScheme.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid color scheme: " + colorScheme));
+        }
+
+        return galaxy3DService.getGalaxy3DData(galaxyName, scheme)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Get camera presets.
+     */
+    @GetMapping("/camera-presets")
+    public List<CameraPreset> getCameraPresets() {
+        return galaxy3DService.getCameraPresets();
+    }
+
+    /**
+     * Get bodies filtered by type for a galaxy.
+     */
+    @GetMapping("/galaxy/{galaxyName}/bodies/{type}")
+    public ResponseEntity<?> getBodiesByType(@PathVariable String galaxyName,
+                                              @PathVariable String type) {
+        Galaxy3DService.BodyType bodyType;
+        try {
+            bodyType = Galaxy3DService.BodyType.valueOf(type.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid body type: " + type));
+        }
+
+        List<CelestialBody3D> bodies = galaxy3DService.getBodiesByType(galaxyName, bodyType);
+        return ResponseEntity.ok(bodies);
+    }
+
+    /**
+     * Get bodies near a position.
+     */
+    @GetMapping("/galaxy/{galaxyName}/bodies/near")
+    public ResponseEntity<?> getBodiesNearPosition(@PathVariable String galaxyName,
+                                                    @RequestParam double x,
+                                                    @RequestParam double y,
+                                                    @RequestParam double z,
+                                                    @RequestParam(defaultValue = "100") double radius) {
+        Position3D position = new Position3D(x, y, z);
+        List<CelestialBody3D> bodies = galaxy3DService.getBodiesNearPosition(galaxyName, position, radius);
+        return ResponseEntity.ok(bodies);
+    }
+
+    /**
+     * Get galaxy statistics.
+     */
+    @GetMapping("/statistics")
+    public Map<String, Object> getStatistics() {
+        return galaxy3DService.getStatistics();
+    }
+
+    /**
+     * Clear the cache.
+     */
+    @DeleteMapping("/cache")
+    public ResponseEntity<?> clearCache() {
+        galaxy3DService.clearCache();
+        return ResponseEntity.ok(Map.of("success", true));
+    }
+
+    /**
+     * Remove a galaxy from cache.
+     */
+    @DeleteMapping("/cache/{galaxyName}")
+    public ResponseEntity<?> removeGalaxyCache(@PathVariable String galaxyName) {
+        galaxy3DService.removeGalaxyCache(galaxyName);
+        return ResponseEntity.ok(Map.of("success", true));
+    }
+}

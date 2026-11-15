@@ -173,9 +173,9 @@ public class Galaxy {
          */
         public List<SubSector> getAllSubSectors() {
             List<SubSector> list = new ArrayList<>(TOTAL_SUBSECTORS_PER_SECTOR);
-            for (int r = 0; r < SUBSECTOR_GRID_SIZE; r++) {
-                for (int c = 0; c < SUBSECTOR_GRID_SIZE; c++) {
-                    list.add(subGrid[r][c]);
+            for (SubSector[] row : subGrid) {
+                for (SubSector sub : row) {
+                    list.add(sub);
                 }
             }
             return Collections.unmodifiableList(list);
@@ -531,9 +531,9 @@ public class Galaxy {
      */
     public List<Sector> getAllSectors() {
         List<Sector> sectors = new ArrayList<>(TOTAL_SECTORS);
-        for (int row = 0; row < GRID_SIZE; row++) {
-            for (int col = 0; col < GRID_SIZE; col++) {
-                sectors.add(grid[row][col]);
+        for (Sector[] row : grid) {
+            for (Sector sector : row) {
+                sectors.add(sector);
             }
         }
         return Collections.unmodifiableList(sectors);

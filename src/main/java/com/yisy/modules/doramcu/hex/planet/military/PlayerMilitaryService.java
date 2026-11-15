@@ -334,11 +334,60 @@ public class PlayerMilitaryService {
             this.active = false;
         }
 
-        @Override
-        public String toString() {
-            return String.format("PlayerMilitary{%s, %s, %s, %s, battles=%d, kills=%d}",
-                    playerId, rank.getDisplayName(), countryName, branch,
-                    battlesParticipated, kills);
+        /**
+         * Get FPS matchmaking data for this player.
+         * Returns faction, team, and combat stats for FPS battle integration.
+         */
+        public Map<String, Object> getFpsMatchmakingData() {
+            Map<String, Object> data = new HashMap<>();
+            data.put("playerId", playerId);
+            data.put("faction", isoCode);
+            data.put("countryName", countryName);
+            data.put("branch", branch);
+            data.put("rank", rank.getDisplayName());
+            data.put("team", branch == MilitaryBranch.NAVY || branch == MilitaryBranch.SPACE_NAVY ? 1 : 0);
+            data.put("health", 100 + rank.getLevel() * 10);
+            data.put("attack", rank.getLevel() * 5);
+            data.put("defense", rank.getLevel() * 3);
+            data.put("active", true);
+            return data;
         }
+    }
+
+    /**
+     * Get FPS matchmaking data for a player.
+     */
+    public Map<String, Object> getFpsMatchmakingData(String playerId) {
+        PlayerMilitaryRecord record = records.get(playerId);
+        if (record == null) {
+            return null;
+        }
+        return record.getFpsMatchmakingData();
+    }
+
+    /**
+     * Join an FPS battle as an enlisted player.
+     */
+    public Map<String, Object> joinFpsBattle(String playerId, String battleId) {
+        PlayerMilitaryRecord record = records.get(playerId);
+        if (record == null) {
+            return null;
+        }
+
+        Map<String, Object> joinData = new HashMap<>();
+        joinData.put("battleId", battleId);
+        joinData.put("playerId", playerId);
+        joinData.put("faction", record.isoCode);
+        joinData.put("countryName", record.countryName);
+        joinData.put("team", record.branch == MilitaryBranch.NAVY || record.branch == MilitaryBranch.SPACE_NAVY ? 1 : 0);
+        joinData.put("rank", record.rank.getDisplayName());
+        joinData.put("health", 100 + record.rank.getLevel() * 10);
+        joinData.put("attack", record.rank.getLevel() * 5);
+        joinData.put("defense", record.rank.getLevel() * 3);
+
+        record.recordBattleParticipation();
+        log.info("Player {} joined FPS battle {} as {} ({})",
+                playerId, battleId, record.rank.getDisplayName(), record.countryName);
+        return joinData;
     }
 }

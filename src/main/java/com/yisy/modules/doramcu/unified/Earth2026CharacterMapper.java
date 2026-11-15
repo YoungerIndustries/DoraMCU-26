@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.unified;
 
 import com.yisy.modules.doramcu.earth2026.model.Earth2026Character;
+import com.yisy.modules.doramcu.gamecore.GameType;
 import org.springframework.stereotype.Component;
 
 import java.util.*;

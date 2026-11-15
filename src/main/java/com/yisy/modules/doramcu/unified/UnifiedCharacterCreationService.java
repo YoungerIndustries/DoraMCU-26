@@ -1,8 +1,15 @@
 package com.yisy.modules.doramcu.unified;
+import org.springframework.stereotype.Service;
+
+import com.yisy.modules.doramcu.gamecore.GameType;
+import com.yisy.modules.doramcu.hex.*;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
 import com.yisy.modules.doramcu.captainslog.service.CaptainLogService;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Character;
+import com.yisy.modules.doramcu.earth2026.service.Earth2026Service;
 import com.yisy.modules.doramcu.traveller.TravellerCharacter;
+import com.yisy.modules.doramcu.model.CorporateRole;
 import com.yisy.modules.doramcu.model.Player;
 import com.yisy.modules.doramcu.model.User;
 import com.yisy.modules.doramcu.repository.PlayerRepository;
@@ -13,7 +20,6 @@ import com.yisy.modules.doramcu.unified.dto.UnifiedCharacterSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
@@ -36,6 +42,7 @@ public class UnifiedCharacterCreationService {
 
     private final CharacterService travellerCharacterService;
     private final CaptainLogService captainLogService;
+    private final Earth2026Service earth2026Service;
     private final PlayerRepository playerRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -44,12 +51,14 @@ public class UnifiedCharacterCreationService {
     public UnifiedCharacterCreationService(
             CharacterService travellerCharacterService,
             CaptainLogService captainLogService,
+            Earth2026Service earth2026Service,
             PlayerRepository playerRepository,
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             TravellerTo4XIntegrationService integrationService) {
         this.travellerCharacterService = travellerCharacterService;
         this.captainLogService = captainLogService;
+        this.earth2026Service = earth2026Service;
         this.playerRepository = playerRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -81,6 +90,8 @@ public class UnifiedCharacterCreationService {
                 return createCaptainsLogCharacter(request);
             case DORAMCU_4X:
                 return createDoraMCUPlayer(request);
+            case EARTH_2026:
+                return createEarth2026Character(request);
             default:
                 throw new IllegalArgumentException("Unknown game type: " + request.getGameType());
         }
@@ -111,7 +122,7 @@ public class UnifiedCharacterCreationService {
         }
 
         if (charType.isManagementRole()) {
-            // Management role — delegate to 4X integration service
+            // Management role ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â delegate to 4X integration service
             // This creates the Traveller character AND sets up the 4X player with empire,
             // home system, and starting fleets
             return integrationService.integrateManagementRole(request);
@@ -159,7 +170,7 @@ public class UnifiedCharacterCreationService {
         summary.setLastName(request.getLastName());
         summary.setFullName(character.getName());
         summary.setGameType(GameType.CAPTAINS_LOG);
-        summary.setGameRole(character.getRank().name() + " — " + character.getAssignment().name());
+        summary.setGameRole(character.getRank().name() + " ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â " + character.getAssignment().name());
         summary.setDescription(String.format(
                 "Rank: %s, Assignment: %s, Environment: %s",
                 character.getRank(), character.getAssignment(), character.getEnvironment()));
@@ -205,7 +216,10 @@ public class UnifiedCharacterCreationService {
         player.setEmpireName(empireName);
         player.setGovernmentType(Player.GovernmentType.DEMOCRACY);
         player.setEthos(Player.Ethos.MATERIALIST);
-        player.setUser(userOpt.get());
+        player.setUser(userOpt.orElseThrow(() -> new IllegalStateException("User not found after save")));
+        // Set up dual identity: default role is CEO
+        player.setCurrentRole(CorporateRole.CEO);
+        player.setAiAssistantId(null);
         player = playerRepository.save(player);
 
         UnifiedCharacterSummary summary = new UnifiedCharacterSummary();
@@ -217,6 +231,34 @@ public class UnifiedCharacterCreationService {
         summary.setGameRole("Empire Ruler");
         summary.setDescription("Empire: " + empireName +
                 " (" + player.getGovernmentType() + ", " + player.getEthos() + ")");
+        summary.setAlive(true);
+        summary.setCurrentRole(player.getCurrentRole().name());
+        summary.setAiAssistantActive(false);
+        return summary;
+    }
+
+    private UnifiedCharacterSummary createEarth2026Character(com.yisy.modules.doramcu.unified.dto.CreateCharacterRequest request) {
+        Earth2026Character character = earth2026Service.createCharacter(
+                request.getFullName(),
+                25,
+                "Citizen"
+        );
+
+        UnifiedCharacterSummary summary = new UnifiedCharacterSummary();
+        summary.setId(character.getId());
+        summary.setFirstName(request.getFirstName());
+        summary.setLastName(request.getLastName());
+        summary.setFullName(character.getName());
+        summary.setGameType(GameType.EARTH_2026);
+        summary.setGameRole("Earth Citizen");
+        summary.setDescription(String.format(
+                "Abilities: STR %d, DEX %d, CON %d, INT %d, WIS %d, CHA %d",
+                character.getStrScore(),
+                character.getDexScore(),
+                character.getConScore(),
+                character.getIntScore(),
+                character.getWisScore(),
+                character.getChaScore()));
         summary.setAlive(true);
         return summary;
     }

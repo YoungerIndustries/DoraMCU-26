@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.zero_zero_seven.service;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +16,7 @@ import java.util.Map;
  * </p>
  */
 @Component
+@Service
 public class BondLoreDatabase {
 
     private final ObjectMapper objectMapper;

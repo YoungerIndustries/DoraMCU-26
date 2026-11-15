@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -263,23 +263,52 @@ import { PlayerCharacterEntry } from '../../core/models/player-character';
       color: var(--text-hint);
       margin: 0;
     }
+
+    /* Desktop-specific optimizations */
+    :host-context(app-desktop-app) .landing-container {
+      max-width: 1200px;
+      padding: var(--spacing-xl);
+    }
+    :host-context(app-desktop-app) .characters-grid {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+    :host-context(app-desktop-app) .landing-title {
+      font-size: 2.25rem;
+    }
+
+    /* Mobile-specific optimizations */
+    :host-context(app-mobile-app) .landing-container {
+      padding: var(--spacing-sm);
+    }
+    :host-context(app-mobile-app) .landing-title {
+      font-size: 1.5rem;
+    }
+    :host-context(app-mobile-app) .landing-subtitle {
+      font-size: 0.875rem;
+    }
+    :host-context(app-mobile-app) .characters-grid {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-md);
+    }
+    :host-context(app-mobile-app) .character-card {
+      min-height: 48px;
+    }
+    :host-context(app-mobile-app) .char-name {
+      font-size: 1rem;
+    }
   `
 })
 export class CharacterLandingComponent implements OnInit {
-  characters: import('@angular/core').Signal<PlayerCharacterEntry[]>;
+  characters = signal<PlayerCharacterEntry[]>([]);
   loading = true;
   error: string | null = null;
-
-  private _characters = new Array<PlayerCharacterEntry>();
 
   constructor(
     private corporationService: CorporationService,
     private playerCharactersService: PlayerCharactersService,
     private router: Router,
     private snackBar: MatSnackBar,
-  ) {
-    this.characters = () => this._characters;
-  }
+  ) {}
 
   ngOnInit(): void {
     this.loadCharacters();
@@ -291,22 +320,24 @@ export class CharacterLandingComponent implements OnInit {
 
     const playerId = this.corporationService.getPlayerId();
     if (!playerId) {
-      this.error = 'Player ID not found. Please complete onboarding first.';
-      this.loading = false;
+      // No player ID — skip character selection and go directly to dashboard
+      console.log('No player ID found — falling back to dashboard');
+      this.router.navigate(['/dashboard']);
       return;
     }
 
     this.playerCharactersService.getCharacters(playerId).subscribe({
       next: (chars) => {
-        this._characters = chars;
+        this.characters.set(chars);
         this.loading = false;
         // Store playerId for future use
         this.playerCharactersService.setPlayerId(playerId);
       },
       error: (err) => {
         console.error('Failed to load characters', err);
-        this.error = 'Failed to load characters. Please check your connection and try again.';
-        this.loading = false;
+        // Fallback: navigate directly to dashboard so the user can still access the corporation
+        console.log('Characters API unavailable — falling back to dashboard');
+        this.router.navigate(['/dashboard']);
       },
     });
   }

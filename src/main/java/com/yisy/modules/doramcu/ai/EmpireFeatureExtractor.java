@@ -124,7 +124,7 @@ public class EmpireFeatureExtractor {
     private void extractResearchLevel(GameStateFeatures features, Player player, AiDecisionContext context) {
         // Research level from context if available, otherwise estimate from player
         double researchLevel = 0.0;
-        double aiCoreLevel = 0.0;
+        double aiCoreLevel;
 
         if (context != null && context.getOwnedFleets() != null) {
             // Estimate research level from fleet sophistication

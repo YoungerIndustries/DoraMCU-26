@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
 import com.yisy.modules.doramcu.admin.service.AiAdminService;
@@ -10,7 +11,6 @@ import com.yisy.modules.doramcu.repository.GalaxyRepository;
 import com.yisy.modules.doramcu.repository.PlayerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -168,7 +168,7 @@ public class GalaxyComparisonService {
         // Generate insights
         dto.setInsights(generateInsights(dto));
 
-        log.info("Galaxy comparison: {} vs {} — winner: {}", nameA, nameB, dto.getOverallWinner());
+        log.info("Galaxy comparison: {} vs {} â€” winner: {}", nameA, nameB, dto.getOverallWinner());
         return dto;
     }
 
@@ -228,7 +228,7 @@ public class GalaxyComparisonService {
             summaries.get(i).setRank(i + 1);
         }
 
-        log.info("Compared {} galaxies — top: {}", summaries.size(),
+        log.info("Compared {} galaxies â€” top: {}", summaries.size(),
                 summaries.isEmpty() ? "none" : summaries.get(0).getGalaxyName());
         return summaries;
     }

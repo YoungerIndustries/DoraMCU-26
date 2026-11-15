@@ -5,6 +5,9 @@ import com.yisy.modules.doramcu.traveller.SectorGenerator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Random galaxy generator for 4X space games.
@@ -42,6 +45,9 @@ public class GalaxyGenerator {
 
     // Traveller integration — enables UWP-based planet generation
     private boolean useTravellerUWP = false;
+
+    // Async execution service
+    private static final ExecutorService asyncExecutor = Executors.newVirtualThreadPerTaskExecutor();
 
     /**
      * Creates a new generator with default parameters and seed 42.
@@ -267,5 +273,46 @@ public class GalaxyGenerator {
     @Override
     public String toString() {
         return "GalaxyGenerator{" + config + "}";
+    }
+
+    // ---- Async Generation Methods ----
+
+    /**
+     * Generates a complete galaxy asynchronously without blocking the calling thread.
+     * <p>
+     * Uses virtual threads (Java 21+) for efficient async execution.
+     * The progress listener receives callbacks on the virtual thread.
+     * </p>
+     *
+     * @param galaxyId the unique identifier for the galaxy
+     * @return a CompletableFuture that completes when generation finishes
+     */
+    public CompletableFuture<Galaxy> generateGalaxyAsync(int galaxyId) {
+        return generateGalaxyAsync(galaxyId, galaxyNames.getNextName());
+    }
+
+    /**
+     * Generates a complete galaxy asynchronously without blocking the calling thread.
+     * <p>
+     * Uses virtual threads (Java 21+) for efficient async execution.
+     * The progress listener receives callbacks on the virtual thread.
+     * </p>
+     *
+     * @param galaxyId the unique identifier for the galaxy
+     * @param name the name of the galaxy
+     * @return a CompletableFuture that completes when generation finishes
+     */
+    public CompletableFuture<Galaxy> generateGalaxyAsync(int galaxyId, String name) {
+        return CompletableFuture.supplyAsync(() -> generateGalaxy(galaxyId, name), asyncExecutor);
+    }
+
+    /**
+     * Returns the async executor service used for galaxy generation.
+     * Useful for shutdown hooks.
+     *
+     * @return the executor service
+     */
+    public static ExecutorService getAsyncExecutor() {
+        return asyncExecutor;
     }
 }

@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * the coordinator's experience aggregation service.
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
 @ConditionalOnProperty(prefix = "neuron", name = "mesh-experience-sync-enabled", havingValue = "true", matchIfMissing = true)
 public class MeshExperienceSyncService implements NeuronMeshService.MeshMessageCallback {
 

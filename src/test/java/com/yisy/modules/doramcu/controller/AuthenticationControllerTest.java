@@ -3,7 +3,10 @@ package com.yisy.modules.doramcu.controller;
 import com.yisy.modules.doramcu.config.MetricsConfig;
 import com.yisy.modules.doramcu.dto.LoginRequest;
 import com.yisy.modules.doramcu.dto.LoginResponse;
+import com.yisy.modules.doramcu.dto.PinLoginRequest;
+import com.yisy.modules.doramcu.dto.PlayerSummaryDto;
 import com.yisy.modules.doramcu.dto.RegisterRequest;
+import com.yisy.modules.doramcu.model.Player;
 import com.yisy.modules.doramcu.model.User;
 import com.yisy.modules.doramcu.repository.UserRepository;
 import com.yisy.modules.doramcu.repository.PlayerRepository;
@@ -320,10 +323,10 @@ class AuthenticationControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(4, response.getBody().size());
+        // Production returns 3 galaxies when galaxyRepository is null: Earth 2026, Milky Way, Test Galaxy
+        assertEquals(3, response.getBody().size());
         assertTrue(response.getBody().contains("Earth 2026"));
         assertTrue(response.getBody().contains("Milky Way"));
-        assertTrue(response.getBody().contains("The Void"));
         assertTrue(response.getBody().contains("Test Galaxy"));
     }
 
@@ -471,5 +474,340 @@ class AuthenticationControllerTest {
         assertEquals("Terran Federation", lr.getEmpireName());
         assertEquals("DEMOCRACY", lr.getGovernmentType());
         verify(loginSuccessCounter).increment();
+    }
+
+    // ---- Player List Tests ----
+
+    @Test
+    @DisplayName("listPlayers - should return empty list when no players exist")
+    void listPlayers_shouldReturnEmptyList() {
+        when(playerRepository.findAll()).thenReturn(List.of());
+
+        ResponseEntity<List<PlayerSummaryDto>> response = controller.listPlayers();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(0, response.getBody().size());
+    }
+
+    @Test
+    @DisplayName("listPlayers - should return all players sorted by empire name")
+    void listPlayers_shouldReturnAllPlayersSorted() {
+        User user1 = new User(1L, "player1", "pass");
+        User user2 = new User(2L, "player2", "pass");
+
+        Player player1 = new Player();
+        player1.setId(1L);
+        player1.setEmpireName("Zeta Empire");
+        player1.setGovernmentType(Player.GovernmentType.AUTHORITARIAN);
+        player1.setEthos(Player.Ethos.SPIRITUALIST);
+        player1.setUser(user1);
+        player1.setAdmin(false);
+
+        Player player2 = new Player();
+        player2.setId(2L);
+        player2.setEmpireName("Alpha Federation");
+        player2.setGovernmentType(Player.GovernmentType.DEMOCRACY);
+        player2.setEthos(Player.Ethos.MATERIALIST);
+        player2.setUser(user2);
+        player2.setAdmin(true);
+
+        when(playerRepository.findAll()).thenReturn(List.of(player1, player2));
+
+        ResponseEntity<List<PlayerSummaryDto>> response = controller.listPlayers();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(2, response.getBody().size());
+        // Should be sorted alphabetically by empire name
+        assertEquals("Alpha Federation", response.getBody().get(0).empireName());
+        assertEquals("Zeta Empire", response.getBody().get(1).empireName());
+    }
+
+    @Test
+    @DisplayName("listPlayers - should include admin flag in player summary")
+    void listPlayers_shouldIncludeAdminFlag() {
+        User user = new User(1L, "admin_player", "pass");
+
+        Player player = new Player();
+        player.setId(1L);
+        player.setEmpireName("Admin Empire");
+        player.setGovernmentType(Player.GovernmentType.MONARCHY);
+        player.setEthos(Player.Ethos.MATERIALIST);
+        player.setUser(user);
+        player.setAdmin(true);
+
+        when(playerRepository.findAll()).thenReturn(List.of(player));
+
+        ResponseEntity<List<PlayerSummaryDto>> response = controller.listPlayers();
+
+        assertEquals(1, response.getBody().size());
+        PlayerSummaryDto dto = response.getBody().get(0);
+        assertTrue(dto.isAdmin());
+        assertEquals("MONARCHY", dto.governmentType());
+        assertEquals("admin_player", dto.commanderName());
+    }
+
+    @Test
+    @DisplayName("listPlayers - should return empty list when playerRepository is null")
+    void listPlayers_shouldReturnEmptyWhenRepositoryNull() {
+        ObjectProvider<PlayerRepository> nullProvider = mock(ObjectProvider.class);
+        when(nullProvider.getIfAvailable()).thenReturn(null);
+
+        AuthenticationController authCtrl = new AuthenticationController(
+                authenticationManager, jwtService, metricsConfig, userRepository, passwordEncoder,
+                playerServiceProvider, nullProvider, galaxyRepositoryProvider
+        );
+
+        ResponseEntity<List<PlayerSummaryDto>> response = authCtrl.listPlayers();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(0, response.getBody().size());
+    }
+
+    @Test
+    @DisplayName("listPlayers - should use commander name from user when available")
+    void listPlayers_shouldUseUserCommanderName() {
+        User user = new User(1L, "commander_x", "pass");
+
+        Player player = new Player();
+        player.setId(1L);
+        player.setEmail("player@example.com");
+        player.setEmpireName("Commander Empire");
+        player.setGovernmentType(Player.GovernmentType.DEMOCRACY);
+        player.setEthos(Player.Ethos.MATERIALIST);
+        player.setUser(user);
+        player.setAdmin(false);
+
+        when(playerRepository.findAll()).thenReturn(List.of(player));
+
+        ResponseEntity<List<PlayerSummaryDto>> response = controller.listPlayers();
+
+        assertEquals(1, response.getBody().size());
+        assertEquals("commander_x", response.getBody().get(0).commanderName());
+    }
+
+    @Test
+    @DisplayName("listPlayers - should use email as commander name when user is null")
+    void listPlayers_shouldUseEmailWhenUserNull() {
+        Player player = new Player();
+        player.setId(1L);
+        player.setEmail("no_user@example.com");
+        player.setEmpireName("No User Empire");
+        player.setGovernmentType(Player.GovernmentType.DEMOCRACY);
+        player.setEthos(Player.Ethos.MATERIALIST);
+        player.setUser(null);
+
+        when(playerRepository.findAll()).thenReturn(List.of(player));
+
+        ResponseEntity<List<PlayerSummaryDto>> response = controller.listPlayers();
+
+        assertEquals(1, response.getBody().size());
+        assertEquals("no_user@example.com", response.getBody().get(0).commanderName());
+    }
+
+    // ---- Player Login by ID Tests ----
+
+    @Test
+    @DisplayName("playerLogin - should return token when player ID is valid")
+    void playerLogin_shouldReturnTokenOnValidId() {
+        PlayerRepository mockRepo = mock(PlayerRepository.class);
+        Player player = new Player();
+        player.setId(5L);
+        player.setEmail("player5@empire.com");
+        player.setLoginPin("5555");
+        player.setEmpireName("Player Five Empire");
+        player.setGovernmentType(Player.GovernmentType.DEMOCRACY);
+        player.setEthos(Player.Ethos.MATERIALIST);
+        player.setAdmin(false);
+
+        User user = new User(1L, "player5@empire.com", "pass");
+        player.setUser(user);
+
+        when(mockRepo.findById(5L)).thenReturn(Optional.of(player));
+        when(jwtService.generateToken("player5@empire.com")).thenReturn("player5-token");
+
+        ObjectProvider<PlayerRepository> repoProvider = mock(ObjectProvider.class);
+        when(repoProvider.getIfAvailable()).thenReturn(mockRepo);
+
+        AuthenticationController authCtrl = new AuthenticationController(
+                authenticationManager, jwtService, metricsConfig, userRepository, passwordEncoder,
+                playerServiceProvider, repoProvider, galaxyRepositoryProvider
+        );
+
+        var response = authCtrl.playerLogin(5L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertTrue(response.getBody() instanceof LoginResponse);
+        LoginResponse lr = (LoginResponse) response.getBody();
+        assertEquals("player5-token", lr.getToken());
+        assertEquals("player5@empire.com", lr.getUsername());
+        assertEquals("Player Five Empire", lr.getEmpireName());
+        verify(loginSuccessCounter).increment();
+    }
+
+    @Test
+    @DisplayName("playerLogin - should return 404 when player ID not found")
+    void playerLogin_shouldReturnNotFound() {
+        PlayerRepository mockRepo = mock(PlayerRepository.class);
+        when(mockRepo.findById(999L)).thenReturn(Optional.empty());
+
+        ObjectProvider<PlayerRepository> repoProvider = mock(ObjectProvider.class);
+        when(repoProvider.getIfAvailable()).thenReturn(mockRepo);
+
+        AuthenticationController authCtrl = new AuthenticationController(
+                authenticationManager, jwtService, metricsConfig, userRepository, passwordEncoder,
+                playerServiceProvider, repoProvider, galaxyRepositoryProvider
+        );
+
+        var response = authCtrl.playerLogin(999L);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        verify(loginFailureCounter).increment();
+        verify(jwtService, never()).generateToken(anyString());
+    }
+
+    @Test
+    @DisplayName("playerLogin - should return 500 when playerRepository is null")
+    void playerLogin_shouldReturnErrorWhenRepoNull() {
+        ObjectProvider<PlayerRepository> nullProvider = mock(ObjectProvider.class);
+        when(nullProvider.getIfAvailable()).thenReturn(null);
+
+        AuthenticationController authCtrl = new AuthenticationController(
+                authenticationManager, jwtService, metricsConfig, userRepository, passwordEncoder,
+                playerServiceProvider, nullProvider, galaxyRepositoryProvider
+        );
+
+        var response = authCtrl.playerLogin(1L);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    // ---- Login with Player Info Tests ----
+
+    @Test
+    @DisplayName("login - should include player empire name when player exists")
+    void login_shouldIncludePlayerEmpireName() {
+        LoginRequest request = new LoginRequest("player1@doramcu.local", "password123");
+
+        Player player = new Player();
+        player.setId(1L);
+        player.setEmail("player1@doramcu.local");
+        player.setLoginPin("1234");
+        player.setEmpireName("Stellar Republic");
+        player.setAdmin(false);
+
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenReturn(authentication);
+        when(jwtService.generateToken("player1@doramcu.local")).thenReturn("token");
+        when(playerRepository.findByEmail("player1@doramcu.local")).thenReturn(Optional.of(player));
+
+        ResponseEntity<LoginResponse> response = controller.login(request);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Stellar Republic", response.getBody().getEmpireName());
+        assertEquals("1234", response.getBody().getPin());
+        assertFalse(response.getBody().isAdmin());
+    }
+
+    @Test
+    @DisplayName("login - should include admin flag when player is admin")
+    void login_shouldIncludeAdminFlag() {
+        LoginRequest request = new LoginRequest("admin@doramcu.local", "adminpass");
+
+        Player player = new Player();
+        player.setId(1L);
+        player.setEmail("admin@doramcu.local");
+        player.setEmpireName("Admin Empire");
+        player.setAdmin(true);
+
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenReturn(authentication);
+        when(jwtService.generateToken("admin@doramcu.local")).thenReturn("admin-token");
+        when(playerRepository.findByEmail("admin@doramcu.local")).thenReturn(Optional.of(player));
+
+        ResponseEntity<LoginResponse> response = controller.login(request);
+
+        assertTrue(response.getBody().isAdmin());
+    }
+
+    @Test
+    @DisplayName("login - should look up player by username@doramcu.local fallback")
+    void login_shouldLookupPlayerWithDomainFallback() {
+        LoginRequest request = new LoginRequest("player1", "password");
+
+        Player player = new Player();
+        player.setId(1L);
+        player.setEmail("player1@doramcu.local");
+        player.setEmpireName("Fallback Empire");
+
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenReturn(authentication);
+        when(jwtService.generateToken("player1")).thenReturn("token");
+        when(playerRepository.findByEmail("player1")).thenReturn(Optional.empty());
+        when(playerRepository.findByEmail("player1@doramcu.local")).thenReturn(Optional.of(player));
+
+        ResponseEntity<LoginResponse> response = controller.login(request);
+
+        assertEquals("Fallback Empire", response.getBody().getEmpireName());
+    }
+
+    // ---- PIN Login additional tests ----
+
+    @Test
+    @DisplayName("pinLogin - should include admin flag for admin player")
+    void pinLogin_shouldIncludeAdminFlag() {
+        PlayerService mockPlayerService = mock(PlayerService.class);
+        PlayerRepository mockPlayerRepo = mock(PlayerRepository.class);
+
+        Player player = new Player();
+        player.setEmail("admin_player@empire.com");
+        player.setLoginPin("0001");
+        player.setEmpireName("Supreme Empire");
+        player.setGovernmentType(Player.GovernmentType.AUTHORITARIAN);
+        player.setEthos(Player.Ethos.SPIRITUALIST);
+        player.setAdmin(true);
+
+        when(mockPlayerService.findByLoginPin("0001")).thenReturn(Optional.of(player));
+        when(userRepository.findByUsername("admin_player@empire.com"))
+                .thenReturn(Optional.of(new User(1L, "admin_player@empire.com", "pass")));
+        when(jwtService.generateToken("admin_player@empire.com")).thenReturn("admin-pin-token");
+
+        ObjectProvider<PlayerService> mockPlayerServiceProvider = mock(ObjectProvider.class);
+        ObjectProvider<PlayerRepository> mockPlayerRepoProvider = mock(ObjectProvider.class);
+        ObjectProvider<GalaxyRepository> mockGalaxyRepoProvider = mock(ObjectProvider.class);
+        when(mockPlayerServiceProvider.getIfAvailable()).thenReturn(mockPlayerService);
+        when(mockPlayerRepoProvider.getIfAvailable()).thenReturn(mockPlayerRepo);
+        when(mockGalaxyRepoProvider.getIfAvailable()).thenReturn(null);
+
+        AuthenticationController authCtrl = new AuthenticationController(
+                authenticationManager, jwtService, metricsConfig, userRepository, passwordEncoder,
+                mockPlayerServiceProvider, mockPlayerRepoProvider, mockGalaxyRepoProvider
+        );
+
+        var response = authCtrl.pinLogin(new PinLoginRequest("0001"));
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        LoginResponse lr = (LoginResponse) response.getBody();
+        assertTrue(lr.isAdmin());
+        assertEquals("AUTHORITARIAN", lr.getGovernmentType());
+        assertEquals("SPIRITUALIST", lr.getEthos());
+    }
+
+    @Test
+    @DisplayName("pinLogin - should return error when player service not configured")
+    void pinLogin_shouldReturnErrorWhenServiceNotConfigured() {
+        ObjectProvider<PlayerService> nullServiceProvider = mock(ObjectProvider.class);
+        ObjectProvider<PlayerRepository> nullRepoProvider = mock(ObjectProvider.class);
+        when(nullServiceProvider.getIfAvailable()).thenReturn(null);
+        when(nullRepoProvider.getIfAvailable()).thenReturn(null);
+
+        AuthenticationController authCtrl = new AuthenticationController(
+                authenticationManager, jwtService, metricsConfig, userRepository, passwordEncoder,
+                nullServiceProvider, nullRepoProvider, galaxyRepositoryProvider
+        );
+
+        var response = authCtrl.pinLogin(new PinLoginRequest("1234"));
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 }

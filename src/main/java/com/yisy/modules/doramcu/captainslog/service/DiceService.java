@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.dto.DiceRollResponse;
 import com.yisy.modules.doramcu.captainslog.dto.OracleQueryRequest;
@@ -24,11 +25,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Implements the correct Modiphius 2d20 "count successes" mechanic:
  * <ul>
  *   <li>Target Number = Attribute value + Discipline value</li>
- *   <li>Each die ≤ Target Number counts as 1 success</li>
+ *   <li>Each die ÃƒÂ¢Ã¢â‚¬Â°Ã‚Â¤ Target Number counts as 1 success</li>
  *   <li>A roll of 1 always counts as 2 successes</li>
- *   <li>If a Focus applies, a die ≤ Discipline value counts as 2 successes</li>
+ *   <li>If a Focus applies, a die ÃƒÂ¢Ã¢â‚¬Â°Ã‚Â¤ Discipline value counts as 2 successes</li>
  *   <li>A roll of 20 is a complication (generates Threat), not a success</li>
- *   <li>Successes ≥ Difficulty = task succeeded</li>
+ *   <li>Successes ÃƒÂ¢Ã¢â‚¬Â°Ã‚Â¥ Difficulty = task succeeded</li>
  *   <li>Excess successes generate Momentum (max 1 in Captain's Log)</li>
  *   <li>Boons and threats are extra dice; keep the best 2 (no numeric modifier)</li>
  * </ul>
@@ -59,11 +60,11 @@ public class DiceService {
      *   <li>Sort all dice descending, keep the best 2</li>
      *   <li>For each of the 2 kept dice:
      *     <ul>
-     *       <li>If die = 20 → complication (Threat), not a success</li>
-     *       <li>If die = 1 → 2 successes (automatic)</li>
-     *       <li>If die ≤ Target Number → 1 success</li>
-     *       <li>If Focus applies and die ≤ Discipline value → 2 successes (instead of 1)</li>
-     *       <li>Otherwise → 0 successes</li>
+     *       <li>If die = 20 ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ complication (Threat), not a success</li>
+     *       <li>If die = 1 ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ 2 successes (automatic)</li>
+     *       <li>If die ÃƒÂ¢Ã¢â‚¬Â°Ã‚Â¤ Target Number ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ 1 success</li>
+     *       <li>If Focus applies and die ÃƒÂ¢Ã¢â‚¬Â°Ã‚Â¤ Discipline value ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ 2 successes (instead of 1)</li>
+     *       <li>Otherwise ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ 0 successes</li>
      *     </ul>
      *   </li>
      *   <li>Compare total successes to difficulty</li>
@@ -118,7 +119,7 @@ public class DiceService {
                 // Natural 1 = 2 successes
                 successes += 2;
             } else if (hasFocus && die <= disciplineRating) {
-                // Focus bonus: die ≤ discipline value = 2 successes
+                // Focus bonus: die ÃƒÂ¢Ã¢â‚¬Â°Ã‚Â¤ discipline value = 2 successes
                 successes += 2;
             } else if (die <= targetNumber) {
                 // Normal success
@@ -132,7 +133,7 @@ public class DiceService {
             // Reroll the worst die
             int worstIndex = keptDice.size() - 1;
             int reroll = random.nextInt(20) + 1;
-            log.debug("Momentum reroll: die {} → {}", keptDice.get(worstIndex), reroll);
+            log.debug("Momentum reroll: die {} ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ {}", keptDice.get(worstIndex), reroll);
             // Recalculate with reroll
             successes = 0;
             complications = 0;
@@ -225,7 +226,7 @@ public class DiceService {
      * <p>
      * This method uses the correct 2d20 under/over mechanic:
      * each die is compared individually to the target number.
-     * A die ≤ target number counts as a success.
+     * A die ÃƒÂ¢Ã¢â‚¬Â°Ã‚Â¤ target number counts as a success.
      * A die = 20 is a complication.
      * A die = 1 counts as 2 successes.
      * </p>
@@ -433,7 +434,7 @@ public class DiceService {
         if (request.isSpendMomentumReroll()) {
             int worstIndex = keptDice.size() - 1;
             int reroll = random.nextInt(20) + 1;
-            log.debug("Momentum reroll: die {} → {}", keptDice.get(worstIndex), reroll);
+            log.debug("Momentum reroll: die {} ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ {}", keptDice.get(worstIndex), reroll);
             successes = 0;
             complications = 0;
             List<Integer> finalDice = new ArrayList<>(keptDice);
@@ -498,7 +499,7 @@ public class DiceService {
 
         // 13. Build description
         StringBuilder desc = new StringBuilder();
-        desc.append("Starship ").append(starship.getName()).append(" — ")
+        desc.append("Starship ").append(starship.getName()).append(" ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â ")
                 .append(request.getSystem().getDisplayName()).append(" + ")
                 .append(request.getDepartment().getDisplayName());
         if (complications > 0) {
@@ -648,7 +649,7 @@ public class DiceService {
             "A diplomatic mission requires unusual tactics.",
             "A scientific discovery has dangerous implications.",
             "A lost starship is found with its crew intact.",
-            "A planet's ecosystem is collapsing — can it be saved?",
+            "A planet's ecosystem is collapsing ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â can it be saved?",
             "A cyber attack targets the ship's computer systems.",
             "A refugee fleet seeks asylum in Federation space.",
             "A wormhole opens to an uncharted region.",

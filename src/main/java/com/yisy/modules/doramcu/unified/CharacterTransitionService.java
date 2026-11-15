@@ -1,10 +1,11 @@
 package com.yisy.modules.doramcu.unified;
+import org.springframework.stereotype.Service;
 
+import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.shared.model.SharedCharacter;
 import com.yisy.modules.doramcu.shared.service.SharedCharacterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;

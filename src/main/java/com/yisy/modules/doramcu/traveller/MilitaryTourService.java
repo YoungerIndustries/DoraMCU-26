@@ -50,7 +50,6 @@ public class MilitaryTourService {
      * Sets an initial empty log manager state; call {@link #setLogManager(CharacterLogManager)}
      * before use to configure the log manager for a specific game session.
      */
-    @Autowired
     public MilitaryTourService() {
         this.navyTours = new HashMap<>();
         this.armyAssignments = new HashMap<>();
@@ -64,6 +63,7 @@ public class MilitaryTourService {
      *
      * @param logManager the character log manager for recording experiences
      */
+    @Autowired(required = false)
     public MilitaryTourService(CharacterLogManager logManager) {
         this.logManager = logManager;
         this.navyTours = new HashMap<>();

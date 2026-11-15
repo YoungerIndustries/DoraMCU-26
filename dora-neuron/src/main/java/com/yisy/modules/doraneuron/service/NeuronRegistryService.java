@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.service;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.config.NeuronConfig;
 import com.yisy.modules.doraneuron.model.NeuronIdentity;
 import com.yisy.modules.doraneuron.model.NeuronStatus;
@@ -38,6 +40,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * and deregisters on shutdown.
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class NeuronRegistryService {
 
     private static final Logger log = LoggerFactory.getLogger(NeuronRegistryService.class);

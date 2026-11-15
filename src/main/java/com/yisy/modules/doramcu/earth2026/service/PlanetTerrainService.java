@@ -64,10 +64,32 @@ public class PlanetTerrainService {
         double vegetationDensity = 0.3;
 
         if (planetTemplate != null) {
-            baseElevation = planetTemplate.getBaseElevation() != null ? planetTemplate.getBaseElevation() : 0.0;
-            terrainType = planetTemplate.getTerrainType() != null ? planetTemplate.getTerrainType() : "URBAN";
-            vegetationDensity = planetTemplate.getVegetationDensity() != null ?
-                    planetTemplate.getVegetationDensity() : 0.3;
+            // Use template type to determine terrain characteristics
+            String templateType = planetTemplate.getTemplateType();
+            if (templateType != null) {
+                switch (templateType.toLowerCase()) {
+                    case "earth":
+                        baseElevation = 50.0;
+                        terrainType = "URBAN";
+                        vegetationDensity = 0.4;
+                        break;
+                    case "terraformed":
+                        baseElevation = 100.0;
+                        terrainType = "PLAINS";
+                        vegetationDensity = 0.6;
+                        break;
+                    case "gas giant station":
+                        baseElevation = 0.0;
+                        terrainType = "URBAN";
+                        vegetationDensity = 0.1;
+                        break;
+                    default:
+                        baseElevation = 0.0;
+                        terrainType = "URBAN";
+                        vegetationDensity = 0.3;
+                        break;
+                }
+            }
         }
 
         log.info("Generating terrain for planet: {} ({}x{}, {}m cells)",

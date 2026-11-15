@@ -108,6 +108,8 @@ public class BiomeGenerator {
         temperature -= (altitude / 1000.0) * 6.0;
         // Add small random variation
         temperature += (random.nextDouble() - 0.5) * 5.0;
+        // Clamp to valid range [-50, +50]
+        temperature = Math.max(-50.0, Math.min(50.0, temperature));
 
         // Determine terrain type
         TerrainType terrain = determineTerrainType(latitude, altitude, moisture, altitudeNoise);
@@ -176,9 +178,7 @@ public class BiomeGenerator {
         if (moisture < 0.35) {
             return TerrainType.SAVANNA;
         }
-        if (moisture > 0.5 && random.nextDouble() < 0.15) {
-            return TerrainType.SWAMP;
-        }
+        // SWAMP (moisture > 0.5) is unreachable — GRASSLAND already covers moisture > 0.45
 
         // Default: grassland
         return TerrainType.GRASSLAND;

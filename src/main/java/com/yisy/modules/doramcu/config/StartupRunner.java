@@ -26,9 +26,7 @@ public class StartupRunner {
 
     @PostConstruct
     public void init() {
-        // Step 1: Process cleanup (handled by StartupProcessCleaner, mark as done)
-        startupProgress.completeStep("process_cleanup", "Previous processes cleaned up");
-        log.info("Startup step 1: Process cleanup complete");
+        // Step 1: Process cleanup is handled by StartupProcessCleaner @PostConstruct
 
         // Step 2: Spring context initialized
         startupProgress.completeStep("spring_context", "Spring context initialized");

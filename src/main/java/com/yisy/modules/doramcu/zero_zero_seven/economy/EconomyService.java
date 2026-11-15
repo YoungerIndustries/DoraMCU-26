@@ -1,10 +1,10 @@
 package com.yisy.modules.doramcu.zero_zero_seven.economy;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.zero_zero_seven.model.BondEmpire;
 import com.yisy.modules.doramcu.zero_zero_seven.model.BondTerritory;
 import com.yisy.modules.doramcu.zero_zero_seven.repository.BondEmpireRepository;
 import com.yisy.modules.doramcu.zero_zero_seven.repository.BondTerritoryRepository;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

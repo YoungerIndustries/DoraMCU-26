@@ -4,6 +4,7 @@ using UnityEngine;
 using DoraMCU.Client.Network;
 using DoraMCU.Client.Procedural;
 using DoraMCU.Client.Input;
+using DoraMCU.Client.Battlefield;
 
 namespace DoraMCU.Client.Core
 {
@@ -26,6 +27,9 @@ namespace DoraMCU.Client.Core
         private ShipGenerator shipGenerator;
         private StationGenerator stationGenerator;
         private InterestManager interestManager;
+
+        private enum GameMode { Space, Battlefield }
+        private GameMode currentMode = GameMode.Space;
 
         private Dictionary<long, GameObject> planetObjects = new();
         private Dictionary<long, GameObject> shipObjects = new();
@@ -73,6 +77,7 @@ namespace DoraMCU.Client.Core
             // Subscribe to input events
             InputHandler.Instance.OnNavigateToSystem += OnNavigateToSystem;
             InputHandler.Instance.OnScan += OnScan;
+            InputHandler.Instance.OnNavigateToBattlefield += OnNavigateToBattlefield;
 
             // Start periodic sync
             syncCoroutine = StartCoroutine(SyncLoop());
@@ -400,6 +405,84 @@ namespace DoraMCU.Client.Core
             // Trigger scan of nearby objects
         }
 
+        /// <summary>
+        /// Handle navigation to a battlefield.
+        /// </summary>
+        private void OnNavigateToBattlefield(long locationId, string timePeriod, string terrain)
+        {
+            Debug.Log($"[GameManager] Entering battlefield mode: location={locationId}, period={timePeriod}, terrain={terrain}");
+            EnterBattlefieldMode(locationId, timePeriod, terrain);
+        }
+
+        /// <summary>
+        /// Enter battlefield mode and load a battlefield.
+        /// </summary>
+        private void EnterBattlefieldMode(long locationId, string timePeriod, string terrain)
+        {
+            currentMode = GameMode.Battlefield;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+            var renderer = BattlefieldRenderer.Instance;
+            if (renderer != null)
+            {
+                renderer.CreateAndLoadBattlefield(locationId, timePeriod, terrain, "CLEAR", 5, 5);
+            }
+
+            Debug.Log("[GameManager] Battlefield mode active");
+        }
+
+        /// <summary>
+        /// Exit battlefield mode and return to space view.
+        /// </summary>
+        public void ExitBattlefieldMode()
+        {
+            if (currentMode == GameMode.Battlefield)
+            {
+                currentMode = GameMode.Space;
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+
+                var renderer = BattlefieldRenderer.Instance;
+                if (renderer != null)
+                {
+                    renderer.ClearBattlefield();
+                }
+
+                var service = BattlefieldService.Instance;
+                if (service != null)
+                {
+                    service.StopPolling();
+                }
+
+                Debug.Log("[GameManager] Returned to space mode");
+            }
+        }
+
         public NetworkManager.GameState CurrentState => currentState;
+
+        /// <summary>
+        /// Switch to a different game system.
+        /// </summary>
+        public void SwitchGame(string gameName)
+        {
+            Debug.Log($"[GameManager] Switching to game: {gameName}");
+            // Notify network manager of game change
+            var nm = NetworkManager.Instance;
+            if (nm != null && nm.IsConnected)
+            {
+                nm.SendRequest($"/game/switch?game={gameName}", null);
+            }
+            // Reset scene for new game
+            FetchInitialState();
+        }
+
+        /// <summary>
+        /// Enter battlefield mode from Electron client command.
+        /// </summary>
+        public void EnterBattlefieldFromElectron(long locationId, string timePeriod, string terrain)
+        {
+            EnterBattlefieldMode(locationId, timePeriod, terrain);
+        }
     }
 }

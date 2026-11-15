@@ -23,6 +23,7 @@ import java.time.format.DateTimeFormatter;
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE + 1)
+@SuppressWarnings("UastIncorrectHttpHeaderInspection")
 public class ApiDeprecationFilter extends OncePerRequestFilter {
 
     private static final String DEPRECATION_HEADER = "Deprecation";

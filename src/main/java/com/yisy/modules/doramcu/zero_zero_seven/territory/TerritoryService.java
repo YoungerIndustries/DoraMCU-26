@@ -1,8 +1,8 @@
 package com.yisy.modules.doramcu.zero_zero_seven.territory;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.zero_zero_seven.model.BondTerritory;
 import com.yisy.modules.doramcu.zero_zero_seven.repository.BondTerritoryRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;

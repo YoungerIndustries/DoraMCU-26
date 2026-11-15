@@ -43,7 +43,7 @@ spec:
               service:
                 name: doramcu-app
                 port:
-                  number: 8084
+                  number: 8080
     # Prometheus metrics (internal only)
     - host: metrics.doramcu.local
       http:

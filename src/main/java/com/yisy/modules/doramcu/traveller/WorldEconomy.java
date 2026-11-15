@@ -112,12 +112,7 @@ public class WorldEconomy {
         if (uwp.getLawLevel() >= 7) {
             return true;
         }
-
-        // Anarchy worlds have unregulated but dangerous trade
-        if (world.hasTradeCode(TradeCode.AN)) {
-            return false; // No restrictions, but risky
-        }
-
+        // Anarchy worlds and normal worlds have no trade restrictions
         return false;
     }
 

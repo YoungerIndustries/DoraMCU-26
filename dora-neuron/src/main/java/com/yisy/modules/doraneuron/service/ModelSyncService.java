@@ -1,10 +1,13 @@
 package com.yisy.modules.doraneuron.service;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.config.NeuronConfig;
 import com.yisy.modules.doraneuron.config.NeuronPrometheusMetrics;
 import com.yisy.modules.doraneuron.model.NeuronIdentity;
 import com.yisy.modules.doraneuron.protocol.ModelUpdateNotification;
 import com.yisy.modules.doraneuron.security.ModelSignatureService;
+import com.yisy.modules.doraneuron.util.InferenceEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -37,7 +40,9 @@ import java.util.Map;
  * coordinator to push model updates to this Neuron.
  */
 @Service
-@ConditionalOnBean(SatelliteAiService.class)
+@ConditionalOnBean({InferenceEngine.class, SatelliteAiService.class})
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class ModelSyncService {
 
     private static final Logger log = LoggerFactory.getLogger(ModelSyncService.class);

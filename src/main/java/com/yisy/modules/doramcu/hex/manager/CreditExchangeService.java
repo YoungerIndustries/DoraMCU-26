@@ -1,7 +1,9 @@
 package com.yisy.modules.doramcu.hex.manager;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.*;
 import com.yisy.modules.doramcu.traveller.Commodity;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
  *   <li><b>Resources to Credits</b>: Converts DoraMCU resources into Traveller credits
  *       for purchasing commodities on Traveller worlds</li>
  *   <li><b>Market Feedback</b>: Resource scarcity in DoraMCU affects Traveller trade prices
- *       — when a resource is scarce, its corresponding commodity becomes more expensive</li>
+ *       Ã¢â‚¬â€ when a resource is scarce, its corresponding commodity becomes more expensive</li>
  * </ul>
  * <p>
  * Exchange rates are dynamic and influenced by:
@@ -31,13 +33,14 @@ import java.util.stream.Collectors;
  * The commodity-to-resource mapping follows Classic Traveller trade rules:
  * </p>
  * <ul>
- *   <li>Food, Medicine → Nutrient</li>
- *   <li>Metals, Machinery → Metal Alloy</li>
- *   <li>Fuel, Chemicals → Fuel</li>
- *   <li>Electronics, Computers → Power Cell</li>
- *   <li>Textiles, Plastics → Composite</li>
+ *   <li>Food, Medicine Ã¢â€ â€™ Nutrient</li>
+ *   <li>Metals, Machinery Ã¢â€ â€™ Metal Alloy</li>
+ *   <li>Fuel, Chemicals Ã¢â€ â€™ Fuel</li>
+ *   <li>Electronics, Computers Ã¢â€ â€™ Power Cell</li>
+ *   <li>Textiles, Plastics Ã¢â€ â€™ Composite</li>
  * </ul>
  */
+
 public class CreditExchangeService {
 
     /** Base conversion rate: 1 credit = this many resource units (before scarcity modifier) */
@@ -61,8 +64,8 @@ public class CreditExchangeService {
     private final GameContext context;
     private final Random random;
 
-    /** Tracks total credits earned from trade per empire */
-    private final Map<Integer, Long> empireTradeCredits = new HashMap<>();
+    /** Maps empire ID to its EconomicState for unified credit tracking. */
+    private final Map<Integer, EconomicState> economicStates = new HashMap<>();
 
     /** Tracks total resources converted from credits per empire */
     private final Map<Integer, Map<RefinedResourceType, Integer>> empireResourceConversion = new HashMap<>();
@@ -75,6 +78,31 @@ public class CreditExchangeService {
     public CreditExchangeService(GameContext context) {
         this.context = context;
         this.random = context.getRandom();
+    }
+
+    /**
+     * Registers an EconomicState for an empire.
+     * <p>
+     * Called by TurnManager when a pipeline is initialized so that
+     * credit operations flow through the unified economic state.
+     * </p>
+     *
+     * @param economicState the economic state to register
+     */
+    public void registerEconomicState(EconomicState economicState) {
+        if (economicState != null) {
+            economicStates.put(economicState.getEmpireId(), economicState);
+        }
+    }
+
+    /**
+     * Returns the EconomicState for an empire, or null if not registered.
+     *
+     * @param empireId the empire ID
+     * @return the economic state or null
+     */
+    public EconomicState getEconomicState(int empireId) {
+        return economicStates.get(empireId);
     }
 
     // ============================================================
@@ -115,7 +143,6 @@ public class CreditExchangeService {
 
         // Track conversion
         int empireId = pipeline.getOwnerEmpireId();
-        empireTradeCredits.merge(empireId, credits - (long)(added / exchangeRate), Long::sum);
         empireResourceConversion
                 .computeIfAbsent(empireId, k -> new EnumMap<>(RefinedResourceType.class))
                 .merge(resourceType, added, Integer::sum);
@@ -266,7 +293,7 @@ public class CreditExchangeService {
         if (ratio < SCARCITY_THRESHOLD) {
             // Scarcity: price increases up to 2x
             double scarcityFactor = ratio / SCARCITY_THRESHOLD;
-            return 1.0 + 1.0 * (1.0 - scarcityFactor); // 1.0 to 2.0
+            return 1.0 + (1.0 - scarcityFactor); // 1.0 to 2.0
         } else if (ratio > SURPLUS_THRESHOLD) {
             // Surplus: price decreases down to 0.7x
             double surplusFactor = (ratio - SURPLUS_THRESHOLD) / (1.0 - SURPLUS_THRESHOLD);
@@ -382,39 +409,46 @@ public class CreditExchangeService {
     // ============================================================
 
     /**
-     * Adds credits to an empire's trade credit balance.
+     * Adds credits to an empire's trade credit balance via EconomicState.
+     * <p>
+     * If an EconomicState is registered for this empire, credits are added there.
+     * Otherwise, this is a no-op for backward compatibility.
+     * </p>
      *
      * @param empireId the empire ID
      * @param credits the credits to add
      */
     public void addTradeCredits(int empireId, long credits) {
-        empireTradeCredits.merge(empireId, credits, Long::sum);
+        EconomicState state = economicStates.get(empireId);
+        if (state != null) {
+            state.addCredits(EconomicState.IncomeSource.TRADE, credits);
+        }
     }
 
     /**
-     * Spends credits from an empire's trade credit balance.
+     * Spends credits from an empire's credit balance via EconomicState.
      *
      * @param empireId the empire ID
      * @param credits the credits to spend
      * @return true if sufficient credits were available
      */
     public boolean spendTradeCredits(int empireId, long credits) {
-        long current = empireTradeCredits.getOrDefault(empireId, 0L);
-        if (current >= credits) {
-            empireTradeCredits.merge(empireId, -credits, Long::sum);
-            return true;
+        EconomicState state = economicStates.get(empireId);
+        if (state != null) {
+            return state.spendCredits(EconomicState.IncomeSource.TRADE, credits);
         }
         return false;
     }
 
     /**
-     * Gets an empire's current trade credit balance.
+     * Gets an empire's current trade credit balance via EconomicState.
      *
      * @param empireId the empire ID
      * @return the credit balance
      */
     public long getTradeCreditBalance(int empireId) {
-        return empireTradeCredits.getOrDefault(empireId, 0L);
+        EconomicState state = economicStates.get(empireId);
+        return state != null ? state.getCreditBalance() : 0L;
     }
 
     // ============================================================
@@ -449,7 +483,7 @@ public class CreditExchangeService {
      */
     public List<Map<String, Object>> getAllExchangeSummaries() {
         List<Map<String, Object>> summaries = new ArrayList<>();
-        for (int empireId : empireTradeCredits.keySet()) {
+        for (int empireId : economicStates.keySet()) {
             summaries.add(getExchangeSummary(empireId));
         }
         return summaries;

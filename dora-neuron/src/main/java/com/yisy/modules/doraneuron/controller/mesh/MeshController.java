@@ -31,6 +31,7 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/api/v1/mesh")
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
 @ConditionalOnProperty(prefix = "neuron", name = "mesh-enabled", havingValue = "true", matchIfMissing = true)
 public class MeshController {
 

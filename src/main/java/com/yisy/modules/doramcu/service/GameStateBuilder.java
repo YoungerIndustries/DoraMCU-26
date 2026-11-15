@@ -1,14 +1,20 @@
 package com.yisy.modules.doramcu.service;
 
 import com.yisy.modules.doramcu.ai.AiDelegationService;
+import com.yisy.modules.doramcu.corporation.service.CorporateOfficeService;
+import com.yisy.modules.doramcu.corporation.service.CorporateRoleService;
+import com.yisy.modules.doramcu.corporation.service.CorporationEconomyService;
 import com.yisy.modules.doramcu.dto.*;
+import com.yisy.modules.doramcu.eve.model.EveCorporation;
 import com.yisy.modules.doramcu.hex.*;
 import com.yisy.modules.doramcu.hex.Player;
+import com.yisy.modules.doramcu.model.CorporateRole;
 import com.yisy.modules.doramcu.model.GameSession;
+import com.yisy.modules.doramcu.repository.EveCorporationRepository;
 import com.yisy.modules.doramcu.repository.SolarSystemRepository;
 import com.yisy.modules.doramcu.repository.GalaxyRepository;
 import com.yisy.modules.doramcu.repository.SubSectorRepository;
-import com.yisy.modules.doramcu.unified.GameType;
+import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.unified.GlobalClock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,17 +41,29 @@ public class GameStateBuilder {
     private final SubSectorRepository subSectorRepository;
     private final TurnScheduler turnScheduler;
     private final AiDelegationService aiDelegationService;
+    private final EveCorporationRepository eveCorporationRepository;
+    private final CorporationEconomyService corporationEconomyService;
+    private final CorporateOfficeService corporateOfficeService;
+    private final CorporateRoleService corporateRoleService;
 
     public GameStateBuilder(SolarSystemRepository solarSystemRepository,
                             GalaxyRepository galaxyRepository,
                             SubSectorRepository subSectorRepository,
                             @Lazy TurnScheduler turnScheduler,
-                            @Lazy AiDelegationService aiDelegationService) {
+                            @Lazy AiDelegationService aiDelegationService,
+                            EveCorporationRepository eveCorporationRepository,
+                            CorporationEconomyService corporationEconomyService,
+                            CorporateOfficeService corporateOfficeService,
+                            CorporateRoleService corporateRoleService) {
         this.solarSystemRepository = solarSystemRepository;
         this.galaxyRepository = galaxyRepository;
         this.subSectorRepository = subSectorRepository;
         this.turnScheduler = turnScheduler;
         this.aiDelegationService = aiDelegationService;
+        this.eveCorporationRepository = eveCorporationRepository;
+        this.corporationEconomyService = corporationEconomyService;
+        this.corporateOfficeService = corporateOfficeService;
+        this.corporateRoleService = corporateRoleService;
     }
 
     /**
@@ -274,6 +292,11 @@ public class GameStateBuilder {
                     order.isCancelled(),
                     order.isInProgress()
             );
+            // Set new fields for enhanced transport orders
+            dto.setPriority(order.getPriority().name());
+            dto.setAssignedFleetId(order.getAssignedFleetId());
+            dto.setConsolidated(order.isConsolidated());
+            dto.setCargoManifest(enumMapToStringMap(order.getCargoManifest()));
             transportDtos.add(dto);
         }
         details.setTransportOrders(transportDtos);
@@ -1389,6 +1412,11 @@ public class GameStateBuilder {
             response.setElapsedDays(clock.getElapsedDays());
         }
 
+        // Populate corporation state for the current player
+        if (playerId != null) {
+            response.setCorporationState(buildCorporationState(playerId));
+        }
+
         // Mark contested subsectors (any empire other than the requesting player owns planets here)
         final Integer playerEmpireId = playerEmpireIdHolder[0];
         if (playerEmpireId != null) {
@@ -1401,5 +1429,76 @@ public class GameStateBuilder {
             }
         }
         return response;
+    }
+
+    /**
+     * Builds the corporation state summary for a player.
+     * Returns null if the player has no corporation.
+     */
+    private Map<String, Object> buildCorporationState(Long playerId) {
+        try {
+            // Find the player's corporation
+            Optional<EveCorporation> corpOpt = eveCorporationRepository.findByCeoPlayerId(String.valueOf(playerId));
+            if (corpOpt.isEmpty()) {
+                return null;
+            }
+
+            EveCorporation corp = corpOpt.get();
+            Long corporationId = corp.getId();
+
+            Map<String, Object> state = new LinkedHashMap<>();
+            state.put("corporationId", corporationId);
+            state.put("corporationName", corp.getName());
+            state.put("ticker", corp.getTicker());
+
+            // Financial state
+            try {
+                Map<String, Object> report = corporationEconomyService.getFinancialReport(corporationId);
+                state.put("creditBalance", report.get("creditBalance"));
+                state.put("totalRevenue", report.get("totalRevenue"));
+                state.put("totalExpenses", report.get("totalExpenses"));
+                state.put("netProfit", report.get("netProfit"));
+                state.put("isInsolvent", report.get("isInsolvent"));
+            } catch (Exception e) {
+                log.debug("Could not get financial report for corp {}: {}", corporationId, e.getMessage());
+                state.put("creditBalance", corp.getCreditBalance());
+                state.put("isInsolvent", false);
+            }
+
+            // Active contracts count
+            try {
+                int activeContracts = corporateOfficeService.getActiveContracts(corporationId).size();
+                state.put("activeContracts", activeContracts);
+            } catch (Exception e) {
+                log.debug("Could not get active contracts for corp {}: {}", corporationId, e.getMessage());
+                state.put("activeContracts", 0);
+            }
+
+            // Active hires count
+            try {
+                int activeHires = corporateOfficeService.getActiveHires(corporationId).size();
+                state.put("activeHires", activeHires);
+            } catch (Exception e) {
+                log.debug("Could not get active hires for corp {}: {}", corporationId, e.getMessage());
+                state.put("activeHires", 0);
+            }
+
+            // Player role and AI assistant status
+            try {
+                Optional<CorporateRole> roleOpt = corporateRoleService.getPlayerRole(playerId);
+                if (roleOpt.isPresent()) {
+                    state.put("currentRole", roleOpt.get().name());
+                    state.put("roleDisplayName", roleOpt.get().getDisplayName());
+                    state.put("aiAssistantActive", roleOpt.get() == CorporateRole.VP);
+                }
+            } catch (Exception e) {
+                log.debug("Could not get role for player {}: {}", playerId, e.getMessage());
+            }
+
+            return state;
+        } catch (Exception e) {
+            log.debug("Could not build corporation state for player {}: {}", playerId, e.getMessage());
+            return null;
+        }
     }
 }

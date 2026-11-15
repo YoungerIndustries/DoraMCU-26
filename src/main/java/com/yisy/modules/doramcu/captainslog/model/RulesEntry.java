@@ -19,7 +19,12 @@ import jakarta.persistence.*;
  * This entity enables the AI and game services to query official rules during task completions,
  * ensuring that dice rolls, combat resolution, and narrative decisions follow the published rules.
  * </p>
+ *
+ * @deprecated Use {@link com.yisy.modules.doramcu.shared.model.RulesEntry} with
+ * {@code gameSystem = GameSystem.CAPTAINS_LOG} instead. The unified entity supports all
+ * game systems in a single table, eliminating schema duplication.
  */
+@Deprecated
 @Entity
 @Table(name = "cl_rules_entries", indexes = {
         @Index(name = "idx_cl_rules_category", columnList = "category"),

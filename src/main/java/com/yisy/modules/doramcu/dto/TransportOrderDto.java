@@ -1,10 +1,12 @@
 package com.yisy.modules.doramcu.dto;
 
+import java.util.Map;
+
 /**
  * Detailed information about a transport order.
  * <p>
  * Includes source and destination, resource type and amount,
- * progress tracking, and status.
+ * progress tracking, status, priority, fleet assignment, and cargo manifest.
  * </p>
  */
 public class TransportOrderDto {
@@ -21,7 +23,7 @@ public class TransportOrderDto {
     /** Destination celestial body ID */
     private int destinationBodyId;
 
-    /** Raw resource type being transported */
+    /** Raw resource type being transported (primary type for consolidated orders) */
     private String resourceType;
 
     /** Total amount to transport */
@@ -50,6 +52,18 @@ public class TransportOrderDto {
 
     /** Whether the transport is still in progress */
     private boolean inProgress;
+
+    /** Transport priority level (NORMAL, URGENT, BULK) */
+    private String priority;
+
+    /** Assigned fleet ID (null if no fleet assigned) */
+    private Integer assignedFleetId;
+
+    /** Whether this transport carries multiple resource types */
+    private boolean consolidated;
+
+    /** Cargo manifest: resource type to amount mapping */
+    private Map<String, Integer> cargoManifest;
 
     public TransportOrderDto() {
     }
@@ -184,5 +198,37 @@ public class TransportOrderDto {
 
     public void setInProgress(boolean inProgress) {
         this.inProgress = inProgress;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public Integer getAssignedFleetId() {
+        return assignedFleetId;
+    }
+
+    public void setAssignedFleetId(Integer assignedFleetId) {
+        this.assignedFleetId = assignedFleetId;
+    }
+
+    public boolean isConsolidated() {
+        return consolidated;
+    }
+
+    public void setConsolidated(boolean consolidated) {
+        this.consolidated = consolidated;
+    }
+
+    public Map<String, Integer> getCargoManifest() {
+        return cargoManifest;
+    }
+
+    public void setCargoManifest(Map<String, Integer> cargoManifest) {
+        this.cargoManifest = cargoManifest;
     }
 }

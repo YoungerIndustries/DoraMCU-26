@@ -21,6 +21,8 @@ public class E26Species {
     private String name;
     private String description;
     private String gameModule;
+    private boolean isAnimal;
+    private String animalCategory;
     private Map<String, Integer> characteristics;
     private int combatDM;
     private int socialDM;
@@ -45,6 +47,12 @@ public class E26Species {
 
     public String getGameModule() { return gameModule; }
     public void setGameModule(String gameModule) { this.gameModule = gameModule; }
+
+    public boolean isAnimal() { return isAnimal; }
+    public void setAnimal(boolean animal) { isAnimal = animal; }
+
+    public String getAnimalCategory() { return animalCategory; }
+    public void setAnimalCategory(String animalCategory) { this.animalCategory = animalCategory; }
 
     public Map<String, Integer> getCharacteristics() { return characteristics; }
     public void setCharacteristics(Map<String, Integer> characteristics) { this.characteristics = characteristics; }

@@ -28,6 +28,9 @@ public class ThirdReichGroundUnit {
     private String commanderId;
     private String sourceGame;
 
+    /** AI Core combat bonus multiplier from the source entity's AI Core component. */
+    private double aiCoreBonus;
+
     /**
      * Creates a new ground unit.
      *
@@ -176,24 +179,36 @@ public class ThirdReichGroundUnit {
         this.sourceGame = sourceGame;
     }
 
+    /** Returns the AI Core combat bonus multiplier. */
+    public double getAiCoreBonus() {
+        return aiCoreBonus;
+    }
+
+    /** Sets the AI Core combat bonus multiplier. */
+    public void setAiCoreBonus(double aiCoreBonus) {
+        this.aiCoreBonus = aiCoreBonus;
+    }
+
     // ---- Combat Calculations ----
 
     /**
-     * Returns the effective attack value modified by strength and morale.
+     * Returns the effective attack value modified by strength, morale, and AI Core bonus.
      */
     public int getEffectiveAttack() {
         double strengthRatio = strength / (double) maxStrength;
         double moraleFactor = Math.max(0.5, morale / 100.0);
-        return Math.max(1, (int) (attackValue * strengthRatio * moraleFactor));
+        double aiCoreMultiplier = 1.0 + aiCoreBonus;
+        return Math.max(1, (int) (attackValue * strengthRatio * moraleFactor * aiCoreMultiplier));
     }
 
     /**
-     * Returns the effective defense value modified by strength, morale, and terrain bonus.
+     * Returns the effective defense value modified by strength, morale, terrain bonus, and AI Core bonus.
      */
     public int getEffectiveDefense() {
         double strengthRatio = strength / (double) maxStrength;
         double moraleFactor = Math.max(0.5, morale / 100.0);
-        int base = (int) (defenseValue * strengthRatio * moraleFactor);
+        double aiCoreMultiplier = 1.0 + aiCoreBonus;
+        int base = (int) (defenseValue * strengthRatio * moraleFactor * aiCoreMultiplier);
         return Math.max(1, base + terrainBonus);
     }
 

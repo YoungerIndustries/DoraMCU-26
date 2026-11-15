@@ -380,8 +380,7 @@ public class CharacterConversionService {
         if (tourCount >= 4) return CaptainLogCharacter.Rank.CAPTAIN;
         if (tourCount >= 3) return CaptainLogCharacter.Rank.COMMANDER;
         if (tourCount >= 2) return CaptainLogCharacter.Rank.LIEUTENANT_COMMANDER;
-        if (tourCount >= 1) return CaptainLogCharacter.Rank.LIEUTENANT;
-        return CaptainLogCharacter.Rank.ENSIGN;
+        return CaptainLogCharacter.Rank.LIEUTENANT;
     }
 
     private CaptainLogCharacter.Education mapEducation(int edu, int soc) {

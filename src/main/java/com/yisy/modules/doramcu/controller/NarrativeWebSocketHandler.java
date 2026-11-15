@@ -1,8 +1,10 @@
 package com.yisy.modules.doramcu.controller;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.yisy.modules.doramcu.service.GameStateBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
@@ -47,11 +49,14 @@ import java.util.concurrent.TimeUnit;
  * Narrative styles: dramatic, subtle, epic, mysterious, urgent, peaceful, chaotic, reflective
  * </p>
  */
+@Component
 public class NarrativeWebSocketHandler extends TextWebSocketHandler {
 
     private static final Logger log = LoggerFactory.getLogger(NarrativeWebSocketHandler.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final GameStateBridge gameStateBridge;
+    private final boolean realDataMode;
 
     // Session management
     private final Map<WebSocketSession, String> sessionPlayerIds = new ConcurrentHashMap<>();
@@ -192,9 +197,18 @@ public class NarrativeWebSocketHandler extends TextWebSocketHandler {
     }
 
     public NarrativeWebSocketHandler() {
-        // Simulate narrative events
-        scheduler.scheduleAtFixedRate(this::simulateNarrativeEvents, 20, 30, TimeUnit.SECONDS);
-        scheduler.scheduleAtFixedRate(this::resolveOldEvents, 60, 60, TimeUnit.SECONDS);
+        this(null, false);
+    }
+
+    public NarrativeWebSocketHandler(GameStateBridge gameStateBridge, boolean realDataMode) {
+        this.gameStateBridge = gameStateBridge;
+        this.realDataMode = realDataMode;
+        if (!realDataMode) {
+            scheduler.scheduleAtFixedRate(this::simulateNarrativeEvents, 20, 30, TimeUnit.SECONDS);
+            scheduler.scheduleAtFixedRate(this::resolveOldEvents, 60, 60, TimeUnit.SECONDS);
+        } else {
+            log.info("Narrative handler starting in real-data mode");
+        }
     }
 
     @Override
@@ -467,5 +481,24 @@ public class NarrativeWebSocketHandler extends TextWebSocketHandler {
      */
     public int getTimelineSize() {
         return timeline.size();
+    }
+
+    /**
+     * Broadcast a galaxy event to all connected sessions.
+     * Called by GalaxyEventBridge when real galaxy events occur.
+     *
+     * @param message the JSON message to broadcast
+     */
+    public void broadcastGalaxyEvent(ObjectNode message) {
+        try {
+            String json = objectMapper.writeValueAsString(message);
+            broadcast(new TextMessage(json));
+        } catch (Exception e) {
+            log.error("Failed to broadcast galaxy event to narrative handler", e);
+        }
+    }
+
+    public boolean isRealDataMode() {
+        return realDataMode;
     }
 }

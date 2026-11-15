@@ -13,6 +13,8 @@ public interface Earth2026LocationRepository extends JpaRepository<Earth2026Loca
 
     List<Earth2026Location> findByType(String type);
 
+    long countByType(String type);
+
     List<Earth2026Location> findByHasPortalTrue();
 
     long countByHasPortalTrue();

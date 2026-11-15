@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.hex.planet;
 
+import com.yisy.modules.doramcu.ai.GalaxyOverlordAI;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -91,7 +93,6 @@ public class RpgQuestSystem {
         int maxTurns;
         int minReputation;
         CargoType cargoType = null;
-        String destinationPlanetId = null;
 
         switch (type) {
             case DELIVERY:
@@ -208,7 +209,7 @@ public class RpgQuestSystem {
                 empireId, targetValue,
                 rewardCredits, rewardXp, rewardReputation,
                 maxTurns, minReputation, CorporationRank.FREELANCER,
-                cargoType, destinationPlanetId
+                cargoType, null
         );
 
         allQuests.put(id, quest);

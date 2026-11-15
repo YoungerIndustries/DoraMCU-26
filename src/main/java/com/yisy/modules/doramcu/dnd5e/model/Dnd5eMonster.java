@@ -236,6 +236,13 @@ public class Dnd5eMonster {
     @Column(nullable = false)
     private boolean active = true;
 
+    /**
+     * Whether this monster is fictional (true) or a real-world animal (false).
+     * Defaults to true for backward compatibility with existing monsters.
+     */
+    @Column(name = "is_fictional", nullable = false)
+    private boolean isFictional = true;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -517,6 +524,14 @@ public class Dnd5eMonster {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public boolean isFictional() {
+        return isFictional;
+    }
+
+    public void setFictional(boolean fictional) {
+        isFictional = fictional;
     }
 
     public LocalDateTime getCreatedAt() {

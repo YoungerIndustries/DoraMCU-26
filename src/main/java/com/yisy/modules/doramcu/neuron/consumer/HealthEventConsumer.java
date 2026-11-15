@@ -7,9 +7,9 @@ import com.yisy.modules.doramcu.neuron.service.NeuronRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
-import org.springframework.stereotype.Service;
 
 /**
  * Kafka consumer for health heartbeat events from neurons.
@@ -19,8 +19,8 @@ import org.springframework.stereotype.Service;
  *
  * Enabled only when Kafka is configured and connected.
  */
-@Service
 @ConditionalOnBean(NeuronRegistry.class)
+@ConditionalOnClass(KafkaListener.class)
 public class HealthEventConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(HealthEventConsumer.class);

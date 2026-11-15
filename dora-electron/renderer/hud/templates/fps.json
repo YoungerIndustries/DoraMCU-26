@@ -1,0 +1,150 @@
+{
+    "id": "fps",
+    "name": "FPS Multiplayer",
+    "icon": "🔫",
+    "gameModule": "fps",
+
+    "layout": {
+        "leftPanelWidth": 280,
+        "rightPanelWidth": 300,
+        "leftSplitRatio": 0.5,
+        "rightSplitRatio": 0.4
+    },
+
+    "theme": {
+        "cssVariables": {
+            "--hud-accent-primary": "#10b981",
+            "--hud-accent-secondary": "#059669",
+            "--hud-accent-glow": "rgba(16, 185, 129, 0.15)"
+        },
+        "fontFamily": "'Segoe UI', system-ui, -apple-system, sans-serif",
+        "panelBackground": "#1a2332",
+        "accentColor": "#10b981",
+        "borderColor": "#2a3a52",
+        "fontColor": "#e2e8f0"
+    },
+
+    "panels": {
+        "info": {
+            "visible": true,
+            "title": "Player Status",
+            "components": [
+                {
+                    "type": "selector",
+                    "label": "Select Match...",
+                    "dataBinding": "match-select"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Health",
+                    "dataBinding": "health"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Shield",
+                    "dataBinding": "shield"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Armor",
+                    "dataBinding": "armor"
+                }
+            ]
+        },
+        "prompt": {
+            "visible": true,
+            "title": "Kill Feed",
+            "components": [
+                {
+                    "type": "narrative-text",
+                    "label": "Waiting for match...",
+                    "dataBinding": "kill-feed"
+                }
+            ]
+        },
+        "responses": {
+            "visible": true,
+            "title": "Weapons & Actions",
+            "components": [
+                {
+                    "type": "action-button",
+                    "icon": "🔫",
+                    "label": "Pistol",
+                    "hint": "12/60",
+                    "dataBinding": "switch-weapon-0"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🔫",
+                    "label": "Assault Rifle",
+                    "hint": "30/120",
+                    "dataBinding": "switch-weapon-1"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🔫",
+                    "label": "Shotgun",
+                    "hint": "8/32",
+                    "dataBinding": "switch-weapon-2"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🔫",
+                    "label": "Machine Gun",
+                    "hint": "100/300",
+                    "dataBinding": "switch-weapon-3"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🔫",
+                    "label": "Sniper",
+                    "hint": "5/20",
+                    "dataBinding": "switch-weapon-4"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🚀",
+                    "label": "Rocket Launcher",
+                    "hint": "3/6",
+                    "dataBinding": "switch-weapon-5"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "💥",
+                    "label": "Fire",
+                    "hint": "Shoot weapon",
+                    "dataBinding": "fire"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "🔄",
+                    "label": "Reload",
+                    "hint": "Reload weapon",
+                    "dataBinding": "reload"
+                }
+            ]
+        },
+        "actions": {
+            "visible": true,
+            "title": "Scoreboard",
+            "components": [
+                {
+                    "type": "scoreboard",
+                    "dataBinding": "scoreboard"
+                },
+                {
+                    "type": "chat-input",
+                    "placeholder": "Team chat message...",
+                    "dataBinding": "team-chat"
+                }
+            ]
+        }
+    },
+
+    "view3D": {
+        "renderer": "threejs",
+        "cameraMode": "fps",
+        "showCrosshair": true,
+        "showMinimap": true
+    }
+}

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.dto.CreateCharacterRequest;
 import com.yisy.modules.doramcu.captainslog.dto.CreateStarshipRequest;

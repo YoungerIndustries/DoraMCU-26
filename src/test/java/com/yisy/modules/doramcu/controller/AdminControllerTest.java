@@ -12,6 +12,7 @@ import com.yisy.modules.doramcu.service.GameSessionService;
 import com.yisy.modules.doramcu.service.TurnScheduler;
 import com.yisy.modules.doradl.dl.service.DoraAiLearningService;
 import com.yisy.modules.doramcu.service.PromoCodeService;
+import com.yisy.modules.doramcu.repository.AiCharacterRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -73,6 +74,9 @@ class AdminControllerTest {
     @Mock
     private DoraAiLearningService doraAiLearningService;
 
+    @Mock
+    private AiCharacterRepository aiCharacterRepository;
+
     private AdminController adminController;
 
     @TempDir
@@ -82,7 +86,7 @@ class AdminControllerTest {
     void setUp() {
         adminController = new AdminController(userRepository, passwordEncoder,
                 galaxyRepository, sectorRepository, subSectorRepository, galaxyService, galaxyProgressService, playerRepository,
-                turnScheduler, gameSessionService, doraAiLearningService, mock(PromoCodeService.class));
+                turnScheduler, gameSessionService, doraAiLearningService, mock(PromoCodeService.class), aiCharacterRepository);
         // Reflectively set the logFileName to a temp file
         try {
             java.lang.reflect.Field field = AdminController.class.getDeclaredField("logFileName");

@@ -1,5 +1,6 @@
-const CACHE_NAME = 'dora-neuron-v2';
+const CACHE_NAME = 'dora-neuron-v3';
 const EXPERIENCE_CACHE = 'dora-experience-cache';
+const MODEL_CACHE = 'dora-model-cache';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -24,7 +25,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME && cacheName !== EXPERIENCE_CACHE) {
+          if (cacheName !== CACHE_NAME && cacheName !== EXPERIENCE_CACHE && cacheName !== MODEL_CACHE) {
             return caches.delete(cacheName);
           }
         })
@@ -37,6 +38,28 @@ self.addEventListener('activate', (event) => {
 // Fetch event - cache-first strategy for static assets, network-first for API calls
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
+
+  // Cache ONNX models in dedicated model cache
+  if (url.pathname.endsWith('.onnx') || url.pathname.includes('/models/')) {
+    event.respondWith(
+      caches.open(MODEL_CACHE).then((modelCache) => {
+        return modelCache.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          return fetch(event.request).then((response) => {
+            if (response && response.status === 200) {
+              modelCache.put(event.request, response.clone());
+            }
+            return response;
+          }).catch(() => {
+            return cachedResponse || new Response('Model not available', { status: 503 });
+          });
+        });
+      })
+    );
+    return;
+  }
 
   // Network-first for API calls
   if (url.pathname.startsWith('/api/')) {

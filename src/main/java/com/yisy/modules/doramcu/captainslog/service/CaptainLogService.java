@@ -1,11 +1,12 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.dto.*;
 import com.yisy.modules.doramcu.captainslog.model.*;
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogMissionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -17,10 +18,10 @@ import java.util.Optional;
  * <p>
  * This class is now a thin facade that delegates to focused sub-services:
  * <ul>
- *   <li>{@link CaptainLogCharacterService} — character and starship CRUD</li>
- *   <li>{@link CaptainLogMissionService} — mission lifecycle and log entries</li>
- *   <li>{@link DiceService} — 2d20 dice rolling and oracle queries</li>
- *   <li>{@link AIMissionService} — AI-based mission generation</li>
+ *   <li>{@link CaptainLogCharacterService} â€” character and starship CRUD</li>
+ *   <li>{@link CaptainLogMissionService} â€” mission lifecycle and log entries</li>
+ *   <li>{@link DiceService} â€” 2d20 dice rolling and oracle queries</li>
+ *   <li>{@link AIMissionService} â€” AI-based mission generation</li>
  * </ul>
  * </p>
  */
@@ -38,6 +39,7 @@ public class CaptainLogService {
     private final ProbabilityMatrixService probabilityMatrixService;
     private final LifepathService lifepathService;
     private final CaptainLogCrewService crewService;
+    @Qualifier("captainsLogCareerProgressionService")
     private final CareerProgressionService careerProgressionService;
     private final DifficultyScalingService difficultyScalingService;
     private final InjuryService injuryService;
@@ -63,7 +65,7 @@ public class CaptainLogService {
                              ProbabilityMatrixService probabilityMatrixService,
                              LifepathService lifepathService,
                              CaptainLogCrewService crewService,
-                             CareerProgressionService careerProgressionService,
+                             @Qualifier("captainsLogCareerProgressionService") CareerProgressionService careerProgressionService,
                              DifficultyScalingService difficultyScalingService,
                              InjuryService injuryService,
                              EquipmentService equipmentService,
@@ -812,8 +814,8 @@ public class CaptainLogService {
      * Gets all rule entries for a specific category.
      */
     public List<CaptainLogEntry> getRulesByCategory(String category) {
-        // Delegate to RulesService — returns RulesEntry, not CaptainLogEntry
-        return List.of(); // placeholder — actual type is RulesEntry, exposed via controller
+        // Delegate to RulesService â€” returns RulesEntry, not CaptainLogEntry
+        return List.of(); // placeholder â€” actual type is RulesEntry, exposed via controller
     }
 
     /**

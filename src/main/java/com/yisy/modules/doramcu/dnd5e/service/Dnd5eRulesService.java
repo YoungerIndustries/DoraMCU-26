@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.dnd5e.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.shared.model.GameSystem;
 import com.yisy.modules.doramcu.shared.model.RulesEntry;
@@ -9,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class Dnd5eRulesService {
         List<RulesEntry> entries = new ArrayList<>();
 
         // ============================================================
-        // PHB — Core Rules
+        // PHB â€” Core Rules
         // ============================================================
 
         // --- ABILITY CHECKS ---
@@ -182,7 +182,7 @@ public class Dnd5eRulesService {
                 "Short rests do not recover spell slots, except for specific features like Warlock's Pact Magic."));
 
         entries.add(createEntry("Spell Components", "PHB", "Spellcasting", "SPELLCASTING", 201,
-                "Spells have three types of components: Verbal (V) — spoken words; Somatic (S) — hand gestures; Material (M) — physical objects. Material components are specified in the spell description. A component pouch or spellcasting focus can substitute for material components that lack a gold cost and aren't consumed.",
+                "Spells have three types of components: Verbal (V) â€” spoken words; Somatic (S) â€” hand gestures; Material (M) â€” physical objects. Material components are specified in the spell description. A component pouch or spellcasting focus can substitute for material components that lack a gold cost and aren't consumed.",
                 "A spell with a Somatic component requires a free hand unless you have a focus or material component."));
 
         entries.add(createEntry("Spell Schools", "PHB", "Spellcasting", "SPELL_SCHOOLS", 201,
@@ -210,7 +210,7 @@ public class Dnd5eRulesService {
 
         // --- ABILITY SCORE GENERATION ---
         entries.add(createEntry("Ability Score Generation", "PHB", "Character Creation", "CHARACTER_CREATION", 23,
-                "There are several methods for generating ability scores: Standard Array — use the scores 15, 14, 13, 12, 10, 8 and assign them to abilities. Point Buy — spend 27 points to buy scores (cost: 8=0, 9=1, 10=2, 11=3, 12=4, 13=5, 14=7, 15=9). Rolling — roll 4d6 and drop the lowest die for each of the six scores. Racial traits may add bonuses to ability scores.",
+                "There are several methods for generating ability scores: Standard Array â€” use the scores 15, 14, 13, 12, 10, 8 and assign them to abilities. Point Buy â€” spend 27 points to buy scores (cost: 8=0, 9=1, 10=2, 11=3, 12=4, 13=5, 14=7, 15=9). Rolling â€” roll 4d6 and drop the lowest die for each of the six scores. Racial traits may add bonuses to ability scores.",
                 "The DM chooses which method the party uses."));
 
         // --- HIT DICE ---
@@ -224,7 +224,7 @@ public class Dnd5eRulesService {
                 "Magic item crafting requires special prerequisites and is at the DM's discretion."));
 
         entries.add(createEntry("Non-Magical Item Crafting", "PHB", "Crafting", "CRAFTING", 233,
-                "To craft a non-magical item, you need: 1) Proficiency with the relevant tool. 2) Raw materials costing half the item's gold value. 3) Time — typically 1 day per 25 gp of the item's price. Each day, make an ability check with the tool's associated ability. The DC is set by the DM based on complexity (typically 10-15). On a success, you complete progress equal to 25 gp worth of work.",
+                "To craft a non-magical item, you need: 1) Proficiency with the relevant tool. 2) Raw materials costing half the item's gold value. 3) Time â€” typically 1 day per 25 gp of the item's price. Each day, make an ability check with the tool's associated ability. The DC is set by the DM based on complexity (typically 10-15). On a success, you complete progress equal to 25 gp worth of work.",
                 "Common items use DC 10-12. Uncommon items use DC 15. Rare items use DC 17+."));
 
         entries.add(createEntry("Potion of Healing Crafting", "PHB", "Crafting", "CRAFTING", 233,
@@ -232,7 +232,7 @@ public class Dnd5eRulesService {
                 "Potions of healing are the most commonly crafted magical items."));
 
         entries.add(createEntry("Spell Scroll Crafting", "PHB", "Crafting", "CRAFTING", 233,
-                "A character who can cast a spell can create a spell scroll of that spell. The process requires calligraphy supplies and a blank scroll. The cost equals 50 gp × spell level (minimum 50 gp for cantrips). The time required is 8 hours per spell level. Make an INT check using a calligraphy set. The DC equals 15 + spell level.",
+                "A character who can cast a spell can create a spell scroll of that spell. The process requires calligraphy supplies and a blank scroll. The cost equals 50 gp Ã— spell level (minimum 50 gp for cantrips). The time required is 8 hours per spell level. Make an INT check using a calligraphy set. The DC equals 15 + spell level.",
                 "The spell must be on your class's spell list and of a level you can cast."));
 
         entries.add(createEntry("Group Crafting", "PHB", "Crafting", "CRAFTING", 233,
@@ -245,8 +245,8 @@ public class Dnd5eRulesService {
 
         // --- HEROIC INSPIRATION (2024 PHB) ---
         entries.add(createEntry("Heroic Inspiration Overview", "PHB 2024", "Core Rules", "HEROIC_INSPIRATION", 254,
-                "Heroic Inspiration replaces the old Inspiration mechanic. It lets you reroll any die after rolling it — including attack rolls, saving throws, ability checks, damage rolls, hit points gained on level-up, and wild magic surges. You keep the higher of the two rolls. This is the most versatile resource in the game, as it can improve any outcome.",
-                "Heroic Inspiration is not limited to d20 tests — it works on any die roll in the game."));
+                "Heroic Inspiration replaces the old Inspiration mechanic. It lets you reroll any die after rolling it â€” including attack rolls, saving throws, ability checks, damage rolls, hit points gained on level-up, and wild magic surges. You keep the higher of the two rolls. This is the most versatile resource in the game, as it can improve any outcome.",
+                "Heroic Inspiration is not limited to d20 tests â€” it works on any die roll in the game."));
 
         entries.add(createEntry("Earning Heroic Inspiration", "PHB 2024", "Core Rules", "HEROIC_INSPIRATION", 254,
                 "Humans get one Heroic Inspiration after a long rest. The Musician origin feat awards one Heroic Inspiration after any rest (short or long). The DM can also award Heroic Inspiration for exceptional roleplaying or creative problem-solving, at their discretion.",
@@ -262,7 +262,7 @@ public class Dnd5eRulesService {
 
         // --- REVISED EXHAUSTION (2024 PHB) ---
         entries.add(createEntry("Revised Exhaustion Overview", "PHB 2024", "Core Rules", "EXHAUSTION", 264,
-                "Exhaustion is tracked as a level from 0 to 6. Each level imposes a penalty of 2 × exhaustion level on all d20 tests (ability checks, saving throws, and attack rolls). Additionally, your speed is reduced by 5 × exhaustion level feet, to a minimum of 0. At level 6, you suffer a -12 penalty on d20 tests and your speed is reduced by 30 feet.",
+                "Exhaustion is tracked as a level from 0 to 6. Each level imposes a penalty of 2 Ã— exhaustion level on all d20 tests (ability checks, saving throws, and attack rolls). Additionally, your speed is reduced by 5 Ã— exhaustion level feet, to a minimum of 0. At level 6, you suffer a -12 penalty on d20 tests and your speed is reduced by 30 feet.",
                 "The revised exhaustion system replaces the old 6-level table with a simple formula, making it easier to track and more impactful at higher levels."));
 
         entries.add(createEntry("Gaining Exhaustion", "PHB 2024", "Core Rules", "EXHAUSTION", 264,
@@ -599,7 +599,7 @@ public class Dnd5eRulesService {
                 "Gold invested in a bastion can be used for upgrades and facilities. " +
                 "The party size determines how many characters can benefit from the bastion's perks. " +
                 "Room count determines the number of available spaces for activities.",
-                "Siege mechanics add tension — a bastion can be a target for enemies."));
+                "Siege mechanics add tension â€” a bastion can be a target for enemies."));
 
         entries.add(createEntry("Bastion Resource Management", "DMG", "Bastions", "RESOURCES", 1,
                 "Gold can be invested in or withdrawn from a bastion. Investing gold enables upgrades, " +
@@ -638,10 +638,10 @@ public class Dnd5eRulesService {
                 "Mixing hook types creates a rich adventure that appeals to different character roles."));
 
         entries.add(createEntry("Hook Urgency and Pacing", "DMG", "Adventure Hooks", "URGENCY", 1,
-                "Immediate hooks demand action right now — a village is burning, a killer is hunting, " +
-                "a rift is growing. Soon hooks create pressure without panic — a curse is spreading, " +
+                "Immediate hooks demand action right now â€” a village is burning, a killer is hunting, " +
+                "a rift is growing. Soon hooks create pressure without panic â€” a curse is spreading, " +
                 "a rival is gathering power, a deadline approaches. Eventual hooks provide long-term " +
-                "motivation — a prophecy foretells doom, a treasure awaits discovery, a god's quest " +
+                "motivation â€” a prophecy foretells doom, a treasure awaits discovery, a god's quest " +
                 "calls. A good adventure mixes urgency levels: immediate hooks drive the opening, " +
                 "soon hooks sustain momentum, and eventual hooks provide overarching goals.",
                 "Urgency levels help the DM pace the adventure and create tension."));
@@ -735,7 +735,7 @@ public class Dnd5eRulesService {
                 "Tension pools make the world feel alive and responsive to player behavior."));
 
         entries.add(createEntry("Tension Thresholds", "DMG", "Tension Pools", "THRESHOLDS", 1,
-                "Each tension pool has thresholds — specific tension levels that trigger consequences. " +
+                "Each tension pool has thresholds â€” specific tension levels that trigger consequences. " +
                 "For example, a Guard Alertness pool might have thresholds at 3, 5, 7, and 9. " +
                 "When tension crosses a threshold, the corresponding consequence fires: guards become watchful, " +
                 "a captain is alerted, reinforcements arrive, or a full alarm sounds. " +
@@ -761,7 +761,7 @@ public class Dnd5eRulesService {
                 "This is the worst-case scenario: full alarm, all enemies attack, the area turns hostile. " +
                 "Ultimate consequences should be dramatic and force the party to either fight, flee, " +
                 "or find a creative solution. They represent the cost of pushing tension too far.",
-                "Make ultimate consequences memorable and consequential — they should change the situation dramatically."));
+                "Make ultimate consequences memorable and consequential â€” they should change the situation dramatically."));
 
         entries.add(createEntry("Tension Pool Design Tips", "DMG", "Tension Pools", "DESIGN", 1,
                 "Create tension pools for areas where player actions have cumulative consequences: " +
@@ -790,7 +790,7 @@ public class Dnd5eRulesService {
 
         entries.add(createEntry("NPC Relationships", "DMG", "NPC Roster", "RELATIONSHIPS", 1,
                 "NPCs have relationships with each other: allies, enemies, and family. " +
-                "Relationships are bidirectional — if A is B's ally, B is also A's ally. " +
+                "Relationships are bidirectional â€” if A is B's ally, B is also A's ally. " +
                 "These relationships drive NPC behavior: allies help each other, enemies oppose each other. " +
                 "Family ties create personal stakes and emotional hooks for both NPCs and players.",
                 "Web of relationships makes the world feel interconnected and alive."));
@@ -803,12 +803,12 @@ public class Dnd5eRulesService {
                 "Resource tracking makes NPCs feel like real entities with assets and vulnerabilities."));
 
         entries.add(createEntry("NPC Motives and Secrets", "DMG", "NPC Roster", "MOTIVES", 1,
-                "Every NPC should have a primary motive — what they want most. " +
+                "Every NPC should have a primary motive â€” what they want most. " +
                 "Secondary motives and secrets add depth: hidden agendas, past traumas, secret alliances. " +
                 "Motives drive NPC behavior and create plot hooks. When players understand an NPC's motive, " +
                 "they can predict and influence that NPC's actions. " +
                 "Villains and allies flags help quickly identify key antagonists and mentors.",
-                "Motives are the engine of NPC-driven plots — give every important NPC a clear goal."));
+                "Motives are the engine of NPC-driven plots â€” give every important NPC a clear goal."));
 
         entries.add(createEntry("NPC Design Principles", "DMG", "NPC Roster", "DESIGN", 1,
                 "Build a diverse roster: mix races, classes, types, and roles. " +
@@ -825,14 +825,14 @@ public class Dnd5eRulesService {
                 "Each monster has an XP value based on its Challenge Rating. The total XP of all monsters " +
                 "in an encounter is compared against the party's XP thresholds for their level and size. " +
                 "Difficulty categories: Trivial, Easy, Medium, Hard, Deadly.",
-                "Use XP thresholds as a guide, not a rigid rule — adjust for the party's actual capabilities."));
+                "Use XP thresholds as a guide, not a rigid rule â€” adjust for the party's actual capabilities."));
 
         entries.add(createEntry("XP Thresholds by Party Size", "DMG", "Encounter Balancer", "THRESHOLDS", 1,
                 "XP thresholds scale with party size. For a party of 4, multiply the per-character XP by 4. " +
                 "For parties smaller than 4, multiply by party size / 4. " +
                 "For parties larger than 4, multiply by (party size - 3) to account for diminishing returns. " +
                 "The thresholds table provides values for all party sizes (1-8) and levels (1-20).",
-                "A solo character faces much lower thresholds — a CR 1 monster is Deadly for a level 1 solo character."));
+                "A solo character faces much lower thresholds â€” a CR 1 monster is Deadly for a level 1 solo character."));
 
         entries.add(createEntry("Multiple Encounter Adjustment", "DMG", "Encounter Balancer", "MULTIPLIER", 1,
                 "When a party faces multiple encounters in quick succession, their effective XP budget decreases. " +
@@ -846,7 +846,7 @@ public class Dnd5eRulesService {
                 "CR 1/8 = 25 XP, CR 1/4 = 50 XP, CR 1/2 = 100 XP, CR 1 = 200 XP, " +
                 "CR 5 = 1,300 XP, CR 10 = 2,800 XP, CR 20 = 15,000 XP, CR 30 = 50,000 XP. " +
                 "Sum the XP values of all monsters in an encounter for the total monster XP.",
-                "The CR table is the foundation of encounter balancing — know it well."));
+                "The CR table is the foundation of encounter balancing â€” know it well."));
 
         entries.add(createEntry("Tension-Based Encounters", "DMG", "Encounter Balancer", "TENSION", 1,
                 "Tension pools can modify encounter difficulty. Each tension level adds 10% of the base " +
@@ -976,7 +976,7 @@ public class Dnd5eRulesService {
                 "Each template includes recommended subsystems, setup instructions, pacing guides, " +
                 "example hooks, villains, NPCs, and encounters, plus difficulty scaling advice and DM tips. " +
                 "Templates cover 6 major themes: Horror, High Magic, Sandbox, Dungeon Crawl, Feywild, and Steampunk.",
-                "Templates are the fastest way to start a campaign — just follow the setup instructions and customize as needed."));
+                "Templates are the fastest way to start a campaign â€” just follow the setup instructions and customize as needed."));
 
         entries.add(createEntry("Campaign Template Themes", "DMG", "Campaign Templates", "THEMES", 1,
                 "Horror: Ravenloft-style dread with fear checks, Dark Gifts, and tension pools. " +
@@ -993,7 +993,7 @@ public class Dnd5eRulesService {
                 "example hook (adventure starter), example villain (main antagonist), " +
                 "example NPCs (key characters), example encounters (sample challenges), " +
                 "difficulty scaling (adjusting for party size/level), and DM tips (best practices).",
-                "Use the template as a starting point — customize every element to fit your campaign."));
+                "Use the template as a starting point â€” customize every element to fit your campaign."));
 
         entries.add(createEntry("Campaign Template Pacing", "DMG", "Campaign Templates", "PACING", 1,
                 "Templates provide session-by-session pacing guides that structure the campaign arc. " +
@@ -1002,7 +1002,7 @@ public class Dnd5eRulesService {
                 "Midpoint (sessions 7-9) reveals the true threat and raises stakes. " +
                 "Climax (final sessions) resolves the main conflict. " +
                 "Adjust pacing based on player choices and emergent story.",
-                "Pacing guides are suggestions — let player agency drive the actual timeline."));
+                "Pacing guides are suggestions â€” let player agency drive the actual timeline."));
 
         entries.add(createEntry("Campaign Template Difficulty Scaling", "DMG", "Campaign Templates", "SCALING", 1,
                 "Each template includes difficulty scaling advice for different party sizes and levels. " +
@@ -1028,7 +1028,7 @@ public class Dnd5eRulesService {
                 "(Weapon, Armor, Wondrous Item, Ring, Rod, Staff, Potion, Scroll, etc.). " +
                 "Some items require attunement; a character can attune to at most 3 items. " +
                 "Items with charges track remaining charges and may recharge after short rest, long rest, or dawn.",
-                "Magic items are a core part of D&D 5e progression — use them to reward players and enable creative solutions."));
+                "Magic items are a core part of D&D 5e progression â€” use them to reward players and enable creative solutions."));
 
         entries.add(createEntry("Magic Item Rarities", "DMG", "Magic Items", "RARITY", 1,
                 "Common: Basic magical effect, no attunement required. " +
@@ -1051,14 +1051,14 @@ public class Dnd5eRulesService {
                 "When an item runs out of charges, it can't be used until it recharges. " +
                 "Recharge rules: Dawn (roll d20 vs DC), Short Rest (full recharge), Long Rest (full recharge), None (no recharge). " +
                 "Items that recharge at dawn typically require a d20 roll meeting or exceeding the DC.",
-                "Charges add resource management to magic items — players must decide when to use them."));
+                "Charges add resource management to magic items â€” players must decide when to use them."));
 
         entries.add(createEntry("Cursed Magic Items", "DMG", "Magic Items", "CURSE", 1,
                 "Cursed items have detrimental effects that may not be immediately apparent. " +
                 "A cursed item's effects can't be removed until the curse is lifted, typically by a Remove Curse spell. " +
                 "While cursed, the character can't de-attune from the item. " +
                 "DMs should decide whether characters know an item is cursed; revealing the curse allows them to seek help.",
-                "Cursed items add drama and roleplay opportunities — use them sparingly for maximum impact."));
+                "Cursed items add drama and roleplay opportunities â€” use them sparingly for maximum impact."));
 
         entries.add(createEntry("Magic Item Categories", "DMG", "Magic Items", "CATEGORIES", 1,
                 "Weapon: Magical weapons that enhance attack and damage. " +

@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.unified;
 
+import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.traveller.AbilityScore;
 import com.yisy.modules.doramcu.traveller.TravellerCharacter;
 import org.springframework.stereotype.Component;

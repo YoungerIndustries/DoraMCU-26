@@ -234,11 +234,8 @@ public class TradeRouteNetwork {
                 double diff = sectorAvg - currentPrice;
                 double adjustment = diff * EQUILIBRIUM_CONVERGENCE_RATE;
 
-                // Only apply if significant
-                if (Math.abs(adjustment) > 1.0) {
-                    // Market conditions fluctuate naturally; equilibrium is a soft pull
-                    // The actual price change happens through market fluctuation
-                }
+                // Market conditions fluctuate naturally; equilibrium is a soft pull
+                // The actual price change happens through market fluctuation
             }
         }
     }

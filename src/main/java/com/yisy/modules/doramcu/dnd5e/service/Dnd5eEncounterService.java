@@ -1,11 +1,11 @@
 package com.yisy.modules.doramcu.dnd5e.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.dnd5e.dto.EncounterAnalysis;
 import com.yisy.modules.doramcu.dnd5e.model.Dnd5eEncounter;
 import com.yisy.modules.doramcu.dnd5e.repository.Dnd5eEncounterRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -27,7 +27,7 @@ import java.util.*;
  * - Encounter Analysis: Full analysis with recommendation
  * </p>
  * <p>
- * XP Thresholds (DMG p.82) — per character, scaled by party size:
+ * XP Thresholds (DMG p.82) â€” per character, scaled by party size:
  * Level | Trivial | Easy | Medium | Hard | Deadly
  * 1     | 25      | 50   | 100    | 200  | 300
  * 2     | 50      | 100  | 200    | 400  | 600
@@ -108,14 +108,6 @@ public class Dnd5eEncounterService {
             50000  // CR 30
     };
 
-    // More precise CR to XP for fractional CRs
-    private static final Map<String, Integer> FRACTIONAL_CR_XP = new LinkedHashMap<>();
-    static {
-        FRACTIONAL_CR_XP.put("0", 0);
-        FRACTIONAL_CR_XP.put("1/8", 25);
-        FRACTIONAL_CR_XP.put("1/4", 50);
-        FRACTIONAL_CR_XP.put("1/2", 100);
-    }
 
     private final Dnd5eEncounterRepository encounterRepository;
 

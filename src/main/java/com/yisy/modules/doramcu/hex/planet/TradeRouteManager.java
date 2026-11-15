@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.hex.planet;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,9 +84,7 @@ public class TradeRouteManager {
                 operatingCost
         );
 
-        if (vehicle != null) {
-            route.setVehicleId(vehicle.getId());
-        }
+        route.setVehicleId(vehicle.getId());
 
         routes.put(route.getId(), route);
 

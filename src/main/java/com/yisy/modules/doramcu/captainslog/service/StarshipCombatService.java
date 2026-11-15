@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.dto.*;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
@@ -22,12 +23,12 @@ import java.util.*;
  * <p>
  * Starship combat follows the official Captain's Log rules with:
  * <ul>
- *   <li><b>Range Bands</b> — Long, Mid, Short. Ships must be in range to attack.</li>
- *   <li><b>System Attacks</b> — Weapons attacks target specific systems (Structure, Weapons, Sensors, etc.)</li>
- *   <li><b>Evasion</b> — Target ship can attempt to evade using Engines + Operations</li>
- *   <li><b>Critical Hits</b> — Excess successes cause critical damage to systems</li>
- *   <li><b>Maneuvering</b> — Ships can change range bands using Engines</li>
- *   <li><b>System Stress</b> — Failed defense adds stress to targeted systems</li>
+ *   <li><b>Range Bands</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Long, Mid, Short. Ships must be in range to attack.</li>
+ *   <li><b>System Attacks</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Weapons attacks target specific systems (Structure, Weapons, Sensors, etc.)</li>
+ *   <li><b>Evasion</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Target ship can attempt to evade using Engines + Operations</li>
+ *   <li><b>Critical Hits</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Excess successes cause critical damage to systems</li>
+ *   <li><b>Maneuvering</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Ships can change range bands using Engines</li>
+ *   <li><b>System Stress</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Failed defense adds stress to targeted systems</li>
  * </ul>
  * </p>
  * <p>
@@ -37,7 +38,7 @@ import java.util.*;
  *   <li>Each round: attacker chooses action (attack, maneuver, repair)</li>
  *   <li>Attack: roll Weapons + Security vs. target's Engines + Operations (evasion)</li>
  *   <li>On hit: deal stress to targeted system; excess successes = critical hit</li>
- *   <li>Maneuver: change range band (Long→Mid→Short or reverse)</li>
+ *   <li>Maneuver: change range band (LongÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢MidÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢Short or reverse)</li>
  *   <li>Repair: reduce stress on a system</li>
  *   <li>Combat ends when one ship is destroyed (all systems at max stress) or retreats</li>
  * </ol>
@@ -118,7 +119,7 @@ public class StarshipCombatService {
                 "Engines + Operations", null),
         SHIELD_RECHARGE("Shield Recharge", "Redirect power to shields, reducing structure stress.",
                 "Computers + Engineering", null),
-        TORPEDO("Torpedo Attack", "Fire torpedoes — higher damage but only at Mid or Short range.",
+        TORPEDO("Torpedo Attack", "Fire torpedoes ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â higher damage but only at Mid or Short range.",
                 "Weapons + Security", "Engines + Operations");
 
         private final String name;
@@ -349,7 +350,7 @@ public class StarshipCombatService {
         result.put("action", action.name());
 
         StringBuilder narrative = new StringBuilder();
-        narrative.append("Round ").append(session.currentRound).append(" — ");
+        narrative.append("Round ").append(session.currentRound).append(" ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â ");
 
         switch (action) {
             case ATTACK -> {
@@ -402,7 +403,7 @@ public class StarshipCombatService {
         combat.setCurrentRound(session.currentRound);
         combatRepository.save(combat);
 
-        log.info("Starship combat round {}: {} — {}", session.currentRound, action.getName(), result.get("narrative"));
+        log.info("Starship combat round {}: {} ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â {}", session.currentRound, action.getName(), result.get("narrative"));
         return result;
     }
 
@@ -418,8 +419,6 @@ public class StarshipCombatService {
         int defenderTarget = 8;  // Enemy's evasion target
 
         // Roll attack
-        TaskAttemptRequest attackRequest = new TaskAttemptRequest();
-        attackRequest.setDifficulty(1);
         TaskAttemptResponse attackRoll = diceService.rollTaskAttemptDirect(attackerTarget, 1, null, 0, 0, false);
 
         // Roll defense (evasion)
@@ -474,30 +473,18 @@ public class StarshipCombatService {
         Map<String, Object> result = new HashMap<>();
 
         // Roll Engines + Operations
-        TaskAttemptRequest maneuverRequest = new TaskAttemptRequest();
-        maneuverRequest.setDifficulty(1);
         TaskAttemptResponse roll = diceService.rollTaskAttemptDirect(10, 1, null, 0, 0, false);
 
         if (roll.isSuccess()) {
             // Change range band
             RangeBand current = session.playerShip.getRangeBand();
             RangeBand next;
-            // Player chooses to close or widen range — default to closing
-            boolean closing = true; // Could be made configurable
-
-            if (closing) {
-                next = switch (current) {
-                    case LONG -> RangeBand.MID;
-                    case MID -> RangeBand.SHORT;
-                    case SHORT -> current; // Already at short
-                };
-            } else {
-                next = switch (current) {
-                    case SHORT -> RangeBand.MID;
-                    case MID -> RangeBand.LONG;
-                    case LONG -> current; // Already at long
-                };
-            }
+            // Player chooses to close or widen range ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â default to closing
+            next = switch (current) {
+                case LONG -> RangeBand.MID;
+                case MID -> RangeBand.SHORT;
+                case SHORT -> current; // Already at short
+            };
 
             if (next != current) {
                 session.playerShip.setRangeBand(next);

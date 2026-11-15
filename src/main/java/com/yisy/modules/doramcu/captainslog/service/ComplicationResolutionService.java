@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogMission;
 import org.slf4j.Logger;
@@ -14,13 +15,13 @@ import java.util.*;
  * and advantages by category so the system can suggest narrative outcomes that match
  * the current mission context. Categories include:
  * <ul>
- *   <li>COMBAT — complications during physical or starship combat</li>
- *   <li>EXPLORATION — complications during planetary exploration or discovery</li>
- *   <li>DIPLOMACY — complications during negotiations or political situations</li>
- *   <li>SCIENCE — complications during research or technical tasks</li>
- *   <li>PERSONAL — complications affecting the character personally</li>
- *   <li>CRISIS — complications during emergency or crisis situations</li>
- *   <li>GENERAL — general-purpose complications for any situation</li>
+ *   <li>COMBAT ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â complications during physical or starship combat</li>
+ *   <li>EXPLORATION ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â complications during planetary exploration or discovery</li>
+ *   <li>DIPLOMACY ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â complications during negotiations or political situations</li>
+ *   <li>SCIENCE ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â complications during research or technical tasks</li>
+ *   <li>PERSONAL ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â complications affecting the character personally</li>
+ *   <li>CRISIS ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â complications during emergency or crisis situations</li>
+ *   <li>GENERAL ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â general-purpose complications for any situation</li>
  * </ul>
  * </p>
  * <p>
@@ -29,8 +30,8 @@ import java.util.*;
  * </p>
  * <p>
  * When no category is specified, the service infers the category from the
- * mission type: CRISIS → CRISIS, COMBAT → COMBAT, EXPLORATION → EXPLORATION,
- * DIPLOMACY → DIPLOMACY, SCIENCE → SCIENCE, and all others → GENERAL.
+ * mission type: CRISIS ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ CRISIS, COMBAT ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ COMBAT, EXPLORATION ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ EXPLORATION,
+ * DIPLOMACY ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ DIPLOMACY, SCIENCE ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ SCIENCE, and all others ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ GENERAL.
  * </p>
  */
 @Component
@@ -45,13 +46,13 @@ public class ComplicationResolutionService {
      * Categories of complications and advantages.
      */
     public enum Category {
-        COMBAT("Combat — physical or starship conflict."),
-        EXPLORATION("Exploration — planetary surface or space discovery."),
-        DIPLOMACY("Diplomacy — negotiation, politics, and social interaction."),
-        SCIENCE("Science — research, analysis, and technical work."),
-        PERSONAL("Personal — affecting the character's life and relationships."),
-        CRISIS("Crisis — emergency situations with high stakes."),
-        GENERAL("General — applicable to any situation.");
+        COMBAT("Combat ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â physical or starship conflict."),
+        EXPLORATION("Exploration ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â planetary surface or space discovery."),
+        DIPLOMACY("Diplomacy ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â negotiation, politics, and social interaction."),
+        SCIENCE("Science ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â research, analysis, and technical work."),
+        PERSONAL("Personal ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â affecting the character's life and relationships."),
+        CRISIS("Crisis ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â emergency situations with high stakes."),
+        GENERAL("General ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â applicable to any situation.");
 
         private final String description;
 
@@ -67,14 +68,14 @@ public class ComplicationResolutionService {
     // ==================== Complication Tables by Category ====================
 
     /**
-     * Combat complications — things that go wrong during conflict.
+     * Combat complications ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â things that go wrong during conflict.
      */
     private static final Map<String, String> COMBAT_COMPLICATIONS = new LinkedHashMap<>();
     static {
         COMBAT_COMPLICATIONS.put("Friendly Fire", "Your attack strikes an ally or civilian instead of the intended target.");
         COMBAT_COMPLICATIONS.put("Weapon Jam", "Your primary weapon malfunctions at a critical moment.");
         COMBAT_COMPLICATIONS.put("Reinforcements", "The enemy receives unexpected backup, shifting the balance of power.");
-        COMBAT_COMPLICATIONS.put("Ambush", "You walk into a trap — the enemy was waiting for you.");
+        COMBAT_COMPLICATIONS.put("Ambush", "You walk into a trap ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â the enemy was waiting for you.");
         COMBAT_COMPLICATIONS.put("Collateral Damage", "The battle damages critical infrastructure or endangers innocents.");
         COMBAT_COMPLICATIONS.put("Shield Failure", "Defensive systems drop, leaving you exposed to enemy fire.");
         COMBAT_COMPLICATIONS.put("Communication Breakdown", "You lose contact with your team during the fight.");
@@ -94,7 +95,7 @@ public class ComplicationResolutionService {
     }
 
     /**
-     * Exploration complications — things that go wrong during discovery.
+     * Exploration complications ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â things that go wrong during discovery.
      */
     private static final Map<String, String> EXPLORATION_COMPLICATIONS = new LinkedHashMap<>();
     static {
@@ -102,17 +103,17 @@ public class ComplicationResolutionService {
         EXPLORATION_COMPLICATIONS.put("Environmental Shift", "Weather or terrain conditions change rapidly, trapping your team.");
         EXPLORATION_COMPLICATIONS.put("Lost Signal", "Communication with the ship is lost; you're on your own.");
         EXPLORATION_COMPLICATIONS.put("Ancient Trap", "The ruins or structure contains defenses that activate as you explore.");
-        EXPLORATION_COMPLICATIONS.put("Contamination", "Something in the environment is harmful — spores, radiation, or toxin.");
+        EXPLORATION_COMPLICATIONS.put("Contamination", "Something in the environment is harmful ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â spores, radiation, or toxin.");
         EXPLORATION_COMPLICATIONS.put("Rival Explorers", "Another group is already here, and they don't want company.");
         EXPLORATION_COMPLICATIONS.put("Structural Collapse", "The cave, ruin, or structure begins to collapse around you.");
-        EXPLORATION_COMPLICATIONS.put("Time Dilation", "Time passes differently here — hours here could be days elsewhere.");
-        EXPLORATION_COMPLICATIONS.put("Psychological Effect", "The environment affects your mind — hallucinations, fear, or confusion.");
+        EXPLORATION_COMPLICATIONS.put("Time Dilation", "Time passes differently here ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â hours here could be days elsewhere.");
+        EXPLORATION_COMPLICATIONS.put("Psychological Effect", "The environment affects your mind ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â hallucinations, fear, or confusion.");
         EXPLORATION_COMPLICATIONS.put("Discovery Gone Wrong", "What you find is far more dangerous than you expected.");
         EXPLORATION_COMPLICATIONS.put("Equipment Failure", "Critical exploration gear fails in the field.");
         EXPLORATION_COMPLICATIONS.put("Hidden Inhabitants", "The planet is inhabited, and the natives are not welcoming.");
         EXPLORATION_COMPLICATIONS.put("Anomaly Activation", "A spatial or temporal anomaly activates, altering the landscape.");
         EXPLORATION_COMPLICATIONS.put("Resource Shortage", "Supplies run low faster than expected; you must adapt.");
-        EXPLORATION_COMPLICATIONS.put("Navigation Error", "Your coordinates were wrong — you're farther from the ship than planned.");
+        EXPLORATION_COMPLICATIONS.put("Navigation Error", "Your coordinates were wrong ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â you're farther from the ship than planned.");
         EXPLORATION_COMPLICATIONS.put("Gravitational Shift", "Gravity fluctuates, making movement and balance difficult.");
         EXPLORATION_COMPLICATIONS.put("Artifact Curse", "An ancient artifact affects those who touch it in unexpected ways.");
         EXPLORATION_COMPLICATIONS.put("Ecosystem Collapse", "The local ecosystem is dying, and your presence may accelerate it.");
@@ -121,7 +122,7 @@ public class ComplicationResolutionService {
     }
 
     /**
-     * Diplomacy complications — things that go wrong during negotiation.
+     * Diplomacy complications ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â things that go wrong during negotiation.
      */
     private static final Map<String, String> DIPLOMACY_COMPLICATIONS = new LinkedHashMap<>();
     static {
@@ -148,7 +149,7 @@ public class ComplicationResolutionService {
     }
 
     /**
-     * Science complications — things that go wrong during research.
+     * Science complications ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â things that go wrong during research.
      */
     private static final Map<String, String> SCIENCE_COMPLICATIONS = new LinkedHashMap<>();
     static {
@@ -175,7 +176,7 @@ public class ComplicationResolutionService {
     }
 
     /**
-     * Personal complications — things that affect the character personally.
+     * Personal complications ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â things that affect the character personally.
      */
     private static final Map<String, String> PERSONAL_COMPLICATIONS = new LinkedHashMap<>();
     static {
@@ -202,7 +203,7 @@ public class ComplicationResolutionService {
     }
 
     /**
-     * Crisis complications — things that go wrong during emergencies.
+     * Crisis complications ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â things that go wrong during emergencies.
      */
     private static final Map<String, String> CRISIS_COMPLICATIONS = new LinkedHashMap<>();
     static {
@@ -229,7 +230,7 @@ public class ComplicationResolutionService {
     }
 
     /**
-     * General complications — applicable to any situation.
+     * General complications ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â applicable to any situation.
      */
     private static final Map<String, String> GENERAL_COMPLICATIONS = new LinkedHashMap<>();
     static {
@@ -252,7 +253,7 @@ public class ComplicationResolutionService {
         GENERAL_COMPLICATIONS.put("Timing Issue", "Everything happens at once, and you can't address it all.");
         GENERAL_COMPLICATIONS.put("Unforeseen Consequence", "A previous action has unexpected repercussions.");
         GENERAL_COMPLICATIONS.put("Lost Opportunity", "A chance to succeed slips away due to circumstances beyond your control.");
-        GENERAL_COMPLICATIONS.put("The Twist", "The situation is not what it seems — everything changes.");
+        GENERAL_COMPLICATIONS.put("The Twist", "The situation is not what it seems ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â everything changes.");
     }
 
     // ==================== Advantage Tables by Category ====================

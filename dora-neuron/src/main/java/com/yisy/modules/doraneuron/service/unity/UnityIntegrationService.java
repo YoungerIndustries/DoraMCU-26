@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.service.unity;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.config.NeuronConfig;
 import com.yisy.modules.doraneuron.config.NeuronPrometheusMetrics;
 import com.yisy.modules.doraneuron.model.ExperienceSample;
@@ -30,6 +32,8 @@ import java.util.concurrent.TimeUnit;
  * game sessions for model retraining.
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class UnityIntegrationService {
 
     private static final Logger log = LoggerFactory.getLogger(UnityIntegrationService.class);

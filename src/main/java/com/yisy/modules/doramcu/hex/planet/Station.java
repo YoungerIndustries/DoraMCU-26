@@ -28,6 +28,12 @@ public class Station {
     private String connectedIndustryId;
     private TerrainData.InfrastructureType infrastructureType;
     private String ownerEmpireId;
+    private String dungeonId;
+    private StationType stationType;
+    private int maxPassengers;
+    private int maxCargo;
+    private int buildCost;
+    private int maintenanceCost;
 
     /**
      * Creates a new station at the given hex position.
@@ -58,6 +64,70 @@ public class Station {
         this.connectedIndustryId = null;
         this.infrastructureType = TerrainData.InfrastructureType.STATION;
         this.ownerEmpireId = null;
+        this.stationType = StationType.GENERAL;
+        this.maxPassengers = 200;
+        this.maxCargo = 200;
+        this.buildCost = 50;
+        this.maintenanceCost = 3;
+    }
+
+    /**
+     * Creates a new station with a specific type.
+     *
+     * @param id       unique identifier for this station
+     * @param name     human-readable name
+     * @param position the hex cell where the station is built
+     * @param type     the station type (bus stop, rail station, port, airport, etc.)
+     */
+    public Station(String id, String name, Hex3D position, StationType type) {
+        this(id, name, position);
+        this.stationType = type != null ? type : StationType.GENERAL;
+        this.maxPassengers = this.stationType.getMaxPassengers();
+        this.maxCargo = this.stationType.getMaxCargo();
+        this.buildCost = this.stationType.getBuildCost();
+        this.maintenanceCost = this.stationType.getMaintenanceCost();
+        this.infrastructureType = this.stationType.getInfrastructureType();
+    }
+
+    /** @return the station type */
+    public StationType getStationType() {
+        return stationType;
+    }
+
+    /**
+     * Sets the station type and updates stats accordingly.
+     *
+     * @param type the station type
+     */
+    public void setStationType(StationType type) {
+        if (type != null) {
+            this.stationType = type;
+            this.maxPassengers = type.getMaxPassengers();
+            this.maxCargo = type.getMaxCargo();
+            this.buildCost = type.getBuildCost();
+            this.maintenanceCost = type.getMaintenanceCost();
+            this.infrastructureType = type.getInfrastructureType();
+        }
+    }
+
+    /** @return the maximum passengers this station can hold */
+    public int getMaxPassengers() {
+        return maxPassengers;
+    }
+
+    /** @return the maximum cargo this station can hold */
+    public int getMaxCargo() {
+        return maxCargo;
+    }
+
+    /** @return the build cost of this station */
+    public int getBuildCost() {
+        return buildCost;
+    }
+
+    /** @return the maintenance cost per turn */
+    public int getMaintenanceCost() {
+        return maintenanceCost;
     }
 
     /** @return the unique station ID */
@@ -78,6 +148,17 @@ public class Station {
     /** @return all hex cells in the station's catchment area */
     public List<Hex3D> getCatchmentArea() {
         return Collections.unmodifiableList(catchmentArea);
+    }
+
+    /**
+     * Adds a hex to the station's catchment area.
+     *
+     * @param hex the hex to add
+     */
+    public void addCatchmentHex(Hex3D hex) {
+        if (hex != null && !catchmentArea.contains(hex)) {
+            catchmentArea.add(hex);
+        }
     }
 
     /** @return the cargo currently waiting at this station */
@@ -153,6 +234,23 @@ public class Station {
      */
     public void setOwnerEmpireId(String empireId) {
         this.ownerEmpireId = empireId;
+    }
+
+    /**
+     * @return the dungeon ID for the interior rooms of this station, or null if not yet generated
+     */
+    public String getDungeonId() {
+        return dungeonId;
+    }
+
+    /**
+     * Sets the dungeon ID for interior rooms.
+     * Called after BuildingInteriorGenerator creates the rooms.
+     *
+     * @param dungeonId the dungeon ID
+     */
+    public void setDungeonId(String dungeonId) {
+        this.dungeonId = dungeonId;
     }
 
     /** @return the hex position (alias for getPosition) */
@@ -282,7 +380,86 @@ public class Station {
 
     @Override
     public String toString() {
-        return String.format("Station{%s, cargo=%d, passengers=%d, income=%d}",
-                name, getTotalCargoWaiting(), passengersWaiting, totalIncome);
+        return String.format("Station{%s, type=%s, cargo=%d, passengers=%d, income=%d}",
+                name, stationType, getTotalCargoWaiting(), passengersWaiting, totalIncome);
+    }
+
+    /**
+     * Station types based on OpenTTD station database.
+     * Each type has different costs, capacities, and infrastructure requirements.
+     */
+    public enum StationType {
+        /** Simple bus stop for passenger pickup */
+        BUS_STOP("Bus Stop", 10, 1, 2, 50, 0, TerrainData.InfrastructureType.STATION),
+
+        /** General-purpose rail station for trains */
+        RAIL_STATION("Rail Station", 50, 3, 4, 200, 200, TerrainData.InfrastructureType.STATION),
+
+        /** Elevated monorail station */
+        MONORAIL_STATION("Monorail Station", 100, 5, 5, 300, 300, TerrainData.InfrastructureType.STATION),
+
+        /** Futuristic maglev station */
+        MAGLEV_STATION("Maglev Station", 200, 8, 6, 500, 500, TerrainData.InfrastructureType.STATION),
+
+        /** Small boat dock for ferries */
+        BOAT_DOCK("Boat Dock", 30, 2, 3, 100, 100, TerrainData.InfrastructureType.PORT),
+
+        /** Large seaport with cranes and warehouses */
+        PORT("Port", 150, 8, 6, 300, 500, TerrainData.InfrastructureType.PORT),
+
+        /** Airport with runway and terminal */
+        AIRPORT("Airport", 500, 20, 8, 500, 200, TerrainData.InfrastructureType.AIRPORT),
+
+        /** Small heliport for helicopters */
+        HELIPORT("Heliport", 100, 5, 4, 50, 50, TerrainData.InfrastructureType.AIRPORT),
+
+        /** Space port for rockets and spacecraft */
+        SPACEPORT("Space Port", 2000, 50, 10, 1000, 1000, TerrainData.InfrastructureType.AIRPORT),
+
+        /** Orbital space station */
+        ORBITAL_STATION("Orbital Station", 10000, 200, 15, 5000, 5000, TerrainData.InfrastructureType.AIRPORT),
+
+        /** Dedicated cargo-only station */
+        CARGO_STATION("Cargo Station", 80, 4, 5, 0, 400, TerrainData.InfrastructureType.STATION),
+
+        /** Default general station */
+        GENERAL("General Station", 50, 3, 4, 200, 200, TerrainData.InfrastructureType.STATION);
+
+        private final String displayName;
+        private final int buildCost;
+        private final int maintenanceCost;
+        private final int catchmentRadius;
+        private final int maxPassengers;
+        private final int maxCargo;
+        private final TerrainData.InfrastructureType infrastructureType;
+
+        StationType(String displayName, int buildCost, int maintenanceCost, int catchmentRadius,
+                    int maxPassengers, int maxCargo, TerrainData.InfrastructureType infrastructureType) {
+            this.displayName = displayName;
+            this.buildCost = buildCost;
+            this.maintenanceCost = maintenanceCost;
+            this.catchmentRadius = catchmentRadius;
+            this.maxPassengers = maxPassengers;
+            this.maxCargo = maxCargo;
+            this.infrastructureType = infrastructureType;
+        }
+
+        public String getDisplayName() { return displayName; }
+        public int getBuildCost() { return buildCost; }
+        public int getMaintenanceCost() { return maintenanceCost; }
+        public int getCatchmentRadius() { return catchmentRadius; }
+        public int getMaxPassengers() { return maxPassengers; }
+        public int getMaxCargo() { return maxCargo; }
+        public TerrainData.InfrastructureType getInfrastructureType() { return infrastructureType; }
+
+        public static StationType fromName(String name) {
+            if (name == null) return GENERAL;
+            for (StationType type : values()) {
+                if (type.name().equalsIgnoreCase(name) || type.displayName.equalsIgnoreCase(name)) {
+                    return type;
+                }
+            }
+            return GENERAL;
+        }
     }
 }

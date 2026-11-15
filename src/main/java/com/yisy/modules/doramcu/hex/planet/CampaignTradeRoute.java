@@ -1,278 +1,393 @@
 package com.yisy.modules.doramcu.hex.planet;
 
-import java.util.Objects;
+import com.yisy.modules.doramcu.hex.spi.AiEntityRegistration;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 /**
- * Represents a trade route in the Business Tycoon campaign.
+ * Represents a trade route connecting stations on a planet or between planets.
  * <p>
- * A trade route connects two points and transports cargo automatically each turn.
- * Routes can be either space routes (planet-to-planet) or surface routes
- * (station-to-station on a single planet).
+ * A trade route defines a path that vehicles follow to transport cargo
+ * between stations. Routes are owned by corporations and generate income
+ * based on cargo volume, distance, and demand between connected stations.
  * </p>
  * <p>
- * Space routes use patterns from the Traveller TradeSimulator, while surface
- * routes use SurfaceVehicle and Station from the hex.planet package.
+ * Supports two creation patterns:
+ * <ul>
+ *   <li>Legacy constructor for TradeRouteManager compatibility</li>
+ *   <li>Builder pattern for auto-population and new code</li>
+ * </ul>
  * </p>
  */
 public class CampaignTradeRoute {
 
-    /**
-     * Type of trade route.
-     */
     public enum RouteType {
-        /** Space route between two planets */
-        SPACE,
-        /** Surface route between two stations on the same planet */
-        SURFACE
+        /** Surface route between stations on the same planet */
+        SURFACE,
+        /** Space route between planets */
+        SPACE
+    }
+
+    public enum RouteStatus {
+        /** Route is active and vehicles are operating */
+        ACTIVE,
+        /** Route is suspended — no vehicles operating */
+        SUSPENDED,
+        /** Route is closed — can be reactivated */
+        CLOSED
     }
 
     private final String id;
     private final String ownerCorporationId;
-    private final RouteType type;
-
-    /** Origin planet ID (space) or station ID (surface) */
+    private final RouteType routeType;
     private final String originId;
-
-    /** Destination planet ID (space) or station ID (surface) */
     private final String destinationId;
-
-    /** Planet ID where this route operates (for surface routes) */
     private final int planetId;
-
-    /** Type of cargo transported on this route */
     private final CargoType cargoType;
-
-    /** Cargo units delivered per turn */
-    private int cargoPerTurn;
-
-    /** Revenue in credits earned per turn */
-    private int revenuePerTurn;
-
-    /** Operating cost per turn (fuel, maintenance, etc.) */
-    private int operatingCostPerTurn;
-
-    /** Whether the route is currently active */
-    private boolean active;
-
-    /** Total cargo delivered on this route since creation */
-    private long totalCargoDelivered;
-
-    /** Total revenue earned from this route since creation */
-    private long totalRevenueEarned;
-
-    /** Reference to the vehicle ID used for surface routes */
+    private final int cargoPerTurn;
+    private final int revenuePerTurn;
+    private final int operatingCostPerTurn;
     private String vehicleId;
-
-    /** Reference to the ship ID used for space routes */
     private String shipId;
+    private boolean active;
+    private long totalCargoDelivered;
+    private long totalRevenue;
+
+    // Builder-pattern fields for new auto-population code
+    private String name;
+    private final List<String> stationIds = new ArrayList<>();
+    private final List<String> vehicleIds = new ArrayList<>();
+    private final List<CargoType> cargoTypes = new ArrayList<>();
+    private RouteStatus status = RouteStatus.ACTIVE;
+    private int totalDistance;
+    private long dailyIncome;
+    private long totalIncome;
+    private int cargoDeliveredToday;
+
+    /** Optional: service for deactivating AI characters when vehicles are removed. */
+    private AiEntityRegistration aiEntityRegistrationService;
 
     /**
-     * Creates a new trade route.
-     *
-     * @param ownerCorporationId the corporation that owns this route
-     * @param type               the route type (SPACE or SURFACE)
-     * @param originId           origin planet or station ID
-     * @param destinationId      destination planet or station ID
-     * @param planetId           planet ID (for surface routes, -1 for space)
-     * @param cargoType          type of cargo transported
-     * @param cargoPerTurn       cargo units delivered per turn
-     * @param revenuePerTurn     credits earned per turn
-     * @param operatingCostPerTurn cost per turn
+     * Legacy constructor for TradeRouteManager compatibility.
      */
-    public CampaignTradeRoute(String ownerCorporationId, RouteType type,
+    public CampaignTradeRoute(String corporationId, RouteType routeType,
                                String originId, String destinationId,
                                int planetId, CargoType cargoType,
                                int cargoPerTurn, int revenuePerTurn,
                                int operatingCostPerTurn) {
         this.id = UUID.randomUUID().toString();
-        this.ownerCorporationId = Objects.requireNonNull(ownerCorporationId, "Owner corporation ID must not be null");
-        this.type = Objects.requireNonNull(type, "Route type must not be null");
-        this.originId = Objects.requireNonNull(originId, "Origin ID must not be null");
-        this.destinationId = Objects.requireNonNull(destinationId, "Destination ID must not be null");
+        this.ownerCorporationId = corporationId;
+        this.routeType = routeType;
+        this.originId = originId;
+        this.destinationId = destinationId;
         this.planetId = planetId;
-        this.cargoType = Objects.requireNonNull(cargoType, "Cargo type must not be null");
+        this.cargoType = cargoType;
         this.cargoPerTurn = cargoPerTurn;
         this.revenuePerTurn = revenuePerTurn;
         this.operatingCostPerTurn = operatingCostPerTurn;
         this.active = true;
         this.totalCargoDelivered = 0;
-        this.totalRevenueEarned = 0;
+        this.totalRevenue = 0;
     }
 
-    /** @return the unique route ID */
+    /**
+     * Builder for creating CampaignTradeRoute instances (new auto-population pattern).
+     */
+    public static class Builder {
+        private String name;
+        private String ownerCorporationId;
+        private final List<String> stationIds = new ArrayList<>();
+        private final List<String> vehicleIds = new ArrayList<>();
+        private final List<CargoType> cargoTypes = new ArrayList<>();
+        private int totalDistance;
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder ownerCorporationId(String ownerCorporationId) {
+            this.ownerCorporationId = ownerCorporationId;
+            return this;
+        }
+
+        public Builder addStationId(String stationId) {
+            this.stationIds.add(stationId);
+            return this;
+        }
+
+        public Builder addVehicleId(String vehicleId) {
+            this.vehicleIds.add(vehicleId);
+            return this;
+        }
+
+        public Builder addCargoType(CargoType cargoType) {
+            this.cargoTypes.add(cargoType);
+            return this;
+        }
+
+        public Builder totalDistance(int totalDistance) {
+            this.totalDistance = totalDistance;
+            return this;
+        }
+
+        public CampaignTradeRoute build() {
+            CampaignTradeRoute route = new CampaignTradeRoute(this);
+            return route;
+        }
+    }
+
+    /**
+     * Creates a builder for CampaignTradeRoute.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    private CampaignTradeRoute(Builder builder) {
+        this.id = UUID.randomUUID().toString();
+        this.name = builder.name;
+        this.ownerCorporationId = builder.ownerCorporationId;
+        this.routeType = RouteType.SURFACE;
+        this.originId = builder.stationIds.isEmpty() ? null : builder.stationIds.get(0);
+        this.destinationId = builder.stationIds.isEmpty() ? null :
+                builder.stationIds.get(builder.stationIds.size() - 1);
+        this.planetId = -1;
+        this.cargoType = builder.cargoTypes.isEmpty() ? null : builder.cargoTypes.get(0);
+        this.cargoPerTurn = 0;
+        this.revenuePerTurn = 0;
+        this.operatingCostPerTurn = 0;
+        this.active = true;
+        this.totalCargoDelivered = 0;
+        this.totalRevenue = 0;
+
+        // Builder-specific fields
+        this.stationIds.addAll(builder.stationIds);
+        this.vehicleIds.addAll(builder.vehicleIds);
+        this.cargoTypes.addAll(builder.cargoTypes);
+        this.totalDistance = builder.totalDistance;
+    }
+
+    // ---- Legacy API (TradeRouteManager compatibility) ----
+
     public String getId() {
         return id;
     }
 
-    /** @return the owner corporation ID */
     public String getOwnerCorporationId() {
         return ownerCorporationId;
     }
 
-    /** @return the route type */
+    public RouteType getRouteType() {
+        return routeType;
+    }
+
+    /** Alias for getRouteType() — TradeRouteManager compatibility */
     public RouteType getType() {
-        return type;
+        return routeType;
     }
 
-    /** @return the origin planet or station ID */
-    public String getOriginId() {
-        return originId;
-    }
-
-    /** @return the destination planet or station ID */
-    public String getDestinationId() {
-        return destinationId;
-    }
-
-    /** @return the planet ID (-1 for space routes) */
-    public int getPlanetId() {
-        return planetId;
-    }
-
-    /** @return the cargo type transported */
-    public CargoType getCargoType() {
-        return cargoType;
-    }
-
-    /** @return cargo units delivered per turn */
-    public int getCargoPerTurn() {
-        return cargoPerTurn;
-    }
-
-    /**
-     * Sets the cargo per turn amount.
-     *
-     * @param cargoPerTurn the new amount
-     */
-    public void setCargoPerTurn(int cargoPerTurn) {
-        if (cargoPerTurn < 0) {
-            throw new IllegalArgumentException("Cargo per turn must be non-negative");
-        }
-        this.cargoPerTurn = cargoPerTurn;
-    }
-
-    /** @return revenue earned per turn */
-    public int getRevenuePerTurn() {
-        return revenuePerTurn;
-    }
-
-    /**
-     * Sets the revenue per turn.
-     *
-     * @param revenuePerTurn the new revenue
-     */
-    public void setRevenuePerTurn(int revenuePerTurn) {
-        if (revenuePerTurn < 0) {
-            throw new IllegalArgumentException("Revenue must be non-negative");
-        }
-        this.revenuePerTurn = revenuePerTurn;
-    }
-
-    /** @return operating cost per turn */
-    public int getOperatingCostPerTurn() {
-        return operatingCostPerTurn;
-    }
-
-    /**
-     * Sets the operating cost per turn.
-     *
-     * @param operatingCostPerTurn the new cost
-     */
-    public void setOperatingCostPerTurn(int operatingCostPerTurn) {
-        if (operatingCostPerTurn < 0) {
-            throw new IllegalArgumentException("Operating cost must be non-negative");
-        }
-        this.operatingCostPerTurn = operatingCostPerTurn;
-    }
-
-    /** @return true if the route is active */
-    public boolean isActive() {
-        return active;
-    }
-
-    /**
-     * Sets the active status of the route.
-     *
-     * @param active the new status
-     */
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    /** @return total cargo delivered since creation */
-    public long getTotalCargoDelivered() {
-        return totalCargoDelivered;
-    }
-
-    /** @return total revenue earned since creation */
-    public long getTotalRevenueEarned() {
-        return totalRevenueEarned;
-    }
-
-    /**
-     * Processes one turn of cargo delivery for this route.
-     * Updates total cargo delivered and total revenue earned.
-     *
-     * @return the cargo value delivered this turn (cargoPerTurn * cargoType base value)
-     */
-    public long processTurn() {
-        if (!active) {
-            return 0;
-        }
-        long cargoValue = (long) cargoPerTurn * cargoType.getBaseValue();
-        this.totalCargoDelivered += cargoPerTurn;
-        this.totalRevenueEarned += revenuePerTurn;
-        return cargoValue;
-    }
-
-    /**
-     * Returns the net profit per turn (revenue minus operating cost).
-     *
-     * @return net profit per turn
-     */
+    /** Returns net profit per turn (revenue - operating cost) */
     public int getNetProfitPerTurn() {
         return revenuePerTurn - operatingCostPerTurn;
     }
 
-    /** @return the vehicle ID for surface routes, or null */
+    public String getOriginId() {
+        return originId;
+    }
+
+    public String getDestinationId() {
+        return destinationId;
+    }
+
+    public int getPlanetId() {
+        return planetId;
+    }
+
+    public CargoType getCargoType() {
+        return cargoType;
+    }
+
+    public int getCargoPerTurn() {
+        return cargoPerTurn;
+    }
+
+    public int getRevenuePerTurn() {
+        return revenuePerTurn;
+    }
+
+    public int getOperatingCostPerTurn() {
+        return operatingCostPerTurn;
+    }
+
     public String getVehicleId() {
         return vehicleId;
     }
 
-    /**
-     * Sets the vehicle ID for surface routes.
-     *
-     * @param vehicleId the vehicle ID
-     */
     public void setVehicleId(String vehicleId) {
         this.vehicleId = vehicleId;
     }
 
-    /** @return the ship ID for space routes, or null */
     public String getShipId() {
         return shipId;
     }
 
-    /**
-     * Sets the ship ID for space routes.
-     *
-     * @param shipId the ship ID
-     */
     public void setShipId(String shipId) {
         this.shipId = shipId;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public long getTotalCargoDelivered() {
+        return totalCargoDelivered;
+    }
+
+    public long getTotalRevenue() {
+        return totalRevenue;
+    }
+
+    /**
+     * Processes one turn for this route.
+     * @return cargo value delivered this turn
+     */
+    public long processTurn() {
+        if (!active || cargoType == null) return 0;
+        long value = (long) cargoType.getBaseValue() * cargoPerTurn;
+        totalCargoDelivered += cargoPerTurn;
+        totalRevenue += revenuePerTurn - operatingCostPerTurn;
+        return value;
+    }
+
+    // ---- Builder-pattern API (auto-population) ----
+
+    public String getName() {
+        return name;
+    }
+
+    public List<String> getStationIds() {
+        return Collections.unmodifiableList(stationIds);
+    }
+
+    public List<String> getVehicleIds() {
+        return Collections.unmodifiableList(vehicleIds);
+    }
+
+    public List<CargoType> getCargoTypes() {
+        return Collections.unmodifiableList(cargoTypes);
+    }
+
+    public RouteStatus getStatus() {
+        return status;
+    }
+
+    public int getTotalDistance() {
+        return totalDistance;
+    }
+
+    public long getDailyIncome() {
+        return dailyIncome;
+    }
+
+    public void setDailyIncome(long dailyIncome) {
+        this.dailyIncome = dailyIncome;
+    }
+
+    public long getTotalIncome() {
+        return totalIncome;
+    }
+
+    public void setTotalIncome(long totalIncome) {
+        this.totalIncome = totalIncome;
+    }
+
+    public int getCargoDeliveredToday() {
+        return cargoDeliveredToday;
+    }
+
+    public void setCargoDeliveredToday(int cargoDeliveredToday) {
+        this.cargoDeliveredToday = cargoDeliveredToday;
+    }
+
+    public void addVehicle(String vehicleId) {
+        this.vehicleIds.add(vehicleId);
+    }
+
+    public void removeVehicle(String vehicleId) {
+        if (aiEntityRegistrationService != null) {
+            try {
+                aiEntityRegistrationService.deactivateVehicleAiCharacter(vehicleId);
+            } catch (Exception e) {
+                // Gracefully skip deactivation if it fails
+            }
+        }
+        this.vehicleIds.remove(vehicleId);
+    }
+
+    /**
+     * Sets the AI entity registration service for deactivating vehicle AI characters.
+     *
+     * @param service the registration service
+     */
+    public void setAiEntityRegistrationService(AiEntityRegistration service) {
+        this.aiEntityRegistrationService = service;
+    }
+
+    public void suspend() {
+        this.status = RouteStatus.SUSPENDED;
+        this.active = false;
+    }
+
+    public void close() {
+        this.status = RouteStatus.CLOSED;
+        this.active = false;
+    }
+
+    public void reactivate() {
+        this.status = RouteStatus.ACTIVE;
+        this.active = true;
+    }
+
+    public void recordDelivery(CargoType cargoType, int amount) {
+        this.cargoDeliveredToday += amount;
+        long income = (long) cargoType.getBaseValue() * amount;
+        this.dailyIncome += income;
+        this.totalIncome += income;
+    }
+
+    public int getStationCount() {
+        return stationIds.size();
+    }
+
+    public int getVehicleCount() {
+        return vehicleIds.size();
+    }
+
+    public String getOriginStationId() {
+        return stationIds.isEmpty() ? null : stationIds.get(0);
+    }
+
+    public String getDestinationStationId() {
+        return stationIds.isEmpty() ? null : stationIds.get(stationIds.size() - 1);
     }
 
     @Override
     public String toString() {
         return "CampaignTradeRoute{" +
                 "id='" + id + '\'' +
-                ", type=" + type +
-                ", origin=" + originId +
-                ", destination=" + destinationId +
-                ", cargo=" + cargoType.getDisplayName() +
+                ", name='" + name + '\'' +
+                ", type=" + routeType +
+                ", stations=" + stationIds.size() +
                 ", active=" + active +
-                ", profit=" + getNetProfitPerTurn() +
+                ", totalIncome=" + totalIncome +
                 '}';
     }
 }

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.dnd5e.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.dnd5e.model.Dnd5eCharacter;
 import com.yisy.modules.doramcu.dnd5e.model.Dnd5eExhaustion;
@@ -6,7 +7,6 @@ import com.yisy.modules.doramcu.dnd5e.repository.Dnd5eCharacterRepository;
 import com.yisy.modules.doramcu.dnd5e.repository.Dnd5eExhaustionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -15,8 +15,8 @@ import java.util.List;
  * Service for managing D&D 5e Revised Exhaustion (2024 PHB).
  * <p>
  * In D&D 2024 PHB, exhaustion is tracked as a level from 0 to 6.
- * Each level imposes a penalty of 2 × exhaustion level on d20 tests,
- * and reduces speed by 5 × exhaustion level feet.
+ * Each level imposes a penalty of 2 Ã— exhaustion level on d20 tests,
+ * and reduces speed by 5 Ã— exhaustion level feet.
  * </p>
  * <p>
  * Exhaustion is gained from harsh environments, starvation, dehydration,
@@ -24,8 +24,8 @@ import java.util.List;
  * </p>
  * <p>
  * Formula:
- * - d20 test penalty: -2 × exhaustion level
- * - Speed reduction: 5 × exhaustion level feet (minimum 0)
+ * - d20 test penalty: -2 Ã— exhaustion level
+ * - Speed reduction: 5 Ã— exhaustion level feet (minimum 0)
  * - At level 6, speed is reduced by 30 feet (minimum 0)
  * </p>
  */
@@ -185,7 +185,7 @@ public class Dnd5eExhaustionService {
 
     /**
      * Calculate the d20 test penalty for a given exhaustion level.
-     * Formula: -2 × exhaustion level
+     * Formula: -2 Ã— exhaustion level
      *
      * @param exhaustionLevel the exhaustion level (0-6)
      * @return the penalty (0 to -12)
@@ -196,7 +196,7 @@ public class Dnd5eExhaustionService {
 
     /**
      * Calculate the speed reduction for a given exhaustion level.
-     * Formula: 5 × exhaustion level feet
+     * Formula: 5 Ã— exhaustion level feet
      *
      * @param exhaustionLevel the exhaustion level (0-6)
      * @return the speed reduction in feet (0 to 30)

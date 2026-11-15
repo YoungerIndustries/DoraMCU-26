@@ -457,7 +457,7 @@ public class ExplorationActivity {
             if (discovery != Discovery.NONE) {
                 sb.append(" [").append(discovery).append("]");
             }
-        } else if (successful || discovery != Discovery.NONE) {
+        } else {
             sb.append(" ✗");
         }
 

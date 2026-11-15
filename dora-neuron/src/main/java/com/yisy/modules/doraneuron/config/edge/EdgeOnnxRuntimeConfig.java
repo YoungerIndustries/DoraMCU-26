@@ -27,6 +27,7 @@ import jakarta.annotation.PreDestroy;
  * - Model quantization support
  */
 @Configuration
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
 @ConditionalOnProperty(prefix = "neuron.edge", name = "auto-optimize", havingValue = "true", matchIfMissing = true)
 public class EdgeOnnxRuntimeConfig {
 

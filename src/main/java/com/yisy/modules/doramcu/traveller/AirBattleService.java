@@ -1,10 +1,13 @@
 package com.yisy.modules.doramcu.traveller;
 
+import org.springframework.stereotype.Service;
 import java.util.*;
 
 /**
  * Service that orchestrates air battles.
  */
+
+@Service
 public class AirBattleService {
     private final Map<String, AirBattle> battles = new HashMap<>();
     private final AircraftConversionService conversionService = new AircraftConversionService();

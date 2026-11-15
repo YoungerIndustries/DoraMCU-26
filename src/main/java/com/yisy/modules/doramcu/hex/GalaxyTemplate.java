@@ -190,6 +190,41 @@ public enum GalaxyTemplate {
     ),
 
     /**
+     * Earth 2026 Template: the default template galaxy with all game mechanics installed.
+     * <p>
+     * This template serves as the foundation for creating new galaxies. When a player
+     * creates a new game, Earth 2026 is used as the template, and the Game Rules uses
+     * the rules database to build the new galaxy using existing database entries.
+     * </p>
+     * <p>
+     * All game mechanics are enabled: combat, economy, diplomacy, crafting, exploration,
+     * survival, RPG, tactical, FPS, simulation, 4X, tycoon, character, inventory,
+     * encounter, campaign, supernatural, real estate, and technology.
+     * </p>
+     */
+    EARTH_2026_TEMPLATE(
+            "Earth 2026 Template",
+            "The default template galaxy with all game mechanics installed. Used as the foundation for new galaxy creation.",
+            GalaxyGenerationConfig.builder()
+                    .sectorSize(10)
+                    .subSectorDimension(10)
+                    .civilizationDensity(0.4)
+                    .resourceDistribution(0.6)
+                    .galaxyShape("spiral")
+                    .namingConvention("astronomical")
+                    .empireCount(4)
+                    .difficultyLevel("medium")
+                    .gameType("Earth2026")
+                    .moonChance(0.5)
+                    .spaceStationChance(0.2)
+                    .gasGiantChance(0.3)
+                    .blackHoleChance(0.02)
+                    .hyperlaneDensity(1.0)
+                    .asteroidBeltChance(0.5)
+                    .build()
+    ),
+
+    /**
      * Custom template: uses all default values. Starting point for fully custom galaxies.
      */
     CUSTOM(

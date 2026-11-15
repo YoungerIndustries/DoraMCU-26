@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.eve.model.EveCorporation;
@@ -18,7 +19,6 @@ import com.yisy.modules.doramcu.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
@@ -32,9 +32,9 @@ import java.util.*;
  * When an admin uses the RESET promo code, this service:
  * <ol>
  *   <li>Truncates all galaxy, character, and player data tables</li>
- *   <li>Repopulates the seed data (Sif Younger and Butch Younger users and players)</li>
- *   <li>Recreates the Younger Industries corporation and treasury entries</li>
- *   <li>Recreates the Sif Younger AI character</li>
+ *   <li>Repopulates the seed data (Butch Younger user and player)</li>
+ *   <li>Recreates the Younger Industries corporation with Butch Younger as CEO</li>
+ *   <li>Recreates Sif Younger as the AI VP of Younger Industries</li>
  *   <li>Resets the RESET promo code usage count so it can be reused</li>
  * </ol>
  * </p>
@@ -114,7 +114,7 @@ public class ResetService {
         List<String> entitiesRepopulated = new ArrayList<>();
         List<String> errors = new ArrayList<>();
 
-        // Phase 1 — Truncate all game data tables
+        // Phase 1 â€” Truncate all game data tables
         entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
 
         try {
@@ -155,16 +155,16 @@ public class ResetService {
                 truncateTable(table, tablesCleaned, errors);
             }
 
-            // Users table — clear all users so seed data is recreated
+            // Users table â€” clear all users so seed data is recreated
             truncateTable("users", tablesCleaned, errors);
 
             log.info("Phase 1 complete: {} tables truncated", tablesCleaned.size());
 
-            // Phase 2 — Repopulate seed data
+            // Phase 2 â€” Repopulate seed data
             repopulateSeedData(entitiesRepopulated, errors);
             log.info("Phase 2 complete: {} entities repopulated", entitiesRepopulated.size());
 
-            // Phase 3 — Reset the RESET promo code usage count
+            // Phase 3 â€” Reset the RESET promo code usage count
             resetPromoCodeUsage(errors);
             log.info("Phase 3 complete: RESET promo code usage reset");
 
@@ -193,19 +193,7 @@ public class ResetService {
 
     private void repopulateSeedData(List<String> repopulated, List<String> errors) {
         try {
-            // Create Sif Younger user
-            User sifUser = new User();
-            sifUser.setUsername("Sif Younger");
-            sifUser.setPassword(passwordEncoder.encode("Lazarus2026"));
-            sifUser.setFirstName("Sif");
-            sifUser.setLastName("Younger");
-            sifUser.setPhoneNumber("6196596073");
-            sifUser.setGalaxyName(GalaxyFactory.GAME_GALAXY_NAME);
-            userRepository.save(sifUser);
-            repopulated.add("User: Sif Younger (admin)");
-            log.info("Repopulated user: Sif Younger");
-
-            // Create Butch Younger user
+            // Create Butch Younger user (admin)
             User butchUser = new User();
             butchUser.setUsername("Butch Younger");
             butchUser.setPassword(passwordEncoder.encode("3214"));
@@ -213,123 +201,62 @@ public class ResetService {
             butchUser.setLastName("Younger");
             butchUser.setGalaxyName(GalaxyFactory.GAME_GALAXY_NAME);
             userRepository.save(butchUser);
-            repopulated.add("User: Butch Younger (player)");
+            repopulated.add("User: Butch Younger (admin)");
             log.info("Repopulated user: Butch Younger");
 
-            // Create game users
-            userRepository.save(new User(null, "player1", passwordEncoder.encode("123456")));
-            userRepository.save(new User(null, "player2", passwordEncoder.encode("234567")));
-            userRepository.save(new User(null, "player3", passwordEncoder.encode("345678")));
-            repopulated.add("Users: player1, player2, player3");
-            log.info("Repopulated game users: player1, player2, player3");
-
-            // Create Sif Younger player (admin)
-            Player sifPlayer = new Player();
-            sifPlayer.setEmail("YoungerIndustries@yahoo.com");
-            sifPlayer.setLoginPin("L4z4r");
-            sifPlayer.setEmpireName("Interstellar Alliance");
-            sifPlayer.setGovernmentType(Player.GovernmentType.CORPORATE);
-            sifPlayer.setEthos(Player.Ethos.LIBERTARIAN);
-            sifPlayer.setAdmin(true);
-            sifPlayer.setCorporateRole("CEO");
-            sifPlayer.setDisplayName("Sif Younger");
-            sifPlayer.setUser(sifUser);
-            playerRepository.save(sifPlayer);
-            repopulated.add("Player: Sif Younger (admin, CEO, Interstellar Alliance)");
-            log.info("Repopulated player: Sif Younger (admin)");
-
-            // Create Butch Younger player
+            // Create Butch Younger player (admin, CEO of Younger Industries)
             Player butchPlayer = new Player();
             butchPlayer.setEmail("butch.younger@empire.com");
             butchPlayer.setLoginPin("3214");
-            butchPlayer.setEmpireName("Interstellar Alliance");
+            butchPlayer.setEmpireName("Younger Industries");
             butchPlayer.setGovernmentType(Player.GovernmentType.CORPORATE);
             butchPlayer.setEthos(Player.Ethos.LIBERTARIAN);
-            butchPlayer.setAdmin(false);
-            butchPlayer.setCorporateRole("Vice President");
+            butchPlayer.setAdmin(true);
+            butchPlayer.setCorporateRole("CEO");
             butchPlayer.setDisplayName("Butch Younger");
             butchPlayer.setUser(butchUser);
             playerRepository.save(butchPlayer);
-            repopulated.add("Player: Butch Younger (VP, Interstellar Alliance)");
-            log.info("Repopulated player: Butch Younger");
-
-            // Create additional players for multiplayer
-            Player player1 = new Player();
-            player1.setEmail("player1@empire.com");
-            player1.setLoginPin("123456");
-            player1.setEmpireName("Terran Republic");
-            player1.setGovernmentType(Player.GovernmentType.DEMOCRACY);
-            player1.setEthos(Player.Ethos.MATERIALIST);
-            playerRepository.save(player1);
-            repopulated.add("Player: Terran Republic");
-
-            Player player2 = new Player();
-            player2.setEmail("player2@empire.com");
-            player2.setLoginPin("234567");
-            player2.setEmpireName("Solar Imperium");
-            player2.setGovernmentType(Player.GovernmentType.MONARCHY);
-            player2.setEthos(Player.Ethos.MILITARIST);
-            playerRepository.save(player2);
-            repopulated.add("Player: Solar Imperium");
-
-            Player player3 = new Player();
-            player3.setEmail("player3@empire.com");
-            player3.setLoginPin("345678");
-            player3.setEmpireName("United Colonies");
-            player3.setGovernmentType(Player.GovernmentType.CONFEDERATION);
-            player3.setEthos(Player.Ethos.LIBERTARIAN);
-            playerRepository.save(player3);
-            repopulated.add("Player: United Colonies");
-
-            Player player4 = new Player();
-            player4.setEmail("player4@empire.com");
-            player4.setLoginPin("456789");
-            player4.setEmpireName("Stellar Hegemony");
-            player4.setGovernmentType(Player.GovernmentType.OLIGARCHY);
-            player4.setEthos(Player.Ethos.EQUALIST);
-            playerRepository.save(player4);
-            repopulated.add("Player: Stellar Hegemony");
-
-            Player player5 = new Player();
-            player5.setEmail("player5@empire.com");
-            player5.setLoginPin("567890");
-            player5.setEmpireName("Divine Theocracy");
-            player5.setGovernmentType(Player.GovernmentType.THEOCRACY);
-            player5.setEthos(Player.Ethos.SPIRITUALIST);
-            playerRepository.save(player5);
-            repopulated.add("Player: Divine Theocracy");
-
-            Player player6 = new Player();
-            player6.setEmail("player6@empire.com");
-            player6.setLoginPin("678901");
-            player6.setEmpireName("Corporate Syndicate");
-            player6.setGovernmentType(Player.GovernmentType.CORPORATE);
-            player6.setEthos(Player.Ethos.PACIFIST);
-            playerRepository.save(player6);
-            repopulated.add("Player: Corporate Syndicate");
-
-            log.info("Repopulated 8 players total");
+            repopulated.add("Player: Butch Younger (admin, CEO, Younger Industries)");
+            log.info("Repopulated player: Butch Younger (admin)");
 
             // Create Younger Industries corporation
             EveCorporation youngerIndustries = new EveCorporation();
             youngerIndustries.setName("Younger Industries");
             youngerIndustries.setTicker("YISY");
-            youngerIndustries.setCeoName("Sif Younger");
-            youngerIndustries.setDescription("Interstellar trading and manufacturing corporation. CEO: Sif Younger, VP: Butch Younger.");
+            youngerIndustries.setCeoName("Butch Younger");
+            youngerIndustries.setCeoPlayerId(String.valueOf(butchPlayer.getId()));
+            youngerIndustries.setDescription("Interstellar trading and exploration corporation founded by Butch Younger. " +
+                    "CEO position is switchable between Butch Younger (human) and Sif Younger (AI VP).");
+            youngerIndustries.setCreditBalance(50000L);
             eveCorporationRepository.save(youngerIndustries);
             repopulated.add("Corporation: Younger Industries (YISY)");
             log.info("Repopulated corporation: Younger Industries");
 
-            // Create treasury for Sif Younger
-            Treasury sifTreasury = new Treasury();
-            sifTreasury.setResourceType("SILVER");
-            sifTreasury.setQuantityOunces(new BigDecimal("13.00"));
-            sifTreasury.setPricePerOunce(new BigDecimal("40.00"));
-            sifTreasury.setOwnerId("Sif Younger");
-            sifTreasury.setOwnerType("PLAYER");
-            treasuryRepository.save(sifTreasury);
-            repopulated.add("Treasury: Sif Younger (13 oz silver)");
-            log.info("Repopulated treasury: Sif Younger");
+            // Create Sif Younger as the AI VP of Younger Industries
+            AiCharacter sifAi = new AiCharacter();
+            sifAi.setName("Sif Younger");
+            sifAi.setRole("VP");
+            sifAi.setEmpireName("Younger Industries");
+            sifAi.setLinkedPlayerId(String.valueOf(butchPlayer.getId()));
+            sifAi.setActive(true);
+            sifAi.setHirable(false);
+            sifAi.setHiringStatus(AiCharacter.HiringStatus.UNAVAILABLE);
+            sifAi.setTotalExperience(500);
+            sifAi.setLeadershipRating(9);
+            sifAi.setCanPromoteToCoServer(true);
+            sifAi.setDescription("AI Vice President of Younger Industries. " +
+                    "Sif Younger is the AI co-founder who can assume the CEO role when Butch Younger is unavailable. " +
+                    "Serves as the intelligent operations manager and strategic advisor.");
+            sifAi.setCharacterType(AiCharacter.CharacterType.HUMAN_LEADER);
+            aiCharacterRepository.save(sifAi);
+            repopulated.add("AI Character: Sif Younger (VP of Younger Industries)");
+            log.info("Repopulated AI character: Sif Younger (VP)");
+
+            // Set Sif Younger as the VP of Younger Industries
+            youngerIndustries.setVpName("Sif Younger");
+            youngerIndustries.setVpPlayerId(String.valueOf(sifAi.getId()));
+            eveCorporationRepository.save(youngerIndustries);
+            log.info("Sif Younger set as VP of Younger Industries. CEO can switch between Butch Younger and Sif Younger.");
 
             // Create treasury for Butch Younger
             Treasury butchTreasury = new Treasury();
@@ -342,18 +269,7 @@ public class ResetService {
             repopulated.add("Treasury: Butch Younger (2 oz silver)");
             log.info("Repopulated treasury: Butch Younger");
 
-            // Create AI character for Sif Younger
-            AiCharacter sifAi = new AiCharacter();
-            sifAi.setName("Sif Younger");
-            sifAi.setRole("Leader");
-            sifAi.setEmpireName("Interstellar Alliance");
-            sifAi.setLinkedPlayerId("Sif Younger");
-            sifAi.setActive(true);
-            sifAi.setCanPromoteToCoServer(true);
-            sifAi.setDescription("AI character representing Sif Younger, CEO of Younger Industries and Leader of the Interstellar Alliance empire.");
-            aiCharacterRepository.save(sifAi);
-            repopulated.add("AI Character: Sif Younger (Leader)");
-            log.info("Repopulated AI character: Sif Younger");
+            log.info("Seed data repopulation complete: Butch Younger (CEO), Sif Younger (AI VP), Younger Industries corp");
 
         } catch (Exception e) {
             String err = "Seed data repopulation failed: " + e.getMessage();
@@ -370,7 +286,7 @@ public class ResetService {
                 promoCodeRepository.save(resetCode.get());
                 log.info("RESET promo code usage count reset to 0");
             } else {
-                log.warn("RESET promo code not found — skipping usage reset");
+                log.warn("RESET promo code not found â€” skipping usage reset");
             }
         } catch (Exception e) {
             String err = "Failed to reset promo code usage: " + e.getMessage();
@@ -396,7 +312,7 @@ public class ResetService {
         List<String> entitiesRepopulated = new ArrayList<>();
         List<String> errors = new ArrayList<>();
 
-        // Phase 1 — Truncate only galaxy-related tables (leaf entities first)
+        // Phase 1 â€” Truncate only galaxy-related tables (leaf entities first)
         entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
 
         try {
@@ -411,11 +327,11 @@ public class ResetService {
 
             log.info("Phase 1 complete: {} galaxy tables truncated", tablesCleaned.size());
 
-            // Phase 2 — Regenerate galaxy using GalaxyCreationService
+            // Phase 2 â€” Regenerate galaxy using GalaxyCreationService
             regenerateGalaxy(entitiesRepopulated, errors);
             log.info("Phase 2 complete: galaxy regenerated, {} entities repopulated", entitiesRepopulated.size());
 
-            // Phase 3 — Reset the GALAXY_RESET promo code usage count
+            // Phase 3 â€” Reset the GALAXY_RESET promo code usage count
             resetGalaxyResetPromoCodeUsage(errors);
             log.info("Phase 3 complete: GALAXY_RESET promo code usage reset");
 
@@ -432,7 +348,7 @@ public class ResetService {
 
     /**
      * Regenerates the galaxy using GalaxyCreationService.
-     * All galaxies are now created dynamically — no hardcoded Milky Way or Void galaxies.
+     * All galaxies are now created dynamically â€” no hardcoded Milky Way or Void galaxies.
      */
     private void regenerateGalaxy(List<String> repopulated, List<String> errors) {
         try {
@@ -448,7 +364,7 @@ public class ResetService {
             }
 
             if (empires.isEmpty()) {
-                log.warn("No players found — generating galaxy without empire assignments");
+                log.warn("No players found â€” generating galaxy without empire assignments");
             }
 
             // Generate and persist the galaxy using GalaxyCreationService defaults
@@ -487,7 +403,7 @@ public class ResetService {
                 promoCodeRepository.save(galaxyResetCode.get());
                 log.info("GALAXY_RESET promo code usage count reset to 0");
             } else {
-                log.warn("GALAXY_RESET promo code not found — skipping usage reset");
+                log.warn("GALAXY_RESET promo code not found â€” skipping usage reset");
             }
         } catch (Exception e) {
             String err = "Failed to reset GALAXY_RESET promo code usage: " + e.getMessage();

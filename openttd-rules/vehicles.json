@@ -1,0 +1,432 @@
+{
+  "game_info": {
+    "title": "OpenTTD Transport Tycoon Vehicle Database",
+    "description": "Complete vehicle database from OpenTTD and NewGRF mods, organized by tech level progression from steam locomotives to interplanetary spacecraft",
+    "source_mods": [
+      "OpenTTD Core (GPL v2)",
+      "NUTS - Unrealistic Train Set by V453000 (GPL v3)",
+      "FRIMS - Future Reality Inspired Maglev Set (CC-BY v3.0)",
+      "SpaceY - Space-themed rockets (GPL v3)",
+      "Kaaskrokets Fictional Aircraft (GPL v2)",
+      "Modern Maglev Trains (CC-BY v3.0)",
+      "Japanese Maglevs (GPL v2)"
+    ]
+  },
+  "vehicles": {
+    "road_vehicles": [
+      {
+        "id": "truck",
+        "name": "Truck",
+        "source": "OpenTTD Core",
+        "tech_level_min": 1,
+        "tech_level_max": 10,
+        "category": "road",
+        "type": "TRUCK",
+        "description": "Basic cargo truck for short-distance freight transport. Available from the start of the game.",
+        "stats": {
+          "speed_hexes_per_turn": 3,
+          "cargo_capacity": 20,
+          "passenger_capacity": 0,
+          "build_cost": 100,
+          "maintenance_cost": 5,
+          "lifetime": 300,
+          "power": 10
+        },
+        "infrastructure": "ROAD",
+        "variants": [
+          {"name": "Express Truck", "id": "express_truck", "speed_hexes_per_turn": 5, "cargo_capacity": 15, "build_cost": 200, "maintenance_cost": 8}
+        ]
+      },
+      {
+        "id": "bus",
+        "name": "Bus",
+        "source": "OpenTTD Core",
+        "tech_level_min": 1,
+        "tech_level_max": 10,
+        "category": "road",
+        "type": "BUS",
+        "description": "Passenger bus for local transport. Essential for connecting settlements to stations.",
+        "stats": {
+          "speed_hexes_per_turn": 4,
+          "cargo_capacity": 0,
+          "passenger_capacity": 30,
+          "build_cost": 80,
+          "maintenance_cost": 4,
+          "lifetime": 250,
+          "power": 8
+        },
+        "infrastructure": "ROAD"
+      }
+    ],
+    "rail_vehicles": [
+      {
+        "id": "steam_locomotive",
+        "name": "Steam Locomotive",
+        "source": "OpenTTD Core / NUTS",
+        "tech_level_min": 1,
+        "tech_level_max": 4,
+        "category": "rail",
+        "rail_type": "normal",
+        "description": "Classic steam-powered locomotive. The first rail vehicle available, representing early industrial technology.",
+        "stats": {
+          "speed_hexes_per_turn": 4,
+          "cargo_capacity": 50,
+          "passenger_capacity": 40,
+          "build_cost": 300,
+          "maintenance_cost": 10,
+          "lifetime": 400,
+          "power": 20
+        },
+        "infrastructure": "RAIL",
+        "variants": [
+          {"name": "NUTS Super-Strong Steam", "specialty": "Heavy freight with high power"},
+          {"name": "NUTS Strong Steam", "specialty": "Balanced freight and passenger"},
+          {"name": "NUTS Medium Steam", "specialty": "Faster passenger service"}
+        ]
+      },
+      {
+        "id": "diesel_locomotive",
+        "name": "Diesel Locomotive",
+        "source": "OpenTTD Core / NUTS",
+        "tech_level_min": 2,
+        "tech_level_max": 5,
+        "category": "rail",
+        "rail_type": "normal",
+        "description": "Diesel-powered locomotive with improved speed and reliability over steam. Represents mid-industrial technology.",
+        "stats": {
+          "speed_hexes_per_turn": 6,
+          "cargo_capacity": 80,
+          "passenger_capacity": 60,
+          "build_cost": 450,
+          "maintenance_cost": 12,
+          "lifetime": 500,
+          "power": 35
+        },
+        "infrastructure": "RAIL",
+        "variants": [
+          {"name": "NUTS Super-Strong Diesel", "specialty": "Maximum freight capacity"},
+          {"name": "NUTS Fast Diesel", "specialty": "High-speed passenger service"}
+        ]
+      },
+      {
+        "id": "electric_locomotive",
+        "name": "Electric Locomotive",
+        "source": "OpenTTD Core / NUTS",
+        "tech_level_min": 3,
+        "tech_level_max": 6,
+        "category": "rail",
+        "rail_type": "electrified",
+        "availability_year": 1965,
+        "description": "Electric train requiring electrified railway. Clean, efficient transport for industrial planets.",
+        "stats": {
+          "speed_hexes_per_turn": 8,
+          "cargo_capacity": 100,
+          "passenger_capacity": 80,
+          "build_cost": 600,
+          "maintenance_cost": 15,
+          "lifetime": 600,
+          "power": 50
+        },
+        "infrastructure": "RAIL",
+        "requires": "ELECTRIFIED_RAIL"
+      },
+      {
+        "id": "monorail_train",
+        "name": "Monorail Train",
+        "source": "OpenTTD Core / NUTS",
+        "tech_level_min": 4,
+        "tech_level_max": 7,
+        "category": "rail",
+        "rail_type": "monorail",
+        "availability_year": 1999,
+        "description": "Advanced monorail system for high-tech planets. Elevated tracks reduce land use.",
+        "stats": {
+          "speed_hexes_per_turn": 10,
+          "cargo_capacity": 120,
+          "passenger_capacity": 100,
+          "build_cost": 800,
+          "maintenance_cost": 20,
+          "lifetime": 700,
+          "power": 70
+        },
+        "infrastructure": "MONORAIL"
+      },
+      {
+        "id": "maglev_train",
+        "name": "Maglev Train",
+        "source": "OpenTTD Core / Modern Maglev",
+        "tech_level_min": 5,
+        "tech_level_max": 8,
+        "category": "rail",
+        "rail_type": "maglev",
+        "availability_year": 2022,
+        "description": "Magnetic levitation train — the pinnacle of conventional rail transport. Used on advanced planets.",
+        "stats": {
+          "speed_hexes_per_turn": 12,
+          "cargo_capacity": 150,
+          "passenger_capacity": 120,
+          "build_cost": 1000,
+          "maintenance_cost": 25,
+          "lifetime": 800,
+          "power": 100
+        },
+        "infrastructure": "MAGLEV",
+        "variants": [
+          {"name": "Chinese Maglev", "origin": "China", "specialty": "High-speed passenger"},
+          {"name": "Japanese SCMaglev", "origin": "Japan", "specialty": "Ultra-high speed"},
+          {"name": "German Transrapid", "origin": "Germany", "specialty": "Balanced performance"},
+          {"name": "Korean Maglev", "origin": "Korea", "specialty": "Cost-effective"}
+        ]
+      },
+      {
+        "id": "frims_maglev",
+        "name": "FRIMS Futuristic Maglev",
+        "source": "FRIMS (Future Reality Inspired)",
+        "tech_level_min": 6,
+        "tech_level_max": 9,
+        "category": "rail",
+        "rail_type": "maglev",
+        "description": "Futuristic maglev trains inspired by the game 'Future Reality'. Sleek designs for space-faring civilizations.",
+        "stats": {
+          "speed_hexes_per_turn": 15,
+          "cargo_capacity": 200,
+          "passenger_capacity": 150,
+          "build_cost": 1500,
+          "maintenance_cost": 30,
+          "lifetime": 1000,
+          "power": 150
+        },
+        "infrastructure": "MAGLEV",
+        "variants": [
+          {"name": "FRIMS Express", "specialty": "Ultra-fast intercity"},
+          {"name": "FRIMS Freight", "specialty": "Heavy cargo maglev"},
+          {"name": "FRIMS Luxury", "specialty": "Premium passenger service"}
+        ]
+      }
+    ],
+    "water_vehicles": [
+      {
+        "id": "cargo_ship",
+        "name": "Cargo Ship",
+        "source": "OpenTTD Core",
+        "tech_level_min": 1,
+        "tech_level_max": 8,
+        "category": "water",
+        "type": "CARGO_SHIP",
+        "description": "Large ocean vessel for bulk cargo transport across water hexes. Slow but high capacity.",
+        "stats": {
+          "speed_hexes_per_turn": 2,
+          "cargo_capacity": 80,
+          "passenger_capacity": 0,
+          "build_cost": 300,
+          "maintenance_cost": 10,
+          "lifetime": 500,
+          "power": 15
+        },
+        "infrastructure": "WATER"
+      },
+      {
+        "id": "passenger_ferry",
+        "name": "Passenger Ferry",
+        "source": "OpenTTD Core",
+        "tech_level_min": 1,
+        "tech_level_max": 8,
+        "category": "water",
+        "type": "PASSENGER_FERRY",
+        "description": "Medium ferry for passenger transport across water. Connects coastal settlements.",
+        "stats": {
+          "speed_hexes_per_turn": 3,
+          "cargo_capacity": 10,
+          "passenger_capacity": 50,
+          "build_cost": 250,
+          "maintenance_cost": 8,
+          "lifetime": 400,
+          "power": 12
+        },
+        "infrastructure": "WATER"
+      },
+      {
+        "id": "advanced_cargo_liner",
+        "name": "Advanced Cargo Liner",
+        "source": "NUTS / Community",
+        "tech_level_min": 4,
+        "tech_level_max": 8,
+        "category": "water",
+        "description": "High-capacity container ship for interplanetary trade routes on ocean worlds.",
+        "stats": {
+          "speed_hexes_per_turn": 3,
+          "cargo_capacity": 200,
+          "passenger_capacity": 0,
+          "build_cost": 800,
+          "maintenance_cost": 20,
+          "lifetime": 700,
+          "power": 40
+        },
+        "infrastructure": "WATER"
+      }
+    ],
+    "air_vehicles": [
+      {
+        "id": "aircraft",
+        "name": "Aircraft",
+        "source": "OpenTTD Core",
+        "tech_level_min": 5,
+        "tech_level_max": 10,
+        "category": "air",
+        "type": "AIRCRAFT",
+        "description": "Jet aircraft for fast point-to-point transport. Requires airport infrastructure.",
+        "stats": {
+          "speed_hexes_per_turn": 10,
+          "cargo_capacity": 10,
+          "passenger_capacity": 10,
+          "build_cost": 800,
+          "maintenance_cost": 25,
+          "lifetime": 300,
+          "power": 80
+        },
+        "infrastructure": "AIRPORT"
+      },
+      {
+        "id": "fictional_aircraft",
+        "name": "Fictional Aircraft",
+        "source": "Kaaskrokets Fictional Aircraft",
+        "tech_level_min": 7,
+        "tech_level_max": 9,
+        "category": "air",
+        "description": "Fictional aircraft and spacecraft designs for advanced transport. Includes actual spacecraft for gameplay.",
+        "stats": {
+          "speed_hexes_per_turn": 15,
+          "cargo_capacity": 20,
+          "passenger_capacity": 20,
+          "build_cost": 1500,
+          "maintenance_cost": 40,
+          "lifetime": 400,
+          "power": 120
+        },
+        "infrastructure": "AIRPORT",
+        "variants": [
+          {"name": "Spacecraft Transport", "specialty": "Atmospheric and space-capable"},
+          {"name": "Orbital Shuttle", "specialty": "Low orbit operations"},
+          {"name": "Planetary Express", "specialty": "High-speed atmospheric"}
+        ]
+      },
+      {
+        "id": "helicopter",
+        "name": "Helicopter",
+        "source": "OpenTTD Core",
+        "tech_level_min": 4,
+        "tech_level_max": 7,
+        "category": "air",
+        "description": "Helicopter for short-range transport. Can operate without airport infrastructure in some scenarios.",
+        "stats": {
+          "speed_hexes_per_turn": 6,
+          "cargo_capacity": 5,
+          "passenger_capacity": 5,
+          "build_cost": 400,
+          "maintenance_cost": 15,
+          "lifetime": 200,
+          "power": 30
+        },
+        "infrastructure": "AIRPORT"
+      }
+    ],
+    "space_vehicles": [
+      {
+        "id": "rocket",
+        "name": "Rocket",
+        "source": "SpaceY (coded as helicopter)",
+        "tech_level_min": 8,
+        "tech_level_max": 10,
+        "category": "space",
+        "description": "Space-themed rocket vehicle. In OpenTTD, rockets are coded as helicopters for gameplay compatibility.",
+        "stats": {
+          "speed_hexes_per_turn": 20,
+          "cargo_capacity": 30,
+          "passenger_capacity": 10,
+          "build_cost": 3000,
+          "maintenance_cost": 60,
+          "lifetime": 500,
+          "power": 200
+        },
+        "infrastructure": "SPACEPORT",
+        "variants": [
+          {"name": "Falcon 9 Style", "specialty": "Reusable orbital rocket"},
+          {"name": "Heavy Lifter", "specialty": "Deep space cargo"},
+          {"name": "Crew Dragon Style", "specialty": "Passenger space transport"}
+        ]
+      },
+      {
+        "id": "apollo_rocket",
+        "name": "Apollo Rocket",
+        "source": "Apollo Rocket Industry Set",
+        "tech_level_min": 9,
+        "tech_level_max": 10,
+        "category": "space",
+        "description": "Full space logistics rocket for interplanetary travel. Part of the Apollo industry set with production chains for rocket parts.",
+        "stats": {
+          "speed_hexes_per_turn": 25,
+          "cargo_capacity": 50,
+          "passenger_capacity": 15,
+          "build_cost": 5000,
+          "maintenance_cost": 100,
+          "lifetime": 600,
+          "power": 300
+        },
+        "infrastructure": "SPACEPORT",
+        "production_chain": [
+          {"stage": "Rocket Parts", "industry": "Rocket Parts Factory"},
+          {"stage": "Spacecraft Assembly", "industry": "Spacecraft Assembly Plant"},
+          {"stage": "Lander Construction", "industry": "Lander Factory"},
+          {"stage": "Final Launch", "industry": "Rocket Launch Pad"}
+        ]
+      },
+      {
+        "id": "space_station",
+        "name": "Orbital Space Station",
+        "source": "Community / DoraMCU",
+        "tech_level_min": 10,
+        "tech_level_max": 10,
+        "category": "space",
+        "description": "Orbital station serving as a hub for interplanetary transport. Acts as a station in space.",
+        "stats": {
+          "speed_hexes_per_turn": 0,
+          "cargo_capacity": 500,
+          "passenger_capacity": 100,
+          "build_cost": 10000,
+          "maintenance_cost": 200,
+          "lifetime": 2000,
+          "power": 500
+        },
+        "infrastructure": "ORBITAL_STATION",
+        "is_station": true
+      }
+    ]
+  },
+  "vehicle_categories": {
+    "road": {
+      "description": "Ground vehicles operating on roads",
+      "infrastructure_required": "ROAD",
+      "tech_level_range": [1, 10]
+    },
+    "rail": {
+      "description": "Rail vehicles from steam to futuristic maglev",
+      "infrastructure_required": ["RAIL", "MONORAIL", "MAGLEV"],
+      "tech_level_range": [1, 9]
+    },
+    "water": {
+      "description": "Ships and ferries for water transport",
+      "infrastructure_required": "WATER",
+      "tech_level_range": [1, 8]
+    },
+    "air": {
+      "description": "Aircraft and helicopters for air transport",
+      "infrastructure_required": "AIRPORT",
+      "tech_level_range": [4, 9]
+    },
+    "space": {
+      "description": "Rockets and spacecraft for interplanetary travel",
+      "infrastructure_required": "SPACEPORT",
+      "tech_level_range": [8, 10]
+    }
+  }
+}

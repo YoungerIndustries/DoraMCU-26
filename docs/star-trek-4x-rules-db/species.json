@@ -118,5 +118,41 @@
     "scienceBonus": 3,
     "diplomacyBonus": 1,
     "tradeBonus": 0
+  },
+  {
+    "id": "TRILL",
+    "name": "Trill",
+    "description": "Trill are a long-lived species that can join with a symbiont, gaining the memories and skills of previous hosts. They excel in science and diplomacy.",
+    "homeWorld": "Trill",
+    "government": "United Federation of Planets",
+    "socialDM": 1,
+    "combatBonus": 0,
+    "scienceBonus": 3,
+    "diplomacyBonus": 2,
+    "tradeBonus": 0
+  },
+  {
+    "id": "BAJORAN",
+    "name": "Bajoran",
+    "description": "Bajorans are a spiritual people who survived Cardassian occupation. They are resilient and resourceful, with strong faith.",
+    "homeWorld": "Bajor",
+    "government": "Bajoran Provisional Government",
+    "socialDM": 0,
+    "combatBonus": 1,
+    "scienceBonus": 0,
+    "diplomacyBonus": 1,
+    "tradeBonus": 0
+  },
+  {
+    "id": "ORION",
+    "name": "Orion",
+    "description": "Orions are a ruthless species known for slavery, piracy, and mercenary work. They are physically strong and cunning.",
+    "homeWorld": "Orion Colony",
+    "government": "Orion Syndicate",
+    "socialDM": -3,
+    "combatBonus": 2,
+    "scienceBonus": 0,
+    "diplomacyBonus": -1,
+    "tradeBonus": 2
   }
 ]

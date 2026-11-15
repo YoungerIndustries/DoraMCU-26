@@ -64,8 +64,8 @@ export class PlayerCharactersService {
   }
 
   getCrew(playerId: number, galaxyName?: string): Observable<PlayerCharacterEntry[]> {
-    const params: Record<string, string> = {};
-    if (galaxyName) params.galaxyName = galaxyName;
+    const params: { [key: string]: string } = {};
+    if (galaxyName) params['galaxyName'] = galaxyName;
     return this.http.get<PlayerCharacterEntry[]>(`${this.apiBase}/${playerId}/characters/crew`, { params });
   }
 

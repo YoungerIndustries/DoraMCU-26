@@ -1,10 +1,10 @@
 package com.yisy.modules.doramcu.dnd5e.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.dnd5e.model.*;
 import com.yisy.modules.doramcu.dnd5e.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -621,13 +621,13 @@ public class Dnd5eModuleService {
 
         // Check for empty components
         if (parseIds(module.getHookIds()).isEmpty()) {
-            issues.add("No adventure hooks linked — consider adding hooks for player engagement");
+            issues.add("No adventure hooks linked â€” consider adding hooks for player engagement");
         }
         if (parseIds(module.getNpcIds()).isEmpty()) {
-            issues.add("No NPCs linked — consider adding NPCs for world-building");
+            issues.add("No NPCs linked â€” consider adding NPCs for world-building");
         }
         if (parseIds(module.getEncounterIds()).isEmpty()) {
-            issues.add("No encounters linked — consider adding encounters for challenge");
+            issues.add("No encounters linked â€” consider adding encounters for challenge");
         }
 
         return issues;

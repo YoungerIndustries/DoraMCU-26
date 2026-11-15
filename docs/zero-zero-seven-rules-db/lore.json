@@ -1,0 +1,408 @@
+{
+  "lore": {
+    "universe": {
+      "title": "007 Universe",
+      "description": "The 007 universe is set in the modern era of international espionage, featuring British secret agent James Bond and his missions for Her Majesty's Secret Intelligence Service (MI6). The world is one of shadowy organizations, megalomaniacal villains, and high-stakes operations that threaten global security.",
+      "source_material": [
+        "James Bond novels by Ian Fleming (1953-1964)",
+        "James Bond film series (Eon Productions)",
+        "Casino Royale film (2006)",
+        "Quantum of Solace (2008)",
+        "Skyfall (2012)",
+        "Spectre (2015)",
+        "No Time to Die (2021)"
+      ]
+    },
+    "mi6": {
+      "name": "Her Majesty's Secret Intelligence Service",
+      "description": "MI6, also known as the Secret Intelligence Service (SIS), is the foreign intelligence agency of the United Kingdom. Responsible for gathering human intelligence (HUMINT) overseas to protect British national security interests.",
+      "headquarters": "London, United Kingdom (official location undisclosed)",
+      "structure": {
+        "c": {
+          "title": "Chief of the Secret Intelligence Service",
+          "description": "The head of MI6, commonly referred to as 'M' in Bond lore. Responsible for overall strategy and operations.",
+          "notable_ms": [
+            "M (Sir Bill Tanner era)",
+            "M (Gareth Mallory)",
+            "M (female, pre-Skyfall)"
+          ]
+        },
+        "q_branch": {
+          "title": "Quartermaster Branch",
+          "description": "The technical branch of MI6 responsible for providing gadgets, weapons, and equipment to field agents.",
+          "notable_quartermasters": [
+            "Q (John Cleese era)",
+            "Q (Ben Whishaw era - Evelyn 'Q')",
+            "Q (Ralph Fiennes era -钱 Q)"
+          ],
+          "famous_gadgets": [
+            "Aston Martin DB5 with ejector seat, missiles, and bulletproof shield",
+            "Wristwatch laser",
+            "Explosive pen",
+            "Tracking devices",
+            "Disguise kits",
+            "Poison dart cufflinks"
+          ]
+        },
+        "moneypenny": {
+          "title": "M's Personal Assistant",
+          "description": "M's personal assistant and head of personnel at MI6 Headquarters. Often the first point of contact for agents returning from missions.",
+          "notable_moneypennys": [
+            "Miss Moneypenny (classic era)",
+            "Moneypenny (Naomie Harris era)"
+          ]
+        },
+        "field_agents": {
+          "description": "Operatives who conduct field operations, including surveillance, infiltration, and direct action.",
+          "sections": {
+            "00_section": {
+              "description": "The most elite section of MI6, consisting of license-to-kill agents. These agents are authorized to use lethal force in the field as a primary option.",
+              "numbering": "Agents are numbered sequentially, with lower numbers indicating seniority and more kills.",
+              "notable_agents": [
+                "007 - James Bond",
+                "003 - Alec Trevelyan (traitor)",
+                "006 - MoneyPenny (pre-field assignment)"
+              ]
+            },
+            "00_section_clearance": "Top Secret, Eyes Only",
+            "training": [
+              "Advanced combat training",
+              "Marksmanship",
+              "Espionage techniques",
+              "Interrogation methods",
+              "Survival skills",
+              "Multilingual communication"
+            ]
+          }
+        }
+      },
+      "operations": {
+        "description": "MI6 conducts a wide range of operations to protect British interests abroad.",
+        "types": [
+          "Human intelligence gathering (HUMINT)",
+          "Counter-terrorism operations",
+          "Counter-espionage",
+          "Covert action",
+          "Asset recruitment and handling",
+          "Technical surveillance",
+          "Cyber operations"
+        ]
+      }
+    },
+    "james_bond": {
+      "name": "James Bond",
+      "code": "007",
+      "description": "The most famous MI6 field agent, known for his sophistication, bravery, and ability to complete impossible missions. Bond is a product of British intelligence training with a personal code of honor.",
+      "background": {
+        "birth": "1968 (reboot timeline), London, England",
+        "education": "Eton College, University of Leiden (Dutch Literature)",
+        "military_service": "British Naval Intelligence, SOE (Special Operations Executive)",
+        "training": [
+          "Advanced combat training",
+          "Marksmanship",
+          "Espionage techniques",
+          "Interrogation methods",
+          "Survival skills",
+          "Multilingual communication"
+        ],
+        "languages": [
+          "English (native)",
+          "French",
+          "German",
+          "Italian",
+          "Spanish",
+          "Russian",
+          "Mandarin"
+        ]
+      },
+      "characteristics": {
+        "strengths": [
+          "Exceptional combat skills",
+          "Master marksman",
+          "Sophisticated and charming",
+          "Adaptable to any situation",
+          "Resilient and determined",
+          "Multilingual",
+          "Expert driver and pilot"
+        ],
+        "weaknesses": [
+          "Emotional attachments can be exploited",
+          "Tendency to act alone",
+          "Personal vendettas can cloud judgment",
+          "Alcohol consumption",
+          "Romantic entanglements"
+        ],
+        "preferences": [
+          "Drinks: Vodka Martini, shaken not stirred",
+          "Cars: Aston Martin",
+          "Women: Intelligent, independent, and dangerous",
+          "Food: French cuisine",
+          "Leisure: Scuba diving, poker, tennis"
+        ]
+      },
+      "notable_missions": [
+        {
+          "name": "Casino Royale",
+          "description": "Bond's first mission as a 00 agent. Tasked with bankrupting Le Chiffre, a financier terror funding terrorism.",
+          "outcome": "Success, but Le Chiffre's death and Vesper Lynd's betrayal haunt Bond",
+          "significance": "Established Bond as a 00 agent and set the tone for his emotional scars"
+        },
+        {
+          "name": "Quantum of Solace",
+          "description": "Bond pursues revenge for Vesper Lynd's death, uncovering a conspiracy involving Quantum.",
+          "outcome": "Quantum disrupted, but the conspiracy runs deeper",
+          "significance": "Bond's transition from personal revenge to professional duty"
+        },
+        {
+          "name": "Skyfall",
+          "description": "Bond's past catches up with him as a terrorist attack on MI6 threatens the agency's existence.",
+          "outcome": "Bond saves M and MI6, but at great personal cost",
+          "significance": "Bond's loyalty to M and MI6 is reaffirmed"
+        },
+        {
+          "name": "Spectre",
+          "description": "Bond uncovers SPECTRE, a shadowy organization orchestrating global terrorism.",
+          "outcome": "SPECTRE exposed, but Erich Krieger escapes",
+          "significance": "Reestablished SPECTRE as the primary antagonist organization"
+        },
+        {
+          "name": "No Time to Die",
+          "description": "Bond is drawn out of retirement to help MI6 track down a missing scientist and his dangerous creation.",
+          "outcome": "Bond sacrifices himself to save the world",
+          "significance": "The end of an era for James Bond"
+        }
+      ]
+    },
+    "villain_organizations": {
+      "spectre": {
+        "name": "SPECTRE",
+        "full_name": "Special Executive for Counter-intelligence, Terrorism, Revenge, and Extortion",
+        "description": "A shadowy international terrorist organization dedicated to world domination through fear and chaos. SPECTRE operates outside national boundaries, using mercenaries, spies, and advanced technology.",
+        "structure": {
+          "number_1": "Supreme Leader of SPECTRE",
+          "executive_committee": "Council of powerful individuals from various nations",
+          "field_operatives": "Mercenaries, spies, and assassins",
+          "technicians": "Scientists and engineers who develop weapons and technology"
+        },
+        "notable_leaders": [
+          {
+            "name": "Ernst Stavro Blofeld",
+            "role": "Original SPECTRE leader, appears in multiple Bond films",
+            "characteristics": "Megalomaniacal, intelligent, and ruthless"
+          },
+          {
+            "name": "Erich Krieger",
+            "role": "Modern SPECTRE leader, former CIA and other intelligence agencies",
+            "characteristics": "Master of manipulation and psychological warfare"
+          }
+        ],
+        "tactics": [
+          "Coordinated global attacks",
+          "Psychological warfare",
+          "Advanced weapons development",
+          "Infiltration of intelligence agencies",
+          "Blackmail and extortion"
+        ]
+      },
+      "quantum": {
+        "name": "Quantum",
+        "description": "A private military contractor and intelligence agency that operates in the shadows, manipulating world events for profit and power.",
+        "structure": {
+          "type": "Private military corporation",
+          "clients": "Governments, corporations, and individuals",
+          "operations": "Covert action, assassination, and intelligence gathering"
+        },
+        "notable_members": [
+          "Dominic Greene - Real estate developer and front man",
+          "Stellmas - Former intelligence officer",
+          "Mathis - Interpol agent (ally of Bond)"
+        ],
+        "tactics": [
+          "Economic manipulation",
+          "Political influence",
+          "Assassination",
+          "Intelligence gathering",
+          "Deniability"
+        ]
+      },
+      "smersh": {
+        "name": "SMERSH",
+        "full_name": "Sмерть шпионам (Death to Spies)",
+        "description": "A Soviet counter-intelligence organization that appears in the early Bond novels. SMERSH is dedicated to eliminating spies and protecting Soviet secrets.",
+        "structure": {
+          "type": "Soviet counter-intelligence",
+          "operations": "Counter-espionage, assassination, and interrogation",
+          "notable_operations": [
+            "Operation Grand Slam - Attempt to assassinate Bond",
+            "Various counter-espionage operations in the West"
+          ]
+        }
+      },
+      "scorpion": {
+        "name": "S.C.O.R.P.I.N.E.",
+        "description": "A cyber-terrorist organization that appears in No Time to Die, led by Lyutsifer Safin.",
+        "leader": {
+          "name": "Lyutsifer Safin",
+          "background": "Son of a Russian spy who was killed by Bond. Seeking revenge against Bond and the world.",
+          "motivation": "Personal revenge and global annihilation"
+        },
+        "weapon": {
+          "name": "Heracles",
+          "description": "A bioweapon capable of targeting specific DNA profiles, potentially wiping out entire populations.",
+          "creator": "Valdo Obruchev, Russian scientist",
+          "delivery": "Airborne transmission via satellite"
+        }
+      }
+    },
+    "allies_and_alliances": {
+      "cia": {
+        "name": "Central Intelligence Agency",
+        "description": "The primary intelligence agency of the United States. MI6 and CIA have a complex relationship, sometimes cooperating and sometimes competing.",
+        "notable_agents": [
+          "Felix Leiter - Long-time ally of Bond",
+          "Max Denicourt - CIA operative (antagonist in some missions)"
+        ]
+      },
+      "interpol": {
+        "name": "International Criminal Police Organization",
+        "description": "International police organization that coordinates cross-border law enforcement. Sometimes cooperates with MI6 on high-profile cases.",
+        "notable_agents": [
+          "Mathis - Interpol agent and ally of Bond"
+        ]
+      },
+      "mi5": {
+        "name": "Military Intelligence, Section 5",
+        "description": "The domestic intelligence agency of the United Kingdom. MI5 handles internal security while MI6 handles foreign intelligence.",
+        "relationship": "Cooperates with MI6 on matters of national security"
+      },
+      "gchq": {
+        "name": "Government Communications Headquarters",
+        "description": "The United Kingdom's signals intelligence and cybersecurity agency. GCHQ provides technical support to MI6 operations.",
+        "relationship": "Provides signals intelligence (SIGINT) support to MI6"
+      }
+    },
+    "weapons_and_technology": {
+      "standard_issue": {
+        "description": "Standard weapons and equipment issued to 00 section agents.",
+        "items": [
+          "Walther PPK / SIG Sauer P320 - Standard sidearm",
+          "Tracking devices - For surveillance and asset location",
+          "Explosives - Various types for demolition and sabotage",
+          "Disguise kits - For infiltration operations",
+          "Communication devices - Encrypted radios and phones"
+        ]
+      },
+      "q_branch_gadgets": {
+        "description": "Specialized gadgets developed by Q Branch for specific missions.",
+        "famous_gadgets": [
+          {
+            "name": "Aston Martin DB5",
+            "features": [
+              "Ejector seat",
+              "Machine guns",
+              "Missiles",
+              "Bulletproof shield",
+              "Tracking device",
+              "Decoy plates"
+            ]
+          },
+          {
+            "name": "Wristwatch Laser",
+            "features": [
+              "Cutting laser",
+              "Timer",
+              "Communication device"
+            ]
+          },
+          {
+            "name": "Explosive Pen",
+            "features": [
+              "Remote-detonated explosive",
+              "Inconspicuous design",
+              "Variable yield"
+            ]
+          },
+          {
+            "name": "Poison Dart Cufflinks",
+            "features": [
+              "Toxic dart",
+              "Silent operation",
+              "Lethal dose"
+            ]
+          }
+        ]
+      },
+      "villain_weapons": {
+        "description": "Advanced weapons and technology developed by villain organizations.",
+        "examples": [
+          {
+            "name": "Laser Satellite",
+            "user": "SPECTRE",
+            "description": "Orbital laser weapon capable of destroying targets from space"
+          },
+          {
+            "name": "Heracles Bioweapon",
+            "user": "S.C.O.R.P.I.N.E.",
+            "description": "DNA-targeted bioweapon capable of selective genocide"
+          },
+          {
+            "name": "Goldeneye Computer Virus",
+            "user": "Aristotle Kristatos",
+            "description": "Cyber weapon capable of hacking satellite systems"
+          },
+          {
+            "name": "Quantum of Solace Diamond",
+            "user": "Quantum",
+            "description": "Rare diamond used as a symbol of power and control"
+          }
+        ]
+      }
+    },
+    "key_locations": [
+      {
+        "name": "MI6 Headquarters",
+        "location": "London, United Kingdom",
+        "description": "The headquarters of MI6, home to M, Q Branch, and Moneypenny.",
+        "significance": "Central command for all MI6 operations"
+      },
+      {
+        "name": "Casino Royale",
+        "location": "Monte Carlo, Monaco",
+        "description": "Famous casino where Bond played poker against Le Chiffre.",
+        "significance": "Site of Bond's first 00 mission"
+      },
+      {
+        "name": "Skyfall Lodge",
+        "location": "Scottish Highlands, United Kingdom",
+        "description": "Bond's childhood home, site of the final battle in Skyfall.",
+        "significance": "Bond's connection to his past and loyalty to Britain"
+      },
+      {
+        "name": "SPECTRE Headquarters",
+        "location": "Various, mobile",
+        "description": "The mobile headquarters of SPECTRE, often hidden in remote locations.",
+        "significance": "Center of SPECTRE operations"
+      },
+      {
+        "name": "Interpol Headquarters",
+        "location": "Lyon, France",
+        "description": "Headquarters of Interpol, where international law enforcement coordinates.",
+        "significance": "Hub for international cooperation"
+      },
+      {
+        "name": "CIA Headquarters",
+        "location": "Langley, Virginia, USA",
+        "description": "Headquarters of the CIA, where Felix Leiter operates.",
+        "significance": "American intelligence hub"
+      }
+    ],
+    "themes": {
+      "loyalty": "Bond's unwavering loyalty to Britain and MI6, despite personal cost",
+      "revenge": "Personal vendettas drive many of Bond's missions",
+      "betrayal": "Trust is a luxury in the world of espionage",
+      "sacrifice": "Bond is willing to sacrifice everything for his country",
+      "identity": "The question of who Bond really is beneath the 00 facade",
+      "modern_espionage": "The evolving nature of intelligence work in the modern era"
+    }
+  }
+}

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogMission;
@@ -13,9 +14,9 @@ import org.springframework.stereotype.Component;
  * on a 2d20 task attempt. The default is 1, but harder situations require more successes.
  * This service provides automated difficulty scaling based on:
  * <ul>
- *   <li>Mission number — later missions are more challenging</li>
- *   <li>Character rank — higher ranks face harder challenges</li>
- *   <li>Mission type — crisis and combat missions are inherently harder</li>
+ *   <li>Mission number ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â later missions are more challenging</li>
+ *   <li>Character rank ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â higher ranks face harder challenges</li>
+ *   <li>Mission type ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â crisis and combat missions are inherently harder</li>
  * </ul>
  * </p>
  * <p>
@@ -132,11 +133,11 @@ public class DifficultyScalingService {
         StringBuilder desc = new StringBuilder();
 
         if (difficulty == 1) {
-            desc.append("Standard difficulty — a routine task.");
+            desc.append("Standard difficulty ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â a routine task.");
         } else if (difficulty == 2) {
-            desc.append("Elevated difficulty — the situation is challenging.");
+            desc.append("Elevated difficulty ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â the situation is challenging.");
         } else {
-            desc.append("Extreme difficulty — this is a critical, high-stakes task.");
+            desc.append("Extreme difficulty ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â this is a critical, high-stakes task.");
         }
 
         if (mission != null) {

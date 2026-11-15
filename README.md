@@ -3,9 +3,11 @@
 **DoraMCU** is a multi-module Spring Boot application for tabletop role-playing game simulation, AI-powered gameplay, and device management. It supports multiple game systems including Traveller, Star Trek 4X, Babylon 5, Earth 2026, and D&D 5E.
 
 [![CI](https://github.com/YoungerIndustries/DoraMCU-26/actions/workflows/ci.yml/badge.svg)](https://github.com/YoungerIndustries/DoraMCU-26/actions/workflows/ci.yml)
+[![Release](https://github.com/YoungerIndustries/DoraMCU-26/actions/workflows/release.yml/badge.svg)](https://github.com/YoungerIndustries/DoraMCU-26/actions/workflows/release.yml)
 [![Java 27](https://img.shields.io/badge/java-27-blue.svg)](https://www.oracle.com/java/technologies/javase/jdk27-archive-downloads.html)
 [![Spring Boot 4.1.2](https://img.shields.io/badge/Spring%20Boot-4.1.2-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![License](https://img.shields.io/badge/license-All%20Rights%20Reserved-gray.svg)]()
+[![Dependabot](https://badgen.net/github/dependabot/YoungerIndustries/DoraMCU-26)](https://dependabot.com/)
 
 ## Features
 
@@ -36,17 +38,51 @@ DoraMCU/
 ├── dora-ai/              # AI chat, code analysis, voice services
 ├── dora-dl-core/         # Deep learning core module (Deeplearning4j)
 ├── dora-electron/        # Electron desktop client
-├── dora-pwa/             # Progressive Web App
-├── dora-neuron/          # Neuron edge deployment
+├── dora-extension/       # Browser extension for enhanced game node capabilities
+├── dora-pwa/             # Progressive Web App (player game node)
+├── dora-neuron/          # Neuron gateway — player auth, client distribution, state sync
+├── dora-web/             # Static web assets and nginx configuration
 ├── k8s/                  # Kubernetes manifests with Kustomize
 ├── docs/                 # Documentation and rule databases
 └── unity-client/         # Unity game client
 ```
 
+### Player Gateway Architecture
+
+The landing page is served by **dora-neuron**, which acts as the single entry point for all players. The flow is:
+
+1. **Player visits the portal** → dora-neuron serves the Angular PWA SPA with a login/registration page.
+2. **Platform detection** → the client detects the player's platform (desktop, mobile, tablet) and OS.
+3. **Client distribution** → the server returns platform-specific capabilities: PWA manifest, browser extension download URL, game engine bundle, and AI model URLs.
+4. **Local game node** → the player's browser runs the full game logic and AI locally via the PWA game engine (`GameEngineService`, `RuleEngineService`, `GameStateStore`).
+5. **State synchronization** → the game node syncs state changes to the server in real-time via WebSocket (`/ws/game-sync`), with HTTP fallback (`/api/v1/game-sync/state`).
+6. **Browser extension** (optional, desktop only) → enhances the PWA with offline AI inference and cached game state for improved performance.
+
+```mermaid
+graph LR
+    A[Player Browser] -->|HTTPS| B[dora-neuron Portal]
+    B -->|Login/Register| C[PlayerAuthController]
+    B -->|Platform Detect| D[ClientDistributionController]
+    D -->|PWA Bundle| E[PWA Game Node]
+    D -->|Extension| F[Browser Extension]
+    E -->|WebSocket| G[GameSyncWebSocketHandler]
+    F -->|Enhanced AI| E
+    G -->|State Sync| H[DoraMCU App]
+    H -->|Database| I[MySQL]
+    E -->|Local AI| J[ONNX Runtime Web]
+```
+
+Key components:
+- **`PlayerAuthController`** — `/api/v1/player/login` and `/api/v1/player/register` for JWT-based authentication.
+- **`ClientDistributionController`** — `/api/v1/player/platform` returns platform-specific client capabilities.
+- **`GameEngineService`** — orchestrates local game state, rules, and AI in the PWA.
+- **`SyncService`** — WebSocket-based real-time state synchronization with last-write-wins conflict resolution.
+- **`dora-extension/`** — Manifest V3 browser extension for offline AI inference and cached game state.
+
 ## Prerequisites
 
 - **Java 27** (Temurin distribution recommended)
-- **Gradle 8.x** (wrapper included)
+- **Gradle 9.8+** (wrapper included)
 - **MySQL 8.x** (optional, H2 in-memory DB for development)
 - **Docker & Docker Compose** (optional, for containerized deployment)
 - **Kubernetes** (optional, for production deployment)
@@ -133,7 +169,8 @@ Key configuration properties in `application.properties`:
 | `dora-dl-core` | Deep learning core with Deeplearning4j |
 | `dora-electron` | Electron-based desktop client |
 | `dora-pwa` | Progressive Web App frontend |
-| `dora-neuron` | Neuron edge deployment |
+| `dora-neuron` | Neuron gateway — player auth, client distribution, state sync |
+| `dora-extension` | Browser extension for enhanced game node capabilities |
 | `unity-client` | Unity game client |
 
 ## Building
@@ -148,6 +185,20 @@ Key configuration properties in `application.properties`:
 # Run tests
 ./gradlew test
 ```
+
+## CI/CD Pipeline
+
+The project uses GitHub Actions for continuous integration and deployment:
+
+- **CI Build** (`ci.yml`): Runs on every push to `main`/`develop` and pull requests. Includes:
+  - Gradle build with caching
+  - Test execution with JaCoCo coverage reporting
+  - OWASP Dependency-Check for vulnerability scanning
+  - Docker image build and push to GHCR
+  - Trivy security scanning for Docker images
+- **Release** (`release.yml`): Triggered by git tags (e.g., `v0.4.0`). Creates a GitHub Release with changelog, builds and pushes versioned Docker images.
+- **Deployment**: Automatic Kubernetes deployment using Kustomize overlays for dev/staging/production environments.
+- **Code Quality**: Qodana code quality checks and Dependabot for dependency updates.
 
 ## Contributing
 

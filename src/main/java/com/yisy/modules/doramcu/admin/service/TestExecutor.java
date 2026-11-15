@@ -5,10 +5,10 @@ import com.yisy.modules.doramcu.admin.model.AiAdminTestCase.TestStatus;
 import com.yisy.modules.doramcu.admin.model.TestDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 /**
  * Executes automated tests against the running DoraMCU system.

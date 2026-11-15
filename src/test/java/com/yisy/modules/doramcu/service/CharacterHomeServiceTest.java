@@ -93,15 +93,15 @@ class CharacterHomeServiceTest {
         }
 
         @Test
-        @DisplayName("returns Milky Way for default user")
+        @DisplayName("returns Earth 2026 for default user")
         void returnsDefaultForDefaultUser() {
             User user = new User(1L, "testuser", "password");
-            // galaxyName defaults to "Milky Way" in User constructor
+            // galaxyName defaults to "Earth 2026" in User entity
             when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
             String result = service.getHomeGalaxy(1L);
 
-            assertEquals("Milky Way", result);
+            assertEquals("Earth 2026", result);
         }
     }
 

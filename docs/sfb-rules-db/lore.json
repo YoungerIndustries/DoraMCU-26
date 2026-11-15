@@ -1,0 +1,341 @@
+{
+  "lore": {
+    "universe": {
+      "title": "Star Fleet Battles Universe",
+      "description": "Star Fleet Battles is set in the Alpha Quadrant of the Star Trek universe, focusing on large-scale space combat between the major powers: the United Federation of Planets, the Klingon Empire, the Romulan Star Empire, and various other factions. The game takes place during the era of the original Star Trek series and films.",
+      "source_material": [
+        "Star Fleet Battles by Amarillo Design Bureau (1979-present)",
+        "Star Trek original series and films",
+        "Star Trek expanded universe"
+      ]
+    },
+    "empires": {
+      "federation": {
+        "name": "United Federation of Planets",
+        "description": "A democratic interstellar federation of planetary governments united under a single central government. The Federation is dedicated to peace, exploration, scientific discovery, and the betterment of all sentient life.",
+        "government": {
+          "type": "Democratic Federation",
+          "leadership": "President and Federation Council",
+          "military": "Starfleet Command",
+          "capital": "Earth, San Francisco Federation Plaza"
+        },
+        "philosophy": {
+          "core_values": [
+            "Peaceful exploration and scientific discovery",
+            "The Prime Directive - non-interference with developing civilizations",
+            "Diplomacy over conflict",
+            "Protection of member worlds and neutral systems",
+            "Advancement of knowledge and understanding"
+          ],
+          "prime_directive": {
+            "description": "General Order 1 prohibits Starfleet from interfering with the normal social development of alien civilizations, particularly pre-warp societies.",
+            "exceptions": [
+              "When the civilization requests assistance",
+              "When a greater threat endangers both parties",
+              "When the civilization has already achieved warp capability"
+            ]
+          }
+        },
+        "starfleet": {
+          "description": "The exploratory and defensive service of the Federation. Starfleet operates starships for exploration, diplomacy, scientific research, and defense.",
+          "ranks": {
+            "enlisted": ["Petty Officer Third Class", "Petty Officer Second Class", "Petty Officer First Class", "Chief Petty Officer"],
+            "officer": ["Ensign", "Lieutenant Junior Grade", "Lieutenant", "Lieutenant Commander", "Commander", "Captain", "Commodore", "Rear Admiral", "Vice Admiral", "Admiral", "Fleet Admiral"]
+          },
+          "ship_classes": [
+            "Constitution-class (Enterprise)",
+            "Constellation-class",
+            "Galaxy-class",
+            "Defiant-class",
+            "Ambassador-class",
+            "Sovereign-class"
+          ]
+        },
+        "member_worlds": [
+          "Earth (capital world)",
+          "Vulcan (founding member)",
+          "Andoria (founding member)",
+          "Tellarite (founding member)",
+          "Beta Cygnus Space Colony",
+          "Many others across the Alpha Quadrant"
+        ]
+      },
+      "klingon_empire": {
+        "name": "Klingon Empire",
+        "description": "A warrior culture that values honor, strength, and martial prowess above all else. The Klingon Empire is a collection of worlds united under the Klingon High Council, with a society built on military achievement and personal honor.",
+        "government": {
+          "type": "Military Oligarchy",
+          "leadership": "Klingon High Council and Chancellor",
+          "military": "Klingon Defense Force",
+          "capital": "Qo'noS (Klingon)"
+        },
+        "culture": {
+          "honor_code": {
+            "description": "Honor is the highest value in Klingon society. Dishonor is the greatest shame, worse than death.",
+            "principles": [
+              "Fight with courage and skill",
+              "Defend the Empire and its interests",
+              "Avenge insults and wrongs",
+              "Die with honor rather than live in shame",
+              "Respect worthy opponents"
+            ]
+          },
+          "warrior_traditions": [
+            "Bat'leth combat - the traditional Klingon weapon",
+              "Kahs - formal duels to settle disputes",
+              "Rites of Passage - proving one's worth through combat",
+              "Death Duels - formal combat to the death for matters of honor"
+          ],
+          "society": {
+            "houses": "Noble houses compete for power and influence",
+            "family": "Family honor is paramount; dishonor affects the entire family",
+            "food": "Klingon cuisine is known for being hearty and unusual (e.g., gagh - live worm)"
+          }
+        },
+        "klingon_defense_force": {
+          "description": "The military arm of the Klingon Empire, responsible for defending Klingon space and expanding imperial influence.",
+          "ship_classes": [
+            "Bird-of-Prey (fast, stealthy raider)",
+            "D7-class (battle cruiser)",
+            "D9-class (heavy battle cruiser)",
+            "K't'inga-class (battlestar)",
+            "Negh'Var-class (super-dreadnought)"
+          ],
+          "tactics": [
+            "Aggressive frontal assaults",
+            "Flanking maneuvers with Bird-of-Prey",
+            "Close-range combat",
+            "Overwhelming firepower"
+          ]
+        },
+        "notable_figures": [
+          {
+            "name": "Chancellor Gorkon",
+            "role": "Reformist Chancellor who sought peace with the Federation",
+            "fate": "Assassinated by rogue elements within the Empire"
+          },
+          {
+            "name": "General Chang",
+            "role": "Military leader who opposed peace with the Federation",
+            "role_description": "Led coup against Gorkon's peace efforts"
+          },
+          {
+            "name": "Worf",
+            "role": "First Klingon to serve in Starfleet",
+            "significance": "Bridge between Klingon and Federation cultures"
+          },
+          {
+            "name": "Martok",
+            "role": "Former prisoner who became Chancellor",
+            "significance": "Led Klingons during Dominion War"
+          }
+        ]
+      },
+      "romulan_star_empire": {
+        "name": "Romulan Star Empire",
+        "description": "A secretive and powerful empire descended from Vulcans who rejected the logical path of their ancestors. The Romulans are masters of deception, espionage, and cloaking technology.",
+        "government": {
+          "type": "Military Dictatorship",
+          "leadership": "The Praetor and the Tal Shiar",
+          "military": "Romulan Starfleet",
+          "capital": "Romulus"
+        },
+        "history": {
+          "founding": "Approximately 1800 years before the 23rd century, Vulcans exiled for emotional extremism founded the Romulan Star Empire.",
+          "split_from_vulcan": "The Romulans split from Vulcan society, embracing emotion and passion while maintaining Vulcan logic and discipline.",
+          "key_events": [
+            "Founding of the Romulan Star Empire",
+            "Development of cloaking technology",
+            "Khitomer Accords - peace with the Federation",
+            "Dominion War alliance with the Federation",
+            "Romulus destruction by supernova (future)"
+          ]
+        },
+        "tal_shiar": {
+          "description": "The intelligence and security service of the Romulan Star Empire. The Tal Shiar is feared throughout the quadrant for its ruthless methods and extensive spy network.",
+          "roles": [
+            "Intelligence gathering and counter-intelligence",
+            "Internal security and political control",
+            "Assassination and sabotage",
+            "Surveillance of all citizens"
+          ],
+          "methods": [
+            "Extensive spy networks",
+            "Brainwashing and interrogation",
+            "Covert operations",
+            "Political manipulation"
+          ]
+        },
+        "romulan_starfleet": {
+          "description": "The military arm of the Romulan Star Empire, known for its use of cloaking devices and plasma torpedoes.",
+          "ship_classes": [
+            "Warbird (capital ship)",
+            "D'Deradex-class (scout)",
+            "Rezanu-class (scout)",
+            "Narada-class (temporal vessel)",
+            "Command ship"
+          ],
+          "tactics": [
+            "Cloaking for surprise attacks",
+            "Long-range plasma torpedo strikes",
+            "Hit-and-run tactics",
+            "Espionage and sabotage"
+          ]
+        },
+        "technology": {
+          "cloaking_device": {
+            "description": "Technology that renders ships invisible to sensors and visual observation. A closely guarded secret.",
+            "limitations": [
+              "Cannot fire weapons while cloaked (without decloaking)",
+              "Requires significant power",
+              "Detectable by subspace residue (Romulan signature)"
+            ]
+          },
+          "plasma_torpedoes": {
+            "description": "Energy-based torpedoes that are more powerful than photon torpedoes but harder to produce.",
+            "advantages": [
+              "Higher yield than photon torpedoes",
+              "No physical warhead to detect",
+              "Can be produced without antimatter"
+            ]
+          }
+        }
+      },
+      "other_factions": {
+        "tholians": {
+          "name": "Tholian Assembly",
+          "description": "An insectoid species that controls the Tholian Web, a vast network of fiber filaments spanning thousands of light-years. The Tholians are isolationist and defensive.",
+          "characteristics": [
+            "Insectoid appearance",
+            "Collective decision-making",
+            "Masters of fiber technology",
+            "Defensive and isolationist"
+          ],
+          "technology": {
+            "fiber_weapons": "Can create webs to trap and immobilize starships",
+            "temperature_manipulation": "Can lower temperature to absolute zero in targeted areas"
+          }
+        },
+        "gorn": {
+          "name": "Gorn",
+          "description": "A reptilian species known for their durability and aggressive nature. The Gorn are solitary hunters who value strength and survival.",
+          "characteristics": [
+            "Reptilian appearance",
+            "Extremely durable",
+            "Solitary hunters",
+            "Aggressive and territorial"
+          ]
+        },
+        "molor": {
+          "name": "Molor",
+          "description": "A minor power in the SFB universe, known for their unique ship designs and trade networks.",
+          "characteristics": [
+            "Trade-oriented society",
+            "Unique ship designs",
+            "Neutral in major conflicts"
+          ]
+        },
+        "son'a": {
+          "name": "Son'a",
+          "description": "A powerful faction that controls the Denobula system and surrounding space. The Son'a are known for their advanced technology and ruthless methods.",
+          "characteristics": [
+            "Advanced biological technology",
+            "Ruthless expansionism",
+            "Control of key trade routes"
+          ]
+        }
+      }
+    },
+    "notable_conflicts": [
+      {
+        "name": "Klingon-Federation Border Wars",
+        "period": "Ongoing throughout the era",
+        "description": "A series of conflicts along the Federation-Klingon border, including the Battle of the Kobayashi Maru (a famous training scenario).",
+        "significance": "Defined the relationship between the two powers and led to the Khitomer Accords"
+      },
+      {
+        "name": "Romulan-Federation Tensions",
+        "period": "Ongoing",
+        "description": "Cold war-style tensions between the Federation and Romulan Star Empire, with proxy conflicts and espionage.",
+        "significance": "Led to the Neutral Zone agreement and ongoing diplomatic efforts"
+      },
+      {
+        "name": "Khitomer Accords",
+        "period": "23rd century",
+        "description": "Peace treaty between the Federation and Klingon Empire, negotiated by Chancellor Gorkon and Spock.",
+        "significance": "Major shift in Alpha Quadrant politics, undermined by rogue elements"
+      },
+      {
+        "name": "Tholian Web Conflicts",
+        "period": "Various",
+        "description": "Incidents where ships entered the Tholian Web without permission, leading to confrontations.",
+        "significance": "Established the Tholian Web as restricted space"
+      }
+    ],
+    "key_locations": [
+      {
+        "name": "Earth",
+        "description": "Capital of the Federation, home to Starfleet Headquarters and the Federation Council.",
+        "significance": "Political and military center of the Federation"
+      },
+      {
+        "name": "Qo'noS",
+        "description": "Capital of the Klingon Empire, a harsh world with a warrior culture.",
+        "significance": "Political and military center of the Klingon Empire"
+      },
+      {
+        "name": "Romulus",
+        "description": "Capital of the Romulan Star Empire, located in the Beta Quadrant.",
+        "significance": "Political and military center of the Romulan Star Empire"
+      },
+      {
+        "name": "Khitomer",
+        "description": "Mining colony where the Khitomer Accords were signed.",
+        "significance": "Symbol of Federation-Klingon peace efforts"
+      },
+      {
+        "name": "Neutral Zone",
+        "description": "Buffer zone between Federation and Romulan space, established by treaty.",
+        "significance": "Demilitarized zone, violation considered act of war"
+      },
+      {
+        "name": "Tholian Web",
+        "description": "Vast network of fiber filaments controlled by the Tholians.",
+        "significance": "Restricted space, entry without permission leads to conflict"
+      },
+      {
+        "name": "Babel",
+        "description": "Diplomatic station where the Federation Council meets.",
+        "significance": "Center of Federation diplomacy"
+      }
+    ],
+    "technology_levels": {
+      "warp_drive": {
+        "description": "Faster-than-light propulsion system that enables interstellar travel.",
+        "levels": {
+          "warp_1": "Speed of light",
+          "warp_2": "2.29 times light speed",
+          "warp_4": "16 times light speed (cruising speed for most ships)",
+          "warp_6": "216 times light speed (cruising speed for Constitution-class)",
+          "warp_8": "512 times light speed (maximum sustained)",
+          "warp_9": "1000+ times light speed (theoretical maximum)"
+        }
+      },
+      "shields": {
+        "description": "Energy barriers that protect ships from weapons fire.",
+        "types": {
+          "deflector_shields": "Primary protection, can be directed to specific arcs",
+          "inertial_dampeners": "Reduce effects of acceleration and deceleration",
+          "force_fields": "Secondary protection for specific areas"
+        }
+      },
+      "weapons": {
+        "phasers": "Energy weapons that can be set to stun or kill",
+        "photon_torpedoes": "Antimatter warheads that explode on impact",
+        "plasma_torpedoes": "Romulan variant of photon torpedoes",
+        "disruptors": "Klingon energy weapons that damage shields and hull",
+        "quantum_torpedoes": "More powerful variant of photon torpedoes"
+      }
+    }
+  }
+}

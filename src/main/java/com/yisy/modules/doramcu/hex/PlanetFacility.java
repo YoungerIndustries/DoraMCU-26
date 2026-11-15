@@ -15,6 +15,9 @@ public class PlanetFacility {
     private int level;
     private boolean operational;
 
+    // ---- AI Core integration ----
+    private AiCoreComponent aiCore;
+
     /**
      * Creates a new facility of the given type.
      *
@@ -79,6 +82,54 @@ public class PlanetFacility {
      */
     public void enable() {
         this.operational = true;
+    }
+
+    // ---- AI Core integration ----
+
+    /**
+     * Returns the AI Core component installed on this facility, or null if none.
+     *
+     * @return the AI Core component, or null
+     */
+    public AiCoreComponent getAiCore() {
+        return aiCore;
+    }
+
+    /**
+     * Installs an AI Core component on this facility.
+     * <p>
+     * If an AI Core is already installed, it will be replaced.
+     * </p>
+     *
+     * @param aiCore the AI Core to install
+     */
+    public void setAiCore(AiCoreComponent aiCore) {
+        this.aiCore = aiCore;
+    }
+
+    /**
+     * Removes the AI Core component from this facility.
+     */
+    public void removeAiCore() {
+        this.aiCore = null;
+    }
+
+    /**
+     * Returns true if this facility has an AI Core installed.
+     *
+     * @return true if an AI Core is installed
+     */
+    public boolean hasAiCore() {
+        return aiCore != null;
+    }
+
+    /**
+     * Returns the AI Core level (1-3), or 0 if no AI Core is installed.
+     *
+     * @return the AI Core level (1-based: BASIC=1, ADVANCED=2, ELITE=3)
+     */
+    public int getAiCoreLevel() {
+        return aiCore != null ? aiCore.getTier().ordinal() + 1 : 0;
     }
 
     // ---- Bonuses ----

@@ -1,7 +1,13 @@
 package com.yisy.modules.doramcu.unified;
+import org.springframework.stereotype.Service;
+
+import com.yisy.modules.doramcu.gamecore.GameType;
+import com.yisy.modules.doramcu.hex.*;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogCharacterRepository;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Character;
+import com.yisy.modules.doramcu.earth2026.service.Earth2026Service;
 import com.yisy.modules.doramcu.traveller.CharacterStatus;
 import com.yisy.modules.doramcu.traveller.TourOfDutyService;
 import com.yisy.modules.doramcu.model.Player;
@@ -16,7 +22,6 @@ import com.yisy.modules.doramcu.unified.dto.UnifiedLoginResponse;
 import com.yisy.modules.doramcu.traveller.TravellerCharacter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +53,7 @@ public class UnifiedCharacterLoginService {
     private final SharedCharacterRepository sharedCharacterRepository;
     private final PlayerRepository playerRepository;
     private final CharacterService travellerCharacterService;
+    private final Earth2026Service earth2026Service;
     private final TourOfDutyService tourOfDutyService;
 
     public UnifiedCharacterLoginService(
@@ -55,11 +61,13 @@ public class UnifiedCharacterLoginService {
             SharedCharacterRepository sharedCharacterRepository,
             PlayerRepository playerRepository,
             CharacterService travellerCharacterService,
+            Earth2026Service earth2026Service,
             TourOfDutyService tourOfDutyService) {
         this.clCharacterRepository = clCharacterRepository;
         this.sharedCharacterRepository = sharedCharacterRepository;
         this.playerRepository = playerRepository;
         this.travellerCharacterService = travellerCharacterService;
+        this.earth2026Service = earth2026Service;
         this.tourOfDutyService = tourOfDutyService;
     }
 
@@ -88,7 +96,7 @@ public class UnifiedCharacterLoginService {
 
         List<UnifiedCharacterSummary> allCharacters = new ArrayList<>();
 
-        // Search by email — find all characters for this player
+        // Search by email ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â find all characters for this player
         if (request.getEmail() != null && !request.getEmail().isBlank()) {
             // Search Captain's Log characters by name (email is stored in Player, not CL character)
             // For now, search all CL characters and filter by name if provided
@@ -97,10 +105,10 @@ public class UnifiedCharacterLoginService {
                 // Check if this character belongs to a player with this email
                 // CL characters don't have direct email linkage, so we match by name
                 if (request.getFirstName() == null && request.getLastName() == null) {
-                    // No name filter — add all CL characters for this email
+                    // No name filter ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â add all CL characters for this email
                     allCharacters.add(toUnifiedSummary(clChar, null));
                 } else {
-                    // Name filter — check if name matches
+                    // Name filter ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â check if name matches
                     String clName = clChar.getName();
                     if (nameMatches(clName, request.getFirstName(), request.getLastName())) {
                         allCharacters.add(toUnifiedSummary(clChar, null));
@@ -148,6 +156,19 @@ public class UnifiedCharacterLoginService {
                     }
                 }
             }
+
+            // Search Earth 2026 characters
+            List<Earth2026Character> earthChars = earth2026Service.getCharactersOnEarth();
+            for (Earth2026Character earthChar : earthChars) {
+                if (request.getFirstName() == null && request.getLastName() == null) {
+                    allCharacters.add(toUnifiedSummary(earthChar));
+                } else {
+                    String earthName = earthChar.getName();
+                    if (nameMatches(earthName, request.getFirstName(), request.getLastName())) {
+                        allCharacters.add(toUnifiedSummary(earthChar));
+                    }
+                }
+            }
         }
         // Search by name only (no email)
         else if (request.getFirstName() != null || request.getLastName() != null) {
@@ -178,6 +199,14 @@ public class UnifiedCharacterLoginService {
             for (TravellerCharacter travellerChar : travellerChars) {
                 if (nameMatches(travellerChar.getName(), request.getFirstName(), request.getLastName())) {
                     allCharacters.add(toUnifiedSummary(travellerChar));
+                }
+            }
+
+            // Search Earth 2026 characters
+            List<Earth2026Character> earthChars = earth2026Service.getCharactersOnEarth();
+            for (Earth2026Character earthChar : earthChars) {
+                if (nameMatches(earthChar.getName(), request.getFirstName(), request.getLastName())) {
+                    allCharacters.add(toUnifiedSummary(earthChar));
                 }
             }
         }
@@ -253,7 +282,7 @@ public class UnifiedCharacterLoginService {
         summary.setLastName(parts[1]);
         summary.setFullName(clChar.getName());
         summary.setGameType(GameType.CAPTAINS_LOG);
-        summary.setGameRole(clChar.getRank().name() + " — " + clChar.getAssignment().name());
+        summary.setGameRole(clChar.getRank().name() + " ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â " + clChar.getAssignment().name());
         summary.setDescription(String.format("Rank: %s, Assignment: %s, Environment: %s",
                 clChar.getRank(), clChar.getAssignment(), clChar.getEnvironment()));
         summary.setAlive(true);
@@ -269,7 +298,7 @@ public class UnifiedCharacterLoginService {
         summary.setFullName(sharedChar.getName());
         summary.setGameType(sharedChar.getOriginSystem());
         summary.setGameRole(sharedChar.getOriginSystem().name());
-        summary.setDescription("Shared character — " + sharedChar.getOriginSystem().getDisplayName());
+        summary.setDescription("Shared character ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â " + sharedChar.getOriginSystem().getDisplayName());
         summary.setAlive(true);
         return summary;
     }
@@ -298,9 +327,29 @@ public class UnifiedCharacterLoginService {
 
         // Add status description for ON_DUTY characters
         if (travellerChar.getStatus() == CharacterStatus.ON_DUTY) {
-            summary.setDescription(summary.getDescription() + " [ON DUTY — not available for login]");
+            summary.setDescription(summary.getDescription() + " [ON DUTY â€” not available for login]");
         }
 
+        return summary;
+    }
+
+    private UnifiedCharacterSummary toUnifiedSummary(Earth2026Character earthChar) {
+        UnifiedCharacterSummary summary = new UnifiedCharacterSummary();
+        summary.setId(earthChar.getId());
+        String[] parts = parseName(earthChar.getName());
+        summary.setFirstName(parts[0]);
+        summary.setLastName(parts[1]);
+        summary.setFullName(earthChar.getName());
+        summary.setGameType(GameType.EARTH_2026);
+        summary.setGameRole(earthChar.getOccupation() != null ? earthChar.getOccupation() : "Citizen");
+        summary.setDescription(String.format("Abilities: STR %d, DEX %d, CON %d, INT %d, WIS %d, CHA %d",
+                earthChar.getStrScore(),
+                earthChar.getDexScore(),
+                earthChar.getConScore(),
+                earthChar.getIntScore(),
+                earthChar.getWisScore(),
+                earthChar.getChaScore()));
+        summary.setAlive(true);
         return summary;
     }
 
@@ -336,5 +385,11 @@ public class UnifiedCharacterLoginService {
                 GameType.DORAMCU_4X, GameType.DORAMCU_4X.getDisplayName(), GameType.DORAMCU_4X.getDescription());
         doraGame.addCharacterType("Empire Leader");
         response.addAvailableGame(doraGame);
+
+        // Earth 2026 game info
+        UnifiedLoginResponse.GameTypeInfo earthGame = new UnifiedLoginResponse.GameTypeInfo(
+                GameType.EARTH_2026, GameType.EARTH_2026.getDisplayName(), GameType.EARTH_2026.getDescription());
+        earthGame.addCharacterType("Earth Citizen");
+        response.addAvailableGame(earthGame);
     }
 }

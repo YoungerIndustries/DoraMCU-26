@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.hex.manager;
+import org.springframework.stereotype.Service;
 
+import org.springframework.stereotype.Service;
 import com.yisy.modules.doramcu.hex.Player;
 import com.yisy.modules.doramcu.hex.ResourcePipelineManager;
 import com.yisy.modules.doramcu.traveller.*;
@@ -24,6 +26,7 @@ import java.util.*;
  * trade economy that rewards Merchant career investment.
  * </p>
  */
+
 public class TradeCareerService {
 
     /** Bonus to trade profit per Merchant skill level */

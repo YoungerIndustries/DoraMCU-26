@@ -21,7 +21,12 @@ import jakarta.persistence.*;
  * during gameplay, ensuring that dice rolls, combat resolution, and narrative decisions
  * follow the published rules from the 7 source PDFs.
  * </p>
+ *
+ * @deprecated Use {@link com.yisy.modules.doramcu.shared.model.RulesEntry} with
+ * {@code gameSystem = GameSystem.TRAVELLER} instead. The unified entity supports all
+ * game systems in a single table, eliminating schema duplication.
  */
+@Deprecated
 @Entity
 @Table(name = "ct_rules_entries", indexes = {
         @Index(name = "idx_ct_rules_category", columnList = "category"),

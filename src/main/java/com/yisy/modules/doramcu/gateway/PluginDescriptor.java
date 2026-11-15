@@ -1,6 +1,6 @@
 package com.yisy.modules.doramcu.gateway;
 
-import com.yisy.modules.doramcu.unified.GameType;
+import com.yisy.modules.doramcu.gamecore.GameType;
 
 /**
  * Describes a game plugin that can be loaded through the Plugin Gateway.

@@ -1,0 +1,3 @@
+DoraMCU Unity Client Placeholder - macOS
+This is a placeholder file. Build the actual Unity client from the unity-client/ directory.
+To build: Open unity-client/ in Unity Editor and build for macOS target.

@@ -1,0 +1,453 @@
+{
+  "game_info": {
+    "title": "Dungeons & Dragons 5th Edition (2024 Rules)",
+    "description": "D&D 5e 2024 (5.5e) updated rules with Weapon Mastery, reorganized spell lists, Bastions, and origin feats.",
+    "source": [
+      "Player's Handbook (2024)",
+      "Dungeon Master's Guide (2024)",
+      "Monster Manual (2024)"
+    ],
+    "edition": "5.5e (2024 revision)"
+  },
+  "core_mechanics": {
+    "ability_scores": {
+      "strength": {
+        "abbreviation": "STR",
+        "description": "Physical power, melee attack, and damage.",
+        "saving_throw": "Strength",
+        "skills": ["Athletics"]
+      },
+      "dexterity": {
+        "abbreviation": "DEX",
+        "description": "Agility, reflexes, and aim.",
+        "saving_throw": "Dexterity",
+        "skills": ["Acrobatics", "Sleight of Hand", "Stealth"]
+      },
+      "constitution": {
+        "abbreviation": "CON",
+        "description": "Endurance, health, and vitality.",
+        "saving_throw": "Constitution",
+        "skills": []
+      },
+      "intelligence": {
+        "abbreviation": "INT",
+        "description": "Reason, memory, and analytical ability.",
+        "saving_throw": "Intelligence",
+        "skills": ["Arcana", "History", "Investigation", "Nature", "Religion"]
+      },
+      "wisdom": {
+        "abbreviation": "WIS",
+        "description": "Awareness, intuition, and perception.",
+        "saving_throw": "Wisdom",
+        "skills": ["Animal Handling", "Insight", "Medicine", "Perception", "Survival"]
+      },
+      "charisma": {
+        "abbreviation": "CHA",
+        "description": "Personality, persuasiveness, and force of personality.",
+        "saving_throw": "Charisma",
+        "skills": ["Deception", "Intimidation", "Performance", "Persuasion"]
+      }
+    },
+    "dice_system": {
+      "description": "D&D uses a d20 (20-sided die) as the core mechanic. Roll d20 + modifier vs target number (DC or AC).",
+      "advantage": "Roll 2d20, take the higher result",
+      "disadvantage": "Roll 2d20, take the lower result",
+      "natural_20": "Automatic hit on attack rolls (critical hit)",
+      "natural_1": "Automatic miss on attack rolls"
+    },
+    "combat": {
+      "initiative": "Roll d20 + Dexterity modifier, highest goes first",
+      "turn_actions": {
+        "action": "One action per turn (Attack, Cast a Spell, Dash, Disengage, Hide, Help, Ready, Retreat, Use an Object)",
+        "bonus_action": "One bonus action per turn if available (specific abilities grant bonus actions)",
+        "movement": "Move up to your speed in any direction",
+        "free_action": "One free interaction with the environment (e.g., open a door, draw a weapon)"
+      },
+      "attack_roll": "d20 + attack bonus vs Armor Class (AC)",
+      "damage_roll": "Weapon die + ability modifier",
+      "critical_hit": "Roll all damage dice twice",
+      "saving_throws": "d20 + ability modifier + proficiency bonus (if proficient) vs DC",
+      "ability_checks": "d20 + ability modifier + proficiency bonus (if proficient) vs DC"
+    },
+    "resting": {
+      "short_rest": {
+        "duration": "1 hour",
+        "benefits": [
+          "Recover hit points (Hit Dice)",
+          "Recover some class features",
+          "Recharge some magic item properties"
+        ]
+      },
+      "long_rest": {
+        "duration": "8 hours",
+        "benefits": [
+          "Recover all hit points",
+          "Recover all spell slots",
+          "Recover 4 Hit Dice (maximum)",
+          "End most curses and diseases"
+        ]
+      }
+    }
+  },
+  "weapon_mastery": {
+    "description": "New 2024 rule: Each weapon has mastery properties that grant special effects when a character with Weapon Mastery hits with that weapon. Replaces the 2014 rule where martial weapon users could add proficiency bonus to damage.",
+    "mastery_properties": {
+      "amber": {
+        "description": "When you hit a creature with this weapon, you can make the target have disadvantage on Dexterity saving throws against the next spell you cast before the end of your next turn."
+      },
+      "blue": {
+        "description": "When you hit a creature with this weapon, you can make the target have disadvantage on the next attack roll it makes before the end of your next turn."
+      },
+      "crimson": {
+        "description": "When you hit a creature with this weapon, you can cause the target to have vulnerability to the next weapon attack you make against it before the end of your next turn."
+      },
+      "emerald": {
+        "description": "When you hit a creature with this weapon, you can heal yourself for an amount equal to your proficiency bonus."
+      },
+      "gold": {
+        "description": "When you hit a creature with this weapon, you can push the target up to 10 feet away from you."
+      },
+      "green": {
+        "description": "When you hit a creature with this weapon, you can give the target resistance to all damage until the end of your next turn."
+      },
+      "orange": {
+        "description": "When you hit a creature with this weapon, you can give yourself resistance to the next damage you take before the end of your next turn."
+      },
+      "purple": {
+        "description": "When you hit a creature with this weapon, you can pull the target up to 10 feet closer to you."
+      },
+      "ruby": {
+        "description": "When you hit a creature with this weapon, you can give yourself advantage on the next attack roll you make before the end of your next turn."
+      },
+      "silver": {
+        "description": "When you hit a creature with this weapon, you can give yourself advantage on the next saving throw you make before the end of your next turn."
+      },
+      "violet": {
+        "description": "When you hit a creature with this weapon, you can give yourself advantage on the next ability check you make before the end of your next turn."
+      },
+      "white": {
+        "description": "When you hit a creature with this weapon, you can give yourself advantage on the next Dexterity saving throw you make before the end of your next turn."
+      }
+    },
+    "weapon_examples": {
+      "longsword": {
+        "mastery": ["Amber", "Gold"],
+        "description": "Versatile weapon with control and push capabilities."
+      },
+      "longbow": {
+        "mastery": ["Amber", "Blue"],
+        "description": "Ranged weapon with control and debuff capabilities."
+      },
+      "greatsword": {
+        "mastery": ["Crimson", "Gold"],
+        "description": "Heavy weapon with vulnerability and push capabilities."
+      },
+      "rapier": {
+        "mastery": ["Blue", "Purple"],
+        "description": "Finesse weapon with debuff and pull capabilities."
+      },
+      "handaxe": {
+        "mastery": ["Orange", "Ruby"],
+        "description": "Light weapon with defense and offense capabilities."
+      }
+    }
+  },
+  "spell_lists": {
+    "description": "2024 revision reorganizes spells into three lists: Arcane, Divine, and Primal (replacing Wizard, Sorcerer, Warlock, Bard, Cleric, Druid, Paladin, Ranger lists).",
+    "arcane": {
+      "description": "Spells of arcane magic, available to Wizards, Sorcerers, Warlocks, and Bards.",
+      "examples": [
+        "Fireball",
+        "Magic Missile",
+        "Teleport",
+        "Disintegrate",
+        "Wish"
+      ]
+    },
+    "divine": {
+      "description": "Spells of divine magic, available to Clerics, Paladins, and some other divine casters.",
+      "examples": [
+        "Cure Wounds",
+        "Smite",
+        "Revivify",
+        "Divine Word",
+        "Heal"
+      ]
+    },
+    "primal": {
+      "description": "Spells of primal magic, available to Druids, Rangers, and some other primal casters.",
+      "examples": [
+        "Entangle",
+        "Call Lightning",
+        "Polymorph",
+        "Conjure Animals",
+        "Insect Plague"
+      ]
+    }
+  },
+  "origin_feats": {
+    "description": "2024 revision replaces racial traits with Origin Feats. Each race grants an origin feat that provides unique abilities, replacing the old racial ability score increases and traits.",
+    "examples": {
+      "elf": {
+        "feat_name": "Fey Ancestry",
+        "benefits": [
+          "Advantage on saving throws against being charmed",
+          "Magic can't put you to sleep",
+          "Darkvision 60 feet",
+          "Fey Ancestry: You have advantage on saving throws against being charmed, and magic can't put you to sleep."
+        ]
+      },
+      "dwarf": {
+        "feat_name": "Dwarven Resilience",
+        "benefits": [
+          "Proficiency in Constitution saving throws",
+          "Darkvision 60 feet",
+          "Stonecunning: Double proficiency bonus on History checks related to stone",
+          "Weapon Training: Proficiency with battleaxe, handaxe, light hammer, and warhammer"
+        ]
+      },
+      "halfling": {
+        "feat_name": "Lucky",
+        "benefits": [
+          "Reroll 1s on attack rolls, ability checks, and saving throws",
+          "Brave: Advantage on saving throws against being frightened",
+          "Halfling Nimbleness: Can move through any space larger than a creature of the next size category"
+        ]
+      },
+      "dragonborn": {
+        "feat_name": "Dragon Fear",
+        "benefits": [
+          "Breath Weapon: Recharge 5-6, cone or line of damage",
+          "Damage Resistance: Resistance to the damage type of your breath weapon",
+          "Dragon Fear: As a bonus action, frighten creatures within 30 feet"
+        ]
+      },
+      "tiefling": {
+        "feat_name": "Hellish Resistance",
+        "benefits": [
+          "Darkvision 60 feet",
+          "Hellish Resistance: Resistance to fire damage",
+          "Infernal Legacy: Can cast hellish rebuke as a 1st-level spell"
+        ]
+      }
+    }
+  },
+  "bastions": {
+    "description": "2024 revision introduces Bastions - bases of operations that provide benefits to the party. Replaces the old stronghold rules.",
+    "types": {
+      "urban": {
+        "description": "A city-based headquarters, providing access to information, contacts, and resources.",
+        "benefits": [
+          "Access to local information and rumors",
+          "Contacts in the city",
+          "Safe haven for the party",
+          "Access to shops and services"
+        ]
+      },
+      "rural": {
+        "description": "A countryside estate, providing access to land, resources, and rural contacts.",
+        "benefits": [
+          "Access to land and resources",
+          "Contacts in the countryside",
+          "Safe haven for the party",
+          "Training grounds for the party"
+        ]
+      },
+      "wilderness": {
+        "description": "A wilderness camp or outpost, providing access to the wild and survival resources.",
+        "benefits": [
+          "Access to wilderness resources",
+          "Contacts in the wilderness",
+          "Safe haven for the party",
+          "Training grounds for survival skills"
+        ]
+      }
+    }
+  },
+  "classes": {
+    "barbarian": {
+      "description": "Fierce warriors who channel rage into combat prowess.",
+      "hit_die": "d12",
+      "primary_ability": "Strength",
+      "saving_throw_proficiencies": ["Strength", "Constitution"],
+      "key_features": [
+        "Rage: Enter a furious state, gaining damage resistance and bonus damage",
+        "Unarmored Defense: AC = 10 + Dexterity modifier + Constitution modifier",
+        "Reckless Attack: Gain advantage on attack rolls, but attackers have advantage against you",
+        "Danger Sense: Advantage on Dexterity saving throws against effects you can see",
+        "Divine Sense: Detect celestial, fiend, or undead within 60 feet",
+        "Divine Smite: Expend spell slot to deal extra radiant damage on melee hit"
+      ]
+    },
+    "bard": {
+      "description": "Versatile performers who use magic through music and speech.",
+      "hit_die": "d8",
+      "primary_ability": "Charisma",
+      "saving_throw_proficiencies": ["Dexterity", "Charisma"],
+      "key_features": [
+        "Spellcasting: Arcane spellcaster using Charisma",
+        "Bardic Inspiration: Inspire allies with performance, granting bonus damage or saving throws",
+        "Jack of All Trades: Add half proficiency bonus to ability checks without proficiency",
+        "Song of Rest: Restore additional hit points during short rest"
+      ]
+    },
+    "cleric": {
+      "description": "Divine spellcasters who channel the power of their deity.",
+      "hit_die": "d8",
+      "primary_ability": "Wisdom",
+      "saving_throw_proficiencies": ["Wisdom", "Charisma"],
+      "key_features": [
+        "Spellcasting: Divine spellcaster using Wisdom",
+        "Divine Domain: Choose a domain that grants additional spells and features",
+        "Channel Divinity: Use divine power for special effects",
+        "Destroy Undead: Instantly destroy undead of a certain challenge rating or lower"
+      ]
+    },
+    "druid": {
+      "description": "Nature spellcasters who draw power from the natural world.",
+      "hit_die": "d8",
+      "primary_ability": "Wisdom",
+      "saving_throw_proficiencies": ["Intelligence", "Wisdom"],
+      "key_features": [
+        "Spellcasting: Primal spellcaster using Wisdom",
+        "Druidic: Secret language of druids",
+        "Wild Shape: Transform into beasts and other creatures",
+        "Druid Circle: Choose a circle that grants additional features"
+      ]
+    },
+    "fighter": {
+      "description": "Mastered warriors proficient with weapons and armor.",
+      "hit_die": "d10",
+      "primary_ability": "Strength or Dexterity",
+      "saving_throw_proficiencies": ["Strength", "Constitution"],
+      "key_features": [
+        "Fighting Style: Choose a style that grants a combat bonus",
+        "Second Wind: Recover hit points as a bonus action",
+        "Action Surge: Take an additional action on your turn",
+        "Martial Archetype: Choose an archetype that defines your fighting style"
+      ]
+    },
+    "monk": {
+      "description": "Martial artists who channel ki energy into combat.",
+      "hit_die": "d8",
+      "primary_ability": "Dexterity and Wisdom",
+      "saving_throw_proficiencies": ["Dexterity", "Wisdom"],
+      "key_features": [
+        "Unarmored Defense: AC = 10 + Dexterity modifier + Wisdom modifier",
+        "Martial Arts: Use Dexterity for melee attacks, bonus action attack",
+        "Ki Points: Pool of points to fuel special abilities",
+        "Flurry of Blows: Spend ki points for bonus action attacks",
+        "Step of the Wind: Spend ki points for bonus action Dash or Disengage"
+      ]
+    },
+    "paladin": {
+      "description": "Holy warriors who fight for justice and righteousness.",
+      "hit_die": "d10",
+      "primary_ability": "Strength and Charisma",
+      "saving_throw_proficiencies": ["Wisdom", "Charisma"],
+      "key_features": [
+        "Divine Sense: Detect celestial, fiend, or undead within 60 feet",
+        "Divine Smite: Expend spell slot to deal extra radiant damage on melee hit",
+        "Spellcasting: Divine spellcaster using Charisma",
+        "Fighting Style: Choose a style that grants a combat bonus",
+        "Sacred Oath: Choose an oath that grants additional features"
+      ]
+    },
+    "ranger": {
+      "description": "Skilled hunters and trackers who protect the frontier.",
+      "hit_die": "d10",
+      "primary_ability": "Dexterity and Wisdom",
+      "saving_throw_proficiencies": ["Strength", "Dexterity"],
+      "key_features": [
+        "Favored Enemy: Advantage on tracking and learning about certain creatures",
+        "Natural Explorer: Advantage on certain exploration checks",
+        "Spellcasting: Primal spellcaster using Wisdom",
+        "Ranger Archetype: Choose an archetype that defines your ranger style"
+      ]
+    },
+    "rogue": {
+      "description": "Skilled thieves and scouts who excel in stealth and precision.",
+      "hit_die": "d8",
+      "primary_ability": "Dexterity",
+      "saving_throw_proficiencies": ["Dexterity", "Intelligence"],
+      "key_features": [
+        "Sneak Attack: Deal extra damage when attacking with advantage or an ally adjacent to the target",
+        "Thieves' Cant: Secret language of rogues",
+        "Cunning Action: Bonus action to Dash, Disengage, or Hide",
+        "Roguish Archetype: Choose an archetype that defines your rogue style"
+      ]
+    },
+    "sorcerer": {
+      "description": "Innate spellcasters who draw magic from their bloodline.",
+      "hit_die": "d6",
+      "primary_ability": "Charisma",
+      "saving_throw_proficiencies": ["Constitution", "Charisma"],
+      "key_features": [
+        "Spellcasting: Arcane spellcaster using Charisma",
+        "Sorcerous Origin: Choose an origin that grants additional features",
+        "Font of Magic: Pool of sorcery points to fuel special abilities",
+        "Metamagic: Modify spells in various ways"
+      ]
+    },
+    "warlock": {
+      "description": "Spellcasters who draw power from a patron.",
+      "hit_die": "d8",
+      "primary_ability": "Charisma",
+      "saving_throw_proficiencies": ["Wisdom", "Charisma"],
+      "key_features": [
+        "Pact Magic: Arcane spellcaster using Charisma, with limited spell slots that refresh on short rest",
+        "Otherworldly Patron: Choose a patron that grants additional features",
+        "Pact Boon: Choose a boon from your patron",
+        "Eldritch Invocations: Special abilities that enhance your magic"
+      ]
+    },
+    "wizard": {
+      "description": "Scholarly spellcasters who study and master arcane magic.",
+      "hit_die": "d6",
+      "primary_ability": "Intelligence",
+      "saving_throw_proficiencies": ["Intelligence", "Wisdom"],
+      "key_features": [
+        "Spellcasting: Arcane spellcaster using Intelligence",
+        "Arcane Recovery: Recover spell slots once per day",
+        "Arcane Tradition: Choose a tradition that grants additional features",
+        "Spellbook: Collection of spells that can be prepared"
+      ]
+    }
+  },
+  "magic_items": {
+    "description": "Magic items are objects with magical properties. 2024 revision introduces attunement slots and rarity tiers.",
+    "rarity": {
+      "common": "No attunement required, minor magical effects",
+      "uncommon": "No attunement required, moderate magical effects",
+      "rare": "Attunement may be required, significant magical effects",
+      "very_rare": "Attunement required, powerful magical effects",
+      "legendary": "Attunement required, extremely powerful magical effects",
+      "artifact": "Attunement required, unique and powerful items with special properties"
+    },
+    "attunement": {
+      "description": "Some magic items require attunement to use. A creature can attune to a maximum of 3 magic items.",
+      "process": [
+        "Hold the item during a short rest",
+        "Channel magic into the item",
+        "Form a bond with the item"
+      ]
+    },
+    "examples": {
+      "weapon": {
+        "magic_weapon": "+1 to attack and damage rolls",
+        "flaming_sword": "+1d6 fire damage on hit",
+        "vorpal_sword": "Chance to decapitate on critical hit"
+      },
+      "armor": {
+        "armor_of_versatility": "+1 to AC, add proficiency bonus to AC if unarmored",
+        "cloak_of_protection": "+1 to AC and saving throws",
+        "dragon_scale_mail": "AC 15 + Dexterity modifier (max 2), resistance to slashing, piercing, and bludgeoning"
+      },
+      "wondrous": {
+        "bag_of_holding": "Extra-dimensional storage space",
+        "boots_of_speed": "Double movement speed, advantage on Dexterity saving throws",
+        "ring_of_invisibility": "Become invisible at will"
+      }
+    }
+  }
+}

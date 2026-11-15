@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.exception;
+import org.springframework.stereotype.Component;
 
 import com.yisy.modules.doramcu.service.ErrorTracker;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import java.util.NoSuchElementException;
 
 @RestControllerAdvice
+@Component
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
@@ -31,7 +33,7 @@ public class GlobalExceptionHandler {
 
     private void trackError(Exception e, WebRequest request) {
         String type = e.getClass().getSimpleName();
-        String endpoint = request != null && request.getDescription(false) != null
+        String endpoint = request != null
                 ? request.getDescription(false).replaceAll(".*uri=(.*?).*", "$1")
                 : null;
         errorTracker.recordError(type, endpoint);

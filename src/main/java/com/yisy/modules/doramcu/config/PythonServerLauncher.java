@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
  * openhands.server.auto-start=false
  */
 @Component
-@ConditionalOnProperty(name = "openhands.server.auto-start", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "openhands.server.auto-start", havingValue = "true", matchIfMissing = false)
 public class PythonServerLauncher {
 
     private static final Logger log = LoggerFactory.getLogger(PythonServerLauncher.class);
@@ -46,7 +46,7 @@ public class PythonServerLauncher {
     public void startPythonServer() {
         // Only auto-start in dev profile
         String[] activeProfiles = environment.getActiveProfiles();
-        boolean isDev = activeProfiles != null && java.util.Arrays.asList(activeProfiles).contains("dev");
+        boolean isDev = java.util.Arrays.asList(activeProfiles).contains("dev");
         if (!isDev) {
             log.info("Skipping Python server auto-start (not in dev profile)");
             return;
@@ -239,9 +239,10 @@ public class PythonServerLauncher {
             ProcessBuilder pb = new ProcessBuilder(command, "--version");
             pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
             pb.redirectError(ProcessBuilder.Redirect.DISCARD);
-            Process p = pb.start();
-            boolean finished = p.waitFor(5, TimeUnit.SECONDS);
-            return finished && p.exitValue() == 0;
+            try (Process p = pb.start()) {
+                boolean finished = p.waitFor(5, TimeUnit.SECONDS);
+                return finished && p.exitValue() == 0;
+            }
         } catch (IOException | InterruptedException e) {
             return false;
         }
@@ -250,6 +251,7 @@ public class PythonServerLauncher {
     /**
      * Wait for the Python server to become available.
      */
+    @SuppressWarnings("BusyWait")
     private boolean waitForServer(long timeout, TimeUnit unit) {
         long deadline = System.nanoTime() + unit.toNanos(timeout);
         while (System.nanoTime() < deadline) {

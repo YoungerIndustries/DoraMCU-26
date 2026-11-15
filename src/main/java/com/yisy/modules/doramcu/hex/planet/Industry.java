@@ -30,6 +30,7 @@ public class Industry {
     private int turnsSinceBuilt;
     private boolean active;
     private String ownerEmpireId;
+    private String dungeonId;
 
     /**
      * Creates a new industry at the given hex position.
@@ -121,6 +122,23 @@ public class Industry {
      */
     public void setOwnerEmpireId(String empireId) {
         this.ownerEmpireId = empireId;
+    }
+
+    /**
+     * @return the dungeon ID for the interior rooms of this industry, or null if not yet generated
+     */
+    public String getDungeonId() {
+        return dungeonId;
+    }
+
+    /**
+     * Sets the dungeon ID for interior rooms.
+     * Called after BuildingInteriorGenerator creates the rooms.
+     *
+     * @param dungeonId the dungeon ID
+     */
+    public void setDungeonId(String dungeonId) {
+        this.dungeonId = dungeonId;
     }
 
     /**

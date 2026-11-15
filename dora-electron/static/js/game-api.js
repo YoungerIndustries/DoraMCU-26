@@ -207,6 +207,97 @@ const GameAPI = (function() {
         });
     }
 
+    // ---- Economy API (4X game) ----
+    // Base path: /api/v1/4x/sessions/{sessionId}/
+
+    async function getEconomicState(sessionId) {
+        return request(`/api/v1/4x/sessions/${sessionId}/economy`);
+    }
+
+    async function getEconomicDashboard(sessionId) {
+        return request(`/api/v1/4x/sessions/${sessionId}/economy/dashboard`);
+    }
+
+    async function getTradeSummary(sessionId) {
+        return request(`/api/v1/4x/sessions/${sessionId}/economy/trade`);
+    }
+
+    async function getIncomeProjection(sessionId) {
+        return request(`/api/v1/4x/sessions/${sessionId}/economy/income`);
+    }
+
+    async function getTechnologyTree(sessionId) {
+        return request(`/api/v1/4x/sessions/${sessionId}/technology`);
+    }
+
+    async function researchTechnology(sessionId, technology) {
+        return request(`/api/v1/4x/sessions/${sessionId}/research/${technology}`, {
+            method: 'POST',
+            body: {}
+        });
+    }
+
+    async function getTaxSummary(sessionId) {
+        return request(`/api/v1/4x/sessions/${sessionId}/tax`);
+    }
+
+    async function setTaxPolicy(sessionId, policy) {
+        return request(`/api/v1/4x/sessions/${sessionId}/tax/policy/${policy}`, {
+            method: 'PUT',
+            body: {}
+        });
+    }
+
+    async function getTransportSummary(sessionId) {
+        return request(`/api/v1/4x/sessions/${sessionId}/transports`);
+    }
+
+    async function consolidateTransports(sessionId) {
+        return request(`/api/v1/4x/sessions/${sessionId}/transports/consolidate`, {
+            method: 'POST',
+            body: {}
+        });
+    }
+
+    async function optimizeTransports(sessionId) {
+        return request(`/api/v1/4x/sessions/${sessionId}/transports/optimize`, {
+            method: 'POST',
+            body: {}
+        });
+    }
+
+    async function cancelTransport(sessionId, orderId) {
+        return request(`/api/v1/4x/sessions/${sessionId}/transports/cancel/${orderId}`, {
+            method: 'POST',
+            body: {}
+        });
+    }
+
+    async function getMarketBoard(sessionId) {
+        return request(`/api/v1/4x/sessions/${sessionId}/market`);
+    }
+
+    async function createMarketListing(sessionId, listingType, commodity, price, quantity) {
+        return request(`/api/v1/4x/sessions/${sessionId}/market/listing`, {
+            method: 'POST',
+            body: { listingType, commodity, price, quantity }
+        });
+    }
+
+    async function cancelMarketListing(sessionId, listingId) {
+        return request(`/api/v1/4x/sessions/${sessionId}/market/listing/${listingId}`, {
+            method: 'DELETE'
+        });
+    }
+
+    async function getShipModuleRequirements(sessionId, shipType) {
+        return request(`/api/v1/4x/sessions/${sessionId}/ship/${shipType}/module-requirements`);
+    }
+
+    async function getRecipes(sessionId) {
+        return request(`/api/v1/4x/sessions/${sessionId}/recipes`);
+    }
+
     // Public API
     return {
         init,
@@ -225,6 +316,24 @@ const GameAPI = (function() {
         buildShip,
         engageCombat,
         advanceTurn,
+        // Economy API
+        getEconomicState,
+        getEconomicDashboard,
+        getTradeSummary,
+        getIncomeProjection,
+        getTechnologyTree,
+        researchTechnology,
+        getTaxSummary,
+        setTaxPolicy,
+        getTransportSummary,
+        consolidateTransports,
+        optimizeTransports,
+        cancelTransport,
+        getMarketBoard,
+        createMarketListing,
+        cancelMarketListing,
+        getShipModuleRequirements,
+        getRecipes,
         clearAuth,
         getToken,
         getUsername: () => localStorage.getItem('username'),

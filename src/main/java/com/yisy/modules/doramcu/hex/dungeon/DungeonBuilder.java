@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.hex.dungeon;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.HullModule;
 import com.yisy.modules.doramcu.hex.M3space;

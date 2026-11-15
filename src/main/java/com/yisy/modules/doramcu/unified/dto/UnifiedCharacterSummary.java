@@ -1,7 +1,7 @@
 package com.yisy.modules.doramcu.unified.dto;
 
 import com.yisy.modules.doramcu.traveller.CharacterStatus;
-import com.yisy.modules.doramcu.unified.GameType;
+import com.yisy.modules.doramcu.gamecore.GameType;
 
 /**
  * Represents a character from any game system in a unified format.
@@ -22,6 +22,12 @@ public class UnifiedCharacterSummary {
     private boolean isAlive;
     private String lastActivity;
     private CharacterStatus characterStatus;
+
+    /** Current corporate role (CEO or VP) for dual-identity system */
+    private String currentRole;
+
+    /** Whether the AI assistant is currently active */
+    private boolean aiAssistantActive;
 
     public UnifiedCharacterSummary() {
     }
@@ -115,6 +121,22 @@ public class UnifiedCharacterSummary {
 
     public void setCharacterStatus(CharacterStatus characterStatus) {
         this.characterStatus = characterStatus;
+    }
+
+    public String getCurrentRole() {
+        return currentRole;
+    }
+
+    public void setCurrentRole(String currentRole) {
+        this.currentRole = currentRole;
+    }
+
+    public boolean isAiAssistantActive() {
+        return aiAssistantActive;
+    }
+
+    public void setAiAssistantActive(boolean aiAssistantActive) {
+        this.aiAssistantActive = aiAssistantActive;
     }
 
     @Override

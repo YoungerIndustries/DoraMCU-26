@@ -219,10 +219,13 @@ public class FirearmsCombat {
         roundShots.addAll(shots1);
 
         // Check if shooter2 is still able to fight
+        CombatRound round;
         if (!shooter2.canFight()) {
             endCombat();
-            return new CombatRound(currentRound, roundShots,
+            round = new CombatRound(currentRound, roundShots,
                     shooter1.getName() + " eliminates " + shooter2.getName() + " in round " + currentRound);
+            rounds.add(round);
+            return round;
         }
 
         // Shooter 2 fires at Shooter 1
@@ -241,9 +244,11 @@ public class FirearmsCombat {
             combatLog.add("Combat ended: draw after " + MAX_ROUNDS + " rounds");
         }
 
-        return new CombatRound(currentRound, roundShots,
+        round = new CombatRound(currentRound, roundShots,
                 "Round " + currentRound + ": " + shots1.size() + " shots from " +
                 shooter1.getName() + ", " + shots2.size() + " shots from " + shooter2.getName());
+        rounds.add(round);
+        return round;
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.hex;
 
+import com.yisy.modules.doramcu.hex.manager.TechnologyTree;
+
 import java.util.Map;
 
 /**
@@ -7,6 +9,8 @@ import java.util.Map;
  * <p>
  * A processing facility can process one recipe at a time. When processing is
  * complete, the refined resource output is added to the refined storage.
+ * Supports both standard and alternative recipes, with alternative recipes
+ * requiring the Advanced Processing technology to be unlocked.
  * </p>
  */
 public class ProcessingFacility {
@@ -108,17 +112,39 @@ public class ProcessingFacility {
 
     /**
      * Processes one turn of the current recipe.
-     * If idle, automatically starts processing the assigned recipe if resources are available.
+     * If idle, automatically starts processing the best available recipe:
+     * prefers the standard recipe, falls back to the alternative recipe if unlocked.
      *
      * @param rawStorage the raw resource storage (used for starting new recipes)
      * @param refinedStorage the refined resource storage to add output to
      */
     public void processTurn(ResourceStorage<RawResourceType> rawStorage,
                             ResourceStorage<RefinedResourceType> refinedStorage) {
+        processTurn(rawStorage, refinedStorage, null);
+    }
+
+    /**
+     * Processes one turn of the current recipe.
+     * If idle, automatically starts processing the best available recipe:
+     * prefers the standard recipe, falls back to the alternative recipe if unlocked.
+     *
+     * @param rawStorage the raw resource storage (used for starting new recipes)
+     * @param refinedStorage the refined resource storage to add output to
+     * @param technologyTree optional technology tree to check for recipe unlocks
+     */
+    public void processTurn(ResourceStorage<RawResourceType> rawStorage,
+                            ResourceStorage<RefinedResourceType> refinedStorage,
+                            TechnologyTree technologyTree) {
         if (!isProcessing()) {
-            // Auto-restart: if idle and a default recipe is assigned, try to start it
-            if (defaultRecipe != null && startProcessing(defaultRecipe, rawStorage)) {
-                // Started processing; continue below
+            // Auto-restart: try the best available recipe (standard first, then alternative if unlocked)
+            if (defaultRecipe != null) {
+                ProcessingRecipe best = getBestAvailableRecipe(
+                        defaultRecipe.getOutput(), rawStorage.getInventory(), technologyTree);
+                if (best != null && !startProcessing(best, rawStorage)) {
+                    return;
+                } else if (best == null) {
+                    return;
+                }
             } else {
                 return;
             }
@@ -131,6 +157,32 @@ public class ProcessingFacility {
             refinedStorage.add(currentRecipe.getOutput(), currentRecipe.getOutputAmount());
             currentRecipe = null;
         }
+    }
+
+    /**
+     * Returns the best available recipe for the given output type.
+     * Prefers the standard recipe, falls back to the alternative only if unlocked.
+     *
+     * @param type the refined resource type to produce
+     * @param inventory the current raw resource inventory
+     * @param technologyTree optional technology tree to check for recipe unlocks
+     * @return the best available recipe, or null if no recipe can be started
+     */
+    public static ProcessingRecipe getBestAvailableRecipe(RefinedResourceType type,
+                                                          Map<RawResourceType, Integer> inventory,
+                                                          TechnologyTree technologyTree) {
+        ProcessingRecipe standard = ProcessingRecipe.getStandardRecipe(type);
+        if (standard != null && standard.canStart(inventory)) {
+            return standard;
+        }
+        // Alternative recipe is only available if Advanced Processing is unlocked
+        if (technologyTree != null && technologyTree.hasAdvancedProcessing()) {
+            ProcessingRecipe alternative = ProcessingRecipe.getAlternativeRecipe(type);
+            if (alternative != null && alternative.canStart(inventory)) {
+                return alternative;
+            }
+        }
+        return null;
     }
 
     /**

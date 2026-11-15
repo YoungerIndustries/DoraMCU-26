@@ -213,9 +213,7 @@ public class GalaxyNameDatabase {
      * @param galaxy the galaxy to name
      */
     public void assignName(Galaxy galaxy) {
-        if (galaxy != null) {
-            // Galaxy doesn't have a name field yet, but we provide this for future use
-        }
+        // Galaxy doesn't have a name field yet, but we provide this for future use
     }
 
     /**
@@ -224,9 +222,7 @@ public class GalaxyNameDatabase {
      * @param galaxy the galaxy to name
      */
     public void assignRandomName(Galaxy galaxy) {
-        if (galaxy != null) {
-            // Galaxy doesn't have a name field yet, but we provide this for future use
-        }
+        // Galaxy doesn't have a name field yet, but we provide this for future use
     }
 
     /**

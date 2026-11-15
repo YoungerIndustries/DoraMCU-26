@@ -11,7 +11,6 @@ import com.yisy.modules.doramcu.star_trek_4x.repository.StarSystemRepository;
 import com.yisy.modules.doramcu.star_trek_4x.service.StarTrekLoreDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 
@@ -22,7 +21,6 @@ import java.util.*;
  * Traveller UWP codes plus Star Trek-specific fields.
  * </p>
  */
-@Service
 public class StarTrekPlanetGenerator {
 
     private static final Logger log = LoggerFactory.getLogger(StarTrekPlanetGenerator.class);

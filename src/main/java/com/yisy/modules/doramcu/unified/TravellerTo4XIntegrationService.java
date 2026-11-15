@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.unified;
+import org.springframework.stereotype.Service;
 
+import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.hex.*;
 import com.yisy.modules.doramcu.hex.manager.CharacterLogManager;
 import com.yisy.modules.doramcu.traveller.*;
@@ -10,7 +12,6 @@ import com.yisy.modules.doramcu.unified.dto.CreateCharacterRequest;
 import com.yisy.modules.doramcu.unified.dto.UnifiedCharacterSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,11 +22,11 @@ import java.util.stream.Collectors;
  * This service handles two integration paths:
  * </p>
  * <ol>
- *   <li><b>Management Roles</b> — When a player selects Empire Leader, Sector Governor,
+ *   <li><b>Management Roles</b> â€” When a player selects Empire Leader, Sector Governor,
  *       Subsector Chief, or System Manager, the service creates a TravellerCharacter
  *       for narrative logging and a complete 4X player with empire, home system,
  *       and starting fleets.</li>
- *   <li><b>Military Characters</b> — When a player creates a FULL_TRAVELLER character
+ *   <li><b>Military Characters</b> â€” When a player creates a FULL_TRAVELLER character
  *       with Soldier/Gunner/Pilot careers, the service can assign the character
  *       as a fleet commander in an existing empire.</li>
  * </ol>
@@ -135,7 +136,7 @@ public class TravellerTo4XIntegrationService {
         summary.setGameType(GameType.TRAVELLER);
         summary.setGameRole(charType.getDisplayName());
         summary.setDescription(String.format(
-                "%s — Empire: %s (ID: %d), Fleets: %d, Session: %s",
+                "%s â€” Empire: %s (ID: %d), Fleets: %d, Session: %s",
                 charType.getShortDescription(), empire.getName(), empire.getId(),
                 startingFleets.size(), session.getSessionId()));
         summary.setAlive(true);
@@ -152,10 +153,10 @@ public class TravellerTo4XIntegrationService {
      * For management roles, this tailors the empire's initial scope:
      * </p>
      * <ul>
-     *   <li>EMPIRE_LEADER — Full empire with multiple sectors (default setup)</li>
-     *   <li>SECTOR_GOVERNOR — One sector (100 systems)</li>
-     *   <li>SUBSECTOR_CHIEF — One subsector (25 systems)</li>
-     *   <li>SYSTEM_MANAGER — One system with planets</li>
+     *   <li>EMPIRE_LEADER â€” Full empire with multiple sectors (default setup)</li>
+     *   <li>SECTOR_GOVERNOR â€” One sector (100 systems)</li>
+     *   <li>SUBSECTOR_CHIEF â€” One subsector (25 systems)</li>
+     *   <li>SYSTEM_MANAGER â€” One system with planets</li>
      * </ul>
      *
      * @param empire   the empire to adjust
@@ -189,7 +190,7 @@ public class TravellerTo4XIntegrationService {
      * <p>
      * Creates a TravellerCharacter with the specified naval career (Gunner/Pilot),
      * serves the career to gain skills and ranks, then assigns the character to
-     * an existing fleet for a tour of duty. The character does not control the fleet —
+     * an existing fleet for a tour of duty. The character does not control the fleet â€”
      * they record the fleet's experiences in their life history and book.
      * </p>
      *
@@ -234,7 +235,7 @@ public class TravellerTo4XIntegrationService {
         // 4. Find an existing empire with fleets
         Map<Integer, Empire> empires = game.getEmpires();
         if (empires.isEmpty()) {
-            // No empires — create a starter empire
+            // No empires â€” create a starter empire
             int playerId = game.getPlayerCount() + 1;
             game.setupPlayer(playerId, request.getFullName());
         }
@@ -265,7 +266,7 @@ public class TravellerTo4XIntegrationService {
         summary.setLastName(request.getLastName());
         summary.setFullName(loggedChar.getName());
         summary.setGameType(GameType.TRAVELLER);
-        summary.setGameRole(career.getName() + " — Navy Tour");
+        summary.setGameRole(career.getName() + " â€” Navy Tour");
 
         Set<Skill> skills = loggedChar.getSkills();
         String skillsStr = skills.isEmpty() ? "none" : skills.stream()
@@ -273,7 +274,7 @@ public class TravellerTo4XIntegrationService {
                 .collect(Collectors.joining(", "));
 
         summary.setDescription(String.format(
-                "Career: %s (%d terms), Skills: %s — Tour: %d turns with %s in %s",
+                "Career: %s (%d terms), Skills: %s â€” Tour: %d turns with %s in %s",
                 career.getName(), termCount, skillsStr,
                 tourTurns, assignedFleet.getName(), assignedEmpire.getName()));
         summary.setAlive(loggedChar.isAlive());
@@ -289,7 +290,7 @@ public class TravellerTo4XIntegrationService {
      * <p>
      * Creates a TravellerCharacter with the Soldier career, serves the career
      * to gain skills and ranks, then assigns the character to an existing army unit
-     * for a tour of duty. The character does not control the unit —
+     * for a tour of duty. The character does not control the unit â€”
      * they record the unit's experiences in their life history and book.
      * </p>
      *
@@ -362,7 +363,7 @@ public class TravellerTo4XIntegrationService {
         summary.setLastName(request.getLastName());
         summary.setFullName(loggedChar.getName());
         summary.setGameType(GameType.TRAVELLER);
-        summary.setGameRole(career.getName() + " — Army Tour");
+        summary.setGameRole(career.getName() + " â€” Army Tour");
 
         Set<Skill> skills = loggedChar.getSkills();
         String skillsStr = skills.isEmpty() ? "none" : skills.stream()
@@ -370,7 +371,7 @@ public class TravellerTo4XIntegrationService {
                 .collect(Collectors.joining(", "));
 
         summary.setDescription(String.format(
-                "Career: %s (%d terms), Skills: %s — Tour: %d turns with %s on %s in %s",
+                "Career: %s (%d terms), Skills: %s â€” Tour: %d turns with %s on %s in %s",
                 career.getName(), termCount, skillsStr,
                 tourTurns, assignedUnit.getName(), planetName, assignedEmpire.getName()));
         summary.setAlive(loggedChar.isAlive());
@@ -447,6 +448,10 @@ public class TravellerTo4XIntegrationService {
         // Create a new infantry unit
         ArmyUnit unit = army.createUnit(ArmyUnitType.INFANTRY);
         unit.setName(character.getName() + "'s Company");
+        // Fallback: install AI core if not already installed by EmpireArmy
+        if (!unit.hasAiCore()) {
+            unit.setAiCore(new AiCoreComponent(AiCoreComponent.Tier.BASIC));
+        }
 
         log.info("Created army unit: {} (ID: {}) for empire {}", unit.getName(), unit.getId(), empire.getName());
         return unit;

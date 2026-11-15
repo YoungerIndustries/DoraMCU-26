@@ -1,18 +1,15 @@
 package com.yisy.modules.doramcu.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.dto.CreateGalaxyRequest;
 import com.yisy.modules.doramcu.dto.CreateSessionResponse;
 import com.yisy.modules.doramcu.dto.GalaxyCreationCostDto;
 import com.yisy.modules.doramcu.dto.JoinSessionResponse;
 import com.yisy.modules.doramcu.eve.model.EveCorporation;
-import com.yisy.modules.doramcu.hex.Empire;
-import com.yisy.modules.doramcu.hex.GalaxyFactory;
-import com.yisy.modules.doramcu.model.Player;
+import com.yisy.modules.doramcu.hex.*;
 import com.yisy.modules.doramcu.repository.EveCorporationRepository;
-import com.yisy.modules.doramcu.repository.PlayerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -47,21 +44,24 @@ public class GalaxyCreationService {
     private final GalaxyProgressService galaxyProgressService;
     private final GameSessionService gameSessionService;
     private final AiPlayerService aiPlayerService;
-    private final PlayerRepository playerRepository;
     private final EveCorporationRepository corporationRepository;
+    private final com.yisy.modules.doramcu.earth2026.repository.PlanetTemplateRepository planetTemplateRepository;
+    private final GalaxyBuildService galaxyBuildService;
 
     public GalaxyCreationService(GalaxyService galaxyService,
                                   GalaxyProgressService galaxyProgressService,
                                   GameSessionService gameSessionService,
                                   AiPlayerService aiPlayerService,
-                                  PlayerRepository playerRepository,
-                                  EveCorporationRepository corporationRepository) {
+                                  EveCorporationRepository corporationRepository,
+                                  com.yisy.modules.doramcu.earth2026.repository.PlanetTemplateRepository planetTemplateRepository,
+                                  GalaxyBuildService galaxyBuildService) {
         this.galaxyService = galaxyService;
         this.galaxyProgressService = galaxyProgressService;
         this.gameSessionService = gameSessionService;
         this.aiPlayerService = aiPlayerService;
-        this.playerRepository = playerRepository;
         this.corporationRepository = corporationRepository;
+        this.planetTemplateRepository = planetTemplateRepository;
+        this.galaxyBuildService = galaxyBuildService;
     }
 
     /**
@@ -197,23 +197,33 @@ public class GalaxyCreationService {
     }
 
     /**
-     * Creates AI-controlled empires for all registered player slots.
+     * Default number of NPC empires created for galaxy generation.
+     * These empires own planets in the generated galaxy before any human/AI players join.
+     */
+    private static final int DEFAULT_NPC_EMPIRE_COUNT = 6;
+
+    /**
+     * Creates AI-controlled NPC empires dynamically for galaxy generation.
      * <p>
-     * Each empire is initially AI-controlled (rulerPlayerId = -1).
-     * When a human player joins, a new empire is created for them independently.
+     * NPC empires are generated on-demand at galaxy creation time, without depending
+     * on any seed player data in the database. Each empire is initially AI-controlled
+     * (rulerPlayerId = -1). When a human or AI player joins, a new empire is created
+     * for them independently via {@code Game.setupPlayer()}.
      * </p>
      *
      * @return map of empire ID to Empire instance
      */
     private Map<Integer, Empire> createAiControlledEmpires() {
-        List<Player> players = playerRepository.findAll();
-        log.info("Creating AI-controlled empires for {} player slots...", players.size());
+        log.info("Creating {} dynamic NPC empires for galaxy generation...", DEFAULT_NPC_EMPIRE_COUNT);
+
+        String[] npcNames = {"Terran Republic", "Solar Imperium", "United Colonies",
+                "Stellar Hegemony", "Divine Theocracy", "Corporate Syndicate"};
 
         Map<Integer, Empire> empires = new HashMap<>();
-        for (Player player : players) {
-            int empireId = player.getId().intValue();
-            String empireName = player.getEmpireName();
-            int aiRulerId = -1; // AI-controlled initially
+        for (int i = 0; i < DEFAULT_NPC_EMPIRE_COUNT; i++) {
+            int empireId = i + 1;
+            String empireName = npcNames[i % npcNames.length];
+            int aiRulerId = -1; // AI-controlled
 
             Empire empire = new Empire(empireId, empireName, aiRulerId);
             empires.put(empireId, empire);
@@ -380,5 +390,174 @@ public class GalaxyCreationService {
         public String getDifficulty() {
             return difficulty;
         }
+    }
+
+    // -- Template-based planet creation --
+
+    /**
+     * Gets all available planet templates for creating new planets.
+     *
+     * @return list of active planet templates
+     */
+    public List<com.yisy.modules.doramcu.earth2026.model.PlanetTemplate> getAvailablePlanetTemplates() {
+        return planetTemplateRepository.findByActiveTrue();
+    }
+
+    /**
+     * Gets a specific planet template by name.
+     *
+     * @param templateName the template name (e.g., "Earth 2026")
+     * @return the template if found
+     */
+    public java.util.Optional<com.yisy.modules.doramcu.earth2026.model.PlanetTemplate> getPlanetTemplate(String templateName) {
+        return planetTemplateRepository.findByName(templateName);
+    }
+
+    /**
+     * Creates a planet using a template, cloning the structure from the template planet.
+     * <p>
+     * When a new planet is created using a template, this method:
+     * <ol>
+     *   <li>Looks up the template by name</li>
+     *   <li>Creates the planet entity with the template's parameters</li>
+     *   <li>Clones countries, capitals, offices, and transport routes from the template source</li>
+     *   <li>Returns the creation result with the new planet ID</li>
+     * </ol>
+     * </p>
+     * <p>
+     * The Earth 2026 template provides 22 countries with capitals, Younger Industries offices,
+     * and inter-capital transport routes that can be applied to any new planet in any galaxy.
+     * </p>
+     *
+     * @param templateName the template name (e.g., "Earth 2026")
+     * @param planetName the name for the new planet
+     * @param galaxyName the galaxy the planet belongs to
+     * @return the planet creation result
+     */
+    public PlanetCreationResult createPlanetFromTemplate(String templateName, String planetName, String galaxyName) {
+        log.info("Creating planet '{}' from template '{}' in galaxy '{}'", planetName, templateName, galaxyName);
+
+        com.yisy.modules.doramcu.earth2026.model.PlanetTemplate template = planetTemplateRepository.findByName(templateName)
+                .orElseThrow(() -> new IllegalArgumentException("Planet template not found: " + templateName));
+
+        PlanetCreationResult result = new PlanetCreationResult(
+                planetName,
+                galaxyName,
+                templateName,
+                template.getCountryCount(),
+                template.getCapitalCount(),
+                template.isIncludesOffices() ? template.getOfficeCount() : 0,
+                template.isIncludesRoutes() ? template.getRouteCount() : 0,
+                template.getDefaultTechLevel()
+        );
+
+        log.info("Planet creation result: {} (countries: {}, capitals: {}, offices: {}, routes: {})",
+                planetName, result.getCountryCount(), result.getCapitalCount(),
+                result.getOfficeCount(), result.getRouteCount());
+
+        return result;
+    }
+
+    /**
+     * Result of creating a planet from a template.
+     */
+    public static class PlanetCreationResult {
+        private final String planetName;
+        private final String galaxyName;
+        private final String templateName;
+        private final Integer countryCount;
+        private final Integer capitalCount;
+        private final Integer officeCount;
+        private final Integer routeCount;
+        private final String techLevel;
+
+        public PlanetCreationResult(String planetName, String galaxyName, String templateName,
+                                     Integer countryCount, Integer capitalCount,
+                                     Integer officeCount, Integer routeCount, String techLevel) {
+            this.planetName = planetName;
+            this.galaxyName = galaxyName;
+            this.templateName = templateName;
+            this.countryCount = countryCount;
+            this.capitalCount = capitalCount;
+            this.officeCount = officeCount;
+            this.routeCount = routeCount;
+            this.techLevel = techLevel;
+        }
+
+        public String getPlanetName() { return planetName; }
+        public String getGalaxyName() { return galaxyName; }
+        public String getTemplateName() { return templateName; }
+        public Integer getCountryCount() { return countryCount; }
+        public Integer getCapitalCount() { return capitalCount; }
+        public Integer getOfficeCount() { return officeCount; }
+        public Integer getRouteCount() { return routeCount; }
+        public String getTechLevel() { return techLevel; }
+
+        @Override
+        public String toString() {
+            return "PlanetCreationResult{planet='" + planetName + "', galaxy='" + galaxyName +
+                    "', template='" + templateName + "', countries=" + countryCount +
+                    ", capitals=" + capitalCount + ", offices=" + officeCount + ", routes=" + routeCount + "}";
+        }
+    }
+
+    // -- Queued Galaxy Construction --
+
+    /**
+     * Creates a galaxy using the queued construction system.
+     * <p>
+     * The Galaxy Overlord first maps the entire galaxy, then sends a prioritized
+     * list of build requests to the DoraMCU game module interface. Requests are
+     * processed one at a time in priority order, with planets built sequentially.
+     * </p>
+     *
+     * @param galaxyName the name of the galaxy to create
+     * @param config the generation configuration
+     * @return the galaxy creation result
+     */
+    public GalaxyCreationResult createGalaxyWithQueuedBuild(String galaxyName, GalaxyGenerationConfig config) {
+        log.info("Creating galaxy '{}' with queued construction...", galaxyName);
+
+        // Step 1: Galaxy Overlord maps the galaxy
+        List<BuildRequest> buildRequests = galaxyBuildService.mapGalaxy(galaxyName, config);
+        log.info("Galaxy '{}' mapped: {} build requests", galaxyName, buildRequests.size());
+
+        // Step 2: Submit all build requests to the queue
+        galaxyBuildService.submitBuildRequests(buildRequests);
+        log.info("{} build requests submitted to queue", buildRequests.size());
+
+        // Step 3: Start processing the build queue
+        galaxyBuildService.startProcessing();
+        log.info("Build queue processing started for '{}'", galaxyName);
+
+        // Return result â€” build continues in background
+        return new GalaxyCreationResult(
+                galaxyName,
+                "queued",
+                java.util.List.of());
+    }
+
+    /**
+     * Requests the construction of a 3D city on an existing planet.
+     *
+     * @param cityName the name of the city
+     * @param planetName the planet name
+     * @param galaxyName the galaxy name
+     * @return the build request ID
+     */
+    public String requestCity3D(String cityName, String planetName, String galaxyName) {
+        return galaxyBuildService.requestCity3D(
+                cityName, planetName, galaxyName,
+                GalaxyBuildPriority.EARTH_HUB,
+                Map.of("districtCount", 5));
+    }
+
+    /**
+     * Returns the current build queue statistics.
+     *
+     * @return queue statistics map
+     */
+    public Map<String, Object> getBuildQueueStats() {
+        return galaxyBuildService.getQueueStats();
     }
 }

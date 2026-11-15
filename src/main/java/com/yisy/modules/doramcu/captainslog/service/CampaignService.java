@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.dto.CreateCampaignRequest;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCampaign;
@@ -9,7 +10,6 @@ import com.yisy.modules.doramcu.captainslog.repository.CaptainLogCharacterReposi
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogMissionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -109,7 +109,7 @@ public class CampaignService {
     }
 
     /**
-     * Performs a mission debrief — post-mission reflection that guides the player
+     * Performs a mission debrief â€” post-mission reflection that guides the player
      * through reflection questions and updates the mission's values and development fields.
      */
     @Transactional

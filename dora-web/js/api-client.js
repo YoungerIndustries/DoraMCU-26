@@ -55,52 +55,64 @@ class ApiClient {
 
     // Game Sessions
     async getGameSessions() {
-        return this.request('/api/v1/game-sessions');
+        return this.request('/api/v1/4x/sessions');
     }
 
     async createGameSession(data) {
-        return this.request('/api/v1/game-sessions', {
+        return this.request('/api/v1/4x/sessions', {
             method: 'POST',
-            body: JSON.stringify(data)
+            body: JSON.stringify({ sessionName: data.name })
         });
     }
 
     async getGameSession(id) {
-        return this.request(`/api/v1/game-sessions/${id}`);
+        return this.request(`/api/v1/4x/sessions/${id}`);
+    }
+
+    async joinSession(id) {
+        return this.request(`/api/v1/4x/sessions/${id}/join`, {
+            method: 'POST'
+        });
+    }
+
+    async leaveSession(id) {
+        return this.request(`/api/v1/4x/sessions/${id}/leave`, {
+            method: 'POST'
+        });
     }
 
     async updateGameSession(id, data) {
-        return this.request(`/api/v1/game-sessions/${id}`, {
+        return this.request(`/api/v1/4x/sessions/${id}`, {
             method: 'PUT',
             body: JSON.stringify(data)
         });
     }
 
     async deleteGameSession(id) {
-        return this.request(`/api/v1/game-sessions/${id}`, {
+        return this.request(`/api/v1/4x/sessions/${id}`, {
             method: 'DELETE'
         });
     }
 
-    // Characters
+    // Characters (Earth2026)
     async getCharacters() {
-        return this.request('/api/v1/characters');
+        return this.request('/api/v1/earth2026/characters');
     }
 
     async createCharacter(data) {
-        return this.request('/api/v1/characters', {
+        return this.request('/api/v1/traveller/characters', {
             method: 'POST',
             body: JSON.stringify(data)
         });
     }
 
     async getCharacter(id) {
-        return this.request(`/api/v1/characters/${id}`);
+        return this.request(`/api/v1/traveller/characters/${id}`);
     }
 
     // Authentication
     async login(username, password) {
-        const response = await this.request('/api/v1/auth/login', {
+        const response = await this.request('/api/v1/4x/auth/login', {
             method: 'POST',
             body: JSON.stringify({ username, password })
         });
@@ -129,7 +141,7 @@ class ApiClient {
 
     // Event Source for SSE
     createEventSource() {
-        return new EventSource(`${this.baseUrl}/api/v1/events`);
+        return new EventSource(`${this.baseUrl}/api/v1/game/events`);
     }
 }
 

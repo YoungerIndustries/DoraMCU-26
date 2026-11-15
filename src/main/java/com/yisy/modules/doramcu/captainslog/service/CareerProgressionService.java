@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.dto.CareerProgressionResponse;
 import com.yisy.modules.doramcu.captainslog.dto.CareerUpgradeRequest;
@@ -24,15 +25,15 @@ import java.util.Map;
  * Characters earn experience points (XP) from completing missions.
  * At career events (every 3rd mission), the player can spend XP on upgrades:
  * <ul>
- *   <li><b>Rank Advancement</b> — Move up one rank (costs XP based on current rank)</li>
- *   <li><b>Discipline Increase</b> — Raise a discipline rating by 1 (costs 3 XP)</li>
- *   <li><b>Add Focus</b> — Gain a new focus in a discipline (costs 2 XP)</li>
- *   <li><b>Add Value</b> — Gain a new core value (costs 2 XP, max 3 values)</li>
- *   <li><b>Retire Value</b> — Retire a value for narrative impact (free, grants 1 XP)</li>
+ *   <li><b>Rank Advancement</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Move up one rank (costs XP based on current rank)</li>
+ *   <li><b>Discipline Increase</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Raise a discipline rating by 1 (costs 3 XP)</li>
+ *   <li><b>Add Focus</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Gain a new focus in a discipline (costs 2 XP)</li>
+ *   <li><b>Add Value</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Gain a new core value (costs 2 XP, max 3 values)</li>
+ *   <li><b>Retire Value</b> ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Retire a value for narrative impact (free, grants 1 XP)</li>
  * </ul>
  * </p>
  */
-@Component
+@Component("captainsLogCareerProgressionService")
 public class CareerProgressionService {
 
     private static final Logger log = LoggerFactory.getLogger(CareerProgressionService.class);

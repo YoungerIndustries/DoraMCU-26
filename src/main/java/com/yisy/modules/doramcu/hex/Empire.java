@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.hex;
 
+import com.yisy.modules.doramcu.hex.spi.AiEntityRegistration;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -69,6 +71,7 @@ public class Empire {
         this.ownedPlanetIds = new HashSet<>();
         this.planetIndustrialLevels = new HashMap<>();
         this.army = new EmpireArmy(id);
+        this.army.setEmpireName(name);
         this.navy = new EmpireNavy(id);
         this.facilities = new EmpireFacilities(id);
     }
@@ -271,6 +274,16 @@ public class Empire {
      */
     public EmpireArmy getArmy() {
         return army;
+    }
+
+    /**
+     * Sets the AI entity registration service, propagating it to the army component.
+     *
+     * @param service the registration service
+     */
+    public void setAiEntityRegistrationService(AiEntityRegistration service) {
+        this.army.setAiEntityRegistrationService(service);
+        this.facilities.setAiEntityRegistrationService(service);
     }
 
     /**

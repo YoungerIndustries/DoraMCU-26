@@ -74,7 +74,7 @@ public class SmugglingOperation {
      * Calculates the estimated purchase cost at the source world.
      */
     public long calculatePurchaseCost() {
-        this.purchaseCost = contraband.getBasePrice() * quantity / 2; // Buy at half price
+        this.purchaseCost = (long) contraband.getBasePrice() * quantity / 2; // Buy at half price
         log.add("Purchase cost: " + purchaseCost + " credits");
         return purchaseCost;
     }

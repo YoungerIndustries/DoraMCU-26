@@ -1,14 +1,28 @@
 package com.yisy.modules.doraneuron.service.edge;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
+import com.yisy.modules.doraneuron.config.NeuronConfig;
 import com.yisy.modules.doraneuron.config.edge.NeuronEdgeConfig;
 import com.yisy.modules.doraneuron.util.edge.SystemResourceDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import jakarta.annotation.PostConstruct;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
@@ -35,12 +49,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * quantized models from the coordinator when needed.
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class ModelQuantizationService {
 
     private static final Logger log = LoggerFactory.getLogger(ModelQuantizationService.class);
 
+    private final NeuronConfig neuronConfig;
     private final NeuronEdgeConfig edgeConfig;
     private final SystemResourceDetector detector;
+    private final RestTemplate restTemplate;
 
     /** Cache of model paths to their quantized counterparts. */
     private final ConcurrentHashMap<String, String> quantizedModelCache = new ConcurrentHashMap<>();
@@ -57,9 +75,11 @@ public class ModelQuantizationService {
     /** Total number of quantization failures. */
     private volatile long totalFailures = 0;
 
-    public ModelQuantizationService(NeuronEdgeConfig edgeConfig, SystemResourceDetector detector) {
+    public ModelQuantizationService(NeuronConfig neuronConfig, NeuronEdgeConfig edgeConfig, SystemResourceDetector detector) {
+        this.neuronConfig = neuronConfig;
         this.edgeConfig = edgeConfig;
         this.detector = detector;
+        this.restTemplate = new RestTemplate();
     }
 
     @PostConstruct
@@ -153,17 +173,64 @@ public class ModelQuantizationService {
         }
 
         // Request quantized model from coordinator
-        // In a real implementation, this would call the coordinator's quantization endpoint
-        // For now, we log the request and return null to use the original model
-        log.info("Quantized model not found at {}. In production, this would request quantization from the coordinator.",
-                quantizedPath);
+        log.info("Requesting quantized model from coordinator for: {}", originalName);
+        String downloadedPath = requestQuantizedModelFromCoordinator(originalFile, quantizedPath);
+        if (downloadedPath != null) {
+            // Update hash cache for integrity verification
+            String originalHash = computeHash(originalFile);
+            if (originalHash != null) {
+                modelHashCache.put(downloadedPath, originalHash);
+            }
+            log.info("Successfully obtained quantized model: {}", downloadedPath);
+            return downloadedPath;
+        }
 
-        // TODO: Implement actual quantization request to coordinator
-        // This would involve:
-        // 1. POST /api/v1/dl/quantize with the original model
-        // 2. Download the quantized model response
-        // 3. Save to quantizedPath
-        // 4. Update hash cache
+        log.warn("Failed to obtain quantized model from coordinator, using original model");
+        return null;
+    }
+
+    /**
+     * Request a quantized model from the coordinator server.
+     * Uploads the original model and downloads the INT8 quantized version.
+     */
+    private String requestQuantizedModelFromCoordinator(File originalFile, String targetPath) {
+        String coordinatorUrl = neuronConfig.getCoordinatorUrl();
+        if (coordinatorUrl == null || coordinatorUrl.isEmpty()) {
+            log.warn("Coordinator URL not configured, cannot request quantized model");
+            return null;
+        }
+
+        String quantizeUrl = coordinatorUrl + "/api/v1/dl/quantize";
+
+        try {
+            // Prepare multipart form data with the model file
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+            body.add("model", new FileSystemResource(originalFile));
+            body.add("modelName", originalFile.getName());
+            body.add("targetType", "int8");
+
+            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+            // Send quantization request
+            ResponseEntity<byte[]> response = restTemplate.exchange(
+                    quantizeUrl, HttpMethod.POST, requestEntity, byte[].class);
+
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                // Save the quantized model
+                Files.write(Path.of(targetPath), response.getBody());
+                log.info("Saved quantized model to: {} ({} bytes)", targetPath, response.getBody().length);
+                return targetPath;
+            } else {
+                log.warn("Coordinator returned status: {}", response.getStatusCode());
+            }
+        } catch (IOException e) {
+            log.error("Failed to save quantized model to {}: {}", targetPath, e.getMessage());
+        } catch (Exception e) {
+            log.warn("Failed to request quantized model from coordinator: {}", e.getMessage());
+        }
 
         return null;
     }

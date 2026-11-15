@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.service;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.config.NeuronConfig;
 import com.yisy.modules.doraneuron.protocol.mesh.LeaderElectionMessage;
 import com.yisy.modules.doraneuron.protocol.mesh.CoServerPromotionMessage;
@@ -26,6 +28,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * and coordination until the server returns.
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class LeaderElectionService {
 
     private static final Logger log = LoggerFactory.getLogger(LeaderElectionService.class);

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.traveller;
+import org.springframework.stereotype.Component;
 
 import com.yisy.modules.doramcu.hex.Ship;
 import com.yisy.modules.doramcu.hex.ShipComponent;
@@ -34,6 +35,7 @@ import java.util.Objects;
  *   <li>Torpedoes → TORPEDO</li>
  * </ul>
  */
+@Component
 public class HighGuardShipFactory {
 
     private int nextId;

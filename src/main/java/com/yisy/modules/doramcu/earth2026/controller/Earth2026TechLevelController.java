@@ -133,7 +133,7 @@ public class Earth2026TechLevelController {
             String terrainType = request.getOrDefault("terrainType", "URBAN").toString();
             String weather = request.getOrDefault("weather", "CLEAR").toString();
 
-            if (locationId == null || timePeriod == null || timePeriod.isBlank()) {
+            if (timePeriod == null || timePeriod.isBlank()) {
                 Map<String, Object> error = new HashMap<>();
                 error.put("error", "locationId and timePeriod are required");
                 return ResponseEntity.badRequest().body(error);

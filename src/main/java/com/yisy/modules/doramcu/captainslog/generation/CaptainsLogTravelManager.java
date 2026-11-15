@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.generation;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.Fleet;
 import com.yisy.modules.doramcu.hex.GalacticEntry;
@@ -134,12 +135,9 @@ public class CaptainsLogTravelManager {
             throw new IllegalStateException("Fleet already has an active travel order");
         }
 
-        // Calculate travel time
-        TravelCalculator.TravelResult result = calculator.calculateWarpTravel(from, to, warpFactor);
-
         // Apply health reduction to warp factor
         double effectiveWarp = warpFactor * Math.max(0.5, healthRatio);
-        result = calculator.calculateWarpTravel(from, to, effectiveWarp);
+        TravelCalculator.TravelResult result = calculator.calculateWarpTravel(from, to, effectiveWarp);
 
         // Create travel order
         LocalDateTime now = LocalDateTime.now();

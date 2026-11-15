@@ -29,6 +29,18 @@ public abstract class CelestialBody {
     protected StrategicResource strategicResource;
     protected boolean hexGeometryGenerated = false;  // Lazy generation flag
 
+    /** Resource depletion level (0-100%). 100% = fully stocked, 0% = depleted. */
+    protected double resourceLevel = 100.0;
+
+    /** Mining yield multiplier based on body quality (0.5-2.0). */
+    protected double miningYield = 1.0;
+
+    /** Number of turns since last mining (for recovery calculation). */
+    protected int turnsSinceLastMining = 0;
+
+    /** Recovery rate per turn when not being mined (0.1% per turn by default). */
+    public static final double RECOVERY_RATE_PER_TURN = 0.1;
+
     /**
      * Creates a new celestial body with the given ID and radius.
      *
@@ -169,6 +181,85 @@ public abstract class CelestialBody {
         this.hasStrategicDeposit = resource != null;
     }
 
+    // ---- Resource Depletion ----
+
+    /**
+     * @return the current resource level (0-100%)
+     */
+    public double getResourceLevel() {
+        return resourceLevel;
+    }
+
+    /**
+     * Sets the resource level.
+     *
+     * @param level the resource level (0-100%)
+     */
+    public void setResourceLevel(double level) {
+        this.resourceLevel = Math.max(0.0, Math.min(100.0, level));
+    }
+
+    /**
+     * @return the mining yield multiplier (0.5-2.0)
+     */
+    public double getMiningYield() {
+        return miningYield;
+    }
+
+    /**
+     * Sets the mining yield multiplier.
+     *
+     * @param yield the yield multiplier (0.5-2.0)
+     */
+    public void setMiningYield(double yield) {
+        this.miningYield = Math.max(0.5, Math.min(2.0, yield));
+    }
+
+    /**
+     * @return the number of turns since last mining
+     */
+    public int getTurnsSinceLastMining() {
+        return turnsSinceLastMining;
+    }
+
+    /**
+     * Records that mining occurred on this body.
+     * Depletes the resource level based on the amount mined.
+     *
+     * @param amountMined the amount of resources mined this turn
+     * @param maxCapacity the maximum storage capacity of this body
+     * @return the effective yield multiplier considering depletion
+     */
+    public double recordMining(int amountMined, int maxCapacity) {
+        turnsSinceLastMining = 0;
+        if (maxCapacity <= 0) return 1.0;
+
+        // Deplete based on mining intensity
+        double depletionRate = (double) amountMined / maxCapacity * 0.5;
+        resourceLevel = Math.max(0.0, resourceLevel - depletionRate);
+
+        // Effective yield: base yield * (resourceLevel / 100)
+        return miningYield * (resourceLevel / 100.0);
+    }
+
+    /**
+     * Processes one turn of resource recovery.
+     * If not mined, the resource level slowly recovers.
+     */
+    public void processRecoveryTurn() {
+        turnsSinceLastMining++;
+        if (turnsSinceLastMining > 0 && resourceLevel < 100.0) {
+            resourceLevel = Math.min(100.0, resourceLevel + RECOVERY_RATE_PER_TURN);
+        }
+    }
+
+    /**
+     * @return true if the body is considered depleted (resource level < 10%)
+     */
+    public boolean isDepleted() {
+        return resourceLevel < 10.0;
+    }
+
     /**
      * @return a string representation of this celestial body
      */
@@ -180,6 +271,8 @@ public abstract class CelestialBody {
                 ", radius=" + radius +
                 ", size=" + size() +
                 ", strategic=" + (hasStrategicDeposit ? strategicResource : "none") +
+                ", resourceLevel=" + String.format("%.1f%%", resourceLevel) +
+                ", miningYield=" + miningYield +
                 '}';
     }
 }

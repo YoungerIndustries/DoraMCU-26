@@ -9,7 +9,6 @@ import com.yisy.modules.doramcu.admin.repository.AiAdminTestReportRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -21,6 +20,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
 
 /**
  * Orchestrates order processing, test scheduling, and report generation.
@@ -124,6 +124,7 @@ public class AiAdminService {
      * @param timeoutSeconds maximum wait time
      * @return true if the order completed successfully, false if timed out
      */
+    @SuppressWarnings("BusyWait")
     public boolean waitForOrder(Long orderId, long timeoutSeconds) {
         long start = System.currentTimeMillis();
         while (System.currentTimeMillis() - start < timeoutSeconds * 1000) {

@@ -452,7 +452,7 @@ public class B5ExplorationActivity {
             if (discovery != Discovery.NONE) {
                 sb.append(" [").append(discovery).append("]");
             }
-        } else if (successful || discovery != Discovery.NONE) {
+        } else {
             sb.append(" ✗");
         }
 

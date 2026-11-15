@@ -24,6 +24,9 @@ public class ArmyUnit {
     private int morale;
     private Planet stationedPlanet;
 
+    /** Optional AI Core component providing combat bonuses. */
+    private AiCoreComponent aiCore;
+
     /**
      * Creates a new army unit of the given type.
      *
@@ -175,6 +178,47 @@ public class ArmyUnit {
      */
     public int getMobility() {
         return unitType.getMobility();
+    }
+
+    // ---- AI Core integration ----
+
+    /**
+     * Returns the AI Core component, or null if not installed.
+     */
+    public AiCoreComponent getAiCore() {
+        return aiCore;
+    }
+
+    /**
+     * Installs an AI Core component on this unit.
+     *
+     * @param aiCore the AI Core to install
+     */
+    public void setAiCore(AiCoreComponent aiCore) {
+        this.aiCore = aiCore;
+    }
+
+    /**
+     * Removes the AI Core component from this unit.
+     */
+    public void removeAiCore() {
+        this.aiCore = null;
+    }
+
+    /**
+     * Returns true if an AI Core is installed.
+     */
+    public boolean hasAiCore() {
+        return aiCore != null;
+    }
+
+    /**
+     * Returns the AI Core bonus multiplier for combat calculations.
+     *
+     * @return the bonus multiplier (0.0 if no AI Core)
+     */
+    public double getAiCoreBonus() {
+        return aiCore != null ? aiCore.getDamageBonus() : 0.0;
     }
 
     @Override

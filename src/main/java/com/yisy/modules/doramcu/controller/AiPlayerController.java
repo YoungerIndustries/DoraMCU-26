@@ -250,6 +250,7 @@ public class AiPlayerController {
      *
      * @return a map of area names to their display names and descriptions
      */
+    @SuppressWarnings("MVCPathVariableInspection")
     @GetMapping("/delegation/areas")
     public ResponseEntity<Map<String, Object>> getDelegationAreas() {
         Map<String, Object> areas = new java.util.LinkedHashMap<>();

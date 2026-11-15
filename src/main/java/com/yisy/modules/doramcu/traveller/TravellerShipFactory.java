@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.traveller;
+import org.springframework.stereotype.Component;
 
 import com.yisy.modules.doramcu.hex.Ship;
 import com.yisy.modules.doramcu.hex.ShipComponent;
@@ -30,6 +31,7 @@ import java.util.Objects;
  * hex combat model.
  * </p>
  */
+@Component
 public class TravellerShipFactory {
 
     private int nextId;

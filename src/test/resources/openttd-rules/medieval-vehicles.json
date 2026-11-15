@@ -1,0 +1,1089 @@
+{
+  "game_info": {
+    "title": "OpenTTD Medieval & Low-Tech Vehicle Database for Fantasy Worlds",
+    "description": "Pre-industrial vehicle database for low-tech fantasy worlds (D&D, medieval settings). Based on OpenTTD NewGRF mods: eGRVTS (horse-drawn vehicles) and Sailing Ships by J Mitchell. Replaces industrial vehicles with animal-drawn and wind-powered alternatives for worlds without steam or combustion technology.",
+    "source_mods": [
+      "eGRVTS - Extended Generic Road Vehicle and Tram Set by Zephyris (GPL v2) — horse-drawn vehicles from 1700s",
+      "Sailing Ships by J Mitchell (GPL v2) — wind-powered ships from 1700-1920",
+      "OpenTTD Core (GPL v2) — base game reference for vehicle stats"
+    ],
+    "integration_notes": "This file adds tech level 0 (Medieval/Pre-Industrial) vehicles. For D&D-style worlds, set planet tech_level to 0 to use only animal and creature mounts. These vehicles use PATH infrastructure instead of ROAD, and WHARF stations instead of PORT."
+  },
+  "vehicles": {
+    "animal_drawn_road": [
+      {
+        "id": "horse_cart",
+        "name": "Horse-Drawn Cart",
+        "source": "eGRVTS — Horse-Drawn Heavy Industry",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "animal_drawn",
+        "type": "HORSE_CART",
+        "description": "Basic horse-drawn cargo cart for short-distance freight. The primary cargo vehicle for medieval worlds. Slow but reliable.",
+        "stats": {
+          "speed_hexes_per_turn": 1,
+          "cargo_capacity": 10,
+          "passenger_capacity": 0,
+          "build_cost": 30,
+          "maintenance_cost": 2,
+          "lifetime": 200,
+          "power": 3
+        },
+        "infrastructure": "PATH",
+        "mount_type": "HORSE",
+        "variants": [
+          {"name": "Two-Horse Wagon", "id": "two_horse_wagon", "speed_hexes_per_turn": 1, "cargo_capacity": 18, "build_cost": 50, "maintenance_cost": 3},
+          {"name": "Ox Cart", "id": "ox_cart", "speed_hexes_per_turn": 1, "cargo_capacity": 15, "build_cost": 25, "maintenance_cost": 1, "mount_type": "OX"}
+        ]
+      },
+      {
+        "id": "horse_drawn_bus",
+        "name": "Horse-Drawn Bus (Omnibus)",
+        "source": "eGRVTS — Horse-Drawn Buses",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "animal_drawn",
+        "type": "HORSE_BUS",
+        "description": "Passenger carriage pulled by horses. Essential for connecting medieval settlements to stations.",
+        "stats": {
+          "speed_hexes_per_turn": 1,
+          "cargo_capacity": 0,
+          "passenger_capacity": 15,
+          "build_cost": 25,
+          "maintenance_cost": 2,
+          "lifetime": 180,
+          "power": 3
+        },
+        "infrastructure": "PATH",
+        "mount_type": "HORSE",
+        "variants": [
+          {"name": "Stagecoach", "id": "stagecoach", "speed_hexes_per_turn": 2, "passenger_capacity": 10, "build_cost": 40, "maintenance_cost": 3},
+          {"name": "Gig", "id": "gig", "speed_hexes_per_turn": 2, "passenger_capacity": 4, "build_cost": 15, "maintenance_cost": 1}
+        ]
+      },
+      {
+        "id": "horse_drawn_tram",
+        "name": "Horse-Drawn Tram",
+        "source": "eGRVTS — Horse-Drawn Trams",
+        "tech_level_min": 0,
+        "tech_level_max": 2,
+        "category": "animal_drawn",
+        "type": "HORSE_TRAM",
+        "description": "Horse-drawn tram on iron-rail tracks. Used in larger medieval cities with tram infrastructure.",
+        "stats": {
+          "speed_hexes_per_turn": 2,
+          "cargo_capacity": 0,
+          "passenger_capacity": 25,
+          "build_cost": 60,
+          "maintenance_cost": 3,
+          "lifetime": 250,
+          "power": 5
+        },
+        "infrastructure": "TRAM_RAIL",
+        "mount_type": "HORSE"
+      },
+      {
+        "id": "pack_animal",
+        "name": "Pack Animal",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "animal_drawn",
+        "type": "PACK_ANIMAL",
+        "description": "Individual pack animal for rough terrain where paths don't exist. Can traverse any terrain type slowly.",
+        "stats": {
+          "speed_hexes_per_turn": 1,
+          "cargo_capacity": 5,
+          "passenger_capacity": 0,
+          "build_cost": 10,
+          "maintenance_cost": 1,
+          "lifetime": 150,
+          "power": 2
+        },
+        "infrastructure": "NONE",
+        "mount_type": "MULE",
+        "terrain_bonus": {"mountain": 0.5, "forest": 0.5, "rough": 0.5},
+        "variants": [
+          {"name": "Donkey Pack", "mount_type": "DONKEY", "cargo_capacity": 4, "build_cost": 8},
+          {"name": "Mule Train", "mount_type": "MULE", "cargo_capacity": 6, "build_cost": 12},
+          {"name": "Camel Caravan", "mount_type": "CAMEL", "cargo_capacity": 12, "build_cost": 20, "terrain_bonus": {"desert": 1.0}}
+        ]
+      }
+    ],
+    "creature_mounts": [
+      {
+        "id": "riding_horse",
+        "name": "Riding Horse",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "creature_mount",
+        "type": "RIDING_MOUNT",
+        "description": "Single rider on horseback. Fast messenger and scout vehicle. Carries mail and small parcels.",
+        "stats": {
+          "speed_hexes_per_turn": 3,
+          "cargo_capacity": 2,
+          "passenger_capacity": 1,
+          "build_cost": 15,
+          "maintenance_cost": 1,
+          "lifetime": 120,
+          "power": 4
+        },
+        "infrastructure": "NONE",
+        "mount_type": "HORSE",
+        "specialty": "MAIL_COURIER"
+      },
+      {
+        "id": "warhorse",
+        "name": "Warhorse",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "creature_mount",
+        "type": "RIDING_MOUNT",
+        "description": "Armored warhorse for military transport. Can carry a knight and light cargo.",
+        "stats": {
+          "speed_hexes_per_turn": 2,
+          "cargo_capacity": 5,
+          "passenger_capacity": 1,
+          "build_cost": 30,
+          "maintenance_cost": 2,
+          "lifetime": 100,
+          "power": 6
+        },
+        "infrastructure": "NONE",
+        "mount_type": "WARHORSE"
+      },
+      {
+        "id": "giant_beetle_mount",
+        "name": "Giant Beetle Mount",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "creature_mount",
+        "type": "CREATURE_MOUNT",
+        "description": "Giant beetle used as a mount in fantasy worlds. High cargo capacity, slow speed.",
+        "stats": {
+          "speed_hexes_per_turn": 1,
+          "cargo_capacity": 20,
+          "passenger_capacity": 2,
+          "build_cost": 40,
+          "maintenance_cost": 3,
+          "lifetime": 300,
+          "power": 8
+        },
+        "infrastructure": "NONE",
+        "mount_type": "GIANT_BEETLE",
+        "fantasy_only": true
+      },
+      {
+        "id": "griffon_mount",
+        "name": "Griffon Mount",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "creature_mount",
+        "type": "FLYING_MOUNT",
+        "description": "Flying griffon for aerial transport in magical worlds. Bypasses terrain obstacles.",
+        "stats": {
+          "speed_hexes_per_turn": 8,
+          "cargo_capacity": 3,
+          "passenger_capacity": 1,
+          "build_cost": 100,
+          "maintenance_cost": 5,
+          "lifetime": 200,
+          "power": 15
+        },
+        "infrastructure": "NONE",
+        "mount_type": "GRIFFON",
+        "fantasy_only": true,
+        "terrain_agnostic": true
+      },
+      {
+        "id": "hippogriff_mount",
+        "name": "Hippogriff Mount",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "creature_mount",
+        "type": "FLYING_MOUNT",
+        "description": "Hippogriff for fast aerial courier service. Faster than griffon but less cargo.",
+        "stats": {
+          "speed_hexes_per_turn": 10,
+          "cargo_capacity": 2,
+          "passenger_capacity": 1,
+          "build_cost": 120,
+          "maintenance_cost": 6,
+          "lifetime": 180,
+          "power": 18
+        },
+        "infrastructure": "NONE",
+        "mount_type": "HIPPOGRIFF",
+        "fantasy_only": true,
+        "terrain_agnostic": true
+      },
+      {
+        "id": "direwolf_mount",
+        "name": "Direwolf Mount",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "creature_mount",
+        "type": "CREATURE_MOUNT",
+        "description": "Large direwolf for fast ground transport in cold climates. Excellent in snow and forest.",
+        "stats": {
+          "speed_hexes_per_turn": 4,
+          "cargo_capacity": 3,
+          "passenger_capacity": 1,
+          "build_cost": 35,
+          "maintenance_cost": 2,
+          "lifetime": 100,
+          "power": 7
+        },
+        "infrastructure": "NONE",
+        "mount_type": "DIREWOLF",
+        "fantasy_only": true,
+        "terrain_bonus": {"snow": 1.0, "forest": 0.5}
+      },
+      {
+        "id": "saber_tooth_tiger_mount",
+        "name": "Saber-Tooth Tiger Mount",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "creature_mount",
+        "type": "CREATURE_MOUNT",
+        "description": "Tamed saber-tooth tiger for fast transport in jungle and savanna terrain.",
+        "stats": {
+          "speed_hexes_per_turn": 5,
+          "cargo_capacity": 2,
+          "passenger_capacity": 1,
+          "build_cost": 45,
+          "maintenance_cost": 3,
+          "lifetime": 90,
+          "power": 9
+        },
+        "infrastructure": "NONE",
+        "mount_type": "SABER_TOOTH_TIGER",
+        "fantasy_only": true,
+        "terrain_bonus": {"jungle": 1.0, "savanna": 0.5}
+      },
+      {
+        "id": "elephant_mount",
+        "name": "War Elephant",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "creature_mount",
+        "type": "CREATURE_MOUNT",
+        "description": "War elephant for heavy transport and military use. Very high cargo capacity, very slow.",
+        "stats": {
+          "speed_hexes_per_turn": 1,
+          "cargo_capacity": 40,
+          "passenger_capacity": 4,
+          "build_cost": 80,
+          "maintenance_cost": 5,
+          "lifetime": 400,
+          "power": 15
+        },
+        "infrastructure": "NONE",
+        "mount_type": "ELEPHANT",
+        "terrain_bonus": {"jungle": 0.5}
+      },
+      {
+        "id": "pegasus_mount",
+        "name": "Pegasus Mount",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "creature_mount",
+        "type": "FLYING_MOUNT",
+        "description": "Winged horse for elite aerial transport. Fast and graceful, but rare and expensive.",
+        "stats": {
+          "speed_hexes_per_turn": 12,
+          "cargo_capacity": 2,
+          "passenger_capacity": 1,
+          "build_cost": 200,
+          "maintenance_cost": 10,
+          "lifetime": 250,
+          "power": 25
+        },
+        "infrastructure": "NONE",
+        "mount_type": "PEGASUS",
+        "fantasy_only": true,
+        "terrain_agnostic": true,
+        "rarity": "LEGENDARY"
+      },
+      {
+        "id": "drake_mount",
+        "name": "Drake Mount",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "creature_mount",
+        "type": "FLYING_MOUNT",
+        "description": "Small dragon-like creature for aerial transport. Can carry moderate cargo and has fire breath for defense.",
+        "stats": {
+          "speed_hexes_per_turn": 9,
+          "cargo_capacity": 8,
+          "passenger_capacity": 2,
+          "build_cost": 150,
+          "maintenance_cost": 8,
+          "lifetime": 300,
+          "power": 20
+        },
+        "infrastructure": "NONE",
+        "mount_type": "DRAKE",
+        "fantasy_only": true,
+        "terrain_agnostic": true,
+        "combat_capability": "FIRE_BREATH"
+      }
+    ],
+    "sailing_ships": [
+      {
+        "id": "brig",
+        "name": "Brig",
+        "source": "Sailing Ships by J Mitchell",
+        "tech_level_min": 0,
+        "tech_level_max": 2,
+        "category": "sailing",
+        "type": "SAILING_SHIP",
+        "description": "Two-masted sailing ship from ~1700. Medium cargo capacity, wind-powered. Length ~30m, capacity 50t.",
+        "stats": {
+          "speed_hexes_per_turn": 1,
+          "cargo_capacity": 25,
+          "passenger_capacity": 5,
+          "build_cost": 100,
+          "maintenance_cost": 4,
+          "lifetime": 400,
+          "power": 5
+        },
+        "infrastructure": "WATER",
+        "propulsion": "WIND",
+        "wind_dependency": 0.8,
+        "introduced_year": 1700
+      },
+      {
+        "id": "schooner",
+        "name": "Schooner",
+        "source": "Sailing Ships by J Mitchell",
+        "tech_level_min": 0,
+        "tech_level_max": 2,
+        "category": "sailing",
+        "type": "SAILING_SHIP",
+        "description": "Fore-and-aft rigged sailing vessel from ~1800. Fast but small capacity. Length ~20m, capacity 40t.",
+        "stats": {
+          "speed_hexes_per_turn": 2,
+          "cargo_capacity": 20,
+          "passenger_capacity": 8,
+          "build_cost": 80,
+          "maintenance_cost": 3,
+          "lifetime": 350,
+          "power": 6
+        },
+        "infrastructure": "WATER",
+        "propulsion": "WIND",
+        "wind_dependency": 0.9,
+        "introduced_year": 1800
+      },
+      {
+        "id": "merchantman",
+        "name": "Merchantman (East Indiaman)",
+        "source": "Sailing Ships by J Mitchell",
+        "tech_level_min": 0,
+        "tech_level_max": 2,
+        "category": "sailing",
+        "type": "SAILING_SHIP",
+        "description": "Fully rigged Dutch East Indiaman from ~1750. Slow bulk carrier. Length ~50m, capacity 100t.",
+        "stats": {
+          "speed_hexes_per_turn": 1,
+          "cargo_capacity": 50,
+          "passenger_capacity": 10,
+          "build_cost": 200,
+          "maintenance_cost": 8,
+          "lifetime": 500,
+          "power": 10
+        },
+        "infrastructure": "WATER",
+        "propulsion": "WIND",
+        "wind_dependency": 0.7,
+        "introduced_year": 1750
+      },
+      {
+        "id": "barque",
+        "name": "Barque",
+        "source": "Sailing Ships by J Mitchell",
+        "tech_level_min": 0,
+        "tech_level_max": 2,
+        "category": "sailing",
+        "type": "SAILING_SHIP",
+        "description": "Re-rigged merchantman from ~1790. Slower than merchantman but cheaper running cost. Length ~50m, capacity 110t.",
+        "stats": {
+          "speed_hexes_per_turn": 1,
+          "cargo_capacity": 55,
+          "passenger_capacity": 8,
+          "build_cost": 180,
+          "maintenance_cost": 6,
+          "lifetime": 450,
+          "power": 9
+        },
+        "infrastructure": "WATER",
+        "propulsion": "WIND",
+        "wind_dependency": 0.7,
+        "introduced_year": 1790
+      },
+      {
+        "id": "windjammer",
+        "name": "Windjammer",
+        "source": "Sailing Ships by J Mitchell",
+        "tech_level_min": 0,
+        "tech_level_max": 2,
+        "category": "sailing",
+        "type": "SAILING_SHIP",
+        "description": "Large fast sailing ship from ~1870. Cheap bulk transport with low running costs. Length ~80m, capacity 250t.",
+        "stats": {
+          "speed_hexes_per_turn": 2,
+          "cargo_capacity": 100,
+          "passenger_capacity": 15,
+          "build_cost": 350,
+          "maintenance_cost": 10,
+          "lifetime": 600,
+          "power": 15
+        },
+        "infrastructure": "WATER",
+        "propulsion": "WIND",
+        "wind_dependency": 0.8,
+        "introduced_year": 1870
+      },
+      {
+        "id": "rowboat",
+        "name": "Rowboat / Galley",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "sailing",
+        "type": "ROWBOAT",
+        "description": "Small rowed or oared boat for river and coastal transport. No wind dependency.",
+        "stats": {
+          "speed_hexes_per_turn": 1,
+          "cargo_capacity": 5,
+          "passenger_capacity": 8,
+          "build_cost": 15,
+          "maintenance_cost": 1,
+          "lifetime": 150,
+          "power": 2
+        },
+        "infrastructure": "WATER",
+        "propulsion": "OAR",
+        "wind_dependency": 0,
+        "variants": [
+          {"name": "Galley", "id": "galley", "cargo_capacity": 15, "passenger_capacity": 20, "build_cost": 40, "maintenance_cost": 2},
+          {"name": "Longship", "id": "longship", "cargo_capacity": 20, "passenger_capacity": 30, "build_cost": 60, "maintenance_cost": 3, "specialty": "Viking-style raiding ship"}
+        ]
+      },
+      {
+        "id": "cog_ship",
+        "name": "Cog (Medieval Ship)",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "sailing",
+        "type": "SAILING_SHIP",
+        "description": "Medieval single-masted sailing ship. Common in European medieval trade.",
+        "stats": {
+          "speed_hexes_per_turn": 1,
+          "cargo_capacity": 30,
+          "passenger_capacity": 10,
+          "build_cost": 120,
+          "maintenance_cost": 5,
+          "lifetime": 350,
+          "power": 7
+        },
+        "infrastructure": "WATER",
+        "propulsion": "WIND",
+        "wind_dependency": 0.8
+      },
+      {
+        "id": "caravel",
+        "name": "Caravel",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "sailing",
+        "type": "SAILING_SHIP",
+        "description": "Light, maneuverable sailing ship used for exploration. Good for coastal and river navigation.",
+        "stats": {
+          "speed_hexes_per_turn": 2,
+          "cargo_capacity": 15,
+          "passenger_capacity": 12,
+          "build_cost": 90,
+          "maintenance_cost": 4,
+          "lifetime": 300,
+          "power": 6
+        },
+        "infrastructure": "WATER",
+        "propulsion": "WIND",
+        "wind_dependency": 0.7
+      }
+    ]
+  },
+  "infrastructure": {
+    "path": {
+      "id": "path",
+      "name": "Dirt Path / Trail",
+      "tech_level_min": 0,
+      "tech_level_max": 1,
+      "description": "Unpaved dirt path for horse-drawn vehicles and pack animals. Cheaper than roads but slower.",
+      "stats": {
+        "build_cost_per_tile": 2,
+        "maintenance_cost_per_tile": 0,
+        "max_speed": 2,
+        "can_carry_cargo": true,
+        "can_carry_passengers": true
+      },
+      "compatible_vehicles": ["horse_cart", "horse_drawn_bus", "two_horse_wagon", "ox_cart", "stagecoach", "gig"],
+      "variants": [
+        {"name": "Gravel Road", "build_cost_per_tile": 3, "max_speed": 2},
+        {"name": "Cobblestone Street", "build_cost_per_tile": 5, "max_speed": 3, "tech_level_min": 1}
+      ]
+    },
+    "tram_rail": {
+      "id": "tram_rail",
+      "name": "Tram Rail (Iron Rail)",
+      "tech_level_min": 0,
+      "tech_level_max": 2,
+      "description": "Simple iron rail for horse-drawn trams. Lighter than full railway, used in cities.",
+      "stats": {
+        "build_cost_per_tile": 8,
+        "maintenance_cost_per_tile": 1,
+        "max_speed": 3,
+        "can_carry_cargo": true,
+        "can_carry_passengers": true
+      },
+      "compatible_vehicles": ["horse_drawn_tram"]
+    },
+    "water": {
+      "id": "water",
+      "name": "Water Route",
+      "tech_level_min": 0,
+      "tech_level_max": 8,
+      "description": "Natural water routes for sailing ships and rowboats. No construction cost, limited to water tiles.",
+      "stats": {
+        "build_cost_per_tile": 0,
+        "maintenance_cost_per_tile": 0,
+        "max_speed": 2,
+        "can_carry_cargo": true,
+        "can_carry_passengers": true
+      },
+      "compatible_vehicles": ["brig", "schooner", "merchantman", "barque", "windjammer", "rowboat", "galley", "longship", "cog_ship", "caravel"],
+      "notes": "Requires water tiles; no construction needed. Wind-powered ships have speed affected by weather."
+    }
+  },
+  "stations": {
+    "medieval_stations": [
+      {
+        "id": "tavern_stop",
+        "name": "Tavern / Inn Stop",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "path",
+        "infrastructure_type": "STATION",
+        "description": "Roadside tavern where stagecoaches and horse-drawn buses stop for passengers and mail.",
+        "stats": {
+          "build_cost": 15,
+          "maintenance_cost": 1,
+          "catchment_radius": 2,
+          "max_passengers": 30,
+          "max_cargo": 20
+        },
+        "interior_rooms": [
+          {"room": "Tavern Hall", "theme": "Social"},
+          {"room": "Stable", "theme": "Social"},
+          {"room": "Inn Rooms", "theme": "Social"}
+        ],
+        "3d_model": "Wooden tavern with stable and signpost"
+      },
+      {
+        "id": "market_square",
+        "name": "Market Square",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "path",
+        "infrastructure_type": "STATION",
+        "description": "Central market square in a medieval town. Hub for cargo and passenger exchange.",
+        "stats": {
+          "build_cost": 40,
+          "maintenance_cost": 2,
+          "catchment_radius": 4,
+          "max_passengers": 100,
+          "max_cargo": 100
+        },
+        "interior_rooms": [
+          {"room": "Market Stalls", "theme": "Social"},
+          {"room": "Town Hall", "theme": "Social"},
+          {"room": "Guard Post", "theme": "Social"},
+          {"room": "Warehouse", "theme": "Social"}
+        ],
+        "3d_model": "Cobblestone square with market stalls and town hall"
+      },
+      {
+        "id": "wharf",
+        "name": "Wharf / Dock",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 2,
+        "category": "water",
+        "infrastructure_type": "PORT",
+        "description": "Simple wooden wharf for sailing ships and rowboats. Medieval equivalent of a port.",
+        "stats": {
+          "build_cost": 25,
+          "maintenance_cost": 2,
+          "catchment_radius": 3,
+          "max_passengers": 80,
+          "max_cargo": 150
+        },
+        "interior_rooms": [
+          {"room": "Dock Office", "theme": "Social"},
+          {"room": "Cargo Shed", "theme": "Social"},
+          {"room": "Captain's Cabin", "theme": "Social"},
+          {"room": "Rope Walk", "theme": "Social"}
+        ],
+        "3d_model": "Wooden wharf with cargo shed and mooring posts"
+      },
+      {
+        "id": "castle_gate",
+        "name": "Castle Gate",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "path",
+        "infrastructure_type": "STATION",
+        "description": "Main gate of a castle or fortified town. Secure station for valuable cargo and VIP passengers.",
+        "stats": {
+          "build_cost": 100,
+          "maintenance_cost": 5,
+          "catchment_radius": 5,
+          "max_passengers": 150,
+          "max_cargo": 200
+        },
+        "interior_rooms": [
+          {"room": "Gatehouse", "theme": "Social"},
+          {"room": "Guard Room", "theme": "Social"},
+          {"room": "Armory", "theme": "Trap"},
+          {"room": "Keep", "theme": "Social"},
+          {"room": "Stables", "theme": "Social"}
+        ],
+        "3d_model": "Stone castle gate with portcullis and guard towers"
+      },
+      {
+        "id": "stable_yard",
+        "name": "Stable Yard",
+        "source": "DoraMCU — Fantasy Extension",
+        "tech_level_min": 0,
+        "tech_level_max": 1,
+        "category": "path",
+        "infrastructure_type": "STATION",
+        "description": "Large stable complex for mounting and dismounting animals. Hub for creature mounts.",
+        "stats": {
+          "build_cost": 30,
+          "maintenance_cost": 2,
+          "catchment_radius": 2,
+          "max_passengers": 20,
+          "max_cargo": 30
+        },
+        "interior_rooms": [
+          {"room": "Stables", "theme": "Social"},
+          {"room": "Tack Room", "theme": "Social"},
+          {"room": "Farrier Shop", "theme": "Social"},
+          {"room": "Feed Storage", "theme": "Social"}
+        ],
+        "3d_model": "Wooden stable complex with paddocks and tack room"
+      }
+    ]
+  },
+  "cargo_types": {
+    "medieval_raw_materials": [
+      {
+        "id": "herbs",
+        "name": "Herbs & Potions",
+        "category": "medieval_raw_materials",
+        "color": "#90EE90",
+        "perishable": true,
+        "base_value": 12,
+        "description": "Magical herbs and potion ingredients. Perishable — must be delivered fresh.",
+        "produced_by": ["herb_garden", "enchanted_forest"],
+        "consumed_by": ["apothecary", "alchemy_lab"]
+      },
+      {
+        "id": "gems",
+        "name": "Gems & Jewels",
+        "category": "medieval_raw_materials",
+        "color": "#FF69B4",
+        "perishable": false,
+        "base_value": 50,
+        "description": "Precious gems mined from deep caves and dungeons. High value, low weight.",
+        "produced_by": ["gem_mine", "dungeon"],
+        "consumed_by": ["jeweler", "enchanted_items"]
+      },
+      {
+        "id": "iron_ore",
+        "name": "Iron Ore",
+        "category": "medieval_raw_materials",
+        "color": "#696969",
+        "perishable": false,
+        "base_value": 10,
+        "description": "Raw iron ore for blacksmithing. Primary input for weapons and armor.",
+        "produced_by": ["iron_mine"],
+        "consumed_by": ["blacksmith"]
+      },
+      {
+        "id": "leather",
+        "name": "Leather & Hides",
+        "category": "medieval_raw_materials",
+        "color": "#8B4513",
+        "perishable": false,
+        "base_value": 14,
+        "description": "Tanned leather from hunting and ranching. Used for armor and goods.",
+        "produced_by": ["tannery", "ranch"],
+        "consumed_by": ["armorer", "saddlemaker"]
+      },
+      {
+        "id": "magic_ore",
+        "name": "Magic Ore (Mithril/Adamantine)",
+        "category": "medieval_raw_materials",
+        "color": "#9370DB",
+        "perishable": false,
+        "base_value": 80,
+        "description": "Rare magical metal ore from deep dungeons. Used for enchanted weapons and armor.",
+        "produced_by": ["deep_mine", "dungeon"],
+        "consumed_by": ["master_blacksmith", "enchanted_items"]
+      }
+    ],
+    "medieval_processed_goods": [
+      {
+        "id": "weapons",
+        "name": "Weapons & Armor",
+        "category": "medieval_processed_goods",
+        "color": "#708090",
+        "perishable": false,
+        "base_value": 35,
+        "description": "Forged weapons and armor from blacksmiths. Essential for adventuring parties.",
+        "produced_by": ["blacksmith"],
+        "consumed_by": ["armory", "adventurers_guild"]
+      },
+      {
+        "id": "potions",
+        "name": "Potions & Elixirs",
+        "category": "medieval_processed_goods",
+        "color": "#00FF7F",
+        "perishable": true,
+        "base_value": 40,
+        "description": "Brewed potions and elixirs. Perishable — lose potency over time.",
+        "produced_by": ["apothecary", "alchemy_lab"],
+        "consumed_by": ["adventurers_guild", "healer"]
+      },
+      {
+        "id": "enchanted_items",
+        "name": "Enchanted Items",
+        "category": "medieval_processed_goods",
+        "color": "#FFD700",
+        "perishable": false,
+        "base_value": 100,
+        "description": "Magically enchanted items. Highest value cargo in medieval worlds.",
+        "produced_by": ["master_blacksmith", "enchanter"],
+        "consumed_by": ["adventurers_guild", "royal_treasury"]
+      },
+      {
+        "id": "scrolls",
+        "name": "Scrolls & Tomes",
+        "category": "medieval_processed_goods",
+        "color": "#F5DEB3",
+        "perishable": false,
+        "base_value": 30,
+        "description": "Magical scrolls and ancient tomes. Light but valuable.",
+        "produced_by": ["library", "wizard_tower"],
+        "consumed_by": ["academy", "adventurers_guild"]
+      }
+    ]
+  },
+  "industries": {
+    "medieval_primary": [
+      {
+        "id": "herb_garden",
+        "name": "Herb Garden",
+        "category": "primary",
+        "output": {"cargo": "herbs", "amount": 8},
+        "input": null,
+        "required_terrain": ["forest", "grassland"],
+        "build_cost": 150,
+        "maintenance": 3,
+        "tech_level_min": 0,
+        "description": "Cultivates magical herbs and potion ingredients.",
+        "interior_rooms": [
+          {"room": "Garden Plots", "theme": "Social"},
+          {"room": "Drying Room", "theme": "Social"},
+          {"room": "Storage Shed", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "gem_mine",
+        "name": "Gem Mine",
+        "category": "primary",
+        "output": {"cargo": "gems", "amount": 2},
+        "input": null,
+        "required_terrain": ["mountain", "highland"],
+        "build_cost": 800,
+        "maintenance": 15,
+        "tech_level_min": 0,
+        "description": "Mines precious gems from deep mountain deposits.",
+        "interior_rooms": [
+          {"room": "Mine Entrance", "theme": "Trap"},
+          {"room": "Crystal Cave", "theme": "Trap"},
+          {"room": "Gem Storage", "theme": "Trap"},
+          {"room": "Miner's Quarters", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "iron_mine",
+        "name": "Iron Mine",
+        "category": "primary",
+        "output": {"cargo": "iron_ore", "amount": 10},
+        "input": null,
+        "required_terrain": ["mountain", "highland"],
+        "build_cost": 400,
+        "maintenance": 8,
+        "tech_level_min": 0,
+        "description": "Extracts iron ore for blacksmithing.",
+        "interior_rooms": [
+          {"room": "Mine Shaft", "theme": "Trap"},
+          {"room": "Ore Storage", "theme": "Social"},
+          {"room": "Tool Room", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "deep_mine",
+        "name": "Deep Mine (Dungeon)",
+        "category": "primary",
+        "output": {"cargo": "magic_ore", "amount": 1},
+        "input": null,
+        "required_terrain": ["mountain", "underground"],
+        "build_cost": 2000,
+        "maintenance": 30,
+        "tech_level_min": 0,
+        "description": "Deep underground mine that extracts rare magical metals. Often guarded by monsters.",
+        "interior_rooms": [
+          {"room": "Dungeon Entrance", "theme": "Trap"},
+          {"room": "Monster Lair", "theme": "Trap"},
+          {"room": "Crystal Vein", "theme": "Trap"},
+          {"room": "Treasure Room", "theme": "Trap"}
+        ]
+      },
+      {
+        "id": "tannery",
+        "name": "Tannery",
+        "category": "primary",
+        "output": {"cargo": "leather", "amount": 6},
+        "input": null,
+        "required_terrain": ["grassland", "forest"],
+        "build_cost": 300,
+        "maintenance": 6,
+        "tech_level_min": 0,
+        "description": "Tans hides into leather for armor and goods.",
+        "interior_rooms": [
+          {"room": "Tanning Vats", "theme": "Trap"},
+          {"room": "Drying Area", "theme": "Social"},
+          {"room": "Leather Storage", "theme": "Social"}
+        ]
+      }
+    ],
+    "medieval_secondary": [
+      {
+        "id": "blacksmith",
+        "name": "Blacksmith",
+        "category": "secondary",
+        "output": {"cargo": "weapons", "amount": 4},
+        "input": [{"cargo": "iron_ore", "amount": 8}],
+        "required_terrain": ["grassland"],
+        "build_cost": 500,
+        "maintenance": 10,
+        "tech_level_min": 0,
+        "description": "Forges weapons and armor from iron ore.",
+        "interior_rooms": [
+          {"room": "Forge", "theme": "Trap"},
+          {"room": "Anvil Area", "theme": "Social"},
+          {"room": "Weapon Rack", "theme": "Social"},
+          {"room": "Shop Front", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "apothecary",
+        "name": "Apothecary",
+        "category": "secondary",
+        "output": {"cargo": "potions", "amount": 4},
+        "input": [{"cargo": "herbs", "amount": 6}],
+        "required_terrain": ["grassland"],
+        "build_cost": 400,
+        "maintenance": 8,
+        "tech_level_min": 0,
+        "description": "Brews potions and elixirs from magical herbs.",
+        "interior_rooms": [
+          {"room": "Brewing Room", "theme": "Social"},
+          {"room": "Herb Storage", "theme": "Social"},
+          {"room": "Potion Shelf", "theme": "Social"},
+          {"room": "Shop Counter", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "master_blacksmith",
+        "name": "Master Blacksmith",
+        "category": "secondary",
+        "output": {"cargo": "enchanted_items", "amount": 1},
+        "input": [{"cargo": "magic_ore", "amount": 2}, {"cargo": "gems", "amount": 2}],
+        "required_terrain": ["grassland"],
+        "build_cost": 1500,
+        "maintenance": 25,
+        "tech_level_min": 0,
+        "description": "Master craftsman who creates enchanted weapons and armor from magical materials.",
+        "interior_rooms": [
+          {"room": "Enchanted Forge", "theme": "Trap"},
+          {"room": "Magic Anvil", "theme": "Trap"},
+          {"room": "Treasure Vault", "theme": "Trap"},
+          {"room": "Apprentice Quarters", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "enchanter",
+        "name": "Enchanter's Tower",
+        "category": "secondary",
+        "output": {"cargo": "enchanted_items", "amount": 2},
+        "input": [{"cargo": "scrolls", "amount": 4}, {"cargo": "gems", "amount": 3}],
+        "required_terrain": ["mountain", "forest"],
+        "build_cost": 2000,
+        "maintenance": 35,
+        "tech_level_min": 0,
+        "description": "Wizard tower where items are magically enchanted.",
+        "interior_rooms": [
+          {"room": "Spell Circle", "theme": "Trap"},
+          {"room": "Library", "theme": "Social"},
+          {"room": "Crystal Chamber", "theme": "Trap"},
+          {"room": "Observatory", "theme": "Social"}
+        ]
+      }
+    ],
+    "medieval_tertiary": [
+      {
+        "id": "adventurers_guild",
+        "name": "Adventurers' Guild",
+        "category": "tertiary",
+        "output": null,
+        "input": [{"cargo": "weapons", "amount": 2}, {"cargo": "potions", "amount": 2}, {"cargo": "enchanted_items", "amount": 1}],
+        "required_terrain": ["grassland"],
+        "build_cost": 1000,
+        "maintenance": 20,
+        "tech_level_min": 0,
+        "description": "Guild hall where adventurers gather. Consumes equipment and provides quest-based income.",
+        "interior_rooms": [
+          {"room": "Guild Hall", "theme": "Social"},
+          {"room": "Quest Board", "theme": "Social"},
+          {"room": "Training Room", "theme": "Social"},
+          {"room": "Treasury", "theme": "Trap"},
+          {"room": "Tavern", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "royal_treasury",
+        "name": "Royal Treasury",
+        "category": "tertiary",
+        "output": null,
+        "input": [{"cargo": "gems", "amount": 4}, {"cargo": "enchanted_items", "amount": 2}],
+        "required_terrain": ["grassland"],
+        "build_cost": 3000,
+        "maintenance": 50,
+        "tech_level_min": 0,
+        "description": "Royal treasury that stores valuable gems and enchanted items. Generates passive income.",
+        "interior_rooms": [
+          {"room": "Gold Vault", "theme": "Trap"},
+          {"room": "Gem Chamber", "theme": "Trap"},
+          {"room": "Guard Post", "theme": "Social"},
+          {"room": "Throne Room", "theme": "Social"}
+        ]
+      }
+    ]
+  },
+  "tech_level_0": {
+    "level": 0,
+    "name": "Medieval / Pre-Industrial",
+    "description": "Pre-industrial fantasy world with animal-drawn vehicles, sailing ships, and creature mounts. No steam, diesel, or electricity. Suitable for D&D, medieval, and low-tech fantasy settings.",
+    "era": "Medieval / Fantasy equivalent",
+    "available_vehicles": [
+      "horse_cart", "two_horse_wagon", "ox_cart",
+      "horse_drawn_bus", "stagecoach", "gig",
+      "horse_drawn_tram",
+      "pack_animal", "donkey_pack", "mule_train", "camel_caravan",
+      "riding_horse", "warhorse",
+      "giant_beetle_mount", "griffon_mount", "hippogriff_mount",
+      "direwolf_mount", "saber_tooth_tiger_mount", "elephant_mount",
+      "pegasus_mount", "drake_mount",
+      "brig", "schooner", "merchantman", "barque", "windjammer",
+      "rowboat", "galley", "longship", "cog_ship", "caravel"
+    ],
+    "available_stations": [
+      "tavern_stop", "market_square", "wharf", "castle_gate", "stable_yard"
+    ],
+    "available_infrastructure": [
+      "path", "tram_rail", "water"
+    ],
+    "available_industries": [
+      "herb_garden", "gem_mine", "iron_mine", "deep_mine", "tannery",
+      "blacksmith", "apothecary", "master_blacksmith", "enchanter",
+      "adventurers_guild", "royal_treasury",
+      "farm", "ranch", "fishing_port", "logging_camp", "orchard"
+    ],
+    "cargo_types": [
+      "herbs", "gems", "iron_ore", "leather", "magic_ore",
+      "weapons", "potions", "enchanted_items", "scrolls",
+      "grain", "livestock", "fish", "fruit", "wood", "mail", "passengers"
+    ],
+    "planet_examples": [
+      "D&D campaign worlds",
+      "Medieval fantasy planets",
+      "Low-tech colony worlds",
+      "Magical realms without industrial technology"
+    ]
+  },
+  "mount_type_definitions": {
+    "HORSE": {"name": "Horse", "category": "common", "speed_modifier": 1.0, "cargo_modifier": 1.0, "description": "Standard riding and draft horse"},
+    "OX": {"name": "Ox", "category": "common", "speed_modifier": 0.7, "cargo_modifier": 1.3, "description": "Slow but strong draft animal"},
+    "MULE": {"name": "Mule", "category": "common", "speed_modifier": 0.9, "cargo_modifier": 1.1, "description": "Hardy pack animal for rough terrain"},
+    "DONKEY": {"name": "Donkey", "category": "common", "speed_modifier": 0.8, "cargo_modifier": 0.9, "description": "Small but resilient pack animal"},
+    "CAMEL": {"name": "Camel", "category": "common", "speed_modifier": 1.0, "cargo_modifier": 1.5, "description": "Desert-adapted transport animal"},
+    "WARHORSE": {"name": "Warhorse", "category": "military", "speed_modifier": 1.2, "cargo_modifier": 0.8, "description": "Armored war horse for combat"},
+    "GIANT_BEETLE": {"name": "Giant Beetle", "category": "fantasy", "speed_modifier": 0.5, "cargo_modifier": 2.0, "description": "Giant insect mount for heavy cargo"},
+    "GRIFFON": {"name": "Griffon", "category": "fantasy_flying", "speed_modifier": 3.0, "cargo_modifier": 0.5, "description": "Flying griffon for aerial transport"},
+    "HIPPOGRIFF": {"name": "Hippogriff", "category": "fantasy_flying", "speed_modifier": 3.5, "cargo_modifier": 0.4, "description": "Fast flying hippogriff for courier service"},
+    "DIREWOLF": {"name": "Direwolf", "category": "fantasy", "speed_modifier": 1.5, "cargo_modifier": 0.5, "description": "Large wolf for fast ground transport"},
+    "SABER_TOOTH_TIGER": {"name": "Saber-Tooth Tiger", "category": "fantasy", "speed_modifier": 1.8, "cargo_modifier": 0.4, "description": "Fast feline mount for jungle terrain"},
+    "ELEPHANT": {"name": "War Elephant", "category": "exotic", "speed_modifier": 0.4, "cargo_modifier": 3.0, "description": "Massive elephant for heavy transport"},
+    "PEGASUS": {"name": "Pegasus", "category": "legendary_flying", "speed_modifier": 4.0, "cargo_modifier": 0.4, "description": "Winged horse for elite aerial transport"},
+    "DRAKE": {"name": "Drake", "category": "fantasy_flying", "speed_modifier": 3.0, "cargo_modifier": 1.0, "description": "Small dragon for aerial transport with combat capability"}
+  },
+  "vehicle_categories": {
+    "animal_drawn": {
+      "description": "Animal-drawn vehicles operating on paths and trails",
+      "infrastructure_required": "PATH",
+      "tech_level_range": [0, 2]
+    },
+    "creature_mount": {
+      "description": "Rideable creatures for individual transport",
+      "infrastructure_required": "NONE",
+      "tech_level_range": [0, 1]
+    },
+    "sailing": {
+      "description": "Wind-powered and oared ships for water transport",
+      "infrastructure_required": "WATER",
+      "tech_level_range": [0, 2]
+    }
+  }
+}

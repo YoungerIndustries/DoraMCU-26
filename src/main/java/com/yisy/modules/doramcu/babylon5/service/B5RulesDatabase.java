@@ -2,9 +2,13 @@ package com.yisy.modules.doramcu.babylon5.service;
 
 import com.yisy.modules.doramcu.shared.model.GameSystem;
 import com.yisy.modules.doramcu.shared.model.RulesEntry;
+import com.yisy.modules.doramcu.shared.repository.UnifiedRulesEntryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +20,10 @@ import java.util.stream.Collectors;
  * This service populates the rules database on application startup with all the
  * official rules extracted from the Babylon 5 universe:
  * <ul>
- *   <li>B5 TV Series — Core canon from all 5 seasons</li>
- *   <li>B5 RPG — Decipher's Babylon 5 Roleplaying Game</li>
- *   <li>B5 Novels — Expanded universe novels</li>
- *   <li>B5 Comics — Dark Horse Comics continuations</li>
+ *   <li>B5 TV Series â€” Core canon from all 5 seasons</li>
+ *   <li>B5 RPG â€” Decipher's Babylon 5 Roleplaying Game</li>
+ *   <li>B5 Novels â€” Expanded universe novels</li>
+ *   <li>B5 Comics â€” Dark Horse Comics continuations</li>
  * </ul>
  * </p>
  * <p>
@@ -28,8 +32,8 @@ import java.util.stream.Collectors;
  * follow the published Babylon 5 rules.
  * </p>
  * <p>
- * Unlike the Traveller rules database which uses JPA persistence, the B5 rules
- * database is in-memory only, consistent with the B5 module's data loading pattern.
+ * Uses JPA persistence via {@link UnifiedRulesEntryRepository} so rules survive
+ * application restarts and can be dynamically updated at runtime.
  * </p>
  */
 @Service
@@ -37,33 +41,50 @@ public class B5RulesDatabase {
 
     private static final Logger log = LoggerFactory.getLogger(B5RulesDatabase.class);
 
-    private final List<RulesEntry> entries = new ArrayList<>();
+    private static final int EXPECTED_ENTRY_COUNT_MIN = 40;
+
+    private final UnifiedRulesEntryRepository entryRepository;
     private boolean initialized = false;
 
-    /**
-     * Initializes the rules database with all B5 rule entries.
-     */
+    public B5RulesDatabase(UnifiedRulesEntryRepository entryRepository) {
+        this.entryRepository = entryRepository;
+    }
+
+    // ==================== Initialization ====================
+
+    @EventListener(ApplicationReadyEvent.class)
+    @Transactional
     public void initialize() {
         if (initialized) {
+            return;
+        }
+        long existingCount = entryRepository.findByGameSystemAndActiveTrue(GameSystem.BABYLON_5).size();
+        if (existingCount >= EXPECTED_ENTRY_COUNT_MIN) {
+            log.info("Babylon 5 rules database already populated with {} entries", existingCount);
+            initialized = true;
             return;
         }
         log.info("Initializing Babylon 5 rules database...");
         populateRuleEntries();
         initialized = true;
-        log.info("B5 rules database initialized: {} entries", entries.size());
+        log.info("B5 rules database initialized: {} entries",
+                entryRepository.findByGameSystemAndActiveTrue(GameSystem.BABYLON_5).size());
     }
 
     // ==================== Rule Entries Population ====================
 
-    private void populateRuleEntries() {
-        entries.addAll(createB5Entries());
+    @Transactional
+    public void populateRuleEntries() {
+        List<RulesEntry> entries = createB5Entries();
+        entryRepository.saveAll(entries);
+        entryRepository.flush();
     }
 
     private List<RulesEntry> createB5Entries() {
         List<RulesEntry> list = new ArrayList<>();
 
         // ============================================================
-        // B5 TV SERIES — Core Rules & Canon
+        // B5 TV SERIES â€” Core Rules & Canon
         // ============================================================
 
         // --- DICE MECHANICS ---
@@ -153,7 +174,7 @@ public class B5RulesDatabase {
 
         // --- WEALTH SYSTEM ---
         list.add(makeEntry("WEALTH_DICE", "Wealth Dice", "B5 RPG", "Character Creation", "WEALTH_SYSTEM", 40,
-                "At character creation, roll wealth dice to determine starting credits. The number of dice and dice type depend on the character's career and rank. Earth Force officers roll 1D10×100. Independent merchants roll 2D6×100. Psi Corps operatives roll 1D6×100. Narn military rolls 1D8×100.",
+                "At character creation, roll wealth dice to determine starting credits. The number of dice and dice type depend on the character's career and rank. Earth Force officers roll 1D10Ã—100. Independent merchants roll 2D6Ã—100. Psi Corps operatives roll 1D6Ã—100. Narn military rolls 1D8Ã—100.",
                 "Wealth is used to purchase equipment, ships, and other starting assets."));
 
         list.add(makeEntry("RETIREMENT", "Retirement Benefits", "B5 RPG", "Character Creation", "WEALTH_SYSTEM", 41,
@@ -247,7 +268,7 @@ public class B5RulesDatabase {
      */
     public List<RulesEntry> getAllEntries() {
         ensureInitialized();
-        return new ArrayList<>(entries);
+        return entryRepository.findByGameSystemAndActiveTrue(GameSystem.BABYLON_5);
     }
 
     /**
@@ -258,9 +279,7 @@ public class B5RulesDatabase {
      */
     public List<RulesEntry> getRulesByCategory(String category) {
         ensureInitialized();
-        return entries.stream()
-                .filter(e -> e.getCategory().equalsIgnoreCase(category))
-                .collect(Collectors.toList());
+        return entryRepository.findByGameSystemAndCategoryAndActiveTrue(GameSystem.BABYLON_5, category);
     }
 
     /**
@@ -271,25 +290,35 @@ public class B5RulesDatabase {
      */
     public List<RulesEntry> getRulesBySource(String source) {
         ensureInitialized();
-        return entries.stream()
-                .filter(e -> e.getSource().equalsIgnoreCase(source))
-                .collect(Collectors.toList());
+        return entryRepository.findByGameSystemAndSourceAndActiveTrue(GameSystem.BABYLON_5, source);
     }
 
     /**
-     * Searches rule entries by keyword.
+     * Searches rule entries by keyword in title and text.
      *
      * @param keyword the search keyword
      * @return list of matching entries
      */
     public List<RulesEntry> searchRules(String keyword) {
         ensureInitialized();
+        List<RulesEntry> results = new ArrayList<>(entryRepository.searchByTitle(GameSystem.BABYLON_5, keyword));
+        List<RulesEntry> textResults = entryRepository.searchByText(GameSystem.BABYLON_5, keyword);
+        for (RulesEntry e : textResults) {
+            if (!results.contains(e)) {
+                results.add(e);
+            }
+        }
+        // Also check notes field (not indexed by repository methods)
+        List<RulesEntry> allEntries = entryRepository.findByGameSystemAndActiveTrue(GameSystem.BABYLON_5);
         String lower = keyword.toLowerCase();
-        return entries.stream()
-                .filter(e -> e.getTitle().toLowerCase().contains(lower) ||
-                        e.getText().toLowerCase().contains(lower) ||
-                        e.getNotes() != null && e.getNotes().toLowerCase().contains(lower))
-                .collect(Collectors.toList());
+        for (RulesEntry e : allEntries) {
+            if (e.getNotes() != null && e.getNotes().toLowerCase().contains(lower)) {
+                if (!results.contains(e)) {
+                    results.add(e);
+                }
+            }
+        }
+        return results;
     }
 
     /**
@@ -299,7 +328,7 @@ public class B5RulesDatabase {
      */
     public List<String> getCategories() {
         ensureInitialized();
-        return entries.stream()
+        return entryRepository.findByGameSystemAndActiveTrue(GameSystem.BABYLON_5).stream()
                 .map(RulesEntry::getCategory)
                 .distinct()
                 .sorted()
@@ -313,7 +342,7 @@ public class B5RulesDatabase {
      */
     public List<String> getSources() {
         ensureInitialized();
-        return entries.stream()
+        return entryRepository.findByGameSystemAndActiveTrue(GameSystem.BABYLON_5).stream()
                 .map(RulesEntry::getSource)
                 .distinct()
                 .sorted()
@@ -327,19 +356,20 @@ public class B5RulesDatabase {
      */
     public int getEntryCount() {
         ensureInitialized();
-        return entries.size();
+        return entryRepository.findByGameSystemAndActiveTrue(GameSystem.BABYLON_5).size();
     }
 
     /**
-     * Gets a rule entry by ID.
+     * Gets a rule entry by ID (matches against title or notes).
      *
      * @param id the entry ID
      * @return the entry or null if not found
      */
     public RulesEntry getEntryById(String id) {
         ensureInitialized();
-        return entries.stream()
-                .filter(e -> e.getId().equals(id))
+        return entryRepository.findByGameSystemAndActiveTrue(GameSystem.BABYLON_5).stream()
+                .filter(e -> e.getTitle().equalsIgnoreCase(id) ||
+                        (e.getNotes() != null && e.getNotes().contains(id)))
                 .findFirst()
                 .orElse(null);
     }
@@ -352,9 +382,7 @@ public class B5RulesDatabase {
      */
     public List<RulesEntry> getRulesByChapter(String chapter) {
         ensureInitialized();
-        return entries.stream()
-                .filter(e -> e.getChapter().equalsIgnoreCase(chapter))
-                .collect(Collectors.toList());
+        return entryRepository.findByGameSystemAndChapterAndActiveTrue(GameSystem.BABYLON_5, chapter);
     }
 
     /**
@@ -364,7 +392,7 @@ public class B5RulesDatabase {
      */
     public List<String> getChapters() {
         ensureInitialized();
-        return entries.stream()
+        return entryRepository.findByGameSystemAndActiveTrue(GameSystem.BABYLON_5).stream()
                 .map(RulesEntry::getChapter)
                 .distinct()
                 .sorted()

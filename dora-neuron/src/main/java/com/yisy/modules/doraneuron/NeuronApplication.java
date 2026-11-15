@@ -1,36 +1,29 @@
 package com.yisy.modules.doraneuron;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * Spring Boot entry point for a DoraMCU Neuron node.
+ * DoraMCU Neuron — standalone AI satellite node and player gateway.
+ * Acts as the primary entry point: player login, platform detection,
+ * client distribution, and real-time game state synchronization.
  *
- * Each Neuron is a lightweight, independently deployable satellite AI node that:
- * <ul>
- *   <li>Serves as a web gateway directing users to the game server</li>
- *   <li>Registers with the central Neuron Coordinator (embedded in DoraMCU)</li>
- *   <li>Sends periodic heartbeats to maintain cluster membership</li>
- * </ul>
- *
- * Usage:
- *   ./gradlew -p dora-neuron bootRun
- *   java -jar dora-neuron.jar --neuron.node-name=Neuron-Alpha
+ * Can also be included as a library in DoraMCU via DoraMcuLauncher.
+ * When included as a library, this class is skipped unless neuron.standalone=true.
  */
-@SpringBootApplication
-@EnableScheduling
-@EnableConfigurationProperties
+@Configuration
+@ConditionalOnProperty(name = "neuron.standalone", havingValue = "true", matchIfMissing = false)
 public class NeuronApplication {
 
-    private static final Logger log = LoggerFactory.getLogger(NeuronApplication.class);
-
+    /**
+     * Standalone entry point for running dora-neuron independently.
+     * Use only when running dora-neuron as a separate service.
+     * Sets neuron.standalone=true so the @ConditionalOnProperty matches.
+     */
     public static void main(String[] args) {
-        log.info("Starting DoraMCU Neuron node");
+        System.setProperty("neuron.standalone", "true");
         SpringApplication.run(NeuronApplication.class, args);
-        log.info("DoraMCU Neuron started successfully");
     }
 }

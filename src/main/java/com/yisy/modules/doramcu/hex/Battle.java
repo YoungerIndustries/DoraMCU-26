@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.hex;
 
+import com.yisy.modules.doramcu.hex.spi.StationAiSupportSpi;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -315,6 +317,8 @@ public class Battle {
     private Planet defenderPlanet;
     private double defenderBonus;
     private int maxRounds;
+    private List<SpaceStation> nearbyStations;
+    private StationAiSupportSpi stationAiSupportService;
 
     // Battle state
     private BattleState state;
@@ -326,6 +330,10 @@ public class Battle {
     // Deep copies for simulation
     private Fleet attackerCopy;
     private Fleet defenderCopy;
+
+    // AI Core coordination for each fleet
+    private FleetAiCoordinator attackerCoordinator;
+    private FleetAiCoordinator defenderCoordinator;
 
     // Statistics
     private int totalAttackerDamage;
@@ -401,6 +409,24 @@ public class Battle {
         this.defenderPlanet = planet;
     }
 
+    /**
+     * Sets the nearby space stations that can provide AI support bonuses.
+     *
+     * @param stations the list of nearby stations with AI cores
+     */
+    public void setNearbyStations(List<SpaceStation> stations) {
+        this.nearbyStations = stations;
+    }
+
+    /**
+     * Sets the station AI support service for calculating station bonuses.
+     *
+     * @param service the support service instance
+     */
+    public void setStationAiSupportService(StationAiSupportSpi service) {
+        this.stationAiSupportService = service;
+    }
+
     /** @return the current battle state */
     public BattleState getState() {
         return state;
@@ -454,6 +480,10 @@ public class Battle {
         initialAttackerShipCount = attackerCopy.getShipCount();
         initialDefenderShipCount = defenderCopy.getShipCount();
 
+        // Create AI coordinators for both fleets
+        attackerCoordinator = new FleetAiCoordinator(attackerCopy);
+        defenderCoordinator = new FleetAiCoordinator(defenderCopy);
+
         state = BattleState.IN_PROGRESS;
         addEvent(0, BattleEvent.EventType.BATTLE_STARTED,
                 String.format("Battle started: %s vs %s at %s",
@@ -482,14 +512,26 @@ public class Battle {
         int attackerShipsBefore = attackerCopy.getActiveShipCount();
         int defenderShipsBefore = defenderCopy.getActiveShipCount();
 
-        // Attacker fires at defender
-        int attackDamage = attackerCopy.getTotalDamage();
-        int effectiveDefenderDamage = (int) Math.round(attackDamage * (1.0 - defenderBonus));
+        // Attacker fires at defender with AI Core formation and command bonuses
+        int attackDamage = attackerCoordinator.getEffectiveFleetDamage();
+        // Calculate total defender bonus (planetary + station AI support)
+        double totalDefenderBonus = defenderBonus;
+        if (stationAiSupportService != null && nearbyStations != null && !nearbyStations.isEmpty()) {
+            double stationDefenseBonus = stationAiSupportService.getTotalDefenseBonus(defenderCopy, nearbyStations);
+            // Stack station bonus additively with planetary bonus, capped at 50%
+            totalDefenderBonus = Math.min(defenderBonus + stationDefenseBonus, 0.50);
+        }
+        int effectiveDefenderDamage = (int) Math.round(attackDamage * (1.0 - totalDefenderBonus));
+        // Apply defender's AI coordination evasion bonus as additional damage reduction
+        double defenderEvasionBonus = defenderCoordinator.getCoordinationEvasionBonus();
+        if (defenderEvasionBonus > 0) {
+            effectiveDefenderDamage = (int) Math.round(effectiveDefenderDamage * (1.0 - defenderEvasionBonus));
+        }
         totalAttackerDamage += effectiveDefenderDamage;
-        if (defenderBonus > 0) {
+        if (totalDefenderBonus > 0) {
             addEvent(currentRound, BattleEvent.EventType.DEFENDER_BONUS_APPLIED,
                     String.format("Defender bonus applied: %.0f%% damage reduction (%d -> %d)",
-                            defenderBonus * 100, attackDamage, effectiveDefenderDamage), null);
+                            totalDefenderBonus * 100, attackDamage, effectiveDefenderDamage), null);
         }
         defenderCopy.distributeDamage(effectiveDefenderDamage);
 
@@ -502,8 +544,13 @@ public class Battle {
             return roundResults.get(roundResults.size() - 1);
         }
 
-        // Defender fires back at attacker
-        int defendDamage = defenderCopy.getTotalDamage();
+        // Defender fires back at attacker with AI Core formation and command bonuses
+        int defendDamage = defenderCoordinator.getEffectiveFleetDamage();
+        // Apply attacker's AI coordination evasion bonus as additional damage reduction
+        double attackerEvasionBonus = attackerCoordinator.getCoordinationEvasionBonus();
+        if (attackerEvasionBonus > 0) {
+            defendDamage = (int) Math.round(defendDamage * (1.0 - attackerEvasionBonus));
+        }
         totalDefenderDamage += defendDamage;
         attackerCopy.distributeDamage(defendDamage);
 

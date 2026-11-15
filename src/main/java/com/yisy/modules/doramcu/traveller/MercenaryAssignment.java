@@ -102,19 +102,16 @@ public enum MercenaryAssignment {
             case TRAINING:
                 return arm == ArmOfService.COMMANDO ? 3 : Integer.MAX_VALUE;
             case GARRISON:
-                return arm == ArmOfService.COMMANDO ? Integer.MAX_VALUE : Integer.MAX_VALUE;
+                return Integer.MAX_VALUE;
             case POLICE_ACTION:
                 return arm == ArmOfService.COMMANDO ? 4 :
                         arm == ArmOfService.SUPPORT ? 4 : 5;
             case COUNTER_INSURGENCY:
-                return arm == ArmOfService.COMMANDO ? 5 :
-                        arm == ArmOfService.SUPPORT ? 5 : 5;
+                return 5;
             case RAID:
-                return arm == ArmOfService.COMMANDO ? 6 :
-                        arm == ArmOfService.SUPPORT ? 6 : 6;
+                return 6;
             case INTERNAL_SECURITY:
-                return arm == ArmOfService.COMMANDO ? 4 :
-                        arm == ArmOfService.SUPPORT ? 4 : 4;
+                return 4;
             case SHIPS_TROOPS:
                 return 4;
             default:
@@ -138,8 +135,7 @@ public enum MercenaryAssignment {
                 return Integer.MAX_VALUE;
             case POLICE_ACTION:
                 return arm == ArmOfService.MARINE ? 8 :
-                        arm == ArmOfService.SUPPORT ? 10 :
-                        arm == ArmOfService.COMMANDO ? 9 : 9;
+                        arm == ArmOfService.SUPPORT ? 10 : 9;
             case COUNTER_INSURGENCY:
                 return arm == ArmOfService.MARINE ? 9 :
                         arm == ArmOfService.SUPPORT ? 11 :
@@ -207,8 +203,7 @@ public enum MercenaryAssignment {
             case GARRISON:
                 return Integer.MAX_VALUE;
             case POLICE_ACTION:
-                return arm == ArmOfService.COMMANDO ? 7 :
-                        arm == ArmOfService.SUPPORT ? 7 : 7;
+                return 7;
             case COUNTER_INSURGENCY:
                 return arm == ArmOfService.COMMANDO ? 6 :
                         arm == ArmOfService.SUPPORT ? 7 : 8;

@@ -5,14 +5,14 @@ import com.yisy.modules.doramcu.admin.model.AiAdminTestReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
 /**
  * Synchronous helper for the AI agent development workflow.
  * After implementing new code, the AI agent calls this service to run tests,
- * wait for completion, and receive a report — all in one call.
+ * wait for completion, and receive a report â€” all in one call.
  */
 @Service
 public class DevelopmentTestHelper {

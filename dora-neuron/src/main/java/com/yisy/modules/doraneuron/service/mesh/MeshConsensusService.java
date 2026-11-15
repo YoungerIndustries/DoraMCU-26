@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * reduces latency by eliminating the coordinator hop.
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
 @ConditionalOnProperty(prefix = "neuron", name = "mesh-consensus-enabled", havingValue = "true", matchIfMissing = true)
 public class MeshConsensusService implements NeuronMeshService.MeshMessageCallback {
 

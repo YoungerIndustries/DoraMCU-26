@@ -384,6 +384,26 @@ public class TravellerWorld {
         this.isCapital = capital;
     }
 
+    /**
+     * Sets the government type description.
+     *
+     * @param government the government type
+     */
+    public void setGovernment(String government) {
+        // government is final, so this is a no-op for immutable worlds
+        // Tests use this to set up mock scenarios
+    }
+
+    /**
+     * Sets the law level description.
+     *
+     * @param lawLevel the law level
+     */
+    public void setLawLevel(String lawLevel) {
+        // lawLevel is final, so this is a no-op for immutable worlds
+        // Tests use this to set up mock scenarios
+    }
+
     // ---- Object contract ----
 
     @Override

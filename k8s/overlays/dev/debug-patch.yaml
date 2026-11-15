@@ -1,0 +1,64 @@
+# Debug patch for dev overlay — enables remote JDWP debugging on port 5005
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doramcu-app
+  namespace: doramcu
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          ports:
+            - name: http
+              containerPort: 8084
+              protocol: TCP
+            - name: redirect
+              containerPort: 8080
+              protocol: TCP
+            - name: debug
+              containerPort: 5005
+              protocol: TCP
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: doramcu-secrets
+                  key: db-password
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: doramcu-secrets
+                  key: jwt-secret
+            - name: DEBUG
+              value: "true"
+          command: ["sh", "-c"]
+          args:
+            - |
+              java -Xmx4G -XX:+UseG1GC -XX:MaxGCPauseMillis=200 \
+                -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 \
+                -Dorg.bytedeco.javacpp.maxbytes=2G \
+                -Dorg.bytedeco.javacpp.maxphysicalbytes=2G \
+                -Dorg.bytedeco.javacpp.alloctype=direct \
+                -jar /app/app.jar
+---
+# Expose debug port in the Service for port-forwarding
+apiVersion: v1
+kind: Service
+metadata:
+  name: doramcu-app
+  namespace: doramcu
+spec:
+  ports:
+    - name: http
+      port: 8084
+      targetPort: 8084
+      protocol: TCP
+    - name: redirect
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+    - name: debug
+      port: 5005
+      targetPort: 5005
+      protocol: TCP

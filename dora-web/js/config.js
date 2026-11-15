@@ -156,11 +156,8 @@ const ConfigManager = {
             return null;
         }
         
-        // If URL is relative, prepend API URL
-        if (download.url.startsWith('/')) {
-            return this.getApiUrl() + download.url;
-        }
-        
+        // Return relative URL to avoid CORS issues when fetching from iframes
+        // The browser will resolve it against the current origin automatically
         return download.url;
     },
     

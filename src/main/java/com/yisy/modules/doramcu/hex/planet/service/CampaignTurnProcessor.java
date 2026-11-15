@@ -1,10 +1,15 @@
 package com.yisy.modules.doramcu.hex.planet.service;
 
 import com.yisy.modules.doramcu.hex.planet.*;
+import com.yisy.modules.doramcu.hex.planet.hullmodule.HullModule;
+import com.yisy.modules.doramcu.hex.planet.hullmodule.HullModuleService;
+import com.yisy.modules.doramcu.hex.Planet;
 import com.yisy.modules.doramcu.hex.planet.ai.AiInfrastructureBuilder;
 import com.yisy.modules.doramcu.hex.planet.cargo.CargoGenerationService;
 import com.yisy.modules.doramcu.hex.planet.cargo.CargoGenerationService.CargoGenerationSummary;
 import com.yisy.modules.doramcu.hex.planet.finance.TycoonFinancialService;
+import com.yisy.modules.doramcu.hex.planet.military.MilitaryProductionChainService;
+import com.yisy.modules.doramcu.hex.planet.military.MilitaryProductionChainService.ProductionTurnSummary;
 import com.yisy.modules.doramcu.hex.planet.news.TycoonNewsService;
 import com.yisy.modules.doramcu.hex.planet.schedule.TimetableService;
 import org.slf4j.Logger;
@@ -23,6 +28,7 @@ import java.util.*;
  *   <li>Calculates financial interest</li>
  *   <li>Processes AI rival actions</li>
  *   <li>Updates vehicle reliability</li>
+ *   <li>Processes military production (cargo → units)</li>
  *   <li>Generates news events</li>
  * </ul>
  * </p>
@@ -37,18 +43,24 @@ public class CampaignTurnProcessor {
     private final TycoonFinancialService financialService;
     private final TycoonNewsService newsService;
     private final AiInfrastructureBuilder aiInfrastructureBuilder;
+    private final MilitaryProductionChainService militaryProductionChainService;
+    private final HullModuleService hullModuleService;
 
     public CampaignTurnProcessor(
             CargoGenerationService cargoGenerationService,
             TimetableService timetableService,
             TycoonFinancialService financialService,
             TycoonNewsService newsService,
-            AiInfrastructureBuilder aiInfrastructureBuilder) {
+            AiInfrastructureBuilder aiInfrastructureBuilder,
+            MilitaryProductionChainService militaryProductionChainService,
+            HullModuleService hullModuleService) {
         this.cargoGenerationService = cargoGenerationService;
         this.timetableService = timetableService;
         this.financialService = financialService;
         this.newsService = newsService;
         this.aiInfrastructureBuilder = aiInfrastructureBuilder;
+        this.militaryProductionChainService = militaryProductionChainService;
+        this.hullModuleService = hullModuleService;
     }
 
     /**
@@ -79,9 +91,21 @@ public class CampaignTurnProcessor {
             stationMap.put(station.getId(), station);
         }
 
-        // 1. Generate cargo and passengers
+        // 1. Generate cargo and passengers at industries and settlements
         CargoGenerationSummary cargoSummary = cargoGenerationService.processTurn(
                 industries, settlements, stations);
+
+        // 1b. Generate cargo from HullModules (unified building system)
+        List<HullModule> hullModules = hullModuleService.getModuleEntitiesByPlanet((long) planetId);
+        int hullModuleCargo = 0;
+        if (!hullModules.isEmpty()) {
+            hullModuleCargo = cargoGenerationService.generateHullModuleCargo(hullModules, stationMap);
+            if (hullModuleCargo > 0) {
+                log.info("HullModules produced {} cargo units this turn", hullModuleCargo);
+            }
+        }
+        // Update total cargo generated
+        int totalCargoGenerated = cargoSummary.getCargoGenerated() + hullModuleCargo;
 
         // 2. Move vehicles along routes/timetables
         int vehiclesMoved = 0;
@@ -108,26 +132,40 @@ public class CampaignTurnProcessor {
         // 4. Calculate financial interest
         long interestCollected = financialService.calculateInterest(corporations, turn);
 
-        // 5. Process AI rival actions
+        // 5. Process military production — consumes cargo from stations to produce units
+        int militaryUnitsProduced = 0;
+        try {
+            ProductionTurnSummary militarySummary = militaryProductionChainService.processProductionTurn(
+                    (long) planetId, industries, settlements, stations);
+            militaryUnitsProduced = militarySummary.getUnitsProduced();
+            if (militaryUnitsProduced > 0) {
+                newsService.onMarketChange("Military Production",
+                        militaryUnitsProduced + " units produced this turn", null);
+            }
+        } catch (Exception e) {
+            log.warn("Military production failed for turn {}: {}", turn, e.getMessage());
+        }
+
+        // 6. Process AI rival actions
         for (TransportCorporation corporation : corporations) {
             if (corporation.getOwnerId().equals("player")) continue;
             aiInfrastructureBuilder.processTurn(corporation, planetId, builder, stations, turn);
         }
 
-        // 6. Process campaign turn (contracts, objectives, etc.)
+        // 7. Process campaign turn (contracts, objectives, etc.)
         campaignManager.processTurn();
 
-        // 7. Generate news for significant events
-        if (cargoSummary.getCargoGenerated() > 0) {
+        // 8. Generate news for significant events
+        if (totalCargoGenerated > 0) {
             newsService.onMarketChange("Cargo",
-                    cargoSummary.getCargoGenerated() + " units produced this turn", null);
+                    totalCargoGenerated + " units produced this turn", null);
         }
 
-        log.info("Turn {} complete: cargo={}, passengers={}, vehicles_moved={}, interest={}",
-                turn, cargoSummary.getCargoGenerated(), cargoSummary.getPassengersGenerated(),
-                vehiclesMoved, interestCollected);
+        log.info("Turn {} complete: cargo={}, passengers={}, vehicles_moved={}, military_units={}, interest={}",
+                turn, totalCargoGenerated, cargoSummary.getPassengersGenerated(),
+                vehiclesMoved, militaryUnitsProduced, interestCollected);
 
-        return new TurnSummary(turn, cargoSummary, vehiclesMoved, interestCollected);
+        return new TurnSummary(turn, cargoSummary, vehiclesMoved, militaryUnitsProduced, interestCollected);
     }
 
     /**
@@ -139,15 +177,17 @@ public class CampaignTurnProcessor {
         private final int passengersGenerated;
         private final int cargoDecayed;
         private final int vehiclesMoved;
+        private final int militaryUnitsProduced;
         private final long interestCollected;
 
         TurnSummary(int turn, CargoGenerationSummary cargo,
-                     int vehiclesMoved, long interestCollected) {
+                     int vehiclesMoved, int militaryUnitsProduced, long interestCollected) {
             this.turn = turn;
             this.cargoGenerated = cargo.getCargoGenerated();
             this.passengersGenerated = cargo.getPassengersGenerated();
             this.cargoDecayed = cargo.getCargoDecayed();
             this.vehiclesMoved = vehiclesMoved;
+            this.militaryUnitsProduced = militaryUnitsProduced;
             this.interestCollected = interestCollected;
         }
 
@@ -156,12 +196,13 @@ public class CampaignTurnProcessor {
         public int getPassengersGenerated() { return passengersGenerated; }
         public int getCargoDecayed() { return cargoDecayed; }
         public int getVehiclesMoved() { return vehiclesMoved; }
+        public int getMilitaryUnitsProduced() { return militaryUnitsProduced; }
         public long getInterestCollected() { return interestCollected; }
 
         @Override
         public String toString() {
-            return String.format("TurnSummary{turn=%d, cargo=%d, passengers=%d, vehicles=%d}",
-                    turn, cargoGenerated, passengersGenerated, vehiclesMoved);
+            return String.format("TurnSummary{turn=%d, cargo=%d, passengers=%d, vehicles=%d, military=%d}",
+                    turn, cargoGenerated, passengersGenerated, vehiclesMoved, militaryUnitsProduced);
         }
     }
 }

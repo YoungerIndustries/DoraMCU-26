@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.sfb.service;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -7,7 +8,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yisy.modules.doramcu.sfb.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -30,7 +30,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * </ul>
  * </p>
  */
-@Service
+@Component
 public class SfbWebSocketHandler extends TextWebSocketHandler {
 
     private static final Logger log = LoggerFactory.getLogger(SfbWebSocketHandler.class);
@@ -38,13 +38,13 @@ public class SfbWebSocketHandler extends TextWebSocketHandler {
     private final SfbCombatEngine combatEngine;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    /** Battle ID → list of connected player sessions. */
+    /** Battle ID â†’ list of connected player sessions. */
     private final ConcurrentHashMap<String, List<WebSocketSession>> battleSessions = new ConcurrentHashMap<>();
 
-    /** Battle ID → current scenario state. */
+    /** Battle ID â†’ current scenario state. */
     private final ConcurrentHashMap<String, SfbScenario> battles = new ConcurrentHashMap<>();
 
-    /** Session → player side (0 or 1) mapping. */
+    /** Session â†’ player side (0 or 1) mapping. */
     private final ConcurrentHashMap<WebSocketSession, Integer> playerSides = new ConcurrentHashMap<>();
 
     public SfbWebSocketHandler(SfbCombatEngine combatEngine) {
@@ -58,7 +58,7 @@ public class SfbWebSocketHandler extends TextWebSocketHandler {
         String sideParam = getQueryParam(session, "side");
 
         if (battleId == null || battleId.isEmpty()) {
-            log.warn("WebSocket connection without battleId — closing");
+            log.warn("WebSocket connection without battleId â€” closing");
             session.close(CloseStatus.BAD_DATA);
             return;
         }
@@ -76,7 +76,7 @@ public class SfbWebSocketHandler extends TextWebSocketHandler {
         battleSessions.computeIfAbsent(battleId, k -> new CopyOnWriteArrayList<>()).add(session);
         playerSides.put(session, side);
 
-        log.info("Player connected to SFB battle {} as side {} — total players: {}",
+        log.info("Player connected to SFB battle {} as side {} â€” total players: {}",
                 battleId, side, battleSessions.get(battleId).size());
 
         // Send connection acknowledgment
@@ -102,13 +102,13 @@ public class SfbWebSocketHandler extends TextWebSocketHandler {
             for (Map.Entry<String, List<WebSocketSession>> entry : battleSessions.entrySet()) {
                 if (entry.getValue().remove(session)) {
                     String battleId = entry.getKey();
-                    log.info("Player disconnected from SFB battle {} (side {}) — status: {}",
+                    log.info("Player disconnected from SFB battle {} (side {}) â€” status: {}",
                             battleId, side, status.getCode());
 
                     // If no players left, clean up
                     if (entry.getValue().isEmpty()) {
                         battleSessions.remove(battleId);
-                        log.info("No players left in battle {} — battle ended", battleId);
+                        log.info("No players left in battle {} â€” battle ended", battleId);
                     } else {
                         // Notify remaining players
                         ObjectNode msg = objectMapper.createObjectNode();
@@ -162,7 +162,7 @@ public class SfbWebSocketHandler extends TextWebSocketHandler {
         log.error("WebSocket transport error: {}", exception.getMessage());
     }
 
-    // ── Message Handlers ──────────────────────────────────────────────────────
+    // â”€â”€ Message Handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private void handleStartBattle(WebSocketSession session, String battleId, JsonNode root) {
         // Create a new scenario for this battle
@@ -281,7 +281,7 @@ public class SfbWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    // ── Broadcast Methods ─────────────────────────────────────────────────────
+    // â”€â”€ Broadcast Methods â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Broadcast game state to all players in a battle.
@@ -416,7 +416,7 @@ public class SfbWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    // ── Utilities ─────────────────────────────────────────────────────────────
+    // â”€â”€ Utilities â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private String getQueryParam(WebSocketSession session, String name) {
         String query = session.getUri().getQuery();

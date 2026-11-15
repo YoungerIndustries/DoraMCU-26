@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.star_trek_4x.combat;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.star_trek_4x.model.StarSystem;
 import com.yisy.modules.doramcu.star_trek_4x.model.StarTrekFaction;
@@ -6,7 +7,6 @@ import com.yisy.modules.doramcu.star_trek_4x.repository.StarSystemRepository;
 import com.yisy.modules.doramcu.star_trek_4x.repository.StarTrekFactionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 

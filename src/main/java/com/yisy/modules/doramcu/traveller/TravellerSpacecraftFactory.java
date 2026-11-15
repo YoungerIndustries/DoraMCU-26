@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.traveller;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +7,7 @@ import java.util.List;
 /**
  * Creates Traveller spacecraft based on TL and world type.
  */
+@Component
 public class TravellerSpacecraftFactory {
 
     public TravellerSpacecraft createSpacecraft(TravellerSpacecraftType type, int tl) {

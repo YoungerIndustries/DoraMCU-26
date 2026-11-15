@@ -5,23 +5,26 @@ import com.yisy.modules.doramcu.dto.*;
 import com.yisy.modules.doramcu.exception.NotYourTurnException;
 import com.yisy.modules.doramcu.hex.*;
 import com.yisy.modules.doramcu.hex.Player;
+import com.yisy.modules.doramcu.model.GameActionLog;
 import com.yisy.modules.doramcu.model.GameSession;
 import com.yisy.modules.doramcu.model.PersistedGameSession;
 import com.yisy.modules.doramcu.model.SolarSystem;
 import com.yisy.modules.doramcu.repository.GalaxyRepository;
 import com.yisy.modules.doramcu.repository.PersistedGameSessionRepository;
 import com.yisy.modules.doramcu.unified.GameCalendarFormatter;
-import com.yisy.modules.doramcu.unified.GameType;
+import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.unified.GlobalClock;
 import com.yisy.modules.doramcu.unified.GlobalClockService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -36,8 +39,8 @@ import java.util.stream.Collectors;
  * This class was refactored from a 1,579-line monolith into a thin facade
  * that coordinates between:
  * <ul>
- *   <li>{@code SessionActionHandler} — all mutable game actions (move, build, combat, etc.)</li>
- *   <li>{@code GameStateBuilder} — all response DTO building</li>
+ *   <li>{@code SessionActionHandler} â€” all mutable game actions (move, build, combat, etc.)</li>
+ *   <li>{@code GameStateBuilder} â€” all response DTO building</li>
  * </ul>
  * Session lifecycle operations (create, join, leave, persist) remain here
  * as they are tightly coupled to the session map ownership.
@@ -60,6 +63,7 @@ public class GameSessionService {
     private final AiDelegationService aiDelegationService;
     private final SessionActionHandler sessionActionHandler;
     private final GlobalClockService globalClockService;
+    private final GameReplayService gameReplayService;
 
     public GameSessionService(PersistedGameSessionRepository persistedGameSessionRepository,
                               GalaxyRepository galaxyRepository,
@@ -69,7 +73,8 @@ public class GameSessionService {
                               CharacterService characterService,
                               @Lazy AiDelegationService aiDelegationService,
                               SessionActionHandler sessionActionHandler,
-                              GlobalClockService globalClockService) {
+                              GlobalClockService globalClockService,
+                              GameReplayService gameReplayService) {
         this.persistedGameSessionRepository = persistedGameSessionRepository;
         this.galaxyRepository = galaxyRepository;
         this.gameInitializationService = gameInitializationService;
@@ -79,6 +84,135 @@ public class GameSessionService {
         this.aiDelegationService = aiDelegationService;
         this.sessionActionHandler = sessionActionHandler;
         this.globalClockService = globalClockService;
+        this.gameReplayService = gameReplayService;
+    }
+
+    /**
+     * Restores persisted game sessions on application startup.
+     * Loads all sessions from the database that have saved game state.
+     */
+    @PostConstruct
+    void restorePersistedSessions() {
+        if (persistedGameSessionRepository == null) {
+            return;
+        }
+        try {
+            List<PersistedGameSession> persisted = persistedGameSessionRepository.findAll();
+            int restored = 0;
+            for (PersistedGameSession pgs : persisted) {
+                if (pgs.getGameState() == null || pgs.getGameState().isBlank()) {
+                    log.info("Skipping session {} (no saved game state)", pgs.getSessionId());
+                    continue;
+                }
+                try {
+                    restoreSession(pgs.getSessionId());
+                    restored++;
+                } catch (Exception e) {
+                    log.error("Failed to restore session {}: {}", pgs.getSessionId(), e.getMessage());
+                }
+            }
+            if (restored > 0) {
+                log.info("Restored {} persisted game sessions on startup", restored);
+            }
+        } catch (Exception e) {
+            log.error("Failed to restore persisted sessions: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Restores a single game session from the database into the in-memory session map.
+     * Reconstructs the Game object from the serialized JSON state and reloads the galaxy.
+     *
+     * @param sessionId the session ID to restore
+     * @return true if the session was successfully restored
+     */
+    @Transactional
+    public boolean restoreSession(String sessionId) {
+        if (persistedGameSessionRepository == null) {
+            return false;
+        }
+
+        PersistedGameSession persisted = persistedGameSessionRepository.findBySessionId(sessionId)
+                .orElse(null);
+        if (persisted == null) {
+            log.warn("No persisted session found for: {}", sessionId);
+            return false;
+        }
+
+        if (persisted.getGameState() == null || persisted.getGameState().isBlank()) {
+            log.warn("No saved game state for session: {}", sessionId);
+            return false;
+        }
+
+        // Parse the serialized game state
+        Map<String, Object> gameState;
+        try {
+            gameState = objectMapper.readValue(persisted.getGameState(),
+                    new TypeReference<Map<String, Object>>() {});
+        } catch (JsonProcessingException e) {
+            log.error("Failed to parse game state for session {}: {}", sessionId, e.getMessage());
+            return false;
+        }
+
+        // Create a new game and deserialize the state
+        Game game = new Game(persisted.getSessionName());
+        game.deserializeGameState(gameState);
+
+        // Load galaxy from database
+        loadGalaxyToGame(game, persisted.getSessionName());
+
+        // Create the session wrapper
+        GameSession session = new GameSession(sessionId, persisted.getSessionName(), game);
+        GlobalClock clock = globalClockService.getOrCreateClock(sessionId, GameType.DORAMCU_4X);
+        session.setGlobalClock(clock);
+
+        // Restore player IDs
+        if (persisted.getPlayerIds() != null && !persisted.getPlayerIds().isBlank()) {
+            String cleaned = persisted.getPlayerIds().replaceAll("[\\[\\] ]", "");
+            for (String pid : cleaned.split(",")) {
+                if (!pid.isEmpty()) {
+                    try {
+                        session.addPlayer(Long.parseLong(pid.trim()));
+                    } catch (NumberFormatException e) {
+                        log.warn("Invalid player ID in persisted session {}: {}", sessionId, pid);
+                    }
+                }
+            }
+        }
+
+        sessions.put(sessionId, session);
+        log.info("Restored session {} with {} players, {} planets, {} fleets",
+                sessionId, session.getPlayerIds().size(),
+                ((Game) session.getGame()).getPlanets().size(),
+                ((Game) session.getGame()).getFleets().size());
+        return true;
+    }
+
+    /**
+     * Lists all persisted game sessions with their metadata.
+     *
+     * @return list of persisted session metadata maps
+     */
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> listPersistedSessions() {
+        if (persistedGameSessionRepository == null) {
+            return List.of();
+        }
+        List<PersistedGameSession> all = persistedGameSessionRepository.findAll();
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (PersistedGameSession pgs : all) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("sessionId", pgs.getSessionId());
+            map.put("sessionName", pgs.getSessionName());
+            map.put("playerIds", pgs.getPlayerIds());
+            map.put("hasGameState", pgs.getGameState() != null && !pgs.getGameState().isBlank());
+            map.put("createdAt", pgs.getCreatedAt());
+            map.put("updatedAt", pgs.getUpdatedAt());
+            map.put("lastActivityAt", pgs.getLastActivityAt());
+            map.put("isLoaded", sessions.containsKey(pgs.getSessionId()));
+            result.add(map);
+        }
+        return result;
     }
 
     /**
@@ -235,6 +369,16 @@ public class GameSessionService {
     }
 
     /**
+     * Returns the session with the given ID, or null if not found.
+     *
+     * @param sessionId the session ID
+     * @return the matching session, or null
+     */
+    public GameSession getSession(String sessionId) {
+        return sessions.get(sessionId);
+    }
+
+    /**
      * Returns the session with the given name, or null if not found.
      *
      * @param name the session name
@@ -289,6 +433,709 @@ public class GameSessionService {
         return gameStateBuilder.buildPipelineDetails(pipeline);
     }
 
+    /**
+     * Returns the unified economic state for the given player's empire.
+     * Returns null if the session or economic state is not found.
+     */
+    public java.util.Map<String, Object> getEconomicState(Long playerId, String sessionId) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null) {
+            return null;
+        }
+        Game game = (Game) session.getGame();
+        Player player = game.getPlayer(playerId.intValue());
+        if (player == null) {
+            return null;
+        }
+        com.yisy.modules.doramcu.hex.manager.EconomicState economicState = game.getEconomicState(player.getEmpireId());
+        if (economicState == null) {
+            return null;
+        }
+        return economicState.getSummary();
+    }
+
+    // ---- Transport Endpoints ----
+
+    /**
+     * Returns the transport summary for the given player's empire.
+     */
+    public java.util.Map<String, Object> getTransportSummary(Long playerId, String sessionId) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null) {
+            return null;
+        }
+        session.getLock().readLock().lock();
+        try {
+            Game game = (Game) session.getGame();
+            Player player = game.getPlayer(playerId.intValue());
+            if (player == null) {
+                return null;
+            }
+            ResourcePipelineManager pipeline = game.getPipelineManager(player.getEmpireId());
+            if (pipeline == null) {
+                return null;
+            }
+            return pipeline.getTransportSummary();
+        } finally {
+            session.getLock().readLock().unlock();
+        }
+    }
+
+    /**
+     * Consolidates transport orders sharing the same route.
+     */
+    @Transactional
+    public java.util.Map<String, Object> consolidateTransports(Long playerId, String sessionId) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null) {
+            throw new NoSuchElementException("Session not found: " + sessionId);
+        }
+        session.getLock().writeLock().lock();
+        try {
+            Game game = (Game) session.getGame();
+            Player player = game.getPlayer(playerId.intValue());
+            if (player == null) {
+                throw new NoSuchElementException("Player not found: " + playerId);
+            }
+            ResourcePipelineManager pipeline = game.getPipelineManager(player.getEmpireId());
+            if (pipeline == null) {
+                throw new NoSuchElementException("Pipeline not found");
+            }
+            int consolidations = pipeline.consolidateTransports();
+            java.util.Map<String, Object> result = new java.util.LinkedHashMap<>();
+            result.put("consolidations", consolidations);
+            result.put("message", consolidations > 0
+                    ? consolidations + " transport(s) consolidated"
+                    : "No consolidations possible");
+            return result;
+        } finally {
+            session.getLock().writeLock().unlock();
+        }
+    }
+
+    /**
+     * Optimizes transport routes by reassigning fleets based on priority.
+     */
+    @Transactional
+    public java.util.Map<String, Object> optimizeTransports(Long playerId, String sessionId) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null) {
+            throw new NoSuchElementException("Session not found: " + sessionId);
+        }
+        session.getLock().writeLock().lock();
+        try {
+            Game game = (Game) session.getGame();
+            Player player = game.getPlayer(playerId.intValue());
+            if (player == null) {
+                throw new NoSuchElementException("Player not found: " + playerId);
+            }
+            ResourcePipelineManager pipeline = game.getPipelineManager(player.getEmpireId());
+            if (pipeline == null) {
+                throw new NoSuchElementException("Pipeline not found");
+            }
+            // Collect all fleet IDs as available for transport assignment
+            java.util.List<Integer> availableFleets = new java.util.ArrayList<>(player.getOwnedFleetIds());
+            pipeline.optimizeTransportRoutes(availableFleets);
+            java.util.Map<String, Object> result = new java.util.LinkedHashMap<>();
+            result.put("optimized", true);
+            result.put("availableFleets", availableFleets.size());
+            return result;
+        } finally {
+            session.getLock().writeLock().unlock();
+        }
+    }
+
+    /**
+     * Cancels a transport order by ID.
+     */
+    @Transactional
+    public java.util.Map<String, Object> cancelTransport(Long playerId, String sessionId, int orderId) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null) {
+            throw new NoSuchElementException("Session not found: " + sessionId);
+        }
+        session.getLock().writeLock().lock();
+        try {
+            Game game = (Game) session.getGame();
+            Player player = game.getPlayer(playerId.intValue());
+            if (player == null) {
+                throw new NoSuchElementException("Player not found: " + playerId);
+            }
+            ResourcePipelineManager pipeline = game.getPipelineManager(player.getEmpireId());
+            if (pipeline == null) {
+                throw new NoSuchElementException("Pipeline not found");
+            }
+            boolean cancelled = pipeline.cancelTransportOrder(orderId);
+            java.util.Map<String, Object> result = new java.util.LinkedHashMap<>();
+            result.put("cancelled", cancelled);
+            if (!cancelled) {
+                result.put("error", "Transport order not found or already completed");
+            }
+            return result;
+        } finally {
+            session.getLock().writeLock().unlock();
+        }
+    }
+
+    /**
+     * Returns the market board summary for the current session.
+     * Returns null if the session is not found.
+     */
+    public java.util.Map<String, Object> getMarketBoard(Long playerId, String sessionId) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null) {
+            return null;
+        }
+        Game game = (Game) session.getGame();
+        com.yisy.modules.doramcu.hex.manager.MarketBoard marketBoard = game.getTradeManager().getMarketBoard();
+        return marketBoard.getSummary();
+    }
+
+    /**
+     * Creates a trade listing on the market board.
+     * Returns the created listing or an error map if creation failed.
+     */
+    @Transactional
+    public java.util.Map<String, Object> createTradeListing(Long playerId, String sessionId,
+                                                              String type, String commodity,
+                                                              int units, int pricePerUnit, int turnsToLive) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null) {
+            throw new NoSuchElementException("Session not found: " + sessionId);
+        }
+        Game game = (Game) session.getGame();
+        Player player = game.getPlayer(playerId.intValue());
+        if (player == null) {
+            throw new NoSuchElementException("Player not found: " + playerId);
+        }
+
+        com.yisy.modules.doramcu.hex.manager.TradeListing.ListingType listingType;
+        if ("BUY".equalsIgnoreCase(type)) {
+            listingType = com.yisy.modules.doramcu.hex.manager.TradeListing.ListingType.BUY;
+        } else {
+            listingType = com.yisy.modules.doramcu.hex.manager.TradeListing.ListingType.SELL;
+        }
+
+        com.yisy.modules.doramcu.traveller.Commodity comm = resolveCommodity(commodity);
+        if (comm == null) {
+            java.util.Map<String, Object> error = new java.util.LinkedHashMap<>();
+            error.put("error", "Unknown commodity: " + commodity);
+            return error;
+        }
+
+        com.yisy.modules.doramcu.hex.manager.MarketBoard marketBoard = game.getTradeManager().getMarketBoard();
+        com.yisy.modules.doramcu.hex.manager.TradeListing listing = marketBoard.createListing(
+                player.getEmpireId(), listingType, comm, units, pricePerUnit, turnsToLive);
+
+        if (listing == null) {
+            java.util.Map<String, Object> error = new java.util.LinkedHashMap<>();
+            error.put("error", "Empire has reached maximum listing limit");
+            return error;
+        }
+
+        java.util.Map<String, Object> result = new java.util.LinkedHashMap<>();
+        result.put("id", listing.getId());
+        result.put("empireId", listing.getEmpireId());
+        result.put("type", listing.getType());
+        result.put("commodity", listing.getCommodity().getName());
+        result.put("units", listing.getUnits());
+        result.put("pricePerUnit", listing.getPricePerUnit());
+        result.put("turnsToLive", listing.getTurnsToLive());
+        return result;
+    }
+
+    /**
+     * Cancels a trade listing by ID.
+     */
+    @Transactional
+    public java.util.Map<String, Object> cancelTradeListing(Long playerId, String sessionId, int listingId) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null) {
+            throw new NoSuchElementException("Session not found: " + sessionId);
+        }
+        Game game = (Game) session.getGame();
+        Player player = game.getPlayer(playerId.intValue());
+        if (player == null) {
+            throw new NoSuchElementException("Player not found: " + playerId);
+        }
+
+        com.yisy.modules.doramcu.hex.manager.MarketBoard marketBoard = game.getTradeManager().getMarketBoard();
+        boolean cancelled = marketBoard.cancelListing(listingId, player.getEmpireId());
+
+        java.util.Map<String, Object> result = new java.util.LinkedHashMap<>();
+        result.put("cancelled", cancelled);
+        if (!cancelled) {
+            result.put("error", "Listing not found or does not belong to this empire");
+        }
+        return result;
+    }
+
+    /**
+     * Returns the technology tree summary for the given player's empire.
+     */
+    public java.util.Map<String, Object> getTechnologyTree(Long playerId, String sessionId) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null) {
+            return null;
+        }
+        Game game = (Game) session.getGame();
+        Player player = game.getPlayer(playerId.intValue());
+        if (player == null) {
+            return null;
+        }
+        com.yisy.modules.doramcu.hex.manager.EconomicState economicState = game.getEconomicState(player.getEmpireId());
+        if (economicState == null) {
+            return null;
+        }
+        return economicState.getTechnologyTree().getSummary();
+    }
+
+    /**
+     * Researches a technology for the given player's empire.
+     */
+    @Transactional
+    public java.util.Map<String, Object> researchTechnology(Long playerId, String sessionId, String technologyName) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null) {
+            throw new NoSuchElementException("Session not found: " + sessionId);
+        }
+        Game game = (Game) session.getGame();
+        Player player = game.getPlayer(playerId.intValue());
+        if (player == null) {
+            throw new NoSuchElementException("Player not found: " + playerId);
+        }
+
+        com.yisy.modules.doramcu.hex.manager.EconomicState economicState = game.getEconomicState(player.getEmpireId());
+        if (economicState == null) {
+            throw new NoSuchElementException("Economic state not found");
+        }
+
+        com.yisy.modules.doramcu.hex.manager.TechnologyUpgrade tech = resolveTechnology(technologyName);
+        if (tech == null) {
+            java.util.Map<String, Object> error = new java.util.LinkedHashMap<>();
+            error.put("error", "Unknown technology: " + technologyName);
+            return error;
+        }
+
+        com.yisy.modules.doramcu.hex.manager.TechnologyTree tree = economicState.getTechnologyTree();
+        boolean success = tree.research(tech);
+
+        java.util.Map<String, Object> result = new java.util.LinkedHashMap<>();
+        result.put("success", success);
+        result.put("technology", tech.getDisplayName());
+        result.put("level", tree.getLevel(tech));
+        result.put("researchPoints", tree.getResearchPoints());
+        if (!success) {
+            result.put("error", "Cannot research: prerequisites not met or insufficient research points");
+            result.put("requiredCost", tree.getResearchCost(tech));
+        }
+        return result;
+    }
+
+    /**
+     * Resolves a commodity by name (case-insensitive).
+     */
+    private com.yisy.modules.doramcu.traveller.Commodity resolveCommodity(String name) {
+        if (name == null) return null;
+        for (com.yisy.modules.doramcu.traveller.Commodity c : com.yisy.modules.doramcu.traveller.Commodity.values()) {
+            if (c.name().equalsIgnoreCase(name) || c.getName().equalsIgnoreCase(name)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Resolves a technology by name (case-insensitive).
+     */
+    private com.yisy.modules.doramcu.hex.manager.TechnologyUpgrade resolveTechnology(String name) {
+        if (name == null) return null;
+        for (com.yisy.modules.doramcu.hex.manager.TechnologyUpgrade t : com.yisy.modules.doramcu.hex.manager.TechnologyUpgrade.values()) {
+            if (t.name().equalsIgnoreCase(name) || t.getDisplayName().equalsIgnoreCase(name)) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    // ---- Tax Management ----
+
+    /**
+     * Returns the tax summary for the given player's empire.
+     */
+    public java.util.Map<String, Object> getTaxSummary(Long playerId, String sessionId) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null) {
+            log.warn("Session not found: {}", sessionId);
+            throw new NoSuchElementException("Session not found: " + sessionId);
+        }
+        updateSessionActivity(sessionId);
+        session.getLock().readLock().lock();
+        try {
+            Game game = (Game) session.getGame();
+            Player player = game.getPlayer(playerId.intValue());
+            if (player == null) {
+                throw new NoSuchElementException("Player not found: " + playerId);
+            }
+            int empireId = player.getEmpireId();
+            com.yisy.modules.doramcu.hex.manager.TaxManager taxManager = game.getTaxManager();
+            if (taxManager == null) {
+                return new java.util.LinkedHashMap<>();
+            }
+            return taxManager.getTaxSummary(empireId);
+        } finally {
+            session.getLock().readLock().unlock();
+        }
+    }
+
+    /**
+     * Sets the tax policy for the given player's empire.
+     */
+    @Transactional
+    public java.util.Map<String, Object> setTaxPolicy(Long playerId, String sessionId, String policyName) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null) {
+            log.warn("Session not found: {}", sessionId);
+            throw new NoSuchElementException("Session not found: " + sessionId);
+        }
+        updateSessionActivity(sessionId);
+        session.getLock().writeLock().lock();
+        try {
+            Game game = (Game) session.getGame();
+            Player player = game.getPlayer(playerId.intValue());
+            if (player == null) {
+                throw new NoSuchElementException("Player not found: " + playerId);
+            }
+            int empireId = player.getEmpireId();
+            com.yisy.modules.doramcu.hex.manager.TaxManager taxManager = game.getTaxManager();
+            if (taxManager == null) {
+                java.util.Map<String, Object> error = new java.util.LinkedHashMap<>();
+                error.put("success", false);
+                error.put("error", "TaxManager not available");
+                return error;
+            }
+            com.yisy.modules.doramcu.hex.manager.TaxManager.TaxPolicy policy = resolveTaxPolicy(policyName);
+            if (policy == null) {
+                java.util.Map<String, Object> error = new java.util.LinkedHashMap<>();
+                error.put("success", false);
+                error.put("error", "Invalid tax policy: " + policyName);
+                error.put("validPolicies", java.util.Arrays.toString(
+                        com.yisy.modules.doramcu.hex.manager.TaxManager.TaxPolicy.values()));
+                return error;
+            }
+            taxManager.setTaxPolicy(empireId, policy);
+            java.util.Map<String, Object> result = new java.util.LinkedHashMap<>();
+            result.put("success", true);
+            result.put("empireId", empireId);
+            result.put("taxPolicy", policy.name());
+            result.put("taxPolicyDisplay", policy.getDisplayName());
+            result.put("taxRate", policy.getTaxRate());
+            result.put("collectionEfficiency", policy.getCollectionEfficiency());
+            return result;
+        } finally {
+            session.getLock().writeLock().unlock();
+        }
+    }
+
+    /**
+     * Resolves a tax policy by name (case-insensitive).
+     */
+    private com.yisy.modules.doramcu.hex.manager.TaxManager.TaxPolicy resolveTaxPolicy(String name) {
+        if (name == null) return null;
+        for (com.yisy.modules.doramcu.hex.manager.TaxManager.TaxPolicy p :
+                com.yisy.modules.doramcu.hex.manager.TaxManager.TaxPolicy.values()) {
+            if (p.name().equalsIgnoreCase(name)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    // ---- Recipe Management ----
+
+    /**
+     * Returns all available recipes (processing and module assembly) for the given player's empire.
+     * Includes information about which alternative recipes are unlocked via technology research.
+     */
+    public java.util.Map<String, Object> getRecipes(Long playerId, String sessionId) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null) {
+            log.warn("Session not found: {}", sessionId);
+            throw new NoSuchElementException("Session not found: " + sessionId);
+        }
+        updateSessionActivity(sessionId);
+        session.getLock().readLock().lock();
+        try {
+            Game game = (Game) session.getGame();
+            Player player = game.getPlayer(playerId.intValue());
+            if (player == null) {
+                throw new NoSuchElementException("Player not found: " + playerId);
+            }
+            int empireId = player.getEmpireId();
+
+            // Get technology tree to check recipe unlocks
+            com.yisy.modules.doramcu.hex.manager.TechnologyTree techTree = null;
+            com.yisy.modules.doramcu.hex.manager.EconomicState econState =
+                    game.getTurnManager().getEconomicState(empireId);
+            if (econState != null) {
+                techTree = econState.getTechnologyTree();
+            }
+            boolean advancedProcessing = techTree != null && techTree.hasAdvancedProcessing();
+            boolean advancedAssembly = techTree != null && techTree.hasAdvancedAssembly();
+
+            java.util.Map<String, Object> result = new java.util.LinkedHashMap<>();
+
+            // Processing recipes
+            java.util.List<java.util.Map<String, Object>> processingRecipes = new java.util.ArrayList<>();
+            for (com.yisy.modules.doramcu.hex.RefinedResourceType type :
+                    com.yisy.modules.doramcu.hex.RefinedResourceType.values()) {
+                com.yisy.modules.doramcu.hex.ProcessingRecipe standard =
+                        com.yisy.modules.doramcu.hex.ProcessingRecipe.getStandardRecipe(type);
+                com.yisy.modules.doramcu.hex.ProcessingRecipe alternative =
+                        com.yisy.modules.doramcu.hex.ProcessingRecipe.getAlternativeRecipe(type);
+
+                if (standard != null) {
+                    java.util.Map<String, Object> recipe = new java.util.LinkedHashMap<>();
+                    recipe.put("output", type.name());
+                    recipe.put("outputDisplay", type.getDisplayName());
+                    recipe.put("inputs", standard.getInputs());
+                    recipe.put("processingTimeTurns", standard.getProcessingTimeTurns());
+                    recipe.put("isStandard", true);
+                    recipe.put("isUnlocked", true);
+
+                    if (alternative != null) {
+                        java.util.Map<String, Object> alt = new java.util.LinkedHashMap<>();
+                        alt.put("inputs", alternative.getInputs());
+                        alt.put("processingTimeTurns", alternative.getProcessingTimeTurns());
+                        alt.put("isUnlocked", advancedProcessing);
+                        alt.put("unlockRequirement", "ADVANCED_PROCESSING");
+                        recipe.put("alternative", alt);
+                    }
+                    processingRecipes.add(recipe);
+                }
+            }
+            result.put("processingRecipes", processingRecipes);
+
+            // Module assembly recipes
+            java.util.List<java.util.Map<String, Object>> moduleRecipes = new java.util.ArrayList<>();
+            for (com.yisy.modules.doramcu.hex.ConstructionModuleType type :
+                    com.yisy.modules.doramcu.hex.ConstructionModuleType.values()) {
+                java.util.Map<String, Object> recipe = new java.util.LinkedHashMap<>();
+                recipe.put("module", type.name());
+                recipe.put("moduleDisplay", type.getDisplayName());
+                recipe.put("standardRecipe", type.getStandardRecipe());
+                recipe.put("standardTimeTurns", type.getAssemblyTimeTurns());
+                recipe.put("alternativeRecipe", type.getAlternativeRecipe());
+                recipe.put("alternativeTimeTurns", type.getAlternativeAssemblyTimeTurns());
+                recipe.put("alternativeUnlocked", advancedAssembly);
+                recipe.put("unlockRequirement", "ADVANCED_ASSEMBLY");
+                moduleRecipes.add(recipe);
+            }
+            result.put("moduleRecipes", moduleRecipes);
+
+            // Unlock status
+            java.util.Map<String, Object> unlocks = new java.util.LinkedHashMap<>();
+            unlocks.put("advancedProcessing", advancedProcessing);
+            unlocks.put("advancedAssembly", advancedAssembly);
+            result.put("unlocks", unlocks);
+
+            return result;
+        } finally {
+            session.getLock().readLock().unlock();
+        }
+    }
+
+    // ---- Economic Dashboard ----
+
+    /**
+     * Returns the module requirements for building a ship of the given type.
+     * <p>
+     * Creates a preview Ship instance to calculate the module requirements
+     * without actually queuing a build order.
+     * </p>
+     */
+    public java.util.Map<String, Object> getShipModuleRequirements(Long playerId, String sessionId, String shipTypeName) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null) {
+            log.warn("Session not found: {}", sessionId);
+            throw new NoSuchElementException("Session not found: " + sessionId);
+        }
+        updateSessionActivity(sessionId);
+        session.getLock().readLock().lock();
+        try {
+            Game game = (Game) session.getGame();
+            Player player = game.getPlayer(playerId.intValue());
+            if (player == null) {
+                throw new NoSuchElementException("Player not found: " + playerId);
+            }
+
+            ShipType shipType;
+            try {
+                shipType = ShipType.valueOf(shipTypeName.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                java.util.Map<String, Object> error = new java.util.LinkedHashMap<>();
+                error.put("error", "Invalid ship type: " + shipTypeName);
+                error.put("validTypes", java.util.Arrays.toString(ShipType.values()));
+                return error;
+            }
+
+            // Create a preview ship to calculate module requirements
+            Ship previewShip = new Ship(0, shipType);
+            com.yisy.modules.doramcu.hex.manager.ResourceManager resourceManager = game.getResourceManager();
+            java.util.Map<com.yisy.modules.doramcu.hex.ConstructionModuleType, Integer> requirements =
+                    resourceManager.calculateModuleRequirements(previewShip);
+
+            // Check pipeline availability
+            ResourcePipelineManager pipeline = game.getPipelineManager(player.getEmpireId());
+            boolean canAfford = pipeline != null && pipeline.canBuildWithModules(requirements);
+
+            // Build response
+            java.util.Map<String, Object> result = new java.util.LinkedHashMap<>();
+            result.put("shipType", shipType.name());
+            result.put("shipDisplayName", shipType.name());
+            result.put("buildTime", shipType.getBuildTimeTurns());
+            result.put("canAfford", canAfford);
+
+            // Module requirements as string-keyed map
+            java.util.Map<String, Integer> moduleMap = new java.util.LinkedHashMap<>();
+            for (java.util.Map.Entry<com.yisy.modules.doramcu.hex.ConstructionModuleType, Integer> entry : requirements.entrySet()) {
+                moduleMap.put(entry.getKey().getDisplayName(), entry.getValue());
+            }
+            result.put("moduleRequirements", moduleMap);
+
+            // Available modules in pipeline
+            if (pipeline != null) {
+                java.util.Map<String, Integer> available = new java.util.LinkedHashMap<>();
+                for (com.yisy.modules.doramcu.hex.ConstructionModuleType moduleType :
+                        com.yisy.modules.doramcu.hex.ConstructionModuleType.values()) {
+                    int count = pipeline.getModuleStorage().getInventory().getOrDefault(moduleType, 0);
+                    available.put(moduleType.getDisplayName(), count);
+                }
+                result.put("availableModules", available);
+            }
+
+            return result;
+        } finally {
+            session.getLock().readLock().unlock();
+        }
+    }
+
+    /**
+     * Returns the trade summary for the given player's empire.
+     */
+    public TradeSummaryDto getTradeSummary(Long playerId, String sessionId) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null) {
+            log.warn("Session not found: {}", sessionId);
+            throw new NoSuchElementException("Session not found: " + sessionId);
+        }
+        updateSessionActivity(sessionId);
+        session.getLock().readLock().lock();
+        try {
+            Game game = (Game) session.getGame();
+            Player player = game.getPlayer(playerId.intValue());
+            if (player == null) {
+                throw new NoSuchElementException("Player not found: " + playerId);
+            }
+            int empireId = player.getEmpireId();
+            return game.getTradeManager().getTradeSummary(empireId);
+        } finally {
+            session.getLock().readLock().unlock();
+        }
+    }
+
+    /**
+     * Returns the income projection for the given player's empire.
+     */
+    public IncomeProjectionDto getIncomeProjection(Long playerId, String sessionId) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null) {
+            log.warn("Session not found: {}", sessionId);
+            throw new NoSuchElementException("Session not found: " + sessionId);
+        }
+        updateSessionActivity(sessionId);
+        session.getLock().readLock().lock();
+        try {
+            Game game = (Game) session.getGame();
+            Player player = game.getPlayer(playerId.intValue());
+            if (player == null) {
+                throw new NoSuchElementException("Player not found: " + playerId);
+            }
+            int empireId = player.getEmpireId();
+            com.yisy.modules.doramcu.hex.manager.EconomicState economicState = game.getEconomicState(empireId);
+            if (economicState == null) {
+                throw new NoSuchElementException("Economic state not found for empire " + empireId);
+            }
+            return economicState.getIncomeProjection(game.getCurrentTurn());
+        } finally {
+            session.getLock().readLock().unlock();
+        }
+    }
+
+    /**
+     * Returns a comprehensive economic dashboard combining all economic data.
+     */
+    public java.util.Map<String, Object> getEconomicDashboard(Long playerId, String sessionId) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null) {
+            log.warn("Session not found: {}", sessionId);
+            throw new NoSuchElementException("Session not found: " + sessionId);
+        }
+        updateSessionActivity(sessionId);
+        session.getLock().readLock().lock();
+        try {
+            Game game = (Game) session.getGame();
+            Player player = game.getPlayer(playerId.intValue());
+            if (player == null) {
+                throw new NoSuchElementException("Player not found: " + playerId);
+            }
+            int empireId = player.getEmpireId();
+
+            java.util.Map<String, Object> dashboard = new java.util.LinkedHashMap<>();
+
+            // Economic state summary
+            com.yisy.modules.doramcu.hex.manager.EconomicState economicState = game.getEconomicState(empireId);
+            if (economicState != null) {
+                dashboard.put("economicState", economicState.getSummary());
+            }
+
+            // Trade summary
+            dashboard.put("trade", game.getTradeManager().getTradeSummary(empireId));
+
+            // Income projection
+            if (economicState != null) {
+                dashboard.put("incomeProjection", economicState.getIncomeProjection(game.getCurrentTurn()));
+            }
+
+            // Pipeline summary
+            ResourcePipelineManager pipeline = game.getPipelineManager(empireId);
+            if (pipeline != null) {
+                dashboard.put("pipeline", gameStateBuilder.buildPipelineSummary(pipeline));
+            }
+
+            // Tax summary
+            com.yisy.modules.doramcu.hex.manager.TaxManager taxManager = game.getTaxManager();
+            if (taxManager != null) {
+                dashboard.put("tax", taxManager.getTaxSummary(empireId));
+            }
+
+            // Technology summary
+            if (economicState != null) {
+                dashboard.put("technology", economicState.getTechnologyTree().getSummary());
+            }
+
+            // Market board summary
+            dashboard.put("market", game.getTradeManager().getMarketBoard().getSummary());
+
+            // Current turn
+            dashboard.put("currentTurn", game.getCurrentTurn());
+
+            return dashboard;
+        } finally {
+            session.getLock().readLock().unlock();
+        }
+    }
+
     public GameStateResponse getGameState(Long playerId, String sessionId) {
         return getGameState(playerId, sessionId, false);
     }
@@ -322,6 +1169,9 @@ public class GameSessionService {
                 Map.of("action", "MOVE_FLEET", "playerId", playerId, "fleetId", request.getFleetId(),
                         "targetRow", request.getTargetRow(), "targetCol", request.getTargetCol(),
                         "solarSystemId", request.getSolarSystemId() != null ? request.getSolarSystemId() : "current")));
+        logAction(sessionId, playerId, GameActionLog.ActionType.MOVE_FLEET, getGame(sessionId).getCurrentTurn(),
+                Map.of("fleetId", request.getFleetId(), "targetRow", request.getTargetRow(),
+                        "targetCol", request.getTargetCol()));
         return response;
     }
 
@@ -335,6 +1185,8 @@ public class GameSessionService {
         broadcastEvent(sessionId, new GameEvent(GameEvent.EventType.ACTION_RESULT, sessionId,
                 Map.of("action", "BUILD_SHIP", "playerId", playerId, "shipType", request.getShipType(),
                         "targetFleetId", request.getTargetFleetId())));
+        logAction(sessionId, playerId, GameActionLog.ActionType.BUILD_SHIP, getGame(sessionId).getCurrentTurn(),
+                Map.of("shipType", request.getShipType(), "targetFleetId", request.getTargetFleetId()));
         return response;
     }
 
@@ -349,6 +1201,9 @@ public class GameSessionService {
                 Map.of("action", "ENGAGE_COMBAT", "playerId", playerId,
                         "attackerFleetId", request.getAttackerFleetId(),
                         "defenderFleetId", request.getDefenderFleetId())));
+        logAction(sessionId, playerId, GameActionLog.ActionType.ENGAGE_COMBAT, getGame(sessionId).getCurrentTurn(),
+                Map.of("attackerFleetId", request.getAttackerFleetId(),
+                        "defenderFleetId", request.getDefenderFleetId()));
         return response;
     }
 
@@ -362,6 +1217,7 @@ public class GameSessionService {
         Game game = (Game) session.getGame();
         broadcastEvent(sessionId, new GameEvent(GameEvent.EventType.TURN_CHANGED, sessionId,
                 Map.of("turn", game.getCurrentTurn(), "autoAdvanced", false)));
+        logAction(sessionId, playerId, GameActionLog.ActionType.ADVANCE_TURN, game.getCurrentTurn(), Collections.emptyMap());
         return response;
     }
 
@@ -399,7 +1255,7 @@ public class GameSessionService {
      * No-op if the repository is not available (e.g., in unit tests).
      */
     @Transactional
-    private void persistSession(String sessionId, String sessionName, Set<Long> playerIds) {
+    void persistSession(String sessionId, String sessionName, Set<Long> playerIds) {
         if (persistedGameSessionRepository == null) {
             return;
         }
@@ -444,7 +1300,7 @@ public class GameSessionService {
      * No-op if the repository is not available (e.g., in unit tests).
      */
     @Transactional
-    private void updateSessionActivity(String sessionId) {
+    void updateSessionActivity(String sessionId) {
         if (persistedGameSessionRepository == null) {
             return;
         }
@@ -565,6 +1421,8 @@ public class GameSessionService {
         GameStateResponse response = sessionActionHandler.buildStation(session, playerId, request);
         broadcastEvent(sessionId, new GameEvent(GameEvent.EventType.ACTION_RESULT, sessionId,
                 Map.of("action", "BUILD_STATION", "playerId", playerId, "stationType", request.getStationType())));
+        logAction(sessionId, playerId, GameActionLog.ActionType.BUILD_STATION, getGame(sessionId).getCurrentTurn(),
+                Map.of("stationType", request.getStationType()));
         return response;
     }
 
@@ -578,6 +1436,8 @@ public class GameSessionService {
         broadcastEvent(sessionId, new GameEvent(GameEvent.EventType.ACTION_RESULT, sessionId,
                 Map.of("action", "BUILD_FACILITY", "playerId", playerId, "facilityType", request.getFacilityType(),
                         "planetId", request.getPlanetId())));
+        logAction(sessionId, playerId, GameActionLog.ActionType.BUILD_FACILITY, getGame(sessionId).getCurrentTurn(),
+                Map.of("facilityType", request.getFacilityType(), "planetId", request.getPlanetId()));
         return response;
     }
 
@@ -590,6 +1450,8 @@ public class GameSessionService {
         GameStateResponse response = sessionActionHandler.createFleet(session, playerId, request);
         broadcastEvent(sessionId, new GameEvent(GameEvent.EventType.ACTION_RESULT, sessionId,
                 Map.of("action", "CREATE_FLEET", "playerId", playerId, "fleetName", request.getFleetName())));
+        logAction(sessionId, playerId, GameActionLog.ActionType.CREATE_FLEET, getGame(sessionId).getCurrentTurn(),
+                Map.of("fleetName", request.getFleetName()));
         return response;
     }
 
@@ -602,6 +1464,8 @@ public class GameSessionService {
         GameStateResponse response = sessionActionHandler.colonizePlanet(session, playerId, request);
         broadcastEvent(sessionId, new GameEvent(GameEvent.EventType.ACTION_RESULT, sessionId,
                 Map.of("action", "COLONIZE", "playerId", playerId, "planetId", request.getPlanetId())));
+        logAction(sessionId, playerId, GameActionLog.ActionType.COLONIZE_PLANET, getGame(sessionId).getCurrentTurn(),
+                Map.of("planetId", request.getPlanetId()));
         return response;
     }
 
@@ -623,6 +1487,8 @@ public class GameSessionService {
         broadcastEvent(sessionId, new GameEvent(GameEvent.EventType.ACTION_RESULT, sessionId,
                 Map.of("action", "REINFORCE_BATTLE", "playerId", playerId, "battleId", battleId,
                         "fleetId", request.getFleetId())));
+        logAction(sessionId, playerId, GameActionLog.ActionType.REINFORCE_BATTLE, getGame(sessionId).getCurrentTurn(),
+                Map.of("battleId", battleId, "fleetId", request.getFleetId()));
         return response;
     }
 
@@ -635,6 +1501,8 @@ public class GameSessionService {
         GameStateResponse response = sessionActionHandler.retreatBattle(session, playerId, battleId);
         broadcastEvent(sessionId, new GameEvent(GameEvent.EventType.ACTION_RESULT, sessionId,
                 Map.of("action", "RETREAT_BATTLE", "playerId", playerId, "battleId", battleId)));
+        logAction(sessionId, playerId, GameActionLog.ActionType.RETREAT_BATTLE, getGame(sessionId).getCurrentTurn(),
+                Map.of("battleId", battleId));
         return response;
     }
 
@@ -676,6 +1544,48 @@ public class GameSessionService {
         }
     }
 
+    // ---- Action Logging Helper ----
+
+    /**
+     * Logs a game action for replay and analysis.
+     * <p>
+     * Called after each action to record the action type, player, turn number, and data.
+     * </p>
+     */
+    private void logAction(String sessionId, Long playerId, GameActionLog.ActionType actionType,
+                           int turnNumber, Map<String, Object> data) {
+        Game game = getGame(sessionId);
+        if (game == null) {
+            return;
+        }
+        GameActionLog actionLog = GameActionLog.builder(actionType, sessionId)
+                .playerId(playerId)
+                .turnNumber(turnNumber)
+                .data(data)
+                .now()
+                .build();
+        gameReplayService.recordAction(actionLog);
+    }
+
+    /**
+     * Logs a system event (no player) for replay and analysis.
+     */
+    private void logSystemEvent(String sessionId, GameActionLog.ActionType actionType, int turnNumber,
+                                Map<String, Object> data) {
+        gameReplayService.recordSystemEvent(sessionId, actionType, turnNumber, data);
+    }
+
+    /**
+     * Gets the Game instance for a session, or null if not found.
+     */
+    private Game getGame(String sessionId) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null || session.getGame() == null) {
+            return null;
+        }
+        return (Game) session.getGame();
+    }
+
     // ---- Delegated Traveller RPG Integration Methods ----
 
     @Transactional
@@ -687,6 +1597,8 @@ public class GameSessionService {
         GameStateResponse response = sessionActionHandler.buildShipFromDesign(session, playerId, request);
         broadcastEvent(sessionId, new GameEvent(GameEvent.EventType.ACTION_RESULT, sessionId,
                 Map.of("action", "BUILD_FROM_DESIGN", "playerId", playerId, "shipName", request.getName())));
+        logAction(sessionId, playerId, GameActionLog.ActionType.BUILD_SHIP_FROM_DESIGN, getGame(sessionId).getCurrentTurn(),
+                Map.of("shipName", request.getName()));
         return response;
     }
 
@@ -700,6 +1612,8 @@ public class GameSessionService {
         broadcastEvent(sessionId, new GameEvent(GameEvent.EventType.ACTION_RESULT, sessionId,
                 Map.of("action", "BUY_COMMODITY", "playerId", playerId, "commodity", request.getCommodity(),
                         "quantity", request.getQuantity())));
+        logAction(sessionId, playerId, GameActionLog.ActionType.BUY_COMMODITY, getGame(sessionId).getCurrentTurn(),
+                Map.of("commodity", request.getCommodity(), "quantity", request.getQuantity()));
         return response;
     }
 
@@ -713,6 +1627,8 @@ public class GameSessionService {
         broadcastEvent(sessionId, new GameEvent(GameEvent.EventType.ACTION_RESULT, sessionId,
                 Map.of("action", "SELL_COMMODITY", "playerId", playerId, "commodity", request.getCommodity(),
                         "quantity", request.getQuantity())));
+        logAction(sessionId, playerId, GameActionLog.ActionType.SELL_COMMODITY, getGame(sessionId).getCurrentTurn(),
+                Map.of("commodity", request.getCommodity(), "quantity", request.getQuantity()));
         return response;
     }
 
@@ -734,6 +1650,8 @@ public class GameSessionService {
         GameStateResponse response = sessionActionHandler.assignCommander(session, playerId, characterId);
         broadcastEvent(sessionId, new GameEvent(GameEvent.EventType.ACTION_RESULT, sessionId,
                 Map.of("action", "ASSIGN_COMMANDER", "playerId", playerId, "characterId", characterId)));
+        logAction(sessionId, playerId, GameActionLog.ActionType.ASSIGN_COMMANDER, getGame(sessionId).getCurrentTurn(),
+                Map.of("characterId", characterId));
         return response;
     }
 }

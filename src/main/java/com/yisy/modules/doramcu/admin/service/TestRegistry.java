@@ -3,13 +3,13 @@ package com.yisy.modules.doramcu.admin.service;
 import com.yisy.modules.doramcu.admin.model.TestDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
 
 /**
  * Collects all TestProvider beans at startup and builds a test catalog.

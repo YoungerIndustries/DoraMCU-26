@@ -46,7 +46,7 @@ public class Dnd5eInventoryItem {
     @Column(nullable = false, precision = 5, scale = 2)
     private BigDecimal weight = BigDecimal.ZERO;
 
-    @Column(nullable = false)
+    @Column(name = "\"value\"", nullable = false)
     private int value = 0;
 
     @Column(nullable = false)

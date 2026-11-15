@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.dto.*;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogShipTalent;
@@ -6,7 +7,6 @@ import com.yisy.modules.doramcu.captainslog.model.CaptainLogStarship;
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogStarshipRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -18,12 +18,12 @@ import java.util.concurrent.atomic.AtomicLong;
  * <p>
  * The starship creation guides the player through 6 narrative steps that build the starship:
  * <ol>
- *   <li><b>Name & Registry</b> — What is your ship called?</li>
- *   <li><b>Ship Class</b> — What class of vessel do you command?</li>
- *   <li><b>Systems</b> — Rate your ship's core systems.</li>
- *   <li><b>Departments</b> — Rate your ship's departments.</li>
- *   <li><b>Traits</b> — Choose your ship's personality traits.</li>
- *   <li><b>Talents</b> — Select your ship's special abilities.</li>
+ *   <li><b>Name & Registry</b> â€” What is your ship called?</li>
+ *   <li><b>Ship Class</b> â€” What class of vessel do you command?</li>
+ *   <li><b>Systems</b> â€” Rate your ship's core systems.</li>
+ *   <li><b>Departments</b> â€” Rate your ship's departments.</li>
+ *   <li><b>Traits</b> â€” Choose your ship's personality traits.</li>
+ *   <li><b>Talents</b> â€” Select your ship's special abilities.</li>
  * </ol>
  * </p>
  * <p>
@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * and saved to the database.
  * </p>
  */
+@SuppressWarnings("ClassEscapesItsScope")
 @Service
 public class StarshipCreationService {
 
@@ -422,7 +423,7 @@ public class StarshipCreationService {
         response.setStep(session.currentStep);
         response.setTotalSteps(TOTAL_STEPS);
         response.setTitle("Ship Class");
-        response.setDescription("Choose your ship's class — this determines its default capabilities.");
+        response.setDescription("Choose your ship's class â€” this determines its default capabilities.");
         response.setNarrative("What class of vessel do you command? Each class has its own strengths and weaknesses.");
 
         List<StarshipCreationChoice> choices = new ArrayList<>();
@@ -533,7 +534,7 @@ public class StarshipCreationService {
     // ==================== Finalization ====================
 
     @Transactional
-    private CaptainLogStarship finalizeStarship(StarshipSession session) {
+    CaptainLogStarship finalizeStarship(StarshipSession session) {
         CaptainLogStarship starship = new CaptainLogStarship();
         starship.setName(session.name);
         starship.setRegistry(session.registry);

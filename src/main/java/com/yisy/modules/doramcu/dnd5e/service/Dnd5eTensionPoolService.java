@@ -1,10 +1,10 @@
 package com.yisy.modules.doramcu.dnd5e.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.dnd5e.model.Dnd5eTensionPool;
 import com.yisy.modules.doramcu.dnd5e.repository.Dnd5eTensionPoolRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -104,7 +104,7 @@ public class Dnd5eTensionPoolService {
             triggered.add(new TensionConsequence(
                     pool.getMaxTension(),
                     "ULTIMATE",
-                    pool.getUltimateConsequence() != null ? pool.getUltimateConsequence() : "Maximum tension reached — ultimate consequence triggers."
+                    pool.getUltimateConsequence() != null ? pool.getUltimateConsequence() : "Maximum tension reached â€” ultimate consequence triggers."
             ));
             log.warn("ULTIMATE CONSEQUENCE triggered for pool: {}", pool.getName());
         }
@@ -209,7 +209,7 @@ public class Dnd5eTensionPoolService {
             if (newTension >= threshold && oldTension < threshold && !alreadyTriggered) {
                 String consequence = i < consequences.size()
                         ? consequences.get(i)
-                        : "Tension reached " + threshold + " — a consequence occurs.";
+                        : "Tension reached " + threshold + " â€” a consequence occurs.";
 
                 triggered.add(new TensionConsequence(threshold, "THRESHOLD", consequence));
 
@@ -267,7 +267,7 @@ public class Dnd5eTensionPoolService {
             );
         } else {
             description = String.format(
-                    "No encounter. Tension %d/%d, DC %d, roll %d. The party remains undetected.",
+                    "No encounter. Tension %d/%d, DC %d, roll %d. Area: %s. The party remains undetected.",
                     tension, maxTension, dc, roll, pool.getAreaId()
             );
         }
@@ -384,9 +384,9 @@ public class Dnd5eTensionPoolService {
         log.info("Tension pool database initialized: {} pools", poolRepository.findByActiveTrue().size());
     }
 
-    @Transactional
+    // Called from initializeTensionDatabase() â€” relies on its transaction
     public void populateExamplePools() {
-        // Castle Ward — Guard Alertness
+        // Castle Ward â€” Guard Alertness
         Dnd5eTensionPool castle = new Dnd5eTensionPool();
         castle.setName("Guard Alertness");
         castle.setDescription("Tracks how suspicious the castle guards are of the party's presence. " +
@@ -397,13 +397,13 @@ public class Dnd5eTensionPoolService {
         castle.setConsequences("[\"Guards become watchful and patrol more frequently\", " +
                 "\"A guard captain is alerted and investigates suspicious areas\", " +
                 "\"Reinforcements arrive from the barracks\", " +
-                "\"Full alarm — all guards are on high alert and search parties are dispatched\"]");
+                "\"Full alarm â€” all guards are on high alert and search parties are dispatched\"]");
         castle.setUltimateConsequence("The party is discovered and confronted by the entire guard force. " +
                 "Escape becomes nearly impossible without combat or powerful magic.");
         castle.setTriggered("[false, false, false, false]");
         poolRepository.save(castle);
 
-        // Dark Forest — Predator Attention
+        // Dark Forest â€” Predator Attention
         Dnd5eTensionPool forest = new Dnd5eTensionPool();
         forest.setName("Predator Attention");
         forest.setDescription("Tracks how much attention the party has drawn from creatures in the dark forest. " +
@@ -419,7 +419,7 @@ public class Dnd5eTensionPoolService {
         forest.setTriggered("[false, false, false]");
         poolRepository.save(forest);
 
-        // Underground Lair — Insect Agitation
+        // Underground Lair â€” Insect Agitation
         Dnd5eTensionPool lair = new Dnd5eTensionPool();
         lair.setName("Insect Agitation");
         lair.setDescription("Tracks the agitation level of insects in an underground lair. " +
@@ -435,7 +435,7 @@ public class Dnd5eTensionPoolService {
         lair.setTriggered("[false, false, false]");
         poolRepository.save(lair);
 
-        // Feywild Grove — Fey Suspicion
+        // Feywild Grove â€” Fey Suspicion
         Dnd5eTensionPool fey = new Dnd5eTensionPool();
         fey.setName("Fey Suspicion");
         fey.setDescription("Tracks how suspicious the fey creatures are of mortal intruders. " +
@@ -444,7 +444,7 @@ public class Dnd5eTensionPoolService {
         fey.setMaxTension(10);
         fey.setThresholds("[2, 5, 7, 9]");
         fey.setConsequences("[\"Fey creatures give the party warning glares and whisper among themselves\", " +
-                "\"Minor fey pranks target the party — items go missing, paths shift\", " +
+                "\"Minor fey pranks target the party â€” items go missing, paths shift\", " +
                 "\"A fey lord takes notice and sends emissaries to interrogate the party\", " +
                 "\"The fey court declares the party enemies of the grove\"]");
         fey.setUltimateConsequence("The feywild itself turns hostile. The party is trapped in an endless loop " +
@@ -452,7 +452,7 @@ public class Dnd5eTensionPoolService {
         fey.setTriggered("[false, false, false, false]");
         poolRepository.save(fey);
 
-        // Dragon's Lair — Dragon's Patience
+        // Dragon's Lair â€” Dragon's Patience
         Dnd5eTensionPool dragon = new Dnd5eTensionPool();
         dragon.setName("Dragon's Patience");
         dragon.setDescription("Tracks a dragon's patience with intruders in its lair. " +
@@ -471,7 +471,7 @@ public class Dnd5eTensionPoolService {
     // ==================== DTOs ====================
 
     /**
-     * Result of a threshold check — contains the threshold level and consequence description.
+     * Result of a threshold check â€” contains the threshold level and consequence description.
      */
     public static class TensionConsequence {
         private final int threshold;

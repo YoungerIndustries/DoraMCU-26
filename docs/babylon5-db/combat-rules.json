@@ -1,0 +1,460 @@
+{
+  "game_info": {
+    "title": "Babylon 5 RPG 2nd Edition Combat Rules",
+    "description": "Combat and special rules from Babylon 5 RPG 2nd Edition (Mongoose Publishing)",
+    "source": [
+      "Babylon 5 RPG 2nd Edition (Mongoose Publishing)",
+      "Babylon 5 television series",
+      "Babylon 5 expanded universe"
+    ]
+  },
+  "core_mechanics": {
+    "dice_system": {
+      "description": "Babylon 5 RPG uses a d100 (percentile dice) system. Roll 2d10 (one tens die, one units die) and compare to the relevant skill or attribute.",
+      "resolution": "Roll under the skill/attribute value to succeed. Rolling 1-5 is an automatic success, rolling 96-00 is an automatic failure.",
+      "margin_of_success": "The difference between the skill value and the roll. Higher margin = better result.",
+      "critical_success": "Roll of 1-5, automatic success with bonus effects",
+      "critical_failure": "Roll of 96-00, automatic failure with complications"
+    },
+    "attributes": {
+      "strength": {
+        "abbreviation": "STR",
+        "description": "Physical power and endurance.",
+        "derived": ["Brawling", "Lifting", "Carrying Capacity"]
+      },
+      "dexterity": {
+        "abbreviation": "DEX",
+        "description": "Agility, reflexes, and coordination.",
+        "derived": ["Pistols", "Rifles", "Piloting", "Stealth"]
+      },
+      "to_tough": {
+        "abbreviation": "TOU",
+        "description": "Health, stamina, and resistance to damage.",
+        "derived": ["Health", "Resistance", "Endurance"]
+      },
+      "education": {
+        "abbreviation": "EDU",
+        "description": "Knowledge, education, and technical skills.",
+        "derived": ["Science", "Engineering", "Medicine", "Tactics"]
+      },
+      "socialstanding": {
+        "abbreviation": "SOC",
+        "description": "Social status, influence, and leadership.",
+        "derived": ["Leadership", "Persuasion", "Intimidation", "Etiquette"]
+      },
+      "empowerment": {
+        "abbreviation": "EMP",
+        "description": "Psi ability and telepathic power.",
+        "derived": ["Telepathy", "Telekinesis", "Psychic abilities"]
+      }
+    }
+  },
+  "telepathy_system": {
+    "description": "Telepathy is a core mechanic in Babylon 5. Telepaths can communicate mentally, sense emotions, and perform various psychic abilities.",
+    "telepath_types": {
+      "pathfinder": {
+        "description": "Rare telepaths who can sense other sentient beings across vast distances. Used for tracking and locating individuals.",
+        "abilities": [
+          "Sense presence of sentient beings",
+          "Track individuals across star systems",
+          "Detect life signs through barriers",
+          "Sense emotional state of targets"
+        ],
+        "limitations": [
+          "Cannot sense through lead or certain alloys",
+          "Range limited by Empowerment attribute",
+          "Cannot distinguish between similar emotional signatures"
+        ]
+      },
+      "guardian": {
+        "description": "Telepaths trained to shield themselves and others from psychic intrusion. Minbari Guardians are the most famous.",
+        "abilities": [
+          "Shield mind from psychic intrusion",
+          "Shield others from psychic attacks",
+          "Detect psychic presence",
+          "Block telepathic communication"
+        ],
+        "limitations": [
+          "Shielding requires concentration",
+          "Cannot shield large groups simultaneously",
+          "Prolonged shielding causes mental fatigue"
+        ]
+      },
+      "standard_telepath": {
+        "description": "Common telepaths who can communicate mentally and perform basic psychic abilities.",
+        "abilities": [
+          "Mental communication with other telepaths",
+          "Sense emotions of nearby beings",
+          "Basic telekinesis",
+          "Mind shielding (basic)"
+        ],
+        "limitations": [
+          "Range limited by Empowerment attribute",
+          "Cannot communicate with non-telepaths directly",
+          "Mental fatigue from prolonged use"
+        ]
+      }
+    },
+    "telepathy_mechanics": {
+      "communication": {
+        "description": "Telepaths can communicate mentally with other telepaths within range.",
+        "range": "Empowerment x 10 meters (base), extended with training",
+        "mechanic": "Roll Empowerment + Telepathy skill vs difficulty",
+        "effects": [
+          "Direct mental communication",
+          "Share images and emotions",
+          "Detect lies (with training)",
+          "Sense emotional state"
+        ]
+      },
+      "telekinesis": {
+        "description": "Move objects with the mind. Requires high Empowerment and training.",
+        "mechanic": "Roll Empowerment + Telekinesis skill vs difficulty",
+        "effects": [
+          "Move small objects (1-5 kg)",
+          "Push or pull objects",
+          "Manipulate machinery",
+          "Deflect projectiles (with high skill)"
+        ],
+        "limitations": [
+          "Weight limit based on Empowerment",
+          "Range limit based on Empowerment",
+          "Mental fatigue from prolonged use"
+        ]
+      },
+      "mind_shielding": {
+        "description": "Protect the mind from psychic intrusion and attacks.",
+        "mechanic": "Roll Empowerment + Mind Shielding skill vs attacker's Empowerment + Telepathy skill",
+        "effects": [
+          "Block telepathic communication",
+          "Resist psychic attacks",
+          "Hide mental presence",
+          "Protect others from psychic intrusion"
+        ]
+      },
+      "psi_blast": {
+        "description": "Offensive psychic attack that damages the target's mind.",
+        "mechanic": "Roll Empowerment + Psi Blast skill vs target's Empowerment + Mind Shielding skill",
+        "effects": [
+          "Cause mental damage",
+          "Stun the target",
+          "Disorient the target",
+          "Knock out the target (with high margin of success)"
+        ],
+        "limitations": [
+          "Requires line of sight or telepathic link",
+          "Mental fatigue from use",
+          "Can be blocked by mind shielding"
+        ]
+      }
+    }
+  },
+  "space_combat": {
+    "description": "Space combat rules for starship engagements, including ship movement, weapons fire, and damage.",
+    "ship_movement": {
+      "description": "Ships move in three dimensions, with movement measured in kilometers per impulse.",
+      "impulses": "Each turn is divided into 12 impulses. Ships move based on their speed rating.",
+      "speed_ratings": {
+        "slow": "100-200 km per impulse",
+        "medium": "200-400 km per impulse",
+        "fast": "400-600 km per impulse",
+        "very_fast": "600+ km per impulse"
+      },
+      "maneuverability": {
+        "description": "Ships have maneuverability ratings that affect their ability to change direction and speed.",
+        "ratings": {
+          "poor": "Large ships, slow to turn",
+          "average": "Medium ships, moderate turning",
+          "good": "Small ships, quick turning",
+          "excellent": "Fighters and small craft, very quick turning"
+        }
+      }
+    },
+    "weapons": {
+      "pulse_lasers": {
+        "description": "Standard energy weapons used by most ships. Fire rapid pulses of energy.",
+        "damage": "Moderate, consistent damage",
+        "range": "Short to medium range",
+        "effects": [
+          "Damage shields first",
+          "Excess damage hits hull",
+          "Can be fired in volleys"
+        ]
+      },
+      "photons": {
+        "description": "Projectile weapons that fire energy warheads. More powerful than pulse lasers but slower.",
+        "damage": "High damage, can overwhelm shields",
+        "range": "Medium to long range",
+        "effects": [
+          "Damage shields first",
+          "Excess damage hits hull",
+          "Can be intercepted by point defense"
+        ]
+      },
+      "point_defense": {
+        "description": "Close-range weapons designed to intercept incoming projectiles and fighters.",
+        "damage": "Low damage, high rate of fire",
+        "range": "Short range",
+        "effects": [
+          "Intercept incoming photons",
+          "Damage fighters",
+          "Can be automated"
+        ]
+      }
+    },
+    "damage": {
+      "description": "Ship damage is tracked in terms of shield points and hull integrity.",
+      "shields": {
+        "description": "Energy barriers that protect the ship from weapons fire.",
+        "mechanic": "Shields absorb damage first. When shields are depleted, damage hits the hull.",
+        "regeneration": "Shields regenerate slowly over time if not under fire."
+      },
+      "hull": {
+        "description": "The physical structure of the ship. Hull damage causes system failures and casualties.",
+        "mechanic": "Hull damage is tracked in terms of hull points. When hull points reach zero, the ship is destroyed.",
+        "effects": [
+          "System failures (weapons, engines, life support)",
+          "Casualties among crew",
+          "Fire and flooding",
+          "Structural damage"
+        ]
+      }
+    },
+    "combat_sequence": {
+      "description": "Space combat is resolved in a series of impulses, with each side taking turns to move and fire.",
+      "phases": [
+        {
+          "name": "Initiative",
+          "description": "Determine which side acts first each impulse."
+        },
+        {
+          "name": "Movement",
+          "description": "Ships move based on their speed and maneuverability."
+        },
+        {
+          "name": "Targeting",
+          "description": "Ships select targets and aim weapons."
+        },
+        {
+          "name": "Firing",
+          "description": "Ships fire weapons at their targets."
+        },
+        {
+          "name": "Resolution",
+          "description": "Damage is applied to shields and hull."
+        },
+        {
+          "name": "Repair",
+          "description": "Ships can attempt to repair damage and regenerate shields."
+        }
+      ]
+    }
+  },
+  "influence_system": {
+    "description": "The Influence system tracks political standings and reputation with various factions. Higher influence grants access to resources, information, and allies.",
+    "factions": {
+      "earth_force": {
+        "name": "Earth Force",
+        "description": "The military arm of the Earth Alliance.",
+        "influence_benefits": [
+          "Access to Earth Force resources",
+          "Military support",
+          "Intelligence sharing",
+          "Diplomatic backing"
+        ]
+      },
+      "minbari": {
+        "name": "Minbari Federation",
+        "description": "The spiritually advanced Minbari civilization.",
+        "influence_benefits": [
+          "Access to Minbari technology",
+          "Spiritual guidance",
+          "Military alliance",
+          "Pathfinder assistance"
+        ]
+      },
+      "centauri": {
+        "name": "Centauri Republic",
+        "description": "The decadent Centauri aristocracy.",
+        "influence_benefits": [
+          "Access to Centauri resources",
+          "Political connections",
+          "Trade opportunities",
+          "Diplomatic support"
+        ]
+      },
+      "narn": {
+        "name": "Narn Regime",
+        "description": "The proud Narn people, scarred by Centauri occupation.",
+        "influence_benefits": [
+          "Access to Narn resources",
+          "Military support",
+          "Intelligence sharing",
+          "Diplomatic backing"
+        ]
+      },
+      "vorlons": {
+        "name": "Vorlons",
+        "description": "Ancient beings who guide younger races.",
+        "influence_benefits": [
+          "Access to Vorlon technology",
+          "Ancient knowledge",
+          "Protection from threats",
+          "Guidance on cosmic matters"
+        ]
+      },
+      "shadows": {
+        "name": "Shadows",
+        "description": "Ancient beings who manipulate younger races through conflict.",
+        "influence_benefits": [
+          "Access to Shadow technology",
+          "Advanced weapons",
+          "Covert operations support",
+          "Manipulation of events"
+        ]
+      }
+    },
+    "influence_mechanics": {
+      "gaining_influence": {
+        "description": "Influence is gained through actions that benefit the faction.",
+        "methods": [
+          "Complete missions for the faction",
+          "Provide resources or information",
+          "Defeat enemies of the faction",
+          "Diplomatic successes",
+          "Heroic actions that benefit the faction"
+        ]
+      },
+      "losing_influence": {
+        "description": "Influence is lost through actions that harm the faction.",
+        "methods": [
+          "Fail missions for the faction",
+          "Harm faction members",
+          "Provide resources to enemies",
+          "Diplomatic failures",
+          "Actions that contradict faction goals"
+        ]
+      },
+      "influence_levels": {
+        "unknown": {
+          "range": "0-10",
+          "benefits": "No special benefits, faction is unaware of the character"
+        },
+        "known": {
+          "range": "11-25",
+          "benefits": "Basic access to faction resources, minor favors"
+        },
+        "trusted": {
+          "range": "26-50",
+          "benefits": "Access to faction resources, significant favors, intelligence sharing"
+        },
+        "ally": {
+          "range": "51-75",
+          "benefits": "Full access to faction resources, major favors, military support"
+        },
+        "hero": {
+          "range": "76-100",
+          "benefits": "Unlimited access to faction resources, faction will go to great lengths to help"
+        }
+      }
+    }
+  },
+  "ground_combat": {
+    "description": "Ground combat rules for infantry and vehicle engagements.",
+    "combat_sequence": {
+      "description": "Ground combat is resolved in a series of rounds, with each character taking turns to act.",
+      "phases": [
+        {
+          "name": "Initiative",
+          "description": "Determine the order of actions."
+        },
+        {
+          "name": "Movement",
+          "description": "Characters move based on their speed."
+        },
+        {
+          "name": "Actions",
+          "description": "Characters take actions (attack, defend, use skills, etc.)."
+        },
+        {
+          "name": "Resolution",
+          "description": "Damage is applied and effects are resolved."
+        }
+      ]
+    },
+    "weapons": {
+      "pistols": {
+        "description": "Handheld energy weapons. Standard sidearm for most characters.",
+        "damage": "Moderate damage",
+        "range": "Short range",
+        "skill": "Pistols"
+      },
+      "rifles": {
+        "description": "Shoulder-fired energy weapons. Standard primary weapon for most characters.",
+        "damage": "High damage",
+        "range": "Medium to long range",
+        "skill": "Rifles"
+      },
+      "heavy_weapons": {
+        "description": "Large weapons that deal significant damage but are difficult to use.",
+        "damage": "Very high damage",
+        "range": "Long range",
+        "skill": "Heavy Weapons"
+      }
+    },
+    "damage": {
+      "description": "Damage is tracked in terms of hit points. When hit points reach zero, the character is incapacitated.",
+      "hit_points": "Based on To_Tough attribute + armor bonus",
+      "armor": {
+        "description": "Armor reduces incoming damage.",
+        "types": {
+          "light": "Minimal protection, high mobility",
+          "medium": "Moderate protection, moderate mobility",
+          "heavy": "High protection, low mobility"
+        }
+      },
+      "injuries": {
+        "description": "Severe damage can cause injuries that impair the character.",
+        "types": [
+          "Bruised: -1 to all rolls",
+          "Injured: -2 to all rolls",
+          "Wounded: -3 to all rolls, cannot take actions",
+          "Incapacitated: Unconscious, requires medical attention"
+        ]
+      }
+    }
+  },
+  "vorlon_and_shadow_abilities": {
+    "description": "Unique abilities of the ancient races, Vorlons and Shadows.",
+    "vorlon_abilities": {
+      "description": "Vorlons possess advanced technology and abilities that far exceed those of younger races.",
+      "abilities": [
+        "Manipulate reality on a limited scale",
+        "Travel through space without conventional means",
+        "Create illusions and false realities",
+        "Communicate across vast distances",
+        "Manipulate time and space"
+      ],
+      "limitations": [
+        "Bound by the Great Conflict with the Shadows",
+        "Cannot directly interfere with younger races",
+        "Must work through proxies and subtle means"
+      ]
+    },
+    "shadow_abilities": {
+      "description": "Shadows possess advanced technology and abilities that far exceed those of younger races.",
+      "abilities": [
+        "Manipulate fear and emotion",
+        "Travel through space without conventional means",
+        "Create illusions and false realities",
+        "Communicate across vast distances",
+        "Manipulate technology and machinery"
+      ],
+      "limitations": [
+        "Bound by the Great Conflict with the Vorlons",
+        "Cannot directly interfere with younger races",
+        "Must work through proxies and subtle means"
+      ]
+    }
+  }
+}

@@ -51,7 +51,7 @@ class GameEventTest {
     @DisplayName("EventType enum - should contain all expected values")
     void eventType_shouldContainAllValues() {
         GameEvent.EventType[] types = GameEvent.EventType.values();
-        assertEquals(6, types.length);
+        assertEquals(10, types.length);
     }
 }
 

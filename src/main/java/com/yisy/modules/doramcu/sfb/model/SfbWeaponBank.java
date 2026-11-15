@@ -96,7 +96,7 @@ public class SfbWeaponBank {
             case LF_R:
                 return relativeDir >= 1 && relativeDir <= 4;
             case LF_LR:
-                return relativeDir >= 1 && relativeDir <= 5;
+                return relativeDir >= 1;
             case RF_RR:
                 return relativeDir == 0 || relativeDir >= 4;
             default:

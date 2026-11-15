@@ -1,10 +1,13 @@
 package com.yisy.modules.doramcu.traveller;
 
+import org.springframework.stereotype.Service;
 import java.util.*;
 
 /**
  * AI opponent for air battles.
  */
+
+@Service
 public class AirBattleAiService {
     public enum Difficulty { EASY, MEDIUM, HARD }
 

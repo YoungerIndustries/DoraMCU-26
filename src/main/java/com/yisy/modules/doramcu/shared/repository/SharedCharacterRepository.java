@@ -1,7 +1,7 @@
 package com.yisy.modules.doramcu.shared.repository;
 
 import com.yisy.modules.doramcu.shared.model.SharedCharacter;
-import com.yisy.modules.doramcu.unified.GameType;
+import com.yisy.modules.doramcu.gamecore.GameType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -25,4 +25,6 @@ public interface SharedCharacterRepository extends JpaRepository<SharedCharacter
     Optional<SharedCharacter> findByTravellerCharacterId(Integer travellerCharacterId);
 
     Optional<SharedCharacter> findByDoramcu4xPlayerId(Long doramcu4xPlayerId);
+
+    Optional<SharedCharacter> findByEarth2026CharacterId(Long earth2026CharacterId);
 }

@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.star_trek_4x.service;
 
+import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -15,7 +16,6 @@ import com.yisy.modules.doramcu.sfb.model.SfbEmpire;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;

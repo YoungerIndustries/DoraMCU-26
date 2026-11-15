@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.thirdreich.adapter;
+import org.springframework.stereotype.Component;
 
 import com.yisy.modules.doramcu.thirdreich.commander.AICommander;
 import com.yisy.modules.doramcu.thirdreich.domain.ThirdReichBattleResult;
@@ -18,6 +19,7 @@ import java.util.Map;
  * Traveller characters to AI commanders.
  * </p>
  */
+@Component
 public class TravellerTo3R4Adapter implements GroundCombatAdapter {
 
     private static final String SOURCE_GAME = "Traveller";

@@ -4,6 +4,8 @@ import com.yisy.modules.doramcu.ai.AiDelegationService;
 import com.yisy.modules.doramcu.ai.AiDecision;
 import com.yisy.modules.doramcu.ai.PlayerActionAnalyzer;
 import com.yisy.modules.doramcu.dto.*;
+import com.yisy.modules.doramcu.eve.model.AiCharacter;
+import com.yisy.modules.doramcu.gamemode.GameModeRegistry;
 import com.yisy.modules.doramcu.hex.*;
 import com.yisy.modules.doramcu.hex.Player;
 import com.yisy.modules.doramcu.model.GameSession;
@@ -35,15 +37,24 @@ public class SessionActionHandler {
     private final CharacterService characterService;
     private final AiDelegationService aiDelegationService;
     private final PlayerActionAnalyzer playerActionAnalyzer;
+    private final AiEntityRegistrationService aiEntityRegistrationService;
+    private final AiCommanderExperienceService aiCommanderExperienceService;
+    private final GameModeRegistry gameModeRegistry;
 
     public SessionActionHandler(GameStateBuilder gameStateBuilder,
                                 CharacterService characterService,
                                 @Lazy AiDelegationService aiDelegationService,
-                                PlayerActionAnalyzer playerActionAnalyzer) {
+                                PlayerActionAnalyzer playerActionAnalyzer,
+                                AiEntityRegistrationService aiEntityRegistrationService,
+                                AiCommanderExperienceService aiCommanderExperienceService,
+                                GameModeRegistry gameModeRegistry) {
         this.gameStateBuilder = gameStateBuilder;
         this.characterService = characterService;
         this.aiDelegationService = aiDelegationService;
         this.playerActionAnalyzer = playerActionAnalyzer;
+        this.aiEntityRegistrationService = aiEntityRegistrationService;
+        this.aiCommanderExperienceService = aiCommanderExperienceService;
+        this.gameModeRegistry = gameModeRegistry;
     }
 
     /**
@@ -327,6 +338,19 @@ public class SessionActionHandler {
                 log.warn("AI delegation turn execution failed in session {}: {}", session.getSessionId(), e.getMessage());
             }
 
+            // Process game mode modules for this turn (RPG, 4X, Tycoon, etc.)
+            try {
+                String galaxyName = session.getName();
+                int turnNumber = game.getCurrentTurn();
+                String playerIdStr = String.valueOf(playerId);
+                String gameModeSummary = gameModeRegistry.processTurnForGalaxy(galaxyName, turnNumber, playerIdStr);
+                if (!gameModeSummary.isEmpty() && !gameModeSummary.contains("No game modes active")) {
+                    log.info("Game mode turn results for {}: {}", galaxyName, gameModeSummary.replace("\n", " | "));
+                }
+            } catch (Exception e) {
+                log.warn("Game mode turn processing failed in session {}: {}", session.getSessionId(), e.getMessage());
+            }
+
             recordHumanAction(player, game, AiDecision.ActionType.WAIT);
             return getGameStateInternal(session, playerId);
         } finally {
@@ -374,6 +398,20 @@ public class SessionActionHandler {
         }
     }
 
+    /**
+     * Registers a facility as an AI character in the AI character repository.
+     * No-op if the AI entity registration service is not available.
+     */
+    private void registerFacilityAsAi(PlanetFacility facility, String empireName) {
+        if (aiEntityRegistrationService != null && facility != null) {
+            try {
+                aiEntityRegistrationService.registerFacility(facility, empireName);
+            } catch (Exception e) {
+                // Silently ignore if registration fails
+            }
+        }
+    }
+
     public GameStateResponse buildFacility(GameSession session, Long playerId, BuildFacilityRequest request) {
         Game game = (Game) session.getGame();
         session.getLock().writeLock().lock();
@@ -410,7 +448,8 @@ public class SessionActionHandler {
 
             Empire empire = game.getEmpire(player.getEmpireId());
             if (empire != null) {
-                empire.getFacilities().buildFacility(planet.getId(), facility);
+                PlanetFacility pf = empire.getFacilities().buildFacility(planet.getId(), facility);
+                registerFacilityAsAi(pf, empire.getName());
             }
 
             log.info("Player {} built {} facility on planet {}", player.getName(), facility.getDisplayName(), request.getPlanetId());
@@ -651,6 +690,14 @@ public class SessionActionHandler {
         applyFleetDamageFromBattle(attacker, battle);
         applyFleetDamageFromBattle(defender, battle);
 
+        // Deactivate AI characters for destroyed ships before removal
+        deactivateAiForDestroyedShips(attacker);
+        deactivateAiForDestroyedShips(defender);
+
+        // Record battle experience for surviving ships' AI characters
+        recordBattleExperienceForFleet(attacker, outcome, true);
+        recordBattleExperienceForFleet(defender, outcome, false);
+
         attacker.removeDestroyedShips();
         defender.removeDestroyedShips();
 
@@ -678,6 +725,77 @@ public class SessionActionHandler {
 
         if (totalDamageDealt > 0) {
             actualFleet.distributeDamage(totalDamageDealt);
+        }
+    }
+
+    /**
+     * Deactivates AI characters for destroyed ships in a fleet.
+     * No-op if the AI entity registration service is not available.
+     */
+    private void deactivateAiForDestroyedShips(Fleet fleet) {
+        if (aiEntityRegistrationService == null || fleet == null) {
+            return;
+        }
+        for (Ship ship : fleet.getDestroyedShips()) {
+            try {
+                aiEntityRegistrationService.deactivateShipAiCharacter(ship.getId());
+            } catch (Exception e) {
+                // Silently ignore if deactivation fails
+            }
+        }
+    }
+
+    /**
+     * Records battle experience for surviving ships' AI characters in a fleet.
+     * No-op if the AI commander experience service is not available.
+     *
+     * @param fleet the fleet to process
+     * @param battleOutcome the overall battle outcome
+     * @param isAttacker true if this fleet was the attacker in the battle
+     */
+    private void recordBattleExperienceForFleet(Fleet fleet, Battle.BattleOutcome battleOutcome, boolean isAttacker) {
+        if (aiCommanderExperienceService == null || fleet == null) {
+            return;
+        }
+        // Determine the outcome for this fleet's side
+        com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome outcome;
+        if (battleOutcome == Battle.BattleOutcome.ATTACKER_VICTORY) {
+            outcome = isAttacker
+                ? com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.VICTORY
+                : com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.DEFEAT;
+        } else if (battleOutcome == Battle.BattleOutcome.DEFENDER_VICTORY) {
+            outcome = isAttacker
+                ? com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.DEFEAT
+                : com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.VICTORY;
+        } else {
+            outcome = com.yisy.modules.doramcu.eve.model.AiCommanderExperience.Outcome.STALEMATE;
+        }
+        // Record experience for each surviving ship's AI character
+        for (Ship ship : fleet.getShips()) {
+            if (ship.isDestroyed()) {
+                continue;
+            }
+            try {
+                Optional<AiCharacter> aiCharOpt = aiEntityRegistrationService.findShipAiCharacter(ship.getId());
+                aiCharOpt.ifPresent(aiChar -> {
+                    try {
+                        aiCommanderExperienceService.recordBattleExperience(
+                            aiChar.getId(),
+                            "TRAVELLER",
+                            "Naval Battle",
+                            outcome,
+                            "Naval battle participation",
+                            null
+                        );
+                        // Advance training level if XP threshold is reached
+                        aiCommanderExperienceService.advanceTrainingLevel(aiChar.getId());
+                    } catch (Exception e) {
+                        // Silently ignore if experience recording fails
+                    }
+                });
+            } catch (Exception e) {
+                // Silently ignore if AI character lookup fails
+            }
         }
     }
 

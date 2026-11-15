@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.traveller;
+import org.springframework.stereotype.Service;
 
+import com.yisy.modules.doramcu.hex.AiCoreComponent;
 import com.yisy.modules.doramcu.hex.Fleet;
 import com.yisy.modules.doramcu.hex.Ship;
 
@@ -128,6 +130,7 @@ public class TravellerFleetBuilder {
 
         for (ShipDesign design : designs) {
             Ship ship = factory.convert(design);
+            ship.setAiCore(new AiCoreComponent());
             fleet.addShip(ship);
         }
 

@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.unified;
 
+import com.yisy.modules.doramcu.gamecore.GameType;
+
 /**
  * Adapter interface that converts between game-specific character models
  * and the {@link UnifiedCharacter} representation.

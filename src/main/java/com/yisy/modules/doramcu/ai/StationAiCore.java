@@ -4,6 +4,7 @@ import com.yisy.modules.doramcu.hex.Fleet;
 import com.yisy.modules.doramcu.hex.Hex3D;
 import com.yisy.modules.doramcu.hex.SpaceStation;
 import com.yisy.modules.doramcu.hex.SpaceStationType;
+import com.yisy.modules.doramcu.hex.spi.StationAiCoreSpi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +34,13 @@ import java.util.Map;
  * </ul>
  * </p>
  */
-public class StationAiCore {
+public class StationAiCore implements StationAiCoreSpi {
 
     /**
      * The AI Core level installed on this station.
+     * @deprecated Use {@link StationAiCoreSpi.Level} instead
      */
+    @Deprecated
     public enum Level {
         /** No AI Core installed */
         NONE(0),
@@ -56,6 +59,19 @@ public class StationAiCore {
 
         public int getValue() {
             return value;
+        }
+
+        /**
+         * Converts to the SPI Level enum.
+         */
+        public StationAiCoreSpi.Level toSpiLevel() {
+            switch (this) {
+                case NONE: return StationAiCoreSpi.Level.NONE;
+                case BASIC: return StationAiCoreSpi.Level.BASIC;
+                case ADVANCED: return StationAiCoreSpi.Level.ADVANCED;
+                case ELITE: return StationAiCoreSpi.Level.ELITE;
+                default: return StationAiCoreSpi.Level.NONE;
+            }
         }
     }
 
@@ -93,8 +109,8 @@ public class StationAiCore {
      *
      * @return the AI Core level
      */
-    public Level getAiCoreLevel() {
-        return aiCoreLevel;
+    public StationAiCoreSpi.Level getAiCoreLevel() {
+        return aiCoreLevel.toSpiLevel();
     }
 
     /**
@@ -102,11 +118,24 @@ public class StationAiCore {
      *
      * @param level the new AI Core level
      */
-    public void setAiCoreLevel(Level level) {
+    public void setAiCoreLevel(StationAiCoreSpi.Level level) {
         if (level == null) {
             throw new IllegalArgumentException("AI Core level must not be null");
         }
-        this.aiCoreLevel = level;
+        this.aiCoreLevel = fromSpiLevel(level);
+    }
+
+    /**
+     * Converts SPI Level to the deprecated internal Level enum.
+     */
+    private Level fromSpiLevel(StationAiCoreSpi.Level spiLevel) {
+        switch (spiLevel) {
+            case NONE: return Level.NONE;
+            case BASIC: return Level.BASIC;
+            case ADVANCED: return Level.ADVANCED;
+            case ELITE: return Level.ELITE;
+            default: return Level.NONE;
+        }
     }
 
     /**

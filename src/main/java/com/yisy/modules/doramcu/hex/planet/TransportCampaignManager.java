@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.hex.planet;
+import org.springframework.stereotype.Service;
 
+import com.yisy.modules.doramcu.ai.GalaxyOverlordAI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -130,9 +132,7 @@ public class TransportCampaignManager {
         this.tradeRouteManager.setEventManager(this.eventManager);
 
         // Add AI rivals
-        for (Map.Entry<String, AiCorporationStrategy> entry : builder.aiRivals.entrySet()) {
-            this.aiStrategies.put(entry.getKey(), entry.getValue());
-        }
+        this.aiStrategies.putAll(builder.aiRivals);
     }
 
     /**

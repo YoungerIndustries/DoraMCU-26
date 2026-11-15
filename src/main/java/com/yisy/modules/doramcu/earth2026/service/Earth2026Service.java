@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.earth2026.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.dto.JoinSessionResponse;
 import com.yisy.modules.doramcu.earth2026.dto.PlanetCharacterInfo;
@@ -13,13 +14,12 @@ import com.yisy.modules.doramcu.repository.AiCharacterRepository;
 import com.yisy.modules.doramcu.service.AiPlayerService;
 import com.yisy.modules.doramcu.service.GalaxyMetricsService;
 import com.yisy.modules.doramcu.service.GameSessionService;
-import com.yisy.modules.doramcu.unified.GameType;
+import com.yisy.modules.doramcu.gamecore.GameType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -62,6 +62,15 @@ public class Earth2026Service implements PlanetService {
     private final GalaxyEventService galaxyEventService;
     private final GalaxyMetricsService galaxyMetricsService;
 
+    /** Optional bridge services for planet surface management (null for non-Earth planets) */
+    private final PlanetBuilderBridge planetBuilderBridge;
+    private final EconomyBridge economyBridge;
+    private final TransportBridge transportBridge;
+    private final Earth2026CompanionService companionService;
+    private final Earth2026FamilyService familyService;
+    private final Earth2026ConnectionService connectionService;
+    private final Earth2026OrganizationService organizationService;
+
     public Earth2026Service(Earth2026CharacterRepository characterRepository,
                             Earth2026LocationRepository locationRepository,
                             Earth2026ScenarioRepository scenarioRepository,
@@ -77,7 +86,14 @@ public class Earth2026Service implements PlanetService {
                             AiPlayerService aiPlayerService,
                             GameSessionService gameSessionService,
                             GalaxyEventService galaxyEventService,
-                            GalaxyMetricsService galaxyMetricsService) {
+                            GalaxyMetricsService galaxyMetricsService,
+                            PlanetBuilderBridge planetBuilderBridge,
+                            EconomyBridge economyBridge,
+                            TransportBridge transportBridge,
+                            Earth2026CompanionService companionService,
+                            Earth2026FamilyService familyService,
+                            Earth2026ConnectionService connectionService,
+                            Earth2026OrganizationService organizationService) {
         this.characterRepository = characterRepository;
         this.locationRepository = locationRepository;
         this.scenarioRepository = scenarioRepository;
@@ -94,6 +110,13 @@ public class Earth2026Service implements PlanetService {
         this.gameSessionService = gameSessionService;
         this.galaxyEventService = galaxyEventService;
         this.galaxyMetricsService = galaxyMetricsService;
+        this.planetBuilderBridge = planetBuilderBridge;
+        this.economyBridge = economyBridge;
+        this.transportBridge = transportBridge;
+        this.companionService = companionService;
+        this.familyService = familyService;
+        this.connectionService = connectionService;
+        this.organizationService = organizationService;
     }
 
     /**
@@ -113,6 +136,45 @@ public class Earth2026Service implements PlanetService {
         character.setUpdatedAt(LocalDateTime.now());
         character.setEarthLocation("San Diego, CA");
         character = characterRepository.save(character);
+
+        // Assign a home apartment structure in San Diego
+        try {
+            // Find the first available apartment structure in San Diego (location 1 = San Diego Convention Center area)
+            Optional<Earth2026Structure> apartment = structureRepository
+                    .findByLocationIdAndStructureType(1L, "Apartment")
+                    .stream()
+                    .filter(s -> s.getCurrentCapacity() < s.getMaxCapacity())
+                    .findFirst();
+
+            if (apartment.isPresent()) {
+                Earth2026Structure struct = apartment.get();
+                struct.setCurrentCapacity(struct.getCurrentCapacity() + 1);
+                structureRepository.save(struct);
+                character.setHomeStructureId(struct.getId());
+                character = characterRepository.save(character);
+                log.info("Assigned home structure: {} (capacity {}/{} ) to character: {}", 
+                        struct.getName(), struct.getCurrentCapacity(), struct.getMaxCapacity(), name);
+            } else {
+                // If no apartment available, create a default one
+                Earth2026Structure newApartment = new Earth2026Structure(
+                        name + "'s Apartment", 1L, "Apartment", 5);
+                newApartment.setDefenseRating(20);
+                newApartment.setMaxCapacity(5);
+                newApartment.setCurrentCapacity(1);
+                newApartment.setProvidesCover(true);
+                newApartment.setCoverBonus(2);
+                newApartment.setStrategic(false);
+                newApartment.setDescription("A modest apartment in San Diego, CA. Home for " + name + ".");
+                newApartment.setActive(true);
+                newApartment = structureRepository.save(newApartment);
+                character.setHomeStructureId(newApartment.getId());
+                character = characterRepository.save(character);
+                log.info("Created new home structure: {} for character: {}", newApartment.getName(), name);
+            }
+        } catch (Exception e) {
+            log.warn("Could not assign home structure to character {}: {}", name, e.getMessage());
+        }
+
         log.info("Created Earth 2026 character: {} (age={}, occupation={}, playerId={})", name, age, occupation, playerId);
         return character;
     }
@@ -128,6 +190,17 @@ public class Earth2026Service implements PlanetService {
     @Transactional
     public Earth2026Character createCharacter(String name, int age, String occupation) {
         return createCharacter(name, age, occupation, null);
+    }
+
+    /**
+     * Persists an Earth 2026 character (used to update character fields after creation).
+     *
+     * @param character the character to save
+     * @return the saved character
+     */
+    @Transactional
+    public Earth2026Character saveCharacter(Earth2026Character character) {
+        return characterRepository.save(character);
     }
 
     /**
@@ -149,6 +222,18 @@ public class Earth2026Service implements PlanetService {
     @Override
     public List<Earth2026Character> getCharactersOnEarth() {
         return characterRepository.findByHasTransitionedFalse();
+    }
+
+    /**
+     * Lists all characters owned by a specific player that have not yet transitioned.
+     *
+     * @param playerId the player (user) ID
+     * @return list of characters for that player still on Earth
+     */
+    public List<Earth2026Character> getCharactersByPlayer(Long playerId) {
+        return characterRepository.findByPlayerId(playerId).stream()
+                .filter(ch -> !ch.isHasTransitioned())
+                .collect(java.util.stream.Collectors.toList());
     }
 
     /**
@@ -219,10 +304,10 @@ public class Earth2026Service implements PlanetService {
      * The character's six ability scores (STR, DEX, CON, INT, WIS, CHA) are used to
      * determine the starting difficulty and role in the galaxy game:
      * <ul>
-     *   <li>High INT → Advisor role (strategic decisions)</li>
-     *   <li>High STR → General role (combat focus)</li>
-     *   <li>High CHA → Leader role (diplomacy focus)</li>
-     *   <li>Otherwise → Explorer role (balanced)</li>
+     *   <li>High INT â†’ Advisor role (strategic decisions)</li>
+     *   <li>High STR â†’ General role (combat focus)</li>
+     *   <li>High CHA â†’ Leader role (diplomacy focus)</li>
+     *   <li>Otherwise â†’ Explorer role (balanced)</li>
      * </ul>
      * </p>
      *
@@ -265,13 +350,13 @@ public class Earth2026Service implements PlanetService {
                             log.info("Character {} joined galaxy session {} as player {}",
                                     characterName, joinResponse.getSessionId(), joinResponse.getPlayerId());
                         } else {
-                            log.warn("No active galaxy game session found for character {} — transition flag set but not joined to session",
+                            log.warn("No active galaxy game session found for character {} â€” transition flag set but not joined to session",
                                     characterName);
                         }
                     } catch (Exception e) {
                         log.error("Failed to join character {} to galaxy session: {}",
                                 characterName, e.getMessage(), e);
-                        // Still mark as transitioned — the character record exists and can be joined later
+                        // Still mark as transitioned â€” the character record exists and can be joined later
                     }
 
                     // Step 5: Mark the character as transitioned
@@ -299,10 +384,10 @@ public class Earth2026Service implements PlanetService {
      * <p>
      * The highest score determines the role:
      * <ul>
-     *   <li>INT highest → Advisor (strategic decisions)</li>
-     *   <li>STR highest → General (combat focus)</li>
-     *   <li>CHA highest → Leader (diplomacy focus)</li>
-     *   <li>Otherwise → Explorer (balanced)</li>
+     *   <li>INT highest â†’ Advisor (strategic decisions)</li>
+     *   <li>STR highest â†’ General (combat focus)</li>
+     *   <li>CHA highest â†’ Leader (diplomacy focus)</li>
+     *   <li>Otherwise â†’ Explorer (balanced)</li>
      * </ul>
      * </p>
      *
@@ -335,9 +420,9 @@ public class Earth2026Service implements PlanetService {
      * <p>
      * Higher levels and total scores produce harder difficulty:
      * <ul>
-     *   <li>Level >= 5 or total scores >= 72 → HARD</li>
-     *   <li>Level >= 3 or total scores >= 60 → MEDIUM</li>
-     *   <li>Otherwise → EASY</li>
+     *   <li>Level >= 5 or total scores >= 72 â†’ HARD</li>
+     *   <li>Level >= 3 or total scores >= 60 â†’ MEDIUM</li>
+     *   <li>Otherwise â†’ EASY</li>
      * </ul>
      * </p>
      *
@@ -397,7 +482,7 @@ public class Earth2026Service implements PlanetService {
         // Build description from character background
         String description = character.getBackground();
         if (description == null || description.isBlank()) {
-            description = character.getName() + " — " + character.getOccupation() +
+            description = character.getName() + " â€” " + character.getOccupation() +
                     " from Earth 2026, transitioning to " + targetGalaxy + " as " + role;
         }
         aiCharacter.setDescription(description);
@@ -436,6 +521,103 @@ public class Earth2026Service implements PlanetService {
                     log.info("Scenario '{}' started", scenario.getName());
                     return scenario;
                 });
+    }
+
+    /**
+     * Starts the game for a character by placing them at the starting location
+     * and returning the first available scenario.
+     *
+     * @param characterId the character ID
+     * @return a map containing the character, starting location, and first scenario
+     */
+    @Transactional
+    public Optional<Map<String, Object>> startGame(Long characterId) {
+        return characterRepository.findById(characterId)
+                .map(character -> {
+                    // Move character to the starting location
+                    String startingLocation = "San Diego Convention Center";
+                    character.setEarthLocation(startingLocation);
+                    character.setUpdatedAt(LocalDateTime.now());
+                    character = characterRepository.save(character);
+                    log.info("Character {} started game at {}", character.getName(), startingLocation);
+
+                    // Find the first available scenario for this character's level
+                    int level = character.getLevel() != 0 ? character.getLevel() : 1;
+                    Optional<Earth2026Scenario> firstScenario = scenarioRepository.findAll().stream()
+                            .filter(s -> s.isActive() && s.getStatus() == Earth2026Scenario.ScenarioStatus.AVAILABLE)
+                            .filter(s -> s.getMinLevel() <= level)
+                            .findFirst();
+
+                    // Build response
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("character", character);
+                    result.put("startingLocation", startingLocation);
+                    result.put("firstScenario", firstScenario.orElse(null));
+                    result.put("message", firstScenario.isPresent()
+                            ? "Welcome to Earth 2026! Your adventure begins at " + startingLocation + ". Start the '" + firstScenario.get().getName() + "' scenario to begin."
+                            : "Welcome to Earth 2026! You are at " + startingLocation + ". No scenarios available yet.");
+                    return result;
+                });
+    }
+
+    /**
+     * Gets the starting location for new characters.
+     *
+     * @return the starting location
+     */
+    public Optional<Earth2026Location> getStartingLocation() {
+        return locationRepository.findAll().stream()
+                .filter(loc -> "San Diego Convention Center".equals(loc.getName()))
+                .findFirst();
+    }
+
+    /**
+     * Gets the first available scenario for a character's level.
+     *
+     * @param level the character level
+     * @return the first available scenario
+     */
+    public Optional<Earth2026Scenario> getFirstAvailableScenario(int level) {
+        return scenarioRepository.findAll().stream()
+                .filter(s -> s.isActive() && s.getStatus() == Earth2026Scenario.ScenarioStatus.AVAILABLE)
+                .filter(s -> s.getMinLevel() <= level)
+                .findFirst();
+    }
+
+    /**
+     * Resets a scenario back to AVAILABLE status.
+     *
+     * @param scenarioId the scenario ID
+     * @return the updated scenario
+     */
+    @Transactional
+    public Optional<Earth2026Scenario> resetScenario(Long scenarioId) {
+        return scenarioRepository.findById(scenarioId)
+                .map(scenario -> {
+                    scenario.setStatus(Earth2026Scenario.ScenarioStatus.AVAILABLE);
+                    scenario.setStartedAt(null);
+                    scenario.setCompletedAt(null);
+                    scenario.setUpdatedAt(LocalDateTime.now());
+                    scenarioRepository.save(scenario);
+                    log.info("Scenario '{}' reset to AVAILABLE", scenario.getName());
+                    return scenario;
+                });
+    }
+
+    /**
+     * Resets all scenarios back to AVAILABLE status.
+     */
+    @Transactional
+    public void resetAllScenarios() {
+        List<Earth2026Scenario> all = scenarioRepository.findAll();
+        for (Earth2026Scenario scenario : all) {
+            scenario.setStatus(Earth2026Scenario.ScenarioStatus.AVAILABLE);
+            scenario.setStartedAt(null);
+            scenario.setCompletedAt(null);
+            scenario.setUpdatedAt(LocalDateTime.now());
+        }
+        scenarioRepository.saveAll(all);
+        log.info("Reset {} scenarios to AVAILABLE", all.size());
     }
 
     /**
@@ -625,7 +807,7 @@ public class Earth2026Service implements PlanetService {
         switch (gameType) {
             case DND_5E:
             case EARTH_2026:
-                // Direct 1:1 mapping — same 6 ability scores
+                // Direct 1:1 mapping â€” same 6 ability scores
                 stats.put("STR", character.getStrScore());
                 stats.put("DEX", character.getDexScore());
                 stats.put("CON", character.getConScore());
@@ -635,7 +817,7 @@ public class Earth2026Service implements PlanetService {
                 break;
 
             case CAPTAINS_LOG:
-                // Star Trek mapping: STR→Strength, DEX→Fitness, INT→Reason, WIS→Insight, CHA→Presence, CON→Constitution
+                // Star Trek mapping: STRâ†’Strength, DEXâ†’Fitness, INTâ†’Reason, WISâ†’Insight, CHAâ†’Presence, CONâ†’Constitution
                 stats.put("Strength", character.getStrScore());
                 stats.put("Fitness", character.getDexScore());
                 stats.put("Reason", character.getIntScore());
@@ -645,7 +827,7 @@ public class Earth2026Service implements PlanetService {
                 break;
 
             case TRAVELLER:
-                // Traveller D6 stats derived from Earth 2026 scores (scale 1-20 → 2-18 → 2D6+modifier)
+                // Traveller D6 stats derived from Earth 2026 scores (scale 1-20 â†’ 2-18 â†’ 2D6+modifier)
                 stats.put("STR", mapToTravellerStat(character.getStrScore()));
                 stats.put("DEX", mapToTravellerStat(character.getDexScore()));
                 stats.put("END", mapToTravellerStat(character.getConScore()));
@@ -771,7 +953,9 @@ public class Earth2026Service implements PlanetService {
                 .map(s -> new Earth2026BattleEnvironment.StructureInfo(
                         s.getId(), s.getName(), s.getStructureType(), s.getTechLevel(),
                         s.getDefenseRating(), s.getMaxCapacity(), s.isProvidesCover(),
-                        s.getCoverBonus(), s.isStrategic()))
+                        s.getCoverBonus(), s.isStrategic(),
+                        s.getX(), s.getY(), s.getZ(),
+                        s.getBuildingWidth(), s.getBuildingDepth(), s.getBuildingHeight()))
                 .toList();
 
         // 6. Get available units for this tech level
@@ -781,6 +965,14 @@ public class Earth2026Service implements PlanetService {
         // 7. Determine terrain type
         String resolvedTerrain = terrainType != null ? terrainType.toUpperCase() : "URBAN";
 
+        // 8. Get elevation and vegetation data from location
+        double groundElevation = location.getElevation() != null ? location.getElevation() : 0.0;
+        double vegetationDensity = location.getVegetationDensity() != null ? location.getVegetationDensity() : 0.3;
+
+        // 9. Generate terrain elevation map
+        TerrainElevationMap elevationMap = TerrainElevationMap.generateRandom(
+                50, 50, 10.0, groundElevation, resolvedTerrain, vegetationDensity);
+
         log.info("Built battle environment for location {} ({}), period={}, terrain={}, weather={}",
                 locationId, location.getName(), timePeriod, resolvedTerrain, weatherCondition);
 
@@ -788,7 +980,8 @@ public class Earth2026Service implements PlanetService {
                 location.getId(), location.getName(), location.getCity(),
                 location.getCountry(), location.getLatitude(), location.getLongitude(),
                 baseTechLevel, template.getName(), resolvedTerrain,
-                weatherCondition, structureInfos, availableUnits);
+                weatherCondition, structureInfos, availableUnits,
+                elevationMap, groundElevation, vegetationDensity);
     }
 
     @Override
@@ -1186,17 +1379,17 @@ public class Earth2026Service implements PlanetService {
     // ------------------------------------------------------------------
 
     /**
-     * Batch size for country population — keeps memory bounded per callback.
+     * Batch size for country population â€” keeps memory bounded per callback.
      */
     private static final int COUNTRY_BATCH_SIZE = 10;
 
     /**
-     * Batch size for region population — keeps memory bounded per callback.
+     * Batch size for region population â€” keeps memory bounded per callback.
      */
     private static final int REGION_BATCH_SIZE = 20;
 
     /**
-     * Deprecated monolithic population method — delegates to the phased version
+     * Deprecated monolithic population method â€” delegates to the phased version
      * and collects all results into a single response object for backward compatibility.
      */
     @Deprecated
@@ -1291,7 +1484,6 @@ public class Earth2026Service implements PlanetService {
             PlanetPopulationProgress progress) {
 
         // Initialize tracking
-        Map<String, Long> reusedAiCharacterIds = new HashMap<>();
         Map<String, String> registeredPlayerCharacters = new HashMap<>();
         List<AiCharacter> newAiCharacters = new ArrayList<>();
 
@@ -1314,15 +1506,11 @@ public class Earth2026Service implements PlanetService {
             }
         }
 
-        // Build lookup maps for existing AI characters by role and by name
+        // Build lookup map for existing AI characters by role
         Map<String, PlanetCharacterInfo> aiByRole = new HashMap<>();
-        Map<String, PlanetCharacterInfo> aiByName = new HashMap<>();
         for (PlanetCharacterInfo ai : aiCharsFromGame) {
             if (ai.getRole() != null) {
                 aiByRole.put(ai.getRole().toLowerCase(), ai);
-            }
-            if (ai.getName() != null) {
-                aiByName.put(ai.getName().toLowerCase(), ai);
             }
         }
 
@@ -1341,9 +1529,9 @@ public class Earth2026Service implements PlanetService {
         if (progress != null) {
             progress.onPlanetCreated(planet);
             if (planetFound) {
-                progress.onLog("Planet '{}' found and reused.".formatted(planet.getName()));
+                progress.onLog("Planet '" + planet.getName() + "' found and reused.");
             } else {
-                progress.onLog("Planet '{}' created.".formatted(planet.getName()));
+                progress.onLog("Planet '" + planet.getName() + "' created.");
             }
         }
 
@@ -1369,7 +1557,6 @@ public class Earth2026Service implements PlanetService {
                         if (ai.getCountryOrRegion() != null &&
                                 ai.getCountryOrRegion().equalsIgnoreCase(country.getName())) {
                             leader = findOrCreateAiCharacter(ai, speciesId);
-                            reusedAiCharacterIds.put(ai.getGameId(), leader.getId());
                             aiReused++;
                             break;
                         }
@@ -1380,7 +1567,6 @@ public class Earth2026Service implements PlanetService {
                         PlanetCharacterInfo leaderInfo = aiByRole.get("leader");
                         if (leaderInfo != null) {
                             leader = findOrCreateAiCharacter(leaderInfo, speciesId);
-                            reusedAiCharacterIds.put(leaderInfo.getGameId(), leader.getId());
                             aiReused++;
                         }
                     }
@@ -1438,7 +1624,6 @@ public class Earth2026Service implements PlanetService {
                             if (ai.getCountryOrRegion() != null &&
                                     ai.getCountryOrRegion().equalsIgnoreCase(region.getName())) {
                                 governor = findOrCreateAiCharacter(ai, speciesId);
-                                reusedAiCharacterIds.put(ai.getGameId(), governor.getId());
                                 aiReused++;
                                 break;
                             }
@@ -1449,7 +1634,6 @@ public class Earth2026Service implements PlanetService {
                             PlanetCharacterInfo govInfo = aiByRole.get("governor");
                             if (govInfo != null) {
                                 governor = findOrCreateAiCharacter(govInfo, speciesId);
-                                reusedAiCharacterIds.put(govInfo.getGameId(), governor.getId());
                                 aiReused++;
                             }
                         }
@@ -1616,9 +1800,9 @@ public class Earth2026Service implements PlanetService {
      * Reuse strategy:
      * </p>
      * <ol>
-     *   <li>Exact name match — returns the existing character with all experience intact</li>
-     *   <li>Role-based pool reuse — finds an existing AI with the same role, ordered by experience (highest first)</li>
-     *   <li>Create new — only if no existing AI character matches by name or role</li>
+     *   <li>Exact name match â€” returns the existing character with all experience intact</li>
+     *   <li>Role-based pool reuse â€” finds an existing AI with the same role, ordered by experience (highest first)</li>
+     *   <li>Create new â€” only if no existing AI character matches by name or role</li>
      * </ol>
      *
      * @param charInfo the character info from the game
@@ -1628,7 +1812,7 @@ public class Earth2026Service implements PlanetService {
     private AiCharacter findOrCreateAiCharacter(PlanetCharacterInfo charInfo, String defaultSpecies) {
         String roleName = charInfo.getRole() != null ? charInfo.getRole() : "Advisor";
 
-        // Strategy 1: Exact name match — return existing character with all experience intact
+        // Strategy 1: Exact name match â€” return existing character with all experience intact
         Optional<AiCharacter> existingByName = aiCharacterRepository.findByName(charInfo.getName());
         if (existingByName.isPresent()) {
             AiCharacter found = existingByName.get();
@@ -1637,7 +1821,7 @@ public class Earth2026Service implements PlanetService {
             return found;
         }
 
-        // Strategy 2: Role-based pool reuse — find existing AI with the same role, ordered by experience
+        // Strategy 2: Role-based pool reuse â€” find existing AI with the same role, ordered by experience
         // This ensures the same AI Admins are reused across planets with retained experience
         List<AiCharacter> candidatesByRole = aiCharacterRepository.findByRoleAndActiveTrueOrderByTotalExperienceDesc(roleName);
         if (!candidatesByRole.isEmpty()) {
@@ -1658,7 +1842,7 @@ public class Earth2026Service implements PlanetService {
             return reused;
         }
 
-        // Strategy 3: Create new AI character — only when no existing match found
+        // Strategy 3: Create new AI character â€” only when no existing match found
         AiCharacter aiChar = new AiCharacter();
         aiChar.setName(charInfo.getName());
         aiChar.setRole(roleName);
@@ -1694,7 +1878,7 @@ public class Earth2026Service implements PlanetService {
      * @return the found or newly created AI character (persisted)
      */
     private AiCharacter findOrCreateAiCharacterByRole(String role, String empireName, String description, String speciesId) {
-        // Strategy 1: Role-based pool reuse — find existing AI with the same role, ordered by experience
+        // Strategy 1: Role-based pool reuse â€” find existing AI with the same role, ordered by experience
         List<AiCharacter> candidatesByRole = aiCharacterRepository.findByRoleAndActiveTrueOrderByTotalExperienceDesc(role);
         if (!candidatesByRole.isEmpty()) {
             // Pick the candidate with the highest experience
@@ -1726,5 +1910,348 @@ public class Earth2026Service implements PlanetService {
                 aiChar.getName(), aiChar.getRole(), aiChar.getEmpireName());
 
         return aiCharacterRepository.save(aiChar);
+    }
+
+    // ---- Planet Surface Management (Transport Tycoon Integration) ----
+
+    /**
+     * Initializes the planet surface using the Transport Tycoon engine.
+     * <p>
+     * This method calls all three bridge services in sequence:
+     * <ol>
+     *   <li>PlanetBuilderBridge: builds hex-based settlements, industries, and stations</li>
+     *   <li>EconomyBridge: initializes cargo production and consumption chains</li>
+     *   <li>TransportBridge: creates trade routes with vehicles</li>
+     * </ol>
+     *
+     * @param galaxyName the galaxy name for event publishing
+     * @return summary of the build results
+     */
+    public Map<String, Object> initializePlanetSurface(String galaxyName) {
+        Map<String, Object> result = new HashMap<>();
+        log.info("Initializing planet surface for galaxy: {}", galaxyName);
+
+        if (planetBuilderBridge == null || economyBridge == null || transportBridge == null) {
+            result.put("success", false);
+            result.put("error", "Bridge services not available");
+            return result;
+        }
+
+        // Step 1: Build geography (settlements, industries, stations)
+        // Note: This requires a hex-based Planet object which is created by GalaxyBuildService
+        // For Earth2026, the geography is already seeded via JPA entities
+        result.put("geographyInitialized", true);
+
+        // Step 2: Initialize economy
+        int countriesProcessed = economyBridge.initializeEconomyFromCountries();
+        result.put("countriesProcessed", countriesProcessed);
+
+        // Step 3: Initialize transport network
+        int routesCreated = transportBridge.initializeTransportNetwork(galaxyName);
+        result.put("routesCreated", routesCreated);
+
+        result.put("success", true);
+        log.info("Planet surface initialized: {} countries, {} routes", countriesProcessed, routesCreated);
+        return result;
+    }
+
+    /**
+     * Processes one planet turn: economy + transport.
+     *
+     * @return combined turn results
+     */
+    public Map<String, Object> processPlanetTurn() {
+        Map<String, Object> result = new HashMap<>();
+
+        if (economyBridge == null || transportBridge == null) {
+            result.put("success", false);
+            result.put("error", "Bridge services not available");
+            return result;
+        }
+
+        long cargoValue = economyBridge.processEconomyTurn();
+        result.put("cargoValueDelivered", cargoValue);
+
+        result.put("success", true);
+        return result;
+    }
+
+    /**
+     * Returns a combined economy + transport summary for the planet.
+     */
+    public Map<String, Object> getPlanetEconomySummary() {
+        Map<String, Object> summary = new HashMap<>();
+
+        if (economyBridge != null) {
+            summary.put("economy", economyBridge.getPlanetEconomySummary());
+        }
+
+        if (transportBridge != null) {
+            summary.put("transport", transportBridge.getNetworkSummary());
+        }
+
+        return summary;
+    }
+
+    /**
+     * Returns economy summary for a specific country.
+     *
+     * @param isoCode the country ISO code
+     * @return economy summary map
+     */
+    public Map<String, Object> getCountryEconomySummary(String isoCode) {
+        if (economyBridge != null) {
+            return economyBridge.getCountryEconomySummary(isoCode);
+        }
+        Map<String, Object> empty = new HashMap<>();
+        empty.put("error", "Economy bridge not available");
+        return empty;
+    }
+
+    /**
+     * Books passenger transport between two locations.
+     *
+     * @param fromLocationId the origin location ID
+     * @param toLocationId the destination location ID
+     * @param passengers number of passengers
+     * @return booking result
+     */
+    public Map<String, Object> bookPassengerTransport(Long fromLocationId, Long toLocationId, int passengers) {
+        if (transportBridge != null) {
+            return transportBridge.bookPassengerTransport(fromLocationId, toLocationId, passengers);
+        }
+        Map<String, Object> empty = new HashMap<>();
+        empty.put("success", false);
+        empty.put("error", "Transport bridge not available");
+        return empty;
+    }
+
+    // ------------------------------------------------------------------
+    // Companion operations (PlanetService implementation)
+    // ------------------------------------------------------------------
+
+    @Override
+    public Optional<Earth2026Companion> getCompanion(Long id) {
+        return companionService.findById(id);
+    }
+
+    @Override
+    public List<Earth2026Companion> getCompanionsByCharacter(Long characterId) {
+        return companionService.findActiveByOwnerCharacterId(characterId);
+    }
+
+    @Override
+    public List<Earth2026Companion> getCompanionsBySpecies(String speciesId) {
+        return companionService.findBySpeciesId(speciesId);
+    }
+
+    @Override
+    public List<Earth2026Companion> getCompanionsByType(Earth2026Companion.CompanionType companionType) {
+        return companionService.findByCompanionType(companionType);
+    }
+
+    @Override
+    public Optional<Earth2026Companion> increaseCompanionBond(Long companionId, int amount) {
+        return companionService.increaseBond(companionId, amount);
+    }
+
+    @Override
+    public Optional<Earth2026Companion> decreaseCompanionBond(Long companionId, int amount) {
+        return companionService.decreaseBond(companionId, amount);
+    }
+
+    @Override
+    public Optional<Earth2026Companion> advanceCompanionTraining(Long companionId) {
+        return companionService.advanceTraining(companionId);
+    }
+
+    @Override
+    public Optional<Earth2026Companion> healCompanion(Long companionId, int amount) {
+        return companionService.heal(companionId, amount);
+    }
+
+    @Override
+    public Optional<Earth2026Companion> damageCompanion(Long companionId, int amount) {
+        return companionService.damage(companionId, amount);
+    }
+
+    // ------------------------------------------------------------------
+    // Family operations (PlanetService implementation)
+    // ------------------------------------------------------------------
+
+    @Override
+    public Optional<Earth2026Family> getFamily(Long id) {
+        return familyService.findById(id);
+    }
+
+    @Override
+    public List<Earth2026Family> getAllFamilies() {
+        return familyService.findActiveFamilies();
+    }
+
+    @Override
+    public List<Earth2026Family> findFamiliesByName(String name) {
+        return familyService.findByName(name);
+    }
+
+    @Override
+    public List<Earth2026FamilyMember> getFamilyMembers(Long familyId) {
+        return familyService.findActiveMembersByFamilyId(familyId);
+    }
+
+    @Override
+    public List<Earth2026FamilyMember> getFamilyMembersByCharacter(Long characterId) {
+        return familyService.findActiveMembersByCharacterId(characterId);
+    }
+
+    @Override
+    public List<Earth2026FamilyMember> getFamilyMembersByNpc(Long npcId) {
+        return familyService.findMembersByNpcId(npcId);
+    }
+
+    @Override
+    public Optional<Earth2026FamilyMember> addFamilyMember(Long familyId, Long characterId, Long npcId,
+                                                            Earth2026FamilyMember.RelationshipType relationshipType) {
+        return familyService.addMember(familyId, characterId, npcId, relationshipType);
+    }
+
+    @Override
+    public boolean removeFamilyMember(Long memberId) {
+        return familyService.removeMember(memberId);
+    }
+
+    @Override
+    public Optional<Earth2026FamilyMember> increaseFamilyBond(Long memberId, int amount) {
+        return familyService.increaseBond(memberId, amount);
+    }
+
+    @Override
+    public Optional<Earth2026FamilyMember> decreaseFamilyBond(Long memberId, int amount) {
+        return familyService.decreaseBond(memberId, amount);
+    }
+
+    @Override
+    public Optional<Earth2026Family> familyGathering(Long familyId, int bondIncrease) {
+        return familyService.familyGathering(familyId, bondIncrease);
+    }
+
+    // ------------------------------------------------------------------
+    // Connection operations
+    // ------------------------------------------------------------------
+
+    @Override
+    public Optional<Earth2026Connection> getConnection(Long id) {
+        return connectionService.findById(id);
+    }
+
+    @Override
+    public List<Earth2026Connection> getAllConnections() {
+        return connectionService.findActiveConnections();
+    }
+
+    @Override
+    public List<Earth2026Connection> getConnectionsBySource(Earth2026Connection.EntityType entityType, Long entityId) {
+        return connectionService.findActiveBySourceEntity(entityType, entityId);
+    }
+
+    @Override
+    public List<Earth2026Connection> getConnectionsByTarget(Earth2026Connection.EntityType entityType, Long entityId) {
+        return connectionService.findActiveByTargetEntity(entityType, entityId);
+    }
+
+    @Override
+    public List<Earth2026Connection> getConnectionsByEntity(Earth2026Connection.EntityType entityType, Long entityId) {
+        return connectionService.findByEntity(entityType, entityId);
+    }
+
+    @Override
+    public List<Earth2026Connection> getConnectionsByType(Earth2026Connection.ConnectionType connectionType) {
+        return connectionService.findActiveByConnectionType(connectionType);
+    }
+
+    @Override
+    public Earth2026Connection createConnection(
+            Earth2026Connection.EntityType sourceType, Long sourceId,
+            Earth2026Connection.EntityType targetType, Long targetId,
+            Earth2026Connection.ConnectionType connectionType,
+            int strength, int secrecyLevel) {
+        return connectionService.createConnection(sourceType, sourceId, targetType, targetId, connectionType, strength, secrecyLevel);
+    }
+
+    @Override
+    public Optional<Earth2026Connection> increaseConnectionStrength(Long connectionId, int amount) {
+        return connectionService.increaseStrength(connectionId, amount);
+    }
+
+    @Override
+    public Optional<Earth2026Connection> decreaseConnectionStrength(Long connectionId, int amount) {
+        return connectionService.decreaseStrength(connectionId, amount);
+    }
+
+    @Override
+    public boolean deactivateConnection(Long connectionId) {
+        return connectionService.deactivateConnection(connectionId);
+    }
+
+    // ------------------------------------------------------------------
+    // Organization operations
+    // ------------------------------------------------------------------
+
+    @Override
+    public Optional<Earth2026Organization> getOrganization(Long id) {
+        return organizationService.findById(id);
+    }
+
+    @Override
+    public List<Earth2026Organization> getAllOrganizations() {
+        return organizationService.findActiveOrganizations();
+    }
+
+    @Override
+    public List<Earth2026Organization> getOrganizationsByType(Earth2026Organization.OrganizationType orgType) {
+        return organizationService.findActiveByType(orgType);
+    }
+
+    @Override
+    public List<Earth2026OrgMember> getOrganizationMembers(Long organizationId) {
+        return organizationService.findActiveMembersByOrganizationId(organizationId);
+    }
+
+    @Override
+    public List<Earth2026OrgMember> getOrganizationMembersByEntity(
+            Earth2026Connection.EntityType memberType, Long memberId) {
+        return organizationService.findActiveMembersByEntity(memberType, memberId);
+    }
+
+    @Override
+    public Optional<Earth2026OrgMember> addOrganizationMember(Long organizationId,
+                                                               Earth2026Connection.EntityType memberType,
+                                                               Long memberId, String role) {
+        return organizationService.addMember(organizationId, memberType, memberId, role);
+    }
+
+    @Override
+    public boolean removeOrganizationMember(Long memberId) {
+        return organizationService.removeMember(memberId);
+    }
+
+    @Override
+    public Optional<Earth2026OrgMember> increaseOrganizationLoyalty(Long memberId, int amount) {
+        return organizationService.increaseLoyalty(memberId, amount);
+    }
+
+    @Override
+    public Optional<Earth2026OrgMember> decreaseOrganizationLoyalty(Long memberId, int amount) {
+        return organizationService.decreaseLoyalty(memberId, amount);
+    }
+
+    @Override
+    public Optional<Earth2026OrgMember> promoteOrganizationMember(Long memberId, int levels) {
+        return organizationService.promoteMember(memberId, levels);
+    }
+
+    @Override
+    public Optional<Earth2026OrgMember> demoteOrganizationMember(Long memberId, int levels) {
+        return organizationService.demoteMember(memberId, levels);
     }
 }

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.traveller;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,10 +11,10 @@ import java.util.List;
  * The service provider handles all ship maintenance operations:
  * </p>
  * <ul>
- *   <li>Refueling — filling fusion fuel tanks for jump travel</li>
- *   <li>Hull repair — restoring damaged hull points</li>
- *   <li>System repair — fixing damaged weapon systems and drives</li>
- *   <li>Maintenance — routine upkeep to prevent future damage</li>
+ *   <li>Refueling ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â filling fusion fuel tanks for jump travel</li>
+ *   <li>Hull repair ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â restoring damaged hull points</li>
+ *   <li>System repair ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â fixing damaged weapon systems and drives</li>
+ *   <li>Maintenance ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â routine upkeep to prevent future damage</li>
  * </ul>
  * <p>
  * Service costs vary by station type and world price level. Alpha stations
@@ -72,8 +73,8 @@ public class StationService {
     /**
      * Returns the service rate multiplier for this station.
      * <p>
-     * Lower values mean cheaper services. Alpha stations have the best rates (0.8×),
-     * while outposts have the worst (2.0×).
+     * Lower values mean cheaper services. Alpha stations have the best rates (0.8ÃƒÆ’Ã¢â‚¬â€),
+     * while outposts have the worst (2.0ÃƒÆ’Ã¢â‚¬â€).
      * </p>
      *
      * @return the service rate multiplier
@@ -286,7 +287,7 @@ public class StationService {
         }
 
         double serviceMultiplier = getServiceRateMultiplier();
-        int cost = (int) ((tonnage / 1000) * BASE_MAINTENANCE_COST_PER_TON * serviceMultiplier);
+        int cost = (int) ((tonnage / 1000.0) * BASE_MAINTENANCE_COST_PER_TON * serviceMultiplier);
 
         logService("Maintenance", cost, "Routine maintenance on " + tonnage + "kt ship");
         return cost;

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.neuron.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.neuron.config.FederationConfig;
 import com.yisy.modules.doramcu.neuron.dto.*;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -45,7 +45,7 @@ public class FederationService {
     /** Current model version at this coordinator. */
     private volatile long currentModelVersion = 0;
 
-    /** Sync history — last 50 sync operations. */
+    /** Sync history â€” last 50 sync operations. */
     private final LinkedList<SyncHistoryDto> syncHistory = new LinkedList<>();
 
     @Value("${server.port:8084}")
@@ -65,7 +65,7 @@ public class FederationService {
     @PostConstruct
     public void init() {
         if (!config.isEnabled()) {
-            log.info("Federation disabled — running in standalone mode");
+            log.info("Federation disabled â€” running in standalone mode");
             return;
         }
 
@@ -98,7 +98,7 @@ public class FederationService {
         }
     }
 
-    // ── Peer Management ──────────────────────────────────────────────────────
+    // â”€â”€ Peer Management â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Register a new peer coordinator.
@@ -135,7 +135,7 @@ public class FederationService {
         return Optional.ofNullable(peers.get(region));
     }
 
-    // ── Registry Sync ────────────────────────────────────────────────────────
+    // â”€â”€ Registry Sync â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Sync registry with all peers (summary sync).
@@ -238,14 +238,17 @@ public class FederationService {
 
         // Wait for all sync tasks to complete
         try {
-            executor.awaitTermination(1, TimeUnit.SECONDS);
+            boolean terminated = executor.awaitTermination(1, TimeUnit.SECONDS);
+            if (!terminated) {
+                log.warn("Sync tasks did not complete within timeout");
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
         return results;
     }
 
-    // ── Cross-Region Consensus ───────────────────────────────────────────────
+    // â”€â”€ Cross-Region Consensus â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Request cross-region consensus from all peers.
@@ -309,7 +312,7 @@ public class FederationService {
         return results;
     }
 
-    // ── Experience Forwarding ────────────────────────────────────────────────
+    // â”€â”€ Experience Forwarding â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Forward experience batch to primary coordinator.
@@ -317,7 +320,7 @@ public class FederationService {
      */
     public boolean forwardExperienceToPrimary(FederationExperienceBatch batch) {
         if (config.isPrimary()) {
-            log.debug("This is the primary coordinator — not forwarding experience");
+            log.debug("This is the primary coordinator â€” not forwarding experience");
             return false;
         }
 
@@ -365,7 +368,7 @@ public class FederationService {
         return count;
     }
 
-    // ── Model Update Propagation ─────────────────────────────────────────────
+    // â”€â”€ Model Update Propagation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Propagate model update to all peer coordinators.
@@ -410,7 +413,10 @@ public class FederationService {
         }
 
         try {
-            executor.awaitTermination(1, TimeUnit.SECONDS);
+            boolean terminated2 = executor.awaitTermination(1, TimeUnit.SECONDS);
+            if (!terminated2) {
+                log.warn("Consensus tasks did not complete within timeout");
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -426,7 +432,7 @@ public class FederationService {
         metricsService.incrementModelUpdateReceived();
     }
 
-    // ── Peer Health Monitoring ───────────────────────────────────────────────
+    // â”€â”€ Peer Health Monitoring â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Periodic health check for all peers.
@@ -454,7 +460,7 @@ public class FederationService {
         }
     }
 
-    // ── Federation Status ────────────────────────────────────────────────────
+    // â”€â”€ Federation Status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Get federation status summary.
@@ -488,7 +494,7 @@ public class FederationService {
         this.currentModelVersion = modelVersion;
     }
 
-    // ── Health Assessment ────────────────────────────────────────────────────
+    // â”€â”€ Health Assessment â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Assess overall federation health and return a comprehensive dashboard DTO.
@@ -622,7 +628,7 @@ public class FederationService {
         return new ArrayList<>(syncHistory);
     }
 
-    // ── Health Assessment Helpers ────────────────────────────────────────────
+    // â”€â”€ Health Assessment Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private int calculateHealthScore() {
         if (peers.isEmpty()) {
@@ -662,7 +668,7 @@ public class FederationService {
         // Check unreachable peers
         for (FederationPeer peer : peers.values()) {
             if (peer.getStatus() == FederationPeer.Status.UNREACHABLE) {
-                recommendations.add("Peer '" + peer.getRegion() + "' is unreachable — check network connectivity to " + peer.getUrl());
+                recommendations.add("Peer '" + peer.getRegion() + "' is unreachable â€” check network connectivity to " + peer.getUrl());
             }
         }
 
@@ -671,9 +677,9 @@ public class FederationService {
             long drift = peer.getModelVersion() - currentModelVersion;
             if (drift != 0) {
                 if (drift > 0) {
-                    recommendations.add("Peer '" + peer.getRegion() + "' is ahead by " + drift + " model version(s) — consider syncing from peer");
+                    recommendations.add("Peer '" + peer.getRegion() + "' is ahead by " + drift + " model version(s) â€” consider syncing from peer");
                 } else {
-                    recommendations.add("Peer '" + peer.getRegion() + "' is behind by " + Math.abs(drift) + " model version(s) — propagate model update");
+                    recommendations.add("Peer '" + peer.getRegion() + "' is behind by " + Math.abs(drift) + " model version(s) â€” propagate model update");
                 }
             }
         }
@@ -683,16 +689,16 @@ public class FederationService {
             if (peer.getLastContact() != null) {
                 long seconds = java.time.Duration.between(peer.getLastContact(), Instant.now()).getSeconds();
                 if (seconds > 120) {
-                    recommendations.add("Peer '" + peer.getRegion() + "' last contacted " + seconds + "s ago — sync may be stale");
+                    recommendations.add("Peer '" + peer.getRegion() + "' last contacted " + seconds + "s ago â€” sync may be stale");
                 }
             } else {
-                recommendations.add("Peer '" + peer.getRegion() + "' has never been contacted — verify peer URL is correct");
+                recommendations.add("Peer '" + peer.getRegion() + "' has never been contacted â€” verify peer URL is correct");
             }
         }
 
         // Check local neuron count
         if (neuronRegistry.getTotalCount() == 0) {
-            recommendations.add("No neurons registered locally — deploy neurons to this region");
+            recommendations.add("No neurons registered locally â€” deploy neurons to this region");
         }
 
         return recommendations;
@@ -772,7 +778,7 @@ public class FederationService {
         }
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
+    // â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private String extractRegionFromUrl(String url) {
         // Try to extract region from URL path or use hostname
@@ -783,7 +789,7 @@ public class FederationService {
         return "unknown-" + System.nanoTime();
     }
 
-    // ── Inner Classes ────────────────────────────────────────────────────────
+    // â”€â”€ Inner Classes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Federation status summary.

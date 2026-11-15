@@ -1,5 +1,9 @@
 package com.yisy.modules.doramcu.hex;
 
+import com.yisy.modules.doramcu.hex.DamageOverlay;
+import com.yisy.modules.doramcu.hex.DamageTier;
+import com.yisy.modules.doramcu.hex.Skin;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -22,6 +26,10 @@ public class M3space {
     private ShipComponent component;
     private Object payload;
     private int hitpoints;
+
+    // ---- Cached damage tier for skin system ----
+    private transient DamageTier cachedDamageTier;
+    private transient int cachedHitpoints;
 
     /**
      * Creates a new M3space cell at origin with default Aluminum material.
@@ -104,6 +112,7 @@ public class M3space {
      */
     public void setHitpoints(int hitpoints) {
         this.hitpoints = Math.max(0, Math.min(hitpoints, getMaxHitpoints()));
+        invalidateDamageTierCache();
     }
 
     /**
@@ -121,7 +130,88 @@ public class M3space {
             this.payload = null;
             return true;
         }
+        // Invalidate cached damage tier when hitpoints change
+        invalidateDamageTierCache();
         return false;
+    }
+
+    // ---- Skin / Damage tier integration ----
+
+    /**
+     * Invalidates the cached damage tier so it will be recomputed on next access.
+     */
+    private void invalidateDamageTierCache() {
+        this.cachedDamageTier = null;
+        this.cachedHitpoints = -1;
+    }
+
+    /**
+     * Computes the damage tier for this cell based on the hitpoint ratio.
+     * <p>
+     * The tier is determined by {@code hitpoints / maxHitpoints}:
+     * </p>
+     * <ul>
+     *   <li>PRISTINE — 100-90% HP</li>
+     *   <li>LIGHT — 89-70% HP</li>
+     *   <li>MODERATE — 69-50% HP</li>
+     *   <li>HEAVY — 49-30% HP</li>
+     *   <li>CRITICAL — 29-0% HP</li>
+     * </ul>
+     * <p>
+     * The result is cached to avoid recalculation on every access.
+     * </p>
+     *
+     * @return the current damage tier
+     */
+    public DamageTier getDamageTier() {
+        // Return cached value if hitpoints haven't changed
+        if (cachedDamageTier != null && cachedHitpoints == hitpoints) {
+            return cachedDamageTier;
+        }
+        int max = getMaxHitpoints();
+        if (max <= 0) {
+            cachedDamageTier = DamageTier.CRITICAL;
+            cachedHitpoints = hitpoints;
+            return cachedDamageTier;
+        }
+        double ratio = (double) hitpoints / max;
+        DamageTier tier;
+        if (ratio >= 0.90) {
+            tier = DamageTier.PRISTINE;
+        } else if (ratio >= 0.70) {
+            tier = DamageTier.LIGHT;
+        } else if (ratio >= 0.50) {
+            tier = DamageTier.MODERATE;
+        } else if (ratio >= 0.30) {
+            tier = DamageTier.HEAVY;
+        } else {
+            tier = DamageTier.CRITICAL;
+        }
+        cachedDamageTier = tier;
+        cachedHitpoints = hitpoints;
+        return tier;
+    }
+
+    /**
+     * Returns the visual overlay description for the current damage tier from the given skin.
+     * <p>
+     * This method delegates to {@link Skin#getDamageOverlay()} and looks up the
+     * description for the current {@link #getDamageTier()}.
+     * </p>
+     *
+     * @param skin the skin to use for overlay lookup
+     * @return the overlay description, or null if the skin has no overlay for this tier
+     */
+    public String getDamageOverlay(Skin skin) {
+        if (skin == null) {
+            return null;
+        }
+        DamageTier tier = getDamageTier();
+        DamageOverlay overlay = skin.getDamageOverlay();
+        if (overlay == null) {
+            return null;
+        }
+        return overlay.getDescription(tier);
     }
 
     // ---- State machine ----
@@ -253,6 +343,7 @@ public class M3space {
         this.component = null;
         this.payload = null;
         this.hitpoints = 0;
+        invalidateDamageTierCache();
         return true;
     }
 
@@ -267,6 +358,7 @@ public class M3space {
             this.component = null;
             this.payload = null;
             this.hitpoints = getMaxHitpoints();
+            invalidateDamageTierCache();
             return true;
         }
         return false;
@@ -280,6 +372,7 @@ public class M3space {
         this.component = null;
         this.payload = null;
         this.hitpoints = getMaxHitpoints();
+        invalidateDamageTierCache();
     }
 
     /**

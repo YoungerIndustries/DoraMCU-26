@@ -59,7 +59,14 @@ public enum ThirdReichUnitType {
      * Air support unit. Close air support from aircraft.
      * Provides attack bonus to adjacent friendly units.
      */
-    AIR_SUPPORT("Air Support", 3, 0, 4, 2, "Close air support from aircraft");
+    AIR_SUPPORT("Air Support", 3, 0, 4, 2, "Close air support from aircraft"),
+
+    /**
+     * BattleMech unit. Heavy bipedal combat vehicle.
+     * Very high attack and defense with moderate mobility.
+     * Adapted from MechWarrior/BattleTech for cross-module ground combat.
+     */
+    MECH("BattleMech", 5, 4, 3, 4, "Heavy bipedal combat vehicle");
 
     private final String displayName;
     private final int baseAttack;

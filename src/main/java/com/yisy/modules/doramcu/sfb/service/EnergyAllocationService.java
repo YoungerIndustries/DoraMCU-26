@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.sfb.service;
 
+import org.springframework.stereotype.Service;
 import com.yisy.modules.doramcu.sfb.model.SfbEnergyAllocation;
 import com.yisy.modules.doramcu.sfb.model.SfbSSD;
 import com.yisy.modules.doramcu.sfb.model.SfbShip;
@@ -11,6 +12,8 @@ import com.yisy.modules.doramcu.sfb.model.SfbShip;
  * batteries, and capacitors based on the ship's SSD state.
  * </p>
  */
+
+@Service
 public class EnergyAllocationService {
 
     /**

@@ -85,7 +85,7 @@ public class PlayerActionAnalyzer {
         Map<PlayerActionCategory, Integer> counts = playerActionCounts.computeIfAbsent(playerId, k -> new HashMap<>());
         counts.merge(category, 1, Integer::sum);
 
-        log.debug("Recorded action for player {}: {} (intensity={:.2f})", playerId, category, intensity);
+        log.debug("Recorded action for player {}: {} (intensity={})", playerId, category, intensity);
     }
 
     /**

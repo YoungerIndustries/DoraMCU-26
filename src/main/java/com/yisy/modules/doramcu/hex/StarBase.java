@@ -273,9 +273,8 @@ public class StarBase {
      */
     public Map<ModuleType, Long> getModuleCounts() {
         Map<ModuleType, Long> counts = new EnumMap<>(ModuleType.class);
-        moduleConfiguration.values().stream()
-                .collect(java.util.stream.Collectors.groupingBy(type -> type, java.util.stream.Collectors.counting()))
-                .forEach(counts::put);
+        counts.putAll(moduleConfiguration.values().stream()
+                .collect(java.util.stream.Collectors.groupingBy(t -> t, java.util.stream.Collectors.counting())));
         return counts;
     }
     

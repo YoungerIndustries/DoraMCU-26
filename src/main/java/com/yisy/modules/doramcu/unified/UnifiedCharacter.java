@@ -1,5 +1,8 @@
 package com.yisy.modules.doramcu.unified;
 
+import com.yisy.modules.doramcu.gamecore.GameType;
+import com.yisy.modules.doramcu.hex.*;
+
 import java.util.List;
 import java.util.Map;
 
@@ -14,13 +17,13 @@ import java.util.Map;
  * <p>
  * The 7-core stats are:
  * <ul>
- *   <li>STR — Strength (physical power)</li>
- *   <li>DEX — Dexterity (agility and reflexes)</li>
- *   <li>CON — Constitution (endurance and health)</li>
- *   <li>INT — Intelligence (knowledge and reasoning)</li>
- *   <li>WIS — Wisdom (intuition and perception)</li>
- *   <li>CHA — Charisma (social influence and presence)</li>
- *   <li>TECH — Technical aptitude (engineering and science)</li>
+ *   <li>STR Ã¢â‚¬â€ Strength (physical power)</li>
+ *   <li>DEX Ã¢â‚¬â€ Dexterity (agility and reflexes)</li>
+ *   <li>CON Ã¢â‚¬â€ Constitution (endurance and health)</li>
+ *   <li>INT Ã¢â‚¬â€ Intelligence (knowledge and reasoning)</li>
+ *   <li>WIS Ã¢â‚¬â€ Wisdom (intuition and perception)</li>
+ *   <li>CHA Ã¢â‚¬â€ Charisma (social influence and presence)</li>
+ *   <li>TECH Ã¢â‚¬â€ Technical aptitude (engineering and science)</li>
  * </ul>
  * </p>
  * <p>

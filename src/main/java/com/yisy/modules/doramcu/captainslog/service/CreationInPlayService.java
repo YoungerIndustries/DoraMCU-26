@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.dto.CreateCharacterRequest;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
@@ -9,7 +10,6 @@ import com.yisy.modules.doramcu.captainslog.repository.CaptainLogFocusRepository
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogValueRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -24,11 +24,11 @@ import java.util.*;
  * <p>
  * The process has 5 steps:
  * <ol>
- *   <li><b>Role</b> — Choose the character's primary role (Captain, Science Officer, Security, etc.)</li>
- *   <li><b>Background</b> — Choose a background trait that shapes the character's past</li>
- *   <li><b>Attributes</b> — Allocate attribute points based on the role</li>
- *   <li><b>Disciplines</b> — Choose primary and secondary disciplines</li>
- *   <li><b>Values</b> — Define the character's core values</li>
+ *   <li><b>Role</b> â€” Choose the character's primary role (Captain, Science Officer, Security, etc.)</li>
+ *   <li><b>Background</b> â€” Choose a background trait that shapes the character's past</li>
+ *   <li><b>Attributes</b> â€” Allocate attribute points based on the role</li>
+ *   <li><b>Disciplines</b> â€” Choose primary and secondary disciplines</li>
+ *   <li><b>Values</b> â€” Define the character's core values</li>
  * </ol>
  * </p>
  * <p>
@@ -455,7 +455,7 @@ public class CreationInPlayService {
                 CaptainLogCharacter.Discipline primaryDisc = session.role.getRecommendedDisciplines().get(0);
                 focus.setDiscipline(CaptainLogFocus.Discipline.valueOf(primaryDisc.name()));
             }
-            focus = focusRepository.save(focus);
+            focusRepository.save(focus);
             log.info("Added focus '{}' to {}", focusName, character.getName());
         }
 

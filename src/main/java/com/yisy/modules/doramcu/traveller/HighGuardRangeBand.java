@@ -205,10 +205,10 @@ public enum HighGuardRangeBand {
         if (attackerCharging && defenderCharging) {
             // Both charging — thrust combines
             effectiveThrust = attackerThrust + defenderThrust;
-        } else if (attackerCharging && !defenderCharging) {
+        } else if (attackerCharging) {
             // Attacker charges, defender flees — difference
             effectiveThrust = attackerThrust - defenderThrust;
-        } else if (!attackerCharging && defenderCharging) {
+        } else if (defenderCharging) {
             // Attacker flees, defender charges — difference (negative = closer)
             effectiveThrust = defenderThrust - attackerThrust;
         } else {

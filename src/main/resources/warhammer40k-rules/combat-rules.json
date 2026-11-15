@@ -1,0 +1,114 @@
+{
+  "ground_combat": {
+    "source": "Warhammer 40K",
+    "description": "Grimdark tactical combat in the 41st millennium using d10-based resolution",
+    "phases": {
+      "movement_phase": {
+        "description": "Units move according to their movement allowance",
+        "steps": [
+          "Declare unit activation order",
+          "Move units within movement range",
+          "Handle jumping, falling, or boarding actions"
+        ]
+      },
+      "psychic_phase": {
+        "description": "Psychic powers are declared and resolved",
+        "steps": [
+          "Declare psychic powers",
+          "Resolve denial of the witch attempts",
+          "Roll for manifestation",
+          "Apply psychic effects"
+        ]
+      },
+      "shooting_phase": {
+        "description": "Units fire ranged weapons",
+        "steps": [
+          "Declare shooting unit",
+          "Select targets within range",
+          "Roll to hit (d10-based)",
+          "Roll to wound",
+          "Allocate and save against wounds"
+        ]
+      },
+      "combat_phase": {
+        "description": "Melee combat is resolved",
+        "steps": [
+          "Declare charges and move",
+          "Resolve charge attempts",
+          "Select attack targets in combat",
+          "Roll attacks, hits, wounds, saves",
+          "Resolve mortal wounds"
+        ]
+      },
+      "end_phase": {
+        "description": "End of turn actions and morale checks",
+        "steps": [
+          "Remove dead models",
+          "Check unit morale",
+          "Reset ready counters",
+          "Pass turn to opponent"
+        ]
+      }
+    },
+    "attack_rules": {
+      "steps": [
+        "Declare attacking unit and weapon",
+        "Calculate number of attacks based on weapon profile",
+        "Roll d10 to hit - must meet or exceed Ballistic Skill (BS) or Weapon Skill (WS)",
+        "Roll d10 to wound - must meet or exceed wound threshold based on weapon strength vs target toughness",
+        "Target rolls armor save - d10 + armor bonus vs save difficulty",
+        "Unsaved wounds become mortal wounds"
+      ],
+      "dice_types": {
+        "attack_die": "d10",
+        "save_die": "d10",
+        "damage_die": "d10"
+      },
+      "to_hit_table": {
+        "BS_1": 2,
+        "BS_2": 3,
+        "BS_3": 4,
+        "BS_4": 5,
+        "BS_5": 6,
+        "BS_6": 7,
+        "BS_7": 8,
+        "BS_8": 9,
+        "BS_9": 10
+      },
+      "wound_table": {
+        "glancing": "1 damage",
+        "hit": "2 damage",
+        "penetrating": "3 damage + special effects"
+      }
+    },
+    "movement": {
+      "description": "Units move based on movement points and terrain modifiers",
+      "terrain": {
+        "open_ground": { "modifier": 0, "description": "Normal movement" },
+        "difficult_terrain": { "modifier": -2, "description": "Ruins, forests, urban areas" },
+        "impassable": { "modifier": -99, "description": "Cannot pass without special abilities" },
+        "cover": { "save_bonus": 1, "description": "Provides armor save bonus" }
+      }
+    }
+  },
+  "space_combat": {
+    "source": "Warhammer 40K",
+    "description": "Orbital and deep space naval combat",
+    "phases": {
+      "movement_phase": {
+        "description": "Ships adjust position and speed",
+        "steps": ["Declare movement", "Resolve orbital mechanics", "Update relative positions"]
+      },
+      "weapon_phase": {
+        "description": "Ships fire weapons",
+        "steps": ["Declare targets", "Roll to hit", "Resolve damage", "Check hull integrity"]
+      }
+    },
+    "ship_types": {
+      "capital_ship": { "hull": 100, "shields": 50, "weapons": 10 },
+      "cruiser": { "hull": 60, "shields": 30, "weapons": 6 },
+      "frigate": { "hull": 30, "shields": 15, "weapons": 3 },
+      "fighter": { "hull": 10, "shields": 5, "weapons": 2 }
+    }
+  }
+}

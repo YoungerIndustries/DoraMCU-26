@@ -1,6 +1,8 @@
 package com.yisy.modules.doramcu.hex.planet.cargo;
 
 import com.yisy.modules.doramcu.hex.planet.*;
+import com.yisy.modules.doramcu.hex.planet.hullmodule.HullModule;
+import com.yisy.modules.doramcu.hex.planet.hullmodule.HullModuleType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,9 @@ public class CargoGenerationService {
 
     /** Maximum cargo waiting at a station before overflow */
     private static final int MAX_CARGO_WAITING = 100;
+
+    /** Decay rate for perishable cargo (1/N of amount per turn) */
+    private static final int DECAY_RATE = 10;
 
     /**
      * Processes cargo generation for all industries on a planet.
@@ -94,6 +99,170 @@ public class CargoGenerationService {
     }
 
     /**
+     * Processes cargo generation for all HullModules on a planet.
+     * HullModules with output cargo produce at connected stations.
+     * HullModules with input cargo consume from connected stations first.
+     *
+     * @param modules list of active HullModules
+     * @param stations map of station IDs to stations
+     * @return total cargo generated from HullModules
+     */
+    public int generateHullModuleCargo(List<HullModule> modules, Map<String, Station> stations) {
+        int totalGenerated = 0;
+
+        for (HullModule module : modules) {
+            if (!module.isActive() || module.getConstructionProgress() < 100) continue;
+            if (module.getModuleType() == null) continue;
+
+            // Only process INDUSTRY and MILITARY category modules for cargo
+            HullModuleType.Category category = module.getModuleType().getCategory();
+            if (category != HullModuleType.Category.INDUSTRY && category != HullModuleType.Category.MILITARY) continue;
+
+            // Find nearest station for this module
+            com.yisy.modules.doramcu.hex.Hex3D position = new com.yisy.modules.doramcu.hex.Hex3D(
+                    module.getHexX(), module.getHexY(), module.getHexZ()
+            );
+            Station station = findNearestStation(position, stations);
+            if (station == null) continue;
+
+            // Apply production level modifier (0-100%)
+            int productionLevel = module.getProductionLevel() != null ? module.getProductionLevel() : 100;
+            if (productionLevel <= 0) continue;
+
+            // Check input requirements
+            Map<String, Integer> input = module.getInputCargo();
+            boolean canProduce = true;
+
+            if (input != null && !input.isEmpty()) {
+                for (Map.Entry<String, Integer> entry : input.entrySet()) {
+                    try {
+                        CargoType cargoType = CargoType.valueOf(entry.getKey());
+                        int required = (int) Math.ceil(entry.getValue() * productionLevel / 100.0);
+                        int available = station.getCargoWaiting().getOrDefault(cargoType, 0);
+                        if (available < required) {
+                            canProduce = false;
+                            break;
+                        }
+                    } catch (IllegalArgumentException e) {
+                        // Unknown cargo type, skip
+                    }
+                }
+            }
+
+            if (canProduce) {
+                // Consume input cargo
+                if (input != null) {
+                    for (Map.Entry<String, Integer> entry : input.entrySet()) {
+                        try {
+                            CargoType cargoType = CargoType.valueOf(entry.getKey());
+                            int amount = (int) Math.ceil(entry.getValue() * productionLevel / 100.0);
+                            station.removeCargo(cargoType, amount);
+                        } catch (IllegalArgumentException e) {
+                            // Unknown cargo type, skip
+                        }
+                    }
+                }
+
+                // Produce output cargo
+                Map<String, Integer> output = module.getOutputCargo();
+                if (output != null) {
+                    for (Map.Entry<String, Integer> entry : output.entrySet()) {
+                        try {
+                            CargoType cargoType = CargoType.valueOf(entry.getKey());
+                            int amount = (int) Math.ceil(entry.getValue() * productionLevel / 100.0);
+
+                            // Check station capacity
+                            int currentWaiting = station.getCargoWaiting().getOrDefault(cargoType, 0);
+                            int space = Math.max(0, MAX_CARGO_WAITING - currentWaiting);
+                            int actualAmount = Math.min(amount, space);
+
+                            if (actualAmount > 0) {
+                                station.addCargo(cargoType, actualAmount);
+                                totalGenerated += actualAmount;
+                                log.debug("HullModule {} produced {} {} at station {}",
+                                        module.getName(), actualAmount, cargoType, station.getName());
+                            }
+                        } catch (IllegalArgumentException e) {
+                            // Unknown cargo type, skip
+                        }
+                    }
+                }
+            }
+        }
+
+        return totalGenerated;
+    }
+
+    /**
+     * Consumes cargo from stations for military unit production.
+     *
+     * @param stations map of station IDs to stations
+     * @param unitCosts map of cargo type to amount required
+     * @return true if all cargo was consumed successfully
+     */
+    public boolean consumeCargoForMilitary(Map<String, Station> stations, Map<String, Integer> unitCosts) {
+        if (unitCosts == null || unitCosts.isEmpty()) return true;
+
+        // Check availability across all stations
+        Map<CargoType, Integer> totalAvailable = new HashMap<>();
+        for (Map.Entry<String, Integer> entry : unitCosts.entrySet()) {
+            try {
+                CargoType cargoType = CargoType.valueOf(entry.getKey());
+                int available = 0;
+                for (Station station : stations.values()) {
+                    available += station.getCargoWaiting().getOrDefault(cargoType, 0);
+                }
+                totalAvailable.put(cargoType, available);
+            } catch (IllegalArgumentException e) {
+                // Unknown cargo type
+            }
+        }
+
+        // Check if enough cargo exists
+        for (Map.Entry<String, Integer> entry : unitCosts.entrySet()) {
+            try {
+                CargoType cargoType = CargoType.valueOf(entry.getKey());
+                if (totalAvailable.getOrDefault(cargoType, 0) < entry.getValue()) {
+                    return false;
+                }
+            } catch (IllegalArgumentException e) {
+                // Skip unknown cargo types
+            }
+        }
+
+        // Consume cargo from stations (distribute across stations proportionally)
+        consumeCargoFromStations(stations, unitCosts);
+        return true;
+    }
+
+    /**
+     * Distributes cargo consumption across all stations proportionally.
+     */
+    private void consumeCargoFromStations(Map<String, Station> stations, Map<String, Integer> unitCosts) {
+        List<Station> stationList = new ArrayList<>(stations.values());
+        if (stationList.isEmpty()) return;
+
+        for (Map.Entry<String, Integer> entry : unitCosts.entrySet()) {
+            try {
+                CargoType cargoType = CargoType.valueOf(entry.getKey());
+                int remaining = entry.getValue();
+
+                for (Station station : stationList) {
+                    if (remaining <= 0) break;
+                    int available = station.getCargoWaiting().getOrDefault(cargoType, 0);
+                    int take = Math.min(remaining, available);
+                    if (take > 0) {
+                        station.removeCargo(cargoType, take);
+                        remaining -= take;
+                    }
+                }
+            } catch (IllegalArgumentException e) {
+                // Skip unknown cargo types
+            }
+        }
+    }
+
+    /**
      * Generates passengers and mail at settlements.
      *
      * @param settlements list of settlements
@@ -144,7 +313,7 @@ public class CargoGenerationService {
                 if (!cargoType.isPerishable()) continue;
 
                 int amount = entry.getValue();
-                int decayAmount = Math.max(1, amount / cargoType.getDecayTurns());
+                int decayAmount = Math.max(1, amount / DECAY_RATE);
                 int remaining = Math.max(0, amount - decayAmount);
 
                 if (remaining == 0) {
@@ -158,7 +327,7 @@ public class CargoGenerationService {
             for (CargoType cargoType : cargoWaiting.keySet()) {
                 if (cargoType.isPerishable()) {
                     int amount = cargoWaiting.get(cargoType);
-                    int decayAmount = Math.max(1, amount / cargoType.getDecayTurns());
+                    int decayAmount = Math.max(1, amount / DECAY_RATE);
                     int remaining = Math.max(0, amount - decayAmount);
                     if (remaining == 0) {
                         station.removeCargo(cargoType, amount);

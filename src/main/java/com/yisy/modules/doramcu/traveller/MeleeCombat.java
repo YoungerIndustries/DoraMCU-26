@@ -315,8 +315,8 @@ public class MeleeCombat {
         int attackValue = attacker.getAttackValue();
         boolean hit = attackRoll <= attackValue;
 
-        int parryRoll = 0;
-        int parryValue = 0;
+        int parryRoll;
+        int parryValue;
         boolean parried = false;
         int rawDamage = 0;
         int armorReduction = 0;

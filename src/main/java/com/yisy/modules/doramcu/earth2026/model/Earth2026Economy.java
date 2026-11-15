@@ -327,7 +327,7 @@ public class Earth2026Economy {
      @return health score from 1-10
      */
     public double getHealthScore() {
-        double growthScore = Math.min(10, Math.max(1, (growthRate + 5) * 1.0));
+        double growthScore = Math.min(10, Math.max(1, growthRate + 5));
         double stabilityScore = financialStability;
         double employmentScore = Math.max(1, 10 - unemploymentRate);
         return (growthScore * 0.25 + stabilityScore * 0.3 + employmentScore * 0.25 + marketSize * 0.2);

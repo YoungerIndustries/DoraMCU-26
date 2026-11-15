@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.service.recovery;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yisy.modules.doraneuron.config.NeuronConfig;
@@ -22,6 +24,8 @@ import java.util.List;
  * if the coordinator was unreachable when the neuron last shut down.
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class ExperiencePersistenceService {
 
     private static final Logger log = LoggerFactory.getLogger(ExperiencePersistenceService.class);

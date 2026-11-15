@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.dnd5e.model;
+import org.springframework.stereotype.Component;
 
 import jakarta.persistence.*;
 
@@ -27,6 +28,7 @@ import java.util.List;
         @Index(name = "idx_dnd5e_tension_pool_name", columnList = "name"),
         @Index(name = "idx_dnd5e_tension_pool_area", columnList = "areaId")
 })
+@Component
 public class Dnd5eTensionPool {
 
     @Id

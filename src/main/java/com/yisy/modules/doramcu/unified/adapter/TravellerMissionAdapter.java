@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.unified.adapter;
+import org.springframework.stereotype.Component;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogEntry;
@@ -59,6 +60,7 @@ import java.util.function.Consumer;
  * );
  * </pre>
  */
+@Component
 public class TravellerMissionAdapter {
 
     private final Long clCharacterId;

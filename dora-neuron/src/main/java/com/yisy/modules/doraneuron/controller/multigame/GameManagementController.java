@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.controller.multigame;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.model.multigame.GameProfile;
 import com.yisy.modules.doraneuron.protocol.multigame.RegisterGameRequest;
 import com.yisy.modules.doraneuron.protocol.multigame.UpdateGameRequest;
@@ -21,6 +23,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/game")
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class GameManagementController {
 
     private static final Logger log = LoggerFactory.getLogger(GameManagementController.class);

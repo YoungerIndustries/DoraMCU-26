@@ -26,6 +26,7 @@ import java.util.Base64;
  * malicious models from being loaded into the neuron network.
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
 @ConditionalOnProperty(name = "neuron.security.model-signature-enabled", havingValue = "true", matchIfMissing = true)
 public class ModelSignatureService {
 

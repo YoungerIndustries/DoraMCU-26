@@ -1,16 +1,24 @@
 package com.yisy.modules.doramcu.controller;
 
 import com.yisy.modules.doramcu.dto.RegisterRequest;
+import com.yisy.modules.doramcu.event.GalaxyEvent;
+import com.yisy.modules.doramcu.event.GalaxyEventService;
+import com.yisy.modules.doramcu.eve.model.AiCharacter;
+import com.yisy.modules.doramcu.eve.model.EveCorporation;
 import com.yisy.modules.doramcu.hex.GalaxyFactory;
 import com.yisy.modules.doramcu.model.PromoCode;
 import com.yisy.modules.doramcu.model.User;
+import com.yisy.modules.doramcu.repository.AiCharacterRepository;
+import com.yisy.modules.doramcu.repository.EveCorporationRepository;
 import com.yisy.modules.doramcu.repository.GalaxyRepository;
 import com.yisy.modules.doramcu.repository.PlayerRepository;
+import com.yisy.modules.doramcu.repository.PromoCodeRepository;
 import com.yisy.modules.doramcu.repository.UserRepository;
 import com.yisy.modules.doramcu.service.JwtService;
 import com.yisy.modules.doramcu.service.PlayerService;
 import com.yisy.modules.doramcu.service.PromoCodeService;
 import com.yisy.modules.doramcu.earth2026.model.Earth2026Character;
+import com.yisy.modules.doramcu.earth2026.repository.Earth2026CharacterRepository;
 import com.yisy.modules.doramcu.earth2026.service.Earth2026Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +51,7 @@ public class OnboardingController {
     private static final Logger log = LoggerFactory.getLogger(OnboardingController.class);
 
     private final PromoCodeService promoCodeService;
+    private final PromoCodeRepository promoCodeRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -50,17 +59,43 @@ public class OnboardingController {
     private final PlayerRepository playerRepository;
     private final GalaxyRepository galaxyRepository;
     private final Earth2026Service earth2026Service;
+    private final Earth2026CharacterRepository earth2026CharacterRepository;
+    private final EveCorporationRepository eveCorporationRepository;
+    private final AiCharacterRepository aiCharacterRepository;
+    private final GalaxyEventService galaxyEventService;
+
+    // Seed promo code names that should never be deleted
+    private static final Set<String> SEED_PROMO_CODES = Set.of("IMMORTAL", "DRAGONS", "RESET", "GALAXY_RESET", "WELCOME2026", "EARLYBIRD");
+
+    // Seed user/player emails that should never be deleted
+    private static final Set<String> SEED_PLAYER_EMAILS = Set.of(
+            "butch.younger@empire.com"
+    );
+
+    // Seed user names that should never be deleted
+    private static final Set<String> SEED_USERNAMES = Set.of(
+            "Butch Younger"
+    );
+
+    // Seed corporation tickers that should never be deleted
+    private static final Set<String> SEED_CORP_TICKERS = Set.of("YISY");
 
     public OnboardingController(
             PromoCodeService promoCodeService,
+            PromoCodeRepository promoCodeRepository,
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             JwtService jwtService,
             ObjectProvider<PlayerService> playerServiceProvider,
             ObjectProvider<PlayerRepository> playerRepositoryProvider,
             ObjectProvider<GalaxyRepository> galaxyRepositoryProvider,
-            ObjectProvider<Earth2026Service> earth2026ServiceProvider) {
+            ObjectProvider<Earth2026Service> earth2026ServiceProvider,
+            ObjectProvider<Earth2026CharacterRepository> earth2026CharacterRepositoryProvider,
+            ObjectProvider<EveCorporationRepository> eveCorporationRepositoryProvider,
+            ObjectProvider<AiCharacterRepository> aiCharacterRepositoryProvider,
+            ObjectProvider<GalaxyEventService> galaxyEventServiceProvider) {
         this.promoCodeService = promoCodeService;
+        this.promoCodeRepository = promoCodeRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
@@ -68,18 +103,96 @@ public class OnboardingController {
         this.playerRepository = playerRepositoryProvider.getIfAvailable();
         this.galaxyRepository = galaxyRepositoryProvider.getIfAvailable();
         this.earth2026Service = earth2026ServiceProvider.getIfAvailable();
+        this.earth2026CharacterRepository = earth2026CharacterRepositoryProvider.getIfAvailable();
+        this.eveCorporationRepository = eveCorporationRepositoryProvider.getIfAvailable();
+        this.aiCharacterRepository = aiCharacterRepositoryProvider.getIfAvailable();
+        this.galaxyEventService = galaxyEventServiceProvider.getIfAvailable();
+    }
+
+    /**
+     * GET /api/v1/onboarding/door
+     * Returns the door panel configuration for the landing page.
+     * This is the first step of the onboarding flow — the "Do You Want to Live Forever?" panel.
+     */
+    @GetMapping("/door")
+    public ResponseEntity<Map<String, Object>> getDoorPanel() {
+        Map<String, Object> door = new HashMap<>();
+        door.put("title", "Do You Want to Live Forever?");
+        door.put("subtitle", "Step through the door and begin your journey across the DoraMCU Universe.");
+        door.put("description", "Create your account, define your corporation, and land on Earth 2026 to start your adventure.");
+        door.put("galaxyName", GalaxyFactory.EARTH_2026_GALAXY_NAME);
+        door.put("landingLocation", "San Diego, CA, USA");
+        door.put("homeType", "Apartment");
+
+        // Include recent news events if available
+        if (galaxyEventService != null) {
+            List<GalaxyEvent> events = galaxyEventService.getEventHistory(null);
+            List<Map<String, Object>> recentNews = new ArrayList<>();
+            int fromIndex = Math.max(0, events.size() - 10);
+            for (int i = fromIndex; i < events.size(); i++) {
+                GalaxyEvent event = events.get(i);
+                Map<String, Object> item = new HashMap<>();
+                item.put("type", event.getType().name());
+                item.put("title", event.getType().formatTitle(event.getGalaxyName()));
+                item.put("galaxyName", event.getGalaxyName());
+                item.put("timestamp", event.getTimestamp().toString());
+                recentNews.add(item);
+            }
+            door.put("recentNews", recentNews);
+            door.put("newsCount", recentNews.size());
+        }
+
+        return ResponseEntity.ok(door);
     }
 
     /**
      * GET /api/v1/onboarding/config
      * Returns the configuration for the onboarding flow, including available payment methods.
+     * If the user provides a username query parameter, it also returns the playerId and existing characters.
      */
     @GetMapping("/config")
-    public ResponseEntity<Map<String, Object>> getOnboardingConfig() {
+    public ResponseEntity<Map<String, Object>> getOnboardingConfig(@RequestParam(required = false) String username) {
         Map<String, Object> config = new HashMap<>();
         config.put("steps", Arrays.asList("door", "promo", "register", "character", "earth"));
         config.put("paymentMethods", getPaymentMethods());
         config.put("galaxyName", GalaxyFactory.EARTH_2026_GALAXY_NAME);
+
+        // If username is provided, look up the player and their characters
+        if (username != null && !username.trim().isEmpty() && playerRepository != null) {
+            Optional<User> userOpt = userRepository.findByUsername(username.trim());
+            if (userOpt.isPresent()) {
+                Optional<com.yisy.modules.doramcu.model.Player> playerOpt = playerRepository.findByUser(userOpt.get());
+                if (playerOpt.isPresent()) {
+                    Long playerId = playerOpt.get().getId();
+                    config.put("playerId", playerId);
+                    
+                    // Check if the player already has characters on Earth
+                    if (earth2026Service != null) {
+                        List<Earth2026Character> characters = earth2026Service.getCharactersByPlayer(playerId);
+                        config.put("existingCharacters", characters);
+                        config.put("hasCharacters", !characters.isEmpty());
+                    }
+                }
+            }
+        }
+
+        // Include recent news events if available
+        if (galaxyEventService != null) {
+            List<GalaxyEvent> events = galaxyEventService.getEventHistory(null);
+            List<Map<String, Object>> recentNews = new ArrayList<>();
+            int fromIndex = Math.max(0, events.size() - 10);
+            for (int i = fromIndex; i < events.size(); i++) {
+                GalaxyEvent event = events.get(i);
+                Map<String, Object> item = new HashMap<>();
+                item.put("type", event.getType().name());
+                item.put("title", event.getType().formatTitle(event.getGalaxyName()));
+                item.put("galaxyName", event.getGalaxyName());
+                item.put("timestamp", event.getTimestamp().toString());
+                recentNews.add(item);
+            }
+            config.put("recentNews", recentNews);
+        }
+
         return ResponseEntity.ok(config);
     }
 
@@ -120,7 +233,13 @@ public class OnboardingController {
     /**
      * POST /api/v1/onboarding/promo/validate
      * Validates a promo code without consuming it.
-     * Used by the Promo/Payment step to check code validity before registration.
+     * Supports all code types: PLAYER, CORPORATION, CHARACTER, ADMIN.
+     * <p>
+     * For CORPORATION codes: returns corporationId so the frontend can navigate to the corporation screen.
+     * For CHARACTER codes: returns characterId so the frontend can land on Earth with that character.
+     * For PLAYER codes: returns bonuses and description for the onboarding flow.
+     * </p>
+     * Used by the landing page to determine where to route the player.
      */
     @PostMapping("/promo/validate")
     public ResponseEntity<?> validatePromoCode(@RequestBody Map<String, String> request) {
@@ -129,16 +248,33 @@ public class OnboardingController {
             return ResponseEntity.badRequest().body(Map.of("error", "Promo code is required"));
         }
 
-        PromoCodeService.ValidationResult result = promoCodeService.validate(code);
+        // Use validateAny to accept all code types (PLAYER, CORPORATION, CHARACTER, ADMIN)
+        PromoCodeService.ValidationResult result = promoCodeService.validateAny(code);
 
         if (result.isValid()) {
             Map<String, Object> response = new HashMap<>();
             response.put("valid", true);
             response.put("message", "Promo code is valid");
+            response.put("codeType", result.getPromoCode().getCodeType().name());
             response.put("description", result.getPromoCode().getDescription());
             if (result.getPromoCode().getBonuses() != null) {
                 response.put("bonuses", result.getPromoCode().getBonuses());
             }
+
+            // For CORPORATION codes, return the associated corporation (player) ID
+            if (result.getPromoCode().getCodeType() == PromoCode.CodeType.CORPORATION) {
+                if (result.getPromoCode().getCorporationId() != null) {
+                    response.put("corporationId", result.getPromoCode().getCorporationId());
+                }
+            }
+
+            // For CHARACTER codes, return the associated character ID
+            if (result.getPromoCode().getCodeType() == PromoCode.CodeType.CHARACTER) {
+                if (result.getPromoCode().getCharacterId() != null) {
+                    response.put("characterId", result.getPromoCode().getCharacterId());
+                }
+            }
+
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.badRequest().body(Map.of(
@@ -304,15 +440,146 @@ public class OnboardingController {
         // Generate JWT token
         String token = jwtService.generateToken(username.trim());
 
+        // Find the player ID for linking promo codes
+        Long playerId = null;
+        if (playerRepository != null) {
+            Optional<User> userOpt = userRepository.findByUsername(username.trim());
+            if (userOpt.isPresent()) {
+                Optional<com.yisy.modules.doramcu.model.Player> playerOpt = playerRepository.findByUser(userOpt.get());
+                if (playerOpt.isPresent()) {
+                    playerId = playerOpt.get().getId();
+                }
+            }
+        }
+
+        // Create the player's corporation and AI VP as part of account creation
+        Long corporationId = null;
+        String corporationTicker = null;
+        String aiVpName = null;
+        if (playerId != null && eveCorporationRepository != null && aiCharacterRepository != null) {
+            try {
+                // Derive corporation name and ticker from the player's empire name
+                String corpName = empireName != null ? empireName.trim() : username.trim() + " Industries";
+                String tickerBase = corpName.replaceAll("[^A-Za-z]", "").substring(0, Math.min(corpName.replaceAll("[^A-Za-z]", "").length(), 4)).toUpperCase();
+                // Ensure unique ticker
+                String ticker = tickerBase;
+                int suffix = 1;
+                while (eveCorporationRepository.findByTicker(ticker).isPresent()) {
+                    ticker = tickerBase + suffix;
+                    suffix++;
+                }
+
+                // Create the corporation
+                EveCorporation corporation = new EveCorporation();
+                corporation.setName(corpName);
+                corporation.setTicker(ticker);
+                corporation.setCeoName(username.trim());
+                corporation.setCeoPlayerId(String.valueOf(playerId));
+                corporation.setDescription("Corporation founded by " + username.trim() + ".");
+                corporation.setCreditBalance(10000L);
+                corporation = eveCorporationRepository.save(corporation);
+                corporationId = corporation.getId();
+                corporationTicker = ticker;
+                log.info("Onboarding: created corporation '{}' ({}) for user: {}", corpName, ticker, username);
+
+                // Create the AI VP for the corporation
+                String vpName = username.trim().replace(" ", "") + " AI";
+                AiCharacter aiVp = new AiCharacter();
+                aiVp.setName(vpName);
+                aiVp.setRole("VP");
+                aiVp.setEmpireName(corpName);
+                aiVp.setLinkedPlayerId(String.valueOf(playerId));
+                aiVp.setActive(true);
+                aiVp.setHirable(false);
+                aiVp.setHiringStatus(AiCharacter.HiringStatus.UNAVAILABLE);
+                aiVp.setTotalExperience(100);
+                aiVp.setLeadershipRating(7);
+                aiVp.setDescription("AI Vice President of " + corpName + ". " +
+                        "Serves as the intelligent operations manager and strategic advisor. " +
+                        "Can assume the CEO role when the founder is unavailable.");
+                aiVp.setCharacterType(AiCharacter.CharacterType.HUMAN_LEADER);
+                aiVp.setCanPromoteToCoServer(true);
+                aiVp = aiCharacterRepository.save(aiVp);
+                aiVpName = vpName;
+
+                // Set the AI VP on the corporation
+                corporation.setVpName(vpName);
+                corporation.setVpPlayerId(String.valueOf(aiVp.getId()));
+                eveCorporationRepository.save(corporation);
+                log.info("Onboarding: created AI VP '{}' for corporation '{}' (user: {})", vpName, corpName, username);
+
+                // Generate a CORPORATION-type promo code for the corporation
+                String corpPromoCode = "C" + ticker + UUID.randomUUID().toString().substring(0, 4).toUpperCase();
+                PromoCode corpPromo = promoCodeService.createPromoCode(
+                        corpPromoCode,
+                        "Corporation code for " + corpName,
+                        null,
+                        PromoCode.CodeType.CORPORATION,
+                        null, corporationId, null
+                );
+                corporation.setPromoCodeId(corpPromo.getId());
+                eveCorporationRepository.save(corporation);
+                log.info("Onboarding: generated corporation promo code: {} for user: {}", corpPromoCode, username);
+
+            } catch (Exception e) {
+                log.warn("Onboarding: could not create corporation/AI VP for {}: {}", username, e.getMessage());
+            }
+        }
+
+        // Generate a unique promo code for this new player so they can reference it
+        String generatedPromoCode = null;
+        try {
+            // Create a unique, permanent promo code tied to this player
+            String codeString = "P" + username.trim().toUpperCase().replace(" ", "_").substring(0, Math.min(username.trim().length(), 6))
+                    + UUID.randomUUID().toString().substring(0, 4).toUpperCase();
+            PromoCode newPromo = promoCodeService.createPromoCode(
+                    codeString,
+                    "Welcome code for " + username.trim(),
+                    null,
+                    PromoCode.CodeType.PLAYER,
+                    playerId, null, null
+            );
+            generatedPromoCode = newPromo.getCode();
+            log.info("Onboarding: generated promo code: {} for user: {}", generatedPromoCode, username);
+
+            // Link the promo code back to the player entity
+            if (playerId != null) {
+                Optional<User> userOpt = userRepository.findByUsername(username.trim());
+                if (userOpt.isPresent()) {
+                    Optional<com.yisy.modules.doramcu.model.Player> playerOpt = playerRepository.findByUser(userOpt.get());
+                    if (playerOpt.isPresent()) {
+                        com.yisy.modules.doramcu.model.Player player = playerOpt.get();
+                        player.setPromoCodeId(newPromo.getId());
+                        playerRepository.save(player);
+                        log.info("Onboarding: linked promo code {} to player {}", newPromo.getId(), playerId);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Onboarding: could not generate promo code for {}: {}", username, e.getMessage());
+        }
+
         Map<String, Object> response = new HashMap<>();
         response.put("token", token);
         response.put("username", username);
         response.put("empireName", empireName);
         response.put("galaxy", galaxyName);
         response.put("nextStep", "character");
-        response.put("message", "Registration complete — create your character to enter Earth 2026");
+        response.put("message", "Registration complete — your corporation and AI VP have been created. Create your character to enter Earth 2026");
         if (pin != null) {
             response.put("playerPin", pin);
+        }
+        if (playerId != null) {
+            response.put("playerId", playerId);
+        }
+        if (corporationId != null) {
+            response.put("corporationId", corporationId);
+            response.put("corporationTicker", corporationTicker);
+            response.put("corporationName", empireName != null ? empireName.trim() : username.trim() + " Industries");
+            response.put("aiVpName", aiVpName);
+        }
+        if (generatedPromoCode != null) {
+            response.put("promoCode", generatedPromoCode);
         }
         if (promoValid) {
             response.put("promoApplied", promoCode);
@@ -373,11 +640,36 @@ public class OnboardingController {
 
         Earth2026Character character = earth2026Service.createCharacter(characterName.trim(), age, occupation, playerId);
 
+        // Generate a CHARACTER-type promo code for this character
+        String characterPromoCode = null;
+        try {
+            String codeString = "CH" + characterName.trim().toUpperCase().replace(" ", "_").substring(0, Math.min(characterName.trim().length(), 6))
+                    + UUID.randomUUID().toString().substring(0, 4).toUpperCase();
+            PromoCode charPromo = promoCodeService.createPromoCode(
+                    codeString,
+                    "Character landing key for " + characterName.trim(),
+                    null,
+                    PromoCode.CodeType.CHARACTER,
+                    null, null, character.getId()
+            );
+            characterPromoCode = charPromo.getCode();
+
+            // Link the promo code back to the character entity
+            character.setPromoCodeId(charPromo.getId());
+            earth2026Service.saveCharacter(character);
+            log.info("Onboarding: generated character promo code: {} for character {}", characterPromoCode, character.getId());
+        } catch (Exception e) {
+            log.warn("Onboarding: could not generate character promo code for {}: {}", characterName, e.getMessage());
+        }
+
         Map<String, Object> response = new HashMap<>();
         response.put("character", character);
         response.put("location", "Earth 2026");
         response.put("nextStep", "earth");
         response.put("message", "Welcome to Earth 2026 — your journey begins");
+        if (characterPromoCode != null) {
+            response.put("characterPromoCode", characterPromoCode);
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -390,6 +682,7 @@ public class OnboardingController {
         Map<String, Object> response = new HashMap<>();
         response.put("galaxy", GalaxyFactory.EARTH_2026_GALAXY_NAME);
         response.put("location", "Earth 2026");
+        response.put("landingCity", "San Diego, CA, USA");
 
         if (earth2026Service != null) {
             response.put("locations", earth2026Service.getAllLocations());
@@ -397,7 +690,136 @@ public class OnboardingController {
             response.put("characters", earth2026Service.getCharactersOnEarth());
         }
 
-        response.put("message", "You have arrived on Earth 2026. Choose your first scenario to begin.");
+        response.put("message", "You have arrived on Earth 2026 in San Diego, CA. Your apartment is ready. Choose your first scenario to begin.");
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * GET /api/v1/promo-codes
+     * Returns all generated promo codes with their details.
+     * Used by the admin dashboard to display and manage promo codes.
+     */
+    @GetMapping("/promo-codes")
+    public ResponseEntity<List<Map<String, Object>>> getAllPromoCodes() {
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (PromoCode pc : promoCodeService.findAll()) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("id", pc.getId());
+            item.put("code", pc.getCode());
+            item.put("description", pc.getDescription());
+            item.put("type", pc.getCodeType().name());
+            item.put("usedCount", pc.getUsedCount());
+            item.put("maxUses", pc.getMaxUses());
+            item.put("expiryDate", pc.getExpiryDate());
+            item.put("active", pc.isActive());
+            item.put("bonuses", pc.getBonuses());
+            item.put("expired", pc.isExpired());
+            item.put("usageLimitReached", pc.isUsageLimitReached());
+            result.add(item);
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * POST /api/v1/onboarding/cleanup
+     * Cleans the database by removing all non-seed players, corporations, characters,
+     * and promo codes created during onboarding sessions.
+     * <p>
+     * Preserves the seed data created at startup:
+     * - Users: Butch Younger
+     * - Players: Butch Younger
+     * - Corporations: Younger Industries (YISY)
+     * - AI Characters: Sif Younger (AI VP of Younger Industries) and all world leaders/governors
+     * - Promo codes: IMMORTAL, DRAGONS, RESET, GALAXY_RESET, WELCOME2026, EARLYBIRD
+     * </p>
+     */
+    @PostMapping("/cleanup")
+    public ResponseEntity<Map<String, Object>> cleanupNonSeedData() {
+        log.warn("=== DATABASE CLEANUP INITIATED ===");
+        Map<String, Object> result = new HashMap<>();
+        int playersDeleted = 0;
+        int charactersDeleted = 0;
+        int corporationsDeleted = 0;
+        int promoCodesDeleted = 0;
+        int usersDeleted = 0;
+
+        // 1. Delete non-seed Earth 2026 characters (those linked to non-seed players)
+        if (earth2026CharacterRepository != null && playerRepository != null) {
+            List<Long> seedPlayerIds = new ArrayList<>();
+            for (com.yisy.modules.doramcu.model.Player p : playerRepository.findAll()) {
+                if (SEED_PLAYER_EMAILS.contains(p.getEmail())) {
+                    seedPlayerIds.add(p.getId());
+                }
+            }
+            List<Earth2026Character> allCharacters = earth2026CharacterRepository.findAll();
+            for (Earth2026Character charEntity : allCharacters) {
+                if (charEntity.getPlayerId() != null && !seedPlayerIds.contains(charEntity.getPlayerId())) {
+                    earth2026CharacterRepository.delete(charEntity);
+                    charactersDeleted++;
+                    log.info("Cleanup: deleted non-seed character: {}", charEntity.getName());
+                }
+            }
+        }
+
+        // 2. Delete non-seed corporations
+        if (eveCorporationRepository != null) {
+            List<EveCorporation> allCorps = eveCorporationRepository.findAll();
+            for (EveCorporation corp : allCorps) {
+                if (!SEED_CORP_TICKERS.contains(corp.getTicker())) {
+                    eveCorporationRepository.delete(corp);
+                    corporationsDeleted++;
+                    log.info("Cleanup: deleted non-seed corporation: {}", corp.getName());
+                }
+            }
+        }
+
+        // 3. Delete non-seed promo codes
+        if (promoCodeRepository != null) {
+            List<PromoCode> allPromos = promoCodeRepository.findAll();
+            for (PromoCode promo : allPromos) {
+                if (!SEED_PROMO_CODES.contains(promo.getCode())) {
+                    promoCodeRepository.delete(promo);
+                    promoCodesDeleted++;
+                    log.info("Cleanup: deleted non-seed promo code: {}", promo.getCode());
+                }
+            }
+        }
+
+        // 4. Delete non-seed players
+        if (playerRepository != null) {
+            List<com.yisy.modules.doramcu.model.Player> allPlayers = playerRepository.findAll();
+            for (com.yisy.modules.doramcu.model.Player player : allPlayers) {
+                if (!SEED_PLAYER_EMAILS.contains(player.getEmail())) {
+                    playerRepository.delete(player);
+                    playersDeleted++;
+                    log.info("Cleanup: deleted non-seed player: {} ({})", player.getEmpireName(), player.getEmail());
+                }
+            }
+        }
+
+        // 5. Delete non-seed users
+        if (userRepository != null) {
+            List<User> allUsers = userRepository.findAll();
+            for (User user : allUsers) {
+                if (!SEED_USERNAMES.contains(user.getUsername())) {
+                    userRepository.delete(user);
+                    usersDeleted++;
+                    log.info("Cleanup: deleted non-seed user: {}", user.getUsername());
+                }
+            }
+        }
+
+        result.put("success", true);
+        result.put("message", "Database cleanup complete");
+        result.put("playersDeleted", playersDeleted);
+        result.put("charactersDeleted", charactersDeleted);
+        result.put("corporationsDeleted", corporationsDeleted);
+        result.put("promoCodesDeleted", promoCodesDeleted);
+        result.put("usersDeleted", usersDeleted);
+
+        log.info("=== DATABASE CLEANUP COMPLETED: {} players, {} characters, {} corporations, {} promo codes, {} users deleted ===",
+                playersDeleted, charactersDeleted, corporationsDeleted, promoCodesDeleted, usersDeleted);
+        return ResponseEntity.ok(result);
+    }
+
 }

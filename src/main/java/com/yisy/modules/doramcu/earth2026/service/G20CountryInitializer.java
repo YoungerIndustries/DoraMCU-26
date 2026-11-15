@@ -1,8 +1,8 @@
 package com.yisy.modules.doramcu.earth2026.service;
 
 import com.yisy.modules.doramcu.earth2026.model.Earth2026Country;
+import com.yisy.modules.doramcu.earth2026.model.TechLevel;
 import com.yisy.modules.doramcu.earth2026.repository.Earth2026CountryRepository;
-import com.yisy.modules.doramcu.techlevel.TechLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

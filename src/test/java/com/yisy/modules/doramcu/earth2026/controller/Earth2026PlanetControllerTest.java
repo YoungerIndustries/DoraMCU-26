@@ -1,6 +1,9 @@
 package com.yisy.modules.doramcu.earth2026.controller;
 
 import com.yisy.modules.doramcu.earth2026.model.*;
+import com.yisy.modules.doramcu.earth2026.service.CountryDiplomacyService;
+import com.yisy.modules.doramcu.earth2026.service.EspionageService;
+import com.yisy.modules.doramcu.earth2026.service.G20CountryInitializer;
 import com.yisy.modules.doramcu.earth2026.service.PlanetService;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,11 +35,20 @@ class Earth2026PlanetControllerTest {
     @Mock
     private PlanetService planetService;
 
+    @Mock
+    private G20CountryInitializer g20Initializer;
+
+    @Mock
+    private CountryDiplomacyService diplomacyService;
+
+    @Mock
+    private EspionageService espionageService;
+
     private Earth2026PlanetController controller;
 
     @BeforeEach
     void setUp() {
-        controller = new Earth2026PlanetController(planetService);
+        controller = new Earth2026PlanetController(planetService, g20Initializer, diplomacyService, espionageService);
     }
 
     // ------------------------------------------------------------------

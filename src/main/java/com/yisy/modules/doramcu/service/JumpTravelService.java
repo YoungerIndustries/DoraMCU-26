@@ -24,7 +24,6 @@ public class JumpTravelService {
 
     private final Map<Integer, TravellerWorld> worlds = new HashMap<>();
     private final Map<Integer, JumpTravelStatus> travelStatuses = new HashMap<>();
-    private final Map<Integer, TravellerSector> sectors = new HashMap<>();
 
     /**
      * Registers a world for jump travel operations.
@@ -37,7 +36,6 @@ public class JumpTravelService {
      * Registers a sector (and all its worlds).
      */
     public void registerSector(TravellerSector sector) {
-        sectors.put(sector.getId(), sector);
         for (TravellerWorld world : sector.getAllWorlds()) {
             worlds.put(world.getId(), world);
         }
@@ -256,7 +254,7 @@ public class JumpTravelService {
         response.setWaypoints(waypoints);
 
         response.setMessage(plan.getJumpCount() + " jumps, " +
-                String.format("%.1f", plan.getTotalDistanceParsecs()) +
+                String.format("%.1f", (double) plan.getTotalDistanceParsecs()) +
                 " parsecs, " + plan.getTotalFuelTons() + " tons fuel required. " +
                 (plan.isSafe() ? "Safe route." : "Contains off-chart jumps."));
 

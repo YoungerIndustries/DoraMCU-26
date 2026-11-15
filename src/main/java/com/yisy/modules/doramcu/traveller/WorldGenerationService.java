@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.traveller;
 
+import org.springframework.stereotype.Service;
 import java.util.*;
 
 import com.yisy.modules.doramcu.util.DiceUtil;
@@ -23,6 +24,8 @@ import com.yisy.modules.doramcu.util.DiceUtil;
  * Each step uses 2D6 rolls against the Traveller probability tables.
  * </p>
  */
+
+@Service
 public class WorldGenerationService {
 
     /**
@@ -414,7 +417,7 @@ public class WorldGenerationService {
      * Calculates port wealth from starport class and population.
      */
     int calculatePortWealth(char starport, int population) {
-        int starportValue = 0;
+        int starportValue;
         switch (starport) {
             case 'A': starportValue = 5; break;
             case 'B': starportValue = 4; break;

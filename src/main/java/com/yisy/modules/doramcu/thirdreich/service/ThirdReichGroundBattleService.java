@@ -1,16 +1,20 @@
 package com.yisy.modules.doramcu.thirdreich.service;
 
+import com.yisy.modules.doramcu.earth2026.model.BiosphereContext;
 import com.yisy.modules.doramcu.earth2026.model.Earth2026BattleEnvironment;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Location;
+import com.yisy.modules.doramcu.earth2026.service.BiosphereService;
 import com.yisy.modules.doramcu.earth2026.service.PlanetService;
 import com.yisy.modules.doramcu.eve.model.AiCommanderExperience;
 import com.yisy.modules.doramcu.service.AiCommanderExperienceService;
+import com.yisy.modules.doramcu.gamecore.GameModuleRegistry;
 import com.yisy.modules.doramcu.thirdreich.adapter.*;
 import com.yisy.modules.doramcu.thirdreich.commander.AICommander;
 import com.yisy.modules.doramcu.thirdreich.commander.AICommanderProfile;
 import com.yisy.modules.doramcu.thirdreich.commander.AICommanderService;
 import com.yisy.modules.doramcu.thirdreich.combat.ThirdReichCombatEngine;
 import com.yisy.modules.doramcu.thirdreich.domain.*;
-import com.yisy.modules.doramcu.unified.GameType;
+import com.yisy.modules.doramcu.gamecore.GameType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,12 +41,14 @@ public class ThirdReichGroundBattleService {
     private static final Logger log = LoggerFactory.getLogger(ThirdReichGroundBattleService.class);
 
     private final ThirdReichCombatEngine combatEngine = new ThirdReichCombatEngine();
-    private final AICommanderService commanderService = new AICommanderService();
+    private final AICommanderService commanderService;
     private final Map<String, GroundCombatAdapter> adapters = new ConcurrentHashMap<>();
     private final Map<String, ThirdReichBattle> battles = new ConcurrentHashMap<>();
     private final AtomicInteger battleCounter = new AtomicInteger(1);
     private final PlanetService planetService;
     private final AiCommanderExperienceService experienceService;
+    private final BiosphereService biosphereService;
+    private final GameModuleRegistry gameModuleRegistry;
 
     /**
      * Constructor with PlanetService and AiCommanderExperienceService for full integration.
@@ -51,12 +57,7 @@ public class ThirdReichGroundBattleService {
      * @param experienceService the shared AI commander experience service (may be null for standalone mode)
      */
     public ThirdReichGroundBattleService(PlanetService planetService, AiCommanderExperienceService experienceService) {
-        this.planetService = planetService;
-        this.experienceService = experienceService;
-        // Register default adapters
-        adapters.put("DoraMCU_4X", new DoraMCUTo3R4Adapter());
-        adapters.put("Traveller", new TravellerTo3R4Adapter());
-        adapters.put("Captains_Log", new StarTrekTo3R4Adapter());
+        this(planetService, experienceService, null);
     }
 
     /**
@@ -65,12 +66,7 @@ public class ThirdReichGroundBattleService {
      * @param planetService the shared Earth planet service (may be null for standalone mode)
      */
     public ThirdReichGroundBattleService(PlanetService planetService) {
-        this.planetService = planetService;
-        this.experienceService = null;
-        // Register default adapters
-        adapters.put("DoraMCU_4X", new DoraMCUTo3R4Adapter());
-        adapters.put("Traveller", new TravellerTo3R4Adapter());
-        adapters.put("Captains_Log", new StarTrekTo3R4Adapter());
+        this(planetService, null, null);
     }
 
     /**
@@ -79,12 +75,52 @@ public class ThirdReichGroundBattleService {
      */
     @Deprecated
     public ThirdReichGroundBattleService() {
-        this.planetService = null;
-        this.experienceService = null;
+        this(null, null, null);
+    }
+
+    /**
+     * Constructor with optional GameModuleRegistry for auto-discovering adapters.
+     *
+     * @param planetService the shared Earth planet service (may be null for standalone mode)
+     * @param experienceService the shared AI commander experience service (may be null for standalone mode)
+     * @param gameModuleRegistry the game module registry for adapter discovery (may be null)
+     */
+    public ThirdReichGroundBattleService(PlanetService planetService, AiCommanderExperienceService experienceService,
+                                          GameModuleRegistry gameModuleRegistry) {
+        this.planetService = planetService;
+        this.experienceService = experienceService;
+        this.biosphereService = new BiosphereService();
+        this.gameModuleRegistry = gameModuleRegistry;
+        // AICommanderService is now a Spring @Service; create a standalone instance for backward compatibility
+        this.commanderService = new AICommanderService(null);
         // Register default adapters
         adapters.put("DoraMCU_4X", new DoraMCUTo3R4Adapter());
         adapters.put("Traveller", new TravellerTo3R4Adapter());
         adapters.put("Captains_Log", new StarTrekTo3R4Adapter());
+        adapters.put("MechWarrior", new MechWarriorTo3R4Adapter());
+        adapters.put("Dnd5e", new Dnd5eTo3R4Adapter());
+        adapters.put("StarshipTroopers", new StarshipTroopersTo3R4Adapter());
+        // Auto-discover adapters from registered game modules
+        if (gameModuleRegistry != null) {
+            discoverAdaptersFromRegistry();
+        }
+    }
+
+    /**
+     * Auto-discovers ground combat adapters from registered game modules.
+     * This allows newly registered modules to automatically participate in cross-module battles.
+     */
+    private void discoverAdaptersFromRegistry() {
+        for (GameType gameType : GameType.values()) {
+            GroundCombatAdapter adapter = gameModuleRegistry.getGroundCombatAdapter(gameType);
+            if (adapter != null) {
+                String sourceGame = adapter.getSourceGame();
+                if (!adapters.containsKey(sourceGame)) {
+                    adapters.put(sourceGame, adapter);
+                    log.info("Auto-discovered ground combat adapter: {} ({})", sourceGame, gameType);
+                }
+            }
+        }
     }
 
     /**
@@ -175,6 +211,124 @@ public class ThirdReichGroundBattleService {
     }
 
     /**
+     * Creates and resolves a cross-module ground battle where attacker and defender
+     * come from different game modules.
+     * <p>
+     * For example, D&amp;D dragons (Dnd5e) can attack Starship Troopers infantry
+     * (StarshipTroopers) on the same battlefield. Each side uses its own
+     * GroundCombatAdapter to convert units to 3R4 format before the battle.
+     * </p>
+     *
+     * @param attackerSourceGame the attacker's source game type
+     * @param defenderSourceGame the defender's source game type
+     * @param attackerUnits the attacker's game units
+     * @param defenderUnits the defender's game units
+     * @param terrainType the terrain type
+     * @param planetName the planet name (optional)
+     * @param attackerCommander the attacker's commander (optional)
+     * @param defenderCommander the defender's commander (optional)
+     * @return the battle result with cross-module metadata
+     */
+    public Map<String, Object> resolveCrossModuleBattle(
+            String attackerSourceGame, String defenderSourceGame,
+            List<?> attackerUnits, List<?> defenderUnits,
+            TerrainType terrainType, String planetName,
+            AICommander attackerCommander, AICommander defenderCommander) {
+
+        GroundCombatAdapter atkAdapter = adapters.get(attackerSourceGame);
+        if (atkAdapter == null) {
+            throw new IllegalArgumentException("No adapter found for attacker game: " + attackerSourceGame
+                    + ". Available: " + adapters.keySet());
+        }
+
+        GroundCombatAdapter defAdapter = adapters.get(defenderSourceGame);
+        if (defAdapter == null) {
+            throw new IllegalArgumentException("No adapter found for defender game: " + defenderSourceGame
+                    + ". Available: " + adapters.keySet());
+        }
+
+        // Convert attacker units using attacker's adapter
+        List<ThirdReichGroundUnit> atkUnits = atkAdapter.to3R4Units(attackerUnits);
+        // Convert defender units using defender's adapter
+        List<ThirdReichGroundUnit> defUnits = defAdapter.to3R4Units(defenderUnits);
+
+        // Create battle
+        String battleId = "cross-module-battle-" + battleCounter.getAndIncrement();
+        ThirdReichBattle battle = new ThirdReichBattle(battleId);
+
+        // Set terrain
+        TerrainContext terrain = new TerrainContext(terrainType != null ? terrainType : TerrainType.PLAINS, planetName);
+        battle.setTerrainContext(terrain);
+
+        // Add units
+        for (ThirdReichGroundUnit unit : atkUnits) {
+            battle.addAttackerUnit(unit);
+        }
+        for (ThirdReichGroundUnit unit : defUnits) {
+            battle.addDefenderUnit(unit);
+        }
+
+        // Set commanders
+        if (attackerCommander != null) {
+            battle.setAttackerCommanderId(attackerCommander.getId());
+        }
+        if (defenderCommander != null) {
+            battle.setDefenderCommanderId(defenderCommander.getId());
+        }
+
+        // Resolve battle
+        ThirdReichBattleResult result = combatEngine.resolveBattle(battle, attackerCommander, defenderCommander);
+
+        // Store battle
+        battles.put(battleId, battle);
+
+        // Record AI commander experience
+        recordCommanderExperience(attackerCommander, result, battleId, terrain);
+        recordCommanderExperience(defenderCommander, result, battleId, terrain);
+
+        // Map result back using attacker's adapter as primary
+        Map<String, Object> mappedResult = atkAdapter.mapResult(result);
+
+        // Add cross-module metadata
+        mappedResult.put("crossModuleBattle", true);
+        mappedResult.put("attackerSourceGame", attackerSourceGame);
+        mappedResult.put("defenderSourceGame", defenderSourceGame);
+        mappedResult.put("attackerAdapter", atkAdapter.getClass().getSimpleName());
+        mappedResult.put("defenderAdapter", defAdapter.getClass().getSimpleName());
+        mappedResult.put("attackerUnitCount", atkUnits.size());
+        mappedResult.put("defenderUnitCount", defUnits.size());
+
+        return mappedResult;
+    }
+
+    /**
+     * Creates a cross-module battle with AI commanders.
+     *
+     * @param attackerSourceGame the attacker's source game type
+     * @param defenderSourceGame the defender's source game type
+     * @param attackerUnits the attacker's game units
+     * @param defenderUnits the defender's game units
+     * @param terrainType the terrain type
+     * @param planetName the planet name (optional)
+     * @param attackerProfile the attacker's commander profile (optional)
+     * @param defenderProfile the defender's commander profile (optional)
+     * @return the battle result with cross-module metadata
+     */
+    public Map<String, Object> resolveCrossModuleAiBattle(
+            String attackerSourceGame, String defenderSourceGame,
+            List<?> attackerUnits, List<?> defenderUnits,
+            TerrainType terrainType, String planetName,
+            AICommanderProfile attackerProfile, AICommanderProfile defenderProfile) {
+        AICommander atkCmd = attackerProfile != null ? commanderService.createFromProfile(attackerProfile) : null;
+        AICommander defCmd = defenderProfile != null ? commanderService.createFromProfile(defenderProfile) : null;
+
+        return resolveCrossModuleBattle(
+                attackerSourceGame, defenderSourceGame,
+                attackerUnits, defenderUnits, terrainType, planetName,
+                atkCmd, defCmd);
+    }
+
+    /**
      * Gets a battle by ID.
      *
      * @param battleId the battle ID
@@ -255,6 +409,11 @@ public class ThirdReichGroundBattleService {
         terrain.setWeatherModifier(env.getWeather().getMovementModifier());
         terrain.setVisibilityModifier(env.getVisibilityModifier());
 
+        // 4. Build biosphere context and attach to terrain
+        BiosphereContext biosphere = biosphereService.buildBiosphereContext(
+                null, timePeriod, env.getWeather());
+        terrain.setBiosphereContext(biosphere);
+
         // 4. Resolve the battle
         Map<String, Object> result = resolveBattle(
                 sourceGame, attackerUnits, defenderUnits, terrainType,
@@ -266,6 +425,13 @@ public class ThirdReichGroundBattleService {
         result.put("availableUnits", env.getAvailableUnits());
         result.put("timePeriod", env.getTimePeriod());
         result.put("baseTechLevel", env.getBaseTechLevel());
+        result.put("biosphere", biosphere.getCombatModifiers());
+        result.put("biosphereDescription", biosphere.getDescription());
+        result.put("terrainElevationMap", env.getTerrainElevationMap() != null ?
+                Map.of("width", env.getTerrainElevationMap().getWidth(),
+                        "height", env.getTerrainElevationMap().getHeight(),
+                        "cellSize", env.getTerrainElevationMap().getCellSizeMeters(),
+                        "baseElevation", env.getTerrainElevationMap().getBaseElevation()) : null);
 
         return result;
     }
@@ -411,8 +577,8 @@ public class ThirdReichGroundBattleService {
 
         // Determine if this commander is on the attacker side
         // Since we don't have explicit side tracking here, we use the outcome mapping:
-        // ATTACKER_VICTORY → attacker wins, defender loses
-        // DEFENDER_VICTORY → defender wins, attacker loses
+        // ATTACKER_VICTORY â†’ attacker wins, defender loses
+        // DEFENDER_VICTORY â†’ defender wins, attacker loses
         // For simplicity, both commanders get the same outcome mapping
         switch (outcome) {
             case ATTACKER_VICTORY:

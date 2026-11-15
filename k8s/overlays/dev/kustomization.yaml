@@ -6,6 +6,9 @@ resources:
   - ../../base
 
 patches:
+  # Enable remote debugging for dev — must be applied first
+  - path: debug-patch.yaml
+
   # Reduce neuron replicas for dev
   - target:
       kind: HorizontalPodAutoscaler

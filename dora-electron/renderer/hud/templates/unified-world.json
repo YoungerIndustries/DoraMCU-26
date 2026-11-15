@@ -1,0 +1,485 @@
+{
+    "id": "unified-world",
+    "name": "Unified World",
+    "icon": "🌐",
+    "gameModule": "unified",
+
+    "layout": {
+        "leftPanelWidth": 300,
+        "rightPanelWidth": 340,
+        "leftSplitRatio": 0.5,
+        "rightSplitRatio": 0.5,
+        "topBarHeight": 40,
+        "bottomBarHeight": 120
+    },
+
+    "theme": {
+        "cssVariables": {
+            "--hud-accent-primary": "#3b82f6",
+            "--hud-accent-secondary": "#60a5fa",
+            "--hud-accent-glow": "rgba(59, 130, 246, 0.15)"
+        },
+        "fontFamily": "'Segoe UI', system-ui, -apple-system, sans-serif",
+        "panelBackground": "#0f172a",
+        "accentColor": "#3b82f6",
+        "borderColor": "#1e3a5f",
+        "fontColor": "#e2e8f0"
+    },
+
+    "modules": [
+        {
+            "id": "earth2026",
+            "name": "Earth 2026",
+            "icon": "🌍",
+            "enabled": true,
+            "alwaysActive": true,
+            "apiBase": "/api/v1/earth2026"
+        },
+        {
+            "id": "captains-log",
+            "name": "Captain's Log",
+            "icon": "🖊️",
+            "enabled": false,
+            "apiBase": "/api/v1/captains-log"
+        },
+        {
+            "id": "dnd-5e",
+            "name": "D&D 5e",
+            "icon": "🐉",
+            "enabled": false,
+            "apiBase": "/api/v1/dnd5e"
+        },
+        {
+            "id": "traveller",
+            "name": "Traveller",
+            "icon": "🚀",
+            "enabled": false,
+            "apiBase": "/api/v1/traveller"
+        },
+        {
+            "id": "star-wars",
+            "name": "Star Wars",
+            "icon": "⭐",
+            "enabled": false,
+            "apiBase": "/api/v1/rules/engines"
+        },
+        {
+            "id": "babylon5",
+            "name": "Babylon5",
+            "icon": "🛸",
+            "enabled": false,
+            "apiBase": "/api/v1/babylon5"
+        },
+        {
+            "id": "star-trek-4x",
+            "name": "Star Trek 4X",
+            "icon": "🚢",
+            "enabled": false,
+            "apiBase": "/api/star-trek-4x"
+        },
+        {
+            "id": "mech-warrior",
+            "name": "Mech Warrior",
+            "icon": "🤖",
+            "enabled": false,
+            "apiBase": "/api/v1/mechwarrior/fps"
+        },
+        {
+            "id": "zero-zero-seven",
+            "name": "Zero Zero Seven",
+            "icon": "🕵️",
+            "enabled": false,
+            "apiBase": "/api/zero-zero-seven"
+        }
+    ],
+
+    "panels": {
+        "info": {
+            "visible": true,
+            "title": "Character Sheet",
+            "components": [
+                {
+                    "type": "selector",
+                    "label": "Select Character...",
+                    "dataBinding": "character-select",
+                    "module": "earth2026"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "HP",
+                    "dataBinding": "hp",
+                    "module": "earth2026"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Hunger",
+                    "dataBinding": "hunger",
+                    "module": "earth2026"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Thirst",
+                    "dataBinding": "thirst",
+                    "module": "earth2026"
+                },
+                {
+                    "type": "stat-bar",
+                    "label": "Fatigue",
+                    "dataBinding": "fatigue",
+                    "module": "earth2026"
+                }
+            ]
+        },
+        "status": {
+            "visible": true,
+            "title": "World Status",
+            "components": [
+                {
+                    "type": "text",
+                    "label": "Location",
+                    "dataBinding": "location",
+                    "module": "earth2026"
+                },
+                {
+                    "type": "text",
+                    "label": "Party",
+                    "dataBinding": "party",
+                    "module": "earth2026"
+                },
+                {
+                    "type": "text",
+                    "label": "Organization",
+                    "dataBinding": "organization",
+                    "module": "earth2026"
+                }
+            ]
+        },
+        "prompt": {
+            "visible": true,
+            "title": "Narrative",
+            "components": [
+                {
+                    "type": "narrative-text",
+                    "label": "The world awaits...",
+                    "dataBinding": "unified-narrative"
+                }
+            ]
+        },
+        "responses": {
+            "visible": true,
+            "title": "Unified Actions",
+            "components": [
+                {
+                    "type": "action-group",
+                    "label": "Earth 2026",
+                    "module": "earth2026",
+                    "actions": [
+                        {
+                            "type": "action-button",
+                            "icon": "🔍",
+                            "label": "Scavenge",
+                            "hint": "Search for supplies",
+                            "dataBinding": "scavenge"
+                        },
+                        {
+                            "type": "action-button",
+                            "icon": "🏕️",
+                            "label": "Rest",
+                            "hint": "Recover hunger & fatigue",
+                            "dataBinding": "rest"
+                        },
+                        {
+                            "type": "action-button",
+                            "icon": "🗺️",
+                            "label": "Travel",
+                            "hint": "Move to another location",
+                            "dataBinding": "travel"
+                        },
+                        {
+                            "type": "action-button",
+                            "icon": "👥",
+                            "label": "Party",
+                            "hint": "Party actions",
+                            "dataBinding": "party-action"
+                        }
+                    ]
+                },
+                {
+                    "type": "action-group",
+                    "label": "Captain's Log",
+                    "module": "captains-log",
+                    "actions": [
+                        {
+                            "type": "action-button",
+                            "icon": "🎯",
+                            "label": "Task Attempt",
+                            "hint": "2d20 skill check",
+                            "dataBinding": "task-attempt"
+                        },
+                        {
+                            "type": "action-button",
+                            "icon": "🔮",
+                            "label": "Oracle",
+                            "hint": "Oracle query",
+                            "dataBinding": "oracle-query"
+                        },
+                        {
+                            "type": "action-button",
+                            "icon": "📖",
+                            "label": "Mission",
+                            "hint": "Advance mission",
+                            "dataBinding": "advance-mission"
+                        }
+                    ]
+                },
+                {
+                    "type": "action-group",
+                    "label": "D&D 5e",
+                    "module": "dnd-5e",
+                    "actions": [
+                        {
+                            "type": "action-button",
+                            "icon": "⚔️",
+                            "label": "Attack",
+                            "hint": "Attack roll",
+                            "dataBinding": "attack"
+                        },
+                        {
+                            "type": "action-button",
+                            "icon": "✨",
+                            "label": "Cast Spell",
+                            "hint": "Cast a spell",
+                            "dataBinding": "cast-spell"
+                        },
+                        {
+                            "type": "action-button",
+                            "icon": "🎲",
+                            "label": "Roll d20",
+                            "hint": "Roll a d20",
+                            "dataBinding": "roll-d20"
+                        }
+                    ]
+                },
+                {
+                    "type": "action-group",
+                    "label": "Traveller",
+                    "module": "traveller",
+                    "actions": [
+                        {
+                            "type": "action-button",
+                            "icon": "🎖️",
+                            "label": "Career",
+                            "hint": "Serve a career tour",
+                            "dataBinding": "career-service"
+                        },
+                        {
+                            "type": "action-button",
+                            "icon": "🔫",
+                            "label": "Firearms",
+                            "hint": "Firearms combat",
+                            "dataBinding": "firearms-combat"
+                        },
+                        {
+                            "type": "action-button",
+                            "icon": "🎲",
+                            "label": "Roll 2D6",
+                            "hint": "Roll 2D6",
+                            "dataBinding": "roll-2d6"
+                        }
+                    ]
+                },
+                {
+                    "type": "action-group",
+                    "label": "Star Wars",
+                    "module": "star-wars",
+                    "actions": [
+                        {
+                            "type": "action-button",
+                            "icon": "🏴",
+                            "label": "Factions",
+                            "hint": "Browse factions",
+                            "dataBinding": "browse-factions"
+                        },
+                        {
+                            "type": "action-button",
+                            "icon": "⚔️",
+                            "label": "Combat",
+                            "hint": "Combat round",
+                            "dataBinding": "combat-round"
+                        },
+                        {
+                            "type": "action-button",
+                            "icon": "🌀",
+                            "label": "Force Power",
+                            "hint": "Use Force power",
+                            "dataBinding": "force-power"
+                        }
+                    ]
+                },
+                {
+                    "type": "action-group",
+                    "label": "Babylon5",
+                    "module": "babylon5",
+                    "actions": [
+                        {
+                            "type": "action-button",
+                            "icon": "📖",
+                            "label": "Storyline",
+                            "hint": "Browse storylines",
+                            "dataBinding": "browse-storylines"
+                        },
+                        {
+                            "type": "action-button",
+                            "icon": "🌌",
+                            "label": "Galaxy",
+                            "hint": "Generate galaxy",
+                            "dataBinding": "generate-galaxy"
+                        }
+                    ]
+                },
+                {
+                    "type": "action-group",
+                    "label": "Star Trek 4X",
+                    "module": "star-trek-4x",
+                    "actions": [
+                        {
+                            "type": "action-button",
+                            "icon": "🔭",
+                            "label": "Explore",
+                            "hint": "Scan sector",
+                            "dataBinding": "explore"
+                        },
+                        {
+                            "type": "action-button",
+                            "icon": "🏗️",
+                            "label": "Expand",
+                            "hint": "Build colony/starbase",
+                            "dataBinding": "expand"
+                        },
+                        {
+                            "type": "action-button",
+                            "icon": "🚀",
+                            "label": "Fleet",
+                            "hint": "Deploy fleet",
+                            "dataBinding": "fleet-action"
+                        }
+                    ]
+                },
+                {
+                    "type": "action-group",
+                    "label": "Mech Warrior",
+                    "module": "mech-warrior",
+                    "actions": [
+                        {
+                            "type": "action-button",
+                            "icon": "🎯",
+                            "label": "Fire",
+                            "hint": "Fire weapons",
+                            "dataBinding": "fire-weapon"
+                        },
+                        {
+                            "type": "action-button",
+                            "icon": "🦘",
+                            "label": "Jump",
+                            "hint": "Jump jets",
+                            "dataBinding": "jump-jets"
+                        },
+                        {
+                            "type": "action-button",
+                            "icon": "⏭️",
+                            "label": "Tick",
+                            "hint": "Process tick",
+                            "dataBinding": "process-tick"
+                        }
+                    ]
+                },
+                {
+                    "type": "action-group",
+                    "label": "Zero Zero Seven",
+                    "module": "zero-zero-seven",
+                    "actions": [
+                        {
+                            "type": "action-button",
+                            "icon": "💣",
+                            "label": "Sabotage",
+                            "hint": "Launch sabotage op",
+                            "dataBinding": "sabotage"
+                        },
+                        {
+                            "type": "action-button",
+                            "icon": "🕵️",
+                            "label": "Intelligence",
+                            "hint": "Gather intelligence",
+                            "dataBinding": "intelligence"
+                        },
+                        {
+                            "type": "action-button",
+                            "icon": "🕸️",
+                            "label": "Network",
+                            "hint": "Spy network",
+                            "dataBinding": "spy-network"
+                        }
+                    ]
+                }
+            ]
+        },
+        "modules": {
+            "visible": true,
+            "title": "Module Layers",
+            "components": [
+                {
+                    "type": "module-toggle",
+                    "label": "Toggle game module layers",
+                    "dataBinding": "module-toggles"
+                }
+            ]
+        },
+        "actions": {
+            "visible": true,
+            "title": "Event Log",
+            "components": [
+                {
+                    "type": "event-log",
+                    "dataBinding": "unified-event-log"
+                },
+                {
+                    "type": "chat-input",
+                    "placeholder": "Command or chat...",
+                    "dataBinding": "unified-chat"
+                }
+            ]
+        },
+        "narrative": {
+            "visible": true,
+            "title": "AI Narrative",
+            "components": [
+                {
+                    "type": "narrative-text",
+                    "label": "AI-generated narrative from all active modules...",
+                    "dataBinding": "ai-narrative"
+                },
+                {
+                    "type": "action-button",
+                    "icon": "✨",
+                    "label": "Generate Narrative",
+                    "hint": "AI narrative from all modules",
+                    "dataBinding": "generate-narrative"
+                }
+            ]
+        }
+    },
+
+    "view3D": {
+        "renderer": "threejs",
+        "cameraMode": "third-person",
+        "showCrosshair": false,
+        "showMinimap": true,
+        "sceneConfig": {
+            "theme": "unified-world",
+            "backgroundColor": 0x0a0a1a,
+            "ambient": { "intensity": 0.4, "color": 0x3b82f6 },
+            "directional": { "intensity": 0.6, "color": 0xffffff, "x": 5, "y": 10, "z": 5 },
+            "camera": { "x": 0, "y": 8, "z": 15, "target": { "x": 0, "y": 2, "z": 0 } }
+        }
+    }
+}

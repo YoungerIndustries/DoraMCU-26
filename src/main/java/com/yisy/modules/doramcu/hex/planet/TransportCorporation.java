@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.hex.planet;
 
+import com.yisy.modules.doramcu.hex.spi.AiEntityRegistration;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -69,6 +71,9 @@ public class TransportCorporation {
 
     /** Completed RPG quests history */
     private final List<String> completedQuestIds;
+
+    /** Optional: service for deactivating AI characters when vehicles are removed. */
+    private AiEntityRegistration aiEntityRegistrationService;
 
     /**
      * Creates a new transport corporation.
@@ -251,13 +256,30 @@ public class TransportCorporation {
     }
 
     /**
-     * Removes a vehicle from this corporation's assets.
+     * Removes a vehicle from this corporation's assets,
+     * deactivating its AI character first.
      *
      * @param vehicleId the vehicle ID
      * @return true if the vehicle was found and removed
      */
     public boolean removeVehicle(String vehicleId) {
+        if (aiEntityRegistrationService != null) {
+            try {
+                aiEntityRegistrationService.deactivateVehicleAiCharacter(vehicleId);
+            } catch (Exception e) {
+                // Gracefully skip deactivation if it fails
+            }
+        }
         return ownedVehicleIds.remove(vehicleId);
+    }
+
+    /**
+     * Sets the AI entity registration service for deactivating vehicle AI characters.
+     *
+     * @param service the registration service
+     */
+    public void setAiEntityRegistrationService(AiEntityRegistration service) {
+        this.aiEntityRegistrationService = service;
     }
 
     /** @return unmodifiable set of owned route IDs */

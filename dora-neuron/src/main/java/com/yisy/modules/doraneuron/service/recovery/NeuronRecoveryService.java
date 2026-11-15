@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.service.recovery;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.config.NeuronConfig;
 import com.yisy.modules.doraneuron.model.ExperienceSample;
 import com.yisy.modules.doraneuron.service.ExperienceCollectorService;
@@ -7,6 +9,7 @@ import com.yisy.modules.doraneuron.service.ModelSyncService;
 import com.yisy.modules.doraneuron.service.NeuronRegistryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -31,6 +34,9 @@ import java.util.Map;
  * 4. Re-registers with the coordinator
  */
 @Service
+@ConditionalOnBean(ModelSyncService.class)
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class NeuronRecoveryService {
 
     private static final Logger log = LoggerFactory.getLogger(NeuronRecoveryService.class);

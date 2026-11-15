@@ -1,13 +1,11 @@
 package com.yisy.modules.doramcu.star_trek_4x.generation;
 
 import com.yisy.modules.doramcu.captainslog.generation.CaptainsLogGalaxyGenerator;
-import com.yisy.modules.doramcu.earth2026.model.E26GalaxyRules;
 import com.yisy.modules.doramcu.earth2026.service.PlanetService;
 import com.yisy.modules.doramcu.hex.Galaxy;
 import com.yisy.modules.doramcu.star_trek_4x.service.StarTrekLoreDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
@@ -18,7 +16,6 @@ import java.util.Random;
  * uses Earth 2026 galaxy rules for constraints.
  * </p>
  */
-@Service
 public class StarTrekGalaxyGenerator extends CaptainsLogGalaxyGenerator {
 
     private static final Logger log = LoggerFactory.getLogger(StarTrekGalaxyGenerator.class);
@@ -43,16 +40,6 @@ public class StarTrekGalaxyGenerator extends CaptainsLogGalaxyGenerator {
         log.info("Generating Star Trek galaxy with seed: {}", seed);
         random.setSeed(seed);
 
-        // Get galaxy rules from Earth 2026
-        E26GalaxyRules rules = null;
-        if (planetService != null) {
-            try {
-                rules = planetService.getGalaxyRules();
-            } catch (Exception e) {
-                log.warn("Failed to get galaxy rules from Earth 2026", e);
-            }
-        }
-
         // Create galaxy with quadrant-aware sector generation
         Galaxy galaxy = new Galaxy(1, "Star Trek Galaxy");
 
@@ -76,10 +63,11 @@ public class StarTrekGalaxyGenerator extends CaptainsLogGalaxyGenerator {
      * Determine the quadrant based on sector position.
      */
     private String determineQuadrant(int row, int col) {
-        if (row < 5 && col < 5) return "Alpha Quadrant";
-        if (row < 5 && col >= 5) return "Beta Quadrant";
-        if (row >= 5 && col < 5) return "Gamma Quadrant";
-        return "Delta Quadrant";
+        if (row < 5) {
+            return col < 5 ? "Alpha Quadrant" : "Beta Quadrant";
+        } else {
+            return col < 5 ? "Gamma Quadrant" : "Delta Quadrant";
+        }
     }
 
     /**

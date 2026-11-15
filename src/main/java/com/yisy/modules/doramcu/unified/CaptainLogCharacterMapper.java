@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.unified;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
+import com.yisy.modules.doramcu.gamecore.GameType;
 import org.springframework.stereotype.Component;
 
 import java.util.*;

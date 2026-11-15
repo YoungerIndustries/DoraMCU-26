@@ -16,6 +16,7 @@ import java.util.function.Supplier;
  * @param <S> the state type
  * @param <E> the event type
  */
+@SuppressWarnings("ClassEscapesItsScope")
 public class StateMachine<S, E> {
 
     /**

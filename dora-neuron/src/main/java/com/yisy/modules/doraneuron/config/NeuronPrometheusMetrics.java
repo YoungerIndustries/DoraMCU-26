@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Counter;
@@ -30,6 +32,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * - neuron_jvm_*: JVM memory and CPU gauges
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class NeuronPrometheusMetrics {
 
     private static final Logger log = LoggerFactory.getLogger(NeuronPrometheusMetrics.class);

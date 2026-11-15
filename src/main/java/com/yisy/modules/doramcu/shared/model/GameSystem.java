@@ -45,5 +45,17 @@ public enum GameSystem {
     ZERO_ZERO_SEVEN,
 
     /** Third Reich ground combat rules. */
-    THIRD_REICH
+    THIRD_REICH,
+
+    /** MechWarrior / BattleTech rules. */
+    MECH_WARRIOR,
+
+    /** Star Wars universe rules. */
+    STAR_WARS,
+
+    /** Starship Troopers rules. */
+    STARSHIP_TROOPERS,
+
+    /** Warhammer 40K universe rules. */
+    WARHAMMER_40K
 }

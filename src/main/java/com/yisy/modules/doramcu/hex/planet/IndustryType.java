@@ -147,7 +147,33 @@ public enum IndustryType {
             Map.of(CargoType.CHEMICALS, 3),
             Map.of(CargoType.PLASTIC, 4, CargoType.REFINED_OIL, 3),
             Set.of(TerrainType.DESERT, TerrainType.GRASSLAND),
-            2200, 38);
+            2200, 38),
+
+    // ---- Space Industries (Apollo Rocket Set - Tech Level 8+) ----
+
+    ROCKET_PARTS_FACTORY("Rocket Parts Factory", ProductionLevel.TERTIARY,
+            Map.of(CargoType.ROCKET_PARTS, 2),
+            Map.of(CargoType.STEEL, 6, CargoType.ELECTRONICS, 4),
+            Set.of(TerrainType.GRASSLAND, TerrainType.DESERT),
+            5000, 80),
+
+    SPACECRAFT_ASSEMBLY("Spacecraft Assembly Plant", ProductionLevel.TERTIARY,
+            Map.of(CargoType.SPACECRAFT, 1),
+            Map.of(CargoType.ROCKET_PARTS, 4, CargoType.ELECTRONICS, 6),
+            Set.of(TerrainType.GRASSLAND),
+            8000, 120),
+
+    LANDER_FACTORY("Lander Factory", ProductionLevel.TERTIARY,
+            Map.of(CargoType.LANDERS, 2),
+            Map.of(CargoType.ROCKET_PARTS, 3, CargoType.MACHINERY, 2),
+            Set.of(TerrainType.GRASSLAND, TerrainType.DESERT),
+            6000, 100),
+
+    ROCKET_LAUNCH_PAD("Rocket Launch Pad", ProductionLevel.TERTIARY,
+            Map.of(),
+            Map.of(CargoType.SPACECRAFT, 1, CargoType.LANDERS, 1),
+            Set.of(TerrainType.GRASSLAND, TerrainType.DESERT),
+            10000, 150);
 
     private final String displayName;
     private final ProductionLevel level;

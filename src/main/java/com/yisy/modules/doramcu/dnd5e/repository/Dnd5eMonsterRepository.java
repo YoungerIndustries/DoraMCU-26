@@ -52,4 +52,14 @@ public interface Dnd5eMonsterRepository extends JpaRepository<Dnd5eMonster, Long
 
     @Query("SELECT m FROM Dnd5eMonster m WHERE m.active = true AND m.xp BETWEEN :minXp AND :maxXp ORDER BY m.xp ASC")
     List<Dnd5eMonster> findByXpRange(@Param("minXp") int minXp, @Param("maxXp") int maxXp);
+
+    /**
+     * Find monsters by fictional/real flag.
+     */
+    List<Dnd5eMonster> findByIsFictional(boolean isFictional);
+
+    /**
+     * Find monsters by type and fictional/real flag.
+     */
+    List<Dnd5eMonster> findByTypeAndIsFictional(String type, boolean isFictional);
 }

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.traveller;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.*;
 import com.yisy.modules.doramcu.hex.manager.CharacterLogManager;
@@ -8,7 +9,6 @@ import com.yisy.modules.doramcu.service.GameSessionService;
 import com.yisy.modules.doramcu.unified.dto.UnifiedCharacterSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,18 +19,18 @@ import java.util.List;
  * When a character needs to serve a career term, the player can choose:
  * </p>
  * <ol>
- *   <li><b>Immediate resolution</b> — Resolve the tour using Traveller rules right away,
+ *   <li><b>Immediate resolution</b> â€” Resolve the tour using Traveller rules right away,
  *       gaining skills, wealth, and experience immediately.</li>
- *   <li><b>4X game service</b> — Serve the tour in the 4X game for a specified number of turns.
+ *   <li><b>4X game service</b> â€” Serve the tour in the 4X game for a specified number of turns.
  *       The character's status changes to ON_DUTY and they cannot log in until the tour completes.</li>
  * </ol>
  * <p>
  * Status transitions:
  * </p>
  * <ul>
- *   <li>TRAINING → ON_DUTY (player chooses 4X tour)</li>
- *   <li>ON_DUTY → TRAINING (tour turns exhausted)</li>
- *   <li>TRAINING → COMPLETED (all career tours resolved)</li>
+ *   <li>TRAINING â†’ ON_DUTY (player chooses 4X tour)</li>
+ *   <li>ON_DUTY â†’ TRAINING (tour turns exhausted)</li>
+ *   <li>TRAINING â†’ COMPLETED (all career tours resolved)</li>
  * </ul>
  */
 @Service
@@ -73,12 +73,12 @@ public class TourOfDutyService {
         }
 
         if (!character.isAlive()) {
-            log.info("Character {} is dead — no tour options", character.getName());
+            log.info("Character {} is dead â€” no tour options", character.getName());
             return List.of();
         }
 
         if (character.getStatus() == CharacterStatus.ON_DUTY) {
-            log.info("Character {} is on duty — no new tour options", character.getName());
+            log.info("Character {} is on duty â€” no new tour options", character.getName());
             return List.of();
         }
 
@@ -110,7 +110,7 @@ public class TourOfDutyService {
     /**
      * Determines the next career for a character based on their existing tours.
      * <p>
-     * Tries to vary careers — a character should not serve the same career
+     * Tries to vary careers â€” a character should not serve the same career
      * consecutively unless it's their first tour.
      * </p>
      *
@@ -122,7 +122,7 @@ public class TourOfDutyService {
         List<TravellerCharacter.CareerTour> tours = character.getCareerTours();
 
         if (tours.isEmpty()) {
-            // First tour — pick a default military career
+            // First tour â€” pick a default military career
             return Career.SOLDIER;
         }
 
@@ -244,7 +244,7 @@ public class TourOfDutyService {
             game = (Game) session.getGame();
         }
         if (game == null) {
-            // No active session — create a new game
+            // No active session â€” create a new game
             game = new Game("4X Campaign");
         }
         CharacterLogManager logManager = new CharacterLogManager(game);
@@ -252,10 +252,10 @@ public class TourOfDutyService {
 
         // Assign the character to a tour based on career type
         if (request.getCareer().isNavyCareer()) {
-            // Navy character — assign to fleet tour
+            // Navy character â€” assign to fleet tour
             assignNavyTour(character, game, request.getCareer(), request.getTourTurns());
         } else if (request.getCareer().isArmyCareer()) {
-            // Army character — assign to unit tour
+            // Army character â€” assign to unit tour
             assignArmyTour(character, game, request.getCareer(), request.getTourTurns());
         } else {
             // Non-military careers default to army-style unit assignment
@@ -298,6 +298,10 @@ public class TourOfDutyService {
         Empire empire = game.getEmpire(character.getId());
         if (empire != null) {
             ArmyUnit unit = empire.getArmy().createUnit(ArmyUnitType.INFANTRY);
+            // Fallback: install AI core if not already installed by EmpireArmy
+            if (!unit.hasAiCore()) {
+                unit.setAiCore(new AiCoreComponent(AiCoreComponent.Tier.BASIC));
+            }
             militaryTourService.assignArmyUnit(character, unit, "4X Empire", "Home World", tourTurns);
             log.info("Character {} assigned to army unit tour", character.getName());
         }
@@ -362,12 +366,12 @@ public class TourOfDutyService {
         }
 
         if (character.getStatus() != CharacterStatus.ON_DUTY) {
-            log.warn("Character {} is not ON_DUTY (status: {}) — skipping tour completion",
+            log.warn("Character {} is not ON_DUTY (status: {}) â€” skipping tour completion",
                     character.getName(), character.getStatus());
             return;
         }
 
-        log.info("Character {} tour completed — status reverted to TRAINING", character.getName());
+        log.info("Character {} tour completed â€” status reverted to TRAINING", character.getName());
 
         // Revert to TRAINING so character can log in
         character.setStatus(CharacterStatus.TRAINING);

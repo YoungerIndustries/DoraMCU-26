@@ -1,0 +1,3 @@
+DoraMCU Electron Client Placeholder - macOS
+This is a placeholder file. Build the actual Electron client from the dora-electron/ directory.
+To build: Run npm run build in dora-electron/ and package for macOS.

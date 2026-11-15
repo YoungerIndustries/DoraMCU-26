@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.ai;
 
 import com.yisy.modules.doramcu.hex.Fleet;
+import com.yisy.modules.doramcu.hex.FleetAiCoordinator;
 import com.yisy.modules.doramcu.hex.Hex3D;
 import com.yisy.modules.doramcu.hex.Ship;
 import com.yisy.modules.doramcu.hex.ShipType;
@@ -86,7 +87,7 @@ public class TacticalAiCore {
         }
 
         // Scout if we have fleets and no immediate threats
-        Fleet scoutFleet = empireCore.selectBestFleet(context);
+        Fleet scoutFleet = selectBestFleetByAiCoordination(context);
         if (scoutFleet != null && scoutFleet.getPosition() != null) {
             double scoutScore = empireCore.evaluateAction(AiDecision.ActionType.SCOUT, context);
             if (scoutScore > 0.3) {
@@ -103,7 +104,7 @@ public class TacticalAiCore {
         // Build ship if resources allow
         double buildScore = empireCore.evaluateAction(AiDecision.ActionType.BUILD_SHIP, context);
         if (buildScore > 0.4 && context.getMinerals() >= 30 && context.getEnergy() >= 20) {
-            Fleet fleet = empireCore.selectBestFleet(context);
+            Fleet fleet = selectBestFleetByAiCoordination(context);
             if (fleet != null) {
                 ShipType shipType = empireCore.chooseShipType(context);
                 return AiDecision.buildShip(
@@ -147,5 +148,35 @@ public class TacticalAiCore {
                 .filter(s -> !s.isDestroyed())
                 .max(Comparator.comparingDouble(Ship::getHullHealthRatio))
                 .orElse(ships.get(0));
+    }
+
+    /**
+     * Selects the best fleet preferring those with higher AI core coordination.
+     * <p>
+     * Fleets with more AI Core-equipped ships have better formation bonuses
+     * and should be preferred for combat and scouting actions.
+     * </p>
+     *
+     * @param context the current decision context
+     * @return the best fleet by AI coordination, falling back to ship count
+     */
+    private Fleet selectBestFleetByAiCoordination(AiDecisionContext context) {
+        List<Fleet> fleets = context.getOwnedFleets();
+        if (fleets.isEmpty()) {
+            return null;
+        }
+
+        // Prefer fleets with higher AI core formation bonus
+        return fleets.stream()
+                .filter(f -> !f.getShips().isEmpty())
+                .max(Comparator.comparingDouble(f -> {
+                    FleetAiCoordinator coordinator = new FleetAiCoordinator(f);
+                    // Weight: formation bonus (0-0.3) + command bonus (0-0.15) + ship count
+                    double aiScore = coordinator.getFormationBonus() + coordinator.getCommandDamageBonus();
+                    // Add ship count as a tiebreaker (normalized)
+                    double shipScore = f.getActiveShipCount() * 0.01;
+                    return aiScore + shipScore;
+                }))
+                .orElse(fleets.get(0));
     }
 }

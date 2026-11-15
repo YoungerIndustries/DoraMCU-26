@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.service;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.config.NeuronConfig;
 import com.yisy.modules.doraneuron.config.NeuronPrometheusMetrics;
 import com.yisy.modules.doraneuron.model.ExperienceSample;
@@ -40,6 +42,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * </ul>
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class ExperienceCollectorService {
 
     private static final Logger log = LoggerFactory.getLogger(ExperienceCollectorService.class);
@@ -52,9 +56,8 @@ public class ExperienceCollectorService {
     private final ExperiencePersistenceService experiencePersistence;
     private final NeuronEventProducer eventProducer; // null if Kafka not configured
 
-    /** Thread-safe queue for buffering experience samples. */
-    private final java.util.concurrent.ConcurrentLinkedQueue<ExperienceSample> buffer =
-        new java.util.concurrent.ConcurrentLinkedQueue<>();
+    /** Thread-safe bounded queue for buffering experience samples — prevents unbounded memory growth. */
+    private final java.util.concurrent.LinkedBlockingQueue<ExperienceSample> buffer;
 
     /** Cumulative count of all samples collected since startup. */
     private final AtomicLong totalCollected = new AtomicLong(0);
@@ -78,6 +81,7 @@ public class ExperienceCollectorService {
         this.prometheusMetrics = prometheusMetrics;
         this.experiencePersistence = experiencePersistence;
         this.eventProducer = eventProducer;
+        this.buffer = new java.util.concurrent.LinkedBlockingQueue<>(config.getExperienceBufferSize());
     }
 
     @PostConstruct
@@ -97,7 +101,14 @@ public class ExperienceCollectorService {
      */
     public void collect(ExperienceSample sample) {
         enrichSample(sample);
-        buffer.offer(sample);
+        // Bounded queue: drop oldest sample if buffer is full (backpressure)
+        if (!buffer.offer(sample)) {
+            ExperienceSample dropped = buffer.poll(); // remove oldest
+            if (dropped != null) {
+                log.debug("Dropping oldest experience sample to make room for new one");
+            }
+            buffer.offer(sample);
+        }
         totalCollected.incrementAndGet();
         prometheusMetrics.recordExperienceCollected(1);
         prometheusMetrics.setExperienceBufferSize(buffer.size());
@@ -118,12 +129,18 @@ public class ExperienceCollectorService {
      * @param samples the list of experience samples to collect
      */
     public void collectAll(List<ExperienceSample> samples) {
+        int added = 0;
         for (ExperienceSample sample : samples) {
             enrichSample(sample);
-            buffer.offer(sample);
+            // Bounded queue: drop oldest if full
+            if (!buffer.offer(sample)) {
+                buffer.poll(); // remove oldest
+                buffer.offer(sample);
+            }
             totalCollected.incrementAndGet();
+            added++;
         }
-        prometheusMetrics.recordExperienceCollected(samples.size());
+        prometheusMetrics.recordExperienceCollected(added);
         prometheusMetrics.setExperienceBufferSize(buffer.size());
         updateExperienceCount();
 

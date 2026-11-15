@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.hex.manager;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.ConstructionModuleType;
 import com.yisy.modules.doramcu.hex.HullModule;
@@ -173,7 +174,7 @@ public class ResourceManager {
         pipelineManager.consumeModules(requirements);
 
         int buildTime = ship.getBuildTime();
-        ShipOrder order = new ShipOrder(ship, buildTime, targetFleetId);
+        ShipOrder order = new ShipOrder(ship, buildTime, targetFleetId, requirements);
         player.addShipOrder(order);
         return order;
     }
@@ -208,12 +209,16 @@ public class ResourceManager {
         int weaponCount = 0;
         int shieldCount = 0;
         int hullReinforcementCount = 0;
+        int mDriveCount = 0;
+        int jDriveCount = 0;
 
         for (ShipComponent component : ship.getComponents()) {
             switch (component.getType()) {
                 case WEAPON -> weaponCount++;
                 case SHIELD -> shieldCount++;
                 case HULL_REINFORCEMENT -> hullReinforcementCount++;
+                case MDRIVE -> mDriveCount++;
+                case JDRIVE -> jDriveCount++;
             }
         }
 
@@ -226,6 +231,11 @@ public class ResourceManager {
         // Hull reinforcements add to hull module count
         if (hullReinforcementCount > 0) {
             requirements.merge(ConstructionModuleType.HULL_MODULE, hullReinforcementCount, Integer::sum);
+        }
+        // Drive components (MDrive and JDrive) require ENGINE_MODULE
+        int totalDriveCount = mDriveCount + jDriveCount;
+        if (totalDriveCount > 0) {
+            requirements.put(ConstructionModuleType.ENGINE_MODULE, totalDriveCount);
         }
 
         return requirements;

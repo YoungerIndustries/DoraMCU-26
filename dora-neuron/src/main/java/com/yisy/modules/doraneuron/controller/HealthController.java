@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.controller;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.config.NeuronConfig;
 import com.yisy.modules.doraneuron.model.NeuronIdentity;
 import com.yisy.modules.doraneuron.model.multigame.GameProfile;
@@ -32,6 +34,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/health")
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class HealthController {
 
     private final NeuronConfig config;

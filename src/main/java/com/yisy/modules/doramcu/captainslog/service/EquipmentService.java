@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.dto.CreateEquipmentRequest;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
@@ -7,7 +8,6 @@ import com.yisy.modules.doramcu.captainslog.repository.CaptainLogCharacterReposi
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogEquipmentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

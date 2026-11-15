@@ -1,6 +1,6 @@
 package com.yisy.modules.doramcu.shared.dto;
 
-import com.yisy.modules.doramcu.unified.GameType;
+import com.yisy.modules.doramcu.gamecore.GameType;
 
 /**
  * DTO for creating a new shared character.

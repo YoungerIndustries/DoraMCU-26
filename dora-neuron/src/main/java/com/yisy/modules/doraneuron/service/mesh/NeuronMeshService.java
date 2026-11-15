@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * providing decentralized P2P capabilities for consensus and experience sharing.
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
 @ConditionalOnProperty(prefix = "neuron", name = "mesh-enabled", havingValue = "true", matchIfMissing = true)
 public class NeuronMeshService {
 
@@ -407,6 +408,10 @@ public class NeuronMeshService {
 
     public Collection<MeshPeerInfo> getPeers() {
         return Collections.unmodifiableCollection(peers.values());
+    }
+
+    public MeshPeerInfo getPeerInfo(String peerId) {
+        return peers.get(peerId);
     }
 
     public int getPeerCount() {

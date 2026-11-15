@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,15 +12,15 @@ import java.util.*;
  * <p>
  * The rulebook contains over 100 random tables organized into categories:
  * <ul>
- *   <li>Yes/No Probability Matrix — core oracle with probability levels</li>
- *   <li>Mission Type tables — what kind of mission is this?</li>
- *   <li>Theme tables — the underlying narrative theme</li>
- *   <li>Advantage/Complication tables — narrative twists</li>
- *   <li>Encounter tables — who or what appears</li>
- *   <li>NPC tables — allies and adversaries (Appendix II)</li>
- *   <li>Location tables — where events take place (Appendix III)</li>
- *   <li>Alien Civilization tables — species and polities</li>
- *   <li>Career Event tables — what happens during downtime</li>
+ *   <li>Yes/No Probability Matrix ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â core oracle with probability levels</li>
+ *   <li>Mission Type tables ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â what kind of mission is this?</li>
+ *   <li>Theme tables ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â the underlying narrative theme</li>
+ *   <li>Advantage/Complication tables ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â narrative twists</li>
+ *   <li>Encounter tables ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â who or what appears</li>
+ *   <li>NPC tables ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â allies and adversaries (Appendix II)</li>
+ *   <li>Location tables ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â where events take place (Appendix III)</li>
+ *   <li>Alien Civilization tables ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â species and polities</li>
+ *   <li>Career Event tables ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â what happens during downtime</li>
  * </ul>
  * </p>
  * <p>
@@ -52,15 +53,15 @@ public class ProbabilityMatrixService {
      * The Yes/No oracle result.
      */
     public enum YesNoResult {
-        YES("Yes — the answer is affirmative."),
-        YES_PLUS("Yes, and — the answer is affirmative with a bonus or advantage."),
-        YES_MINUS("Yes, but — the answer is affirmative with a complication or cost."),
-        NO("No — the answer is negative."),
-        NO_PLUS("No, but — the answer is negative with a silver lining."),
-        NO_MINUS("No, and — the answer is negative with additional bad news."),
-        BOTH("Both/Neither — the situation is more complex than a simple yes or no."),
-        CRITICAL_YES("Critical Yes — an extraordinary and highly favorable outcome."),
-        CRITICAL_NO("Critical No — an extraordinary and highly unfavorable outcome.");
+        YES("Yes ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â the answer is affirmative."),
+        YES_PLUS("Yes, and ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â the answer is affirmative with a bonus or advantage."),
+        YES_MINUS("Yes, but ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â the answer is affirmative with a complication or cost."),
+        NO("No ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â the answer is negative."),
+        NO_PLUS("No, but ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â the answer is negative with a silver lining."),
+        NO_MINUS("No, and ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â the answer is negative with additional bad news."),
+        BOTH("Both/Neither ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â the situation is more complex than a simple yes or no."),
+        CRITICAL_YES("Critical Yes ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â an extraordinary and highly favorable outcome."),
+        CRITICAL_NO("Critical No ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â an extraordinary and highly unfavorable outcome.");
 
         private final String description;
 
@@ -160,26 +161,26 @@ public class ProbabilityMatrixService {
      * Mission types from the Captain's Log rules.
      */
     public enum MissionType {
-        DIPLOMACY("Diplomacy — Negotiations, treaties, and political maneuvering."),
-        EXPLORATION("Exploration — Charting unknown space and discovering new worlds."),
-        COMBAT("Combat — Engaging hostile forces in battle."),
-        SCIENCE("Science — Research, analysis, and scientific discovery."),
-        RESCUE("Rescue — Saving those in distress."),
-        INVESTIGATION("Investigation — Uncovering secrets and solving mysteries."),
-        TRADE("Trade — Commerce, resource acquisition, and economic dealings."),
-        SURVEILLANCE("Surveillance — Espionage, reconnaissance, and covert operations."),
-        CRISIS("Crisis — Responding to emergencies and disasters."),
-        FIRST_CONTACT("First Contact — Encountering unknown species or civilizations."),
-        MAINTENANCE("Maintenance — Ship repairs, upgrades, and downtime activities."),
-        PATROL("Patrol — Monitoring borders and protecting territory."),
-        TRANSPORT("Transport — Delivering personnel, cargo, or messages."),
-        MEDICAL("Medical — Treating the sick and injured, epidemiological research."),
-        SEARCH("Search — Finding lost ships, colonies, or artifacts."),
-        ESCORT("Escort — Protecting another vessel or convoy."),
-        RECONNAISSANCE("Reconnaissance — Gathering intelligence on a target."),
-        NEGOTIATION("Negotiation — Brokerage between conflicting parties."),
-        SURVIVAL("Survival — Enduring hostile environments or situations."),
-        CONSPIRACY("Conspiracy — Uncovering plots and hidden agendas.");
+        DIPLOMACY("Diplomacy ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Negotiations, treaties, and political maneuvering."),
+        EXPLORATION("Exploration ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Charting unknown space and discovering new worlds."),
+        COMBAT("Combat ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Engaging hostile forces in battle."),
+        SCIENCE("Science ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Research, analysis, and scientific discovery."),
+        RESCUE("Rescue ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Saving those in distress."),
+        INVESTIGATION("Investigation ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Uncovering secrets and solving mysteries."),
+        TRADE("Trade ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Commerce, resource acquisition, and economic dealings."),
+        SURVEILLANCE("Surveillance ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Espionage, reconnaissance, and covert operations."),
+        CRISIS("Crisis ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Responding to emergencies and disasters."),
+        FIRST_CONTACT("First Contact ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Encountering unknown species or civilizations."),
+        MAINTENANCE("Maintenance ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Ship repairs, upgrades, and downtime activities."),
+        PATROL("Patrol ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Monitoring borders and protecting territory."),
+        TRANSPORT("Transport ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Delivering personnel, cargo, or messages."),
+        MEDICAL("Medical ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Treating the sick and injured, epidemiological research."),
+        SEARCH("Search ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Finding lost ships, colonies, or artifacts."),
+        ESCORT("Escort ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Protecting another vessel or convoy."),
+        RECONNAISSANCE("Reconnaissance ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Gathering intelligence on a target."),
+        NEGOTIATION("Negotiation ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Brokerage between conflicting parties."),
+        SURVIVAL("Survival ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Enduring hostile environments or situations."),
+        CONSPIRACY("Conspiracy ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Uncovering plots and hidden agendas.");
 
         private final String description;
 
@@ -209,26 +210,26 @@ public class ProbabilityMatrixService {
      * Narrative themes that color a mission.
      */
     public enum MissionTheme {
-        BETRAYAL("Betrayal — Someone close cannot be trusted."),
-        SACRIFICE("Sacrifice — Something valuable must be given up."),
-        REDEMPTION("Redemption — A chance to make amends for past failures."),
-        DISCOVERY("Discovery — Uncovering something that changes everything."),
-        SURVIVAL("Survival — Enduring against overwhelming odds."),
-        HONOR("Honor — Upholding principles in the face of temptation."),
-        REVENGE("Revenge — Settling old scores."),
-        HOPE("Hope — Finding light in the darkest circumstances."),
-        FEAR("Fear — Confronting what lies in the shadows."),
-        LOYALTY("Loyalty — Standing by allies when it matters most."),
-        DECEPTION("Deception — Nothing is as it seems."),
-        LEGACY("Legacy — The weight of the past shapes the future."),
-        ISOLATION("Isolation — Cut off from help, alone with the problem."),
-        ALLIANCE("Alliance — Forming unexpected partnerships."),
-        CORRUPTION("Corruption — Power's corrupting influence."),
-        INNOVATION("Innovation — Breaking new ground with bold ideas."),
-        JUSTICE("Justice — Righting wrongs and holding the guilty accountable."),
-        MYSTERY("Mystery — Solving an enigma with far-reaching consequences."),
-        WAR("War — The brutal reality of conflict."),
-        PEACE("Peace — Building bridges where walls once stood.");
+        BETRAYAL("Betrayal ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Someone close cannot be trusted."),
+        SACRIFICE("Sacrifice ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Something valuable must be given up."),
+        REDEMPTION("Redemption ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A chance to make amends for past failures."),
+        DISCOVERY("Discovery ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Uncovering something that changes everything."),
+        SURVIVAL("Survival ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Enduring against overwhelming odds."),
+        HONOR("Honor ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Upholding principles in the face of temptation."),
+        REVENGE("Revenge ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Settling old scores."),
+        HOPE("Hope ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Finding light in the darkest circumstances."),
+        FEAR("Fear ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Confronting what lies in the shadows."),
+        LOYALTY("Loyalty ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Standing by allies when it matters most."),
+        DECEPTION("Deception ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Nothing is as it seems."),
+        LEGACY("Legacy ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â The weight of the past shapes the future."),
+        ISOLATION("Isolation ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Cut off from help, alone with the problem."),
+        ALLIANCE("Alliance ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Forming unexpected partnerships."),
+        CORRUPTION("Corruption ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Power's corrupting influence."),
+        INNOVATION("Innovation ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Breaking new ground with bold ideas."),
+        JUSTICE("Justice ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Righting wrongs and holding the guilty accountable."),
+        MYSTERY("Mystery ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Solving an enigma with far-reaching consequences."),
+        WAR("War ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â The brutal reality of conflict."),
+        PEACE("Peace ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Building bridges where walls once stood.");
 
         private final String description;
 
@@ -259,26 +260,26 @@ public class ProbabilityMatrixService {
      * These are triggered by Threat, failed checks, or narrative choices.
      */
     public enum Complication {
-        REINFORCEMENTS("Reinforcements — The enemy gets backup."),
-        SYSTEM_FAILURE("System Failure — A critical system goes offline."),
-        BETRAYAL("Betrayal — An ally reveals hidden motives."),
-        TIME_PRESSURE("Time Pressure — The clock starts ticking faster."),
-        CASUALTIES("Casualties — Someone is hurt or lost."),
-        ENVIRONMENTAL_HAZARD("Environmental Hazard — The environment turns hostile."),
-        COMMUNICATIONS_BLACKOUT("Communications Blackout — Cut off from support."),
-        UNEXPECTED_ALLY("Unexpected Ally — A stranger offers help, but at what cost?"),
-        MORAL_DILEMMA("Moral Dilemma — A choice with no good options."),
-        EQUIPMENT_LOSS("Equipment Loss — Vital gear is destroyed or stolen."),
-        AMBUSH("Ambush — Attacked from an unexpected direction."),
-        POLITICAL_INTERFERENCE("Political Interference — Orders from above complicate things."),
-        TREACHEROUS_TERRAIN("Treachorous Terrain — The environment works against you."),
-        DOUBLE_AGENT("Double Agent — Someone is playing both sides."),
-        POWER_FAILURE("Power Failure — Lights out, systems down."),
-        HOSTAGE_SITUATION("Hostage Situation — Innocents are held at gunpoint."),
-        WEAPON_OF_MASS_DESTRUCTION("Weapon of Mass Destruction — A doomsday device is activated."),
-        MUTINY("Mutiny — Crew members turn against the captain."),
-        TEMPORAL_ANOMALY("Temporal Anomaly — Time behaves strangely."),
-        COSMIC_HORROR("Cosmic Horror — Something beyond comprehension appears.");
+        REINFORCEMENTS("Reinforcements ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â The enemy gets backup."),
+        SYSTEM_FAILURE("System Failure ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A critical system goes offline."),
+        BETRAYAL("Betrayal ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â An ally reveals hidden motives."),
+        TIME_PRESSURE("Time Pressure ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â The clock starts ticking faster."),
+        CASUALTIES("Casualties ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Someone is hurt or lost."),
+        ENVIRONMENTAL_HAZARD("Environmental Hazard ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â The environment turns hostile."),
+        COMMUNICATIONS_BLACKOUT("Communications Blackout ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Cut off from support."),
+        UNEXPECTED_ALLY("Unexpected Ally ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A stranger offers help, but at what cost?"),
+        MORAL_DILEMMA("Moral Dilemma ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A choice with no good options."),
+        EQUIPMENT_LOSS("Equipment Loss ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Vital gear is destroyed or stolen."),
+        AMBUSH("Ambush ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Attacked from an unexpected direction."),
+        POLITICAL_INTERFERENCE("Political Interference ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Orders from above complicate things."),
+        TREACHEROUS_TERRAIN("Treachorous Terrain ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â The environment works against you."),
+        DOUBLE_AGENT("Double Agent ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Someone is playing both sides."),
+        POWER_FAILURE("Power Failure ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Lights out, systems down."),
+        HOSTAGE_SITUATION("Hostage Situation ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Innocents are held at gunpoint."),
+        WEAPON_OF_MASS_DESTRUCTION("Weapon of Mass Destruction ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A doomsday device is activated."),
+        MUTINY("Mutiny ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Crew members turn against the captain."),
+        TEMPORAL_ANOMALY("Temporal Anomaly ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Time behaves strangely."),
+        COSMIC_HORROR("Cosmic Horror ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Something beyond comprehension appears.");
 
         private final String description;
 
@@ -309,26 +310,26 @@ public class ProbabilityMatrixService {
      * These are triggered by Momentum, successful checks, or narrative choices.
      */
     public enum Advantage {
-        INTEL("Intel — You learn something the enemy doesn't expect you to know."),
-        REINFORCEMENTS("Reinforcements — Friendly forces arrive to help."),
-        EQUIPMENT_BOOST("Equipment Boost — A piece of gear performs better than expected."),
-        ALLY_ASSISTANCE("Ally Assistance — An ally steps in at the crucial moment."),
-        ENVIRONMENTAL_EDGE("Environmental Edge — The environment works in your favor."),
-        SURPRISE_ATTACK("Surprise Attack — You catch the enemy off guard."),
-        MORALE_BOOST("Morale Boost — The crew's spirits are lifted."),
-        TECHNOLOGY_EDGE("Technology Edge — Your tech outclasses the opposition."),
-        INSIDER_INFORMATION("Insider Information — A mole provides critical details."),
-        SAFE_HAVEN("Safe Haven — A place to rest and regroup."),
-        WEAPON_UPGRADE("Weapon Upgrade — Armaments are more effective than planned."),
-        DIPLOMATIC_OPENING("Diplomatic Opening — A path to negotiation appears."),
-        MEDICAL_SUPPLY("Medical Supply — Healing resources are found."),
-        TRANSPORT_ASSISTANCE("Transport Assistance — A ride or shuttle becomes available."),
-        SENSOR_ADVANTAGE("Sensor Advantage — You see what others miss."),
-        SHIELD_BOOST("Shield Boost — Defenses hold stronger than expected."),
-        CREW_EXPERTISE("Crew Expertise — A crew member's skill shines."),
-        LUCKY_BREAK("Lucky Break — Fortune smiles upon you."),
-        ELEMENT_OF_SURPRISE("Element of Surprise — The enemy isn't ready."),
-        COMMAND_PRESENCE("Command Presence — Your leadership inspires excellence.");
+        INTEL("Intel ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â You learn something the enemy doesn't expect you to know."),
+        REINFORCEMENTS("Reinforcements ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Friendly forces arrive to help."),
+        EQUIPMENT_BOOST("Equipment Boost ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A piece of gear performs better than expected."),
+        ALLY_ASSISTANCE("Ally Assistance ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â An ally steps in at the crucial moment."),
+        ENVIRONMENTAL_EDGE("Environmental Edge ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â The environment works in your favor."),
+        SURPRISE_ATTACK("Surprise Attack ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â You catch the enemy off guard."),
+        MORALE_BOOST("Morale Boost ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â The crew's spirits are lifted."),
+        TECHNOLOGY_EDGE("Technology Edge ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Your tech outclasses the opposition."),
+        INSIDER_INFORMATION("Insider Information ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A mole provides critical details."),
+        SAFE_HAVEN("Safe Haven ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A place to rest and regroup."),
+        WEAPON_UPGRADE("Weapon Upgrade ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Armaments are more effective than planned."),
+        DIPLOMATIC_OPENING("Diplomatic Opening ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A path to negotiation appears."),
+        MEDICAL_SUPPLY("Medical Supply ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Healing resources are found."),
+        TRANSPORT_ASSISTANCE("Transport Assistance ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A ride or shuttle becomes available."),
+        SENSOR_ADVANTAGE("Sensor Advantage ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â You see what others miss."),
+        SHIELD_BOOST("Shield Boost ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Defenses hold stronger than expected."),
+        CREW_EXPERTISE("Crew Expertise ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A crew member's skill shines."),
+        LUCKY_BREAK("Lucky Break ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Fortune smiles upon you."),
+        ELEMENT_OF_SURPRISE("Element of Surprise ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â The enemy isn't ready."),
+        COMMAND_PRESENCE("Command Presence ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Your leadership inspires excellence.");
 
         private final String description;
 
@@ -358,26 +359,26 @@ public class ProbabilityMatrixService {
      * Types of encounters that can occur during a mission.
      */
     public enum EncounterType {
-        HOSTILE_SHIP("Hostile Ship — An enemy vessel hails or attacks."),
-        DISTRESS_SIGNAL("Distress Signal — Someone is calling for help."),
-        ANOMALOUS_READING("Anomalous Reading — Sensors detect something unusual."),
-        NEUTRAL_PARTY("Neutral Party — A third faction enters the scene."),
-        CIVILIAN_VESSEL("Civilian Vessel — Non-combatants are in the area."),
-        DERELICT("Derelict — An abandoned ship or station drifts nearby."),
-        ASTEROID_FIELD("Asteroid Field — Navigational hazard ahead."),
-        PLANETARY_DEFENSE("Planetary Defense — Automated defenses activate."),
-        PIRATE_ATTACK("Pirate Attack — Raiders strike without warning."),
-        DIPLOMATIC_MEETING("Diplomatic Meeting — A formal encounter with another faction."),
-        SCIENTIFIC_PHENOMENON("Scientific Phenomenon — A natural event demands study."),
-        BLACK_MARKET("Black Market — An opportunity for illicit trade."),
-        SEARCH_AND_RESCUE("Search and Rescue — Survivors need extraction."),
-        TERRITORIAL_DISPUTE("Territorial Dispute — Two factions clash over space."),
-        MYSTERIOUS_SIGNAL("Mysterious Signal — An encoded transmission is detected."),
-        WEATHER_STORM("Weather Storm — A plasma storm or radiation belt."),
-        GHOST_SHIP("Ghost Ship — A vessel with no life signs approaches."),
-        REFUGEE_CRISIS("Refugee Crisis — Displaced civilians need aid."),
-        MILITARY_BLOCKADE("Military Blockade — Passage is denied."),
-        ARTIFACT_DISCOVERY("Artifact Discovery — An ancient object is found.");
+        HOSTILE_SHIP("Hostile Ship ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â An enemy vessel hails or attacks."),
+        DISTRESS_SIGNAL("Distress Signal ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Someone is calling for help."),
+        ANOMALOUS_READING("Anomalous Reading ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Sensors detect something unusual."),
+        NEUTRAL_PARTY("Neutral Party ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A third faction enters the scene."),
+        CIVILIAN_VESSEL("Civilian Vessel ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Non-combatants are in the area."),
+        DERELICT("Derelict ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â An abandoned ship or station drifts nearby."),
+        ASTEROID_FIELD("Asteroid Field ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Navigational hazard ahead."),
+        PLANETARY_DEFENSE("Planetary Defense ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Automated defenses activate."),
+        PIRATE_ATTACK("Pirate Attack ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Raiders strike without warning."),
+        DIPLOMATIC_MEETING("Diplomatic Meeting ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A formal encounter with another faction."),
+        SCIENTIFIC_PHENOMENON("Scientific Phenomenon ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A natural event demands study."),
+        BLACK_MARKET("Black Market ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â An opportunity for illicit trade."),
+        SEARCH_AND_RESCUE("Search and Rescue ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Survivors need extraction."),
+        TERRITORIAL_DISPUTE("Territorial Dispute ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Two factions clash over space."),
+        MYSTERIOUS_SIGNAL("Mysterious Signal ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â An encoded transmission is detected."),
+        WEATHER_STORM("Weather Storm ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A plasma storm or radiation belt."),
+        GHOST_SHIP("Ghost Ship ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A vessel with no life signs approaches."),
+        REFUGEE_CRISIS("Refugee Crisis ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Displaced civilians need aid."),
+        MILITARY_BLOCKADE("Military Blockade ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Passage is denied."),
+        ARTIFACT_DISCOVERY("Artifact Discovery ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â An ancient object is found.");
 
         private final String description;
 
@@ -407,26 +408,26 @@ public class ProbabilityMatrixService {
      * NPC roles from the Captain's Log rulebook.
      */
     public enum NpcRole {
-        COMMANDING_OFFICER("Commanding Officer — A leader making tough decisions."),
-        FIRST_OFFICER("First Officer — The right hand, executing orders."),
-        SCIENCE_OFFICER("Science Officer — Analyzing data and making discoveries."),
-        SECURITY_OFFICER("Security Officer — Enforcing order and handling threats."),
-        ENGINEER("Engineer — Keeping the ship running and fixing problems."),
-        MEDICAL_OFFICER("Medical Officer — Healing the wounded and treating disease."),
-        PILOT("Pilot — Flying the ship through danger."),
-        TACTICAL_OFFICER("Tactical Officer — Directing weapons and shields."),
-        COMMUNICATIONS_OFFICER("Communications Officer — Managing all transmissions."),
-        NAVIGATOR("Navigator — Plotting courses through space."),
-        DIPLOMAT("Diplomat — Negotiating with other factions."),
-        SCOUT("Scout — Reconnaissance and first contact."),
-        MERCHANT("Merchant — Trading goods and services."),
-        SMUGGLER("Smuggler — Operating outside the law."),
-        SPY("Spy — Gathering intelligence covertly."),
-        MERCENARY("Mercenary — Fighting for profit."),
-        ACADEMIC("Academic — Researching and teaching."),
-        RELIGIOUS_LEADER("Religious Leader — Guiding the faithful."),
-        CRIMINAL("Criminal — Operating in the shadows."),
-        CIVILIAN("Civilian — An ordinary person caught in extraordinary events.");
+        COMMANDING_OFFICER("Commanding Officer ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A leader making tough decisions."),
+        FIRST_OFFICER("First Officer ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â The right hand, executing orders."),
+        SCIENCE_OFFICER("Science Officer ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Analyzing data and making discoveries."),
+        SECURITY_OFFICER("Security Officer ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Enforcing order and handling threats."),
+        ENGINEER("Engineer ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Keeping the ship running and fixing problems."),
+        MEDICAL_OFFICER("Medical Officer ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Healing the wounded and treating disease."),
+        PILOT("Pilot ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Flying the ship through danger."),
+        TACTICAL_OFFICER("Tactical Officer ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Directing weapons and shields."),
+        COMMUNICATIONS_OFFICER("Communications Officer ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Managing all transmissions."),
+        NAVIGATOR("Navigator ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Plotting courses through space."),
+        DIPLOMAT("Diplomat ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Negotiating with other factions."),
+        SCOUT("Scout ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Reconnaissance and first contact."),
+        MERCHANT("Merchant ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Trading goods and services."),
+        SMUGGLER("Smuggler ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Operating outside the law."),
+        SPY("Spy ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Gathering intelligence covertly."),
+        MERCENARY("Mercenary ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Fighting for profit."),
+        ACADEMIC("Academic ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Researching and teaching."),
+        RELIGIOUS_LEADER("Religious Leader ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Guiding the faithful."),
+        CRIMINAL("Criminal ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Operating in the shadows."),
+        CIVILIAN("Civilian ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â An ordinary person caught in extraordinary events.");
 
         private final String description;
 
@@ -440,14 +441,14 @@ public class ProbabilityMatrixService {
     }
 
     /**
-     * NPC alignment — how they relate to the player.
+     * NPC alignment ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â how they relate to the player.
      */
     public enum NpcAlignment {
-        ALLY("Ally — Works with the player character."),
-        NEUTRAL("Neutral — Has their own agenda."),
-        RIVAL("Rival — Competes with the player."),
-        ENEMY("Enemy — Actively opposes the player."),
-        WILD_CARD("Wild Card — Unpredictable, could go either way.");
+        ALLY("Ally ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Works with the player character."),
+        NEUTRAL("Neutral ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Has their own agenda."),
+        RIVAL("Rival ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Competes with the player."),
+        ENEMY("Enemy ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Actively opposes the player."),
+        WILD_CARD("Wild Card ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Unpredictable, could go either way.");
 
         private final String description;
 
@@ -464,26 +465,26 @@ public class ProbabilityMatrixService {
      * Alien species from the Star Trek universe and beyond.
      */
     public enum AlienSpecies {
-        HUMAN("Human — Versatile and adaptable."),
-        ANDORIAN("Andorian — Honor-bound warriors from a cold world."),
-        BAJORAN("Bajoran — Spiritual and resilient."),
-        BETAZOID("Betazoid — Empathic communicators."),
-        BOLIAN("Bolian — Artistic and philosophical."),
-        CARDASSIAN("Cardassian — Ambitious and militaristic."),
-        DENOBULAN("Denobulan — Master healers and scientists."),
-        FERENGI("Ferengi — Profit-driven traders."),
-        HYLEAN("Hylean — Proud and traditional."),
-        KLINGON("Klingon — Fierce warriors who value honor."),
-        ROMULAN("Romulan — Cunning and secretive."),
-        VULCAN("Vulcan — Logical and disciplined."),
-        TRILL("Trill — Symbiotic beings with combined wisdom."),
-        ORION("Orion — Raiders and traders."),
-        THOLIAN("Tholian — Isolationist and technologically advanced."),
-        ROMULAN_ELITE("Romulan Elite — Nobility of the Romulan Star Empire."),
-        FOUNDLING("Foundling — A mysterious and ancient species."),
-        XINDI("Xindi — A diverse species with multiple primate forms."),
-        DELTA_RACE("Delta Race — Advanced beings from the Delta Quadrant."),
-        UNKNOWN("Unknown — An unclassified species.");
+        HUMAN("Human ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Versatile and adaptable."),
+        ANDORIAN("Andorian ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Honor-bound warriors from a cold world."),
+        BAJORAN("Bajoran ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Spiritual and resilient."),
+        BETAZOID("Betazoid ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Empathic communicators."),
+        BOLIAN("Bolian ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Artistic and philosophical."),
+        CARDASSIAN("Cardassian ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Ambitious and militaristic."),
+        DENOBULAN("Denobulan ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Master healers and scientists."),
+        FERENGI("Ferengi ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Profit-driven traders."),
+        HYLEAN("Hylean ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Proud and traditional."),
+        KLINGON("Klingon ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Fierce warriors who value honor."),
+        ROMULAN("Romulan ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Cunning and secretive."),
+        VULCAN("Vulcan ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Logical and disciplined."),
+        TRILL("Trill ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Symbiotic beings with combined wisdom."),
+        ORION("Orion ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Raiders and traders."),
+        THOLIAN("Tholian ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Isolationist and technologically advanced."),
+        ROMULAN_ELITE("Romulan Elite ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Nobility of the Romulan Star Empire."),
+        FOUNDLING("Foundling ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A mysterious and ancient species."),
+        XINDI("Xindi ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A diverse species with multiple primate forms."),
+        DELTA_RACE("Delta Race ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Advanced beings from the Delta Quadrant."),
+        UNKNOWN("Unknown ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â An unclassified species.");
 
         private final String description;
 
@@ -596,26 +597,26 @@ public class ProbabilityMatrixService {
      * Location types where events can take place.
      */
     public enum LocationType {
-        STARBASE("Starbase — A large military or civilian space station."),
-        COLONY("Colony — A settled world with infrastructure."),
-        SPACE_STATION("Space Station — A smaller orbital facility."),
-        PLANET_SURFACE("Planet Surface — On the ground of a habitable world."),
-        DEEP_SPACE("Deep Space — Far from any star or colony."),
-        WORMHOLE("Wormhole — A spatial anomaly connecting distant points."),
-        NEBULA("Nebula — A cloud of gas and dust."),
-        ASTEROID_BELT("Asteroid Belt — A field of rocky bodies."),
-        STARSHIP("Starship — Aboard a vessel in transit."),
-        MOON("Moon — A natural satellite with facilities."),
-        OUTPOST("Outpost — A remote forward base."),
-        MARKET("Market — A trading hub or bazaar."),
-        DIPLOMATIC_ENCLAVE("Diplomatic Enclave — Neutral ground for negotiations."),
-        RESEARCH_FACILITY("Research Facility — A laboratory or observatory."),
-        MILITARY_FORTRESS("Military Fortress — A heavily defended installation."),
-        PRISON("Prison — A detention facility."),
-        HOSPITAL("Hospital — A medical center."),
-        TEMPLE("Temple — A place of worship or meditation."),
-        BLACK_SITE("Black Site — A covert, unacknowledged facility."),
-        ANOMALOUS_ZONE("Anomalous Zone — An area where physics behaves strangely.");
+        STARBASE("Starbase ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A large military or civilian space station."),
+        COLONY("Colony ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A settled world with infrastructure."),
+        SPACE_STATION("Space Station ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A smaller orbital facility."),
+        PLANET_SURFACE("Planet Surface ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â On the ground of a habitable world."),
+        DEEP_SPACE("Deep Space ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Far from any star or colony."),
+        WORMHOLE("Wormhole ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A spatial anomaly connecting distant points."),
+        NEBULA("Nebula ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A cloud of gas and dust."),
+        ASTEROID_BELT("Asteroid Belt ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A field of rocky bodies."),
+        STARSHIP("Starship ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Aboard a vessel in transit."),
+        MOON("Moon ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A natural satellite with facilities."),
+        OUTPOST("Outpost ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A remote forward base."),
+        MARKET("Market ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A trading hub or bazaar."),
+        DIPLOMATIC_ENCLAVE("Diplomatic Enclave ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Neutral ground for negotiations."),
+        RESEARCH_FACILITY("Research Facility ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A laboratory or observatory."),
+        MILITARY_FORTRESS("Military Fortress ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A heavily defended installation."),
+        PRISON("Prison ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A detention facility."),
+        HOSPITAL("Hospital ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A medical center."),
+        TEMPLE("Temple ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A place of worship or meditation."),
+        BLACK_SITE("Black Site ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A covert, unacknowledged facility."),
+        ANOMALOUS_ZONE("Anomalous Zone ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â An area where physics behaves strangely.");
 
         private final String description;
 
@@ -632,26 +633,26 @@ public class ProbabilityMatrixService {
      * Planet types for world generation.
      */
     public enum PlanetType {
-        TERRAN("Terran — Earth-like, habitable world."),
-        DESERT("Desert — Arid world with vast sand seas."),
-        OCEAN("Ocean — Water world with minimal landmass."),
-        ICE("Ice — Frozen world with glacial landscapes."),
-        VOLCANIC("Volcanic — Active tectonics and lava flows."),
-        JUNGLE("Jungle — Dense vegetation and high humidity."),
-        GAS_GIANT("Gas Giant — No solid surface, atmospheric platforms."),
-        BARREN("Barren — Lifeless rock with minimal atmosphere."),
-        TOXIC("Toxic — Hazardous atmosphere requires protection."),
-        URBAN("Urban — Heavily developed, city-covered world."),
-        ARCTIC("Arctic — Polar world with ice caps."),
-        SWAMP("Swamp — Wetlands and marshes."),
-        MOUNTAIN("Mountain — Rugged terrain with high peaks."),
-        SUBTERRANEAN("Subterranean — Underground civilization."),
-        MOON_HABITAT("Moon Habitat — Artificial habitat on a moon."),
-        DYSON_STRUCTURE("Dyson Structure — Artificial megastructure."),
-        WARP_STORM("Warp Storm — Perpetual energy storm."),
-        CRYSTAL("Crystal — World covered in crystalline formations."),
-        MAGNETIC("Magnetic — Extreme magnetic fields affect technology."),
-        UNKNOWN("Unknown — Classification pending further study.");
+        TERRAN("Terran ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Earth-like, habitable world."),
+        DESERT("Desert ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Arid world with vast sand seas."),
+        OCEAN("Ocean ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Water world with minimal landmass."),
+        ICE("Ice ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Frozen world with glacial landscapes."),
+        VOLCANIC("Volcanic ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Active tectonics and lava flows."),
+        JUNGLE("Jungle ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Dense vegetation and high humidity."),
+        GAS_GIANT("Gas Giant ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â No solid surface, atmospheric platforms."),
+        BARREN("Barren ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Lifeless rock with minimal atmosphere."),
+        TOXIC("Toxic ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Hazardous atmosphere requires protection."),
+        URBAN("Urban ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Heavily developed, city-covered world."),
+        ARCTIC("Arctic ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Polar world with ice caps."),
+        SWAMP("Swamp ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Wetlands and marshes."),
+        MOUNTAIN("Mountain ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Rugged terrain with high peaks."),
+        SUBTERRANEAN("Subterranean ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Underground civilization."),
+        MOON_HABITAT("Moon Habitat ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Artificial habitat on a moon."),
+        DYSON_STRUCTURE("Dyson Structure ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Artificial megastructure."),
+        WARP_STORM("Warp Storm ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Perpetual energy storm."),
+        CRYSTAL("Crystal ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â World covered in crystalline formations."),
+        MAGNETIC("Magnetic ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Extreme magnetic fields affect technology."),
+        UNKNOWN("Unknown ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Classification pending further study.");
 
         private final String description;
 
@@ -744,26 +745,26 @@ public class ProbabilityMatrixService {
      * Career events that occur during downtime between missions.
      */
     public enum CareerEvent {
-        PROMOTION("Promotion — Your rank and responsibilities increase."),
-        NEW_ASSIGNMENT("New Assignment — Transferred to a different post."),
-        TRAINING("Training — Attended a course that improves your skills."),
-        LEAVE("Leave — Time off to rest and recharge."),
-        PERSONAL_CRISIS("Personal Crisis — A personal matter demands attention."),
-        NEW_ALLY("New Ally — You gain a valuable contact or friend."),
-        NEW_ENEMY("New Enemy — Someone holds a grudge against you."),
-        EQUIPMENT_UPGRADE("Equipment Upgrade — Your gear is improved."),
-        SHIP_TRANSFER("Ship Transfer — Reassigned to a different vessel."),
-        MEDICAL_TREATMENT("Medical Treatment — Health issues are addressed."),
-        POLITICAL_INTRIGUE("Political Intrigue — Office politics affect your career."),
-        SCIENTIFIC_BREAKTHROUGH("Scientific Breakthrough — Your research yields results."),
-        COURT_MARTIAL("Court Martial — You face disciplinary action."),
-        AWARDS_CEREMONY("Awards Ceremony — Your achievements are recognized."),
-        MENTORSHIP("Mentorship — You guide a junior officer."),
-        INVESTIGATION("Investigation — You're questioned about a past mission."),
-        BLACK_OPS("Black Ops — A covert assignment is offered."),
-        RETIREMENT_CONSIDERATION("Retirement Consideration — Is it time to step down?"),
-        FAMILY_MATTER("Family Matter — Relatives need your help."),
-        RETIREMENT("Retirement — A chapter closes, a new one begins.");
+        PROMOTION("Promotion ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Your rank and responsibilities increase."),
+        NEW_ASSIGNMENT("New Assignment ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Transferred to a different post."),
+        TRAINING("Training ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Attended a course that improves your skills."),
+        LEAVE("Leave ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Time off to rest and recharge."),
+        PERSONAL_CRISIS("Personal Crisis ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A personal matter demands attention."),
+        NEW_ALLY("New Ally ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â You gain a valuable contact or friend."),
+        NEW_ENEMY("New Enemy ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Someone holds a grudge against you."),
+        EQUIPMENT_UPGRADE("Equipment Upgrade ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Your gear is improved."),
+        SHIP_TRANSFER("Ship Transfer ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Reassigned to a different vessel."),
+        MEDICAL_TREATMENT("Medical Treatment ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Health issues are addressed."),
+        POLITICAL_INTRIGUE("Political Intrigue ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Office politics affect your career."),
+        SCIENTIFIC_BREAKTHROUGH("Scientific Breakthrough ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Your research yields results."),
+        COURT_MARTIAL("Court Martial ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â You face disciplinary action."),
+        AWARDS_CEREMONY("Awards Ceremony ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Your achievements are recognized."),
+        MENTORSHIP("Mentorship ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â You guide a junior officer."),
+        INVESTIGATION("Investigation ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â You're questioned about a past mission."),
+        BLACK_OPS("Black Ops ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A covert assignment is offered."),
+        RETIREMENT_CONSIDERATION("Retirement Consideration ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Is it time to step down?"),
+        FAMILY_MATTER("Family Matter ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Relatives need your help."),
+        RETIREMENT("Retirement ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â A chapter closes, a new one begins.");
 
         private final String description;
 
@@ -812,7 +813,7 @@ public class ProbabilityMatrixService {
             "A diplomatic mission requires unusual tactics.",
             "A scientific discovery has dangerous implications.",
             "A lost starship is found with its crew intact.",
-            "A planet's ecosystem is collapsing — can it be saved?",
+            "A planet's ecosystem is collapsing ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â can it be saved?",
             "A cyber attack targets the ship's computer systems.",
             "A refugee fleet seeks asylum in Federation space.",
             "A wormhole opens to an uncharted region.",
@@ -824,7 +825,7 @@ public class ProbabilityMatrixService {
             "A vision or dream hints at a future threat.",
             "Your ship's AI begins behaving strangely.",
             "A crew member goes missing during a routine EVA.",
-            "An old wound reopens — literally or figuratively.",
+            "An old wound reopens ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â literally or figuratively.",
             "You must choose between duty and personal loyalty.",
             "A child's life depends on your decision.",
             "Your past catches up with you in an unexpected way.",
@@ -883,26 +884,26 @@ public class ProbabilityMatrixService {
      * Maintenance events that occur during downtime between missions.
      */
     public enum MaintenanceEvent {
-        SYSTEM_REPAIR("System Repair — Fixing damage to ship systems."),
-        WEAPON_CALIBRATION("Weapon Calibration — Tuning weapons for optimal performance."),
-        SHIELD_UPGRADE("Shield Upgrade — Improving defensive capabilities."),
-        ENGINE_OVERHAUL("Engine Overhaul — Boosting warp and impulse performance."),
-        SENSOR_ENHANCEMENT("Sensor Enhancement — Extending detection range."),
-        COMPUTER_UPDATE("Computer Update — Installing new software and patches."),
-        CREW_TRAINING("Crew Training — Improving crew skills and coordination."),
-        MEDICAL_SUPPLY_RESTOCK("Medical Supply Restock — Replenishing healing resources."),
-        HULL_PATCHING("Hull Patching — Repairing structural damage."),
-        COMMS_REPAIR("Comms Repair — Restoring communication systems."),
-        LIFE_SUPPORT_CHECK("Life Support Check — Ensuring environmental systems work."),
-        CARGO_ORGANIZATION("Cargo Organization — Sorting and securing supplies."),
-        CREW_LEAVE("Crew Leave — Allowing crew members time off."),
-        DIPLOMATIC_VISIT("Diplomatic Visit — Hosting or attending a diplomatic event."),
-        SCIENTIFIC_RESEARCH("Scientific Research — Conducting experiments and studies."),
-        PERSONAL_TIME("Personal Time — Reflecting on values and goals."),
-        INTEL_ANALYSIS("Intel Analysis — Reviewing intelligence reports."),
-        CREW_EVALUATION("Crew Evaluation — Assessing crew performance."),
-        EMERGENCY_DRILL("Emergency Drill — Practicing for worst-case scenarios."),
-        SHIP_CUSTOMIZATION("Ship Customization — Personalizing the vessel.");
+        SYSTEM_REPAIR("System Repair ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Fixing damage to ship systems."),
+        WEAPON_CALIBRATION("Weapon Calibration ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Tuning weapons for optimal performance."),
+        SHIELD_UPGRADE("Shield Upgrade ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Improving defensive capabilities."),
+        ENGINE_OVERHAUL("Engine Overhaul ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Boosting warp and impulse performance."),
+        SENSOR_ENHANCEMENT("Sensor Enhancement ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Extending detection range."),
+        COMPUTER_UPDATE("Computer Update ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Installing new software and patches."),
+        CREW_TRAINING("Crew Training ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Improving crew skills and coordination."),
+        MEDICAL_SUPPLY_RESTOCK("Medical Supply Restock ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Replenishing healing resources."),
+        HULL_PATCHING("Hull Patching ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Repairing structural damage."),
+        COMMS_REPAIR("Comms Repair ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Restoring communication systems."),
+        LIFE_SUPPORT_CHECK("Life Support Check ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Ensuring environmental systems work."),
+        CARGO_ORGANIZATION("Cargo Organization ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Sorting and securing supplies."),
+        CREW_LEAVE("Crew Leave ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Allowing crew members time off."),
+        DIPLOMATIC_VISIT("Diplomatic Visit ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Hosting or attending a diplomatic event."),
+        SCIENTIFIC_RESEARCH("Scientific Research ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Conducting experiments and studies."),
+        PERSONAL_TIME("Personal Time ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Reflecting on values and goals."),
+        INTEL_ANALYSIS("Intel Analysis ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Reviewing intelligence reports."),
+        CREW_EVALUATION("Crew Evaluation ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Assessing crew performance."),
+        EMERGENCY_DRILL("Emergency Drill ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Practicing for worst-case scenarios."),
+        SHIP_CUSTOMIZATION("Ship Customization ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Personalizing the vessel.");
 
         private final String description;
 
@@ -930,26 +931,26 @@ public class ProbabilityMatrixService {
      * Alien polities and factions from the Star Trek universe.
      */
     public enum AlienPolity {
-        UNITED_FEDERATION("United Federation of Planets — Democratic alliance of worlds."),
-        KLINGON_EMPIRE("Klingon Empire — Warrior culture valoring honor and strength."),
-        ROMULAN_STAR_EMPIRE("Romulan Star Empire — Secretive and cunning rivals."),
-        FERENGI_ALLIANCE("Ferengi Alliance — Profit-driven merchant society."),
-        CARDASSIAN_UNION("Cardassian Union — Authoritarian militaristic state."),
-        BAJORAN_RESISTANCE("Bajoran Resistance — Freedom fighters seeking independence."),
-        ORION_SYNDICATE("Orion Syndicate — Interstellar criminal organization."),
-        THOLIAN_COLLECTIVE("Tholian Collective — Isolationist defensive alliance."),
-        ANDORIAN_EMPIRE("Andorian Empire — Honor-bound warrior culture."),
-        BETAZOI_COLLECTIVE("Betazoi Collective — Empathic telepathic society."),
-        DENOBULAN_FEDERATION("Denobulan Federation — Healing-focused civilization."),
-        TRILL_UNITY("Trill Unity — Symbiotic beings with combined wisdom."),
-        ROMULAN_SENSITATIVE_OFFICE("Romulan Sensitive Office — Secret intelligence agency."),
-        FERENGI_COMMERCE_AUTHORITY("Ferengi Commerce Authority — Corporate overlords."),
-        KLINGON_HIGH_COUNCIL("Klingon High Council — Governing body of the Empire."),
-        FEDERATION_COUNCIL("Federation Council — Legislative body of the Federation."),
-        BAJORAN_RELICTION_AUTHORITY("Bajoran Religion Authority — Spiritual leaders."),
-        CARDASSIA_CENTRAL("Cardassia Central — Ruling council of Cardassia."),
-        MAUDITH("Mau'Dor — Ancient and mysterious beings."),
-        UNKNOWN_FACTION("Unknown Faction — An unclassified political entity.");
+        UNITED_FEDERATION("United Federation of Planets ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Democratic alliance of worlds."),
+        KLINGON_EMPIRE("Klingon Empire ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Warrior culture valoring honor and strength."),
+        ROMULAN_STAR_EMPIRE("Romulan Star Empire ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Secretive and cunning rivals."),
+        FERENGI_ALLIANCE("Ferengi Alliance ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Profit-driven merchant society."),
+        CARDASSIAN_UNION("Cardassian Union ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Authoritarian militaristic state."),
+        BAJORAN_RESISTANCE("Bajoran Resistance ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Freedom fighters seeking independence."),
+        ORION_SYNDICATE("Orion Syndicate ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Interstellar criminal organization."),
+        THOLIAN_COLLECTIVE("Tholian Collective ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Isolationist defensive alliance."),
+        ANDORIAN_EMPIRE("Andorian Empire ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Honor-bound warrior culture."),
+        BETAZOI_COLLECTIVE("Betazoi Collective ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Empathic telepathic society."),
+        DENOBULAN_FEDERATION("Denobulan Federation ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Healing-focused civilization."),
+        TRILL_UNITY("Trill Unity ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Symbiotic beings with combined wisdom."),
+        ROMULAN_SENSITATIVE_OFFICE("Romulan Sensitive Office ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Secret intelligence agency."),
+        FERENGI_COMMERCE_AUTHORITY("Ferengi Commerce Authority ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Corporate overlords."),
+        KLINGON_HIGH_COUNCIL("Klingon High Council ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Governing body of the Empire."),
+        FEDERATION_COUNCIL("Federation Council ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Legislative body of the Federation."),
+        BAJORAN_RELICTION_AUTHORITY("Bajoran Religion Authority ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Spiritual leaders."),
+        CARDASSIA_CENTRAL("Cardassia Central ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Ruling council of Cardassia."),
+        MAUDITH("Mau'Dor ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Ancient and mysterious beings."),
+        UNKNOWN_FACTION("Unknown Faction ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â An unclassified political entity.");
 
         private final String description;
 
@@ -981,7 +982,7 @@ public class ProbabilityMatrixService {
         MaintenanceEvent event = rollMaintenanceEvent();
         AlienPolity polity = rollAlienPolity();
 
-        log.info("Generated downtime profile: {} — {}", event, polity);
+        log.info("Generated downtime profile: {} ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â {}", event, polity);
 
         Map<String, String> profile = new LinkedHashMap<>();
         profile.put("maintenanceEvent", event.name());
@@ -998,26 +999,26 @@ public class ProbabilityMatrixService {
      * These represent recurring threats and enemies.
      */
     public enum Adversary {
-        KLINGON_WARRIOR("Klingon Warrior — Honorable but deadly opponent."),
-        ROMULAN_OPERATIVE("Romulan Operative — Cunning agent of the Tal Shiar."),
-        FERENGI_RAIDER("Ferengi Raider — Profit-driven pirate."),
-        CARDASSIAN_OFFICER("Cardassian Officer — Ruthless enforcer of the Union."),
-        ORION_SLAVE_TRADER("Orion Slave Trader — Criminal dealing in lives."),
-        BORG_DRONE("Borg Drone — Relentless assimilator."),
-        ROMULAN_SNIPER("Romulan Sniper — Patient and precise assassin."),
-        KLINGON_BOARDING_PARTY("Klingon Boarding Party — Aggressive assault team."),
-        FERENGI_MERCENARY("Ferengi Mercenary — Will fight for the right price."),
-        CARDASSIAN_JAGHRAAF("Cardassian Jaghraf — Elite special forces operative."),
-        THOLIAN_GUARDIAN("Tholian Guardian — Defensive but dangerous."),
-        BAJORAN_INSURGENT("Bajoran Insurgent — Desperate freedom fighter."),
-        ORION_WARRIOR("Orion Warrior — Brutal and strong combatant."),
-        ROMULAN_TACTICIAN("Romulan Tactician — Master of deception and strategy."),
-        KLINGON_CHAMPION("Klingon Champion — The best warrior the Empire has to offer."),
-        UNKNOWN_ENTITIES("Unknown Entities — Mysterious beings with unknown motives."),
-        CYBORG_ASSASSIN("Cyborg Assassin — Enhanced killer with no mercy."),
-        PIRATE_CAPTAIN("Pirate Captain — Leader of a rogue crew."),
-        CORRUPT_OFFICIAL("Corrupt Official — Abuses power for personal gain."),
-        RIVAL_CAPTAIN("Rival Captain — Competing officer with conflicting goals.");
+        KLINGON_WARRIOR("Klingon Warrior ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Honorable but deadly opponent."),
+        ROMULAN_OPERATIVE("Romulan Operative ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Cunning agent of the Tal Shiar."),
+        FERENGI_RAIDER("Ferengi Raider ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Profit-driven pirate."),
+        CARDASSIAN_OFFICER("Cardassian Officer ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Ruthless enforcer of the Union."),
+        ORION_SLAVE_TRADER("Orion Slave Trader ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Criminal dealing in lives."),
+        BORG_DRONE("Borg Drone ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Relentless assimilator."),
+        ROMULAN_SNIPER("Romulan Sniper ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Patient and precise assassin."),
+        KLINGON_BOARDING_PARTY("Klingon Boarding Party ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Aggressive assault team."),
+        FERENGI_MERCENARY("Ferengi Mercenary ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Will fight for the right price."),
+        CARDASSIAN_JAGHRAAF("Cardassian Jaghraf ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Elite special forces operative."),
+        THOLIAN_GUARDIAN("Tholian Guardian ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Defensive but dangerous."),
+        BAJORAN_INSURGENT("Bajoran Insurgent ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Desperate freedom fighter."),
+        ORION_WARRIOR("Orion Warrior ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Brutal and strong combatant."),
+        ROMULAN_TACTICIAN("Romulan Tactician ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Master of deception and strategy."),
+        KLINGON_CHAMPION("Klingon Champion ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â The best warrior the Empire has to offer."),
+        UNKNOWN_ENTITIES("Unknown Entities ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Mysterious beings with unknown motives."),
+        CYBORG_ASSASSIN("Cyborg Assassin ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Enhanced killer with no mercy."),
+        PIRATE_CAPTAIN("Pirate Captain ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Leader of a rogue crew."),
+        CORRUPT_OFFICIAL("Corrupt Official ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Abuses power for personal gain."),
+        RIVAL_CAPTAIN("Rival Captain ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Competing officer with conflicting goals.");
 
         private final String description;
 
@@ -1046,26 +1047,26 @@ public class ProbabilityMatrixService {
      * These represent helpful contacts and allies.
      */
     public enum Ally {
-        FEDERATION_LIAISON("Federation Liaison — Official contact within Starfleet."),
-        INFORMANT("Informant — Source of intelligence from within enemy ranks."),
-        LOCAL_GUIDE("Local Guide — Knows the area and its secrets."),
-        ALLIED_CAPTAIN("Allied Captain — Friendly officer who can provide assistance."),
-        SCIENTIFIC_CONTACT("Scientific Contact — Expert who can analyze anomalies."),
-        DIPLOMATIC_CONTACT("Diplomatic Contact — Can open doors through protocol."),
-        RESISTANCE_LEADER("Resistance Leader — Commands local freedom fighters."),
-        MEDICAL_EXPERT("Medical Expert — Can heal injuries and treat diseases."),
-        TECH_SPECIALIST("Tech Specialist — Can repair or hack systems."),
-        NAVIGATOR("Navigator — Knows the routes through dangerous space."),
-        TRANSLATOR("Translator — Can communicate with alien species."),
-        PILOT("Pilot — Expert ship or shuttle operator."),
-        SECURITY_CONSULTANT("Security Consultant — Can assess and improve defenses."),
-        SUPPLIER("Supplier — Provides equipment and resources."),
-        LEGAL_ADVISOR("Legal Advisor — Knows the regulations and loopholes."),
-        HISTORIAN("Historian — Knows the ancient secrets and prophecies."),
-        PSYCHIC_ALLY("Psychic Ally — Can sense danger and read minds."),
-        ENGINEER_CONTACT("Engineer Contact — Can modify or build equipment."),
-        DIPLOMAT("Diplomat — Can negotiate peace or alliances."),
-        MENTOR("Mentor — Wise advisor who guides your character.");
+        FEDERATION_LIAISON("Federation Liaison ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Official contact within Starfleet."),
+        INFORMANT("Informant ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Source of intelligence from within enemy ranks."),
+        LOCAL_GUIDE("Local Guide ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Knows the area and its secrets."),
+        ALLIED_CAPTAIN("Allied Captain ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Friendly officer who can provide assistance."),
+        SCIENTIFIC_CONTACT("Scientific Contact ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Expert who can analyze anomalies."),
+        DIPLOMATIC_CONTACT("Diplomatic Contact ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Can open doors through protocol."),
+        RESISTANCE_LEADER("Resistance Leader ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Commands local freedom fighters."),
+        MEDICAL_EXPERT("Medical Expert ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Can heal injuries and treat diseases."),
+        TECH_SPECIALIST("Tech Specialist ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Can repair or hack systems."),
+        NAVIGATOR("Navigator ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Knows the routes through dangerous space."),
+        TRANSLATOR("Translator ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Can communicate with alien species."),
+        PILOT("Pilot ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Expert ship or shuttle operator."),
+        SECURITY_CONSULTANT("Security Consultant ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Can assess and improve defenses."),
+        SUPPLIER("Supplier ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Provides equipment and resources."),
+        LEGAL_ADVISOR("Legal Advisor ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Knows the regulations and loopholes."),
+        HISTORIAN("Historian ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Knows the ancient secrets and prophecies."),
+        PSYCHIC_ALLY("Psychic Ally ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Can sense danger and read minds."),
+        ENGINEER_CONTACT("Engineer Contact ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Can modify or build equipment."),
+        DIPLOMAT("Diplomat ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Can negotiate peace or alliances."),
+        MENTOR("Mentor ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Wise advisor who guides your character.");
 
         private final String description;
 
@@ -1130,26 +1131,26 @@ public class ProbabilityMatrixService {
      * Starship classes and types from the Star Trek universe (Appendix III).
      */
     public enum StarshipClass {
-        CONSTITUTION("Constitution-Class — Versatile exploration vessel (2 ships)."),
-        GALAXY("Galaxy-Class — Long-range exploration flagship (5 ships)."),
-        SOVEREIGN("Sovereign-Class — Diplomatic and combat vessel (3 ships)."),
-        VOYAGER("Voyager-Class — Deep space exploration (2 ships)."),
-        DEFiant("Defiant-Class — Heavy combat vessel (1 ship)."),
-        AKIRA("Akira-Class — Heavy exploration and combat (3 ships)."),
-        NEBUULA("Nebula-Class — Science and exploration (2 ships)."),
-        PROMETHEUS("Prometheus-Class — Stealth and reconnaissance (1 ship)."),
-        D7("D7-Class — Klingon battle cruiser (1 ship)."),
-        DREADNOUGHT("Dreadnought-Class — Klingon heavy warship (2 ships)."),
-        WARSHIP("Warship-Class — Romulan heavy combat vessel (1 ship)."),
-        CRUISER("Cruiser-Class — Romulan long-range vessel (2 ships)."),
-        RAIDER("Raider-Class — Ferengi fast attack ship (1 ship)."),
-        MERCHANT("Merchant-Class — Ferengi cargo and trade vessel (2 ships)."),
-        ORBITAL("Orbital Station — Large space station (6 ships)."),
-        SHUTTLE("Shuttlecraft — Small transport vessel (0 ships)."),
-        RUNABOUT("Runabout — Small multi-role vessel (0 ships)."),
-        EXPLORER("Explorer-Class — Deep space probe ship (1 ship)."),
-        CUSTOM("Custom-Class — Unique vessel with custom capabilities."),
-        UNKNOWN("Unknown-Class — Unidentified vessel type.");
+        CONSTITUTION("Constitution-Class ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Versatile exploration vessel (2 ships)."),
+        GALAXY("Galaxy-Class ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Long-range exploration flagship (5 ships)."),
+        SOVEREIGN("Sovereign-Class ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Diplomatic and combat vessel (3 ships)."),
+        VOYAGER("Voyager-Class ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Deep space exploration (2 ships)."),
+        DEFiant("Defiant-Class ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Heavy combat vessel (1 ship)."),
+        AKIRA("Akira-Class ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Heavy exploration and combat (3 ships)."),
+        NEBUULA("Nebula-Class ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Science and exploration (2 ships)."),
+        PROMETHEUS("Prometheus-Class ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Stealth and reconnaissance (1 ship)."),
+        D7("D7-Class ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Klingon battle cruiser (1 ship)."),
+        DREADNOUGHT("Dreadnought-Class ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Klingon heavy warship (2 ships)."),
+        WARSHIP("Warship-Class ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Romulan heavy combat vessel (1 ship)."),
+        CRUISER("Cruiser-Class ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Romulan long-range vessel (2 ships)."),
+        RAIDER("Raider-Class ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Ferengi fast attack ship (1 ship)."),
+        MERCHANT("Merchant-Class ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Ferengi cargo and trade vessel (2 ships)."),
+        ORBITAL("Orbital Station ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Large space station (6 ships)."),
+        SHUTTLE("Shuttlecraft ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Small transport vessel (0 ships)."),
+        RUNABOUT("Runabout ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Small multi-role vessel (0 ships)."),
+        EXPLORER("Explorer-Class ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Deep space probe ship (1 ship)."),
+        CUSTOM("Custom-Class ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Unique vessel with custom capabilities."),
+        UNKNOWN("Unknown-Class ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Unidentified vessel type.");
 
         private final String description;
 
@@ -1177,26 +1178,26 @@ public class ProbabilityMatrixService {
      * Terrain types for planetary surfaces (Appendix III).
      */
     public enum TerrainType {
-        MOUNTAINS("Mountains — Rugged peaks and valleys."),
-        PLAINS("Plains — Flat, open grasslands."),
-        FOREST("Forest — Dense woodland with diverse flora."),
-        JUNGLE("Jungle — Thick, humid tropical growth."),
-        DESERT("Desert — Arid sands and rock formations."),
-        TUNDRA("Tundra — Frozen, barren landscape."),
-        SWAMP("Swamp — Wet, marshy terrain with standing water."),
-        VOLCANIC("Volcanic — Active lava flows and ash fields."),
-        OCEANIC("Oceanic — Water-covered world with islands."),
-        URBAN("Urban — Heavily developed cityscape."),
-        CANYON("Canyon — Deep gorges and cliffs."),
-        CAVE("Cave — Underground network of tunnels."),
-        GLACIER("Glacier — Massive ice formations."),
-        RAIN_FOREST("Rain Forest — Lush, biodiverse ecosystem."),
-        STEPPE("Steppe — Semi-arid grassland."),
-        BADLANDS("Badlands — Eroded, rocky terrain."),
-        CRATER("Crater — Impact site with unique geology."),
-        RIFT("Rift — Tectonic fissure with unusual activity."),
-        ARTIFICIAL("Artificial — Constructed or modified terrain."),
-        UNKNOWN("Unknown — Terrain type not yet identified.");
+        MOUNTAINS("Mountains ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Rugged peaks and valleys."),
+        PLAINS("Plains ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Flat, open grasslands."),
+        FOREST("Forest ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Dense woodland with diverse flora."),
+        JUNGLE("Jungle ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Thick, humid tropical growth."),
+        DESERT("Desert ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Arid sands and rock formations."),
+        TUNDRA("Tundra ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Frozen, barren landscape."),
+        SWAMP("Swamp ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Wet, marshy terrain with standing water."),
+        VOLCANIC("Volcanic ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Active lava flows and ash fields."),
+        OCEANIC("Oceanic ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Water-covered world with islands."),
+        URBAN("Urban ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Heavily developed cityscape."),
+        CANYON("Canyon ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Deep gorges and cliffs."),
+        CAVE("Cave ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Underground network of tunnels."),
+        GLACIER("Glacier ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Massive ice formations."),
+        RAIN_FOREST("Rain Forest ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Lush, biodiverse ecosystem."),
+        STEPPE("Steppe ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Semi-arid grassland."),
+        BADLANDS("Badlands ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Eroded, rocky terrain."),
+        CRATER("Crater ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Impact site with unique geology."),
+        RIFT("Rift ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Tectonic fissure with unusual activity."),
+        ARTIFICIAL("Artificial ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Constructed or modified terrain."),
+        UNKNOWN("Unknown ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Terrain type not yet identified.");
 
         private final String description;
 
@@ -1224,26 +1225,26 @@ public class ProbabilityMatrixService {
      * Atmosphere types for planetary classification (Appendix III).
      */
     public enum AtmosphereType {
-        BREATHABLE("Breathable — Humans can breathe without assistance."),
-        TOXIC("Toxic — Requires environmental suit."),
-        THIN("Thin — Low oxygen, requires breathing apparatus."),
-        DENSE("Dense — High pressure, requires pressure suit."),
-        NONE("None — Vacuum or near-vacuum environment."),
-        WATER_VAPOR("Water Vapor — Steam-filled atmosphere."),
-        METHANE("Methane — Natural gas atmosphere."),
-        AMMONIA("Ammonia — Toxic ammonia-based atmosphere."),
-        CARBON_DIOXIDE("Carbon Dioxide — CO2-rich atmosphere."),
-        NITROGEN("Nitrogen — Nitrogen-dominant atmosphere."),
-        OXYGEN_RICH("Oxygen Rich — Highly flammable, oxygen-saturated."),
-        SULFURIC("Sulfuric — Acidic atmosphere with sulfur compounds."),
-        RADIATION("Radiation — High radiation levels, dangerous to life."),
-        PLASMA("Plasma — Superheated ionized gas."),
-        CRYOGENIC("Cryogenic — Extremely cold, frozen gases."),
-        STORM("Storm — Perpetual storms and lightning."),
-        MAGNETIC("Magnetic — Strong electromagnetic field in atmosphere."),
-        BIOLOGICAL("Biological — Living, organic atmosphere."),
-        ARTIFICIAL("Artificial — Maintained by technology."),
-        UNKNOWN("Unknown — Atmosphere composition not yet determined.");
+        BREATHABLE("Breathable ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Humans can breathe without assistance."),
+        TOXIC("Toxic ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Requires environmental suit."),
+        THIN("Thin ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Low oxygen, requires breathing apparatus."),
+        DENSE("Dense ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â High pressure, requires pressure suit."),
+        NONE("None ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Vacuum or near-vacuum environment."),
+        WATER_VAPOR("Water Vapor ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Steam-filled atmosphere."),
+        METHANE("Methane ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Natural gas atmosphere."),
+        AMMONIA("Ammonia ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Toxic ammonia-based atmosphere."),
+        CARBON_DIOXIDE("Carbon Dioxide ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â CO2-rich atmosphere."),
+        NITROGEN("Nitrogen ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Nitrogen-dominant atmosphere."),
+        OXYGEN_RICH("Oxygen Rich ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Highly flammable, oxygen-saturated."),
+        SULFURIC("Sulfuric ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Acidic atmosphere with sulfur compounds."),
+        RADIATION("Radiation ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â High radiation levels, dangerous to life."),
+        PLASMA("Plasma ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Superheated ionized gas."),
+        CRYOGENIC("Cryogenic ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Extremely cold, frozen gases."),
+        STORM("Storm ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Perpetual storms and lightning."),
+        MAGNETIC("Magnetic ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Strong electromagnetic field in atmosphere."),
+        BIOLOGICAL("Biological ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Living, organic atmosphere."),
+        ARTIFICIAL("Artificial ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Maintained by technology."),
+        UNKNOWN("Unknown ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Atmosphere composition not yet determined.");
 
         private final String description;
 
@@ -1271,26 +1272,26 @@ public class ProbabilityMatrixService {
      * Population levels for world generation (Appendix III).
      */
     public enum PopulationLevel {
-        UNINHABITED("Uninhabited — No sentient life."),
-        WILDLIFE_ONLY("Wildlife Only — Non-sentient animal life."),
-        PRIMITIVE("Primitive — Pre-industrial civilization."),
-        MEDIEVAL("Medieval — Early industrial technology."),
-        INDUSTRIAL("Industrial — Steam and early electricity."),
-        ATOMIC("Atomic — Nuclear age technology."),
-        INTERPLANETARY("Interplanetary — Colonizing nearby planets."),
-        PRE_WARP("Pre-Warp — Approaching faster-than-light travel."),
-        WARP_CAPABLE("Warp Capable — Has achieved FTL travel."),
-        FEDERATION_LEVEL("Federation Level — Advanced warp civilization."),
-        POST_WARP("Post-Warp — Mature warp civilization."),
-        TYPE_II("Type II — Harnesses stellar energy (Kardashev scale)."),
-        TYPE_III("Type III — Controls galactic energy."),
-        ANCIENT("Ancient — Vastly advanced, possibly precursors."),
-        DYING("Dying — Civilization in decline or collapse."),
-        REBUILT("Rebuilt — Recovering from past destruction."),
-        HIDDEN("Hidden — Deliberately concealing their presence."),
-        NOMADIC("Nomadic — Moving civilization without fixed homes."),
-        SUBTERRANEAN("Subterranean — Lives underground or beneath surface."),
-        UNKNOWN("Unknown — Population level not yet determined.");
+        UNINHABITED("Uninhabited ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â No sentient life."),
+        WILDLIFE_ONLY("Wildlife Only ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Non-sentient animal life."),
+        PRIMITIVE("Primitive ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Pre-industrial civilization."),
+        MEDIEVAL("Medieval ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Early industrial technology."),
+        INDUSTRIAL("Industrial ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Steam and early electricity."),
+        ATOMIC("Atomic ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Nuclear age technology."),
+        INTERPLANETARY("Interplanetary ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Colonizing nearby planets."),
+        PRE_WARP("Pre-Warp ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Approaching faster-than-light travel."),
+        WARP_CAPABLE("Warp Capable ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Has achieved FTL travel."),
+        FEDERATION_LEVEL("Federation Level ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Advanced warp civilization."),
+        POST_WARP("Post-Warp ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Mature warp civilization."),
+        TYPE_II("Type II ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Harnesses stellar energy (Kardashev scale)."),
+        TYPE_III("Type III ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Controls galactic energy."),
+        ANCIENT("Ancient ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Vastly advanced, possibly precursors."),
+        DYING("Dying ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Civilization in decline or collapse."),
+        REBUILT("Rebuilt ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Recovering from past destruction."),
+        HIDDEN("Hidden ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Deliberately concealing their presence."),
+        NOMADIC("Nomadic ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Moving civilization without fixed homes."),
+        SUBTERRANEAN("Subterranean ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Lives underground or beneath surface."),
+        UNKNOWN("Unknown ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Population level not yet determined.");
 
         private final String description;
 

@@ -1,10 +1,12 @@
 package com.yisy.modules.doramcu.controller;
 
+import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.hex.Empire;
 import com.yisy.modules.doramcu.hex.GalaxyFactory;
 import com.yisy.modules.doramcu.hex.GalaxyGenerationConfig;
 import com.yisy.modules.doramcu.model.Player;
 import com.yisy.modules.doramcu.model.User;
+import com.yisy.modules.doramcu.repository.AiCharacterRepository;
 import com.yisy.modules.doramcu.repository.GalaxyRepository;
 import com.yisy.modules.doramcu.repository.PlayerRepository;
 import com.yisy.modules.doramcu.repository.SectorRepository;
@@ -57,6 +59,7 @@ public class AdminController {
     private final GameSessionService gameSessionService;
     private final DoraAiLearningService doraAiLearningService;
     private final com.yisy.modules.doramcu.service.PromoCodeService promoCodeService;
+    private final AiCharacterRepository aiCharacterRepository;
 
     @Value("${server.port:8080}")
     private int serverPort;
@@ -74,7 +77,8 @@ public class AdminController {
                            TurnScheduler turnScheduler,
                            GameSessionService gameSessionService,
                            DoraAiLearningService doraAiLearningService,
-                           com.yisy.modules.doramcu.service.PromoCodeService promoCodeService) {
+                           com.yisy.modules.doramcu.service.PromoCodeService promoCodeService,
+                           AiCharacterRepository aiCharacterRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.galaxyRepository = galaxyRepository;
@@ -87,6 +91,7 @@ public class AdminController {
         this.gameSessionService = gameSessionService;
         this.doraAiLearningService = doraAiLearningService;
         this.promoCodeService = promoCodeService;
+        this.aiCharacterRepository = aiCharacterRepository;
     }
 
     // ==================== Admin Rights Check ====================
@@ -766,7 +771,10 @@ public class AdminController {
             if (request != null) {
                 count = request.get("count") != null ? ((Number) request.get("count")).intValue() : count;
                 length = request.get("length") != null ? ((Number) request.get("length")).intValue() : length;
-                prefix = request.get("prefix") != null ? (String) request.get("prefix") : prefix;
+                Object prefixObj = request.get("prefix");
+                if (prefixObj != null) {
+                    prefix = (String) prefixObj;
+                }
                 description = request.get("description") != null ? (String) request.get("description") : description;
                 maxUses = request.get("maxUses") != null ? ((Number) request.get("maxUses")).intValue() : null;
                 typeStr = request.get("type") != null ? (String) request.get("type") : typeStr;
@@ -817,6 +825,156 @@ public class AdminController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
         }
+    }
+
+    // ==================== Admin Info Summary ====================
+
+    /**
+     * Returns a comprehensive summary of all admin-relevant information:
+     * server health, AI character status, galaxy/planet/city counts, and game state.
+     * Used by the corporation dashboard admin info modal.
+     */
+    @GetMapping("/info-summary")
+    public Map<String, Object> getAdminInfoSummary() {
+        Map<String, Object> summary = new HashMap<>();
+
+        // --- Server Health ---
+        Map<String, Object> serverHealth = new HashMap<>();
+        long startTime = ManagementFactory.getRuntimeMXBean().getStartTime();
+        long uptime = System.currentTimeMillis() - startTime;
+        serverHealth.put("uptime", uptime);
+        serverHealth.put("port", serverPort);
+
+        MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
+        MemoryUsage heapUsage = memoryBean.getHeapMemoryUsage();
+        serverHealth.put("heapUsed", heapUsage.getUsed());
+        serverHealth.put("heapMax", heapUsage.getMax());
+        serverHealth.put("heapPercent", (int) (heapUsage.getUsed() * 100.0 / heapUsage.getMax()));
+
+        OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+        if (osBean instanceof com.sun.management.OperatingSystemMXBean) {
+            com.sun.management.OperatingSystemMXBean sunBean = (com.sun.management.OperatingSystemMXBean) osBean;
+            serverHealth.put("cpuLoad", sunBean.getCpuLoad());
+            serverHealth.put("systemCpuLoad", sunBean.getSystemCpuLoad());
+        }
+        serverHealth.put("availableProcessors", Runtime.getRuntime().availableProcessors());
+        serverHealth.put("threadCount", Thread.activeCount());
+        summary.put("server", serverHealth);
+
+        // --- AI Characters ---
+        List<AiCharacter> allCharacters = aiCharacterRepository.findAll();
+        Map<String, Object> aiChars = new HashMap<>();
+        aiChars.put("total", allCharacters.size());
+
+        long activeCount = allCharacters.stream().filter(AiCharacter::isActive).count();
+        aiChars.put("active", activeCount);
+        aiChars.put("inactive", allCharacters.size() - activeCount);
+
+        // Count by character type
+        Map<String, Long> byType = new HashMap<>();
+        for (AiCharacter.CharacterType type : AiCharacter.CharacterType.values()) {
+            long count = allCharacters.stream().filter(c -> c.getCharacterType() == type).count();
+            if (count > 0) {
+                byType.put(type.name(), count);
+            }
+        }
+        aiChars.put("byType", byType);
+
+        // Count by hiring status
+        Map<String, Long> byHiringStatus = new HashMap<>();
+        for (AiCharacter.HiringStatus status : AiCharacter.HiringStatus.values()) {
+            long count = allCharacters.stream().filter(c -> c.getHiringStatus() == status).count();
+            if (count > 0) {
+                byHiringStatus.put(status.name(), count);
+            }
+        }
+        aiChars.put("byHiringStatus", byHiringStatus);
+
+        // Count by empire
+        Map<String, Long> byEmpire = new HashMap<>();
+        for (AiCharacter c : allCharacters) {
+            String empire = c.getEmpireName() != null ? c.getEmpireName() : "Unknown";
+            byEmpire.merge(empire, 1L, Long::sum);
+        }
+        aiChars.put("byEmpire", byEmpire);
+
+        // AI Admin characters
+        long aiAdminCount = allCharacters.stream().filter(AiCharacter::isAiAdmin).count();
+        aiChars.put("aiAdmins", aiAdminCount);
+
+        // List all characters with key info
+        List<Map<String, Object>> charList = new ArrayList<>();
+        for (AiCharacter c : allCharacters) {
+            Map<String, Object> charInfo = new HashMap<>();
+            charInfo.put("id", c.getId());
+            charInfo.put("name", c.getName());
+            charInfo.put("role", c.getRole());
+            charInfo.put("empire", c.getEmpireName());
+            charInfo.put("active", c.isActive());
+            charInfo.put("characterType", c.getCharacterType() != null ? c.getCharacterType().name() : "HUMAN_LEADER");
+            charInfo.put("hiringStatus", c.getHiringStatus() != null ? c.getHiringStatus().name() : "AVAILABLE");
+            charInfo.put("aiAdmin", c.isAiAdmin());
+            charInfo.put("experience", c.getTotalExperience());
+            charInfo.put("leadership", c.getLeadershipRating());
+            charInfo.put("battles", c.getTotalBattles());
+            charInfo.put("victories", c.getTotalVictories());
+            charInfo.put("linkedPlayerId", c.getLinkedPlayerId());
+            charInfo.put("primarySkill", c.getPrimarySkill());
+            charInfo.put("description", c.getDescription());
+            charList.add(charInfo);
+        }
+        aiChars.put("characters", charList);
+        summary.put("aiCharacters", aiChars);
+
+        // --- Galaxy Data ---
+        Map<String, Object> galaxyData = new HashMap<>();
+        List<com.yisy.modules.doramcu.model.Galaxy> galaxies = galaxyRepository.findAll();
+        galaxyData.put("galaxies", galaxies.size());
+
+        long totalSectors = 0;
+        long totalSubSectors = 0;
+        for (com.yisy.modules.doramcu.model.Galaxy galaxy : galaxies) {
+            List<com.yisy.modules.doramcu.model.Sector> sectors = sectorRepository.findByGalaxyId(galaxy.getId());
+            totalSectors += sectors.size();
+            for (com.yisy.modules.doramcu.model.Sector sector : sectors) {
+                totalSubSectors += subSectorRepository.findBySectorId(sector.getId()).size();
+            }
+        }
+        galaxyData.put("sectors", totalSectors);
+        galaxyData.put("subSectors", totalSubSectors);
+        summary.put("galaxy", galaxyData);
+
+        // --- Game Sessions ---
+        Map<String, Object> gameSessions = new HashMap<>();
+        try {
+            Map<String, com.yisy.modules.doramcu.model.GameSession> sessions = gameSessionService.getAllSessions();
+            gameSessions.put("total", sessions.size());
+            gameSessions.put("active", sessions.size());
+        } catch (Exception e) {
+            gameSessions.put("error", e.getMessage());
+        }
+        summary.put("gameSessions", gameSessions);
+
+        // --- Turn Scheduler ---
+        Map<String, Object> turnInfo = new HashMap<>();
+        try {
+            turnInfo.put("enabled", turnScheduler.isEnabled());
+            turnInfo.put("intervalSeconds", turnScheduler.getTurnIntervalSeconds());
+        } catch (Exception e) {
+            turnInfo.put("error", e.getMessage());
+        }
+        summary.put("turnScheduler", turnInfo);
+
+        // --- DL Service ---
+        Map<String, Object> dlInfo = new HashMap<>();
+        try {
+            dlInfo.put("available", doraAiLearningService != null);
+        } catch (Exception e) {
+            dlInfo.put("error", e.getMessage());
+        }
+        summary.put("dlService", dlInfo);
+
+        return summary;
     }
 
     @PutMapping("/promo-codes/{code}")

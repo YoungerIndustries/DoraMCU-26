@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.hex.manager;
+import org.springframework.stereotype.Service;
 
+import com.yisy.modules.doramcu.hex.AiCoreComponent;
 import com.yisy.modules.doramcu.hex.Fleet;
 import com.yisy.modules.doramcu.hex.Galaxy;
 import com.yisy.modules.doramcu.hex.Hex3D;
@@ -10,6 +12,12 @@ import com.yisy.modules.doramcu.hex.SolarSystem;
 import com.yisy.modules.doramcu.hex.SolarSystemEntity;
 import com.yisy.modules.doramcu.hex.WeaponType;
 import com.yisy.modules.doramcu.hex.Player;
+import com.yisy.modules.doramcu.hex.spi.AiEntityRegistration;
+import com.yisy.modules.doramcu.hex.Skin;
+import com.yisy.modules.doramcu.hex.SkinType;
+import com.yisy.modules.doramcu.hex.spi.AssetRegistrySpi;
+import com.yisy.modules.doramcu.hex.spi.SkinLookupSpi;
+import com.yisy.modules.doramcu.hex.spi.SkinProviders;
 import com.yisy.modules.doramcu.traveller.HighGuardShipDesign;
 import com.yisy.modules.doramcu.traveller.HighGuardShipFactory;
 import com.yisy.modules.doramcu.traveller.ShipDesign;
@@ -28,6 +36,7 @@ import java.util.Map;
 public class FleetManager {
 
     private final GameContext context;
+    private AiEntityRegistration aiEntityRegistrationService;
 
     /**
      * Creates a new FleetManager.
@@ -36,6 +45,13 @@ public class FleetManager {
      */
     public FleetManager(GameContext context) {
         this.context = context;
+    }
+
+    /**
+     * Sets the AI entity registration service (injected by Game when available).
+     */
+    public void setAiEntityRegistrationService(AiEntityRegistration aiEntityRegistrationService) {
+        this.aiEntityRegistrationService = aiEntityRegistrationService;
     }
 
     /**
@@ -156,7 +172,9 @@ public class FleetManager {
         ship.setName(name);
         ship.addComponent(new ShipComponent(WeaponType.BEAM, 1));
         ship.addComponent(ShipComponent.shield(1));
+        ship.setAiCore(new AiCoreComponent());
         context.addShip(ship);
+        registerShipWithSkin(ship);
         return ship;
     }
 
@@ -174,7 +192,9 @@ public class FleetManager {
         ship.addComponent(new ShipComponent(WeaponType.BEAM, 1));
         ship.addComponent(ShipComponent.shield(1));
         ship.addComponent(ShipComponent.shield(1));
+        ship.setAiCore(new AiCoreComponent());
         context.addShip(ship);
+        registerShipWithSkin(ship);
         return ship;
     }
 
@@ -189,7 +209,9 @@ public class FleetManager {
         Ship ship = new Ship(shipId, ShipType.FRIGATE);
         ship.setName(name);
         ship.addComponent(ShipComponent.shield(1));
+        ship.setAiCore(new AiCoreComponent());
         context.addShip(ship);
+        registerShipWithSkin(ship);
         return ship;
     }
 
@@ -220,8 +242,11 @@ public class FleetManager {
         TravellerShipFactory factory = new TravellerShipFactory(context.getNextShipIdAndIncrement());
         for (ShipDesign design : designs) {
             Ship ship = factory.convert(design);
+            ship.setAiCore(new AiCoreComponent());
             context.addShip(ship);
             fleet.addShip(ship);
+            registerShipAsAi(ship, owner.getName());
+            registerShipWithSkin(ship);
         }
 
         return context.addFleet(fleet, owner);
@@ -250,8 +275,11 @@ public class FleetManager {
         HighGuardShipFactory factory = new HighGuardShipFactory(context.getNextShipIdAndIncrement());
         for (HighGuardShipDesign design : designs) {
             Ship ship = factory.convert(design);
+            ship.setAiCore(new AiCoreComponent());
             context.addShip(ship);
             fleet.addShip(ship);
+            registerShipAsAi(ship, owner.getName());
+            registerShipWithSkin(ship);
         }
 
         return context.addFleet(fleet, owner);
@@ -266,7 +294,9 @@ public class FleetManager {
     public Ship convertShipDesign(ShipDesign design) {
         TravellerShipFactory factory = new TravellerShipFactory(context.getNextShipIdAndIncrement());
         Ship ship = factory.convert(design);
+        ship.setAiCore(new AiCoreComponent());
         context.addShip(ship);
+        registerShipWithSkin(ship);
         return ship;
     }
 
@@ -279,7 +309,9 @@ public class FleetManager {
     public Ship convertHighGuardDesign(HighGuardShipDesign design) {
         HighGuardShipFactory factory = new HighGuardShipFactory(context.getNextShipIdAndIncrement());
         Ship ship = factory.convert(design);
+        ship.setAiCore(new AiCoreComponent());
         context.addShip(ship);
+        registerShipWithSkin(ship);
         return ship;
     }
 
@@ -301,6 +333,7 @@ public class FleetManager {
 
         Ship ship = convertShipDesign(design);
         ship.setName(request.getName());
+        registerShipAsAi(ship, player.getName());
 
         // Add to player's first fleet or create a new one
         java.util.Set<Integer> fleetIdSet = player.getOwnedFleetIds();
@@ -318,5 +351,38 @@ public class FleetManager {
         }
 
         return ship.getId();
+    }
+
+    /**
+     * Registers a ship with the asset registry and assigns a default skin.
+     * Uses static AssetRegistrySpi.getInstance() for non-Spring access.
+     */
+    private void registerShipWithSkin(Ship ship) {
+        AssetRegistrySpi registry = SkinProviders.getAssetRegistry();
+        if (registry == null) {
+            return;
+        }
+        registry.register(SkinType.SHIP, ship.getId(), ship);
+        SkinLookupSpi skinLookup = SkinProviders.getSkinLookup();
+        if (skinLookup != null && ship.getSkin() == null) {
+            Skin defaultSkin = skinLookup.getSkin("sci-fi-ship");
+            if (defaultSkin != null) {
+                ship.setSkin(defaultSkin);
+            }
+        }
+    }
+
+    /**
+     * Registers a ship as an AI character in the AI character repository.
+     * No-op if the AI entity registration service is not available.
+     */
+    private void registerShipAsAi(Ship ship, String empireName) {
+        if (aiEntityRegistrationService != null && ship != null) {
+            try {
+                aiEntityRegistrationService.registerShip(ship, empireName);
+            } catch (Exception e) {
+                // Silently ignore if registration fails
+            }
+        }
     }
 }

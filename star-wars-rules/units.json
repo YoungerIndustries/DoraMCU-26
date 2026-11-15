@@ -1,0 +1,807 @@
+{
+  "units": {
+    "ground_units": [
+      {
+        "id": "clone_trooper",
+        "name": "Clone Trooper",
+        "faction": "galactic_republic",
+        "type": "infantry",
+        "era": "Prequel",
+        "description": "Genetically engineered soldier cloned from Jango Fett on Kamino. Forms the backbone of the Grand Army of the Republic.",
+        "stats": {
+          "attack": 2,
+          "defense": 2,
+          "hull": 3,
+          "shields": 0,
+          "speed": 6,
+          "wounds": 3
+        },
+        "weapons": ["DC-15A Blaster Rifle"],
+        "abilities": ["Disciplined", "Mass Produced"],
+        "variants": [
+          {"name": "Clone Sharpshooter", "specialty": "Long-range precision fire"},
+          {"name": "Clone Heavy Gunner", "specialty": "DC-15A Light Repeating Blaster"},
+          {"name": "Clone Engineer", "specialty": "Demolitions and repair"},
+          {"name": "Phase II Clone Trooper", "specialty": "Improved armor and flexibility"}
+        ]
+      },
+      {
+        "id": "clone_commando",
+        "name": "Clone Commando",
+        "faction": "galactic_republic",
+        "type": "elite_infantry",
+        "era": "Prequel",
+        "description": "Elite CC-series clone commandos with enhanced aggression and independence. Trained for special operations.",
+        "stats": {
+          "attack": 3,
+          "defense": 3,
+          "hull": 4,
+          "shields": 0,
+          "speed": 6,
+          "wounds": 4
+        },
+        "weapons": ["DC-15A Blaster Rifle", "DC-17 Hand Blaster", "Thermal Detonators"],
+        "abilities": ["Elite Training", "Independent Thinking", "Special Operations"],
+        "notable_units": ["Captain Rex (CT-7567)", "Commander Cody (CC-2224)", "Commander Wolffe (CC-2225)", "Echo (CT-21-0407)"]
+      },
+      {
+        "id": "stormtrooper",
+        "name": "Stormtrooper",
+        "faction": "galactic_empire",
+        "type": "infantry",
+        "era": "Original Trilogy",
+        "description": "Elite Imperial infantry in iconic white armor. Conscripted and trained for absolute obedience. Known for notoriously poor aim in popular culture.",
+        "stats": {
+          "attack": 2,
+          "defense": 3,
+          "hull": 3,
+          "shields": 0,
+          "speed": 6,
+          "wounds": 3
+        },
+        "weapons": ["E-11 Blaster Rifle"],
+        "abilities": ["Imperial Discipline", "Armor Plating"],
+        "variants": [
+          {"name": "Snowtrooper", "specialty": "Cold-weather operations on Hoth"},
+          {"name": "Scout Trooper", "specialty": "Reconnaissance and long-range patrol"},
+          {"name": "Death Trooper", "specialty": "Covert operations and assassination"},
+          {"name": "Shock Trooper", "specialty": "Rapid deployment via drop pods"},
+          {"name": "Armored Assault AT-AT Crew", "specialty": "Walker operation"}
+        ]
+      },
+      {
+        "id": "b1 Battle Droid",
+        "name": "B1 Battle Droid",
+        "faction": "separatist_alliance",
+        "type": "droid_infantry",
+        "era": "Prequel",
+        "description": "Mass-produced battle droid forming the backbone of the Separatist Droid Army. Vulnerable but produced in unlimited numbers.",
+        "stats": {
+          "attack": 1,
+          "defense": 1,
+          "hull": 2,
+          "shields": 0,
+          "speed": 6,
+          "wounds": 2
+        },
+        "weapons": ["E-5 Blaster Rifle"],
+        "abilities": ["Mass Produced", "No Fear", "Remote Shutdown Vulnerability"],
+        "weaknesses": ["Centralized control network", "Poor individual combat ability", "Comedy-prone design"]
+      },
+      {
+        "id": "b2_super_battle_droid",
+        "name": "B2 Super Battle Droid",
+        "faction": "separatist_alliance",
+        "type": "heavy_droid",
+        "era": "Prequel",
+        "description": "Heavy battle droid with superior armor and firepower. Slow but devastating in combat.",
+        "stats": {
+          "attack": 3,
+          "defense": 3,
+          "hull": 5,
+          "shields": 0,
+          "speed": 4,
+          "wounds": 5
+        },
+        "weapons": ["DLT-19 Heavy Blaster"],
+        "abilities": ["Heavy Armor", "High Firepower"],
+        "weaknesses": ["Slow movement", "Expensive to produce", "Prone to malfunctions"]
+      },
+      {
+        "id": "at_at_walker",
+        "name": "AT-AT (All Terrain Armored Transport)",
+        "faction": "galactic_empire",
+        "type": "walker",
+        "era": "Original Trilogy",
+        "description": "Iconic four-legged Imperial walker that dominated the Battle of Hoth. Carries troops and provides devastating firepower. Vulnerable to magnetic sensors on its ankles.",
+        "stats": {
+          "attack": 5,
+          "defense": 4,
+          "hull": 10,
+          "shields": 0,
+          "speed": 5,
+          "wounds": 10
+        },
+        "weapons": ["Heavy Blaster Cannons", "Dual Light Blasters", "Searchlight"],
+        "abilities": ["Intimidating Presence", "Troop Transport", "Terrain Independence"],
+        "weaknesses": ["Magnetic sensors on ankles", "Slow turning", "Vulnerable to ground troops"]
+      },
+      {
+        "id": "at_st_walker",
+        "name": "AT-ST (All Terrain Scout Transport)",
+        "faction": "galactic_empire",
+        "type": "walker",
+        "era": "Original Trilogy",
+        "description": "Bipedal scout walker used for reconnaissance and support. Faster but less armored than the AT-AT.",
+        "stats": {
+          "attack": 3,
+          "defense": 2,
+          "hull": 5,
+          "shields": 0,
+          "speed": 7,
+          "wounds": 5
+        },
+        "weapons": ["Dual Light Blasters"],
+        "abilities": ["Fast Movement", "Scout Capability"],
+        "weaknesses": ["Light armor", "Exposed cockpit", "Top-heavy"]
+      },
+      {
+        "id": "rebel_commando",
+        "name": "Rebel Commando",
+        "faction": "rebel_alliance",
+        "type": "elite_infantry",
+        "era": "Original Trilogy",
+        "description": "Elite Rebel soldier trained for special operations. More skilled than Imperial stormtroopers but fewer in number.",
+        "stats": {
+          "attack": 3,
+          "defense": 2,
+          "hull": 3,
+          "shields": 0,
+          "speed": 6,
+          "wounds": 3
+        },
+        "weapons": ["DC-15A Blaster Rifle", "Thermal Detonators"],
+        "abilities": ["Guerrilla Tactics", "Determined", "Elite Training"]
+      },
+      {
+        "id": "rebel_artillery",
+        "name": "Rebel Artillery Team",
+        "faction": "rebel_alliance",
+        "type": "heavy_weapons",
+        "era": "Original Trilogy",
+        "description": "Long-range artillery team providing devastating fire support. Used the Z9 Artillery Piece at Hoth.",
+        "stats": {
+          "attack": 5,
+          "defense": 1,
+          "hull": 2,
+          "shields": 0,
+          "speed": 3,
+          "wounds": 2
+        },
+        "weapons": ["Z9 Artillery Piece"],
+        "abilities": ["Long Range", "Devastating Firepower"],
+        "weaknesses": ["Slow to relocate", "Vulnerable up close"]
+      },
+      {
+        "id": "first_order_stormtrooper",
+        "name": "First Order Stormtrooper",
+        "faction": "first_order",
+        "type": "infantry",
+        "era": "Sequel Trilogy",
+        "description": "Advanced stormtrooper with improved armor and training. More competent than their Imperial predecessors.",
+        "stats": {
+          "attack": 3,
+          "defense": 3,
+          "hull": 4,
+          "shields": 1,
+          "speed": 6,
+          "wounds": 4
+        },
+        "weapons": ["F-11D Blaster Rifle"],
+        "abilities": ["Advanced Training", "Improved Armor"],
+        "variants": [
+          {"name": "Flank Trooper", "specialty": "Heavy blaster and shield"},
+          {"name": "Commander Trooper", "specialty": "Leadership and coordination"},
+          {"name": "Snow Trooper", "specialty": "Cold-weather operations"}
+        ]
+      },
+      {
+        "id": "battle_droid_commando",
+        "name": "OOM Commando Droid",
+        "faction": "separatist_alliance",
+        "type": "elite_droid",
+        "era": "Prequel",
+        "description": "Orange-marked elite battle droid officer. Commands B1 units with superior tactics and firepower.",
+        "stats": {
+          "attack": 2,
+          "defense": 2,
+          "hull": 3,
+          "shields": 0,
+          "speed": 6,
+          "wounds": 3
+        },
+        "weapons": ["E-5 Blaster Rifle", "Command Uplink"],
+        "abilities": ["Leadership", "Tactical Uplink"]
+      },
+      {
+        "id": "tarfful_wookiee",
+        "name": "Wookiee Warrior",
+        "faction": "rebel_alliance",
+        "type": "creature",
+        "era": "Original Trilogy",
+        "description": "Powerful Wookiee fighter from Kashyyyk. Fights alongside the Rebels with bowcasters and immense strength.",
+        "stats": {
+          "attack": 4,
+          "defense": 3,
+          "hull": 5,
+          "shields": 0,
+          "speed": 6,
+          "wounds": 5
+        },
+        "weapons": ["Bowcaster"],
+        "abilities": ["Immense Strength", "Fearless", "Rebel Ally"],
+        "notable_members": ["Chewbacca", "Attichitcuk"]
+      }
+    ],
+    "starships": [
+      {
+        "id": "x_wing",
+        "name": "T-65 X-Wing Starfighter",
+        "faction": "rebel_alliance",
+        "type": "starfighter",
+        "era": "Original Trilogy",
+        "description": "The iconic Rebel starfighter. Reliable, versatile, and armed with laser cannons and proton torpedoes. Used to destroy both Death Stars.",
+        "stats": {
+          "attack": 3,
+          "agility": 2,
+          "hull": 4,
+          "shields": 4,
+          "speed": 8,
+          "pilot_skill": "Variable (1-160+)"
+        },
+        "weapons": ["4 Laser Cannons", "2 Proton Torpedo Launchers"],
+        "abilities": ["Red Five (S-Foils Attack Position)", "Torpedo Reload"],
+        "notable_pilots": ["Luke Skywalker (Red Five)", "Wedge Antilles (Red Leader)", "Biggs Darklighter"]
+      },
+      {
+        "id": "tie_fighter",
+        "name": "TIE/ln Space Superiority Fighter",
+        "faction": "galactic_empire",
+        "type": "starfighter",
+        "era": "Original Trilogy",
+        "description": "The standard Imperial starfighter. Fast and agile but lacks shields and hyperdrive. Hexagonal solar wing panels provide power.",
+        "stats": {
+          "attack": 2,
+          "agility": 3,
+          "hull": 2,
+          "shields": 0,
+          "speed": 9,
+          "pilot_skill": "Variable (1-140+)"
+        },
+        "weapons": ["2 Laser Cannons"],
+        "abilities": ["Shielding (none)", "Mass Produced"],
+        "weaknesses": ["No shields", "No hyperdrive", "Vulnerable hull"]
+      },
+      {
+        "id": "tie_interceptor",
+        "name": "TIE/in Interceptor",
+        "faction": "galactic_empire",
+        "type": "starfighter",
+        "era": "Original Trilogy",
+        "description": "Extended-wing TIE variant with superior speed and maneuverability. The fastest mass-produced starfighter in the galaxy.",
+        "stats": {
+          "attack": 3,
+          "agility": 4,
+          "hull": 2,
+          "shields": 0,
+          "speed": 10,
+          "pilot_skill": "Variable (1-150+)"
+        },
+        "weapons": ["2 Laser Cannons"],
+        "abilities": ["Extended Wings", "Superior Speed"],
+        "weaknesses": ["No shields", "Fragile hull", "Extended wings vulnerable"]
+      },
+      {
+        "id": "millennium_falcon",
+        "name": "Millennium Falcon",
+        "faction": "rebel_alliance",
+        "type": "freighter",
+        "era": "All Eras",
+        "description": "The fastest hunk of junk in the galaxy. Corellian YT-1300 light freighter owned by Han Solo and Chewbacca. Made the Kessel Run in less than 12 parsecs.",
+        "stats": {
+          "attack": 4,
+          "agility": 3,
+          "hull": 8,
+          "shields": 6,
+          "speed": 11,
+          "pilot_skill": "Han Solo (390)"
+        },
+        "weapons": ["Dorsal Quad Laser", "Ventral Turret", "Proton Torpedoes"],
+        "abilities": ["Modified Hyperdrive", "Coward's Flip", "Speed Enhancements"],
+        "crew": ["Han Solo (Pilot)", "Chewbacca (Co-pilot/Gunner)"]
+      },
+      {
+        "id": "y_wing",
+        "name": "BTL Y-Wing Starfighter",
+        "faction": "rebel_alliance",
+        "type": "starfighter",
+        "era": "Original Trilogy",
+        "description": "Heavy assault starfighter with superior armor and torpedo capacity. The workhorse of the Rebel fleet.",
+        "stats": {
+          "attack": 3,
+          "agility": 1,
+          "hull": 6,
+          "shields": 5,
+          "speed": 7,
+          "pilot_skill": "Variable (1-140+)"
+        },
+        "weapons": ["6 Laser Cannons", "Heavy Torpedoes"],
+        "abilities": ["Heavy Armor", "Bombardment"]
+      },
+      {
+        "id": "a_wing",
+        "name": "RZ-1 A-Wing Starfighter",
+        "faction": "rebel_alliance",
+        "type": "starfighter",
+        "era": "Original Trilogy",
+        "description": "Fast interceptor designed for hit-and-run attacks. The fastest Rebel starfighter but difficult to fly.",
+        "stats": {
+          "attack": 3,
+          "agility": 2,
+          "hull": 3,
+          "shields": 3,
+          "speed": 10,
+          "pilot_skill": "Variable (1-130+)"
+        },
+        "weapons": ["4 Laser Cannons"],
+        "abilities": ["Superior Speed", "Interceptor Role"]
+      },
+      {
+        "id": "vulture_droid",
+        "name": "Vulture Droid Fighter",
+        "faction": "separatist_alliance",
+        "type": "starfighter",
+        "era": "Prequel",
+        "description": "Mass-produced droid starfighter with landing legs that double as laser cannons. Flies in swarms.",
+        "stats": {
+          "attack": 2,
+          "agility": 2,
+          "hull": 2,
+          "shields": 0,
+          "speed": 8,
+          "pilot_skill": "Droid (1-80)"
+        },
+        "weapons": ["2 Laser Cannons (landing legs)"],
+        "abilities": ["Mass Produced", "Swarm Tactics"],
+        "weaknesses": ["No shields", "Droid piloting", "Fragile"]
+      },
+      {
+        "id": "arc170",
+        "name": "ARC-170 Starfighter",
+        "faction": "galactic_republic",
+        "type": "starfighter",
+        "era": "Prequel",
+        "description": "Tri-engine Republic starfighter used during the Clone Wars. Lacked a hyperdrive initially.",
+        "stats": {
+          "attack": 3,
+          "agility": 2,
+          "hull": 5,
+          "shields": 4,
+          "speed": 8,
+          "pilot_skill": "Variable (1-120+)"
+        },
+        "weapons": ["3 Forward-Mounted Laser Cannons", "Proton Torpedoes"],
+        "abilities": ["Tri-Engine Design", "Crew of Two"]
+      },
+      {
+        "id": "v_wing",
+        "name": "Alpha-3 Nimbus V-Wing",
+        "faction": "galactic_republic",
+        "type": "starfighter",
+        "era": "Prequel",
+        "description": "Multi-role Republic starfighter capable of space and ground attack.",
+        "stats": {
+          "attack": 3,
+          "agility": 2,
+          "hull": 4,
+          "shields": 4,
+          "speed": 8,
+          "pilot_skill": "Variable (1-110+)"
+        },
+        "weapons": ["2 Laser Cannons", "Missiles"],
+        "abilities": ["Multi-Role", "Ground Attack"]
+      },
+      {
+        "id": "star_destroyer",
+        "name": "Imperial-class Star Destroyer",
+        "faction": "galactic_empire",
+        "type": "capital_ship",
+        "era": "Original Trilogy",
+        "description": "1,600-meter dreadnought and the symbol of Imperial power. Carries TIE fighters, shuttles, and troops. Projects fear across the galaxy.",
+        "stats": {
+          "attack": 10,
+          "agility": 0,
+          "hull": 50,
+          "shields": 30,
+          "speed": 4,
+          "hull_points": 80
+        },
+        "weapons": ["Heavy Turbolaser Batteries", "Ion Cannons", "Point-Defense Lasers"],
+        "abilities": ["TIE Complement", "Troop Transport", "Intimidation"],
+        "notable_ships": ["Devastator", "Executor (Super Star Destroyer)"]
+      },
+      {
+        "id": "death_star",
+        "name": "Death Star",
+        "faction": "galactic_empire",
+        "type": "space_station",
+        "era": "Original Trilogy",
+        "description": "Planet-destroying superweapon the size of a moon. Powered by Kyber crystals. First Death Star destroyed by Luke Skywalker; second destroyed above Endor.",
+        "stats": {
+          "attack": 20,
+          "agility": 0,
+          "hull": 100,
+          "shields": 50,
+          "speed": 2,
+          "hull_points": 150
+        },
+        "weapons": ["Superlaser (planet-destroying)", "Turbaser Batteries", "TIE Defender Complement"],
+        "abilities": ["Planet Destruction", "Massive Shield Generator"],
+        "weaknesses": ["Thermal exhaust port (DS1)", "Shield generator vulnerability (DS2)"],
+        "crew": "Millions of personnel"
+      },
+      {
+        "id": "venator_cruiser",
+        "name": "Venator-class Star Destroyer",
+        "faction": "galactic_republic",
+        "type": "capital_ship",
+        "era": "Prequel",
+        "description": "Republic flagship during the Clone Wars. Carries Jedi Generals, clone troops, and starfighter complement.",
+        "stats": {
+          "attack": 8,
+          "agility": 1,
+          "hull": 40,
+          "shields": 25,
+          "speed": 5,
+          "hull_points": 65
+        },
+        "weapons": ["Hull-Mounted Turbolasers", "Point-Defense Batteries"],
+        "abilities": ["Starfighter Complement", "Troop Transport", "Jedi Operations"]
+      },
+      {
+        "id": "tie_silencer",
+        "name": "TIE/sf Space Superiority Fighter (Silencer)",
+        "faction": "first_order",
+        "type": "starfighter",
+        "era": "Sequel Trilogy",
+        "description": "First Order's standard starfighter. An upgrade over the Imperial TIE with shields and hyperdrive.",
+        "stats": {
+          "attack": 3,
+          "agility": 3,
+          "hull": 3,
+          "shields": 2,
+          "speed": 9,
+          "pilot_skill": "Variable (1-150+)"
+        },
+        "weapons": ["2 Laser Cannons"],
+        "abilities": ["Shielding", "Hyperdrive"]
+      }
+    ],
+    "ground_vehicles": [
+      {
+        "id": "speeder_bike",
+        "name": "74-Z Speeder Bike",
+        "faction": "rebel_alliance",
+        "type": "speeder",
+        "era": "Original Trilogy",
+        "description": "Fast repulsorcraft used at the Battle of Hoth. Iconic for the speeder bike chase scene.",
+        "stats": {
+          "attack": 1,
+          "defense": 1,
+          "hull": 2,
+          "shields": 0,
+          "speed": 10,
+          "wounds": 2
+        },
+        "weapons": ["Blaster Cannon (optional)"],
+        "abilities": ["Extreme Speed", "Agile Maneuvering"],
+        "weaknesses": ["No armor", "Rider exposed", "Unstable on uneven terrain"]
+      },
+      {
+        "id": "at_at_rebel",
+        "name": "Snowspeeder",
+        "faction": "rebel_alliance",
+        "type": "speeder",
+        "era": "Original Trilogy",
+        "description": "T-47 Airspeeder used by the Rebels on Hoth. Armed with tow-cables to trip AT-ATs.",
+        "stats": {
+          "attack": 2,
+          "defense": 1,
+          "hull": 3,
+          "shields": 0,
+          "speed": 9,
+          "wounds": 3
+        },
+        "weapons": ["Laser Bolters", "Tow-Cable"],
+        "abilities": ["Tow-Cable Trip", "Two-Crew Coordination"]
+      },
+      {
+        "id": "ta17_jedi_speeder",
+        "name": "TA-17 Jedi Speeder",
+        "faction": "jedi_order",
+        "type": "speeder",
+        "era": "Prequel",
+        "description": "Personal repulsorcraft used by Jedi for rapid ground transport. Open-cockpit design.",
+        "stats": {
+          "attack": 0,
+          "defense": 1,
+          "hull": 2,
+          "shields": 0,
+          "speed": 11,
+          "wounds": 2
+        },
+        "weapons": ["None (unarmed)"],
+        "abilities": ["Extreme Speed", "Jedi Pilot Bonus"]
+      },
+      {
+        "id": "devastator",
+        "name": "Devastator",
+        "faction": "separatist_alliance",
+        "type": "tank",
+        "era": "Prequel",
+        "description": "Six-legged Separatist tank with heavy firepower. Dominates ground combat.",
+        "stats": {
+          "attack": 5,
+          "defense": 3,
+          "hull": 8,
+          "shields": 0,
+          "speed": 5,
+          "wounds": 8
+        },
+        "weapons": ["Heavy Blaster Cannons", "Dual Light Blasters"],
+        "abilities": ["Six-Legged Stability", "Heavy Firepower"]
+      }
+    ],
+    "characters": [
+      {
+        "id": "darth_vader",
+        "name": "Darth Vader",
+        "faction": "galactic_empire",
+        "type": "commander",
+        "era": "Original Trilogy",
+        "description": "Once Anakin Skywalker, the Chosen One. Fallen to the Dark Side and rebuilt as the terrifying enforcer of the Emperor. Wields a red lightsaber and commands Imperial fleets.",
+        "stats": {
+          "attack": 5,
+          "defense": 5,
+          "hull": 8,
+          "shields": 3,
+          "speed": 5,
+          "wounds": 8,
+          "force_power": 10
+        },
+        "weapons": ["Red Lightsaber", "Force Choke", "Force Lightning (limited)"],
+        "abilities": ["Dark Side Mastery", "Intimidation", "Lightsaber Form V", "Force Sense", "Flight (Force-assisted)"],
+        "command_cards": ["TIE Advanced x1", "Fear of the Dark Side", "Imperial Supremacy"]
+      },
+      {
+        "id": "luke_skywalker",
+        "name": "Luke Skywalker",
+        "faction": "rebel_alliance",
+        "type": "commander",
+        "era": "Original Trilogy",
+        "description": "Son of Anakin Skywalker and heir to the Jedi legacy. Became a Jedi Knight and defeated the Emperor, redeeming his father. Later attempted to restore the Jedi Order.",
+        "stats": {
+          "attack": 4,
+          "defense": 4,
+          "hull": 5,
+          "shields": 2,
+          "speed": 5,
+          "wounds": 5,
+          "force_power": 9
+        },
+        "weapons": ["Green Lightsaber", "Blue Lightsaber (early)"],
+        "abilities": ["Light Side Mastery", "Lightsaber Form V", "Force Heal", "Force Push", "Jedi Mind Trick"],
+        "command_cards": ["X-Wing Pilot", "Jedi Training", "Hope of the Rebellion"]
+      },
+      {
+        "id": "obi_wan_kenobi",
+        "name": "Obi-Wan Kenobi",
+        "faction": "galactic_republic",
+        "type": "commander",
+        "era": "Prequel / Original Trilogy",
+        "description": "Jedi Master known as Obi-Wan Kenobi. General in the Clone Wars, mentor to Anakin, and guardian of Luke on Tatooine. Master of Soresu (Form III).",
+        "stats": {
+          "attack": 4,
+          "defense": 5,
+          "hull": 5,
+          "shields": 2,
+          "speed": 5,
+          "wounds": 5,
+          "force_power": 8
+        },
+        "weapons": ["Blue Lightsaber"],
+        "abilities": ["Lightsaber Form III (Soresu)", "Jedi Mind Trick", "Force Sense", "Strategic Genius"],
+        "command_cards": ["Clone Army Tactics", "Jedi Defense", "Watchful Guardian"]
+      },
+      {
+        "id": "yoda",
+        "name": "Yoda",
+        "faction": "jedi_order",
+        "type": "commander",
+        "era": "All Eras",
+        "description": "Jedi Grand Master and the most powerful Force user of his generation. Lived 900 years and trained generations of Jedi, including Obi-Wan and Luke.",
+        "stats": {
+          "attack": 4,
+          "defense": 5,
+          "hull": 3,
+          "shields": 2,
+          "speed": 4,
+          "wounds": 4,
+          "force_power": 10
+        },
+        "weapons": ["Green Lightsaber"],
+        "abilities": ["Unlimited Force Power", "Lightsaber Form IV (Ataru)", "Force Heal", "Force Ghost", "Precognition"],
+        "command_cards": ["Jedi Wisdom", "Force Mastery", "Ancient Knowledge"]
+      },
+      {
+        "id": "han_solo",
+        "name": "Han Solo",
+        "faction": "rebel_alliance",
+        "type": "commander",
+        "era": "Original Trilogy",
+        "description": "Smuggler turned Rebel General. Pilot of the Millennium Falcon and hero of the galaxy. Made the Kessel Run and fired shot first (in the novelization).",
+        "stats": {
+          "attack": 3,
+          "defense": 3,
+          "hull": 5,
+          "shields": 1,
+          "speed": 6,
+          "wounds": 5,
+          "force_power": 0
+        },
+        "weapons": ["DL-44 Heavy Blaster"],
+        "abilities": ["Expert Pilot", "Millennium Falcon", "Fearless", "Sharpshooter"],
+        "command_cards": ["Incredible Pilot", "Millennium Falcon Run", "Rebel General"]
+      },
+      {
+        "id": "general_grievous",
+        "name": "General Grievous",
+        "faction": "separatist_alliance",
+        "type": "commander",
+        "era": "Prequel",
+        "description": "Cyborg Supreme Commander of the Droid Armies. Formerly Count of Kalee. Wields multiple lightsabers simultaneously. Feared by the Jedi.",
+        "stats": {
+          "attack": 5,
+          "defense": 3,
+          "hull": 6,
+          "shields": 2,
+          "speed": 7,
+          "wounds": 6,
+          "force_power": 0
+        },
+        "weapons": ["4 Lightsabers (captured)", "Dual Blaster Pistols"],
+        "abilities": ["Multi-Saber Combat", "Cyborg Enhancement", "Speed", "Droid Army Command"],
+        "command_cards": ["Droid Army Surge", "Lightsaber Collection", "Tactical Retreat"]
+      },
+      {
+        "id": "count_dooku",
+        "name": "Count Dooku (Darth Tyranus)",
+        "faction": "separatist_alliance",
+        "type": "commander",
+        "era": "Prequel",
+        "description": "Former Jedi Master who became Darth Tyranus, Sith apprentice of Palpatine. Led the Separatist Alliance as a figurehead while serving the Sith.",
+        "stats": {
+          "attack": 4,
+          "defense": 4,
+          "hull": 5,
+          "shields": 2,
+          "speed": 5,
+          "wounds": 5,
+          "force_power": 8
+        },
+        "weapons": ["Red Lightsaber (curved hilt)"],
+        "abilities": ["Lightsaber Form II (Makashi)", "Force Lightning", "Sith Mastery", "Diplomatic Immunity"],
+        "command_cards": ["Sith Deception", "Force Lightning Strike", "Separatist Command"]
+      },
+      {
+        "id": "bobafett",
+        "name": "Boba Fett",
+        "faction": "scum_villainy",
+        "type": "elite_infantry",
+        "era": "Original Trilogy / Sequel",
+        "description": "Genetic clone of Jango Fett and legendary bounty hunter. Wears his father's Mandalorian armor and pilots the Slave I.",
+        "stats": {
+          "attack": 3,
+          "defense": 4,
+          "hull": 5,
+          "shields": 2,
+          "speed": 6,
+          "wounds": 5
+        },
+        "weapons": ["Blaster Pistol", "Rocket Launcher", "Proton Torpedoes", "Disintegrator Rifle"],
+        "abilities": ["Mandalorian Armor", "Expert Pilot (Slave I)", "Tracking", "Survival"],
+        "vehicles": ["Slave I"]
+      },
+      {
+        "id": "kylo_ren",
+        "name": "Kylo Ren (Ben Solo)",
+        "faction": "first_order",
+        "type": "commander",
+        "era": "Sequel Trilogy",
+        "description": "Son of Han Solo and Leia Organa. Fallen to the Dark Side under Snoke's influence. Wields a crossguard lightsaber and commands the First Order.",
+        "stats": {
+          "attack": 4,
+          "defense": 3,
+          "hull": 5,
+          "shields": 2,
+          "speed": 5,
+          "wounds": 5,
+          "force_power": 8
+        },
+        "weapons": ["Crossguard Lightsaber (red)"],
+        "abilities": ["Dark Side Rage", "Force Choke", "Force Sensitivity", "Emotional Instability"],
+        "command_cards": ["Dark Side Fury", "First Order Command", "Sith Inheritance"]
+      },
+      {
+        "id": "rey",
+        "name": "Rey Skywalker",
+        "faction": "resistance",
+        "type": "commander",
+        "era": "Sequel Trilogy",
+        "description": "Force-sensitive orphan from Jakku who became a Jedi under Luke's remote guidance. Daughter of Han and Leia. Defeated Palpatine and restored hope.",
+        "stats": {
+          "attack": 4,
+          "defense": 4,
+          "hull": 5,
+          "shields": 2,
+          "speed": 5,
+          "wounds": 5,
+          "force_power": 9
+        },
+        "weapons": ["Yellow Lightsaber (crafted)", "Blue Lightsaber (Luke's/Anakin's)"],
+        "abilities": ["Force Sensitivity", "Mechanical Genius", "Lightsaber Combat", "Force Heal", "Dyad Connection"],
+        "command_cards": ["Jedi Training", "Force Dyad", "Scavenger Resourcefulness"]
+      },
+      {
+        "id": "leia_organa",
+        "name": "Princess Leia Organa",
+        "faction": "rebel_alliance",
+        "type": "commander",
+        "era": "Original Trilogy / Sequel",
+        "description": "Senator, Rebel Leader, and General. Biological daughter of Palpatine (twin of Luke). Founded the Resistance to fight the First Order. The heart of the Rebellion.",
+        "stats": {
+          "attack": 2,
+          "defense": 3,
+          "hull": 4,
+          "shields": 1,
+          "speed": 5,
+          "wounds": 4,
+          "force_power": 3
+        },
+        "weapons": ["Blaster Pistol"],
+        "abilities": ["Leadership", "Diplomacy", "Force Sensitivity (untapped)", "Inspiration"],
+        "command_cards": ["Rebel Leadership", "Hope and Inspiration", "Resistance Founding"]
+      },
+      {
+        "id": "emperor_palpatine",
+        "name": "Emperor Palpatine (Darth Sidious)",
+        "faction": "sith",
+        "type": "commander",
+        "era": "Prequel / Original Trilogy / Sequel",
+        "description": "The most powerful Sith Lord in history. Manipulated the galaxy from both sides, orchestrating the Clone Wars and the fall of the Republic. Returned via Sith Eternal in the Sequel Trilogy.",
+        "stats": {
+          "attack": 3,
+          "defense": 3,
+          "hull": 4,
+          "shields": 2,
+          "speed": 3,
+          "wounds": 4,
+          "force_power": 10
+        },
+        "weapons": ["Red Lightsaber", "Force Lightning (master)", "Force Choke"],
+        "abilities": ["Sith Mastery", "Force Lightning", "Immortality (Sith alchemy)", "Political Manipulation", "Dark Side Aura"],
+        "command_cards": ["Sith Rule", "Force Lightning Storm", "Emperor's Will"]
+      }
+    ]
+  }
+}

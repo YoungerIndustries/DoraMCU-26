@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogMission;
 import org.slf4j.Logger;
@@ -17,12 +18,12 @@ import java.util.*;
  * <p>
  * Developments are organized by category:
  * <ul>
- *   <li>COMPLICATION — something goes wrong or gets worse</li>
- *   <li>OPPORTUNITY — something unexpected helps the situation</li>
- *   <li>REVELATION — new information comes to light</li>
- *   <li>CHARACTER — the character's personal life is affected</li>
- *   <li>STARSHIP — the ship experiences an issue or discovery</li>
- *   <li>ENVIRONMENT — the setting changes in an unexpected way</li>
+ *   <li>COMPLICATION ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â something goes wrong or gets worse</li>
+ *   <li>OPPORTUNITY ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â something unexpected helps the situation</li>
+ *   <li>REVELATION ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â new information comes to light</li>
+ *   <li>CHARACTER ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â the character's personal life is affected</li>
+ *   <li>STARSHIP ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â the ship experiences an issue or discovery</li>
+ *   <li>ENVIRONMENT ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â the setting changes in an unexpected way</li>
  * </ul>
  * </p>
  * <p>
@@ -63,7 +64,7 @@ public class MissionDevelopmentService {
     // ==================== Development Tables by Category ====================
 
     /**
-     * Complication developments — things that go wrong.
+     * Complication developments ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â things that go wrong.
      */
     private static final List<DevelopmentDefinition> COMPLICATIONS = new ArrayList<>();
 
@@ -78,7 +79,7 @@ public class MissionDevelopmentService {
                 new DevelopmentDefinition("Communication Lost", "Contact with support is severed.",
                         "You cannot call for help until the next beat. Gain 1 Threat.",
                         Category.COMPLICATION),
-                new DevelopmentDefinition("Time Pressure", "The clock is ticking — you have less time than expected.",
+                new DevelopmentDefinition("Time Pressure", "The clock is ticking ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â you have less time than expected.",
                         "The next two task attempts suffer a threat.",
                         Category.COMPLICATION),
                 new DevelopmentDefinition("Casualties", "An ally is injured or killed.",
@@ -133,7 +134,7 @@ public class MissionDevelopmentService {
     }
 
     /**
-     * Opportunity developments — things that help.
+     * Opportunity developments ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â things that help.
      */
     private static final List<DevelopmentDefinition> OPPORTUNITIES = new ArrayList<>();
 
@@ -203,7 +204,7 @@ public class MissionDevelopmentService {
     }
 
     /**
-     * Revelation developments — new information.
+     * Revelation developments ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â new information.
      */
     private static final List<DevelopmentDefinition> REVELATIONS = new ArrayList<>();
 
@@ -273,7 +274,7 @@ public class MissionDevelopmentService {
     }
 
     /**
-     * Character developments — personal life affected.
+     * Character developments ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â personal life affected.
      */
     private static final List<DevelopmentDefinition> CHARACTERS = new ArrayList<>();
 
@@ -343,7 +344,7 @@ public class MissionDevelopmentService {
     }
 
     /**
-     * Starship developments — ship-related events.
+     * Starship developments ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â ship-related events.
      */
     private static final List<DevelopmentDefinition> STARSHIPS = new ArrayList<>();
 
@@ -392,7 +393,7 @@ public class MissionDevelopmentService {
                         "The next Weapons check gains a boon. The ship is more heavily armed.",
                         Category.STARSHIP),
                 new DevelopmentDefinition("Torpedo Launch", "A torpedo is fired.",
-                        "Deal 2 hits to the target instead of 1. The torpedo may miss — roll a Weapons check.",
+                        "Deal 2 hits to the target instead of 1. The torpedo may miss ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â roll a Weapons check.",
                         Category.STARSHIP),
                 new DevelopmentDefinition("Red Alert", "The ship goes to red alert.",
                         "All systems are at maximum readiness. Gain 1 Momentum.",
@@ -413,7 +414,7 @@ public class MissionDevelopmentService {
     }
 
     /**
-     * Environment developments — setting changes.
+     * Environment developments ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â setting changes.
      */
     private static final List<DevelopmentDefinition> ENVIRONMENTS = new ArrayList<>();
 

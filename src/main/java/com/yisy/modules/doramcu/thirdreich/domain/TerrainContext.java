@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.thirdreich.domain;
 
+import com.yisy.modules.doramcu.earth2026.model.BiosphereContext;
+
 /**
  * Terrain context for a 3R4 ground battle.
  * <p>
@@ -13,6 +15,7 @@ public class TerrainContext {
     private String planetName;
     private int weatherModifier;
     private int visibilityModifier;
+    private BiosphereContext biosphereContext;
 
     /**
      * Creates a terrain context with the given terrain type.
@@ -76,21 +79,47 @@ public class TerrainContext {
         this.visibilityModifier = Math.max(-2, Math.min(2, visibilityModifier));
     }
 
+    /** Returns the biosphere context, or null if not set. */
+    public BiosphereContext getBiosphereContext() {
+        return biosphereContext;
+    }
+
+    /** Sets the biosphere context. */
+    public void setBiosphereContext(BiosphereContext biosphereContext) {
+        this.biosphereContext = biosphereContext;
+    }
+
     // ---- Calculations ----
 
     /**
      * Returns the total defense bonus for defending units in this terrain.
-     * Combines terrain defense bonus with weather and visibility modifiers.
+     * Combines terrain defense bonus with weather, visibility, and biosphere modifiers.
      */
     public int getTotalDefenseBonus() {
-        return terrainType.getDefenseBonus() + weatherModifier + visibilityModifier;
+        int bonus = terrainType.getDefenseBonus() + weatherModifier + visibilityModifier;
+        if (biosphereContext != null) {
+            bonus += biosphereContext.getDefenseModifier();
+        }
+        return bonus;
     }
 
     /**
      * Returns the movement penalty for units moving through this terrain.
+     * Includes biosphere movement effects if available.
      */
     public int getMovementPenalty() {
-        return terrainType.getMovementPenalty() + Math.abs(weatherModifier);
+        int penalty = terrainType.getMovementPenalty() + Math.abs(weatherModifier);
+        if (biosphereContext != null) {
+            penalty -= biosphereContext.getMovementModifier(); // negative modifier = penalty
+        }
+        return penalty;
+    }
+
+    /**
+     * Returns the ranged attack modifier from biosphere effects.
+     */
+    public int getRangedAttackModifier() {
+        return biosphereContext != null ? biosphereContext.getRangedAttackModifier() : 0;
     }
 
     @Override

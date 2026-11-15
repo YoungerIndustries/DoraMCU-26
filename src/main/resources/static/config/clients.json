@@ -1,0 +1,108 @@
+{
+    "version": "1.0.0",
+    "clients": [
+        {
+            "id": "desktop",
+            "name": "DoraMCU Desktop",
+            "type": "native",
+            "description": "Full-featured desktop game client with Unity 3D graphics",
+            "platforms": [
+                {
+                    "os": "windows",
+                    "architecture": "x64",
+                    "minimumSpecs": {
+                        "cores": 4,
+                        "memory": 4,
+                        "gpu": "DirectX 11"
+                    },
+                    "downloadUrl": "/api/v1/clients/download/unity/windows",
+                    "filename": "DoraMCU-Setup.exe",
+                    "size": "150MB",
+                    "checksum": ""
+                },
+                {
+                    "os": "macos",
+                    "architecture": "x64",
+                    "minimumSpecs": {
+                        "cores": 4,
+                        "memory": 4,
+                        "gpu": "Metal"
+                    },
+                    "downloadUrl": "/api/v1/clients/download/unity/macos",
+                    "filename": "DoraMCU.dmg",
+                    "size": "140MB",
+                    "checksum": ""
+                },
+                {
+                    "os": "linux",
+                    "architecture": "x64",
+                    "minimumSpecs": {
+                        "cores": 4,
+                        "memory": 4,
+                        "gpu": "OpenGL 4.0"
+                    },
+                    "downloadUrl": "/api/v1/clients/download/unity/linux",
+                    "filename": "DoraMCU.AppImage",
+                    "size": "145MB",
+                    "checksum": ""
+                }
+            ]
+        },
+        {
+            "id": "electron",
+            "name": "DoraMCU Electron",
+            "type": "hybrid",
+            "description": "Electron-based desktop launcher with embedded server",
+            "platforms": [
+                {
+                    "os": "windows",
+                    "architecture": "x64",
+                    "minimumSpecs": {
+                        "cores": 2,
+                        "memory": 2
+                    },
+                    "downloadUrl": "/api/v1/clients/download/electron/windows",
+                    "filename": "DoraMCU-Electron-Setup.exe",
+                    "size": "80MB",
+                    "checksum": ""
+                }
+            ]
+        },
+        {
+            "id": "web",
+            "name": "DoraMCU Web",
+            "type": "web",
+            "description": "Browser-based full game client",
+            "platforms": ["all"],
+            "url": "/clients/desktop/",
+            "minimumSpecs": {
+                "cores": 2,
+                "memory": 2
+            }
+        },
+        {
+            "id": "mobile",
+            "name": "DoraMCU Mobile",
+            "type": "pwa",
+            "description": "Lightweight PWA game client for mobile devices",
+            "platforms": ["android", "ios"],
+            "url": "/clients/mobile/",
+            "minimumSpecs": {
+                "cores": 2,
+                "memory": 1
+            }
+        },
+        {
+            "id": "tablet",
+            "name": "DoraMCU Tablet",
+            "type": "web",
+            "description": "Tablet-optimized game client with touch-friendly UI",
+            "platforms": ["android", "ios"],
+            "url": "/clients/tablet/",
+            "minimumSpecs": {
+                "cores": 4,
+                "memory": 2
+            }
+        }
+    ]
+}

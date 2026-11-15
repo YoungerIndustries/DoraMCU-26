@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.service.edge;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.config.edge.NeuronEdgeConfig;
 import com.yisy.modules.doraneuron.util.edge.SystemResourceDetector;
 import org.slf4j.Logger;
@@ -32,6 +34,8 @@ import java.util.Map;
  * underperforming and take corrective action.
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class EdgeMetricsService {
 
     private static final Logger log = LoggerFactory.getLogger(EdgeMetricsService.class);

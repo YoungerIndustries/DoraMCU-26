@@ -356,8 +356,8 @@ public class B5WorldProfile {
             return B5TradeCode.COLONIAL;
         }
 
-        // Agricultural: Population ≥ 4, gravity 3-6
-        if (population >= 4 && gravity >= 3 && gravity <= 6) {
+        // Agricultural: gravity 3-6 (population is already 4-6 at this point)
+        if (gravity >= 3 && gravity <= 6) {
             return B5TradeCode.AGRICULTURAL;
         }
 

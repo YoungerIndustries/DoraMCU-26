@@ -3,6 +3,7 @@ package com.yisy.modules.doramcu.controller;
 import com.yisy.modules.doramcu.dto.TradeRequest;
 import com.yisy.modules.doramcu.dto.TradeResponse;
 import com.yisy.modules.doramcu.hex.Player;
+import com.yisy.modules.doramcu.hex.manager.CreditExchangeService;
 import com.yisy.modules.doramcu.hex.manager.TradeCareerService;
 import com.yisy.modules.doramcu.hex.manager.TradeManager;
 import com.yisy.modules.doramcu.hex.manager.TradeRouteNetwork;
@@ -16,7 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.yisy.modules.doramcu.hex.Game;
+import com.yisy.modules.doramcu.hex.RefinedResourceType;
 import com.yisy.modules.doramcu.model.GameSession;
+import com.yisy.modules.doramcu.traveller.Commodity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -259,5 +262,255 @@ public class TradeController {
             }).collect(java.util.stream.Collectors.toList());
         }
         return ResponseEntity.ok(routes);
+    }
+
+    // ============================================================
+    // Credit Exchange Endpoints
+    // ============================================================
+
+    /**
+     * Gets the credit balance for an empire.
+     */
+    @GetMapping("/credits/balance/{empireId}")
+    public ResponseEntity<Map<String, Object>> getCreditBalance(@PathVariable int empireId,
+            @RequestParam(required = false) String sessionId) {
+        log.debug("GET /api/v1/traveller/trade/credits/balance/{} for session {}", empireId, sessionId);
+        long balance = 0L;
+        if (sessionId != null) {
+            CreditExchangeService exchange = getCreditExchangeService(sessionId);
+            if (exchange != null) {
+                balance = exchange.getTradeCreditBalance(empireId);
+            }
+        }
+        Map<String, Object> result = new HashMap<>();
+        result.put("empireId", empireId);
+        result.put("balance", balance);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Adds credits to an empire's trade credit balance.
+     */
+    @PostMapping("/credits/add")
+    public ResponseEntity<Map<String, Object>> addCredits(@RequestBody CreditOperationRequest request,
+            @RequestParam(required = false) String sessionId) {
+        log.debug("POST /api/v1/traveller/trade/credits/add - {} credits to empire {}",
+                request.getCredits(), request.getEmpireId());
+        if (sessionId == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "sessionId is required"));
+        }
+        CreditExchangeService exchange = getCreditExchangeService(sessionId);
+        if (exchange == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "No active game session with trade manager"));
+        }
+        exchange.addTradeCredits(request.getEmpireId(), request.getCredits());
+        long balance = exchange.getTradeCreditBalance(request.getEmpireId());
+        Map<String, Object> result = new HashMap<>();
+        result.put("empireId", request.getEmpireId());
+        result.put("added", request.getCredits());
+        result.put("balance", balance);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Spends credits from an empire's trade credit balance.
+     */
+    @PostMapping("/credits/spend")
+    public ResponseEntity<Map<String, Object>> spendCredits(@RequestBody CreditOperationRequest request,
+            @RequestParam(required = false) String sessionId) {
+        log.debug("POST /api/v1/traveller/trade/credits/spend - {} credits from empire {}",
+                request.getCredits(), request.getEmpireId());
+        if (sessionId == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "sessionId is required"));
+        }
+        CreditExchangeService exchange = getCreditExchangeService(sessionId);
+        if (exchange == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "No active game session with trade manager"));
+        }
+        boolean success = exchange.spendTradeCredits(request.getEmpireId(), request.getCredits());
+        long balance = exchange.getTradeCreditBalance(request.getEmpireId());
+        Map<String, Object> result = new HashMap<>();
+        result.put("empireId", request.getEmpireId());
+        result.put("success", success);
+        result.put("amount", request.getCredits());
+        result.put("balance", balance);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Gets the exchange rate for a commodity to resource conversion.
+     */
+    @GetMapping("/exchange-rate/{commodity}")
+    public ResponseEntity<Map<String, Object>> getExchangeRate(@PathVariable String commodity,
+            @RequestParam(required = false) String sessionId) {
+        log.debug("GET /api/v1/traveller/trade/exchange-rate/{} for session {}", commodity, sessionId);
+        Map<String, Object> result = new HashMap<>();
+        result.put("commodity", commodity);
+        try {
+            Commodity comm = Commodity.valueOf(commodity.toUpperCase());
+            RefinedResourceType resourceType = mapCommodityToResource(comm);
+            result.put("resourceType", resourceType.name());
+            result.put("creditToResourceRate", 1.0);
+            result.put("resourceToCreditRate", 1.0);
+        } catch (IllegalArgumentException e) {
+            result.put("error", "Unknown commodity: " + commodity);
+            return ResponseEntity.badRequest().body(result);
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Maps a commodity to its corresponding resource type.
+     */
+    @GetMapping("/mapping/commodity-to-resource/{commodity}")
+    public ResponseEntity<Map<String, String>> getCommodityToResourceMapping(@PathVariable String commodity) {
+        log.debug("GET /api/v1/traveller/trade/mapping/commodity-to-resource/{}", commodity);
+        Map<String, String> result = new HashMap<>();
+        try {
+            Commodity comm = Commodity.valueOf(commodity.toUpperCase());
+            RefinedResourceType resourceType = mapCommodityToResource(comm);
+            result.put("commodity", comm.name());
+            result.put("resourceType", resourceType.name());
+        } catch (IllegalArgumentException e) {
+            result.put("error", "Unknown commodity: " + commodity);
+            return ResponseEntity.badRequest().body(result);
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Maps a resource type to its corresponding commodity.
+     */
+    @GetMapping("/mapping/resource-to-commodity/{resourceType}")
+    public ResponseEntity<Map<String, String>> getResourceToCommodityMapping(@PathVariable String resourceType) {
+        log.debug("GET /api/v1/traveller/trade/mapping/resource-to-commodity/{}", resourceType);
+        Map<String, String> result = new HashMap<>();
+        try {
+            RefinedResourceType res = RefinedResourceType.valueOf(resourceType.toUpperCase());
+            Commodity comm = mapResourceToCommodity(res);
+            result.put("resourceType", res.name());
+            result.put("commodity", comm.name());
+        } catch (IllegalArgumentException e) {
+            result.put("error", "Unknown resource type: " + resourceType);
+            return ResponseEntity.badRequest().body(result);
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Lists all commodity-to-resource mappings.
+     */
+    @GetMapping("/mapping/all")
+    public ResponseEntity<List<Map<String, String>>> getAllMappings() {
+        log.debug("GET /api/v1/traveller/trade/mapping/all");
+        List<Map<String, String>> mappings = new java.util.ArrayList<>();
+        for (Commodity comm : Commodity.values()) {
+            Map<String, String> mapping = new HashMap<>();
+            mapping.put("commodity", comm.name());
+            mapping.put("resourceType", mapCommodityToResource(comm).name());
+            mappings.add(mapping);
+        }
+        return ResponseEntity.ok(mappings);
+    }
+
+    /**
+     * Gets all exchange summaries for all empires in a session.
+     */
+    @GetMapping("/exchange-all")
+    public ResponseEntity<List<Map<String, Object>>> getAllExchangeSummaries(
+            @RequestParam(required = false) String sessionId) {
+        log.debug("GET /api/v1/traveller/trade/exchange-all for session {}", sessionId);
+        if (sessionId == null) {
+            return ResponseEntity.ok(List.of());
+        }
+        CreditExchangeService exchange = getCreditExchangeService(sessionId);
+        if (exchange == null) {
+            return ResponseEntity.ok(List.of());
+        }
+        return ResponseEntity.ok(exchange.getAllExchangeSummaries());
+    }
+
+    // ============================================================
+    // Helper Methods
+    // ============================================================
+
+    private CreditExchangeService getCreditExchangeService(String sessionId) {
+        GameSession session = gameSessionService.getGameSession(sessionId);
+        if (session == null || session.getGame() == null) {
+            return null;
+        }
+        Game game = (Game) session.getGame();
+        TradeManager tradeManager = game.getTradeManager();
+        if (tradeManager != null) {
+            return tradeManager.getCreditExchangeService();
+        }
+        return null;
+    }
+
+    private RefinedResourceType mapCommodityToResource(Commodity commodity) {
+        if (commodity == null) {
+            return RefinedResourceType.METAL_ALLOY;
+        }
+        switch (commodity) {
+            case FOOD:
+            case MEDICINE:
+                return RefinedResourceType.NUTRIENT;
+            case FUEL:
+            case CHEMICALS:
+                return RefinedResourceType.FUEL;
+            case ELECTRONICS:
+            case INFORMATION:
+                return RefinedResourceType.POWER_CELL;
+            case TEXTILES:
+            case TOBACCO:
+            case ALCOHOL:
+                return RefinedResourceType.COMPOSITE;
+            case METALS:
+            case MACHINERY:
+            case WEAPONS:
+            case GEMS:
+            case LUXURY:
+            case TIMBER:
+            case FURS:
+            case SPICES:
+            case ANIMALS:
+            case SLAVES:
+            case RELIGIOUS:
+            default:
+                return RefinedResourceType.METAL_ALLOY;
+        }
+    }
+
+    private Commodity mapResourceToCommodity(RefinedResourceType resourceType) {
+        if (resourceType == null) {
+            return Commodity.METALS;
+        }
+        switch (resourceType) {
+            case NUTRIENT:
+                return Commodity.FOOD;
+            case FUEL:
+                return Commodity.FUEL;
+            case POWER_CELL:
+                return Commodity.ELECTRONICS;
+            case COMPOSITE:
+                return Commodity.TEXTILES;
+            case METAL_ALLOY:
+            default:
+                return Commodity.METALS;
+        }
+    }
+
+    // ============================================================
+    // DTOs
+    // ============================================================
+
+    public static class CreditOperationRequest {
+        private int empireId;
+        private long credits;
+
+        public int getEmpireId() { return empireId; }
+        public void setEmpireId(int id) { this.empireId = id; }
+        public long getCredits() { return credits; }
+        public void setCredits(long credits) { this.credits = credits; }
     }
 }

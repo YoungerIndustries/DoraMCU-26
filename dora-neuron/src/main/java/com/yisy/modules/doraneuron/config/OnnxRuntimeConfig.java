@@ -20,6 +20,7 @@ import jakarta.annotation.PreDestroy;
  * edge-optimized inference engine instead.
  */
 @Configuration
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
 @ConditionalOnProperty(prefix = "neuron", name = "onnx-model-path")
 @ConditionalOnProperty(prefix = "neuron.edge", name = "auto-optimize", havingValue = "false", matchIfMissing = false)
 public class OnnxRuntimeConfig {

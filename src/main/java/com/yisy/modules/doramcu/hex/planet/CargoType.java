@@ -92,7 +92,18 @@ public enum CargoType {
     LUXURY("Luxury Goods", "#FFD700", CargoCategory.ADVANCED, false, 55),
 
     /** Chemicals from chemical plants */
-    CHEMICALS("Chemicals", "#9370DB", CargoCategory.ADVANCED, false, 35);
+    CHEMICALS("Chemicals", "#9370DB", CargoCategory.ADVANCED, false, 35),
+
+    // ---- Space Cargo (Space Industries - Apollo Rocket Set) ----
+
+    /** Rocket parts from rocket parts factories */
+    ROCKET_PARTS("Rocket Parts", "#B0C4DE", CargoCategory.ADVANCED, false, 80),
+
+    /** Assembled spacecraft from assembly plants */
+    SPACECRAFT("Spacecraft", "#E6E6FA", CargoCategory.ADVANCED, false, 150),
+
+    /** Planetary landers from lander factories */
+    LANDERS("Landers", "#F0E68C", CargoCategory.ADVANCED, false, 120);
 
     private final String displayName;
     private final String color;

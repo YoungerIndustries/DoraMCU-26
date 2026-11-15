@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.hex;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;

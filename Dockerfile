@@ -60,10 +60,13 @@ ENV DL_MODE=local
 # Default: "" (disabled)
 ENV DEBUG=
 
-# JVM memory standardized to match build.gradle bootRun settings.
+# JVM memory standardized to match gradle.properties (app.jvm.args, app.javacpp.args).
 # Override at runtime: docker run -e JVM_XMX="-Xmx8G" ...
 # When DL_MODE=rest, DL4J is not loaded — lower memory is sufficient.
 # When DL_MODE=local, DL4J memory args are needed for neural network training.
+# JVM defaults match gradle.properties: app.jvm.args + app.javacpp.args
+ENV JVM_ARGS="-Xmx4G -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+ENV JAVACPP_ARGS="-Dorg.bytedeco.javacpp.maxbytes=2G -Dorg.bytedeco.javacpp.maxphysicalbytes=2G -Dorg.bytedeco.javacpp.alloctype=direct"
 ENTRYPOINT ["sh", "-c", "\
   # Activate swap file if not already active (only needed for local DL4J mode; \
   # requires privileged container — silently skip if permission denied) \

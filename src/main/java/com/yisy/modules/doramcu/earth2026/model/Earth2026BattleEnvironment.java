@@ -51,6 +51,15 @@ public class Earth2026BattleEnvironment {
     /** Movement modifier for combat (-5 to +5). */
     private final int movementModifier;
 
+    /** Terrain elevation map for 3D battlefield representation. */
+    private final TerrainElevationMap terrainElevationMap;
+
+    /** Ground elevation in meters above sea level. */
+    private final Double groundElevation;
+
+    /** Vegetation density (0.0 = bare, 1.0 = dense). */
+    private final Double vegetationDensity;
+
     /** When this environment was generated. */
     private final LocalDateTime generatedAt;
 
@@ -67,10 +76,27 @@ public class Earth2026BattleEnvironment {
         private final boolean providesCover;
         private final int coverBonus;
         private final boolean isStrategic;
+        
+        // 3D spatial coordinates
+        private final Double x;
+        private final Double y;
+        private final Double z;
+        private final Double buildingWidth;
+        private final Double buildingDepth;
+        private final Double buildingHeight;
 
         public StructureInfo(Long id, String name, String structureType, int techLevel,
                              int defenseRating, int maxCapacity, boolean providesCover,
                              int coverBonus, boolean isStrategic) {
+            this(id, name, structureType, techLevel, defenseRating, maxCapacity,
+                 providesCover, coverBonus, isStrategic, null, null, null, null, null, null);
+        }
+
+        public StructureInfo(Long id, String name, String structureType, int techLevel,
+                             int defenseRating, int maxCapacity, boolean providesCover,
+                             int coverBonus, boolean isStrategic,
+                             Double x, Double y, Double z,
+                             Double buildingWidth, Double buildingDepth, Double buildingHeight) {
             this.id = id;
             this.name = name;
             this.structureType = structureType;
@@ -80,6 +106,12 @@ public class Earth2026BattleEnvironment {
             this.providesCover = providesCover;
             this.coverBonus = coverBonus;
             this.isStrategic = isStrategic;
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.buildingWidth = buildingWidth;
+            this.buildingDepth = buildingDepth;
+            this.buildingHeight = buildingHeight;
         }
 
         public Long getId() { return id; }
@@ -91,6 +123,17 @@ public class Earth2026BattleEnvironment {
         public boolean isProvidesCover() { return providesCover; }
         public int getCoverBonus() { return coverBonus; }
         public boolean isStrategic() { return isStrategic; }
+        
+        public Double getX() { return x; }
+        public Double getY() { return y; }
+        public Double getZ() { return z; }
+        public Double getBuildingWidth() { return buildingWidth; }
+        public Double getBuildingDepth() { return buildingDepth; }
+        public Double getBuildingHeight() { return buildingHeight; }
+        
+        public boolean hasSpatialCoordinates() {
+            return x != null && y != null && z != null;
+        }
     }
 
     /**
@@ -159,6 +202,18 @@ public class Earth2026BattleEnvironment {
                                        int baseTechLevel, String timePeriod, String terrainType,
                                        WeatherCondition weather, List<StructureInfo> structures,
                                        List<UnitTypeInfo> availableUnits) {
+        this(locationId, locationName, city, country, latitude, longitude,
+             baseTechLevel, timePeriod, terrainType, weather, structures, availableUnits,
+             null, null, null);
+    }
+
+    public Earth2026BattleEnvironment(Long locationId, String locationName, String city,
+                                       String country, Double latitude, Double longitude,
+                                       int baseTechLevel, String timePeriod, String terrainType,
+                                       WeatherCondition weather, List<StructureInfo> structures,
+                                       List<UnitTypeInfo> availableUnits,
+                                       TerrainElevationMap terrainElevationMap,
+                                       Double groundElevation, Double vegetationDensity) {
         this.locationId = locationId;
         this.locationName = locationName;
         this.city = city;
@@ -173,6 +228,9 @@ public class Earth2026BattleEnvironment {
         this.availableUnits = availableUnits != null ? availableUnits : new ArrayList<>();
         this.visibilityModifier = (weather != null ? weather.getVisibilityModifier() : 0);
         this.movementModifier = (weather != null ? weather.getMovementModifier() : 0);
+        this.terrainElevationMap = terrainElevationMap;
+        this.groundElevation = groundElevation;
+        this.vegetationDensity = vegetationDensity;
         this.generatedAt = LocalDateTime.now();
     }
 
@@ -191,6 +249,9 @@ public class Earth2026BattleEnvironment {
     public List<UnitTypeInfo> getAvailableUnits() { return availableUnits; }
     public int getVisibilityModifier() { return visibilityModifier; }
     public int getMovementModifier() { return movementModifier; }
+    public TerrainElevationMap getTerrainElevationMap() { return terrainElevationMap; }
+    public Double getGroundElevation() { return groundElevation; }
+    public Double getVegetationDensity() { return vegetationDensity; }
     public LocalDateTime getGeneratedAt() { return generatedAt; }
 
     /**

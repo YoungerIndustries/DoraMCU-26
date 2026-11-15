@@ -1,6 +1,13 @@
 package com.yisy.modules.doramcu.hex.manager;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.*;
+import com.yisy.modules.doramcu.hex.spi.StationAiCoreSpi;
+import com.yisy.modules.doramcu.hex.Skin;
+import com.yisy.modules.doramcu.hex.SkinType;
+import com.yisy.modules.doramcu.hex.spi.AssetRegistrySpi;
+import com.yisy.modules.doramcu.hex.spi.SkinLookupSpi;
+import com.yisy.modules.doramcu.hex.spi.SkinProviders;
 
 import java.util.*;
 
@@ -190,6 +197,8 @@ public class FacilityConstructionManager {
         int stationId = context.getNextPlanetIdAndIncrement();
         SpaceStation station = new SpaceStation(stationId, stationType);
         station.setHomeSystem(homeSystem);
+        station.setAiCoreLevel(StationAiCoreSpi.Level.BASIC);
+        registerStation(station);
         return station;
     }
 
@@ -277,6 +286,24 @@ public class FacilityConstructionManager {
     }
 
     /**
+     * Registers a space station with the asset registry and assigns a default skin.
+     */
+    private void registerStation(SpaceStation station) {
+        AssetRegistrySpi registry = SkinProviders.getAssetRegistry();
+        if (registry == null) {
+            return;
+        }
+        registry.register(SkinType.SPACE_STATION, station.getId(), station);
+        SkinLookupSpi skinLookup = SkinProviders.getSkinLookup();
+        if (skinLookup != null && station.getSkin() == null) {
+            Skin defaultSkin = skinLookup.getSkin("industrial-station");
+            if (defaultSkin != null) {
+                station.setSkin(defaultSkin);
+            }
+        }
+    }
+
+    /**
      * Completes a space station construction order by creating the station.
      * The station is added to the game's space station list and assigned to the owner.
      *
@@ -293,12 +320,16 @@ public class FacilityConstructionManager {
         SpaceStation station = new SpaceStation(stationId, order.getStationType());
         station.setOwner(owner);
         station.setHomeSystem(homeSystem);
+        station.setAiCoreLevel(StationAiCoreSpi.Level.BASIC);
         context.getSpaceStations().add(station);
+        registerStation(station);
         return station;
     }
 
     /**
      * Completes a planetary facility construction order by adding the facility.
+     * For storage upgrade facilities (Warehouse, Refinery, Module Bay),
+     * also increases the corresponding storage capacity.
      *
      * @param order the completed construction order
      * @param planet the planet to add the facility to
@@ -309,7 +340,51 @@ public class FacilityConstructionManager {
             return false;
         }
         planet.addStartingFacility(order.getPlanetFacility());
+
+        // Apply storage upgrades for storage-type facilities
+        StartingFacility facility = order.getPlanetFacility();
+        if (facility != null) {
+            applyStorageUpgrade(facility, order.getOwnerEmpireId());
+        }
         return true;
+    }
+
+    /**
+     * Applies storage capacity upgrades based on the facility type.
+     *
+     * @param facility the facility type
+     * @param empireId the empire ID
+     */
+    private void applyStorageUpgrade(StartingFacility facility, int empireId) {
+        ResourcePipelineManager pipeline = getPipelineManager(empireId);
+        if (pipeline == null) return;
+
+        switch (facility) {
+            case WAREHOUSE:
+                // +100 raw storage per level
+                pipeline.getRawStorage().increaseAllCapacity(100);
+                break;
+            case REFINERY:
+                // +50 refined storage per level
+                pipeline.getRefinedStorage().increaseAllCapacity(50);
+                break;
+            case MODULE_BAY:
+                // +10 module storage per level
+                pipeline.getModuleStorage().increaseAllCapacity(10);
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Gets the pipeline manager for an empire from the TurnManager.
+     */
+    private ResourcePipelineManager getPipelineManager(int empireId) {
+        if (context instanceof com.yisy.modules.doramcu.hex.Game game) {
+            return game.getPipelineManager(empireId);
+        }
+        return null;
     }
 
     // ---- Module Summary ----

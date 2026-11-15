@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.neuron.handler;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +20,7 @@ import java.util.List;
  * WebSocket handler that broadcasts CDC events to connected game clients.
  * Each connected subscriber receives real-time entity change events.
  */
+@Component
 public class CdcWebSocketHandler extends TextWebSocketHandler {
 
     private static final Logger log = LoggerFactory.getLogger(CdcWebSocketHandler.class);

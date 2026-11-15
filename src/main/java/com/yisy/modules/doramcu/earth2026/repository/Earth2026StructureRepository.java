@@ -44,4 +44,9 @@ public interface Earth2026StructureRepository extends JpaRepository<Earth2026Str
      * Count structures at a location.
      */
     long countByLocationId(Long locationId);
+
+    /**
+     * Find all structures at a specific location with a specific type.
+     */
+    List<Earth2026Structure> findByLocationIdAndStructureType(Long locationId, String structureType);
 }

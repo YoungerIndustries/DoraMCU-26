@@ -92,6 +92,29 @@ public class Earth2026Location {
     @Column
     private Double longitude;
 
+    // ---- 3D Battlefield Elevation Data ----
+
+    /**
+     * Ground elevation in meters above sea level.
+     * Used for battlefield terrain representation.
+     */
+    @Column
+    private Double elevation;
+
+    /**
+     * Terrain type for combat resolution (e.g., "URBAN", "PLAINS", "MOUNTAIN").
+     * Overrides the default terrain type derived from location type.
+     */
+    @Column(name = "terrain_type", length = 50)
+    private String terrainType;
+
+    /**
+     * Vegetation density (0.0 = bare ground, 1.0 = dense jungle).
+     * Affects visibility and movement in combat.
+     */
+    @Column(name = "vegetation_density")
+    private Double vegetationDensity;
+
     public Earth2026Location() {
     }
 
@@ -205,6 +228,17 @@ public class Earth2026Location {
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
+
+    // ---- 3D Battlefield Elevation Accessors ----
+
+    public Double getElevation() { return elevation; }
+    public void setElevation(Double elevation) { this.elevation = elevation; }
+
+    public String getTerrainType() { return terrainType; }
+    public void setTerrainType(String terrainType) { this.terrainType = terrainType; }
+
+    public Double getVegetationDensity() { return vegetationDensity; }
+    public void setVegetationDensity(Double vegetationDensity) { this.vegetationDensity = vegetationDensity; }
 
     @Override
     public String toString() {

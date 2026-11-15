@@ -1,0 +1,448 @@
+{
+  "game_info": {
+    "title": "OpenTTD Transport Tycoon Industry Database",
+    "description": "Complete industry database including primary, secondary, and tertiary industries with cargo chains",
+    "source": "DoraMCU Transport Tycoon Biodome Database"
+  },
+  "industries": {
+    "primary_industries": [
+      {
+        "id": "mine",
+        "name": "Mine",
+        "category": "primary",
+        "output": {"cargo": "ore", "amount": 8},
+        "input": null,
+        "required_terrain": ["mountain", "highland"],
+        "build_cost": 500,
+        "maintenance": 10,
+        "tech_level_min": 1,
+        "description": "Extracts raw metal ore from mountain deposits.",
+        "interior_rooms": [
+          {"room": "Entrance", "theme": "Trap"},
+          {"room": "Shaft", "theme": "Trap"},
+          {"room": "Ore Storage", "theme": "Trap"},
+          {"room": "Equipment Room", "theme": "Trap"},
+          {"room": "Break Room", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "coal_mine",
+        "name": "Coal Mine",
+        "category": "primary",
+        "output": {"cargo": "coal", "amount": 8},
+        "input": null,
+        "required_terrain": ["mountain", "highland"],
+        "build_cost": 600,
+        "maintenance": 12,
+        "tech_level_min": 1,
+        "description": "Mines coal for energy and steel production.",
+        "interior_rooms": [
+          {"room": "Entrance", "theme": "Trap"},
+          {"room": "Tunnel", "theme": "Trap"},
+          {"room": "Coal Storage", "theme": "Trap"},
+          {"room": "Ventilation", "theme": "Trap"},
+          {"room": "Break Room", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "oil_well",
+        "name": "Oil Well",
+        "category": "primary",
+        "output": {"cargo": "oil", "amount": 6},
+        "input": null,
+        "required_terrain": ["desert", "grassland"],
+        "build_cost": 1000,
+        "maintenance": 20,
+        "tech_level_min": 2,
+        "description": "Extracts crude oil from underground deposits.",
+        "interior_rooms": [
+          {"room": "Platform", "theme": "Trap"},
+          {"room": "Pump Room", "theme": "Trap"},
+          {"room": "Storage Tank", "theme": "Trap"},
+          {"room": "Control Room", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "logging_camp",
+        "name": "Logging Camp",
+        "category": "primary",
+        "output": {"cargo": "wood", "amount": 10},
+        "input": null,
+        "required_terrain": ["forest"],
+        "build_cost": 200,
+        "maintenance": 5,
+        "tech_level_min": 1,
+        "description": "Harvests timber from forested areas.",
+        "interior_rooms": [
+          {"room": "Saw Area", "theme": "Social"},
+          {"room": "Wood Storage", "theme": "Social"},
+          {"room": "Tool Shed", "theme": "Social"},
+          {"room": "Camp Quarters", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "farm",
+        "name": "Farm",
+        "category": "primary",
+        "output": {"cargo": "grain", "amount": 10},
+        "input": null,
+        "required_terrain": ["grassland", "savanna"],
+        "build_cost": 300,
+        "maintenance": 6,
+        "tech_level_min": 1,
+        "description": "Grows grain crops for food production.",
+        "interior_rooms": [
+          {"room": "Barn", "theme": "Social"},
+          {"room": "Grain Silo", "theme": "Social"},
+          {"room": "Tool Shed", "theme": "Social"},
+          {"room": "Farmhouse", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "ranch",
+        "name": "Ranch",
+        "category": "primary",
+        "output": {"cargo": "livestock", "amount": 6},
+        "input": null,
+        "required_terrain": ["grassland", "savanna"],
+        "build_cost": 350,
+        "maintenance": 7,
+        "tech_level_min": 1,
+        "description": "Raises livestock for meat production.",
+        "interior_rooms": [
+          {"room": "Barn", "theme": "Social"},
+          {"room": "Pasture Office", "theme": "Social"},
+          {"room": "Feed Storage", "theme": "Social"},
+          {"room": "Ranch House", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "fishing_port",
+        "name": "Fishing Port",
+        "category": "primary",
+        "output": {"cargo": "fish", "amount": 8},
+        "input": null,
+        "required_terrain": ["coastal"],
+        "build_cost": 250,
+        "maintenance": 5,
+        "tech_level_min": 1,
+        "description": "Harvests fish from coastal waters.",
+        "interior_rooms": [
+          {"room": "Dock Office", "theme": "Social"},
+          {"room": "Fish Storage", "theme": "Social"},
+          {"room": "Net Repair", "theme": "Social"},
+          {"room": "Boathouse", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "orchard",
+        "name": "Orchard",
+        "category": "primary",
+        "output": {"cargo": "fruit", "amount": 8},
+        "input": null,
+        "required_terrain": ["grassland", "savanna"],
+        "build_cost": 280,
+        "maintenance": 5,
+        "tech_level_min": 1,
+        "description": "Grows fruit for consumption and luxury goods.",
+        "interior_rooms": [
+          {"room": "Greenhouse", "theme": "Social"},
+          {"room": "Fruit Storage", "theme": "Social"},
+          {"room": "Packing Room", "theme": "Social"},
+          {"room": "Farmhouse", "theme": "Social"}
+        ]
+      }
+    ],
+    "secondary_industries": [
+      {
+        "id": "steel_mill",
+        "name": "Steel Mill",
+        "category": "secondary",
+        "output": {"cargo": "steel", "amount": 6},
+        "input": [{"cargo": "ore", "amount": 8}, {"cargo": "coal", "amount": 8}],
+        "required_terrain": ["grassland", "desert"],
+        "build_cost": 1500,
+        "maintenance": 25,
+        "tech_level_min": 3,
+        "description": "Processes ore and coal into steel.",
+        "interior_rooms": [
+          {"room": "Furnace Room", "theme": "Trap"},
+          {"room": "Rolling Mill", "theme": "Trap"},
+          {"room": "Steel Storage", "theme": "Trap"},
+          {"room": "Control Room", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "cement_plant",
+        "name": "Cement Plant",
+        "category": "secondary",
+        "output": {"cargo": "concrete", "amount": 6},
+        "input": [{"cargo": "ore", "amount": 6}],
+        "required_terrain": ["grassland", "desert"],
+        "build_cost": 1200,
+        "maintenance": 20,
+        "tech_level_min": 3,
+        "description": "Produces concrete for construction.",
+        "interior_rooms": [
+          {"room": "Crusher Room", "theme": "Trap"},
+          {"room": "Kiln", "theme": "Trap"},
+          {"room": "Storage", "theme": "Social"},
+          {"room": "Control Room", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "glass_factory",
+        "name": "Glass Factory",
+        "category": "secondary",
+        "output": {"cargo": "glass", "amount": 5},
+        "input": [{"cargo": "ore", "amount": 6}],
+        "required_terrain": ["grassland"],
+        "build_cost": 1000,
+        "maintenance": 18,
+        "tech_level_min": 3,
+        "description": "Manufactures glass for electronics and construction.",
+        "interior_rooms": [
+          {"room": "Melting Room", "theme": "Trap"},
+          {"room": "Shaping Area", "theme": "Trap"},
+          {"room": "Storage", "theme": "Social"},
+          {"room": "Control Room", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "sawmill",
+        "name": "Sawmill",
+        "category": "secondary",
+        "output": {"cargo": "lumber", "amount": 8},
+        "input": [{"cargo": "wood", "amount": 8}],
+        "required_terrain": ["forest", "grassland"],
+        "build_cost": 400,
+        "maintenance": 8,
+        "tech_level_min": 2,
+        "description": "Processes raw wood into lumber.",
+        "interior_rooms": [
+          {"room": "Saw Area", "theme": "Social"},
+          {"room": "Lumber Storage", "theme": "Social"},
+          {"room": "Dry Room", "theme": "Social"},
+          {"room": "Office", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "bakery",
+        "name": "Bakery",
+        "category": "secondary",
+        "output": {"cargo": "bread", "amount": 10},
+        "input": [{"cargo": "grain", "amount": 8}],
+        "required_terrain": ["grassland", "savanna"],
+        "build_cost": 400,
+        "maintenance": 6,
+        "tech_level_min": 2,
+        "description": "Bakes bread from grain.",
+        "interior_rooms": [
+          {"room": "Kitchen", "theme": "Social"},
+          {"room": "Oven Room", "theme": "Social"},
+          {"room": "Storage", "theme": "Social"},
+          {"room": "Shop Front", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "slaughterhouse",
+        "name": "Slaughterhouse",
+        "category": "secondary",
+        "output": {"cargo": "meat", "amount": 6},
+        "input": [{"cargo": "livestock", "amount": 8}],
+        "required_terrain": ["grassland", "savanna"],
+        "build_cost": 450,
+        "maintenance": 7,
+        "tech_level_min": 2,
+        "description": "Processes livestock into meat.",
+        "interior_rooms": [
+          {"room": "Processing Room", "theme": "Trap"},
+          {"room": "Cold Storage", "theme": "Trap"},
+          {"room": "Office", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "refinery",
+        "name": "Refinery",
+        "category": "secondary",
+        "output": {"cargo": "refined_oil", "amount": 6},
+        "input": [{"cargo": "oil", "amount": 8}],
+        "required_terrain": ["desert", "grassland"],
+        "build_cost": 1500,
+        "maintenance": 25,
+        "tech_level_min": 3,
+        "description": "Refines crude oil into usable products.",
+        "interior_rooms": [
+          {"room": "Distillation Tower", "theme": "Trap"},
+          {"room": "Storage Tanks", "theme": "Trap"},
+          {"room": "Control Room", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "chemical_plant",
+        "name": "Chemical Plant",
+        "category": "secondary",
+        "output": {"cargo": "plastic", "amount": 5},
+        "input": [{"cargo": "refined_oil", "amount": 6}],
+        "required_terrain": ["desert", "grassland"],
+        "build_cost": 1200,
+        "maintenance": 20,
+        "tech_level_min": 4,
+        "description": "Produces plastic from refined oil.",
+        "interior_rooms": [
+          {"room": "Mixing Room", "theme": "Trap"},
+          {"room": "Storage", "theme": "Trap"},
+          {"room": "Lab", "theme": "Social"},
+          {"room": "Control Room", "theme": "Social"}
+        ]
+      }
+    ],
+    "tertiary_industries": [
+      {
+        "id": "electronics_factory",
+        "name": "Electronics Factory",
+        "category": "tertiary",
+        "output": {"cargo": "electronics", "amount": 3},
+        "input": [{"cargo": "steel", "amount": 4}, {"cargo": "glass", "amount": 3}, {"cargo": "plastic", "amount": 2}],
+        "required_terrain": ["grassland"],
+        "build_cost": 3000,
+        "maintenance": 50,
+        "tech_level_min": 6,
+        "description": "Manufactures high-tech electronic components.",
+        "interior_rooms": [
+          {"room": "Assembly Line", "theme": "Social"},
+          {"room": "Clean Room", "theme": "Social"},
+          {"room": "Storage", "theme": "Social"},
+          {"room": "R&D Lab", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "machine_shop",
+        "name": "Machine Shop",
+        "category": "tertiary",
+        "output": {"cargo": "machinery", "amount": 3},
+        "input": [{"cargo": "steel", "amount": 6}, {"cargo": "refined_oil", "amount": 2}],
+        "required_terrain": ["grassland", "desert"],
+        "build_cost": 2500,
+        "maintenance": 40,
+        "tech_level_min": 5,
+        "description": "Produces industrial machinery and equipment.",
+        "interior_rooms": [
+          {"room": "Machine Bay", "theme": "Social"},
+          {"room": "Tool Room", "theme": "Social"},
+          {"room": "Parts Storage", "theme": "Social"},
+          {"room": "Office", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "luxury_factory",
+        "name": "Luxury Factory",
+        "category": "tertiary",
+        "output": {"cargo": "luxury", "amount": 2},
+        "input": [{"cargo": "fruit", "amount": 4}, {"cargo": "bread", "amount": 2}, {"cargo": "plastic", "amount": 2}],
+        "required_terrain": ["grassland"],
+        "build_cost": 2000,
+        "maintenance": 35,
+        "tech_level_min": 5,
+        "description": "Creates premium luxury goods.",
+        "interior_rooms": [
+          {"room": "Design Studio", "theme": "Social"},
+          {"room": "Assembly", "theme": "Social"},
+          {"room": "Quality Control", "theme": "Social"},
+          {"room": "Showroom", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "advanced_chemicals",
+        "name": "Advanced Chemicals",
+        "category": "tertiary",
+        "output": {"cargo": "chemicals", "amount": 3},
+        "input": [{"cargo": "plastic", "amount": 4}, {"cargo": "refined_oil", "amount": 3}],
+        "required_terrain": ["desert", "grassland"],
+        "build_cost": 2200,
+        "maintenance": 38,
+        "tech_level_min": 6,
+        "description": "Produces advanced chemical compounds.",
+        "interior_rooms": [
+          {"room": "Lab", "theme": "Trap"},
+          {"room": "Mixing Room", "theme": "Trap"},
+          {"room": "Storage", "theme": "Trap"},
+          {"room": "Safety Room", "theme": "Social"}
+        ]
+      }
+    ],
+    "space_industries": [
+      {
+        "id": "rocket_parts_factory",
+        "name": "Rocket Parts Factory",
+        "category": "space",
+        "output": {"cargo": "rocket_parts", "amount": 2},
+        "input": [{"cargo": "steel", "amount": 6}, {"cargo": "electronics", "amount": 4}],
+        "required_terrain": ["grassland"],
+        "build_cost": 5000,
+        "maintenance": 80,
+        "tech_level_min": 8,
+        "description": "Manufactures components for rockets and spacecraft.",
+        "interior_rooms": [
+          {"room": "Assembly Hall", "theme": "Social"},
+          {"room": "Precision Lab", "theme": "Social"},
+          {"room": "Parts Storage", "theme": "Social"},
+          {"room": "Quality Control", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "spacecraft_assembly",
+        "name": "Spacecraft Assembly Plant",
+        "category": "space",
+        "output": {"cargo": "spacecraft", "amount": 1},
+        "input": [{"cargo": "rocket_parts", "amount": 4}, {"cargo": "electronics", "amount": 6}],
+        "required_terrain": ["grassland"],
+        "build_cost": 8000,
+        "maintenance": 120,
+        "tech_level_min": 9,
+        "description": "Assembles complete spacecraft from components.",
+        "interior_rooms": [
+          {"room": "Assembly Hangar", "theme": "Social"},
+          {"room": "Testing Bay", "theme": "Social"},
+          {"room": "Control Center", "theme": "Social"},
+          {"room": "Crew Training", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "lander_factory",
+        "name": "Lander Factory",
+        "category": "space",
+        "output": {"cargo": "landers", "amount": 2},
+        "input": [{"cargo": "rocket_parts", "amount": 3}, {"cargo": "machinery", "amount": 2}],
+        "required_terrain": ["grassland"],
+        "build_cost": 6000,
+        "maintenance": 100,
+        "tech_level_min": 9,
+        "description": "Builds planetary landers for surface operations.",
+        "interior_rooms": [
+          {"room": "Assembly Bay", "theme": "Social"},
+          {"room": "Testing Chamber", "theme": "Social"},
+          {"room": "Storage", "theme": "Social"}
+        ]
+      },
+      {
+        "id": "rocket_launch_pad",
+        "name": "Rocket Launch Pad",
+        "category": "space",
+        "output": null,
+        "input": [{"cargo": "spacecraft", "amount": 1}, {"cargo": "landers", "amount": 1}],
+        "required_terrain": ["grassland", "desert"],
+        "build_cost": 10000,
+        "maintenance": 150,
+        "tech_level_min": 9,
+        "description": "Launch facility for rockets — the final stage of space logistics.",
+        "interior_rooms": [
+          {"room": "Launch Control", "theme": "Social"},
+          {"room": "Fueling Station", "theme": "Trap"},
+          {"room": "Observation Deck", "theme": "Social"},
+          {"room": "Crew Quarters", "theme": "Social"}
+        ]
+      }
+    ]
+  }
+}

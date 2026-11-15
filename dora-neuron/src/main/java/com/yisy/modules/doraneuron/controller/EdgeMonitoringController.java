@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.controller;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.service.edge.EdgeMetricsService;
 import com.yisy.modules.doraneuron.service.edge.ModelQuantizationService;
 import com.yisy.modules.doraneuron.util.edge.SystemResourceDetector;
@@ -19,6 +21,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/neuron/edge")
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class EdgeMonitoringController {
 
     private final EdgeMetricsService edgeMetricsService;

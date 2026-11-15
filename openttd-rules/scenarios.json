@@ -1,0 +1,378 @@
+{
+  "game_info": {
+    "title": "OpenTTD Transport Tycoon Scenarios",
+    "description": "Pre-built scenarios and campaign setups for transport tycoon gameplay across tech levels",
+    "source": "DoraMCU Transport Tycoon Biodome Database"
+  },
+  "scenarios": [
+    {
+      "id": "frontier_railway",
+      "name": "Frontier Railway",
+      "tech_level": 1,
+      "description": "Build a railway network on a primitive frontier planet. Connect mining towns to ports using steam trains.",
+      "landscape": "default",
+      "climate": "temperate",
+      "starting_credits": 50000,
+      "objective": {
+        "type": "cargo_delivery",
+        "description": "Deliver 10,000 units of ore to the port within 5 years",
+        "target": 10000,
+        "cargo_type": "ore",
+        "deadline_years": 5
+      },
+      "available_vehicles": ["truck", "bus", "steam_locomotive", "cargo_ship", "passenger_ferry"],
+      "available_stations": ["bus_stop", "rail_station", "boat_dock"],
+      "industries_placed": [
+        {"type": "mine", "count": 3},
+        {"type": "coal_mine", "count": 2},
+        {"type": "farm", "count": 2},
+        {"type": "logging_camp", "count": 1}
+      ],
+      "settlements_placed": [
+        {"type": "village", "count": 4},
+        {"type": "town", "count": 2}
+      ],
+      "difficulty": "easy",
+      "tips": [
+        "Start by connecting the mines to the port with a rail line",
+        "Use trucks to feed cargo to rail stations from nearby industries",
+        "Build bus stops near settlements for passenger income"
+      ]
+    },
+    {
+      "id": "industrial_boom",
+      "name": "Industrial Boom",
+      "tech_level": 3,
+      "description": "An industrial planet needs a comprehensive transport network. Connect steel mills, refineries, and factories.",
+      "landscape": "default",
+      "climate": "temperate",
+      "starting_credits": 200000,
+      "objective": {
+        "type": "corporation_rank",
+        "description": "Reach Regional Carrier rank within 10 years",
+        "target_rank": "REGIONAL",
+        "deadline_years": 10
+      },
+      "available_vehicles": [
+        "truck", "bus", "express_truck", "steam_locomotive", "diesel_locomotive", "electric_locomotive",
+        "cargo_ship", "passenger_ferry", "advanced_cargo_liner"
+      ],
+      "available_stations": ["bus_stop", "rail_station", "port", "cargo_station"],
+      "industries_placed": [
+        {"type": "mine", "count": 4},
+        {"type": "coal_mine", "count": 3},
+        {"type": "oil_well", "count": 2},
+        {"type": "steel_mill", "count": 2},
+        {"type": "refinery", "count": 1},
+        {"type": "farm", "count": 3},
+        {"type": "ranch", "count": 2}
+      ],
+      "settlements_placed": [
+        {"type": "town", "count": 4},
+        {"type": "city", "count": 2}
+      ],
+      "difficulty": "medium",
+      "tips": [
+        "Electrify your rail lines for faster electric trains",
+        "Build a port to handle bulk cargo shipments",
+        "Create cargo chains: mine → steel mill → factory"
+      ]
+    },
+    {
+      "id": "maglev_express",
+      "name": "Maglev Express",
+      "tech_level": 5,
+      "description": "A high-tech planet demands the fastest transport. Build a maglev network connecting cities and airports.",
+      "landscape": "default",
+      "climate": "temperate",
+      "starting_credits": 500000,
+      "objective": {
+        "type": "passenger_delivery",
+        "description": "Transport 50,000 passengers within 8 years using maglev and aircraft",
+        "target": 50000,
+        "deadline_years": 8
+      },
+      "available_vehicles": [
+        "truck", "bus", "express_truck", "diesel_locomotive", "electric_locomotive",
+        "monorail_train", "maglev_train", "cargo_ship", "passenger_ferry", "advanced_cargo_liner",
+        "helicopter", "aircraft"
+      ],
+      "available_stations": [
+        "bus_stop", "rail_station", "monorail_station", "maglev_station", "port", "airport", "heliport", "cargo_station"
+      ],
+      "industries_placed": [
+        {"type": "electronics_factory", "count": 2},
+        {"type": "luxury_factory", "count": 2},
+        {"type": "machine_shop", "count": 2},
+        {"type": "steel_mill", "count": 2},
+        {"type": "glass_factory", "count": 1},
+        {"type": "chemical_plant", "count": 1}
+      ],
+      "settlements_placed": [
+        {"type": "city", "count": 4},
+        {"type": "metropolis", "count": 2}
+      ],
+      "difficulty": "medium",
+      "tips": [
+        "Maglev is expensive but pays off with high passenger volumes",
+        "Airports serve as hubs for long-distance passenger routes",
+        "Connect cities with maglev for maximum passenger income"
+      ]
+    },
+    {
+      "id": "mars_colony",
+      "name": "Mars Colony",
+      "tech_level": 4,
+      "description": "Establish transport infrastructure on Mars. Deal with dust storms and low gravity while connecting mining outposts.",
+      "landscape": "mars",
+      "climate": "mars_equatorial",
+      "starting_credits": 300000,
+      "objective": {
+        "type": "cargo_delivery",
+        "description": "Deliver 20,000 units of ore and 5,000 units of refined oil to the spaceport within 12 years",
+        "target_cargo": [
+          {"cargo": "ore", "amount": 20000},
+          {"cargo": "refined_oil", "amount": 5000}
+        ],
+        "deadline_years": 12
+      },
+      "available_vehicles": [
+        "truck", "bus", "express_truck", "diesel_locomotive", "electric_locomotive",
+        "monorail_train", "cargo_ship", "passenger_ferry", "helicopter"
+      ],
+      "available_stations": [
+        "bus_stop", "rail_station", "monorail_station", "port", "heliport", "cargo_station"
+      ],
+      "industries_placed": [
+        {"type": "mine", "count": 5},
+        {"type": "oil_well", "count": 3},
+        {"type": "refinery", "count": 2},
+        {"type": "farm", "count": 1}
+      ],
+      "settlements_placed": [
+        {"type": "village", "count": 3},
+        {"type": "town", "count": 2}
+      ],
+      "difficulty": "hard",
+      "special_conditions": {
+        "dust_storms": true,
+        "low_gravity": true,
+        "thin_atmosphere": true
+      },
+      "tips": [
+        "Dust storms will slow your vehicles — plan for delays",
+        "Low gravity gives vehicles extended range — use it wisely",
+        "Aircraft perform poorly in thin atmosphere — rely on ground transport",
+        "Martian town names add immersion: Olympus Base, Valles Colony"
+      ]
+    },
+    {
+      "id": "ocean_hopping",
+      "name": "Ocean Hopping",
+      "tech_level": 3,
+      "description": "Connect scattered island settlements on an ocean world. Ships and aircraft are your primary transport.",
+      "landscape": "ocean_world",
+      "climate": "oceanic",
+      "starting_credits": 250000,
+      "objective": {
+        "type": "network_coverage",
+        "description": "Connect all 8 islands with regular transport service within 10 years",
+        "target_islands": 8,
+        "deadline_years": 10
+      },
+      "available_vehicles": [
+        "truck", "bus", "express_truck", "diesel_locomotive", "electric_locomotive",
+        "cargo_ship", "passenger_ferry", "advanced_cargo_liner", "helicopter"
+      ],
+      "available_stations": [
+        "bus_stop", "rail_station", "port", "heliport", "cargo_station"
+      ],
+      "industries_placed": [
+        {"type": "fishing_port", "count": 6},
+        {"type": "farm", "count": 3},
+        {"type": "orchard", "count": 2}
+      ],
+      "settlements_placed": [
+        {"type": "village", "count": 6},
+        {"type": "town", "count": 3}
+      ],
+      "difficulty": "medium",
+      "tips": [
+        "Build ports on every island for ship connections",
+        "Ferries are cost-effective for passenger routes between islands",
+        "Helicopters can reach small islands without ports"
+      ]
+    },
+    {
+      "id": "desert_trade_routes",
+      "name": "Desert Trade Routes",
+      "tech_level": 2,
+      "description": "Establish trade routes across a desert planet. Sand storms and scarce water make transport challenging.",
+      "landscape": "desert_planet",
+      "climate": "arid",
+      "starting_credits": 150000,
+      "objective": {
+        "type": "profit",
+        "description": "Earn 1,000,000 credits total profit within 15 years",
+        "target_profit": 1000000,
+        "deadline_years": 15
+      },
+      "available_vehicles": [
+        "truck", "bus", "express_truck", "steam_locomotive", "diesel_locomotive",
+        "cargo_ship", "passenger_ferry"
+      ],
+      "available_stations": [
+        "bus_stop", "rail_station", "boat_dock", "cargo_station"
+      ],
+      "industries_placed": [
+        {"type": "oil_well", "count": 4},
+        {"type": "mine", "count": 3},
+        {"type": "farm", "count": 1}
+      ],
+      "settlements_placed": [
+        {"type": "village", "count": 3},
+        {"type": "town", "count": 2}
+      ],
+      "difficulty": "hard",
+      "special_conditions": {
+        "sand_storms": true,
+        "oasis_bonus": true
+      },
+      "tips": [
+        "Sand storms will damage vehicles — maintain your fleet regularly",
+        "Oases provide bonus cargo — build stations near them",
+        "Water is scarce — focus on oil and ore transport"
+      ]
+    },
+    {
+      "id": "space_logistics",
+      "name": "Space Logistics",
+      "tech_level": 8,
+      "description": "Build a complete space logistics chain. Manufacture rocket parts, assemble spacecraft, and launch rockets.",
+      "landscape": "default",
+      "climate": "temperate",
+      "starting_credits": 2000000,
+      "objective": {
+        "type": "rocket_launch",
+        "description": "Successfully launch 5 rockets within 15 years",
+        "target_launches": 5,
+        "deadline_years": 15
+      },
+      "available_vehicles": [
+        "truck", "bus", "express_truck", "maglev_train", "frims_maglev",
+        "advanced_cargo_liner", "aircraft", "fictional_aircraft", "rocket"
+      ],
+      "available_stations": [
+        "bus_stop", "maglev_station", "port", "airport", "spaceport", "cargo_station"
+      ],
+      "industries_placed": [
+        {"type": "mine", "count": 3},
+        {"type": "steel_mill", "count": 2},
+        {"type": "electronics_factory", "count": 2},
+        {"type": "rocket_parts_factory", "count": 1}
+      ],
+      "settlements_placed": [
+        {"type": "city", "count": 3},
+        {"type": "metropolis", "count": 1}
+      ],
+      "difficulty": "very_hard",
+      "tips": [
+        "Build the full production chain: ore → steel → electronics → rocket parts",
+        "Spaceports are expensive but essential for rocket launches",
+        "Use maglev to transport rocket parts efficiently",
+        "Each rocket requires multiple cargo deliveries to the spaceport"
+      ]
+    },
+    {
+      "id": "galactic_empire",
+      "name": "Galactic Empire",
+      "tech_level": 10,
+      "description": "The ultimate challenge: manage transport across multiple planets with orbital stations and interplanetary travel.",
+      "landscape": "mars",
+      "climate": "mars_equatorial",
+      "starting_credits": 5000000,
+      "objective": {
+        "type": "galactic_monopoly",
+        "description": "Achieve Galactic Monopoly rank and operate on all 5 planets within 20 years",
+        "target_rank": "GALACTIC_MONOPOLY",
+        "target_planets": 5,
+        "deadline_years": 20
+      },
+      "available_vehicles": [
+        "truck", "bus", "express_truck", "frims_maglev",
+        "advanced_cargo_liner", "aircraft", "fictional_aircraft", "rocket", "apollo_rocket",
+        "space_station"
+      ],
+      "available_stations": [
+        "bus_stop", "maglev_station", "port", "airport", "spaceport", "orbital_station", "cargo_station"
+      ],
+      "industries_placed": [
+        {"type": "mine", "count": 5},
+        {"type": "oil_well", "count": 3},
+        {"type": "steel_mill", "count": 3},
+        {"type": "electronics_factory", "count": 3},
+        {"type": "rocket_parts_factory", "count": 2},
+        {"type": "spacecraft_assembly", "count": 1},
+        {"type": "rocket_launch_pad", "count": 1}
+      ],
+      "settlements_placed": [
+        {"type": "city", "count": 5},
+        {"type": "metropolis", "count": 3}
+      ],
+      "difficulty": "extreme",
+      "multi_planet": true,
+      "planets": [
+        {"name": "Earth Prime", "landscape": "default", "tech_level": 10},
+        {"name": "Mars Colony", "landscape": "mars", "tech_level": 8},
+        {"name": "Oceanus", "landscape": "ocean_world", "tech_level": 6},
+        {"name": "Tatooine", "landscape": "desert_planet", "tech_level": 5},
+        {"name": "Hoth", "landscape": "ice_world", "tech_level": 4}
+      ],
+      "tips": [
+        "Start with the highest tech planet and expand outward",
+        "Orbital stations connect planets — build them early",
+        "Different planets have different challenges — adapt your strategy",
+        "Use apollo rockets for interplanetary cargo transport"
+      ]
+    }
+  ],
+  "campaigns": [
+    {
+      "id": "tech_progression_campaign",
+      "name": "Tech Progression Campaign",
+      "description": "Complete all scenarios in order to experience the full tech progression from steam trains to spacecraft.",
+      "scenarios_in_order": [
+        "frontier_railway",
+        "industrial_boom",
+        "maglev_express",
+        "mars_colony",
+        "ocean_hopping",
+        "desert_trade_routes",
+        "space_logistics",
+        "galactic_empire"
+      ],
+      "total_estimated_playtime_hours": 40,
+      "rewards": {
+        "completion_bonus": "Unlock all vehicle variants and special station designs",
+        "achievement": "Master Transport Tycoon"
+      }
+    },
+    {
+      "id": "planet_explorer_campaign",
+      "name": "Planet Explorer Campaign",
+      "description": "Visit every planet type and master transport in each environment.",
+      "scenarios_in_order": [
+        "frontier_railway",
+        "mars_colony",
+        "ocean_hopping",
+        "desert_trade_routes",
+        "galactic_empire"
+      ],
+      "total_estimated_playtime_hours": 25,
+      "rewards": {
+        "completion_bonus": "Unlock all landscape variants and town name sets",
+        "achievement": "Galactic Explorer"
+      }
+    }
+  ]
+}

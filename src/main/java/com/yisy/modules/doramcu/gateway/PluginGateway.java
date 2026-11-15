@@ -1,6 +1,6 @@
 package com.yisy.modules.doramcu.gateway;
 
-import com.yisy.modules.doramcu.unified.GameType;
+import com.yisy.modules.doramcu.gamecore.GameType;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacterTalent;
@@ -6,7 +7,6 @@ import com.yisy.modules.doramcu.captainslog.repository.CaptainLogCharacterReposi
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogCharacterTalentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -36,7 +36,7 @@ public class CaptainLogTalentService {
     // ==================== Predefined Talent Pools ====================
 
     /**
-     * Species-specific talents — innate biological abilities.
+     * Species-specific talents â€” innate biological abilities.
      */
     private static final Map<String, List<TalentDefinition>> SPECIES_TALENTS = new LinkedHashMap<>();
 
@@ -152,7 +152,7 @@ public class CaptainLogTalentService {
     }
 
     /**
-     * Lifepath talents — gained through life experiences.
+     * Lifepath talents â€” gained through life experiences.
      */
     private static final List<TalentDefinition> LIFEPATH_TALENTS = Arrays.asList(
             new TalentDefinition("Street Smart", "You learned to survive on your own.",
@@ -182,7 +182,7 @@ public class CaptainLogTalentService {
     );
 
     /**
-     * Career talents — earned through advancement.
+     * Career talents â€” earned through advancement.
      */
     private static final List<TalentDefinition> CAREER_TALENTS = Arrays.asList(
             new TalentDefinition("Command Authority", "Your rank carries weight.",
@@ -212,7 +212,7 @@ public class CaptainLogTalentService {
     );
 
     /**
-     * Training talents — learned through formal education.
+     * Training talents â€” learned through formal education.
      */
     private static final List<TalentDefinition> TRAINING_TALENTS = Arrays.asList(
             new TalentDefinition("Academic Excellence", "Your education was top-tier.",

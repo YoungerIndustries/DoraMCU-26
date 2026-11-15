@@ -42,13 +42,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Build with Gradle (skip distTar on Linux to avoid path issues)
-        run: ./gradlew :bootJar dora-ai:build dora-dl-core:build --no-daemon --parallel
+      - name: Build with Gradle
+        run: ./gradlew :bootJar dora-neuron:build --no-daemon --parallel
         env:
           JAVA_OPTS: "-Xmx4g"
 
       - name: Run tests
-        run: ./gradlew test --no-daemon --parallel
+        run: ./gradlew test dora-neuron:test --no-daemon --parallel
+        env:
+          JAVA_OPTS: "-Xmx4g"
+
+      - name: Generate JaCoCo coverage report
+        run: ./gradlew jacocoTestReport --no-daemon
         env:
           JAVA_OPTS: "-Xmx4g"
 
@@ -60,6 +65,33 @@ jobs:
           path: |
             **/build/test-results/test/
             **/build/reports/tests/
+
+      - name: Upload JaCoCo coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jacoco-coverage
+          path: build/reports/jacoco/test/html/
+
+      - name: Upload JaCoCo XML for badge
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jacoco-xml
+          path: build/reports/jacoco/test/jacocoTestReport.xml
+
+      - name: OWASP Dependency-Check
+        run: ./gradlew dependencyCheckAnalyze --no-daemon
+        continue-on-error: true
+        env:
+          JAVA_OPTS: "-Xmx4g"
+
+      - name: Upload Dependency-Check report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dependency-check-report
+          path: build/reports/dependency-check-report-*.html
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -111,6 +143,23 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      # Security scanning with Trivy
+      - name: Run Trivy vulnerability scanner
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
   deploy-dev:
     needs: build
     runs-on: ubuntu-latest
@@ -120,13 +169,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy to Kubernetes (dev)
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Configure kubeconfig
         run: |
-          echo "Deploying to development cluster"
-          # kubectl apply -f k8s/base/ -n doramcu-dev
-          # kubectl apply -f k8s/overlays/dev/ -n doramcu-dev
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG_DEV }}" | base64 -d > $HOME/.kube/config
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG_DEV }}
+
+      - name: Deploy to Kubernetes (dev)
+        run: |
+          kubectl apply -k k8s/overlays/dev/ -n doramcu-dev
+          kubectl set image deployment/doramcu-app doramcu=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} -n doramcu-dev
+          kubectl rollout status deployment/doramcu-app -n doramcu-dev --timeout=300s
+
+      - name: Verify deployment health
+        run: |
+          kubectl get pods -n doramcu-dev
+          kubectl get services -n doramcu-dev
 
   deploy-prod:
     needs: build
@@ -137,10 +201,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy to Kubernetes (prod)
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Configure kubeconfig
         run: |
-          echo "Deploying to production cluster"
-          # kubectl apply -f k8s/base/ -n doramcu-prod
-          # kubectl apply -f k8s/overlays/prod/ -n doramcu-prod
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG_PROD }}" | base64 -d > $HOME/.kube/config
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG_PROD }}
+
+      - name: Deploy to Kubernetes (prod)
+        run: |
+          kubectl apply -k k8s/overlays/production/ -n doramcu-prod
+          kubectl set image deployment/doramcu-app doramcu=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }} -n doramcu-prod
+          kubectl rollout status deployment/doramcu-app -n doramcu-prod --timeout=300s
+
+      - name: Verify deployment health
+        run: |
+          kubectl get pods -n doramcu-prod
+          kubectl get services -n doramcu-prod

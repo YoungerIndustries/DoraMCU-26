@@ -1,14 +1,15 @@
 package com.yisy.modules.doramcu.zero_zero_seven.territory;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.zero_zero_seven.model.BondEmpire;
 import com.yisy.modules.doramcu.zero_zero_seven.model.BondTerritory;
 import com.yisy.modules.doramcu.zero_zero_seven.repository.BondEmpireRepository;
 import com.yisy.modules.doramcu.zero_zero_seven.repository.BondTerritoryRepository;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Service for expanding empire control to adjacent hexes.
@@ -101,7 +102,7 @@ public class ExpansionService {
                 List<BondTerritory> adjacent = territoryService.getAdjacentTerritories(
                         controlled.getGameSession().getId(), controlled.getHexX(), controlled.getHexY());
                 for (BondTerritory t : adjacent) {
-                    if (!expandable.contains(t) && (t.isUncontrolled() || t.getOwnerEmpireId().equals(empireId) == false)) {
+                    if (!expandable.contains(t) && (t.isUncontrolled() || !Objects.equals(t.getOwnerEmpireId(), empireId))) {
                         expandable.add(t);
                     }
                 }

@@ -6,11 +6,13 @@ import com.yisy.modules.doramcu.traveller.TravellerAdventureService;
 import com.yisy.modules.doramcu.traveller.TourOfDutyOption;
 import com.yisy.modules.doramcu.traveller.TourOfDutyRequest;
 import com.yisy.modules.doramcu.traveller.TourOfDutyService;
-import com.yisy.modules.doramcu.unified.GameType;
+import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.unified.TravellerCharacterType;
 import com.yisy.modules.doramcu.unified.TravellerTo4XIntegrationService;
 import com.yisy.modules.doramcu.unified.UnifiedCharacterCreationService;
 import com.yisy.modules.doramcu.unified.UnifiedCharacterLoginService;
+import com.yisy.modules.doramcu.model.CorporateRole;
+import com.yisy.modules.doramcu.corporation.service.CorporateRoleService;
 import com.yisy.modules.doramcu.unified.dto.CreateCharacterRequest;
 import com.yisy.modules.doramcu.unified.dto.UnifiedCharacterSummary;
 import com.yisy.modules.doramcu.unified.dto.UnifiedLoginRequest;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * REST controller for the unified character login and creation system.
@@ -50,18 +53,21 @@ public class UnifiedCharacterController {
     private final TravellerTo4XIntegrationService integrationService;
     private final TourOfDutyService tourOfDutyService;
     private final TravellerAdventureService adventureService;
+    private final CorporateRoleService corporateRoleService;
 
     public UnifiedCharacterController(
             UnifiedCharacterLoginService loginService,
             UnifiedCharacterCreationService creationService,
             TravellerTo4XIntegrationService integrationService,
             TourOfDutyService tourOfDutyService,
-            TravellerAdventureService adventureService) {
+            TravellerAdventureService adventureService,
+            CorporateRoleService corporateRoleService) {
         this.loginService = loginService;
         this.creationService = creationService;
         this.integrationService = integrationService;
         this.tourOfDutyService = tourOfDutyService;
         this.adventureService = adventureService;
+        this.corporateRoleService = corporateRoleService;
     }
 
     // ============================================================
@@ -800,5 +806,87 @@ public class UnifiedCharacterController {
             log.warn("End adventure failed: {}", e.getMessage());
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
+    }
+
+    // ============================================================
+    // Corporate Role Switching Endpoints
+    // ============================================================
+
+    /**
+     * Switch the player's corporate role between CEO and VP.
+     * <p>
+     * When switching to VP, an AI assistant is created to manage the corporation.
+     * When switching to CEO, the AI assistant is paused.
+     * </p>
+     *
+     * @param characterId the character/player ID
+     * @param body        containing the target role ("CEO" or "VP")
+     * @return the updated role state
+     */
+    @PostMapping("/characters/{characterId}/role/switch")
+    public ResponseEntity<Map<String, Object>> switchRole(
+            @PathVariable Long characterId,
+            @RequestBody Map<String, String> body) {
+        log.debug("POST /api/v1/unified/characters/{}/role/switch - switching corporate role", characterId);
+
+        String roleStr = body.getOrDefault("role", "").toUpperCase();
+        CorporateRole targetRole;
+        try {
+            targetRole = CorporateRole.valueOf(roleStr);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Invalid role: " + roleStr + ". Must be CEO or VP."
+            ));
+        }
+
+        try {
+            com.yisy.modules.doramcu.model.Player player = corporateRoleService.switchRole(characterId, targetRole);
+            return ResponseEntity.ok(Map.of(
+                    "characterId", player.getId(),
+                    "currentRole", player.getCurrentRole().name(),
+                    "roleDisplayName", player.getCurrentRole().getDisplayName(),
+                    "aiAssistantActive", player.getAiAssistantId() != null,
+                    "aiAssistantId", player.getAiAssistantId(),
+                    "inOrdersLoop", true
+            ));
+        } catch (IllegalArgumentException e) {
+            log.warn("Role switch failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Get the current corporate role state for a player.
+     *
+     * @param characterId the character/player ID
+     * @return the current role state and AI assistant status
+     */
+    @GetMapping("/characters/{characterId}/role")
+    public ResponseEntity<Map<String, Object>> getRole(@PathVariable Long characterId) {
+        log.debug("GET /api/v1/unified/characters/{}/role - getting corporate role", characterId);
+
+        Optional<CorporateRole> roleOpt = corporateRoleService.getPlayerRole(characterId);
+        if (roleOpt.isEmpty()) {
+            // Return default CEO role for new players without a role record
+            log.info("No corporate role found for character {}, returning default CEO role", characterId);
+            return ResponseEntity.ok(Map.of(
+                    "characterId", characterId,
+                    "currentRole", "CEO",
+                    "roleDisplayName", "Chief Executive Officer",
+                    "aiAssistantActive", false,
+                    "inOrdersLoop", true
+            ));
+        }
+
+        CorporateRole role = roleOpt.get();
+        boolean hasAssistant = corporateRoleService.hasAiAssistant(characterId);
+
+        return ResponseEntity.ok(Map.of(
+                "characterId", characterId,
+                "currentRole", role.name(),
+                "roleDisplayName", role.getDisplayName(),
+                "aiAssistantActive", hasAssistant,
+                "inOrdersLoop", true
+        ));
     }
 }

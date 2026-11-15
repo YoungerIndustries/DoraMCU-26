@@ -1,10 +1,10 @@
 package com.yisy.modules.doramcu.zero_zero_seven.diplomacy;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.zero_zero_seven.model.BondDiplomaticRelation;
 import com.yisy.modules.doramcu.zero_zero_seven.model.BondGameSession;
 import com.yisy.modules.doramcu.zero_zero_seven.repository.BondDiplomaticRelationRepository;
 import com.yisy.modules.doramcu.zero_zero_seven.repository.BondGameSessionRepository;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

@@ -3,6 +3,9 @@ package com.yisy.modules.doramcu.ai;
 import com.yisy.modules.doramcu.hex.Fleet;
 import com.yisy.modules.doramcu.hex.Hex3D;
 import com.yisy.modules.doramcu.hex.SpaceStation;
+import com.yisy.modules.doramcu.hex.spi.StationAiCoreSpi;
+import com.yisy.modules.doramcu.hex.spi.StationAiSupportSpi;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +31,9 @@ import java.util.Map;
  * with bonuses stacking up to a maximum cap.
  * </p>
  */
-public class StationAiSupportService {
+
+@Service
+public class StationAiSupportService implements StationAiSupportSpi {
 
     private static final double MAX_COMBINED_BONUS = 0.50; // Cap at 50% total bonus
 
@@ -53,7 +58,7 @@ public class StationAiSupportService {
 
         for (SpaceStation station : stations) {
             if (station.hasAiCore() && station.getPosition() != null) {
-                StationAiCore aiCore = station.getAiCore();
+                StationAiCoreSpi aiCore = station.getAiCore();
                 if (aiCore.isFleetInRange(fleet)) {
                     supporting.add(station);
                 }
@@ -106,7 +111,7 @@ public class StationAiSupportService {
 
         double totalBonus = 0.0;
         for (SpaceStation station : supporting) {
-            StationAiCore aiCore = station.getAiCore();
+            StationAiCoreSpi aiCore = station.getAiCore();
             double bonus = aiCore.getFleetSupportBonus(fleet);
             totalBonus += bonus;
         }
@@ -136,7 +141,7 @@ public class StationAiSupportService {
 
         for (SpaceStation station : supporting) {
             if (station.getStationType() == com.yisy.modules.doramcu.hex.SpaceStationType.MILITARY) {
-                StationAiCore aiCore = station.getAiCore();
+                StationAiCore aiCore = (StationAiCore) station.getAiCore();
                 // Process the station to generate insights
                 aiCore.processTurn(context);
                 // Add threat insights
@@ -171,7 +176,7 @@ public class StationAiSupportService {
         double totalBonus = 0.0;
         for (SpaceStation station : supporting) {
             if (station.getStationType() == com.yisy.modules.doramcu.hex.SpaceStationType.SHIPYARD) {
-                StationAiCore aiCore = station.getAiCore();
+                StationAiCore aiCore = (StationAiCore) station.getAiCore();
                 totalBonus += aiCore.getAssemblyBonus();
             }
         }
@@ -199,7 +204,7 @@ public class StationAiSupportService {
         double totalBonus = 0.0;
         for (SpaceStation station : supporting) {
             if (station.getStationType() == com.yisy.modules.doramcu.hex.SpaceStationType.TRADE) {
-                StationAiCore aiCore = station.getAiCore();
+                StationAiCore aiCore = (StationAiCore) station.getAiCore();
                 totalBonus += aiCore.getEconomicEfficiencyBonus();
             }
         }
@@ -223,7 +228,7 @@ public class StationAiSupportService {
 
         for (SpaceStation station : stations) {
             if (station.hasAiCore()) {
-                station.getAiCore().processTurn(context);
+                ((StationAiCore) station.getAiCore()).processTurn(context);
             }
         }
     }
@@ -242,7 +247,7 @@ public class StationAiSupportService {
         java.util.HashMap<String, List<StationAiInsight>> insightsMap = new java.util.HashMap<>();
         for (SpaceStation station : stations) {
             if (station.hasAiCore()) {
-                List<StationAiInsight> insights = station.getAiCore().getInsights();
+                List<StationAiInsight> insights = ((StationAiCore) station.getAiCore()).getInsights();
                 if (!insights.isEmpty()) {
                     insightsMap.put(station.getName(), insights);
                 }

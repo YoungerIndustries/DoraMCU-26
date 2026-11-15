@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.service;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.config.NeuronConfig;
 import com.yisy.modules.doraneuron.model.NeuronIdentity;
 import org.slf4j.Logger;
@@ -22,6 +24,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * monitoring systems and the dashboard.
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class NeuronMetricsService {
 
     private static final Logger log = LoggerFactory.getLogger(NeuronMetricsService.class);

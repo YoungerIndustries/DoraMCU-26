@@ -3,6 +3,8 @@ plugins {
     id 'application'
     id 'org.springframework.boot' version '4.1.2'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
+    id 'org.owasp.dependencycheck' version '11.1.0'
 }
 
 application {
@@ -10,36 +12,41 @@ application {
 }
 
 bootRun {
+    mainClass = 'com.yisy.modules.doramcu.DoraMcuLauncher'
     systemProperty 'doramcu.development', 'true'
+    systemProperty 'doramcu.launcher.mode', 'desktop'
+    systemProperty 'doramcu.launcher.skip-headless-check', 'true'
 }
 
 group = 'com.YISY.modules'
-version = '0.3.0'
+version = project.property('app.version')
 description = 'DoraMCU'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(27)
+        languageVersion = JavaLanguageVersion.of(project.property('java.version').toInteger())
     }
     sourceSets {
         main {
-            java {
-                // Exclude broken thirdreich stubs that reference non-existent packages
-                exclude 'com/yisy/modules/doramcu/thirdreich/SpaceBattle.java'
-                exclude 'com/yisy/modules/doramcu/thirdreich/AircraftConversionController.java'
-            }
             resources {
-                srcDirs = ['src/main/resources', 'starship-troopers-rules']
+                srcDirs = ['src/main/resources']
             }
         }
         test {
             java {
-                // Exclude broken test files with pre-existing type mismatch errors
-                exclude '**/RulesServiceTest.java'
-                exclude '**/B5TravellerGapsIntegrationTest.java'
-                exclude '**/SfbTravellerGapsIntegrationTest.java'
             }
         }
+    }
+}
+
+tasks.named('processResources') {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    // Place rule files into subdirectories to avoid name collisions
+    into('starship-troopers-rules') {
+        from('starship-troopers-rules')
+    }
+    into('star-wars-rules') {
+        from('star-wars-rules')
     }
 }
 
@@ -48,33 +55,49 @@ repositories {
 }
 
 dependencies {
+    // Neuron module — player gateway, client distribution, game sync
+    implementation project(':dora-neuron')
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-mysql'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
-    implementation 'com.github.ben-manes.caffeine:caffeine:3.2.0'
+    implementation "com.github.ben-manes.caffeine:caffeine:${findProperty('caffeine.version')}"
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus'
-    implementation 'org.springframework.kafka:spring-kafka'
+    // OpenAPI 3.0 documentation (SpringDoc)
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+    // Kafka - optional, only needed when neuron.kafka.enabled=true
+    compileOnly 'org.springframework.kafka:spring-kafka'
+    // Redis - for distributed event bus and cache (optional, falls back to in-memory)
+    compileOnly 'org.springframework.boot:spring-boot-starter-data-redis'
     // JSON logging for production (Logstash encoder for ELK/Grafana Loki)
-    implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    implementation "net.logstash.logback:logstash-logback-encoder:${findProperty('logstash.logback.version')}"
+    implementation "io.jsonwebtoken:jjwt-api:${findProperty('jjwt.version')}"
+    
+    // Google Maps API for accurate terrain and city data
+    implementation 'com.google.maps:google-maps-services:2.2.0'
     
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.h2database:h2'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:${findProperty('jjwt.version')}"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:${findProperty('jjwt.version')}"
 
-    // Shared DL core module (includes Deeplearning4j dependencies)
-    implementation project(':dora-dl-core')
+    // Deeplearning4j for local DL mode (when dl.rest-client.enabled=false)
+    implementation "org.deeplearning4j:deeplearning4j-core:${findProperty('dl4j.version')}"
+    implementation "org.deeplearning4j:deeplearning4j-nn:${findProperty('dl4j.version')}"
+    implementation "org.nd4j:nd4j-native-platform:${findProperty('dl4j.version')}"
 
-    // Dora AI module (AI chat, code analysis, deep learning, voice services)
-    implementation project(':dora-ai')
+    // Caffeine cache (also used by dora-ai)
+    // Already declared above
+
+    // SLF4J (for FPS core)
+    // Already provided by Spring Boot
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -84,7 +107,9 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
     maxHeapSize = '4G'
-    jvmArgs '-XX:+UseG1GC', '-XX:MaxGCPauseMillis=200', '-Dorg.bytedeco.javacpp.maxbytes=1G', '-Dorg.bytedeco.javacpp.maxphysicalbytes=2G'
+    def jvmArgs = project.property('app.jvm.args').toString().split() +
+                   project.property('app.javacpp.args').toString().split()
+    jvmArgs jvmArgs
     
     // Exclude heavy galaxy generation tests from default build to keep it fast
     exclude '**/GalaxyGeneratorTest.class'
@@ -100,11 +125,7 @@ tasks.named('test') {
     exclude '**/GameSessionLifecycleIntegrationTest.class'
     exclude '**/Babylon5DatabaseIntegrationTest.class'
     
-    // Exclude tests with pre-existing failures (production code not yet implemented)
-    exclude '**/ResetServiceTest.class'
-    exclude '**/PluginGatewayServiceTest.class'
-    exclude '**/AuthenticationControllerTest.class'
-    exclude '**/CharacterHomeServiceTest.class'
+    // All previously excluded tests now compile and pass
 }
 
 // Separate task for heavy galaxy integration tests (run manually when needed)
@@ -117,7 +138,8 @@ tasks.register('heavyTests', Test) {
     
     useJUnitPlatform()
     maxHeapSize = '8G'
-    jvmArgs '-XX:+UseG1GC', '-XX:MaxGCPauseMillis=200', '-Dorg.bytedeco.javacpp.maxbytes=2G', '-Dorg.bytedeco.javacpp.maxphysicalbytes=4G'
+    def jvmArgs = project.property('app.javacpp.args').toString().split()
+    jvmArgs jvmArgs
     
     include '**/GalaxyGeneratorTest.class'
     include '**/GalaxyConsolidationIntegrationTest.class'
@@ -134,5 +156,197 @@ tasks.register('heavyTests', Test) {
 }
 
 tasks.named('bootRun') {
-    jvmArgs '-Xmx8G', '-XX:+UseG1GC', '-XX:MaxGCPauseMillis=200', '-Dorg.bytedeco.javacpp.maxbytes=4G', '-Dorg.bytedeco.javacpp.maxphysicalbytes=8G'
+    def jvmArgs = project.property('app.jvm.args').toString().split() +
+                   project.property('app.javacpp.args').toString().split()
+    jvmArgs = jvmArgs
+}
+
+// Build the standalone desktop distribution (Electron + embedded Spring Boot JAR)
+tasks.register('buildDesktop', Exec) {
+    description = 'Builds the standalone DoraMCU Desktop app (Electron + embedded Spring Boot JAR)'
+    group = 'build'
+    dependsOn bootJar
+
+    // Copy the JAR to dora-electron/server/ for electron-builder
+    doFirst {
+        def jarDir = file('build/libs')
+        def serverDir = file('dora-electron/server')
+        serverDir.mkdirs()
+        def jarFile = jarDir.listFiles()?.findAll { it.name.endsWith('.jar') && !it.name.endsWith('.sources.jar') && !it.name.endsWith('.javadoc.jar') && !it.name.contains('-plain.jar') }
+            ?.sort { it.length() }?.last()
+        if (jarFile) {
+            copy {
+                from jarFile
+                into serverDir
+            }
+            logger.lifecycle("Copied ${jarFile.name} to dora-electron/server/")
+        } else {
+            throw new GradleException('No Spring Boot JAR found in build/libs. Run bootJar first.')
+        }
+    }
+
+    if (System.properties['os.name'].toLowerCase().contains('windows')) {
+        commandLine 'cmd', '/c', 'cd dora-electron && npm run build'
+    } else {
+        commandLine 'sh', '-c', 'cd dora-electron && npm run build'
+    }
+}
+
+// Quick desktop dev mode: build JAR and copy to dora-electron/server/ without full electron-builder
+tasks.register('prepareDesktopDev') {
+    description = 'Prepares the Spring Boot JAR for desktop development (copy to dora-electron/server/)'
+    group = 'build'
+    dependsOn bootJar
+
+    doLast {
+        def jarDir = file('build/libs')
+        def serverDir = file('dora-electron/server')
+        serverDir.mkdirs()
+        def jarFile = jarDir.listFiles()?.findAll { it.name.endsWith('.jar') && !it.name.endsWith('.sources.jar') && !it.name.endsWith('.javadoc.jar') && !it.name.contains('-plain.jar') }
+            ?.sort { it.length() }?.last()
+        if (jarFile) {
+            copy {
+                from jarFile
+                into serverDir
+            }
+            logger.lifecycle("Copied ${jarFile.name} to dora-electron/server/ — run 'npm start' in dora-electron/")
+        } else {
+            throw new GradleException('No Spring Boot JAR found in build/libs.')
+        }
+    }
+}
+
+// ---- JaCoCo Code Coverage Configuration ----
+
+jacoco {
+    toolVersion = '0.8.15'
+}
+
+tasks.named('test') {
+    // Exclude JDK bootstrap classes from instrumentation (required for Java 27+)
+    jacoco {
+        excludes = ['sun/**', 'jdk/**', 'java/**', 'javax/**', 'com/sun/**', 'com/oracle/**']
+    }
+}
+
+def jacocoExcludes = [
+    '**/*Controller.class',
+    '**/*Controller$*.class',
+    '**/*Dto.class',
+    '**/*DTO.class',
+    '**/*DTO$*.class',
+    '**/*Config.class',
+    '**/*Config$*.class',
+    '**/*Initializer.class',
+    '**/*Initializer$*.class',
+    '**/model/**',
+    '**/dto/**',
+    '**/config/**',
+    '**/*Application.class',
+    '**/*WebSocketHandler.class',
+    '**/*WebSocketHandler$*.class'
+]
+
+tasks.named('jacocoTestReport') {
+    // Include dora-neuron module in coverage aggregation
+    executionData(fileTree(dir: 'dora-neuron', includes: ['**/jacoco/test.exec']))
+
+    // Exclude infrastructure code from coverage: controllers, DTOs, configs, data initializers, models
+    classDirectories.setFrom(classDirectories.files.collect {
+        fileTree(dir: it, excludes: jacocoExcludes)
+    })
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        html.outputLocation.set(layout.buildDirectory.dir('jacocoHtml'))
+    }
+}
+
+tasks.named('jacocoTestCoverageVerification') {
+    // Exclude the same infrastructure code from verification
+    classDirectories.setFrom(classDirectories.files.collect {
+        fileTree(dir: it, excludes: jacocoExcludes)
+    })
+    violationRules {
+        rule {
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.50  // Realistic target: 50% line coverage
+            }
+        }
+        rule {
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.30  // Realistic target: 30% branch coverage
+            }
+        }
+    }
+}
+
+tasks.named('check') {
+    dependsOn 'jacocoTestReport'
+}
+
+// ---- Web Client Configuration Generation ----
+
+// Capture all values at configuration time for configuration cache compatibility
+def webEnv = findProperty('web.env') ?: 'dev'
+def webApiUrl = findProperty('web.api.url')
+def webDefaultApiUrls = [
+    'dev':    'http://localhost:8080',
+    'staging': 'https://staging-api.doramcu.com',
+    'prod':   'https://api.doramcu.com'
+]
+if (!webApiUrl) {
+    webApiUrl = webDefaultApiUrls.get(webEnv, webDefaultApiUrls['dev'])
+}
+def webAppVersion = project.property('app.version') as String
+def webOutputFile = file('dora-web/config.json')
+def webOutputDir = file('dora-web')
+
+tasks.register('generateWebConfig') {
+    description = 'Generates dora-web/config.json with environment-specific API URL'
+    group = 'build'
+    outputs.file webOutputFile
+
+    doLast {
+        webOutputDir.mkdirs()
+        // Load client metadata from template
+        def templateFile = file('dora-web/clients-template.json')
+        if (!templateFile.exists()) {
+            throw new GradleException("Client template not found: ${templateFile.path}")
+        }
+        def jsonSlurper = new groovy.json.JsonSlurper()
+        def template = jsonSlurper.parse(templateFile)
+
+        def config = [
+            apiUrl: webApiUrl,
+            version: webAppVersion,
+            clients: template.clients
+        ]
+        // Write JSON using Groovy's JsonOutput
+        def json = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(config))
+        webOutputFile.text = json
+        logger.lifecycle("Generated ${webOutputFile.path} for environment '${webEnv}' with apiUrl=${webApiUrl}")
+    }
+}
+
+// Generate dev config by default when building
+tasks.register('prepareWebClient') {
+    description = 'Prepares the web client for deployment (generates config.json)'
+    group = 'build'
+    dependsOn 'generateWebConfig'
+}
+
+// ---- OWASP Dependency-Check Configuration ----
+
+dependencyCheck {
+    failBuildOnCVSS = 9  // Fail only on CRITICAL (9-10)
+    suppressionFile = 'dependencycheck-suppressions.xml'
+    analyzers {
+        nodeAudit.enabled = false  // Skip Node.js audit (no package.json in root)
+    }
+    format = 'ALL'
 }

@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.service.multigame;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.model.multigame.GameProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,8 @@ import java.util.Optional;
  * and default routing when no game is specified.
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class GameRouterService {
 
     private static final Logger log = LoggerFactory.getLogger(GameRouterService.class);

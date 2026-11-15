@@ -329,7 +329,6 @@ public class ShipToShipBattle {
         // In a simplified model, all ships detect all enemies unless radar is damaged
         for (ShipCombatStatus ship : getAllActiveShips()) {
             List<ShipCombatStatus> enemies = getEnemyShips(ship);
-            boolean detected = false;
             for (ShipCombatStatus enemy : enemies) {
                 if (enemy.isDestroyed()) continue;
                 // Detection check: roll vs radar range
@@ -337,7 +336,6 @@ public class ShipToShipBattle {
                 int detectionRoll = DiceUtil.roll2D6();
                 int detectionThreshold = 8 - ship.getCurrentRadarRange();
                 if (detectionRoll >= detectionThreshold) {
-                    detected = true;
                     addEvent(currentRound, BattlePhase.RADAR_DETECTION, BattleEvent.EventType.RADAR_DETECTED,
                             String.format("%s detects %s", ship.getName(), enemy.getName()), ship);
                 } else {
@@ -612,8 +610,7 @@ public class ShipToShipBattle {
     // ---- Helper methods ----
 
     private List<ShipCombatStatus> getAllActiveShips() {
-        List<ShipCombatStatus> all = new ArrayList<>();
-        all.addAll(side0Ships);
+        List<ShipCombatStatus> all = new ArrayList<>(side0Ships);
         all.addAll(side1Ships);
         all.removeIf(ShipCombatStatus::isDestroyed);
         return all;

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogShipTalent;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogStarship;
@@ -6,7 +7,6 @@ import com.yisy.modules.doramcu.captainslog.repository.CaptainLogShipTalentRepos
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogStarshipRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -36,7 +36,7 @@ public class CaptainLogShipTalentService {
     // ==================== Predefined Talent Pools ====================
 
     /**
-     * Ship class-specific talents — innate to the design.
+     * Ship class-specific talents â€” innate to the design.
      */
     private static final Map<String, List<ShipTalentDefinition>> CLASS_TALENTS = new LinkedHashMap<>();
 
@@ -145,7 +145,7 @@ public class CaptainLogShipTalentService {
     }
 
     /**
-     * Role-based talents — gained through mission specialization.
+     * Role-based talents â€” gained through mission specialization.
      */
     private static final List<ShipTalentDefinition> ROLE_TALENTS = Arrays.asList(
             new ShipTalentDefinition("Diplomatic Mission", "Ship configured for diplomatic operations.",
@@ -167,7 +167,7 @@ public class CaptainLogShipTalentService {
     );
 
     /**
-     * Upgrade talents — earned through refit and upgrades.
+     * Upgrade talents â€” earned through refit and upgrades.
      */
     private static final List<ShipTalentDefinition> UPGRADE_TALENTS = Arrays.asList(
             new ShipTalentDefinition("Shield Upgrade", "Enhanced shield generators installed.",

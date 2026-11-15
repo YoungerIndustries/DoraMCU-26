@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.hex.planet;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;

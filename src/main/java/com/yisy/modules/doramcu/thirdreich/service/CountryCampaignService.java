@@ -2,15 +2,11 @@ package com.yisy.modules.doramcu.thirdreich.service;
 
 import com.yisy.modules.doramcu.earth2026.model.Earth2026Country;
 import com.yisy.modules.doramcu.earth2026.service.PlanetService;
-import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.hex.planet.military.MilitaryProductionService;
-import com.yisy.modules.doramcu.service.AiPlayerService;
 import com.yisy.modules.doramcu.thirdreich.commander.AICommander;
-import com.yisy.modules.doramcu.thirdreich.commander.AICommanderProfile;
 import com.yisy.modules.doramcu.thirdreich.commander.AICommanderService;
 import com.yisy.modules.doramcu.thirdreich.domain.ThirdReichGroundUnit;
 import com.yisy.modules.doramcu.thirdreich.domain.ThirdReichUnitType;
-import com.yisy.modules.doramcu.techlevel.TechLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -35,7 +31,6 @@ public class CountryCampaignService {
 
     private final PlanetService planetService;
     private final AICommanderService aiCommanderService;
-    private final AiPlayerService aiPlayerService;
     private final MilitaryProductionService militaryProductionService;
 
     /** Maps country ID to its campaign state */
@@ -46,11 +41,9 @@ public class CountryCampaignService {
     public CountryCampaignService(
             PlanetService planetService,
             AICommanderService aiCommanderService,
-            AiPlayerService aiPlayerService,
             MilitaryProductionService militaryProductionService) {
         this.planetService = planetService;
         this.aiCommanderService = aiCommanderService;
-        this.aiPlayerService = aiPlayerService;
         this.militaryProductionService = militaryProductionService;
     }
 
@@ -125,6 +118,31 @@ public class CountryCampaignService {
     }
 
     /**
+     * Get all campaigns across all planets.
+     *
+     * @return list of all campaigns
+     */
+    public List<CountryCampaign> getAllCampaigns() {
+        return new ArrayList<>(campaigns.values());
+    }
+
+    /**
+     * Get units for a faction by ISO code.
+     * Used by the battle resolver to find country campaign units.
+     *
+     * @param isoCode the country ISO code (e.g., "US", "RU")
+     * @return list of combat-effective units, or empty list if not found
+     */
+    public List<ThirdReichGroundUnit> getUnitsByIsoCode(String isoCode) {
+        for (CountryCampaign campaign : campaigns.values()) {
+            if (campaign.getIsoCode().equals(isoCode)) {
+                return new ArrayList<>(campaign.getCombatEffectiveUnits());
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    /**
      * Initialize campaigns for all countries on a planet.
      *
      * @param planetId the planet ID
@@ -145,25 +163,17 @@ public class CountryCampaignService {
      */
     private AICommander createCommanderFromCountry(Earth2026Country country) {
         String commanderId = "CMD-" + country.getIsoCode() + "-" + campaignIdCounter.getAndIncrement();
+        String name = country.getLeaderName() != null ? country.getLeaderName() : country.getName() + " Commander";
 
-        // Try to get the AI character if there's a leader ID
-        AiCharacter leader = null;
-        if (country.getAiLeaderId() != null) {
-            Optional<AiCharacter> optional = aiPlayerService.getAiCharacter(country.getAiLeaderId());
-            leader = optional.orElse(null);
-        }
-
-        // Create commander profile based on country stats
-        AICommanderProfile profile = new AICommanderProfile(
-                country.getLeaderName() != null ? country.getLeaderName() : country.getName() + " Commander",
-                country.getLeaderTitle() != null ? country.getLeaderTitle() : "General",
-                country.getMilitaryStrength(),
-                country.getMilitaryStrength(),
-                country.getDiplomaticInfluence(),
-                country.getTechLevel() != null ? country.getTechLevel().getLevel() : 5
+        AICommander commander = new AICommander(commanderId, name);
+        commander.setLeadership(country.getMilitaryStrength());
+        commander.setTacticalPreference(
+                country.getMilitaryStrength() >= 8 ? AICommander.TacticalPreference.AGGRESSIVE :
+                country.getMilitaryStrength() >= 5 ? AICommander.TacticalPreference.BALANCED :
+                AICommander.TacticalPreference.DEFENSIVE
         );
-
-        return aiCommanderService.createCommander(commanderId, profile);
+        commander.setSourceGame("Earth2026");
+        return commander;
     }
 
     /**
@@ -172,7 +182,7 @@ public class CountryCampaignService {
     private List<ThirdReichGroundUnit> generateInitialUnits(Earth2026Country country) {
         List<ThirdReichGroundUnit> units = new ArrayList<>();
         int militaryStrength = country.getMilitaryStrength();
-        TechLevel techLevel = country.getTechLevel();
+        int techLevel = country.getTechLevel() != null ? country.getTechLevel().getLevel() : 5;
         String isoCode = country.getIsoCode();
 
         // Infantry - every country has infantry
@@ -183,7 +193,7 @@ public class CountryCampaignService {
         }
 
         // Mechanized - TL5+
-        if (techLevel.getLevel() >= 5) {
+        if (techLevel >= 5) {
             int mechCount = Math.max(0, militaryStrength - 3);
             for (int i = 0; i < mechCount; i++) {
                 units.add(createUnit(isoCode, "Mechanized Regiment " + (i + 1),
@@ -192,7 +202,7 @@ public class CountryCampaignService {
         }
 
         // Tanks - TL6+
-        if (techLevel.getLevel() >= 6) {
+        if (techLevel >= 6) {
             int tankCount = Math.max(0, militaryStrength - 4);
             for (int i = 0; i < tankCount; i++) {
                 units.add(createUnit(isoCode, "Tank Division " + (i + 1),
@@ -201,7 +211,7 @@ public class CountryCampaignService {
         }
 
         // Artillery - TL5+
-        if (techLevel.getLevel() >= 5) {
+        if (techLevel >= 5) {
             int artyCount = Math.max(0, militaryStrength - 2);
             for (int i = 0; i < artyCount; i++) {
                 units.add(createUnit(isoCode, "Artillery Battery " + (i + 1),
@@ -210,19 +220,19 @@ public class CountryCampaignService {
         }
 
         // Recon - TL6+
-        if (techLevel.getLevel() >= 6) {
+        if (techLevel >= 6) {
             units.add(createUnit(isoCode, "Recon Squadron",
                     ThirdReichUnitType.RECON, militaryStrength));
         }
 
         // Engineers - TL5+
-        if (techLevel.getLevel() >= 5) {
+        if (techLevel >= 5) {
             units.add(createUnit(isoCode, "Engineer Corps",
                     ThirdReichUnitType.ENGINEER, militaryStrength));
         }
 
         // Anti-Air - TL6+
-        if (techLevel.getLevel() >= 6) {
+        if (techLevel >= 6) {
             int aaCount = Math.max(0, militaryStrength - 5);
             for (int i = 0; i < aaCount; i++) {
                 units.add(createUnit(isoCode, "Anti-Air Battery " + (i + 1),
@@ -231,7 +241,7 @@ public class CountryCampaignService {
         }
 
         // Air Support - TL7+
-        if (techLevel.getLevel() >= 7) {
+        if (techLevel >= 7) {
             int airCount = Math.max(0, militaryStrength - 6);
             for (int i = 0; i < airCount; i++) {
                 units.add(createUnit(isoCode, "Air Support Wing " + (i + 1),
@@ -240,7 +250,7 @@ public class CountryCampaignService {
         }
 
         // BattleMechs - TL10+
-        if (techLevel.getLevel() >= 10) {
+        if (techLevel >= 10) {
             int mechWarriorCount = Math.max(0, militaryStrength - 8);
             for (int i = 0; i < mechWarriorCount; i++) {
                 units.add(createUnit(isoCode, "BattleMech Company " + (i + 1),
@@ -259,24 +269,18 @@ public class CountryCampaignService {
     private ThirdReichGroundUnit createUnit(String isoCode, String name,
                                             ThirdReichUnitType type, int militaryStrength) {
         String id = isoCode + "-" + type.name() + "-" + UUID.randomUUID().toString().substring(0, 8);
-        int strength = Math.max(10, 50 + (militaryStrength - 5) * 10);
-        int morale = Math.max(50, 70 + militaryStrength * 2);
+        ThirdReichGroundUnit unit = new ThirdReichGroundUnit(id, name, type);
 
-        return new ThirdReichGroundUnit(
-                id,
-                name,
-                type,
-                strength,
-                strength,
-                morale,
-                type.getBaseAttack() + militaryStrength / 2,
-                type.getBaseDefense() + militaryStrength / 2,
-                type.getMobility(),
-                type.getSupplyCost(),
-                0,
-                null,
-                "Earth2026"
-        );
+        // Adjust stats based on military strength
+        int strength = Math.max(10, 50 + (militaryStrength - 5) * 10);
+        unit.setStrength(strength);
+        unit.setMaxStrength(strength);
+        unit.setMorale(Math.max(50, 70 + militaryStrength * 2));
+        unit.setAttackValue(type.getBaseAttack() + militaryStrength / 2);
+        unit.setDefenseValue(type.getBaseDefense() + militaryStrength / 2);
+        unit.setSourceGame("Earth2026");
+
+        return unit;
     }
 
     /**
@@ -292,7 +296,7 @@ public class CountryCampaignService {
     /**
      * Get available unit types based on tech level.
      */
-    private Set<ThirdReichUnitType> getAvailableUnitTypes(TechLevel techLevel) {
+    private Set<ThirdReichUnitType> getAvailableUnitTypes(com.yisy.modules.doramcu.earth2026.model.TechLevel techLevel) {
         Set<ThirdReichUnitType> types = new HashSet<>();
         int level = techLevel != null ? techLevel.getLevel() : 0;
 
@@ -328,7 +332,7 @@ public class CountryCampaignService {
         private final String isoCode;
         private final int militaryStrength;
         private final int economicPower;
-        private final TechLevel techLevel;
+        private final int techLevel;
 
         private AICommander commander;
         private List<ThirdReichGroundUnit> armyUnits;
@@ -345,7 +349,7 @@ public class CountryCampaignService {
             this.isoCode = country.getIsoCode();
             this.militaryStrength = country.getMilitaryStrength();
             this.economicPower = country.getEconomicPower();
-            this.techLevel = country.getTechLevel();
+            this.techLevel = country.getTechLevel() != null ? country.getTechLevel().getLevel() : 5;
             this.armyUnits = new ArrayList<>();
             this.availableUnitTypes = new HashSet<>();
         }
@@ -355,7 +359,7 @@ public class CountryCampaignService {
         public String getIsoCode() { return isoCode; }
         public int getMilitaryStrength() { return militaryStrength; }
         public int getEconomicPower() { return economicPower; }
-        public TechLevel getTechLevel() { return techLevel; }
+        public int getTechLevel() { return techLevel; }
         public AICommander getCommander() { return commander; }
         public void setCommander(AICommander commander) { this.commander = commander; }
         public List<ThirdReichGroundUnit> getArmyUnits() { return armyUnits; }

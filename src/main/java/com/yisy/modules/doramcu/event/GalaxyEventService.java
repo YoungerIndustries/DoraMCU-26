@@ -51,7 +51,15 @@ public class GalaxyEventService {
      * Metrics service for Prometheus event counters.
      */
     @Autowired(required = false)
+    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
     private GalaxyMetricsService galaxyMetricsService;
+
+    /**
+     * Bridge to WebSocket handlers for 3D visualization.
+     */
+    @Autowired(required = false)
+    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
+    private GalaxyEventBridge galaxyEventBridge;
 
     /**
      * Holds an SSE emitter and its subscription filter.
@@ -87,6 +95,11 @@ public class GalaxyEventService {
         // Increment Prometheus event counter
         if (galaxyMetricsService != null) {
             galaxyMetricsService.incrementEvent(event.getType());
+        }
+
+        // Forward to WebSocket handlers for 3D visualization
+        if (galaxyEventBridge != null) {
+            galaxyEventBridge.onEvent(event);
         }
 
         // Broadcast to matching subscribers

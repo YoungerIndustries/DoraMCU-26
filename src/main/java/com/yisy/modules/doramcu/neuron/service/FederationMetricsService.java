@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.neuron.service;
+import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.neuron.model.FederationPeer;
 import io.micrometer.core.instrument.Counter;
@@ -7,7 +8,6 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
 import java.util.Map;
@@ -86,9 +86,6 @@ public class FederationMetricsService {
     /** Model version drift per region (from primary). */
     private final Map<String, Long> modelVersionDriftByRegion = new ConcurrentHashMap<>();
 
-    /** Seconds since last sync per peer. */
-    private final Map<String, Long> secondsSinceLastSync = new ConcurrentHashMap<>();
-
     /** Federation health score (0-100). */
     private final Map<String, Integer> federationHealthScore = new ConcurrentHashMap<>();
 
@@ -98,7 +95,7 @@ public class FederationMetricsService {
 
     @PostConstruct
     public void init() {
-        log.info("Initializing FederationMetricsService — registering Prometheus metrics");
+        log.info("Initializing FederationMetricsService â€” registering Prometheus metrics");
 
         // ---- Counters ----
         syncSuccessCounter = Counter.builder("dora.neuron.federation.sync.success")
@@ -204,7 +201,7 @@ public class FederationMetricsService {
     }
 
     public void updateSecondsSinceLastSync(String region, long seconds) {
-        secondsSinceLastSync.put(region, seconds);
+        // No-op: metric is collected but not exposed as a gauge
     }
 
     // ---- Consensus Metrics ----

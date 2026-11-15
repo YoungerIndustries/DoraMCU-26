@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.dnd5e.service;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -7,7 +8,6 @@ import com.yisy.modules.doramcu.dnd5e.model.Dnd5eSpecies;
 import com.yisy.modules.doramcu.dnd5e.repository.Dnd5eSpeciesRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -405,7 +405,7 @@ public class Dnd5eSpeciesService {
         s.setAbilityIncreases("{\"STR\": 2, \"CHA\": 1}");
         s.setRacialTraits("[\"Draconic Ancestry\", \"Breath Weapon\", \"Damage Resistance\"]");
         s.setLanguages("Common, Draconic");
-        s.setMaleFirstNames("[\"Akra\", \"Donaar\", \"Feng\", \"Haru\", \"Heskan\", \"Kriv\", \"Medrash\", \"Nadarr\", \"Pandjed\", \"Rhogar\", \"Shamash\", \"Tarhin\", \"Torinn\", \"Ver金\", \"Wu\"]");
+        s.setMaleFirstNames("[\"Akra\", \"Donaar\", \"Feng\", \"Haru\", \"Heskan\", \"Kriv\", \"Medrash\", \"Nadarr\", \"Pandjed\", \"Rhogar\", \"Shamash\", \"Tarhin\", \"Torinn\", \"Veré‡‘\", \"Wu\"]");
         s.setFemaleFirstNames("[\"Akra\", \"Donaara\", \"Feng\", \"Haru\", \"Heska\", \"Kriv\", \"Medra\", \"Nadara\", \"Pandje\", \"Rhogara\", \"Shamasha\", \"Tarhina\", \"Torinna\", \"Ver\", \"Wu\"]");
         s.setLastNames("[\"Clethtinthiallor\", \"Daardendrian\", \"Delmirev\", \"Drachedandion\", \"Fenkenkabradon\", \"Kimbatuul\", \"Khrumztek\", \"Nemmonis\", \"Norixius\", \"Ophinshtaj\", \"Prexijhela\", \"Shestendeli\", \"Turifndol\", \"Verghoth\"]");
         s.setTitlePrefixes("[\"Warlord\", \"Chieftain\", \"Dragon\", \"Scion\"]");

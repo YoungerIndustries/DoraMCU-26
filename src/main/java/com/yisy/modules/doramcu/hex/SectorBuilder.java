@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.hex;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
@@ -81,7 +82,7 @@ public class SectorBuilder {
      * @return the trade type name
      */
     public static String generateTradeType(int row, int col, int gridSize, String[] tradeTypes) {
-        return generateTradeType(row, col, gridSize, tradeTypes, new Random(row * 1000 + col));
+        return generateTradeType(row, col, gridSize, tradeTypes, new Random((long) row * 1000 + col));
     }
 
     /**

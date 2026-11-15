@@ -4,6 +4,7 @@ import com.yisy.modules.doramcu.dto.CreateGalaxyRequest;
 import com.yisy.modules.doramcu.dto.CreateSessionResponse;
 import com.yisy.modules.doramcu.dto.FourxUnlockState;
 import com.yisy.modules.doramcu.dto.ThemeGameResult;
+import com.yisy.modules.doramcu.gamecreator.GameCreatorService;
 import com.yisy.modules.doramcu.hex.GalaxyGenerationConfig;
 import com.yisy.modules.doramcu.hex.GalaxyTemplate;
 import com.yisy.modules.doramcu.model.GameSession;
@@ -21,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,18 +44,21 @@ public class GameCreationController {
     private final ThemeBasedGameService themeBasedGameService;
     private final FourxProgressiveUnlockService fourxProgressiveUnlockService;
     private final PlayerIdExtractor playerIdExtractor;
+    private final GameCreatorService gameCreatorService;
 
     public GameCreationController(
             GalaxyCreationService galaxyCreationService,
             GameSessionService gameSessionService,
             ThemeBasedGameService themeBasedGameService,
             FourxProgressiveUnlockService fourxProgressiveUnlockService,
-            PlayerIdExtractor playerIdExtractor) {
+            PlayerIdExtractor playerIdExtractor,
+            GameCreatorService gameCreatorService) {
         this.galaxyCreationService = galaxyCreationService;
         this.gameSessionService = gameSessionService;
         this.themeBasedGameService = themeBasedGameService;
         this.fourxProgressiveUnlockService = fourxProgressiveUnlockService;
         this.playerIdExtractor = playerIdExtractor;
+        this.gameCreatorService = gameCreatorService;
     }
 
     /**
@@ -180,12 +185,7 @@ public class GameCreationController {
         if (templateName == null || templateName.isBlank()) {
             return GalaxyTemplate.SUBSECTOR_RPG;
         }
-        GalaxyTemplate template = GalaxyTemplate.findByName(templateName);
-        if (template == null) {
-            log.warn("Unknown template '{}', defaulting to SUBSECTOR_RPG", templateName);
-            return GalaxyTemplate.SUBSECTOR_RPG;
-        }
-        return template;
+        return GalaxyTemplate.findByName(templateName);
     }
 
     /**
@@ -232,5 +232,37 @@ public class GameCreationController {
         }
 
         return ResponseEntity.ok(session.getFourxUnlockState());
+    }
+
+    /**
+     * Lists all available galaxy templates with their installed mechanics.
+     * <p>
+     * Players can use this endpoint to discover available templates before
+     * creating a new game.
+     * </p>
+     *
+     * @return list of templates with their mechanics
+     */
+    @GetMapping("/templates")
+    public ResponseEntity<List<Map<String, Object>>> listAvailableTemplates() {
+        log.info("Listing available galaxy templates");
+        List<Map<String, Object>> templates = gameCreatorService.getAvailableTemplates();
+        return ResponseEntity.ok(templates);
+    }
+
+    /**
+     * Lists all available game mechanics with their descriptions.
+     * <p>
+     * Players can use this endpoint to understand which mechanics are available
+     * and how they can be combined when creating a new game.
+     * </p>
+     *
+     * @return list of mechanics with descriptions
+     */
+    @GetMapping("/available-mechanics")
+    public ResponseEntity<List<Map<String, String>>> listAvailableMechanics() {
+        log.info("Listing available game mechanics");
+        List<Map<String, String>> mechanics = gameCreatorService.getAvailableMechanics();
+        return ResponseEntity.ok(mechanics);
     }
 }

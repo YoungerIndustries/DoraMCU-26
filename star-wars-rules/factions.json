@@ -1,0 +1,358 @@
+{
+  "factions": [
+    {
+      "id": "galactic_republic",
+      "name": "Galactic Republic",
+      "era": "Prequel Era (32 BBY - 19 BBY)",
+      "ideology": "Democracy, justice, and peace through the Rule of Five",
+      "description": "The thousand-year-old democratic government of the galaxy, governed by a Senate on Coruscant and protected by the Jedi Order. Fell to the Dark Side through Order 66 and transformed into the Galactic Empire.",
+      "military_branches": [
+        {
+          "name": "Grand Army of the Republic (GAR)",
+          "description": "Mass clone army created on Kamino, led by Jedi Generals",
+          "unit_types": ["Clone Troopers", "Clone Commandos", "Clone Sharpshooters", "Heavy Weapons Teams"]
+        },
+        {
+          "name": "Republic Navy",
+          "description": "Starfighter and capital ship fleet",
+          "unit_types": ["V-Wing Starfighters", "ARC-170 Starfighters", "Republic Gunships", "Venator-class Cruisers", "Acclamator-class Transports"]
+        },
+        {
+          "name": "Jedi Order",
+          "description": "Force-wielding guardians of peace and justice",
+          "unit_types": ["Jedi Knights", "Jedi Masters", "Padawans"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Supreme Chancellor Palpatine", "role": "Head of State (secretly Darth Sidious)"},
+        {"name": "Yoda", "role": "Jedi Grand Master"},
+        {"name": "Mace Windu", "role": "Jedi Council Member, Master of Defense"},
+        {"name": "Obi-Wan Kenobi", "role": "Jedi General"},
+        {"name": "Anakin Skywalker", "role": "Jedi General, the Chosen One"},
+        {"name": "Admiral Yularen", "role": "Fleet Commander"}
+      ],
+      "strengths": ["Massive clone army", "Jedi leadership", "Advanced technology", "Galactic legitimacy"],
+      "weaknesses": ["Over-reliance on Jedi", "Political corruption by Palpatine", "Slow decision-making through Senate"],
+      "home_world": "Coruscant",
+      "colors": ["Blue", "White"],
+      "allies": ["Jedi Order", "Rebel Alliance (spiritual successor)"],
+      "enemies": ["Separatist Alliance", "Sith"]
+    },
+    {
+      "id": "galactic_empire",
+      "name": "Galactic Empire",
+      "era": "Original Trilogy Era (19 BBY - 5 ABY)",
+      "ideology": "Order through absolute authority, fear, and military dominance",
+      "description": "The authoritarian regime that replaced the Republic, ruled by Emperor Palpatine (Darth Sidious) with Darth Vader as his enforcer. Maintained control through fear, a massive military, and the destruction of the Jedi Order.",
+      "military_branches": [
+        {
+          "name": "Imperial Army",
+          "description": "Conscripted ground forces with advanced armor",
+          "unit_types": ["Stormtroopers", "Dark Troopers", "Scout Troopers", "AT-AT Walkers", "AT-ST Walkers", "All Terrain Defense Pod"]
+        },
+        {
+          "name": "Imperial Navy",
+          "description": "The most powerful fleet in galactic history",
+          "unit_types": ["TIE Fighters", "TIE Interceptors", "TIE Bombers", "TIE Defenders", "Star Destroyers", "Executor-class Super Star Destroyers", "Death Star"]
+        },
+        {
+          "name": "Inquisitorius",
+          "description": "Dark Side Force users hunting surviving Jedi",
+          "unit_types": ["Inquisitors", "Sith Lords"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Emperor Palpatine (Darth Sidious)", "role": "Supreme Ruler of the Galaxy"},
+        {"name": "Darth Vader", "role": "Dark Lord of the Sith, Fleet Commander"},
+        {"name": "Grand Moff Tarkin", "role": "Governor of the Outer Rim Territories"},
+        {"name": "Grand Admiral Thrawn", "role": "Naval strategist and tactician"},
+        {"name": "Director Krennic", "role": "Director of Project Stardust (Death Star)"}
+      ],
+      "strengths": ["Overwhelming military power", "Death Star superweapon", "Fear-based control", "Advanced technology", "Galaxy-spanning resources"],
+      "weaknesses": ["Oppression breeds rebellion", "Internal political infighting", "Overextension across the galaxy", "Reliance on fear rather than loyalty"],
+      "home_world": "Coruscant",
+      "colors": ["Black", "White", "Gray"],
+      "allies": ["Sith", "ISB (Imperial Security Bureau)"],
+      "enemies": ["Rebel Alliance", "Jedi Order", "Smugglers"]
+    },
+    {
+      "id": "rebel_alliance",
+      "name": "Rebel Alliance (Alliance to Restore the Republic)",
+      "era": "Original Trilogy Era (2 BBY - 5 ABY)",
+      "ideology": "Freedom, democracy, and the restoration of the Republic",
+      "description": "A coalition of dissidents, warriors, and idealists fighting to overthrow the Galactic Empire. Formed from the remnants of the Freedom Fleet and led by visionaries like Mon Mothma and General Dodonna. Achieved victory at Endor, destroying the second Death Star and killing Emperor Palpatine.",
+      "military_branches": [
+        {
+          "name": "Alliance Special Forces",
+          "description": "Elite ground troops and commandos",
+          "unit_types": ["Rebel Commandos", "Snowtroopers", "B-Wing Squadrons", "Speeder Bike Squadrons"]
+        },
+        {
+          "name": "Alliance Starfighter Corps",
+          "description": "Starfighter pilots who strike at the heart of the Empire",
+          "unit_types": ["X-Wing Squadrons", "Y-Wing Squadrons", "A-Wing Squadrons"]
+        },
+        {
+          "name": "Rebel Cell Network",
+          "description": "Covert operations and intelligence gathering",
+          "unit_types": ["Spies", "Saboteurs", "Partisans"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Mon Mothma", "role": "Founder and Chief of State"},
+        {"name": "General Dodonna", "role": "Military Commander"},
+        {"name": "Princess Leia Organa", "role": "Senator and Rebel Leader"},
+        {"name": "Han Solo", "role": "General, Pilot of the Millennium Falcon"},
+        {"name": "Luke Skywalker", "role": "Jedi Knight, Hero of the Rebellion"},
+        {"name": "Admiral Daala", "role": "Fleet Commander"}
+      ],
+      "strengths": ["Morale and idealism", "Elite starfighter pilots", "Guerrilla tactics", "Jedi support", "Public sympathy"],
+      "weaknesses": ["Outnumbered by the Empire", "Limited resources", "Hidden base vulnerability", "No capital ships initially"],
+      "home_world": "Yavin 4 (later Echo Base on Hoth, then various hidden locations)",
+      "colors": ["Blue", "White"],
+      "allies": ["Jedi Order", "Mon Calamari", "Chewbacca and Wookiees", "Smugglers"],
+      "enemies": ["Galactic Empire", "Sith"]
+    },
+    {
+      "id": "separatist_alliance",
+      "name": "Separatist Alliance (Confederacy of Independent Systems)",
+      "era": "Prequel Era (24 BBY - 19 BBY)",
+      "ideology": "Independence from Republic corruption through secession",
+      "description": "A coalition of systems, corporations, and worlds that seceded from the Republic, secretly orchestrated by Darth Sidious through his apprentice Count Dooku (Darth Tyranus). Fought the Clone Wars with a droid army but was defeated when Palpatine revealed himself and ordered the droid army shutdown.",
+      "military_branches": [
+        {
+          "name": "Droid Army",
+          "description": "Mass-produced battle droids manufactured on Geonosis and other worlds",
+          "unit_types": ["B1 Battle Droids", "B2 Super Battle Droids", "OOM Commando Droids", "DT-FD Heavy Fighters", "Tank Droids"]
+        },
+        {
+          "name": "Separatist Navy",
+          "description": "Fleet of warships and Lucrehulk Battleships",
+          "unit_types": ["Vulture Droid Fighters", "Hydroid Medusa", "Lucrehulk Battleship", "Providence-class Dreadnought"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Count Dooku (Darth Tyranus)", "role": "Supreme Leader, Sith Lord"},
+        {"name": "Nute Gunray", "role": "Viceroy of the Trade Federation"},
+        {"name": "General Grievous", "role": "Commander of the Droid Armies"},
+        {"name": "Ziro Desilijic Tiure", "role": "Tusken Raider ally and political figure"},
+        {"name": "Poggle the Lesser", "role": "Geonosian King and Droid Manufacturer"}
+      ],
+      "strengths": ["Vast droid armies", "Financial resources from corporations", "Strategic locations across the galaxy", "General Grievous as a formidable warrior"],
+      "weaknesses": ["Droids lack initiative", "Easy to shut down remotely", "Puppet leaders unaware of Sith manipulation", "Internal factional disputes"],
+      "home_world": "Geonosis (primary manufacturing), Muunilinst (financial)",
+      "colors": ["Green", "Orange"],
+      "allies": ["Trade Federation", "Techno Union", "InterGalactic Banking Clan", "Sith (secret)"],
+      "enemies": ["Galactic Republic", "Jedi Order"]
+    },
+    {
+      "id": "sith",
+      "name": "Sith",
+      "era": "All Eras (Ancient - 4 ABY, then resurgence)",
+      "ideology": "Power through the Dark Side of the Force; Rule of Two (one Master, one Apprentice)",
+      "description": "An ancient order of Force-sensitive users of the Dark Side. For millennia they warred with the Jedi. Under Darth Bane's Rule of Two, the Sith hid in shadows, manipulating galactic events from behind the scenes until Darth Sidious brought the galaxy under their control.",
+      "philosophy": {
+        "rule_of_two": "There can be only two Sith: a Master to embody power, and an Apprentice to crave it. The Apprentice will eventually overthrow the Master, continuing the cycle.",
+        "dark_side_tenets": ["Passion where there was serenity", "Strength where there was weakness", "Victory where there was failure", "Freedom where there was chains"]
+      },
+      "key_members": [
+        {"name": "Darth Sidious (Palpatine)", "role": "Sith Master, Emperor of the Galaxy"},
+        {"name": "Darth Tyranus (Count Dooku)", "role": "Sith Apprentice, leader of the Separatists"},
+        {"name": "Darth Vader (Anakin Skywalker)", "role": "Sith Apprentice, enforcer of the Empire"},
+        {"name": "Darth Plagueis", "role": "Former Sith Master of Sidious"},
+        {"name": "Darth Maul", "role": "Sith Assassin of Darth Sidious (pre-Rule of Two era)"},
+        {"name": "Darth Bane", "role": "Founder of the Rule of Two"}
+      ],
+      "force_abilities": [
+        "Force Lightning",
+        "Force Choke",
+        "Mind Trick",
+        "Force Drain",
+        "Telekinesis",
+        "Force Vision",
+        "Dark Side Aura (Intimidation)",
+        "Sith Alchemy"
+      ],
+      "strengths": ["Mastery of the Dark Side", "Manipulation and deception", "Lightsaber combat prowess", "Immortality through the Force"],
+      "weaknesses": ["Internal betrayal (Rule of Two)", "Emotional instability", "Arrogance", "Underestimating the Light Side"],
+      "enemies": ["Jedi Order", "Rebel Alliance"]
+    },
+    {
+      "id": "first_order",
+      "name": "The First Order",
+      "era": "Sequel Trilogy Era (34 ABY - 35 ABY)",
+      "ideology": "Total domination; restoration of Imperial power through fear and technological superiority",
+      "description": "A militaristic organization formed from the remnants of the Galactic Empire. Led by Supreme Leader Snoke and later Kylo Ren, they sought to conquer the galaxy using superior technology including Starkiller Base and the Supremas-class Star Destroyer Finalizer.",
+      "military_branches": [
+        {
+          "name": "First Order Army",
+          "description": "Elite ground forces with advanced armor and weapons",
+          "unit_types": ["First Order Stormtroopers", "Phasma Guards", "Flank Troopers", "Commander Troopers", "AT-M6 Walkers"]
+        },
+        {
+          "name": "First Order Navy",
+          "description": "Advanced fleet with hyperspace-capable capital ships",
+          "unit_types": ["TIE Silencers", "TIE Raptors", "Resurgent-class Star Destroyers", "Supremas-class Star Destroyer (Finalizer)"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Supreme Leader Snoke", "role": "Dark Side leader and puppet of Palpatine"},
+        {"name": "Kylo Ren (Ben Solo)", "role": "Dark Side warrior, later Supreme Leader"},
+        {"name": "General Hux", "role": "Military commander and propagandist"},
+        {"name": "Captain Phasma", "role": "Champion of the trooper corps"},
+        {"name": "Poe Dameron", "role": "Defected to the Resistance"}
+      ],
+      "strengths": ["Hyperspace-capable capital ships", "Planet-destroying superweapons", "Technological superiority", "Surprise attacks"],
+      "weaknesses": ["Small population base", "Overly aggressive", "Internal dissent", "Underestimating the Resistance"],
+      "home_world": "Unknown (hidden territories)",
+      "colors": ["Black", "White", "Red"],
+      "allies": ["Sith (Palpatine's return)"],
+      "enemies": ["Resistance", "New Republic"]
+    },
+    {
+      "id": "resistance",
+      "name": "The Resistance",
+      "era": "Sequel Trilogy Era (34 ABY - 35 ABY)",
+      "ideology": "Defending freedom and exposing the First Order's threat",
+      "description": "A small military force led by General Leia Organa to combat the First Order. Composed of former Rebel Alliance veterans and New Republic defectors who warned of the First Order threat. Fought alongside the New Republic at Crait and Starkiller Base.",
+      "military_branches": [
+        {
+          "name": "Resistance Ground Forces",
+          "description": "Small but dedicated ground troops",
+          "unit_types": ["Resistance Troopers", "Commandos"]
+        },
+        {
+          "name": "Resistance Starfighter Corps",
+          "description": "Elite pilots flying older but reliable starfighters",
+          "unit_types": ["X-Wing Squadrons", "Modified Starfighters"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "General Leia Organa", "role": "Founder and Leader"},
+        {"name": "Poe Dameron", "role": "Resistance Pilot and Leader"},
+        {"name": "Finn", "role": "Defector from First Order, hero"},
+        {"name": "Rey", "role": "Force-sensitive warrior"},
+        {"name": "General Hocke", "role": "Military advisor"}
+      ],
+      "strengths": ["Dedicated fighters", "Force-sensitive allies", "Intelligence network", "Moral high ground"],
+      "weaknesses": ["Tiny force compared to First Order", "Limited resources", "New Republic initially ignored them"],
+      "home_world": "Various hidden bases (D'Qar, Ajan Kloss)",
+      "colors": ["Blue", "Red"],
+      "allies": ["New Republic (eventually)", "Jedi (Rey, Luke)"],
+      "enemies": ["First Order", "Sith"]
+    },
+    {
+      "id": "scum_villainy",
+      "name": "Scum & Villainy",
+      "era": "All Eras",
+      "ideology": "Self-interest, profit, and survival in the Outer Rim",
+      "description": "A loose collection of smugglers, bounty hunters, pirates, and criminals operating in the lawless regions of the galaxy. While not a unified faction, they often serve as mercenaries or operate independently, sometimes crossing paths with heroes and villains alike.",
+      "notable_groups": [
+        {"name": "Bounty Hunters Guild", "description": "Professional hunters tracking targets across the galaxy"},
+        {"name": "Hutt Cartel", "description": "Criminal empire controlled by the Hutt species"},
+        {"name": "Pirate Clans", "description": "Raiding fleets preying on trade routes"},
+        {"name": "Underworld Syndicates", "description": "Organized crime operations on various planets"}
+      ],
+      "key_members": [
+        {"name": "Boba Fett", "role": "Legendary bounty hunter"},
+        {"name": "Jango Fett", "role": "Bounty hunter and clone template"},
+        {"name": "Jabba the Hutt", "role": "Crime lord of Tatooine"},
+        {"name": "IG-88", "role": "Bounty droid"},
+        {"name": "Bossk", "role": "Trandoshan bounty hunter"},
+        {"name": "Greedo", "role": "Blaster-losing bounty hunter"},
+        {"name": "Han Solo (early)", "role": "Smuggler before joining the Rebellion"}
+      ],
+      "strengths": ["Independence", "Knowledge of underworld", "Adaptability", "No loyalty to any government"],
+      "weaknesses": ["Internal rivalries", "Betrayal", "No unified command", "Often outgunned by major factions"],
+      "home_world": "Outer Rim Territories (Tatooine, Nal Hutta, Ord Mantell)",
+      "colors": ["Brown", "Green", "Purple"],
+      "allies": ["Whomever pays the most"],
+      "enemies": ["Galactic Empire (law enforcement)", "Rebel Alliance (sometimes)", "Each other"]
+    },
+    {
+      "id": "jedi_order",
+      "name": "Jedi Order",
+      "era": "All Eras (Ancient - 19 BBY, then restored)",
+      "ideology": "Peace, knowledge, and enlightenment through the Light Side of the Force",
+      "description": "An ancient monastic order of Force-sensitive guardians who served the Republic as peacekeepers. Trained in the ways of the Light Side, they wielded lightsabers and used the Force for knowledge and defense. Nearly exterminated by Order 66, the order was restored by Luke and later Rey Skywalker.",
+      "philosophy": {
+        "code": "There is no emotion, there is peace. There is no passion, there is serenity. There is no chaos, there is harmony. There is no death, there is the Force.",
+        "light_side_tenets": ["Selflessness", "Compassion", "Discipline", "Detachment", "Service to others"]
+      },
+      "ranks": [
+        {"name": "Youngling", "description": "Children beginning their training (ages 6-13)"},
+        {"name": "Padawan", "description": "Apprentice assigned to a Jedi Knight or Master"},
+        {"name": "Jedi Knight", "description": "Fully trained Jedi who has passed the Trials"},
+        {"name": "Jedi Master", "description": "Experienced Knight who has trained a Padawan to Knighthood"},
+        {"name": "Jedi Council Member", "description": "Elected Master serving on the High Council"}
+      ],
+      "key_members": [
+        {"name": "Yoda", "role": "Jedi Grand Master, 900 years old"},
+        {"name": "Obi-Wan Kenobi", "role": "Jedi Master, General in the Clone Wars"},
+        {"name": "Anakin Skywalker / Darth Vader", "role": "The Chosen One, fallen and redeemed"},
+        {"name": "Luke Skywalker", "role": "Last Jedi, then restorer of the Order"},
+        {"name": "Mace Windu", "role": "Jedi Master, creator of Vaapad form"},
+        {"name": "Ahsoka Tano", "role": "Former Padawan, Force-sensitive ally"},
+        {"name": "Rey Skywalker", "role": "Heir to Luke, restorer of the Jedi"}
+      ],
+      "force_abilities": [
+        "Telekinesis",
+        "Force Push/Pull",
+        "Force Heal",
+        "Force Speed",
+        "Force Sense",
+        "Force Jump",
+        "Mind Trick (limited)",
+        "Force Choke (rare, gray area)",
+        "Force Ghost (after death)"
+      ],
+      "lightsaber_forms": [
+        {"name": "Shii-Cho", "number": "Form I", "description": "The Basic Form, foundation of all lightsaber combat"},
+        {"name": "Makashi", "number": "Form II", "description": "Form of Perfection, dueling-focused, used by Dooku"},
+        {"name": "Soresu", "number": "Form III", "description": "Form of Defense, used by Obi-Wan Kenobi"},
+        {"name": "Ataru", "number": "Form IV", "description": "Form of Aggression, acrobatic attacks"},
+        {"name": "Shien/Denari", "number": "Form V", "description": "Form of Power, counter-attack focused, used by Anakin"},
+        {"name": "Niman", "number": "Form VI", "description": "Form of Balance, combining Force and blade"},
+        {"name": "Juyo", "number": "Form VII", "description": "Form of Passion, aggressive and dangerous"},
+        {"name": "Vaapad", "number": "Variant", "description": "Created by Mace Windu, channels inner darkness"}
+      ],
+      "strengths": ["Mastery of the Light Side", "Lightsaber combat expertise", "Wisdom and discipline", "Galactic respect"],
+      "weaknesses": ["Strict code limits emotional expression", "Small numbers", "Political naivety", "Attachment forbidden"],
+      "home_world": "Coruscant (Jedi Temple)",
+      "colors": ["Green", "Blue", "Yellow (Temple Guards)"],
+      "allies": ["Galactic Republic", "Rebel Alliance"],
+      "enemies": ["Sith", "Galactic Empire"]
+    },
+    {
+      "id": "new_republic",
+      "name": "New Republic",
+      "era": "Post-Original Trilogy (5 ABY - 34 ABY)",
+      "ideology": "Democracy, freedom, and rebuilding after the Empire's fall",
+      "description": "The democratic government established after the defeat of the Galactic Empire. Built on the ideals of the original Republic but with stronger checks on executive power. Eventually weakened by political complacency, allowing the First Order to rise in secret.",
+      "military_branches": [
+        {
+          "name": "New Republic Army",
+          "description": "Reformed ground forces",
+          "unit_types": ["Republic Troopers", "Reclaimed Imperial Equipment"]
+        },
+        {
+          "name": "New Republic Fleet",
+          "description": "Rebuilt navy from captured Imperial ships",
+          "unit_types": ["Reclaimed Star Destroyers", "X-Wing Squadrons", "Home One-type Flagships"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Mon Mothma", "role": "First Chancellor"},
+        {"name": "Leia Organa", "role": "Senator and General"},
+        {"name": "Han Solo", "role": "General"},
+        {"name": "Luke Skywalker", "role": "Jedi Master, trainer of new generation"}
+      ],
+      "strengths": ["Legitimacy", "Captured Imperial technology", "Jedi restoration attempt", "Public support"],
+      "weaknesses": ["Military disarmament", "Political complacency", "Underestimated First Order threat"],
+      "home_world": "Coruscant (later Hosnian Prime)",
+      "colors": ["Blue", "Gold"],
+      "allies": ["Resistance", "Jedi Order"],
+      "enemies": ["Imperial Remnants", "First Order"]
+    }
+  ]
+}

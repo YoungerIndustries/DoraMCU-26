@@ -1,5 +1,7 @@
 package com.yisy.modules.doraneuron.service;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import com.yisy.modules.doraneuron.config.NeuronConfig;
 import com.yisy.modules.doraneuron.protocol.mesh.AiTaskMessage;
 import com.yisy.modules.doraneuron.service.mesh.NeuronMeshService;
@@ -9,8 +11,10 @@ import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
 import java.util.*;
+import java.util.Comparator;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Distributes AI inference tasks to connected neurons via the P2P mesh.
@@ -20,6 +24,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * returned to the requester.
  */
 @Service
+@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
+
 public class TaskDistributionService {
 
     private static final Logger log = LoggerFactory.getLogger(TaskDistributionService.class);
@@ -108,12 +114,13 @@ public class TaskDistributionService {
     }
 
     /**
-     * Distribute a task to an available neuron.
+     * Distribute a task to an available neuron using capability-aware weighted selection.
+     * Peers are selected based on their capability score (CPU cores, memory, GPU, queue depth, latency).
      */
     private void distributeTask(TaskRequest task) {
         // Find available neurons
         List<String> availablePeers = meshService.getConnectedPeerIds();
-        
+
         if (availablePeers.isEmpty()) {
             // No peers available — if this is co-server, handle locally
             log.warn("No available peers for task {}", task.taskId);
@@ -128,9 +135,9 @@ public class TaskDistributionService {
             return;
         }
 
-        // Select a peer (round-robin for now)
-        String selectedPeer = availablePeers.get((int) (taskCounter.get() % availablePeers.size()));
-        
+        // Select a peer using capability-aware weighted selection
+        String selectedPeer = selectBestPeer(availablePeers);
+
         // Create task message
         AiTaskMessage taskMessage = new AiTaskMessage(
                 task.taskId, task.taskType, task.input, task.timeoutMs);
@@ -139,8 +146,53 @@ public class TaskDistributionService {
         // Send to selected peer
         meshService.sendMessage(selectedPeer, taskMessage);
         totalDistributed.incrementAndGet();
-        
-        log.debug("Task {} distributed to peer {}", task.taskId, selectedPeer);
+
+        log.debug("Task {} distributed to peer {} (capability-aware selection)", task.taskId, selectedPeer);
+    }
+
+    /**
+     * Select the best peer using weighted random selection based on capability scores.
+     * Higher capability score = higher probability of being selected.
+     */
+    private String selectBestPeer(List<String> peerIds) {
+        List<Map.Entry<String, Double>> scoredPeers = new ArrayList<>();
+
+        for (String peerId : peerIds) {
+            com.yisy.modules.doraneuron.protocol.mesh.MeshPeerInfo peerInfo = meshService.getPeerInfo(peerId);
+            if (peerInfo != null) {
+                double score = peerInfo.getCapabilityScore();
+                if (score > 0) {
+                    scoredPeers.add(Map.entry(peerId, score));
+                }
+            }
+        }
+
+        // Fallback to round-robin if no peers have capability scores
+        if (scoredPeers.isEmpty()) {
+            String fallback = peerIds.get((int) (taskCounter.get() % peerIds.size()));
+            log.debug("No capability scores available, falling back to round-robin: {}", fallback);
+            return fallback;
+        }
+
+        // Weighted random selection: higher score = higher probability
+        double totalScore = scoredPeers.stream().mapToDouble(Map.Entry::getValue).sum();
+        double randomValue = ThreadLocalRandom.current().nextDouble(0, totalScore);
+        double cumulativeScore = 0;
+
+        for (Map.Entry<String, Double> entry : scoredPeers) {
+            cumulativeScore += entry.getValue();
+            if (randomValue <= cumulativeScore) {
+                return entry.getKey();
+            }
+        }
+
+        // Fallback to highest score peer
+        String bestPeer = scoredPeers.stream()
+                .max(Map.Entry.comparingByValue(Comparator.naturalOrder()))
+                .map(Map.Entry::getKey)
+                .orElse(peerIds.get(0));
+        log.debug("Selected best peer by capability score: {}", bestPeer);
+        return bestPeer;
     }
 
     /**

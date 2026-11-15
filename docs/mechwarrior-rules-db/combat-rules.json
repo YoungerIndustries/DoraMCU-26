@@ -1,0 +1,384 @@
+{
+  "game_info": {
+    "title": "MechWarrior / BattleTech Combat Rules",
+    "description": "Comprehensive combat rules from BattleTech tabletop game and MechWarrior video game series",
+    "source_games": [
+      "BattleTech tabletop game (FASA, Catalyst Game Labs)",
+      "MechWarrior: Mercenaries (2009)",
+      "MechWarrior 5: Mercenaries (2019)",
+      "MechWarrior 5: Clans (2021)",
+      "MechWarrior 5: Dark Age (2023)",
+      "BattleTech 2018 video game",
+      "MechCommander series"
+    ]
+  },
+  "core_mechanics": {
+    "resolution_system": {
+      "description": "BattleTech uses a 2D6 (two six-sided dice) resolution system. Roll 2D6 and add modifiers. If the total meets or exceeds the Target Number (TN), the check succeeds.",
+      "bell_curve": {
+        "2": "1/36 (2.8%)",
+        "3": "2/36 (5.6%)",
+        "4": "3/36 (8.3%)",
+        "5": "4/36 (11.1%)",
+        "6": "5/36 (13.9%)",
+        "7": "6/36 (16.7%)",
+        "8": "5/36 (13.9%)",
+        "9": "4/36 (11.1%)",
+        "10": "3/36 (8.3%)",
+        "11": "2/36 (5.6%)",
+        "12": "1/36 (2.8%)"
+      }
+    },
+    "sequence_of_play": {
+      "description": "Each turn consists of several phases performed in order.",
+      "phases": [
+        {
+          "name": "Initiative Phase",
+          "description": "One player from each side rolls 2D6. Higher result wins Initiative for the turn. Re-roll ties.",
+          "effects": "Winner fires first but moves second. Loser moves first but fires second."
+        },
+        {
+          "name": "Movement Phase",
+          "description": "Side that lost Initiative moves first. Side that won Initiative moves second.",
+          "details": "Each unit may move up to its Movement Points (MP) allowance. Movement is measured in hexes."
+        },
+        {
+          "name": "Weapon Attack Phase",
+          "description": "Side that won Initiative fires first. Side that lost Initiative fires second.",
+          "details": "Each unit may fire weapons at targets within range. To-Hit Number depends on range, movement, and modifiers."
+        },
+        {
+          "name": "Heat Phase",
+          "description": "Resolve heat accumulation and shutdown checks.",
+          "details": "If heat exceeds thresholds, roll 2D6 against Target Number to avoid shutdown."
+        },
+        {
+          "name": "End Phase",
+          "description": "Cleanup and preparation for next turn.",
+          "details": "Remove temporary markers, check for mission objectives, advance turn counter."
+        }
+      ]
+    }
+  },
+  "movement": {
+    "movement_points": {
+      "description": "Each BattleMech has Walking Speed and Running (Sprint) Speed, measured in km/h. Converted to Movement Points (MP) for game purposes.",
+      "calculation": {
+        "walk_mp": "Walking Speed / 16 (rounded down)",
+        "run_mp": "Running Speed / 16 (rounded down)"
+      },
+      "restrictions": "A unit may walk or run each turn, but not both. Running prevents weapon fire that turn due to recoil."
+    },
+    "terrain_costs": {
+      "description": "Movement costs vary by terrain type. Each hex costs 1 MP plus a terrain modifier.",
+      "costs": {
+        "clear": 1,
+        "light_woods": 2,
+        "heavy_woods": 3,
+        "hills": 3,
+        "mountains": "Impassable",
+        "urban": "2-4 (depends on density)",
+        "water": "Variable (depends on depth)"
+      }
+    },
+    "facing": {
+      "description": "Each unit has a facing direction. Changing facing costs 1 MP per 60 degrees of rotation.",
+      "arcs": {
+        "front": "Directly ahead, ±30 degrees",
+        "side": "Left or right, ±60 degrees from the side",
+        "rear": "Behind, ±30 degrees from the rear"
+      },
+      "firing_penalties": "Firing from the side or rear arc imposes penalties."
+    },
+    "jump_jets": {
+      "description": "Jump jets allow vertical movement over obstacles and terrain, consuming additional MP and generating heat.",
+      "limitations": [
+        "Heat cost per jump",
+        "Stability risk on landing",
+        "Limited by number of jump jets installed"
+      ]
+    }
+  },
+  "combat": {
+    "to_hit_number": {
+      "description": "The To-Hit Number (THN) for a weapon attack is calculated as: THN = Base THN + Range Modifier + Movement Modifier + Terrain Modifier",
+      "range_modifiers": {
+        "short": 0,
+        "medium": 2,
+        "long": 4
+      },
+      "movement_modifiers": {
+        "both_moved": 2,
+        "one_moved": 1,
+        "neither_moved": 0
+      }
+    },
+    "hit_location_table": {
+      "description": "When a weapon attack hits a BattleMech, roll 2D6 to determine which location is struck.",
+      "table": {
+        "2": "Center Torso",
+        "3": "Right Arm",
+        "4": "Right Arm",
+        "5": "Right Leg",
+        "6": "Right Leg",
+        "7": "Center Torso",
+        "8": "Left Torso",
+        "9": "Left Leg",
+        "10": "Left Leg",
+        "11": "Left Arm",
+        "12": "Head"
+      },
+      "probabilities": {
+        "center_torso": "2/12 (16.7%)",
+        "right_arm": "2/12 (16.7%)",
+        "right_leg": "2/12 (16.7%)",
+        "left_torso": "1/12 (8.3%)",
+        "left_leg": "2/12 (16.7%)",
+        "left_arm": "1/12 (8.3%)",
+        "head": "1/12 (8.3%)"
+      }
+    },
+    "armor_and_damage": {
+      "description": "Each BattleMech location has an Armor Value (AV) that absorbs incoming damage. Damage first reduces armor, then internal structure.",
+      "rules": [
+        "Damage is first applied to the armor in the hit location",
+        "If damage exceeds armor value, excess is applied to internal structure",
+        "When internal structure is destroyed, the location is lost",
+        "Arms fall off when destroyed",
+        "Legs cause the mech to fall when destroyed",
+        "Head hits can kill the pilot",
+        "Center Torso destruction causes catastrophic explosion"
+      ]
+    },
+    "critical_hits": {
+      "description": "When a BattleMech's armor in a location is reduced to zero, subsequent hits may cause critical hits.",
+      "rules": [
+        "Roll to hit the location again",
+        "If it hits, check for critical hits on the critical hit slot map",
+        "Critical hits can destroy weapons, ammunition, heat sinks, cockpit, or engine",
+        "Destroying the engine causes the mech to shut down",
+        "Destroying the cockpit kills the pilot",
+        "Ammunition explosions deal massive damage and may cause chain reactions"
+      ]
+    },
+    "physical_attacks": {
+      "description": "BattleMechs may perform physical attacks including punching, kicking, and ramming.",
+      "requirements": [
+        "Attacker must be adjacent to the target",
+        "Attacker must be facing the target"
+      ],
+      "resolution": "Roll 2D6 and add the attacker's Piloting Skill modifier. If the total meets or exceeds the Target Number, the attack hits.",
+      "damage": "Based on the attacker's tonnage and the type of attack.",
+      "effects": [
+        "Can knock targets down",
+        "Can push targets back",
+        "Can cause structural damage",
+        "Kicking a damaged leg can cause the target to fall"
+      ]
+    }
+  },
+  "heat_system": {
+    "description": "BattleMechs generate heat when firing weapons and using jump jets. Heat sinks dissipate heat each turn.",
+    "heat_sources": [
+      "Weapon fire (varies by weapon)",
+      "Jump jets (varies by number of jumps)",
+      "Running (minimal heat)"
+    ],
+    "heat_sinks": {
+      "standard": "1 heat point dissipated per sink per turn",
+      "double": "2 heat points dissipated per sink per turn (takes twice the critical hit space)"
+    },
+    "shutdown_thresholds": {
+      "description": "At certain heat thresholds, the mech attempts an automatic shutdown.",
+      "thresholds": [
+        {
+          "heat": 14,
+          "tn": 10
+        },
+        {
+          "heat": 18,
+          "tn": 8
+        },
+        {
+          "heat": 22,
+          "tn": 7
+        },
+        {
+          "heat": 26,
+          "tn": 6
+        },
+        {
+          "heat": 30,
+          "tn": "Automatic shutdown, cannot avoid"
+        }
+      ]
+    },
+    "shutdown_procedure": {
+      "description": "When heat reaches a threshold, roll 2D6 once during the Heat Phase.",
+      "rules": [
+        "If the roll meets or exceeds the TN, the pilot avoids shutdown for that turn",
+        "If the roll fails, the mech shuts down and becomes immobile",
+        "At 30+ heat, shutdown is automatic and unavoidable",
+        "A shut-down mech cannot move or fire weapons but can still be targeted"
+      ]
+    },
+    "heat_override": {
+      "description": "The player can override the automatic shutdown to continue fighting, but this risks internal damage and reactor explosion.",
+      "risks": [
+        "Internal damage to components",
+        "Reactor explosion if overheating continues",
+        "Permanent damage to the mech"
+      ]
+    }
+  },
+  "pilot_rules": {
+    "skills": {
+      "description": "Each MechWarrior has two primary skills: Gunnery and Piloting.",
+      "gunnery": "Affects weapon accuracy — higher Gunnery skill reduces the To-Hit Number",
+      "piloting": "Affects movement and physical attacks — higher Piloting skill reduces movement penalties and improves physical attack accuracy",
+      "skill_range": "0 to 10, with 5 being average"
+    },
+    "experience_levels": {
+      "green": {
+        "skills": "0-3",
+        "description": "New recruits, prone to errors and may panic under fire"
+      },
+      "veteran": {
+        "skills": "4-6",
+        "description": "Experienced combatants, reliable in combat"
+      },
+      "elite": {
+        "skills": "7-8",
+        "description": "Highly skilled warriors, can perform advanced maneuvers"
+      },
+      "ace": {
+        "skills": "9-10",
+        "description": "Legendary pilots, can turn the tide of battle"
+      }
+    },
+    "consciousness_and_wounds": {
+      "description": "When a MechWarrior takes damage (wounds), they must make a Consciousness Roll.",
+      "consciousness_table": {
+        "wound_1": {
+          "tn": 3
+        },
+        "wound_2": {
+          "tn": 5
+        },
+        "wound_3": {
+          "tn": 7
+        },
+        "wound_4": {
+          "tn": 9
+        },
+        "wound_5": "Death"
+      },
+      "rules": [
+        "Roll 2D6 and compare to the consciousness number",
+        "If the roll fails, the warrior is immediately knocked unconscious",
+        "An unconscious MechWarrior cannot control their mech",
+        "During the End Phase, roll 2D6 to attempt to recover",
+        "If the result meets or exceeds the consciousness number, the warrior regains consciousness",
+        "MechWarriors can survive up to 5 points of damage; beyond that, they die"
+      ]
+    }
+  },
+  "formations": {
+    "lance": {
+      "description": "A Lance is the basic tactical unit in BattleTech, consisting of 4 BattleMechs.",
+      "typical_composition": "1 light, 2 medium, 1 heavy",
+      "command": "Lance Commander coordinates the actions of the individual MechWarriors"
+    },
+    "company": {
+      "description": "A Company consists of 10 Lances (40 BattleMechs).",
+      "dcms_ratio": {
+        "description": "Draconis Combine Military Standard ratio",
+        "light": 6,
+        "medium": 15,
+        "heavy": 9,
+        "assault": 6
+      },
+      "higher_formations": {
+        "battalion": "3-4 companies",
+        "regiment": "3-4 battalions"
+      }
+    }
+  },
+  "fps_specific_rules": {
+    "description": "FPS-specific rules from MechWarrior video games.",
+    "cockpit_view": {
+      "description": "First-person cockpit view as the primary perspective. The player sees the BattleMech from inside the cockpit with instrument panels, targeting displays, and weapon status indicators.",
+      "third_person": "Third-person external view available in most games for tactical overview"
+    },
+    "control_modes": {
+      "basic": "Point and Shoot — simplified controls where the mech aims and fires automatically",
+      "advanced": "Independent control of the mech legs and torso, with the player controlling left leg, right leg, and torso twist separately",
+      "torso_twist": "Allows the upper body to rotate independently for aiming while moving"
+    },
+    "weapon_targeting": {
+      "description": "Crosshair-based targeting with weapon-specific targeting reticles.",
+      "weapon_grouping": "Weapons can be assigned to groups that fire together or in sequence (chain fire)",
+      "alpha_strike": "Fires all weapons simultaneously for maximum damage",
+      "chain_fire": "Fires weapons in sequence to manage heat and cooldowns",
+      "cooldowns": "Each weapon has a cooldown period after firing — ballistic weapons reload while energy weapons cool down"
+    },
+    "component_damage": {
+      "description": "Component-based damage with separate integrity for each part.",
+      "components": [
+        "Head",
+        "Center Torso",
+        "Left Torso",
+        "Right Torso",
+        "Left Arm",
+        "Right Arm",
+        "Left Leg",
+        "Right Leg"
+      ],
+      "destruction_effects": {
+        "arms": "Ripped off, loss of weapons mounted on that arm",
+        "legs": "Mech falls, cannot move",
+        "head": "Pilot may be killed",
+        "center_torso": "Catastrophic explosion, mech destroyed"
+      }
+    },
+    "stability": {
+      "description": "Mechs are bipedal walkers that must maintain balance. Weapon impacts can destabilize a mech, causing it to be knocked down.",
+      "effects": [
+        "Knocked down mechs are temporarily unable to move or fire effectively",
+        "Pilot may take damage when knocked down",
+        "Rough terrain increases stability damage",
+        "Jump jets can affect stability on landing"
+      ]
+    },
+    "called_shots": {
+      "description": "Target specific parts of an enemy mech for focused damage.",
+      "rules": [
+        "Riskier than normal attacks",
+        "Can quickly disable key components",
+        "Precision Strike ability allows called shots on standing mechs",
+        "Essential for strategic combat"
+      ]
+    },
+    "electronic_warfare": {
+      "description": "Electronic warfare adds a layer of tactical depth.",
+      "ecm": "Electronic Countermeasures — disrupts enemy targeting and radar",
+      "eccm": "Electronic Counter-Countermeasures — counters ECM effects",
+      "active_probes": "Longer radar range and faster target lock",
+      "night_vision": "Allows combat in low-light conditions"
+    },
+    "multiplayer_modes": {
+      "quickplay": "Team-based matches on various maps",
+      "faction_play": "Prolonged team-based engagements conquering planets",
+      "co_op": "Online co-op with friends",
+      "deathmatch": "Free-for-all combat",
+      "instant_action": "Quick customized battles for testing loadouts"
+    }
+  },
+  "scenario_types": {
+    "skirmish": "Small-scale engagements between lances or companies",
+    "battle": "Large-scale engagements between regiments or larger forces",
+    "raid": "One side attempts to capture or destroy a specific objective",
+    "defense": "One side defends a position against an attacking force",
+    "patrol": "A force searches for and engages enemy units"
+  }
+}

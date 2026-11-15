@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.thirdreich.adapter;
+import org.springframework.stereotype.Component;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCombat;
 import com.yisy.modules.doramcu.thirdreich.commander.AICommander;
@@ -18,6 +19,7 @@ import java.util.Map;
  * Captain's Log characters to AI commanders using their attributes.
  * </p>
  */
+@Component
 public class StarTrekTo3R4Adapter implements GroundCombatAdapter {
 
     private static final String SOURCE_GAME = "Captains_Log";

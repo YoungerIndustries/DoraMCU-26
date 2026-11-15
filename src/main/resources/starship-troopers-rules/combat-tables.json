@@ -1,0 +1,227 @@
+{
+  "combat_tables": {
+    "description": "Attack resolution tables for determining combat outcomes. Roll one six-sided die (1-6) and cross-reference with the odds ratio.",
+    "odds_ratios": ["1:6", "1:5", "1:4", "1:3", "1:2", "2:1", "3:1", "4:1", "5:1", "6:1", "7:1+"],
+    "outcome_codes": {
+      "M": "Miss - No effect",
+      "D": "Disrupted - Target cannot move or attack next turn",
+      "W": "WIA - Wounded in Action - Unit wounded with reduced effectiveness",
+      "K": "KIA - Killed in Action - Unit eliminated from play",
+      "H": "HVY - Heavy Damage - Unit heavily damaged"
+    }
+  },
+  "terran_attack_table": {
+    "description": "Used when Terran units attack Arachnid or Humanoid units. Also used when Humanoid units attack Arachnid units.",
+    "table": {
+      "1:6": {
+        "1": "M",
+        "2": "M",
+        "3": "M",
+        "4": "M",
+        "5": "M",
+        "6": "D"
+      },
+      "1:5": {
+        "1": "M",
+        "2": "M",
+        "3": "M",
+        "4": "M",
+        "5": "D",
+        "6": "D"
+      },
+      "1:4": {
+        "1": "M",
+        "2": "M",
+        "3": "M",
+        "4": "D",
+        "5": "D",
+        "6": "W"
+      },
+      "1:3": {
+        "1": "M",
+        "2": "M",
+        "3": "D",
+        "4": "D",
+        "5": "W",
+        "6": "W"
+      },
+      "1:2": {
+        "1": "M",
+        "2": "D",
+        "3": "D",
+        "4": "W",
+        "5": "W",
+        "6": "K"
+      },
+      "2:1": {
+        "1": "D",
+        "2": "D",
+        "3": "W",
+        "4": "W",
+        "5": "K",
+        "6": "K"
+      },
+      "3:1": {
+        "1": "D",
+        "2": "W",
+        "3": "W",
+        "4": "K",
+        "5": "K",
+        "6": "K"
+      },
+      "4:1": {
+        "1": "W",
+        "2": "W",
+        "3": "K",
+        "4": "K",
+        "5": "K",
+        "6": "K"
+      },
+      "5:1": {
+        "1": "W",
+        "2": "K",
+        "3": "K",
+        "4": "K",
+        "5": "K",
+        "6": "K"
+      },
+      "6:1": {
+        "1": "K",
+        "2": "K",
+        "3": "K",
+        "4": "K",
+        "5": "K",
+        "6": "K"
+      },
+      "7:1+": {
+        "1": "K",
+        "2": "K",
+        "3": "K",
+        "4": "K",
+        "5": "K",
+        "6": "K"
+      }
+    }
+  },
+  "alien_attack_table": {
+    "description": "Used when Arachnid units attack Terran units. Note: Humanoid units use the Terran Attack Table when defending against Arachnids.",
+    "table": {
+      "1:6": {
+        "1": "M",
+        "2": "M",
+        "3": "M",
+        "4": "M",
+        "5": "M",
+        "6": "D"
+      },
+      "1:5": {
+        "1": "M",
+        "2": "M",
+        "3": "M",
+        "4": "M",
+        "5": "D",
+        "6": "D"
+      },
+      "1:4": {
+        "1": "M",
+        "2": "M",
+        "3": "M",
+        "4": "D",
+        "5": "D",
+        "6": "W"
+      },
+      "1:3": {
+        "1": "M",
+        "2": "M",
+        "3": "D",
+        "4": "D",
+        "5": "W",
+        "6": "W"
+      },
+      "1:2": {
+        "1": "M",
+        "2": "D",
+        "3": "D",
+        "4": "W",
+        "5": "W",
+        "6": "K"
+      },
+      "2:1": {
+        "1": "D",
+        "2": "D",
+        "3": "W",
+        "4": "W",
+        "5": "K",
+        "6": "K"
+      },
+      "3:1": {
+        "1": "D",
+        "2": "W",
+        "3": "W",
+        "4": "K",
+        "5": "K",
+        "6": "K"
+      },
+      "4:1": {
+        "1": "W",
+        "2": "W",
+        "3": "K",
+        "4": "K",
+        "5": "K",
+        "6": "K"
+      },
+      "5:1": {
+        "1": "W",
+        "2": "K",
+        "3": "K",
+        "4": "K",
+        "5": "K",
+        "6": "K"
+      },
+      "6:1": {
+        "1": "K",
+        "2": "K",
+        "3": "K",
+        "4": "K",
+        "5": "K",
+        "6": "K"
+      },
+      "7:1+": {
+        "1": "K",
+        "2": "K",
+        "3": "K",
+        "4": "K",
+        "5": "K",
+        "6": "K"
+      }
+    }
+  },
+  "disrupted_status": {
+    "description": "When a unit is disrupted, place a disrupted marker on the unit.",
+    "effects": [
+      "Unit may not move during the next player segment",
+      "Unit may not re-enter tunnel systems",
+      "Unit may not engage in any type of attack during the next player segment"
+    ],
+    "removal": "Remove disrupted marker at the end of the next player segment"
+  },
+  "combat_resolution_example": {
+    "description": "Example of combat resolution",
+    "scenario": "Terran units attack Arachnid units in a hex",
+    "steps": [
+      "Attacking Terran units have combined attack strength of 12",
+      "Defending Arachnid units have combined defense strength of 8",
+      "Odds ratio: 12:8 = 1.5:1, rounded down to 1:1",
+      "Roll die: 5",
+      "Look up Terran Attack Table at 1:1, roll 5",
+      "Result: Disrupted - place disrupted marker on target unit"
+    ]
+  },
+  "notes": [
+    "Always round odds ratios DOWN to the nearest category",
+    "Heavy weapons affect all units in the target hex",
+    "Disrupted units are still counted for defense but cannot attack",
+    "KIA units are removed from the game immediately",
+    "WIA units have reduced effectiveness for the remainder of the game"
+  ]
+}

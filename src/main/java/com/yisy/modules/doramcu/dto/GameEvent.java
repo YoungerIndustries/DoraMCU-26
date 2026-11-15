@@ -10,7 +10,12 @@ public class GameEvent {
         PLAYER_JOINED,
         PLAYER_LEFT,
         GAME_STATE,
-        SESSION_CREATED
+        SESSION_CREATED,
+        // Corporation-specific events for CEO/VP integration
+        CORPORATION_CONTRACT_COMPLETED,  // A contract was completed (success or failure)
+        CORPORATION_EMERGENCY,           // General corporation emergency (multiple failures, etc.)
+        CORPORATION_INSOLVENCY_WARNING,  // Corporation balance is negative or near-zero
+        CORPORATION_CREW_ISSUE           // Crew problems: fired, underperforming, etc.
     }
 
     private EventType type;

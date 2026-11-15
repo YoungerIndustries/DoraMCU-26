@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.service;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -11,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.PostConstruct;
@@ -30,8 +30,8 @@ import java.util.stream.Collectors;
 /**
  * Service for creating and restoring galaxy backups.
  * <p>
- * Exports the entire galaxy state — galaxy config, sectors, solar systems,
- * celestial bodies, and hyperlanes — to timestamped JSON files stored in the
+ * Exports the entire galaxy state â€” galaxy config, sectors, solar systems,
+ * celestial bodies, and hyperlanes â€” to timestamped JSON files stored in the
  * configured backup directory. Restores recreate the galaxy from a backup file,
  * replacing the current state.
  * </p>
@@ -260,9 +260,9 @@ public class GalaxyBackupService {
         // Delete existing galaxy if it exists
         galaxyRepository.findByName(galaxyName).ifPresent(g -> {
             // Delete related entities first
-            hyperlaneRepository.findByGalaxyId(g.getId()).forEach(hyperlaneRepository::delete);
-            solarSystemRepository.findByGalaxyId(g.getId()).forEach(solarSystemRepository::delete);
-            sectorRepository.findByGalaxyId(g.getId()).forEach(sectorRepository::delete);
+            hyperlaneRepository.deleteAll(hyperlaneRepository.findByGalaxyId(g.getId()));
+            solarSystemRepository.deleteAll(solarSystemRepository.findByGalaxyId(g.getId()));
+            sectorRepository.deleteAll(sectorRepository.findByGalaxyId(g.getId()));
             galaxyRepository.delete(g);
             log.info("Deleted existing galaxy '{}' for restore", galaxyName);
         });
@@ -310,12 +310,6 @@ public class GalaxyBackupService {
         }
 
         Duration duration = Duration.between(startTime, Instant.now());
-        long sizeBytes;
-        try {
-            sizeBytes = Files.size(backupPath);
-        } catch (IOException e) {
-            sizeBytes = 0;
-        }
 
         log.info("Restore completed: {} sectors, {} systems, {} hyperlanes in {}ms",
                 sectorsRestored, systemsRestored, hyperlanesRestored, duration.toMillis());
@@ -545,7 +539,7 @@ public class GalaxyBackupService {
         return map;
     }
 
-    // Minimal serializers for celestial bodies — captures essential fields
+    // Minimal serializers for celestial bodies â€” captures essential fields
     private Map<String, Object> serializeStar(Star s) {
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("name", s.getName());

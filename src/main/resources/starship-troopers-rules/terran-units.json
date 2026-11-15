@@ -1,0 +1,140 @@
+{
+  "faction": "Terran Mobile Infantry",
+  "description": "The Federated Solar System's Mobile Infantry - elite space-borne troops dropped from orbit in individual reentry vehicles",
+  "unit_types": [
+    {
+      "id": "command",
+      "name": "Command",
+      "type": "Officer",
+      "attack_strength": 3,
+      "defense_strength": 4,
+      "movement_allowance": 6,
+      "description": "Platoon commander and officers. Provides leadership and coordination.",
+      "abilities": ["Can call in reinforcements", "Coordinates unit actions"],
+      "counters_per_scenario": 3
+    },
+    {
+      "id": "marauder",
+      "name": "Marauder",
+      "type": "Infantry Squad",
+      "attack_strength": 6,
+      "defense_strength": 4,
+      "movement_allowance": 6,
+      "description": "Standard rifle squad - the backbone of the Mobile Infantry.",
+      "abilities": ["Standard rifle fire", "Can carry heavy weapons"],
+      "counters_per_scenario": 21
+    },
+    {
+      "id": "scout",
+      "name": "Scout",
+      "type": "Reconnaissance",
+      "attack_strength": 4,
+      "defense_strength": 3,
+      "movement_allowance": 9,
+      "description": "Reconnaissance unit with higher movement for scouting ahead.",
+      "abilities": ["Extended movement", "Can detect tunnels with sensors"],
+      "counters_per_scenario": 3
+    },
+    {
+      "id": "combat_engineer",
+      "name": "Combat Engineer Squad",
+      "type": "Engineer",
+      "attack_strength": 4,
+      "defense_strength": 4,
+      "movement_allowance": 6,
+      "description": "Specialized engineers who can breach tunnels and set demolition charges.",
+      "abilities": ["Can breach tunnels", "Set demolition charges", "Repair structures"],
+      "equipment": ["Delayed Action Proximity Mine", "Delayed Action Remote Mine", "Heavy Explosive Demolition Munitions", "Nuclear Demolition Munitions"],
+      "counters_per_scenario": 6
+    },
+    {
+      "id": "air_car",
+      "name": "Air Car",
+      "type": "Vehicle",
+      "attack_strength": 0,
+      "defense_strength": 2,
+      "movement_allowance": 12,
+      "description": "Flying vehicle for rapid transport and evacuation.",
+      "abilities": ["High movement", "Can transport units", "Evacuation capability"],
+      "counters_per_scenario": 6
+    },
+    {
+      "id": "special_talent",
+      "name": "Special Talent",
+      "type": "Support",
+      "attack_strength": 0,
+      "defense_strength": 2,
+      "movement_allowance": 6,
+      "description": "Specialist with unique abilities for specific tasks.",
+      "abilities": ["Medical support", "Technical expertise"],
+      "counters_per_scenario": 6
+    },
+    {
+      "id": "listening_device",
+      "name": "Listening Device",
+      "type": "Equipment",
+      "attack_strength": 0,
+      "defense_strength": 0,
+      "movement_allowance": 0,
+      "description": "Sensor device to detect underground tunnel activity.",
+      "abilities": ["Detect tunnel movement", "Reveal hidden positions"],
+      "counters_per_scenario": 6
+    },
+    {
+      "id": "heavy_nerve_gas",
+      "name": "Heavy Nerve Gas",
+      "type": "Heavy Weapon",
+      "attack_strength": 9,
+      "defense_strength": 0,
+      "movement_allowance": 0,
+      "range": 10,
+      "description": "Heavy weapon that fires nerve gas projectiles at long range.",
+      "abilities": ["Area effect", "Suppresses enemies"],
+      "counters_per_scenario": 6
+    },
+    {
+      "id": "retrieval_boat",
+      "name": "Retrieval Boat",
+      "type": "Transport",
+      "attack_strength": 0,
+      "defense_strength": 1,
+      "movement_allowance": 6,
+      "description": "Water transport for evacuation scenarios.",
+      "abilities": ["Water movement", "Evacuation"],
+      "counters_per_scenario": 1
+    },
+    {
+      "id": "rocket_beacon",
+      "name": "Rocket Beacon",
+      "type": "Equipment",
+      "attack_strength": 0,
+      "defense_strength": 0,
+      "movement_allowance": 0,
+      "description": "Signal device for marking positions or calling reinforcements.",
+      "abilities": ["Signal marker", "Call reinforcements"],
+      "counters_per_scenario": 6
+    }
+  ],
+  "heavy_weapons": [
+    {
+      "name": "Heavy Nerve Gas",
+      "range": 10,
+      "attack_strength": 9,
+      "description": "Long-range heavy weapon firing nerve gas projectiles"
+    },
+    {
+      "name": "Heavy Explosive",
+      "range": 10,
+      "attack_strength": 9,
+      "description": "Long-range heavy weapon firing explosive projectiles"
+    }
+  ],
+  "special_equipment": [
+    "Delayed Action Proximity Mine (DAP)",
+    "Delayed Action Remote Mine (DAR)",
+    "Heavy Explosive Demolition Munitions",
+    "Nuclear Demolition Munitions",
+    "Listening Devices",
+    "Rocket Beacons"
+  ]
+}

@@ -132,7 +132,6 @@ public class AirBattle {
     private AirBattleResult.Outcome determineOutcome(String crt) {
         if (crt.contains("Superior") || crt.contains("Good")) return AirBattleResult.Outcome.ATTACKER_VICTORY;
         if (crt.contains("Even")) return AirBattleResult.Outcome.PYRRHIC_VICTORY;
-        if (crt.contains("Poor")) return AirBattleResult.Outcome.DEFENDER_VICTORY;
         return AirBattleResult.Outcome.DEFENDER_VICTORY;
     }
 

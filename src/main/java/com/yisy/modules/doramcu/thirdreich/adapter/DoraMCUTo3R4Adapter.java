@@ -1,8 +1,9 @@
 package com.yisy.modules.doramcu.thirdreich.adapter;
+import org.springframework.stereotype.Component;
 
 import com.yisy.modules.doramcu.hex.ArmyUnit;
 import com.yisy.modules.doramcu.hex.ArmyUnitType;
-import com.yisy.modules.doramcu.hex.UnifiedGroundUnit;
+import com.yisy.modules.doramcu.unified.UnifiedGroundUnit;
 import com.yisy.modules.doramcu.thirdreich.commander.AICommander;
 import com.yisy.modules.doramcu.thirdreich.domain.ThirdReichBattleResult;
 import com.yisy.modules.doramcu.thirdreich.domain.ThirdReichGroundUnit;
@@ -20,6 +21,7 @@ import java.util.Map;
  * ArmyUnitType mapping.
  * </p>
  */
+@Component
 public class DoraMCUTo3R4Adapter implements GroundCombatAdapter {
 
     private static final String SOURCE_GAME = "DoraMCU_4X";
@@ -55,6 +57,7 @@ public class DoraMCUTo3R4Adapter implements GroundCombatAdapter {
         unit.setMorale(armyUnit.getMorale());
         unit.setAttackValue(armyUnit.getUnitType().getOffense());
         unit.setDefenseValue(armyUnit.getUnitType().getDefense());
+        unit.setAiCoreBonus(armyUnit.getAiCoreBonus());
         unit.setSourceGame(SOURCE_GAME);
         return unit;
     }

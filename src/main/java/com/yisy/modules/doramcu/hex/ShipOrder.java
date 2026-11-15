@@ -1,10 +1,13 @@
 package com.yisy.modules.doramcu.hex;
 
+import java.util.Map;
+
 /**
  * Represents a pending ship construction order in a player's queue.
  * <p>
  * A ship order tracks the ship template, remaining build time, and the fleet
- * that will receive the completed ship.
+ * that will receive the completed ship. It also records the construction module
+ * requirements consumed from the resource pipeline.
  * </p>
  */
 public class ShipOrder {
@@ -12,6 +15,7 @@ public class ShipOrder {
     private final int buildTime;
     private final int targetFleetId;
     private int turnsRemaining;
+    private final Map<ConstructionModuleType, Integer> moduleRequirements;
 
     /**
      * Creates a new ship order.
@@ -21,6 +25,19 @@ public class ShipOrder {
      * @param targetFleetId the fleet ID to add the completed ship to
      */
     public ShipOrder(Ship shipTemplate, int buildTime, int targetFleetId) {
+        this(shipTemplate, buildTime, targetFleetId, Map.of());
+    }
+
+    /**
+     * Creates a new ship order with module requirements.
+     *
+     * @param shipTemplate the ship to build
+     * @param buildTime the number of turns to build
+     * @param targetFleetId the fleet ID to add the completed ship to
+     * @param moduleRequirements the construction modules consumed from the pipeline
+     */
+    public ShipOrder(Ship shipTemplate, int buildTime, int targetFleetId,
+                     Map<ConstructionModuleType, Integer> moduleRequirements) {
         if (shipTemplate == null) {
             throw new IllegalArgumentException("Ship template must not be null");
         }
@@ -31,6 +48,7 @@ public class ShipOrder {
         this.buildTime = buildTime;
         this.targetFleetId = targetFleetId;
         this.turnsRemaining = buildTime;
+        this.moduleRequirements = Map.copyOf(moduleRequirements);
     }
 
     /** Returns the ship template for this order. */
@@ -71,6 +89,18 @@ public class ShipOrder {
     /** Returns the energy cost for this ship. */
     public int getEnergyCost() {
         return shipTemplate.getEnergyCost();
+    }
+
+    /**
+     * Returns the construction module requirements for this order.
+     * <p>
+     * These are the modules consumed from the resource pipeline when the order was created.
+     * </p>
+     *
+     * @return unmodifiable map of module types to required quantities
+     */
+    public Map<ConstructionModuleType, Integer> getModuleRequirements() {
+        return moduleRequirements;
     }
 
     @Override

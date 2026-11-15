@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.hex.manager;
 
 import com.yisy.modules.doramcu.hex.*;
+import com.yisy.modules.doramcu.hex.spi.AiEntityRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,6 @@ import java.util.Random;
  * The builder uses a configurable random seed for reproducibility.
  * </p>
  */
-@Service
 public class DefaultEmpireBuilder implements EmpireBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultEmpireBuilder.class);
@@ -38,6 +38,7 @@ public class DefaultEmpireBuilder implements EmpireBuilder {
     };
 
     private final Random random;
+    private final AiEntityRegistration aiEntityRegistrationService;
 
     public DefaultEmpireBuilder() {
         this(DEFAULT_EMPIRE_SEED);
@@ -48,6 +49,15 @@ public class DefaultEmpireBuilder implements EmpireBuilder {
      */
     public DefaultEmpireBuilder(long seed) {
         this.random = new Random(seed);
+        this.aiEntityRegistrationService = null;
+    }
+
+    /**
+     * Constructor with AI entity registration service.
+     */
+    public DefaultEmpireBuilder(AiEntityRegistration aiEntityRegistrationService) {
+        this.random = new Random(DEFAULT_EMPIRE_SEED);
+        this.aiEntityRegistrationService = aiEntityRegistrationService;
     }
 
     /**
@@ -193,6 +203,7 @@ public class DefaultEmpireBuilder implements EmpireBuilder {
             Ship miningFrigate = game.createMiningFrigate(empire.getName() + " Miner");
             fleet.addShip(miningFrigate);
             game.addFleet(fleet, player);
+            registerShipAsAi(miningFrigate, empire.getName());
             return;
         }
 
@@ -200,8 +211,10 @@ public class DefaultEmpireBuilder implements EmpireBuilder {
             Fleet fleet = game.createFleet(empire.getName() + " Defense Fleet", player);
             Ship frigate = game.createMilitaryFrigate(empire.getName() + " Frigate");
             fleet.addShip(frigate);
+            registerShipAsAi(frigate, empire.getName());
             Ship destroyer = game.createMilitaryDestroyer(empire.getName() + " Destroyer");
             fleet.addShip(destroyer);
+            registerShipAsAi(destroyer, empire.getName());
             game.addFleet(fleet, player);
         }
 
@@ -209,6 +222,7 @@ public class DefaultEmpireBuilder implements EmpireBuilder {
             Fleet fleet = game.createFleet(empire.getName() + " Mining Fleet", player);
             Ship miningFrigate = game.createMiningFrigate(empire.getName() + " Miner");
             fleet.addShip(miningFrigate);
+            registerShipAsAi(miningFrigate, empire.getName());
             game.addFleet(fleet, player);
         }
 
@@ -216,7 +230,23 @@ public class DefaultEmpireBuilder implements EmpireBuilder {
             Fleet fleet = game.createFleet(empire.getName() + " Reserve Fleet", player);
             Ship frigate = game.createMilitaryFrigate(empire.getName() + " Reserve Frigate");
             fleet.addShip(frigate);
+            registerShipAsAi(frigate, empire.getName());
             game.addFleet(fleet, player);
+        }
+    }
+
+    /**
+     * Registers a ship as an AI character in the AI character repository.
+     * No-op if the AI entity registration service is not available.
+     */
+    private void registerShipAsAi(Ship ship, String empireName) {
+        if (aiEntityRegistrationService != null && ship != null) {
+            try {
+                aiEntityRegistrationService.registerShip(ship, empireName);
+                log.debug("Registered ship '{}' as AI character for empire '{}'", ship.getName(), empireName);
+            } catch (Exception e) {
+                log.warn("Failed to register ship '{}' as AI character: {}", ship.getName(), e.getMessage());
+            }
         }
     }
 
