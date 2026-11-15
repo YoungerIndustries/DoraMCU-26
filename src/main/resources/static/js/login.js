@@ -333,7 +333,7 @@ const LoginPanel = (function() {
     function loadGalaxies() {
         const galaxySelect = document.getElementById('registerGalaxy');
         const base = GameAPI.getServerUrl();
-        fetch((base ? base : '') + '/api/v1/auth/galaxies')
+        fetch((base ? base : '') + '/api/v1/4x/auth/galaxies')
             .then(response => response.json())
             .then(galaxies => {
                 galaxySelect.innerHTML = '';
@@ -387,7 +387,7 @@ const LoginPanel = (function() {
             submitRegister.innerHTML = '⏳ Creating Empire...';
 
             const base = GameAPI.getServerUrl();
-            fetch((base ? base : '') + '/api/v1/auth/register', {
+            fetch((base ? base : '') + '/api/v1/4x/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -117,12 +117,12 @@ const GameAPI = (function() {
 
     // Server discovery
     async function getServerInfo() {
-        return request('/api/v1/auth/server-info');
+        return request('/api/v1/4x/auth/server-info');
     }
 
     // Authentication
     async function login(username, password) {
-        const data = await request('/api/v1/auth/login', {
+        const data = await request('/api/v1/4x/auth/login', {
             method: 'POST',
             body: { username, password },
             headers: { 'Content-Type': 'application/json' }
@@ -137,7 +137,7 @@ const GameAPI = (function() {
     }
 
     async function pinLogin(pin) {
-        const data = await request('/api/v1/auth/pin-login', {
+        const data = await request('/api/v1/4x/auth/pin-login', {
             method: 'POST',
             body: { pin: String(pin).trim() },
             headers: { 'Content-Type': 'application/json' }
@@ -153,12 +153,12 @@ const GameAPI = (function() {
 
     // List all available empires for selection
     async function listPlayers() {
-        return request('/api/v1/auth/players');
+        return request('/api/v1/4x/auth/players');
     }
 
     // Login by selecting a player from the empire list
     async function playerLogin(playerId) {
-        const data = await request(`/api/v1/auth/player-login/${playerId}`, {
+        const data = await request(`/api/v1/4x/auth/player-login/${playerId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         });
@@ -176,7 +176,7 @@ const GameAPI = (function() {
 
     // Register new player
     async function register(username, password, empireName, governmentType, ethos, galaxyName) {
-        const data = await request('/api/v1/auth/register', {
+        const data = await request('/api/v1/4x/auth/register', {
             method: 'POST',
             body: { username, password, empireName, governmentType, ethos, galaxyName },
             headers: { 'Content-Type': 'application/json' }
@@ -194,7 +194,7 @@ const GameAPI = (function() {
 
     // Dev bypass: auto-login as Butch Younger without credentials (dev profile only)
     async function devLogin() {
-        const data = await request('/api/v1/auth/dev-login', {
+        const data = await request('/api/v1/4x/auth/dev-login', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });

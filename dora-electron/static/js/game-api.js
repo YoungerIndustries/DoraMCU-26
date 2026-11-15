@@ -89,12 +89,12 @@ const GameAPI = (function() {
 
     // Server discovery
     async function getServerInfo() {
-        return request('/api/v1/auth/server-info');
+        return request('/api/v1/4x/auth/server-info');
     }
 
     // Authentication
     async function login(username, password) {
-        const data = await request('/api/v1/auth/login', {
+        const data = await request('/api/v1/4x/auth/login', {
             method: 'POST',
             body: { username, password },
             headers: { 'Content-Type': 'application/json' }
@@ -109,7 +109,7 @@ const GameAPI = (function() {
     }
 
     async function pinLogin(pin) {
-        const data = await request('/api/v1/auth/pin-login', {
+        const data = await request('/api/v1/4x/auth/pin-login', {
             method: 'POST',
             body: { pin: String(pin).trim() },
             headers: { 'Content-Type': 'application/json' }
@@ -125,7 +125,7 @@ const GameAPI = (function() {
 
     // Register new player
     async function register(username, password) {
-        const data = await request('/api/v1/auth/register', {
+        const data = await request('/api/v1/4x/auth/register', {
             method: 'POST',
             body: { username, password },
             headers: { 'Content-Type': 'application/json' }

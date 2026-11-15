@@ -227,7 +227,7 @@ const AdminPanel = (function() {
         const errorEl = document.getElementById('loginError');
 
         try {
-            const response = await fetch('/api/v1/auth/login', {
+            const response = await fetch('/api/v1/4x/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password })

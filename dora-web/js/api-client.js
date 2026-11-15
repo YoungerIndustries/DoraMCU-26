@@ -126,7 +126,7 @@ class ApiClient {
 
     async logout() {
         this.setToken(null);
-        return this.request('/api/v1/auth/logout', { method: 'POST' });
+        return this.request('/api/v1/4x/auth/logout', { method: 'POST' });
     }
 
     // Client Manifest

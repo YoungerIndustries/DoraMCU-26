@@ -81,7 +81,7 @@ const Auth = (function() {
      */
     async function login(username, password) {
         const baseUrl = getBaseUrl();
-        const response = await fetch(`${baseUrl}/api/auth/login`, {
+        const response = await fetch(`${baseUrl}/api/v1/4x/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
@@ -106,7 +106,7 @@ const Auth = (function() {
      */
     async function loginWithPin(pin) {
         const baseUrl = getBaseUrl();
-        const response = await fetch(`${baseUrl}/api/auth/pin`, {
+        const response = await fetch(`${baseUrl}/api/v1/4x/auth/login/pin`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ pin })
@@ -131,7 +131,7 @@ const Auth = (function() {
      */
     async function register(data) {
         const baseUrl = getBaseUrl();
-        const response = await fetch(`${baseUrl}/api/auth/register`, {
+        const response = await fetch(`${baseUrl}/api/v1/4x/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -167,7 +167,7 @@ const Auth = (function() {
 
         try {
             const baseUrl = getBaseUrl();
-            const response = await fetch(`${baseUrl}/api/auth/verify`, {
+            const response = await fetch(`${baseUrl}/api/v1/4x/auth/server-info`, {
                 headers: getAuthHeader()
             });
             return response.ok;

@@ -55,7 +55,7 @@
 
         async login(username, password) {
             try {
-                const result = await this.fetchJson('/api/auth/login', {
+                const result = await this.fetchJson('/api/v1/4x/auth/login', {
                     method: 'POST',
                     body: JSON.stringify({ username, password })
                 });

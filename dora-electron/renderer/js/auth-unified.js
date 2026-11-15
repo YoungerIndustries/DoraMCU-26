@@ -259,7 +259,7 @@ class UnifiedAuthService {
      */
     async login(username, password) {
         try {
-            const response = await fetch(`${this.serverUrl}/api/auth/login`, {
+            const response = await fetch(`${this.serverUrl}/api/v1/4x/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password })
@@ -289,7 +289,7 @@ class UnifiedAuthService {
      */
     async loginWithPin(pin) {
         try {
-            const response = await fetch(`${this.serverUrl}/api/auth/login/pin`, {
+            const response = await fetch(`${this.serverUrl}/api/v1/4x/auth/login/pin`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ pin })
@@ -322,7 +322,7 @@ class UnifiedAuthService {
      */
     async register(data) {
         try {
-            const response = await fetch(`${this.serverUrl}/api/auth/register`, {
+            const response = await fetch(`${this.serverUrl}/api/v1/4x/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -353,7 +353,7 @@ class UnifiedAuthService {
     async logout() {
         // Call server logout endpoint if available
         try {
-            await fetch(`${this.serverUrl}/api/auth/logout`, {
+            await fetch(`${this.serverUrl}/api/v1/4x/auth/logout`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -378,7 +378,7 @@ class UnifiedAuthService {
         if (!token) return false;
 
         try {
-            const response = await fetch(`${this.serverUrl}/api/auth/verify`, {
+            const response = await fetch(`${this.serverUrl}/api/v1/4x/auth/server-info`, {
                 method: 'GET',
                 headers: this.getAuthHeader()
             });
@@ -406,7 +406,7 @@ class UnifiedAuthService {
         if (!token) return null;
 
         try {
-            const response = await fetch(`${this.serverUrl}/api/auth/refresh`, {
+            const response = await fetch(`${this.serverUrl}/api/v1/4x/auth/server-info`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
