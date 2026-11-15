@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>DoraMCU Mobile</title>
+    <link rel="manifest" href="../../manifest.json">
+    <style>
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #131842;
+            --bg-card: #1a1f4e;
+            --text-primary: #e0e6ff;
+            --text-secondary: #8892b0;
+            --accent-primary: #64ffda;
+            --accent-secondary: #7c4dff;
+            --border-color: #2a3070;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+        }
+
+        .status-dot.disconnected {
+            background: #ff5252;
+        }
+
+        /* Main content */
+        .content {
+            padding: 72px 16px 80px;
+        }
+
+        /* Bottom navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .nav-btn.active {
+            color: var(--accent-primary);
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 2px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--accent-primary);
+        }
+
+        /* Stats */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Session list */
+        .session-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .session-item:last-child {
+            border-bottom: none;
+        }
+
+        .session-name {
+            font-weight: 500;
+        }
+
+        .session-status {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .btn-primary {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Sections */
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        /* Event feed */
+        .event-item {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .event-time {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1 class="header-title">DoraMCU</h1>
+        <div class="status-dot" id="statusDot"></div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="stat-value" id="statPlayers">0</div>
+                    <div class="stat-label">Players</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="statSessions">0</div>
+                    <div class="stat-label">Sessions</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Quick Actions</h3>
+                <button class="btn btn-primary" onclick="joinSession()">Join Game</button>
+                <button class="btn btn-secondary" onclick="navigateTo('sessions')">Browse Sessions</button>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Recent Activity</h3>
+                <div id="eventFeed">
+                    <div class="loading">Loading...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sessions Section -->
+        <section id="sessions" class="section">
+            <div class="card">
+                <h3 class="card-title">Game Sessions</h3>
+                <div id="sessionList">
+                    <div class="loading">Loading sessions...</div>
+                </div>
+                <button class="btn btn-primary" onclick="createSession()">Create Session</button>
+            </div>
+        </section>
+
+        <!-- Characters Section -->
+        <section id="characters" class="section">
+            <div class="card">
+                <h3 class="card-title">My Characters</h3>
+                <div id="characterList">
+                    <div class="loading">Loading characters...</div>
+                </div>
+                <button class="btn btn-primary" onclick="createCharacter()">New Character</button>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="section">
+            <div class="card">
+                <h3 class="card-title">Settings</h3>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 8px; font-size: 0.9rem;">Server URL</label>
+                    <input type="url" id="serverUrl" style="width: 100%; padding: 12px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 1rem;" placeholder="http://localhost:8080">
+                </div>
+                <button class="btn btn-primary" onclick="saveSettings()">Save</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" data-section="home">
+            <span class="nav-icon">🏠</span>
+            <span>Home</span>
+        </button>
+        <button class="nav-btn" data-section="sessions">
+            <span class="nav-icon">🎮</span>
+            <span>Sessions</span>
+        </button>
+        <button class="nav-btn" data-section="characters">
+            <span class="nav-icon">👤</span>
+            <span>Chars</span>
+        </button>
+        <button class="nav-btn" data-section="settings">
+            <span class="nav-icon">⚙️</span>
+            <span>Settings</span>
+        </button>
+    </nav>
+
+    <script src="../../js/api-client.js"></script>
+    <script>
+        let apiUrl = 'http://localhost:8080';
+        let api = new ApiClient(apiUrl);
+
+        // Listen for config from parent
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'CONFIG') {
+                apiUrl = event.data.apiUrl || apiUrl;
+                api = new ApiClient(apiUrl);
+                initialize();
+            }
+        });
+
+        // Navigation
+        function navigateTo(section) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(section).classList.add('active');
+            document.querySelector(`[data-section="${section}"]`).classList.add('active');
+        }
+
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => navigateTo(btn.dataset.section));
+        });
+
+        // Initialize
+        async function initialize() {
+            try {
+                await api.healthCheck();
+                document.getElementById('statusDot').classList.remove('disconnected');
+                loadStats();
+                loadSessions();
+                connectEvents();
+            } catch (error) {
+                console.error('Connection failed:', error);
+                document.getElementById('statusDot').classList.add('disconnected');
+            }
+        }
+
+        // Load stats
+        async function loadStats() {
+            try {
+                const sessions = await api.getGameSessions();
+                document.getElementById('statSessions').textContent = sessions.length || 0;
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+
+        // Load sessions
+        async function loadSessions() {
+            try {
+                const sessions = await api.getGameSessions();
+                const list = document.getElementById('sessionList');
+                
+                if (sessions.length === 0) {
+                    list.innerHTML = '<div class="loading">No active sessions</div>';
+                    return;
+                }
+
+                list.innerHTML = sessions.map(s => `
+                    <div class="session-item" onclick="joinSession('${s.id}')">
+                        <div>
+                            <div class="session-name">${s.name || 'Session'}</div>
+                            <div class="session-status">${s.status || 'Active'}</div>
+                        </div>
+                        <span style="color: var(--accent-primary);">Join →</span>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load sessions:', error);
+            }
+        }
+
+        // Join session
+        function joinSession(id) {
+            if (id) {
+                alert(`Joining session: ${id}`);
+            } else {
+                navigateTo('sessions');
+            }
+        }
+
+        // Create session
+        async function createSession() {
+            try {
+                await api.createGameSession({ name: 'Mobile Session' });
+                loadStats();
+                loadSessions();
+                alert('Session created!');
+            } catch (error) {
+                alert('Failed to create session');
+            }
+        }
+
+        // Create character
+        function createCharacter() {
+            alert('Character creation would open here');
+        }
+
+        // Connect to events
+        function connectEvents() {
+            const eventSource = api.createEventSource();
+            const feed = document.getElementById('eventFeed');
+            
+            eventSource.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    const item = document.createElement('div');
+                    item.className = 'event-item';
+                    item.innerHTML = `
+                        <div>${data.message || 'New event'}</div>
+                        <div class="event-time">${new Date().toLocaleTimeString()}</div>
+                    `;
+                    feed.prepend(item);
+                    if (feed.children.length > 20) feed.removeChild(feed.lastChild);
+                } catch (e) {
+                    // Ignore parse errors
+                }
+            };
+        }
+
+        // Save settings
+        function saveSettings() {
+            const url = document.getElementById('serverUrl').value;
+            if (url) {
+                localStorage.setItem('doramcu_api_url', url);
+                apiUrl = url;
+                api = new ApiClient(url);
+                initialize();
+                alert('Settings saved!');
+            }
+        }
+
+        // Load saved settings
+        const savedUrl = localStorage.getItem('doramcu_api_url');
+        if (savedUrl) {
+            apiUrl = savedUrl;
+            api = new ApiClient(apiUrl);
+            document.getElementById('serverUrl').value = savedUrl;
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', initialize);
+    </script>
+</body>
+</html>
