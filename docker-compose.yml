@@ -1,4 +1,46 @@
 services:
+  # Nginx reverse proxy - serves the web UI and proxies API requests
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+      args:
+        WEB_ENV: ${WEB_ENV:-dev}
+        WEB_API_URL: ${WEB_API_URL:-http://app:8080}
+    container_name: doramcu-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - app
+      - neuron
+    restart: unless-stopped
+
+  # DoraMCU Neuron - AI satellite node and player gateway
+  # Acts as the primary entry point: player login, platform detection,
+  # client distribution, and real-time game state synchronization.
+  neuron:
+    build:
+      context: .
+      dockerfile: Dockerfile.neuron
+    container_name: doramcu-neuron
+    ports:
+      - "8090:8090"
+    environment:
+      - NEURON_COORDINATOR_URL=http://app:8080
+      - NEURON_GAME_SERVER_URL=http://app:8080
+      - NEURON_SECURITY_JWT_SECRET=${NEURON_SECURITY_JWT_SECRET:-}
+      - JVM_XMX=-Xmx4G
+    depends_on:
+      - app
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 2G
+
   app:
     build:
       context: .
@@ -6,11 +48,14 @@ services:
     container_name: doramcu
     ports:
       - "8080:8080"
+      - "${DEBUG_PORT:-5005}:5005"
     environment:
       - SPRING_PROFILES_ACTIVE=mysql
       - DB_PASSWORD=${DB_PASSWORD:-root}
       - JWT_SECRET=${JWT_SECRET:-}
       - DL_MODE=rest
+      - DEBUG=${DEBUG:-}
+      - JVM_XMX=-Xmx4G
     depends_on:
       mysql:
         condition: service_healthy
@@ -79,5 +124,22 @@ services:
       - DL_BLEND_FACTOR=0.5
     restart: unless-stopped
 
+  # Redis - for distributed event bus and cache (optional, enable for multi-process mode)
+  redis:
+    image: redis:7-alpine
+    container_name: doramcu-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
 volumes:
   mysql-data:
+  redis-data:

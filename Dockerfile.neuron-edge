@@ -41,7 +41,7 @@ RUN addgroup -S neuron && adduser -S neuron -G neuron
 WORKDIR /app
 
 # Copy the built JAR
-COPY --from=builder /build/dora-neuron/build/libs/dora-neuron-0.1.0.jar app.jar
+COPY --from=builder /build/dora-neuron/build/libs/*.jar app.jar
 
 # Create directories for models and temp files
 RUN mkdir -p /app/dl-models /tmp/neuron-quantized-models && \

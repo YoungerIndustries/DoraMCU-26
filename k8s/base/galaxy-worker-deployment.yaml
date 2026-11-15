@@ -1,0 +1,114 @@
+# Galaxy Worker Deployment Template
+# Each galaxy runs in its own pod with isolated resources
+# This template is used by the Galaxy Process Manager to spawn galaxy-specific pods
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doramcu-galaxy-worker
+  namespace: doramcu
+  labels:
+    app.kubernetes.io/name: doramcu-galaxy-worker
+    app.kubernetes.io/component: galaxy-worker
+    app.kubernetes.io/part-of: doramcu-neuron-network
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: doramcu-galaxy-worker
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: doramcu-galaxy-worker
+        app.kubernetes.io/component: galaxy-worker
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    spec:
+      containers:
+        - name: galaxy-worker
+          image: doramcu/app:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: doramcu-config
+          env:
+            - name: GALAXY_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels[gateway.kubernetes.io/galaxy-id]
+            - name: GALAXY_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels[gateway.kubernetes.io/galaxy-name]
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: doramcu-secrets
+                  key: db-password
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: doramcu-secrets
+                  key: jwt-secret
+            - name: SPRING_PROFILES_ACTIVE
+              value: "mysql,gateway"
+            - name: DORAMCU_PROCESS_MANAGER_ENABLED
+              value: "true"
+            - name: DORAMCU_PROCESS_MANAGER_MODE
+              value: "kubernetes"
+            - name: DORAMCU_EVENT_REDIS_ENABLED
+              value: "true"
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "1Gi"
+            limits:
+              cpu: "1000m"
+              memory: "2Gi"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+---
+# Horizontal Pod Autoscaler for galaxy workers
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: doramcu-galaxy-worker-hpa
+  namespace: doramcu
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: doramcu-galaxy-worker
+  minReplicas: 1
+  maxReplicas: 20
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80

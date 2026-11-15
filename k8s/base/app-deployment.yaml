@@ -25,9 +25,6 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
-              containerPort: 8084
-              protocol: TCP
-            - name: redirect
               containerPort: 8080
               protocol: TCP
           envFrom:
@@ -53,24 +50,24 @@ spec:
               memory: "4Gi"
           livenessProbe:
             httpGet:
-              path: /api/health/live
-              port: 8084
+              path: /actuator/health/liveness
+              port: 8080
             initialDelaySeconds: 60
             periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /api/health/ready
-              port: 8084
+              path: /actuator/health/readiness
+              port: 8080
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
           startupProbe:
             httpGet:
-              path: /api/health/live
-              port: 8084
+              path: /actuator/health/liveness
+              port: 8080
             initialDelaySeconds: 10
             periodSeconds: 10
             failureThreshold: 10
@@ -90,10 +87,6 @@ spec:
     app.kubernetes.io/name: doramcu-app
   ports:
     - name: http
-      port: 8084
-      targetPort: 8084
-      protocol: TCP
-    - name: redirect
       port: 8080
       targetPort: 8080
       protocol: TCP

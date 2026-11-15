@@ -72,10 +72,10 @@ secretGenerator:
 images:
   - name: doramcu/app
     newName: doramcu/app
-    newTag: latest
+    newTag: "0.3.9"
   - name: doramcu/neuron
     newName: doramcu/neuron
-    newTag: latest
+    newTag: "0.3.9"
   - name: doramcu/dl-python
     newName: doramcu/dl-python
-    newTag: latest
+    newTag: "0.3.9"

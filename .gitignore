@@ -95,3 +95,22 @@ DoraMCU.bundle
 
 ### Junie session files ###
 .junie/plans/
+
+### PowerShell dev scripts ###
+fix-pagefile.ps1
+setup-d-drive-pagefile.ps1
+setup-ram-disk.ps1
+
+### Stray files ###
+LOG_FILE_IS_UNDEFINED
+
+### IDE scratch files ###
+*.orig
+*.rej
+
+### Build output in submodules ###
+*/build/
+*/.gradle/
+
+### Neuron backups ###
+dora-neuron/backups/
