@@ -71,7 +71,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus'
     // OpenAPI 3.0 documentation (SpringDoc)
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0'
     // Kafka - optional, only needed when neuron.kafka.enabled=true
     compileOnly 'org.springframework.kafka:spring-kafka'
     // Redis - for distributed event bus and cache (required in Docker/K8s deployments)
