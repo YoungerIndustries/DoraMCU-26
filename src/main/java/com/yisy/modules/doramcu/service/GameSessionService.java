@@ -392,6 +392,77 @@ public class GameSessionService {
     }
 
     /**
+     * Returns the session ID for a session that has the given galaxy loaded, or null.
+     * Used by the portal travel system to find existing sessions per galaxy.
+     *
+     * @param galaxyName the galaxy name to match
+     * @return the session ID, or null if no session has this galaxy
+     */
+    public String getSessionIdByGalaxyName(String galaxyName) {
+        for (var entry : sessions.entrySet()) {
+            GameSession session = entry.getValue();
+            Game game = (Game) session.getGame();
+            if (game == null) continue;
+            Galaxy galaxy = game.getGalaxy(0);
+            if (galaxy != null && galaxyName.equals(galaxy.getName())) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Creates a new game session for a specific galaxy (used by portal travel).
+     * Loads the given galaxy into the session game instead of the default first galaxy.
+     *
+     * @param sessionId the session ID
+     * @param sessionName the session name
+     * @param dbGalaxy the galaxy to load
+     * @param gameType the game type for the global clock
+     */
+    @Transactional
+    public void createSessionForGalaxy(String sessionId, String sessionName,
+                                        com.yisy.modules.doramcu.model.Galaxy dbGalaxy,
+                                        com.yisy.modules.doramcu.gamecore.GameType gameType) {
+        log.info("Creating session {} for galaxy '{}' (gameType: {})", sessionId, dbGalaxy.getName(), gameType);
+
+        // Create the Game engine first
+        Game game = new Game(sessionName);
+
+        // Load the specific galaxy instead of the default
+        com.yisy.modules.doramcu.hex.Galaxy inMemoryGalaxy =
+                gameInitializationService.convertToInMemoryGalaxy(dbGalaxy);
+        if (inMemoryGalaxy != null) {
+            game.addGalaxy(inMemoryGalaxy);
+            log.info("Loaded galaxy '{}' into session with {} systems",
+                    inMemoryGalaxy.getName(), inMemoryGalaxy.getAllSystems().size());
+        }
+
+        // Create session with the game engine (constructor requires it)
+        GameSession session = new GameSession(sessionId, sessionName, game);
+
+        // Set up global clock
+        GlobalClock clock = globalClockService.getOrCreateClock(sessionId, gameType);
+        session.setGlobalClock(clock);
+        sessions.put(sessionId, session);
+
+        // Persist session metadata
+        if (persistedGameSessionRepository != null) {
+            PersistedGameSession pgs = new PersistedGameSession();
+            pgs.setSessionId(sessionId);
+            pgs.setSessionName(sessionName);
+            pgs.setGalaxyName(dbGalaxy.getName());
+            pgs.setGameType(gameType.name());
+            pgs.setCreatedAt(LocalDateTime.now());
+            pgs.setUpdatedAt(LocalDateTime.now());
+            pgs.setLastActivityAt(LocalDateTime.now());
+            persistedGameSessionRepository.save(pgs);
+        }
+
+        log.info("Session {} created for galaxy '{}'", sessionId, dbGalaxy.getName());
+    }
+
+    /**
      * Returns the resource pipeline summary for the given player.
      * Returns null if the session or pipeline is not found.
      */

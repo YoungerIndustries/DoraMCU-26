@@ -231,6 +231,41 @@ public enum GalaxyTemplate {
             "Custom",
             "A blank slate using all default generation parameters.",
             GalaxyGenerationConfig.builder().build()
+    ),
+
+    /**
+     * DoraMCU 4X Template: the base 4X galaxy template used as the foundation for all galaxies.
+     * <p>
+     * Every galaxy starts as a 4X galaxy with this template, providing sectors, solar systems,
+     * planets, hyperlanes, and generic empires. Game-specific overlays (Star Wars, Traveller,
+     * D&D, etc.) are then applied on top of this base structure.
+     * </p>
+     * <p>
+     * This template enables the 4X layer by default and provides balanced generation parameters
+     * suitable for any game type overlay.
+     * </p>
+     */
+    DORAMCU_4X_TEMPLATE(
+            "DoraMCU 4X Base",
+            "The base 4X galaxy template. Every galaxy starts here before game-specific overlays are applied.",
+            GalaxyGenerationConfig.builder()
+                    .sectorSize(10)
+                    .subSectorDimension(10)
+                    .civilizationDensity(0.3)
+                    .resourceDistribution(0.5)
+                    .galaxyShape("spiral")
+                    .namingConvention("astronomical")
+                    .empireCount(4)
+                    .difficultyLevel("medium")
+                    .gameType("DoraMCU4X")
+                    .moonChance(0.4)
+                    .spaceStationChance(0.1)
+                    .gasGiantChance(0.3)
+                    .blackHoleChance(0.05)
+                    .hyperlaneDensity(1.0)
+                    .asteroidBeltChance(0.5)
+                    .enable4xLayer(true)
+                    .build()
     );
 
     private final String displayName;

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Frontiers</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0a1a0a; color: #e0e0e0; }
+
+        .header {
+            background: linear-gradient(135deg, #2e7d32 0%, #0a1a0a 100%);
+            padding: 16px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid #4caf50;
+        }
+        .header h1 { font-size: 24px; color: #fff; }
+        .header .subtitle { font-size: 12px; color: #a0a0a0; margin-top: 2px; }
+        .btn-back {
+            background: #4caf50; color: #fff; padding: 8px 16px;
+            border-radius: 6px; text-decoration: none; font-size: 14px;
+        }
+        .btn-back:hover { background: #388e3c; }
+
+        .layout { display: flex; height: calc(100vh - 70px); }
+        .sidebar {
+            width: 220px; background: #0d200d; padding: 16px;
+            overflow-y: auto; border-right: 1px solid #2e7d32;
+        }
+        .sidebar-section { margin-bottom: 20px; }
+        .sidebar-title {
+            font-size: 11px; text-transform: uppercase; color: #4caf50;
+            margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;
+        }
+        .sidebar-item {
+            padding: 8px 12px; margin: 2px 0; border-radius: 6px;
+            cursor: pointer; font-size: 14px; transition: all 0.2s;
+        }
+        .sidebar-item:hover { background: #2e7d32; }
+        .sidebar-item.active { background: #4caf50; color: #fff; }
+
+        .main-content { flex: 1; padding: 24px; overflow-y: auto; }
+        .card {
+            background: #0d200d; border-radius: 8px; padding: 20px;
+            margin-bottom: 16px; border: 1px solid #2e7d32;
+        }
+        .card h3 { color: #4caf50; margin-bottom: 12px; font-size: 16px; }
+        .grid { display: grid; gap: 16px; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+        .btn {
+            background: #4caf50; color: #fff; border: none;
+            padding: 8px 16px; border-radius: 6px; cursor: pointer;
+            font-size: 14px; margin: 4px;
+        }
+        .btn:hover { background: #388e3c; }
+
+        .item-row {
+            background: #0a1a0a; border: 1px solid #2e7d32;
+            border-radius: 6px; padding: 12px; margin: 6px 0;
+        }
+        .item-row .name { font-weight: 600; color: #fff; }
+        .item-row .detail { font-size: 12px; color: #a0a0a0; margin-top: 4px; }
+
+        .loading { text-align: center; padding: 40px; color: #a0a0a0; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🌌 Star Frontiers</h1>
+            <div class="subtitle">Sectors, Ships, Aliens & The Known Space</div>
+        </div>
+        <a href="younger-hq.html" class="btn-back">← Back to HQ Portal</a>
+    </div>
+
+    <div class="layout">
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Universe</div>
+                <div class="sidebar-item active" onclick="switchView('dashboard')">📊 Dashboard</div>
+                <div class="sidebar-item" onclick="switchView('sectors')">🗺️ Sectors</div>
+                <div class="sidebar-item" onclick="switchView('aliens')">👽 Aliens</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Fleet</div>
+                <div class="sidebar-item" onclick="switchView('ships')">🚀 Ships</div>
+                <div class="sidebar-item" onclick="switchView('weapons')">🔫 Weapons</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Rules</div>
+                <div class="sidebar-item" onclick="switchView('rules')">📖 Rules</div>
+                <div class="sidebar-item" onclick="switchView('combat')">⚔️ Combat</div>
+            </div>
+        </div>
+
+        <div class="main-content" id="mainContent">
+            <div class="loading">Exploring the Known Space...</div>
+        </div>
+    </div>
+
+    <script>
+        const API = '/api/v1/sfb';
+        let currentView = 'dashboard';
+        let sectors = [], aliens = [], ships = [], weapons = [], rules = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSectors();
+            loadAliens();
+            loadShips();
+            loadWeapons();
+            loadRules();
+            switchView('dashboard');
+        });
+
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            event?.target?.classList.add('active');
+            const content = document.getElementById('mainContent');
+            switch(view) {
+                case 'dashboard': renderDashboard(content); break;
+                case 'sectors': renderSectors(content); break;
+                case 'aliens': renderAliens(content); break;
+                case 'ships': renderShips(content); break;
+                case 'weapons': renderWeapons(content); break;
+                case 'rules': renderRules(content); break;
+                case 'combat': renderCombat(content); break;
+            }
+        }
+
+        async function renderDashboard(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🌌 Star Frontiers Dashboard</h2>
+                <div class="grid grid-3">
+                    <div class="card">
+                        <h3>🗺️ Sectors</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#4caf50;">${sectors.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Mapped sectors</div>
+                    </div>
+                    <div class="card">
+                        <h3>👽 Aliens</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#4caf50;">${aliens.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Alien species</div>
+                    </div>
+                    <div class="card">
+                        <h3>🚀 Ships</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#4caf50;">${ships.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Starships</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>⚡ Quick Actions</h3>
+                    <button class="btn" onclick="switchView('sectors')">Explore Sectors</button>
+                    <button class="btn" onclick="switchView('aliens')">View Aliens</button>
+                    <button class="btn" onclick="switchView('ships')">Fleet Overview</button>
+                    <button class="btn" onclick="switchView('rules')">Read Rules</button>
+                </div>
+            `;
+        }
+
+        function renderSectors(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🗺️ Sectors</h2>
+                <div class="card">
+                    ${sectors.map(s => `
+                        <div class="item-row">
+                            <div class="name">${s.name || 'Unknown'}</div>
+                            <div class="detail">${s.systems || 0} systems ${s.faction ? '• ' + s.faction : ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No sectors loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderAliens(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">👽 Alien Species</h2>
+                <div class="card">
+                    ${aliens.map(a => `
+                        <div class="item-row">
+                            <div class="name">${a.name || 'Unknown'}</div>
+                            <div class="detail">${a.homeWorld || ''} ${a.description ? '• ' + a.description.substring(0, 80) : ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No aliens loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderShips(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🚀 Starships</h2>
+                <div class="card">
+                    ${ships.map(s => `
+                        <div class="item-row">
+                            <div class="name">${s.name || 'Unknown'}</div>
+                            <div class="detail">${s.class || s.type || ''} ${s.faction ? '• ' + s.faction : ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No ships loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderWeapons(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🔫 Weapons</h2>
+                <div class="card">
+                    ${weapons.map(w => `
+                        <div class="item-row">
+                            <div class="name">${w.name || 'Unknown'}</div>
+                            <div class="detail">${w.type || ''} • Damage: ${w.damage || '?'}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No weapons loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderRules(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">📖 Rules</h2>
+                <div class="card">
+                    ${rules.map(r => `
+                        <div class="item-row">
+                            <div class="name">${r.title || 'Unknown'}</div>
+                            <div class="detail">${r.content ? r.content.substring(0, 120) + '...' : ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No rules loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderCombat(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">⚔️ Combat</h2>
+                <div class="card">
+                    <h3>Combat System</h3>
+                    <p style="color:#a0a0a0;margin-bottom:12px;">Star Frontiers uses a d100-based combat system with armor classes and hit locations.</p>
+                    <button class="btn" onclick="alert('Combat system coming soon!')">Start Combat</button>
+                </div>
+            `;
+        }
+
+        async function loadSectors() {
+            try { sectors = await fetch(`${API}/sectors`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load sectors:', e); }
+        }
+
+        async function loadAliens() {
+            try { aliens = await fetch(`${API}/aliens`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load aliens:', e); }
+        }
+
+        async function loadShips() {
+            try { ships = await fetch(`${API}/ships`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load ships:', e); }
+        }
+
+        async function loadWeapons() {
+            try { weapons = await fetch(`${API}/weapons`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load weapons:', e); }
+        }
+
+        async function loadRules() {
+            try { rules = await fetch(`${API}/rules`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load rules:', e); }
+        }
+    </script>
+</body>
+</html>

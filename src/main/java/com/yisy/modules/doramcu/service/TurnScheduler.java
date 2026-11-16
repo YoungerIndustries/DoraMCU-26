@@ -1,9 +1,11 @@
 package com.yisy.modules.doramcu.service;
 import org.springframework.stereotype.Service;
 
+import com.yisy.modules.doramcu.ai.framework.AiLearningService;
 import com.yisy.modules.doramcu.corporation.service.AiAssistantService;
 import com.yisy.modules.doramcu.corporation.service.CorporateRoleService;
 import com.yisy.modules.doramcu.corporation.service.CorporationEventService;
+import com.yisy.modules.doramcu.corporation.service.TreasuryLoanService;
 import com.yisy.modules.doramcu.dto.GameEvent;
 import com.yisy.modules.doramcu.eve.model.EveCorporation;
 import com.yisy.modules.doramcu.model.CorporateRole;
@@ -70,11 +72,13 @@ public class TurnScheduler {
     private final GameSessionService gameSessionService;
     private final AiPlayerService aiPlayerService;
     private final DoraAiLearningService doraAiLearningService;
+    private final AiLearningService aiLearningService;
     private final GlobalClockService globalClockService;
     private final AiAssistantService aiAssistantService;
     private final CorporateRoleService corporateRoleService;
     private final CorporationEventService corporationEventService;
     private final EveCorporationRepository eveCorporationRepository;
+    private final TreasuryLoanService treasuryLoanService;
 
     @Value("${doramcu.corporation.management.enabled:true}")
     private boolean corporationManagementEnabled = true;
@@ -87,21 +91,25 @@ public class TurnScheduler {
 
     @Autowired
     public TurnScheduler(GameSessionService gameSessionService,
-                         @Lazy AiPlayerService aiPlayerService,
-                         DoraAiLearningService doraAiLearningService,
-                         GlobalClockService globalClockService,
-                         @Lazy AiAssistantService aiAssistantService,
-                         CorporateRoleService corporateRoleService,
-                         CorporationEventService corporationEventService,
-                         EveCorporationRepository eveCorporationRepository) {
+                          @Lazy AiPlayerService aiPlayerService,
+                          DoraAiLearningService doraAiLearningService,
+                          AiLearningService aiLearningService,
+                          GlobalClockService globalClockService,
+                          @Lazy AiAssistantService aiAssistantService,
+                          CorporateRoleService corporateRoleService,
+                          CorporationEventService corporationEventService,
+                          EveCorporationRepository eveCorporationRepository,
+                          TreasuryLoanService treasuryLoanService) {
         this.gameSessionService = gameSessionService;
         this.aiPlayerService = aiPlayerService;
         this.doraAiLearningService = doraAiLearningService;
+        this.aiLearningService = aiLearningService;
         this.globalClockService = globalClockService;
         this.aiAssistantService = aiAssistantService;
         this.corporateRoleService = corporateRoleService;
         this.corporationEventService = corporationEventService;
         this.eveCorporationRepository = eveCorporationRepository;
+        this.treasuryLoanService = treasuryLoanService;
         // Initialize thread pool for parallel turn processing
         this.turnExecutor = Executors.newFixedThreadPool(
                 Runtime.getRuntime().availableProcessors(),
@@ -275,6 +283,11 @@ public class TurnScheduler {
      * Each AI player's action is recorded with the Dora AI learning service so the
      * neural network can learn from the outcomes.
      * </p>
+     * <p>
+     * The AiLearningService framework interface (via DlGameAiLearningAdapter) is available
+     * for unified learning operations; the direct DoraAiLearningService calls can be
+     * migrated to use aiLearningService when the interface is extended with computeReward.
+     * </p>
      */
     private void executeAiActionsForSession(String sessionId, GameSession session) {
         Map<Long, String> aiPlayerDifficulties = session.getAiPlayerDifficulties();
@@ -432,6 +445,16 @@ public class TurnScheduler {
                 log.warn("Corporation management failed for player {} in session {}: {}",
                         playerId, sessionId, e.getMessage());
             }
+        }
+
+        // Process treasury loan payments for all active loans
+        try {
+            int paymentsProcessed = treasuryLoanService.processAllDuePayments();
+            if (paymentsProcessed > 0) {
+                log.info("Turn scheduler processed {} treasury loan payments", paymentsProcessed);
+            }
+        } catch (Exception e) {
+            log.warn("Treasury loan payment processing failed: {}", e.getMessage());
         }
     }
 }

@@ -1,0 +1,234 @@
+{
+  "combat_tables": {
+    "description": "Attack resolution tables for Star Trek tabletop games. Adapted from Star Trek Adventures (2d20 RPG) and Star Fleet Battles mechanics.",
+    "ground_combat": {
+      "source": "Star Trek Adventures (2d20)",
+      "description": "Ground combat uses the 2d20 Outcome Table with Action Dice for damage severity.",
+      "outcome_table": {
+        "description": "Roll 2d20 and compare the results. The highest die is the 'High Die' and the lowest is the 'Low Die'.",
+        "critical_failure": {
+          "condition": "Both dice show 1",
+          "result": "1 Complication + 1 Threat — the action fails catastrophically with additional negative consequences"
+        },
+        "failure": {
+          "condition": "High die is 1 (but not both), or both dice are equal and ≤10",
+          "result": "1 Threat — the action fails with a negative side effect"
+        },
+        "partial_success": {
+          "condition": "No special conditions met; total meets or exceeds TN",
+          "result": "1 Success — the action succeeds without additional effects"
+        },
+        "success": {
+          "condition": "High die is 20 (but not both), or both dice are equal and ≥11",
+          "result": "1 Success + 1 Advantage — the action succeeds with a positive side effect"
+        },
+        "critical_success": {
+          "condition": "Both dice show 20",
+          "result": "1 Success + 2 Advantages — the action succeeds spectacularly"
+        }
+      },
+      "action_dice_results": {
+        "description": "When an attack hits, roll the weapon's Action Dice (d6s) to determine damage severity.",
+        "phaser_stun": {
+          "dice": "2d6",
+          "1": "Target is dazed for 1 round",
+          "2": "Target is stunned and drops to one knee",
+          "3": "Target is unconscious for 1d4 rounds",
+          "4": "Target is unconscious for 2d6 rounds; risk of Trauma",
+          "5-6": "Target is unconscious for 1d10 rounds; roll for Trauma"
+        },
+        "phaser_injure": {
+          "dice": "2d6",
+          "1": "Target takes 1 Stress",
+          "2": "Target takes 2 Stress",
+          "3": "Target takes 1 Damage",
+          "4": "Target takes 2 Damage",
+          "5-6": "Target takes 3 Damage + 1 Stress"
+        },
+        "hand_laser": {
+          "dice": "2d6",
+          "1": "Target takes 1 Stress",
+          "2": "Target takes 1 Damage",
+          "3": "Target takes 2 Damage",
+          "4": "Target takes 3 Damage",
+          "5-6": "Target takes 4 Damage + limb injury"
+        },
+        "melee_batleth": {
+          "dice": "2d6",
+          "1": "Target takes 1 Stress (glancing blow)",
+          "2": "Target takes 1 Damage",
+          "3": "Target takes 2 Damage",
+          "4": "Target takes 3 Damage + bleeding",
+          "5-6": "Target takes 4 Damage + severe wound"
+        }
+      },
+      "cover_modifiers": {
+        "no_cover": "No modifier to defense",
+        "light_cover": "+2 to defense roll (crates, rubble, partial walls)",
+        "heavy_cover": "+4 to defense roll (bulkheads, reinforced walls, behind cover with firing port)",
+        "total_cover": "Cannot be targeted directly"
+      },
+      "range_modifiers": {
+        "point_blank": "Within 2 meters; no modifier",
+        "short_range": "Within weapon's short range; no modifier",
+        "medium_range": "Within weapon's medium range; +2 to TN",
+        "long_range": "Within weapon's long range; +4 to TN",
+        "beyond_range": "Target is beyond effective range; +6 to TN and attacker is at the target's mercy"
+      }
+    },
+    "space_combat": {
+      "source": "Star Fleet Battles",
+      "description": "Space combat uses firing numbers, evasion, and damage tables for ship-to-ship combat.",
+      "firing_resolution": {
+        "description": "To hit a target, roll 2d6 and add the firing ship's weapon factor. If the total meets or exceeds the target's evasion number, the attack hits.",
+        "steps": [
+          "Declare target and weapon arc (Forward, Aft, Broadside)",
+          "Check range: weapon must be within effective range",
+          "Roll 2d6 + weapon factor vs target evasion number",
+          "On a hit, roll damage on the appropriate table",
+          "Apply damage to shields first, then hull"
+        ]
+      },
+      "phaser_damage_table": {
+        "description": "When phasers hit, roll 2d6 and add the phaser bank's power factor to determine damage.",
+        "damage_scale": {
+          "1-2": "Negligible — 1 hull point or shield point",
+          "3-4": "Light — 2 hull points or shield points",
+          "5-6": "Moderate — 3 hull points or shield points",
+          "7-8": "Significant — 4 hull points or shield points",
+          "9-10": "Heavy — 5 hull points or shield points",
+          "11-12": "Severe — 6 hull points or shield points",
+          "13-14": "Critical — 8 hull points or shield points + possible system disruption",
+          "15-16": "Devastating — 10 hull points or shield points + system disruption",
+          "17-18": "Catastrophic — 12 hull points or shield points + system destruction"
+        }
+      },
+      "torpedo_damage_table": {
+        "description": "Photon and quantum torpedoes deal massive damage. Roll on the table based on torpedo type.",
+        "photon_torpedo": {
+          "dice": "2d6",
+          "2-3": "Glancing hit — 5 hull points",
+          "4-5": "Light damage — 8 hull points",
+          "6-7": "Moderate damage — 12 hull points + 1 system disruption",
+          "8-9": "Heavy damage — 16 hull points + 1 system disruption",
+          "10-11": "Severe damage — 20 hull points + 2 system disruptions",
+          "12-13": "Critical hit — 25 hull points + 2 system disruptions + possible crew casualty",
+          "14-15": "Catastrophic — 30 hull points + 3 system disruptions + crew casualty",
+          "16-17": "Magazine penetration — 40 hull points + possible ship destruction",
+          "18": "Direct hit on command center — 50 hull points + bridge casualty"
+        },
+        "quantum_torpedo": {
+          "description": "Quantum torpedoes deal 1.5x the damage of photon torpedoes (round up).",
+          "dice": "2d6",
+          "modifier": "Multiply photon torpedo result by 1.5 and round up"
+        }
+      },
+      "shield_modulation": {
+        "description": "Ships can modulate their shields to reduce incoming damage from specific attack types.",
+        "effects": [
+          "Phaser resistance: -1 to phaser damage rolls",
+          "Torpedo resistance: -2 to torpedo damage rolls",
+          "Directional focus: Double shield strength in one arc, halve in others",
+          "Shield inversion: Temporarily move shields inside the hull for 1 impulse; next hit does double damage to attacker"
+        ]
+      },
+      "evasion_numbers": {
+        "description": "Each ship class has a base evasion number that represents how hard it is to hit.",
+        "examples": {
+          "constellation_class": 10,
+          "galaxy_class": 11,
+          "sovereign_class": 10,
+          "klingon_d7": 9,
+          "romulan_warbird": 10,
+          "bird_of_prey": 8
+        }
+      },
+      "system_disruption_table": {
+        "description": "When a hit causes system disruption, roll d10 to determine which system is affected.",
+        "roll": {
+          "1": "Warp drive — ship cannot use warp for 1d4 impulses",
+          "2": "Impulse drive — ship cannot maneuver at sublight for 1d4 impulses",
+          "3": "Forward phasers — forward phaser bank offline for 1d4 impulses",
+          "4": "Aft phasers — aft phaser bank offline for 1d4 impulses",
+          "5": "Broadside phasers — broadside phaser bank offline for 1d4 impulses",
+          "6": "Torpedo launchers — cannot fire torpedoes for 1d4 impulses",
+          "7": "Shield generator — shields offline for 1d4 impulses",
+          "8": "Sensors — reduced sensor range for 1d4 impulses",
+          "9": "Communications — cannot communicate for 1d4 impulses",
+          "10": "Life support — crew takes 1 Stress per impulse until repaired"
+        }
+      }
+    },
+    "rpg_combat": {
+      "source": "Star Trek Adventures (2d20)",
+      "description": "RPG combat uses the 2d20 system with Action Dice for damage and stress.",
+      "damage_resolution": {
+        "steps": [
+          "Attacker rolls 2d20 + Attribute + Skill vs TN",
+          "If the attack succeeds, roll the weapon's Action Dice",
+          "Apply the result to the target's Stress track first",
+          "When Stress is full, excess becomes Damage",
+          "When Damage equals Toughness, the character is incapacitated"
+        ]
+      },
+      "active_defense": {
+        "description": "A target can attempt an Active Defense to reduce or negate incoming damage.",
+        "mechanic": "Roll Agility + Athletics vs the attacker's total (2d20 + Attribute + Skill)",
+        "success": "For each Success on the defense, negate 1 Success from the attack",
+        "critical_defense": "On a Critical Success, the defender negates all damage and gains 1 Advantage"
+      },
+      "stress_and_damage_tracks": {
+        "stress": {
+          "description": "Temporary damage track; represents fatigue, minor wounds, and shock.",
+          "capacity": "Equal to the character's Toughness (Brawn + Resilience)",
+          "recovery": "Stress recovers during rest or medical treatment"
+        },
+        "damage": {
+          "description": "Permanent damage track; represents serious injuries.",
+          "capacity": "Equal to the character's Toughness (Brawn + Resilience)",
+          "recovery": "Requires medical treatment and extended downtime"
+        },
+        "trauma": {
+          "description": "When a character would take Damage beyond their capacity, they take Trauma instead.",
+          "effects": [
+            "Physical Trauma: -1 to all physical Attribute rolls until healed",
+            "Psychological Trauma: -1 to all mental Attribute rolls until healed",
+            "Each Trauma adds a permanent limitation until resolved through therapy or significant events"
+          ]
+        }
+      }
+    },
+    "ship_combat_rpg": {
+      "source": "Star Trek Adventures (2d20) — Starship Combat",
+      "description": "Starship combat in the RPG uses the same 2d20 system with ship statistics.",
+      "ship_statistics": {
+        "hull": "Represents the ship's structural integrity; derived from the ship's size and construction",
+        "shields": "Represents the ship's deflector shield strength; regenerates when not under fire",
+        "maneuverability": "How well the ship can dodge attacks; modifies evasion",
+        "sensors": "Detection range and accuracy; modifies first strike and targeting",
+        "weapons": "Phaser and torpedo firepower; determines damage potential"
+      },
+      "combat_round": {
+        "description": "Each combat round represents several minutes of ship-to-ship combat.",
+        "phases": [
+          "Maneuver: Helm officer rolls Starship Operations to position the ship",
+          "Weapons: Tactical officer rolls Weapon Skill to fire phasers or torpedoes",
+          "Defense: Science officer rolls Science to modulate shields",
+          "Repair: Engineering officer rolls Engineering to repair damage"
+        ]
+      },
+      "ship_damage": {
+        "description": "Ships have Stress and Damage tracks similar to characters.",
+        "stress": "Hull Stress — represents minor damage and system strain",
+        "damage": "Hull Damage — represents serious structural damage",
+        "critical_systems": [
+          "Warp Drive: If destroyed, the ship cannot travel at FTL",
+          "Impulse Drive: If destroyed, the ship cannot maneuver at sublight",
+          "Shields: If destroyed, the ship is vulnerable to direct hits",
+          "Weapons: If destroyed, the ship cannot fight back",
+          "Life Support: If destroyed, crew takes Stress each round"
+        ]
+      }
+    }
+  }
+}

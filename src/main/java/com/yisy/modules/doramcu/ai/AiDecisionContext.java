@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.ai;
 
+import com.yisy.modules.doramcu.ai.framework.AiNetworkManager;
 import com.yisy.modules.doramcu.hex.Fleet;
 import com.yisy.modules.doramcu.hex.Game;
 import com.yisy.modules.doramcu.hex.Player;
@@ -29,6 +30,7 @@ public class AiDecisionContext {
     private final List<SpaceStation> stations;
     private final Map<String, Integer> resources;
     private final AiNetworkService aiNetworkService;
+    private final AiNetworkManager aiNetworkManager;
 
     private AiDecisionContext(Builder builder) {
         this.player = builder.player;
@@ -42,6 +44,7 @@ public class AiDecisionContext {
         this.stations = builder.stations != null ? builder.stations : List.of();
         this.resources = builder.resources != null ? builder.resources : Map.of();
         this.aiNetworkService = builder.aiNetworkService;
+        this.aiNetworkManager = builder.aiNetworkManager;
     }
 
     /**
@@ -96,9 +99,19 @@ public class AiDecisionContext {
     /**
      * Returns the AI network service for querying network connectivity.
      * May be null if the service is not available.
+     * @deprecated Use {@link #getAiNetworkManager()} instead for the unified framework interface.
      */
+    @Deprecated
     public AiNetworkService getAiNetworkService() {
         return aiNetworkService;
+    }
+
+    /**
+     * Returns the unified AI network manager for querying network connectivity.
+     * May be null if the manager is not available.
+     */
+    public AiNetworkManager getAiNetworkManager() {
+        return aiNetworkManager;
     }
 
     /**
@@ -116,6 +129,7 @@ public class AiDecisionContext {
         private List<SpaceStation> stations;
         private Map<String, Integer> resources;
         private AiNetworkService aiNetworkService;
+        private AiNetworkManager aiNetworkManager;
 
         public Builder player(Player player) {
             this.player = player;
@@ -169,6 +183,11 @@ public class AiDecisionContext {
 
         public Builder aiNetworkService(AiNetworkService aiNetworkService) {
             this.aiNetworkService = aiNetworkService;
+            return this;
+        }
+
+        public Builder aiNetworkManager(AiNetworkManager aiNetworkManager) {
+            this.aiNetworkManager = aiNetworkManager;
             return this;
         }
 

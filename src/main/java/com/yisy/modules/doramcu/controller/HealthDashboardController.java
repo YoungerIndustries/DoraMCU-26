@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.controller;
 
+import com.yisy.modules.doramcu.ai.framework.AiFrameworkRegistry;
 import com.yisy.modules.doramcu.config.PythonServerLauncher;
 import com.yisy.modules.doramcu.service.AiPlayerService;
 import com.yisy.modules.doramcu.service.GalaxyCreationService;
@@ -44,6 +45,7 @@ public class HealthDashboardController {
     private final ObjectProvider<TurnScheduler> turnSchedulerProvider;
     private final ObjectProvider<AiPlayerService> aiPlayerServiceProvider;
     private final ObjectProvider<GalaxyCreationService> galaxyCreationServiceProvider;
+    private final ObjectProvider<AiFrameworkRegistry> aiFrameworkRegistryProvider;
 
     @Autowired
     public HealthDashboardController(
@@ -52,6 +54,7 @@ public class HealthDashboardController {
             ObjectProvider<TurnScheduler> turnSchedulerProvider,
             ObjectProvider<AiPlayerService> aiPlayerServiceProvider,
             ObjectProvider<GalaxyCreationService> galaxyCreationServiceProvider,
+            ObjectProvider<AiFrameworkRegistry> aiFrameworkRegistryProvider,
             @Autowired(required = false) List<HealthIndicator> healthIndicators) {
         this.healthIndicators = healthIndicators != null ? healthIndicators : List.of();
         this.gameSessionServiceProvider = gameSessionServiceProvider;
@@ -59,6 +62,7 @@ public class HealthDashboardController {
         this.turnSchedulerProvider = turnSchedulerProvider;
         this.aiPlayerServiceProvider = aiPlayerServiceProvider;
         this.galaxyCreationServiceProvider = galaxyCreationServiceProvider;
+        this.aiFrameworkRegistryProvider = aiFrameworkRegistryProvider;
     }
 
     @GetMapping("/dashboard")
@@ -87,6 +91,9 @@ public class HealthDashboardController {
 
         // Turn scheduler
         dashboard.put("turnScheduler", getTurnSchedulerStatus());
+
+        // AI Framework status
+        dashboard.put("aiFramework", getAiFrameworkStatus());
 
         // DL circuit breaker
         dashboard.put("dlCircuitBreaker", getDlCircuitBreakerStatus());
@@ -290,6 +297,31 @@ public class HealthDashboardController {
         }
 
         return ResponseEntity.ok(result);
+    }
+
+    private Map<String, Object> getAiFrameworkStatus() {
+        Map<String, Object> status = new HashMap<>();
+        AiFrameworkRegistry registry = aiFrameworkRegistryProvider.getIfAvailable();
+
+        if (registry == null) {
+            status.put("status", "UNAVAILABLE");
+            status.put("message", "AI Framework Registry not configured");
+            return status;
+        }
+
+        status.put("status", registry.getStatus().name());
+        status.put("healthy", registry.isHealthy());
+        status.put("serviceCount", registry.getAllServices().size());
+        status.put("services", registry.getAllServices().stream()
+                .map(s -> Map.of(
+                        "id", s.getServiceId(),
+                        "name", s.getServiceName(),
+                        "status", s.getStatus().name(),
+                        "healthy", s.isHealthy()
+                ))
+                .toList());
+        status.putAll(registry.getMetrics());
+        return status;
     }
 
     private Map<String, Object> getJunieAgentStatus() {

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starship Troopers</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0a0a1a; color: #e0e0e0; }
+
+        .header {
+            background: linear-gradient(135deg, #1565c0 0%, #0a0a1a 100%);
+            padding: 16px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid #1976d2;
+        }
+        .header h1 { font-size: 24px; color: #fff; }
+        .header .subtitle { font-size: 12px; color: #a0a0a0; margin-top: 2px; }
+        .btn-back {
+            background: #1976d2; color: #fff; padding: 8px 16px;
+            border-radius: 6px; text-decoration: none; font-size: 14px;
+        }
+        .btn-back:hover { background: #1565c0; }
+
+        .layout { display: flex; height: calc(100vh - 70px); }
+        .sidebar {
+            width: 220px; background: #0d0d20; padding: 16px;
+            overflow-y: auto; border-right: 1px solid #1565c0;
+        }
+        .sidebar-section { margin-bottom: 20px; }
+        .sidebar-title {
+            font-size: 11px; text-transform: uppercase; color: #1976d2;
+            margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;
+        }
+        .sidebar-item {
+            padding: 8px 12px; margin: 2px 0; border-radius: 6px;
+            cursor: pointer; font-size: 14px; transition: all 0.2s;
+        }
+        .sidebar-item:hover { background: #1565c0; }
+        .sidebar-item.active { background: #1976d2; color: #fff; }
+
+        .main-content { flex: 1; padding: 24px; overflow-y: auto; }
+        .card {
+            background: #0d0d20; border-radius: 8px; padding: 20px;
+            margin-bottom: 16px; border: 1px solid #1565c0;
+        }
+        .card h3 { color: #1976d2; margin-bottom: 12px; font-size: 16px; }
+        .grid { display: grid; gap: 16px; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+        .btn {
+            background: #1976d2; color: #fff; border: none;
+            padding: 8px 16px; border-radius: 6px; cursor: pointer;
+            font-size: 14px; margin: 4px;
+        }
+        .btn:hover { background: #1565c0; }
+
+        .item-row {
+            background: #0a0a1a; border: 1px solid #1565c0;
+            border-radius: 6px; padding: 12px; margin: 6px 0;
+        }
+        .item-row .name { font-weight: 600; color: #fff; }
+        .item-row .detail { font-size: 12px; color: #a0a0a0; margin-top: 4px; }
+
+        .loading { text-align: center; padding: 40px; color: #a0a0a0; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🪖 Starship Troopers</h1>
+            <div class="subtitle">Federation Forces, Bugs & Planetary Combat</div>
+        </div>
+        <a href="younger-hq.html" class="btn-back">← Back to HQ Portal</a>
+    </div>
+
+    <div class="layout">
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Federation</div>
+                <div class="sidebar-item active" onclick="switchView('dashboard')">📊 Dashboard</div>
+                <div class="sidebar-item" onclick="switchView('units')">🪖 Units</div>
+                <div class="sidebar-item" onclick="switchView('weapons')">🔫 Weapons</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Enemy</div>
+                <div class="sidebar-item" onclick="switchView('bugs')">🐛 Bug Types</div>
+                <div class="sidebar-item" onclick="switchView('planets')">🪐 Planets</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Combat</div>
+                <div class="sidebar-item" onclick="switchView('battles')">⚔️ Battles</div>
+                <div class="sidebar-item" onclick="switchView('ranks')">🎖️ Ranks</div>
+            </div>
+        </div>
+
+        <div class="main-content" id="mainContent">
+            <div class="loading">Citizen, your country needs you...</div>
+        </div>
+    </div>
+
+    <script>
+        const API = '/api/v1/starshiptroopers';
+        let currentView = 'dashboard';
+        let units = [], weapons = [], bugs = [], planets = [], ranks = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUnits();
+            loadWeapons();
+            loadBugs();
+            loadPlanets();
+            loadRanks();
+            switchView('dashboard');
+        });
+
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            event?.target?.classList.add('active');
+            const content = document.getElementById('mainContent');
+            switch(view) {
+                case 'dashboard': renderDashboard(content); break;
+                case 'units': renderUnits(content); break;
+                case 'weapons': renderWeapons(content); break;
+                case 'bugs': renderBugs(content); break;
+                case 'planets': renderPlanets(content); break;
+                case 'battles': renderBattles(content); break;
+                case 'ranks': renderRanks(content); break;
+            }
+        }
+
+        async function renderDashboard(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🪖 Starship Troopers Dashboard</h2>
+                <div class="grid grid-3">
+                    <div class="card">
+                        <h3>🪖 Units</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#1976d2;">${units.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Federation units</div>
+                    </div>
+                    <div class="card">
+                        <h3>🐛 Bug Types</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#1976d2;">${bugs.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Known arachnids</div>
+                    </div>
+                    <div class="card">
+                        <h3>🪐 Planets</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#1976d2;">${planets.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Colonized worlds</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>⚡ Quick Actions</h3>
+                    <button class="btn" onclick="switchView('units')">View Units</button>
+                    <button class="btn" onclick="switchView('bugs')">Bug Intel</button>
+                    <button class="btn" onclick="switchView('planets')">Planet Map</button>
+                    <button class="btn" onclick="switchView('battles')">Deploy to Battle</button>
+                </div>
+            `;
+        }
+
+        function renderUnits(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🪖 Federation Units</h2>
+                <div class="card">
+                    ${units.map(u => `
+                        <div class="item-row">
+                            <div class="name">${u.name || 'Unknown'}</div>
+                            <div class="detail">${u.branch || 'Federation'} • ${u.type || 'Infantry'} • ${u.size || '?'} troops</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No units loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderWeapons(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🔫 Weapons</h2>
+                <div class="card">
+                    ${weapons.map(w => `
+                        <div class="item-row">
+                            <div class="name">${w.name || 'Unknown'}</div>
+                            <div class="detail">${w.type || ''} • Range: ${w.range || '?'} • Damage: ${w.damage || '?'}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No weapons loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderBugs(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🐛 Bug Intel</h2>
+                <div class="card">
+                    ${bugs.map(b => `
+                        <div class="item-row">
+                            <div class="name">${b.name || 'Unknown'}</div>
+                            <div class="detail">${b.type || ''} • Threat: ${b.threat || 'Low'} • ${b.description ? b.description.substring(0, 80) : ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No bug intel loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderPlanets(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🪐 Planets</h2>
+                <div class="card">
+                    ${planets.map(p => `
+                        <div class="item-row">
+                            <div class="name">${p.name || 'Unknown'}</div>
+                            <div class="detail">${p.status || 'Unknown'} • ${p.population || '?'} population ${p.infested ? '• ⚠️ INFESTED' : ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No planets loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderBattles(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">⚔️ Battles</h2>
+                <div class="card">
+                    <h3>Planetary Defense</h3>
+                    <p style="color:#a0a0a0;margin-bottom:12px;">Defend Federation colonies from the arachnid threat.</p>
+                    <button class="btn" onclick="alert('Battle system coming soon!')">Deploy Troops</button>
+                    <div id="battleLog" style="margin-top:12px;"></div>
+                </div>
+            `;
+        }
+
+        function renderRanks(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🎖️ Federation Ranks</h2>
+                <div class="card">
+                    ${ranks.map(r => `
+                        <div class="item-row">
+                            <div class="name">${r.name || 'Unknown'}</div>
+                            <div class="detail">${r.branch || ''} • ${r.description || ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No ranks loaded</div>'}
+                </div>
+            `;
+        }
+
+        async function loadUnits() {
+            try { units = await fetch(`${API}/units`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load units:', e); }
+        }
+
+        async function loadWeapons() {
+            try { weapons = await fetch(`${API}/weapons`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load weapons:', e); }
+        }
+
+        async function loadBugs() {
+            try { bugs = await fetch(`${API}/bugs`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load bugs:', e); }
+        }
+
+        async function loadPlanets() {
+            try { planets = await fetch(`${API}/planets`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load planets:', e); }
+        }
+
+        async function loadRanks() {
+            try { ranks = await fetch(`${API}/ranks`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load ranks:', e); }
+        }
+    </script>
+</body>
+</html>

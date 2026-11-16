@@ -16,6 +16,7 @@ import com.yisy.modules.doramcu.earth2026.repository.Earth2026ScenarioRepository
 import com.yisy.modules.doramcu.earth2026.repository.Earth2026StructureRepository;
 import com.yisy.modules.doramcu.event.GalaxyEventService;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
+import com.yisy.modules.doramcu.ai.framework.AiPlayerServiceAdapter;
 import com.yisy.modules.doramcu.hex.PlanetPopulationProgress;
 import com.yisy.modules.doramcu.repository.AiCharacterRepository;
 import com.yisy.modules.doramcu.service.AiPlayerService;
@@ -79,6 +80,7 @@ class AiAdminPersistenceTest {
         aiCharacterRepository = mock(AiCharacterRepository.class);
         rulesDatabaseService = mock(Earth2026RulesDatabaseService.class);
         aiPlayerService = mock(AiPlayerService.class);
+        AiPlayerServiceAdapter aiPlayerServiceAdapter = mock(AiPlayerServiceAdapter.class);
         gameSessionService = mock(GameSessionService.class);
         galaxyEventService = mock(GalaxyEventService.class);
         galaxyMetricsService = mock(GalaxyMetricsService.class);
@@ -94,7 +96,7 @@ class AiAdminPersistenceTest {
                 characterRepository, locationRepository, scenarioRepository, structureRepository,
                 countryRepository, regionRepository, economyRepository,
                 jobRepository, contractRepository, planetRepository, aiCharacterRepository,
-                rulesDatabaseService, aiPlayerService, gameSessionService, galaxyEventService,
+                rulesDatabaseService, aiPlayerService, aiPlayerServiceAdapter, gameSessionService, galaxyEventService,
                 galaxyMetricsService, planetBuilderBridge, economyBridge, transportBridge,
                 companionService, familyService, connectionService, organizationService
         );

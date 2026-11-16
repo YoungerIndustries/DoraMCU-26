@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.corporation.service;
 
 import com.yisy.modules.doramcu.ai.PlayerCloneService;
+import com.yisy.modules.doramcu.ai.framework.AiPlayerServiceAdapter;
 import com.yisy.modules.doramcu.model.Player;
 import com.yisy.modules.doramcu.service.AiPlayerService;
 import com.yisy.modules.doramcu.repository.PlayerRepository;
@@ -117,14 +118,21 @@ public class CorporateRoleTestConfig {
     }
 
     @Bean
+    public AiPlayerServiceAdapter aiPlayerServiceAdapter(AiPlayerService aiPlayerService) {
+        return new AiPlayerServiceAdapter(aiPlayerService);
+    }
+
+    @Bean
     public CorporateRoleService corporateRoleService(
             PlayerRepository playerRepository,
             PlayerCloneService playerCloneService,
-            AiPlayerService aiPlayerService) {
+            AiPlayerService aiPlayerService,
+            AiPlayerServiceAdapter aiPlayerServiceAdapter) {
         return new CorporateRoleService(
                 playerRepository,
                 playerCloneService,
-                aiPlayerService
+                aiPlayerService,
+                aiPlayerServiceAdapter
         );
     }
 }

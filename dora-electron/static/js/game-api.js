@@ -141,7 +141,7 @@ const GameAPI = (function() {
 
     // Session management
     async function createSession(sessionName) {
-        return request('/api/v1/sessions', {
+        return request('/api/v1/4x/sessions', {
             method: 'POST',
             body: { sessionName }
         });
@@ -149,7 +149,7 @@ const GameAPI = (function() {
 
     async function joinSession(sessionId) {
         try {
-            return await request(`/api/v1/sessions/${sessionId}/join`, {
+            return await request(`/api/v1/4x/sessions/${sessionId}/join`, {
                 method: 'POST',
                 body: {}
             });
@@ -163,45 +163,45 @@ const GameAPI = (function() {
     }
 
     async function leaveSession(sessionId) {
-        return request(`/api/v1/sessions/${sessionId}/leave`, {
+        return request(`/api/v1/4x/sessions/${sessionId}/leave`, {
             method: 'POST',
             body: {}
         });
     }
 
     async function listSessions() {
-        return request('/api/v1/sessions');
+        return request('/api/v1/4x/sessions');
     }
 
     // Game state
     async function getGameState(sessionId) {
-        return request(`/api/v1/sessions/${sessionId}/state`);
+        return request(`/api/v1/4x/sessions/${sessionId}/state`);
     }
 
     // Game actions
     async function moveFleet(sessionId, fleetId, targetX, targetY, solarSystemId) {
-        return request(`/api/v1/sessions/${sessionId}/actions/move-fleet`, {
+        return request(`/api/v1/4x/sessions/${sessionId}/actions/move-fleet`, {
             method: 'POST',
             body: { fleetId, targetX, targetY, solarSystemId }
         });
     }
 
     async function buildShip(sessionId, shipType, targetFleetId) {
-        return request(`/api/v1/sessions/${sessionId}/actions/build-ship`, {
+        return request(`/api/v1/4x/sessions/${sessionId}/actions/build-ship`, {
             method: 'POST',
             body: { shipType, targetFleetId }
         });
     }
 
     async function engageCombat(sessionId, attackerFleetId, defenderFleetId) {
-        return request(`/api/v1/sessions/${sessionId}/actions/engage-combat`, {
+        return request(`/api/v1/4x/sessions/${sessionId}/actions/engage-combat`, {
             method: 'POST',
             body: { attackerFleetId, defenderFleetId }
         });
     }
 
     async function advanceTurn(sessionId) {
-        return request(`/api/v1/sessions/${sessionId}/actions/advance-turn`, {
+        return request(`/api/v1/4x/sessions/${sessionId}/actions/advance-turn`, {
             method: 'POST',
             body: {}
         });

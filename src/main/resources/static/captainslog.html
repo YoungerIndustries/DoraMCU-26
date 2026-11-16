@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captain's Log - Star Trek RPG</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0a1628; color: #e0e0e0; }
+
+        .header {
+            background: linear-gradient(135deg, #1565c0 0%, #0a1628 100%);
+            padding: 16px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid #1976d2;
+        }
+        .header h1 { font-size: 24px; color: #fff; }
+        .header .subtitle { font-size: 12px; color: #a0a0a0; margin-top: 2px; }
+        .btn-back {
+            background: #1976d2; color: #fff; padding: 8px 16px;
+            border-radius: 6px; text-decoration: none; font-size: 14px;
+        }
+        .btn-back:hover { background: #1565c0; }
+
+        .layout { display: flex; height: calc(100vh - 70px); }
+        .sidebar {
+            width: 220px; background: #0d1b2a; padding: 16px;
+            overflow-y: auto; border-right: 1px solid #1565c0;
+        }
+        .sidebar-section { margin-bottom: 20px; }
+        .sidebar-title {
+            font-size: 11px; text-transform: uppercase; color: #1976d2;
+            margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;
+        }
+        .sidebar-item {
+            padding: 8px 12px; margin: 2px 0; border-radius: 6px;
+            cursor: pointer; font-size: 14px; transition: all 0.2s;
+        }
+        .sidebar-item:hover { background: #1565c0; }
+        .sidebar-item.active { background: #1976d2; color: #fff; }
+
+        .main-content { flex: 1; padding: 24px; overflow-y: auto; }
+        .card {
+            background: #0d1b2a; border-radius: 8px; padding: 20px;
+            margin-bottom: 16px; border: 1px solid #1565c0;
+        }
+        .card h3 { color: #1976d2; margin-bottom: 12px; font-size: 16px; }
+        .grid { display: grid; gap: 16px; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+        .btn {
+            background: #1976d2; color: #fff; border: none;
+            padding: 8px 16px; border-radius: 6px; cursor: pointer;
+            font-size: 14px; margin: 4px;
+        }
+        .btn:hover { background: #1565c0; }
+        .btn-success { background: #2e7d32; }
+        .btn-success:hover { background: #1b5e20; }
+
+        .item-row {
+            background: #0a1628; border: 1px solid #1565c0;
+            border-radius: 6px; padding: 12px; margin: 6px 0;
+        }
+        .item-row .name { font-weight: 600; color: #fff; }
+        .item-row .detail { font-size: 12px; color: #a0a0a0; margin-top: 4px; }
+
+        .dice-result {
+            font-size: 48px; font-weight: bold; text-align: center;
+            color: #1976d2; padding: 20px;
+        }
+        .dice-label { text-align: center; color: #a0a0a0; margin-top: 8px; }
+
+        .input {
+            background: #0a1628; border: 1px solid #1565c0;
+            color: #e0e0e0; padding: 8px 12px; border-radius: 6px;
+            width: 100%; font-size: 14px;
+        }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12px; color: #a0a0a0; margin-bottom: 4px; }
+
+        .loading { text-align: center; padding: 40px; color: #a0a0a0; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🖖 Captain's Log</h1>
+            <div class="subtitle">Star Trek Solo RPG - Characters, Ships & Missions</div>
+        </div>
+        <a href="younger-hq.html" class="btn-back">← Back to HQ Portal</a>
+    </div>
+
+    <div class="layout">
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Core</div>
+                <div class="sidebar-item active" onclick="switchView('dashboard')">📊 Dashboard</div>
+                <div class="sidebar-item" onclick="switchView('characters')">👤 Characters</div>
+                <div class="sidebar-item" onclick="switchView('ships')">🚀 Starships</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Gameplay</div>
+                <div class="sidebar-item" onclick="switchView('missions')">📋 Missions</div>
+                <div class="sidebar-item" onclick="switchView('dice')">🎲 2d20 Roller</div>
+                <div class="sidebar-item" onclick="switchView('combat')">⚔️ Combat</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Reference</div>
+                <div class="sidebar-item" onclick="switchView('oracles')">🔮 Oracles</div>
+                <div class="sidebar-item" onclick="switchView('logs')">📝 Log Entries</div>
+            </div>
+        </div>
+
+        <div class="main-content" id="mainContent">
+            <div class="loading">Loading Captain's Log...</div>
+        </div>
+    </div>
+
+    <script>
+        const API = '/api/v1/captains-log';
+        let currentView = 'dashboard';
+        let characters = [], ships = [], missions = [], logs = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCharacters();
+            loadShips();
+            loadMissions();
+            loadLogs();
+            switchView('dashboard');
+        });
+
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            event?.target?.classList.add('active');
+            const content = document.getElementById('mainContent');
+            switch(view) {
+                case 'dashboard': renderDashboard(content); break;
+                case 'characters': renderCharacters(content); break;
+                case 'ships': renderShips(content); break;
+                case 'missions': renderMissions(content); break;
+                case 'dice': renderDice(content); break;
+                case 'combat': renderCombat(content); break;
+                case 'oracles': renderOracles(content); break;
+                case 'logs': renderLogs(content); break;
+            }
+        }
+
+        async function renderDashboard(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🖖 Captain's Log Dashboard</h2>
+                <div class="grid grid-3">
+                    <div class="card">
+                        <h3>👤 Characters</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#1976d2;">${characters.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Starfleet officers</div>
+                    </div>
+                    <div class="card">
+                        <h3>🚀 Starships</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#1976d2;">${ships.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Registered vessels</div>
+                    </div>
+                    <div class="card">
+                        <h3>📋 Missions</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#1976d2;">${missions.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Active missions</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>⚡ Quick Actions</h3>
+                    <button class="btn" onclick="switchView('characters')">View Characters</button>
+                    <button class="btn" onclick="switchView('ships')">Fleet Overview</button>
+                    <button class="btn" onclick="switchView('dice')">Roll 2d20</button>
+                    <button class="btn btn-success" onclick="switchView('missions')">Start Mission</button>
+                </div>
+            `;
+        }
+
+        function renderCharacters(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">👤 Characters</h2>
+                <div class="card">
+                    <button class="btn" onclick="createCharacter()">+ New Character</button>
+                    ${characters.map(c => `
+                        <div class="item-row">
+                            <div class="name">${c.name || 'Unnamed'}</div>
+                            <div class="detail">${c.species || 'Human'} • ${c.rank || 'Ensign'} • ${c.role || 'No role'}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No characters yet. Create your first officer!</div>'}
+                </div>
+            `;
+        }
+
+        function renderShips(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🚀 Starships</h2>
+                <div class="card">
+                    <button class="btn" onclick="createShip()">+ New Starship</button>
+                    ${ships.map(s => `
+                        <div class="item-row">
+                            <div class="name">${s.name || 'Unnamed'}</div>
+                            <div class="detail">${s.class || s.type || 'Unknown class'} ${s.registry ? '• NCC-' + s.registry : ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No starships yet. Commission your first vessel!</div>'}
+                </div>
+            `;
+        }
+
+        function renderMissions(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">📋 Missions</h2>
+                <div class="card">
+                    <button class="btn btn-success" onclick="startMission()">+ New Mission</button>
+                    ${missions.map(m => `
+                        <div class="item-row">
+                            <div class="name">${m.name || 'Unnamed Mission'}</div>
+                            <div class="detail">${m.status || 'Unknown'} ${m.objective ? '• ' + m.objective.substring(0, 80) : ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No active missions. Start a new adventure!</div>'}
+                </div>
+            `;
+        }
+
+        function renderDice(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🎲 2d20 Dice Roller</h2>
+                <div class="card">
+                    <div class="form-group">
+                        <label>Modifier</label>
+                        <input class="input" id="diceMod" type="number" value="0" min="-10" max="10">
+                    </div>
+                    <div class="form-group">
+                        <label>Difficulty (Target Number)</label>
+                        <select class="input" id="diceDifficulty">
+                            <option value="10">Easy (10+)</option>
+                            <option value="13" selected>Medium (13+)</option>
+                            <option value="16">Hard (16+)</option>
+                            <option value="19">Extreme (19+)</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="roll2d20()">Roll 2d20</button>
+                    <div id="diceResult" style="margin-top:20px;"></div>
+                </div>
+            `;
+        }
+
+        function roll2d20() {
+            const mod = parseInt(document.getElementById('diceMod').value) || 0;
+            const difficulty = parseInt(document.getElementById('diceDifficulty').value) || 13;
+            const d1 = Math.floor(Math.random() * 20) + 1;
+            const d2 = Math.floor(Math.random() * 20) + 1;
+            const total = d1 + d2 + mod;
+            const result = total >= difficulty ? 'SUCCESS' : 'FAILURE';
+            const resultColor = result === 'SUCCESS' ? '#4caf50' : '#e53e3e';
+
+            document.getElementById('diceResult').innerHTML = `
+                <div class="dice-result" style="color:${resultColor};">${total}</div>
+                <div class="dice-label">d1: ${d1} + d2: ${d2} ${mod >= 0 ? '+' : ''}${mod} = ${total}</div>
+                <div class="dice-label" style="font-size:18px;font-weight:bold;color:${resultColor};">${result} (Target: ${difficulty}+)</div>
+            `;
+        }
+
+        function renderCombat(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">⚔️ Combat</h2>
+                <div class="card">
+                    <h3>Combat Tracker</h3>
+                    <p style="color:#a0a0a0;margin-bottom:12px;">Track combat encounters and resolve actions using 2d20 rolls.</p>
+                    <button class="btn" onclick="switchView('dice')">Roll for Attack</button>
+                    <div id="combatLog" style="margin-top:12px;"></div>
+                </div>
+            `;
+        }
+
+        function renderOracles(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🔮 Oracles</h2>
+                <div class="card">
+                    <h3>Oracle Queries</h3>
+                    <p style="color:#a0a0a0;margin-bottom:12px;">Ask the oracle questions about your Star Trek universe.</p>
+                    <div class="form-group">
+                        <input class="input" id="oracleQuery" placeholder="Ask the oracle...">
+                    </div>
+                    <button class="btn" onclick="queryOracle()">Query Oracle</button>
+                    <div id="oracleResult" style="margin-top:12px;"></div>
+                </div>
+            `;
+        }
+
+        async function queryOracle() {
+            const query = document.getElementById('oracleQuery').value;
+            if (!query) return;
+            const result = document.getElementById('oracleResult');
+            result.innerHTML = '<div class="loading">Consulting the oracle...</div>';
+            try {
+                const response = await fetch(`${API}/oracle?query=${encodeURIComponent(query)}`);
+                const data = await response.json();
+                result.innerHTML = `<div class="item-row"><div class="name">Oracle Response</div><div class="detail">${data.response || data.answer || 'No response'}</div></div>`;
+            } catch (e) {
+                result.innerHTML = `<div style="color:#e53e3e;">Oracle unavailable: ${e.message}</div>`;
+            }
+        }
+
+        function renderLogs(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">📝 Log Entries</h2>
+                <div class="card">
+                    <button class="btn" onclick="addLogEntry()">+ New Entry</button>
+                    ${logs.map(l => `
+                        <div class="item-row">
+                            <div class="name">${l.stardate || 'Unknown'} - ${l.title || 'Untitled'}</div>
+                            <div class="detail">${l.content ? l.content.substring(0, 120) + '...' : ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No log entries yet.</div>'}
+                </div>
+            `;
+        }
+
+        async function loadCharacters() {
+            try { characters = await fetch(`${API}/characters`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load characters:', e); }
+        }
+
+        async function loadShips() {
+            try { ships = await fetch(`${API}/starships`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load ships:', e); }
+        }
+
+        async function loadMissions() {
+            try { missions = await fetch(`${API}/missions`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load missions:', e); }
+        }
+
+        async function loadLogs() {
+            try { logs = await fetch(`${API}/entries`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load logs:', e); }
+        }
+
+        async function createCharacter() {
+            const name = prompt('Character name:');
+            if (!name) return;
+            const species = prompt('Species (Human, Vulcan, Betazoid, etc.):', 'Human') || 'Human';
+            const rank = prompt('Rank (Ensign, Lieutenant, Commander, Captain):', 'Ensign') || 'Ensign';
+            try {
+                await fetch(`${API}/characters`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name, species, rank})
+                });
+                await loadCharacters();
+                switchView('characters');
+            } catch (e) { console.error('Failed to create character:', e); }
+        }
+
+        async function createShip() {
+            const name = prompt('Ship name:');
+            if (!name) return;
+            const shipClass = prompt('Ship class (Constitution, Galaxy, Sovereign, etc.):', 'Constitution') || 'Constitution';
+            try {
+                await fetch(`${API}/starships`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name, class: shipClass})
+                });
+                await loadShips();
+                switchView('ships');
+            } catch (e) { console.error('Failed to create ship:', e); }
+        }
+
+        async function startMission() {
+            try {
+                const response = await fetch(`${API}/missions`, { method: 'POST', headers: {'Content-Type': 'application/json'} });
+                if (response.ok) {
+                    await loadMissions();
+                    switchView('missions');
+                }
+            } catch (e) { console.error('Failed to start mission:', e); }
+        }
+
+        function addLogEntry() {
+            const title = prompt('Log entry title:');
+            if (!title) return;
+            const content = prompt('Log entry content:');
+            logs.unshift({stardate: '47988.' + Math.floor(Math.random()*9), title, content: content || ''});
+            switchView('logs');
+        }
+    </script>
+</body>
+</html>

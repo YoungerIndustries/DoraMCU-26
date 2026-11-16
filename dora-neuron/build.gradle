@@ -5,12 +5,12 @@ plugins {
 }
 
 group = 'com.YISY.modules'
-version = project.property('app.version')
+version = findProperty('app.version')
 description = 'DoraMCU Neuron — Satellite AI node and web gateway'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(project.property('java.version').toInteger())
+        languageVersion = JavaLanguageVersion.of(findProperty('java.version').toString().toInteger())
     }
 }
 

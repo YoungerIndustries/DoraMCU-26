@@ -3,6 +3,8 @@ package com.yisy.modules.doramcu.controller;
 import com.yisy.modules.doramcu.dto.RegisterRequest;
 import com.yisy.modules.doramcu.event.GalaxyEvent;
 import com.yisy.modules.doramcu.event.GalaxyEventService;
+import com.yisy.modules.doramcu.corporation.model.SilverCurrencyConstants;
+import com.yisy.modules.doramcu.corporation.service.TreasuryLoanService;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.eve.model.EveCorporation;
 import com.yisy.modules.doramcu.hex.GalaxyFactory;
@@ -63,6 +65,7 @@ public class OnboardingController {
     private final EveCorporationRepository eveCorporationRepository;
     private final AiCharacterRepository aiCharacterRepository;
     private final GalaxyEventService galaxyEventService;
+    private final TreasuryLoanService treasuryLoanService;
 
     // Seed promo code names that should never be deleted
     private static final Set<String> SEED_PROMO_CODES = Set.of("IMMORTAL", "DRAGONS", "RESET", "GALAXY_RESET", "WELCOME2026", "EARLYBIRD");
@@ -93,7 +96,8 @@ public class OnboardingController {
             ObjectProvider<Earth2026CharacterRepository> earth2026CharacterRepositoryProvider,
             ObjectProvider<EveCorporationRepository> eveCorporationRepositoryProvider,
             ObjectProvider<AiCharacterRepository> aiCharacterRepositoryProvider,
-            ObjectProvider<GalaxyEventService> galaxyEventServiceProvider) {
+            ObjectProvider<GalaxyEventService> galaxyEventServiceProvider,
+            TreasuryLoanService treasuryLoanService) {
         this.promoCodeService = promoCodeService;
         this.promoCodeRepository = promoCodeRepository;
         this.userRepository = userRepository;
@@ -107,6 +111,7 @@ public class OnboardingController {
         this.eveCorporationRepository = eveCorporationRepositoryProvider.getIfAvailable();
         this.aiCharacterRepository = aiCharacterRepositoryProvider.getIfAvailable();
         this.galaxyEventService = galaxyEventServiceProvider.getIfAvailable();
+        this.treasuryLoanService = treasuryLoanService;
     }
 
     /**
@@ -476,11 +481,24 @@ public class OnboardingController {
                 corporation.setCeoName(username.trim());
                 corporation.setCeoPlayerId(String.valueOf(playerId));
                 corporation.setDescription("Corporation founded by " + username.trim() + ".");
-                corporation.setCreditBalance(10000L);
+                // Silver-backed starting capital: $500 USD = 100,000 credits
+                // Player receives full amount, with a treasury loan for $495 of it
+                corporation.setCreditBalance(SilverCurrencyConstants.STARTING_CAPITAL_CREDITS);
                 corporation = eveCorporationRepository.save(corporation);
                 corporationId = corporation.getId();
                 corporationTicker = ticker;
-                log.info("Onboarding: created corporation '{}' ({}) for user: {}", corpName, ticker, username);
+                log.info("Onboarding: created corporation '{}' ({}) for user: {} with {} starting capital",
+                        corpName, ticker, username,
+                        SilverCurrencyConstants.formatCredits(SilverCurrencyConstants.STARTING_CAPITAL_CREDITS));
+
+                // Create the treasury loan for the remaining $495 USD
+                try {
+                    treasuryLoanService.createStartupLoan(corporationId);
+                    log.info("Onboarding: created treasury loan for corporation {} ({})", corpName, ticker);
+                } catch (Exception e) {
+                    log.error("Onboarding: failed to create treasury loan for corporation {}: {}",
+                            corpName, e.getMessage());
+                }
 
                 // Create the AI VP for the corporation
                 String vpName = username.trim().replace(" ", "") + " AI";

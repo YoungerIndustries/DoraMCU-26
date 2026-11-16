@@ -58,24 +58,27 @@ configMapGenerator:
       - NEURON_SECURITY_JWT_ENABLED="true"
       - NEURON_SECURITY_MODEL_SIGNATURE_ENABLED="true"
 
-secretGenerator:
-  - name: doramcu-secrets-prod
-    behavior: merge
-    literals:
-      # These MUST be replaced with actual secure values
-      - db-password=CHANGE-ME-PRODUCTION
-      - jwt-secret=CHANGE-ME-PRODUCTION
-      - neuron-jwt-secret=CHANGE-ME-PRODUCTION
-      - redis-password=CHANGE-ME-PRODUCTION
-      - grafana-admin-password=CHANGE-ME-PRODUCTION
+# Secrets must be injected by the CI/CD pipeline using an external secrets manager
+# (e.g., HashiCorp Vault, AWS Secrets Manager, or Kubernetes External Secrets Operator).
+# Do NOT commit real secrets to this file.
+#
+# Example: use a kustomize secret generator plugin or seal-secrets in your pipeline:
+#   kustomize build k8s/overlays/production | kubeseal --format=yaml > sealed-secrets.yaml
+#
+# Required secret keys:
+#   - db-password
+#   - jwt-secret
+#   - neuron-jwt-secret
+#   - redis-password
+#   - grafana-admin-password
 
 images:
   - name: doramcu/app
     newName: doramcu/app
-    newTag: "0.3.9"
+    newTag: "0.4.0"
   - name: doramcu/neuron
     newName: doramcu/neuron
-    newTag: "0.3.9"
+    newTag: "0.4.0"
   - name: doramcu/dl-python
     newName: doramcu/dl-python
-    newTag: "0.3.9"
+    newTag: "0.4.0"

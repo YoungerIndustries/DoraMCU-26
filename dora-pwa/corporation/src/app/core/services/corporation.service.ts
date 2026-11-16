@@ -6,6 +6,9 @@ import {
   CorporationState,
   FinancialReport,
   FinanceTransaction,
+  FinancialBreakdown,
+  PayrollSummary,
+  ContractCostEstimate,
   AiAction,
   AiTurnSummary,
   CareerDetails,
@@ -131,6 +134,41 @@ export class CorporationService {
     return this.http.get<FinanceTransaction[]>(`${this.apiBase}/${this.corporationId}/finance/transactions`, {
       params: { page, size },
     });
+  }
+
+  getFinancialBreakdown(): Observable<FinancialBreakdown> {
+    return this.http.get<FinancialBreakdown>(`${this.apiBase}/${this.corporationId}/finance/breakdown`);
+  }
+
+  getPayrollSummary(): Observable<PayrollSummary> {
+    return this.http.get<PayrollSummary>(`${this.apiBase}/${this.corporationId}/finance/payroll`);
+  }
+
+  // ---- Contract Crew Assignment ----
+
+  assignCrewToContract(contractId: number, hiringId: number): Observable<unknown> {
+    return this.http.post(`${this.apiBase}/contracts/${contractId}/assign-crew`, { hiringId });
+  }
+
+  removeCrewFromContract(contractId: number, hiringId: number): Observable<unknown> {
+    return this.http.post(`${this.apiBase}/contracts/${contractId}/remove-crew`, { hiringId });
+  }
+
+  /**
+   * Estimate the cost of a contract based on crew salaries and duration.
+   */
+  estimateContractCost(contract: ContractSummary): ContractCostEstimate {
+    const dailyCost = this.state()?.activeHires?.reduce((sum, hire) => sum + hire.dailySalary, 0) || 0;
+    const estimatedCost = Math.round((dailyCost * contract.durationTurns) / 7);
+    return {
+      contractId: contract.id,
+      title: contract.title,
+      payment: contract.payment,
+      estimatedCost,
+      netRoi: contract.payment - estimatedCost,
+      durationTurns: contract.durationTurns,
+      difficulty: contract.difficulty,
+    };
   }
 
   // ---- AI Assistant ----

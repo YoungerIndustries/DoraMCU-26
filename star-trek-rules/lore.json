@@ -1,0 +1,360 @@
+{
+  "lore": {
+    "starfleet": {
+      "description": "Starfleet is the primary exploratory, scientific, and defensive arm of the United Federation of Planets. Founded in the 22nd century, Starfleet's mission is to explore strange new worlds, seek out new life and new civilizations, and to boldly go where no one has gone before.",
+      "motto": "Space: The Final Frontier",
+      "headquarters": "San Francisco, Planet Earth",
+      "ranks": [
+        "Ensign",
+        "Lieutenant Junior Grade",
+        "Lieutenant",
+        "Lieutenant Commander",
+        "Commander",
+        "Captain",
+        "Captain Upper Half",
+        "Commodore",
+        "Captain (Flag Rank)",
+        "Rear Admiral Lower Half",
+        "Rear Admiral",
+        "Vice Admiral",
+        "Admiral",
+        "Fleet Admiral"
+      ],
+      "divisions": {
+        "command": {
+          "color": "Gold",
+          "description": "Commanding officers, first officers, and tactical officers"
+        },
+        "science": {
+          "color": "Blue",
+          "description": "Science officers, medical officers, and navigators"
+        },
+        "operations": {
+          "color": "Red",
+          "description": "Engineering, security, and communications officers"
+        }
+      }
+    },
+    "eras": [
+      {
+        "name": "The Original Series Era",
+        "period": "2250s - 2270s",
+        "description": "The era of the USS Enterprise (NCC-1701) under Captain James T. Kirk. This period saw the exploration of the galaxy, first contact with numerous civilizations, and conflicts with the Klingons, Romulans, and various threats.",
+        "key_events": [
+          "Defeat of Khan Noonien Singh",
+          "The Genesis Device crisis",
+          "The Khitomer Accords",
+          "The death of Spock and his resurrection"
+        ],
+        "notable_ships": [
+          "USS Enterprise (NCC-1701)",
+          "USS Constitution",
+          "USS Intrepid"
+        ]
+      },
+      {
+        "name": "The Next Generation Era",
+        "period": "2360s - 2370s",
+        "description": "The era of the USS Enterprise-D and E under Captain Jean-Luc Picard. This period saw the rise of the Borg threat, the Dominion War, and the exploration of the Delta Quadrant.",
+        "key_events": [
+          "First contact with the Borg",
+          "Picard's assimilation as Locutus",
+          "The Dominion War",
+          "The search for Voyager"
+        ],
+        "notable_ships": [
+          "USS Enterprise-D (NCC-1701-D)",
+          "USS Enterprise-E (NCC-1701-E)",
+          "USS Voyager"
+        ]
+      },
+      {
+        "name": "The Kelvin Timeline",
+        "period": "2230s - 2260s (alternate)",
+        "description": "An alternate timeline created by the time-traveling Nero. This era saw a younger Kirk rise to command of the USS Enterprise and face threats including Khan Noonien Singh and the Klingons.",
+        "key_events": [
+          "Attack on the USS Kelvin",
+          "Kirk's graduation from Starfleet Academy",
+          "The defeat of Khan",
+          "The Battle of the Klingon frontier"
+        ],
+        "notable_ships": [
+          "USS Kelvin",
+          "USS Enterprise (NCC-1701, Kelvin)",
+          "USS Vengeance"
+        ]
+      }
+    ],
+    "factions": {
+      "federation": {
+        "name": "United Federation of Planets",
+        "description": "A democratic interstellar federation of planets dedicated to peace, exploration, and scientific discovery. Earth is a founding member.",
+        "alignment": "Lawful Good",
+        "motto": "Peace through strength, strength through unity"
+      },
+      "klingon_empire": {
+        "name": "Klingon Empire",
+        "description": "A warrior culture that values honor, strength, and combat. The Klingons are both allies and adversaries of the Federation.",
+        "alignment": "Neutral",
+        "motto": "The life of the Empire is the strength of the warrior"
+      },
+      "romulan_star_empire": {
+        "name": "Romulan Star Empire",
+        "description": "A secretive and militaristic empire that borders the Federation. The Romulans are masters of deception and strategy.",
+        "alignment": "Lawful Neutral",
+        "motto": "The needs of the many outweigh the needs of the few"
+      },
+      "borg_collective": {
+        "name": "Borg Collective",
+        "description": "A cybernetic hive mind that assimilates other species to achieve perfection. The Borg are the greatest threat to individuality in the galaxy.",
+        "alignment": "Lawful Evil",
+        "motto": "You will be assimilated. Resistance is futile."
+      },
+      "dominion": {
+        "name": "The Dominion",
+        "description": "A powerful empire ruled by the Founders, shape-shifting beings who control the Jem'Hadar and Vorta. The Dominion seeks to control all of space.",
+        "alignment": "Lawful Evil",
+        "motto": "The Dominion will prevail"
+      },
+      "augment": {
+        "name": "Augments",
+        "description": "Genetically enhanced humans who rose to power during the Eugenics Wars. Khan Noonien Singh was the most famous Augment.",
+        "alignment": "Chaotic Evil",
+        "motto": "The strong rule the weak"
+      }
+    },
+    "characters": {
+      "james_t_kirk": {
+        "name": "James T. Kirk",
+        "species": "Human",
+        "rank": "Captain",
+        "affiliation": "Starfleet",
+        "era": "Original Series / Kelvin Timeline",
+        "description": "Legendary Starfleet captain who commanded the USS Enterprise. Known for his bold, intuitive leadership style and his willingness to bend regulations to do what's right.",
+        "abilities": [
+          "Charismatic leadership",
+          "Tactical brilliance",
+          "Hand-to-hand combat",
+          "Negotiation"
+        ],
+        "notable_quotes": [
+          "Beam me down, Scotty.",
+          "There's always another way, Spock. There always is.",
+          "I'm playing the man, not the odds."
+        ]
+      },
+      "spock": {
+        "name": "Spock",
+        "species": "Half-Human, Half-Vulcan",
+        "rank": "Commander",
+        "affiliation": "Starfleet",
+        "era": "Original Series",
+        "description": "Half-Human, Half-Vulcan Science Officer who serves as the logical counterbalance to Captain Kirk's intuition. A bridge between two cultures and two ways of thinking.",
+        "abilities": [
+          "Vulcan mind meld",
+          "Vulcan nerve pinch",
+          "Superhuman intellect",
+          "Scientific analysis"
+        ],
+        "notable_quotes": [
+          "Live long and prosper.",
+          "Fascinating.",
+          "The needs of the many outweigh the needs of the few, or the one."
+        ]
+      },
+      "leonard_mccoy": {
+        "name": "Leonard 'Bones' McCoy",
+        "species": "Human",
+        "rank": "Doctor",
+        "affiliation": "Starfleet",
+        "era": "Original Series",
+        "description": "Chief Medical Officer of the USS Enterprise, known for his compassion, his skepticism of technology, and his role as the moral conscience of the crew.",
+        "abilities": [
+          "Medical expertise",
+          "Diagnostic skills",
+          "Surgical proficiency",
+          "Moral authority"
+        ],
+        "notable_quotes": [
+          "He's dead, Jim.",
+          "I'm a doctor, not a...",
+          "Of all the souls I have encountered in my travels, humanity has always been the most bizarre."
+        ]
+      },
+      "data": {
+        "name": "Lieutenant Commander Data",
+        "species": "Android (Soong-type)",
+        "rank": "Lieutenant Commander",
+        "affiliation": "Starfleet",
+        "era": "The Next Generation",
+        "description": "Soong-type android who serves as the Executive Officer of the USS Enterprise-D. His quest to understand humanity challenges the definition of sentience and personhood.",
+        "abilities": [
+          "Superhuman strength",
+          "Superhuman speed",
+          "Encyclopedic knowledge",
+          "Split consciousness"
+        ],
+        "notable_quotes": [
+          "I do not understand humor.",
+          "Fascinating.",
+          "I desire to become alive."
+        ]
+      },
+      "jean_luc_picard": {
+        "name": "Jean-Luc Picard",
+        "species": "Human",
+        "rank": "Captain",
+        "affiliation": "Starfleet",
+        "era": "The Next Generation",
+        "description": "Legendary Starfleet captain who commanded the USS Enterprise-D and E. Known for his diplomatic approach, his love of literature, and his fight against the Borg.",
+        "abilities": [
+          "Diplomatic negotiation",
+          "Tactical command",
+          "Literary knowledge",
+          "Leadership"
+        ],
+        "notable_quotes": [
+          "Make it so.",
+          "Engage.",
+          "Earl Grey, hot."
+        ]
+      },
+      "khan_noonien_singh": {
+        "name": "Khan Noonien Singh",
+        "species": "Human (Augment)",
+        "rank": "Dictator (former)",
+        "affiliation": "Augment",
+        "era": "Original Series / Kelvin Timeline",
+        "description": "Genetically augmented superhuman who ruled a third of Earth during the Eugenics Wars. Exiled into space, he became one of the most dangerous adversaries in the galaxy.",
+        "abilities": [
+          "Superhuman strength",
+          "Superhuman intellect",
+          "Strategic brilliance",
+          "Enhanced durability"
+        ],
+        "notable_quotes": [
+          "His whole life he has searched for a worthy adversary. Has he found one? Has I?",
+          "You would have to sentence all of mankind to death to punish me for what I have done.",
+          "I am Khan."
+        ]
+      }
+    },
+    "species": {
+      "human": {
+        "name": "Human",
+        "homeworld": "Planet Earth",
+        "description": "A diverse and adaptable species from Planet Earth. Humans are known for their curiosity, ambition, and capacity for both great good and great evil.",
+        "traits": [
+          "Curious",
+          "Adaptable",
+          "Ambitious",
+          "Emotional"
+        ]
+      },
+      "vulcan": {
+        "name": "Vulcan",
+        "homeworld": "Vulcan",
+        "description": "A logical and disciplined species from the planet Vulcan. Vulcans suppress their emotions in favor of logic and reason.",
+        "traits": [
+          "Logical",
+          "Disciplined",
+          "Telepathic",
+          "Enhanced strength"
+        ],
+        "abilities": [
+          "Mind meld",
+          "Vulcan nerve pinch",
+          "Kolinahr (emotion suppression)"
+        ]
+      },
+      "android": {
+        "name": "Android (Soong-type)",
+        "homeworld": "Omicron Ceti III",
+        "description": "Artificial beings created by Dr. Noonien Soong to be indistinguishable from humans. Androids possess superhuman abilities and an insatiable curiosity about humanity.",
+        "traits": [
+          "Superhuman strength",
+          "Superhuman speed",
+          "Encyclopedic knowledge",
+          "No emotions (without emulation chip)"
+        ]
+      },
+      "augment": {
+        "name": "Augment",
+        "homeworld": "Planet Earth",
+        "description": "Genetically enhanced humans who possess superior strength, intelligence, and charisma. Augments were banned after the Eugenics Wars.",
+        "traits": [
+          "Superhuman strength",
+          "Superhuman intellect",
+          "Enhanced durability",
+          "Charismatic"
+        ]
+      }
+    },
+    "ships": {
+      "uss_enterprise_ncc_1701": {
+        "name": "USS Enterprise (NCC-1701)",
+        "class": "Constitution-class",
+        "era": "Original Series",
+        "captain": "James T. Kirk",
+        "description": "The iconic starship commanded by Captain Kirk during the Original Series. The Enterprise explored the galaxy and faced numerous threats.",
+        "capabilities": [
+          "Warp drive",
+          "Phasers",
+          "Photon torpedoes",
+          "Transporter"
+        ]
+      },
+      "uss_enterprise_ncc_1701_d": {
+        "name": "USS Enterprise-D (NCC-1701-D)",
+        "class": "Galaxy-class",
+        "era": "The Next Generation",
+        "captain": "Jean-Luc Picard",
+        "description": "The flagship of the Federation during the TNG era. The Enterprise-D was a city-sized starship with a crew of over 1,000.",
+        "capabilities": [
+          "Warp drive",
+          "Phasers",
+          "Photon torpedoes",
+          "Transporter",
+          "Holodeck"
+        ]
+      },
+      "uss_enterprise_ncc_1701_e": {
+        "name": "USS Enterprise-E (NCC-1701-E)",
+        "class": "Sovereign-class",
+        "era": "The Next Generation / Movies",
+        "captain": "Jean-Luc Picard",
+        "description": "The successor to the Enterprise-D, the Enterprise-E was a more advanced and powerful starship designed for exploration and combat.",
+        "capabilities": [
+          "Warp drive",
+          "Phasers",
+          "Photon torpedoes",
+          "Transporter",
+          "Holodeck",
+          "Enhanced shields"
+        ]
+      }
+    },
+    "key_concepts": {
+      "prime_directive": {
+        "name": "Prime Directive",
+        "description": "The First Directive of Starfleet, prohibiting interference with the natural development of less advanced civilizations. Violating the Prime Directive is a serious offense."
+      },
+      "transporter": {
+        "name": "Transporter",
+        "description": "A device that dematerializes matter at one location and rematerializes it at another. The transporter is used for beaming personnel and objects between ships and planets."
+      },
+      "tricorder": {
+        "name": "Tricorder",
+        "description": "A handheld scanning device used by Starfleet officers to analyze biological, chemical, and physical phenomena. Medical tricorders are used for diagnostic purposes."
+      },
+      "phasers": {
+        "name": "Phasers",
+        "description": "The standard energy weapon of Starfleet. Phasers can be set to stun or kill, and are used for defense and combat."
+      },
+      "warp_drive": {
+        "name": "Warp Drive",
+        "description": "A propulsion system that allows starships to travel faster than light by creating a warp bubble around the ship. Warp factors range from 1 to 9+."
+      }
+    }
+  }
+}

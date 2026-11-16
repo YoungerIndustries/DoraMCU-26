@@ -1,0 +1,222 @@
+# =============================================================================
+# DoraMCU Production Docker Compose Configuration
+# =============================================================================
+# Production-specific overrides for docker-compose.yml.
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Key differences from default docker-compose.yml:
+# - No debug ports exposed
+# - Production replicas for high availability
+# - Production resource limits
+# - OpenHands disabled (development-only service)
+# - Production image tags
+# - Production logging driver
+# =============================================================================
+
+services:
+
+  # Nginx reverse proxy - production configuration
+  nginx:
+    image: doramcu/web:0.4.0
+    container_name: doramcu-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # DoraMCU Neuron - production configuration
+  neuron:
+    image: doramcu/neuron:0.4.0
+    container_name: doramcu-neuron
+    ports:
+      - "8090:8090"
+    environment:
+      - NEURON_COORDINATOR_URL=http://app:8080
+      - NEURON_GAME_SERVER_URL=http://app:8080
+      - NEURON_SECURITY_JWT_SECRET=${NEURON_SECURITY_JWT_SECRET}
+      - NEURON_SECURITY_JWT_ENABLED=true
+      - NEURON_SECURITY_MODEL_SIGNATURE_ENABLED=true
+      - JVM_XMX=-Xmx512m
+    restart: always
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  # DoraMCU App - production configuration
+  app:
+    image: doramcu/app:0.4.0
+    container_name: doramcu
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,production
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - DL_MODE=rest
+      - JVM_XMX=-Xmx1G
+      # Production-specific overrides
+      - SERVER_FORWARD_HEADERS_STRATEGY=framework
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,metrics,prometheus
+      - LOGGING_LEVEL_ROOT=WARN
+      - LOGGING_LEVEL_COM_YISY_MODULES_DORAMCU=INFO
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      dl:
+        condition: service_started
+    restart: always
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    # Health check for orchestration
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 120s
+      retries: 5
+
+  # MySQL - production configuration
+  mysql:
+    image: mysql:8.4
+    container_name: doramcu-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=doramcu
+      # Production MySQL tuning
+      - MYSQL_INNODB_BUFFER_POOL_SIZE=1G
+      - MYSQL_MAX_CONNECTIONS=200
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./backups:/backups
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # DL Python service - production configuration
+  dl:
+    build:
+      context: ./dora-dl-python
+      dockerfile: Dockerfile.dl
+    container_name: doramcu-dl
+    ports:
+      - "8083:8083"
+    volumes:
+      - dl-models:/app/dl-models
+    environment:
+      - DORA_DL_PORT=8083
+      - DL_MODEL_DIR=/app/dl-models
+      - DL_BLEND_FACTOR=0.5
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Redis - production configuration
+  redis:
+    image: redis:7-alpine
+    container_name: doramcu-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  # OpenHands is explicitly disabled in production
+  # To enable for debugging, remove the 'profiles' line below
+  openhands:
+    profiles:
+      - debug  # This service will only start with: --profile debug
+
+volumes:
+  mysql-data:
+    driver: local
+  redis-data:
+    driver: local
+  dl-models:
+    driver: local

@@ -14,6 +14,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -279,5 +280,99 @@ public class CorporationEconomyService {
                 .orElseThrow(() -> new IllegalArgumentException("Corporation not found: " + corporationId));
         long balance = corp.getCreditBalance() != null ? corp.getCreditBalance() : 0L;
         return balance < 0;
+    }
+
+    // ---- Financial Breakdown ----
+
+    /**
+     * Get a detailed financial breakdown grouped by transaction type.
+     * Returns revenue and expense categories with subtotals.
+     *
+     * @param corporationId the corporation ID
+     * @return map with revenueBreakdown, expenseBreakdown, and totals
+     */
+    @Transactional(readOnly = true)
+    public Map<String, Object> getFinancialBreakdown(Long corporationId) {
+        // Revenue breakdown
+        Map<String, Long> revenueBreakdown = new HashMap<>();
+        revenueBreakdown.put("contractRevenue", transactionRepository.sumByCorporationIdAndType(corporationId, TransactionType.REVENUE));
+        revenueBreakdown.put("bonuses", transactionRepository.sumByCorporationIdAndType(corporationId, TransactionType.BONUS));
+        long totalRevenue = revenueBreakdown.values().stream().mapToLong(Long::longValue).sum();
+
+        // Expense breakdown
+        Map<String, Long> expenseBreakdown = new HashMap<>();
+        long salaryTotal = Math.abs(transactionRepository.sumByCorporationIdAndType(corporationId, TransactionType.SALARY));
+        long penaltyTotal = Math.abs(transactionRepository.sumByCorporationIdAndType(corporationId, TransactionType.PENALTY));
+        long expenseTotal = Math.abs(transactionRepository.sumByCorporationIdAndType(corporationId, TransactionType.EXPENSE));
+        expenseBreakdown.put("salaries", salaryTotal);
+        expenseBreakdown.put("penalties", penaltyTotal);
+        expenseBreakdown.put("generalExpenses", expenseTotal);
+        long totalExpenses = salaryTotal + penaltyTotal + expenseTotal;
+
+        // Payroll summary
+        List<CorporateHiring> activeHires = hiringRepository
+                .findByCorporationIdAndStatus(corporationId, CorporateHiring.Status.ACTIVE);
+        long totalDailyPayroll = 0L;
+        List<Map<String, Object>> payrollDetails = new ArrayList<>();
+        for (CorporateHiring hire : activeHires) {
+            long dailySalary = hire.getDailySalary() != null ? hire.getDailySalary() : 0L;
+            totalDailyPayroll += dailySalary;
+            Map<String, Object> detail = new HashMap<>();
+            detail.put("hiringId", hire.getId());
+            detail.put("aiCharacterId", hire.getAiCharacterId());
+            detail.put("position", hire.getPosition().getDisplayName());
+            detail.put("dailySalary", dailySalary);
+            detail.put("careerLevel", hire.getCareerLevel().name());
+            payrollDetails.add(detail);
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("revenueBreakdown", revenueBreakdown);
+        result.put("expenseBreakdown", expenseBreakdown);
+        result.put("totalRevenue", totalRevenue);
+        result.put("totalExpenses", totalExpenses);
+        result.put("netProfit", totalRevenue - totalExpenses);
+        result.put("totalDailyPayroll", totalDailyPayroll);
+        result.put("payrollDetails", payrollDetails);
+        result.put("activeHireCount", activeHires.size());
+        return result;
+    }
+
+    /**
+     * Get payroll summary for a corporation.
+     *
+     * @param corporationId the corporation ID
+     * @return map with total daily payroll, period payroll, and hire details
+     */
+    @Transactional(readOnly = true)
+    public Map<String, Object> getPayrollSummary(Long corporationId) {
+        List<CorporateHiring> activeHires = hiringRepository
+                .findByCorporationIdAndStatus(corporationId, CorporateHiring.Status.ACTIVE);
+
+        long totalDailyPayroll = 0L;
+        List<Map<String, Object>> hireDetails = new ArrayList<>();
+        for (CorporateHiring hire : activeHires) {
+            long dailySalary = hire.getDailySalary() != null ? hire.getDailySalary() : 0L;
+            totalDailyPayroll += dailySalary;
+            Map<String, Object> detail = new HashMap<>();
+            detail.put("hiringId", hire.getId());
+            detail.put("aiCharacterId", hire.getAiCharacterId());
+            detail.put("position", hire.getPosition().getDisplayName());
+            detail.put("dailySalary", dailySalary);
+            detail.put("careerLevel", hire.getCareerLevel().name());
+            detail.put("xpEarned", hire.getXpEarned());
+            detail.put("performanceRating", hire.getPerformanceRating());
+            hireDetails.add(detail);
+        }
+
+        // Period payroll (7 turns = 1 salary period)
+        long periodPayroll = totalDailyPayroll * TURNS_PER_SALARY_PERIOD;
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("totalDailyPayroll", totalDailyPayroll);
+        result.put("periodPayroll", periodPayroll);
+        result.put("activeHireCount", activeHires.size());
+        result.put("hireDetails", hireDetails);
+        return result;
     }
 }

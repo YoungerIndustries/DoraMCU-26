@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.ai;
 
+import com.yisy.modules.doramcu.ai.framework.PersonalityProfile.PersonalityType;
 import com.yisy.modules.doramcu.hex.Player;
 
 import java.util.HashMap;
@@ -234,5 +235,10 @@ public class DynamicAiPersonality extends AiPersonality {
                 ", confidence=" + String.format("%.2f", getConfidenceScore()) +
                 ", actions=" + observedActionCount +
                 '}';
+    }
+
+    @Override
+    public PersonalityType getType() {
+        return PersonalityType.DYNAMIC;
     }
 }

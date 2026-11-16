@@ -48,7 +48,8 @@ class StrategyNetwork:
         self.config = config
         self.model: Optional[StrategyNet] = None
         self.initialized = False
-        self.device = torch.device("cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        log.info("StrategyNetwork device: %s (CUDA available: %s)", self.device, torch.cuda.is_available())
 
     def initialize(self) -> None:
         if self.initialized:

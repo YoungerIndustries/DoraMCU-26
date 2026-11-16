@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Wars</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0a0a0a; color: #e0e0e0; }
+
+        .header {
+            background: linear-gradient(135deg, #c49000 0%, #0a0a0a 100%);
+            padding: 16px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid #f5c518;
+        }
+        .header h1 { font-size: 24px; color: #fff; }
+        .header .subtitle { font-size: 12px; color: #a0a0a0; margin-top: 2px; }
+        .btn-back {
+            background: #f5c518; color: #000; padding: 8px 16px;
+            border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 600;
+        }
+        .btn-back:hover { background: #c49000; }
+
+        .layout { display: flex; height: calc(100vh - 70px); }
+        .sidebar {
+            width: 220px; background: #111; padding: 16px;
+            overflow-y: auto; border-right: 1px solid #333;
+        }
+        .sidebar-section { margin-bottom: 20px; }
+        .sidebar-title {
+            font-size: 11px; text-transform: uppercase; color: #f5c518;
+            margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;
+        }
+        .sidebar-item {
+            padding: 8px 12px; margin: 2px 0; border-radius: 6px;
+            cursor: pointer; font-size: 14px; transition: all 0.2s;
+        }
+        .sidebar-item:hover { background: #333; }
+        .sidebar-item.active { background: #f5c518; color: #000; }
+
+        .main-content { flex: 1; padding: 24px; overflow-y: auto; }
+        .card {
+            background: #111; border-radius: 8px; padding: 20px;
+            margin-bottom: 16px; border: 1px solid #333;
+        }
+        .card h3 { color: #f5c518; margin-bottom: 12px; font-size: 16px; }
+        .grid { display: grid; gap: 16px; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+        .btn {
+            background: #f5c518; color: #000; border: none;
+            padding: 8px 16px; border-radius: 6px; cursor: pointer;
+            font-size: 14px; margin: 4px; font-weight: 600;
+        }
+        .btn:hover { background: #c49000; }
+
+        .item-row {
+            background: #0a0a0a; border: 1px solid #333;
+            border-radius: 6px; padding: 12px; margin: 6px 0;
+        }
+        .item-row .name { font-weight: 600; color: #fff; }
+        .item-row .detail { font-size: 12px; color: #a0a0a0; margin-top: 4px; }
+
+        .loading { text-align: center; padding: 40px; color: #a0a0a0; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>⭐ Star Wars</h1>
+            <div class="subtitle">Factions, Characters, Ships & The Force</div>
+        </div>
+        <a href="younger-hq.html" class="btn-back">← Back to HQ Portal</a>
+    </div>
+
+    <div class="layout">
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Universe</div>
+                <div class="sidebar-item active" onclick="switchView('dashboard')">📊 Dashboard</div>
+                <div class="sidebar-item" onclick="switchView('factions')">⚔️ Factions</div>
+                <div class="sidebar-item" onclick="switchView('characters')">👤 Characters</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Fleet</div>
+                <div class="sidebar-item" onclick="switchView('ships')">🚀 Starships</div>
+                <div class="sidebar-item" onclick="switchView('vehicles')">🛸 Vehicles</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">The Force</div>
+                <div class="sidebar-item" onclick="switchView('force')">✨ Force Powers</div>
+                <div class="sidebar-item" onclick="switchView('species')">👽 Species</div>
+            </div>
+        </div>
+
+        <div class="main-content" id="mainContent">
+            <div class="loading">A long time ago in a galaxy far, far away...</div>
+        </div>
+    </div>
+
+    <script>
+        const API = '/api/v1/starwars';
+        let currentView = 'dashboard';
+        let factions = [], characters = [], ships = [], vehicles = [], species = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFactions();
+            loadCharacters();
+            loadShips();
+            loadVehicles();
+            loadSpecies();
+            switchView('dashboard');
+        });
+
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            event?.target?.classList.add('active');
+            const content = document.getElementById('mainContent');
+            switch(view) {
+                case 'dashboard': renderDashboard(content); break;
+                case 'factions': renderFactions(content); break;
+                case 'characters': renderCharacters(content); break;
+                case 'ships': renderShips(content); break;
+                case 'vehicles': renderVehicles(content); break;
+                case 'force': renderForce(content); break;
+                case 'species': renderSpecies(content); break;
+            }
+        }
+
+        async function renderDashboard(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">⭐ Star Wars Dashboard</h2>
+                <div class="grid grid-3">
+                    <div class="card">
+                        <h3>⚔️ Factions</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#f5c518;">${factions.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Known factions</div>
+                    </div>
+                    <div class="card">
+                        <h3>👤 Characters</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#f5c518;">${characters.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Characters</div>
+                    </div>
+                    <div class="card">
+                        <h3>🚀 Starships</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#f5c518;">${ships.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Starships</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>⚡ Quick Actions</h3>
+                    <button class="btn" onclick="switchView('factions')">Browse Factions</button>
+                    <button class="btn" onclick="switchView('characters')">View Characters</button>
+                    <button class="btn" onclick="switchView('ships')">Fleet Overview</button>
+                    <button class="btn" onclick="switchView('force')">Force Powers</button>
+                </div>
+            `;
+        }
+
+        function renderFactions(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">⚔️ Factions</h2>
+                <div class="card">
+                    ${factions.map(f => `
+                        <div class="item-row">
+                            <div class="name">${f.name || 'Unknown'}</div>
+                            <div class="detail">${f.description || f.alignment || 'No description'}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No factions loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderCharacters(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">👤 Characters</h2>
+                <div class="card">
+                    ${characters.map(c => `
+                        <div class="item-row">
+                            <div class="name">${c.name || 'Unknown'}</div>
+                            <div class="detail">${c.species || ''} ${c.faction ? '• ' + c.faction : ''} ${c.forceSensitive ? '• Force Sensitive' : ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No characters loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderShips(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🚀 Starships</h2>
+                <div class="card">
+                    ${ships.map(s => `
+                        <div class="item-row">
+                            <div class="name">${s.name || 'Unknown'}</div>
+                            <div class="detail">${s.class || s.type || ''} ${s.faction ? '• ' + s.faction : ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No starships loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderVehicles(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🛸 Vehicles</h2>
+                <div class="card">
+                    ${vehicles.map(v => `
+                        <div class="item-row">
+                            <div class="name">${v.name || 'Unknown'}</div>
+                            <div class="detail">${v.type || ''} ${v.faction ? '• ' + v.faction : ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No vehicles loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderForce(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">✨ Force Powers</h2>
+                <div class="card">
+                    <h3>The Force</h3>
+                    <p style="color:#a0a0a0;margin-bottom:12px;">The Force is what gives a Jedi his power. It's an energy field created by all living things.</p>
+                    <div class="grid grid-2">
+                        <div class="item-row">
+                            <div class="name">Light Side</div>
+                            <div class="detail">Telekinesis, Force Push, Force Heal, Precognition, Mind Trick</div>
+                        </div>
+                        <div class="item-row">
+                            <div class="name">Dark Side</div>
+                            <div class="detail">Force Lightning, Force Choke, Fear, Terror, Dominate</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSpecies(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">👽 Species</h2>
+                <div class="card">
+                    ${species.map(s => `
+                        <div class="item-row">
+                            <div class="name">${s.name || 'Unknown'}</div>
+                            <div class="detail">${s.homeworld || ''} ${s.description ? '• ' + s.description.substring(0, 80) : ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No species loaded</div>'}
+                </div>
+            `;
+        }
+
+        async function loadFactions() {
+            try { factions = await fetch(`${API}/factions`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load factions:', e); }
+        }
+
+        async function loadCharacters() {
+            try { characters = await fetch(`${API}/characters`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load characters:', e); }
+        }
+
+        async function loadShips() {
+            try { ships = await fetch(`${API}/ships`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load ships:', e); }
+        }
+
+        async function loadVehicles() {
+            try { vehicles = await fetch(`${API}/vehicles`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load vehicles:', e); }
+        }
+
+        async function loadSpecies() {
+            try { species = await fetch(`${API}/species`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load species:', e); }
+        }
+    </script>
+</body>
+</html>

@@ -186,12 +186,30 @@ public class TravellerCharacter {
     }
 
     /**
+     * Sets the character's age.
+     *
+     * @param age the age in years
+     */
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    /**
      * Returns the character's total wealth in credits.
      *
      * @return the wealth
      */
     public long getWealth() {
         return wealth;
+    }
+
+    /**
+     * Sets the character's total wealth in credits.
+     *
+     * @param wealth the wealth
+     */
+    public void setWealth(long wealth) {
+        this.wealth = wealth;
     }
 
     /**

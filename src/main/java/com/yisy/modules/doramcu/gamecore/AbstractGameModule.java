@@ -4,12 +4,10 @@ import com.yisy.modules.doramcu.techlevel.TechLevelAdapter;
 import com.yisy.modules.doramcu.thirdreich.adapter.GroundCombatAdapter;
 import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.gamecore.RulesEngine;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 
 import java.util.Set;
 
@@ -70,14 +68,16 @@ public abstract class AbstractGameModule implements GameModule {
     }
 
     /**
-     * Auto-registers this module when the application context is ready.
+     * Auto-registers this module when the bean is constructed.
+     * Using @PostConstruct ensures all modules are registered before
+     * ApplicationReadyEvent fires, allowing GalaxyStartupRegistry to
+     * see all modules when it processes the multi-galaxy build queue.
      * Subclasses should not override this method; instead override {@link #onRegister()}
      * if they need custom registration logic.
      */
-    @EventListener(ApplicationReadyEvent.class)
+    @PostConstruct
     public void register() {
         gameModuleRegistry.registerModule(this);
-        log.info("{} module registered with GameModuleRegistry", getModuleName());
         onRegister();
     }
 

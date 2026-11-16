@@ -4,6 +4,8 @@ import com.yisy.modules.doramcu.ai.AiDelegationArea;
 import com.yisy.modules.doramcu.ai.AiDelegationSettings;
 import com.yisy.modules.doramcu.ai.AiDelegationService;
 import com.yisy.modules.doramcu.ai.DynamicAiPersonality;
+import com.yisy.modules.doramcu.ai.framework.AiPersonalityManager;
+import com.yisy.modules.doramcu.ai.framework.PersonalityProfile;
 import com.yisy.modules.doramcu.babylon5.model.B5Personality;
 import com.yisy.modules.doramcu.dto.JoinSessionResponse;
 import com.yisy.modules.doramcu.dto.GameStateResponse;
@@ -45,13 +47,16 @@ public class AiPlayerController {
     private final AiPlayerService aiPlayerService;
     private final AiDelegationService aiDelegationService;
     private final GameSessionService gameSessionService;
+    private final AiPersonalityManager aiPersonalityManager;
 
     public AiPlayerController(AiPlayerService aiPlayerService,
                               AiDelegationService aiDelegationService,
-                              GameSessionService gameSessionService) {
+                              GameSessionService gameSessionService,
+                              AiPersonalityManager aiPersonalityManager) {
         this.aiPlayerService = aiPlayerService;
         this.aiDelegationService = aiDelegationService;
         this.gameSessionService = gameSessionService;
+        this.aiPersonalityManager = aiPersonalityManager;
     }
 
     /**
@@ -311,17 +316,24 @@ public class AiPlayerController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
 
+            // Use unified PersonalityProfile interface via AiPersonalityManager
+            PersonalityProfile profile = aiPersonalityManager.getPersonality(player.getId()).orElse(null);
+            if (profile == null) {
+                profile = personality; // Fallback to direct personality
+            }
+
             double confidence = aiPlayerService.getPlayerConfidenceScore(player.getId());
             int actionCount = personality.getObservedActionCount();
 
-            // Build traits map with 6 core axes
+            // Build traits map with 6 core axes using unified PersonalityProfile interface
             Map<String, Double> traits = new HashMap<>();
-            traits.put("aggression", personality.getAggression());
-            traits.put("expansionDrive", personality.getExpansionDrive());
-            traits.put("economicFocus", personality.getEconomicFocus());
-            traits.put("scientificFocus", personality.getScientificFocus());
-            traits.put("diplomaticStance", personality.getDiplomaticStance());
-            traits.put("riskTolerance", personality.getRiskTolerance());
+            traits.put("aggression", profile.getAggression());
+            traits.put("expansionDrive", profile.getExpansionDrive());
+            traits.put("economicFocus", profile.getEconomicFocus());
+            traits.put("scientificFocus", profile.getScientificFocus());
+            traits.put("diplomaticStance", profile.getDiplomaticStance());
+            traits.put("riskTolerance", profile.getRiskTolerance());
+            traits.put("personalityType", null); // Not a Double, handled separately
 
             // Build B5 12-axis personality map
             B5Personality b5 = personality.toB5Personality();
@@ -332,6 +344,7 @@ public class AiPlayerController {
             response.put("confidence", confidence);
             response.put("actionCount", actionCount);
             response.put("b5Personality", b5Personality);
+            response.put("personalityType", profile.getType().name());
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {

@@ -2,6 +2,7 @@ package com.yisy.modules.doramcu.corporation.service;
 import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.ai.PlayerCloneService;
+import com.yisy.modules.doramcu.ai.framework.AiPlayerServiceAdapter;
 import com.yisy.modules.doramcu.service.AiPlayerService;
 import com.yisy.modules.doramcu.model.CorporateRole;
 import com.yisy.modules.doramcu.model.Player;
@@ -30,14 +31,17 @@ public class CorporateRoleService {
     private final PlayerRepository playerRepository;
     private final PlayerCloneService playerCloneService;
     private final AiPlayerService aiPlayerService;
+    private final AiPlayerServiceAdapter aiPlayerServiceAdapter;
 
     public CorporateRoleService(
             PlayerRepository playerRepository,
             PlayerCloneService playerCloneService,
-            @Lazy AiPlayerService aiPlayerService) {
+            @Lazy AiPlayerService aiPlayerService,
+            AiPlayerServiceAdapter aiPlayerServiceAdapter) {
         this.playerRepository = playerRepository;
         this.playerCloneService = playerCloneService;
         this.aiPlayerService = aiPlayerService;
+        this.aiPlayerServiceAdapter = aiPlayerServiceAdapter;
     }
 
     /**

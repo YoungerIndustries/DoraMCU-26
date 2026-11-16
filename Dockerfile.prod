@@ -1,0 +1,44 @@
+# Production Dockerfile - uses pre-built JAR
+FROM eclipse-temurin:27-jdk
+WORKDIR /app
+
+COPY build/libs/DoraMCU-0.4.0.jar app.jar
+
+RUN groupadd -r doramcu && useradd -r -g doramcu -d /app -s /sbin/nologin doramcu && chown -R doramcu:doramcu /app
+USER doramcu
+
+EXPOSE 8080
+EXPOSE 5005
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+  CMD wget -qO- http://localhost:8080/actuator/health || exit 1
+
+ENV DL_MODE=rest
+ENV DEBUG=
+ENV JVM_ARGS="-Xmx1G -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+ENV JAVACPP_ARGS="-Dorg.bytedeco.javacpp.maxbytes=512M -Dorg.bytedeco.javacpp.maxphysicalbytes=512M -Dorg.bytedeco.javacpp.alloctype=direct"
+
+ENTRYPOINT ["sh", "-c", "\
+  if [ \"$DL_MODE\" != \"rest\" ] && [ ! -f /swapfile ]; then \
+    SWAP_SIZE=${SWAP_SIZE:-8G} && \
+    SWAP_MB=$(( ${SWAP_SIZE%G} * 1024 )) && \
+    dd if=/dev/zero of=/swapfile bs=1M count=$SWAP_MB 2>/dev/null && \
+    chmod 600 /swapfile && \
+    mkswap /swapfile && \
+    swapon /swapfile 2>/dev/null && echo \"Swap activated (${SWAP_SIZE})\" || echo \"Swap activation skipped\"; \
+  elif [ \"$DL_MODE\" != \"rest\" ] && [ -f /swapfile ]; then \
+    swapon /swapfile 2>/dev/null && echo 'Swap activated from existing file' || echo 'Swap activation skipped'; \
+  fi && \
+  DL_ARGS=\"\" && \
+  if [ \"$DL_MODE\" = \"rest\" ]; then \
+    DL_ARGS=\"-Ddl.rest-client.enabled=true\"; \
+  fi && \
+  DEBUG_ARGS=\"\" && \
+  if [ \"$DEBUG\" = \"true\" ]; then \
+    DEBUG_ARGS=\"-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005\" && \
+    echo 'Debug mode enabled on port 5005'; \
+  fi && \
+  java ${JVM_XMX:-$JVM_ARGS} $JAVACPP_ARGS \
+    $DL_ARGS \
+    $DEBUG_ARGS \
+    -jar app.jar"]

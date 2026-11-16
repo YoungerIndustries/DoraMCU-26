@@ -257,7 +257,7 @@ const GameAPI = (function() {
 
     // Session management
     async function createSession(sessionName) {
-        return request('/api/v1/sessions', {
+        return request('/api/v1/4x/sessions', {
             method: 'POST',
             body: { sessionName }
         });
@@ -265,7 +265,7 @@ const GameAPI = (function() {
 
     async function joinSession(sessionId) {
         try {
-            return await request(`/api/v1/sessions/${sessionId}/join`, {
+            return await request(`/api/v1/4x/sessions/${sessionId}/join`, {
                 method: 'POST',
                 body: {}
             });
@@ -279,26 +279,26 @@ const GameAPI = (function() {
     }
 
     async function leaveSession(sessionId) {
-        return request(`/api/v1/sessions/${sessionId}/leave`, {
+        return request(`/api/v1/4x/sessions/${sessionId}/leave`, {
             method: 'POST',
             body: {}
         });
     }
 
     async function listSessions() {
-        return request('/api/v1/sessions');
+        return request('/api/v1/4x/sessions');
     }
 
     // Game state
     async function getGameState(sessionId, summary) {
         // Default to summary=true to reduce response size (14MB full vs ~2MB summary)
         const summaryParam = (summary === undefined || summary) ? '?summary=true' : '';
-        return request(`/api/v1/sessions/${sessionId}/state${summaryParam}`);
+        return request(`/api/v1/4x/sessions/${sessionId}/state${summaryParam}`);
     }
 
     // System details - fetch full celestial body data for a specific system
     async function getSystemDetails(sessionId, systemId) {
-        return request(`/api/v1/sessions/${sessionId}/systems/${systemId}`);
+        return request(`/api/v1/4x/sessions/${sessionId}/systems/${systemId}`);
     }
 
     // ---- Traveller RPG API Methods ----
@@ -343,14 +343,14 @@ const GameAPI = (function() {
     }
 
     async function buildFromDesign(sessionId, design) {
-        return request(`/api/v1/sessions/${sessionId}/actions/build-from-design`, {
+        return request(`/api/v1/4x/sessions/${sessionId}/actions/build-from-design`, {
             method: 'POST',
             body: design
         });
     }
 
     async function getTradeMarket(sessionId, systemId) {
-        return request(`/api/v1/sessions/${sessionId}/trade/market?systemId=${systemId}`);
+        return request(`/api/v1/4x/sessions/${sessionId}/trade/market?systemId=${systemId}`);
     }
 
     async function buyCommodity(sessionId, request) {
@@ -447,28 +447,28 @@ const GameAPI = (function() {
 
     // Game actions
     async function moveFleet(sessionId, fleetId, targetX, targetY, solarSystemId) {
-        return request(`/api/v1/sessions/${sessionId}/actions/move-fleet`, {
+        return request(`/api/v1/4x/sessions/${sessionId}/actions/move-fleet`, {
             method: 'POST',
             body: { fleetId, targetX, targetY, solarSystemId }
         });
     }
 
     async function buildShip(sessionId, shipType, targetFleetId) {
-        return request(`/api/v1/sessions/${sessionId}/actions/build-ship`, {
+        return request(`/api/v1/4x/sessions/${sessionId}/actions/build-ship`, {
             method: 'POST',
             body: { shipType, targetFleetId }
         });
     }
 
     async function engageCombat(sessionId, attackerFleetId, defenderFleetId) {
-        return request(`/api/v1/sessions/${sessionId}/actions/engage-combat`, {
+        return request(`/api/v1/4x/sessions/${sessionId}/actions/engage-combat`, {
             method: 'POST',
             body: { attackerFleetId, defenderFleetId }
         });
     }
 
     async function advanceTurn(sessionId) {
-        return request(`/api/v1/sessions/${sessionId}/actions/advance-turn`, {
+        return request(`/api/v1/4x/sessions/${sessionId}/actions/advance-turn`, {
             method: 'POST',
             body: {}
         });

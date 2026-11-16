@@ -71,6 +71,62 @@ export interface FinanceTransaction {
   createdAt: string;
 }
 
+/** Financial breakdown by category from the breakdown API */
+export interface FinancialBreakdown {
+  revenueBreakdown: {
+    contractRevenue: number;
+    bonuses: number;
+  };
+  expenseBreakdown: {
+    salaries: number;
+    penalties: number;
+    generalExpenses: number;
+  };
+  totalRevenue: number;
+  totalExpenses: number;
+  netProfit: number;
+  totalDailyPayroll: number;
+  payrollDetails: PayrollDetail[];
+  activeHireCount: number;
+}
+
+export interface PayrollDetail {
+  hiringId: number;
+  aiCharacterId: number;
+  position: string;
+  dailySalary: number;
+  careerLevel: string;
+}
+
+/** Payroll summary from the payroll API */
+export interface PayrollSummary {
+  totalDailyPayroll: number;
+  periodPayroll: number;
+  activeHireCount: number;
+  hireDetails: HireDetail[];
+}
+
+export interface HireDetail {
+  hiringId: number;
+  aiCharacterId: number;
+  position: string;
+  dailySalary: number;
+  careerLevel: string;
+  xpEarned: number;
+  performanceRating: number;
+}
+
+/** Contract cost estimate for ROI analysis */
+export interface ContractCostEstimate {
+  contractId: number;
+  title: string;
+  payment: number;
+  estimatedCost: number;
+  netRoi: number;
+  durationTurns: number;
+  difficulty: number;
+}
+
 /** AI assistant action log */
 export interface AiAction {
   id: number;

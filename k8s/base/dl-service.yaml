@@ -19,6 +19,17 @@ spec:
         app.kubernetes.io/name: dl
         app.kubernetes.io/component: deep-learning
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: nvidia.com/gpu
+                    operator: Exists
+      tolerations:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule
       containers:
         - name: dl
           image: doramcu/dl-python:latest
@@ -38,13 +49,11 @@ spec:
             requests:
               cpu: "500m"
               memory: "1Gi"
+              nvidia.com/gpu: 1
             limits:
               cpu: "2000m"
               memory: "4Gi"
-          # GPU support — requires NVIDIA device plugin
-          # resources:
-          #   limits:
-          #     nvidia.com/gpu: 1
+              nvidia.com/gpu: 1
           volumeMounts:
             - name: dl-models
               mountPath: /app/dl-models

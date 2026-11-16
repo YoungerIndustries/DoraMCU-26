@@ -44,8 +44,10 @@ public class WebConfig implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {
         // When web-ui.external=true, skip root redirect (API-only mode)
         // The external web server serves the unified index.html
-        // Root path (/) is now handled by the neuron PortalController which serves
-        // the player login/registration page — no redirect needed.
+        if (!webUiExternal) {
+            // Root path redirects to the D&D dark fantasy login page (index.html), which then redirects to game.html (corporation dashboard) after login
+            registry.addRedirectViewController("/", "/index.html");
+        }
         // Corporation dashboard is served by the neuron PortalController as well,
         // so no redirect to the old Angular app.
         // Web client redirects — serve index.html for each client tier

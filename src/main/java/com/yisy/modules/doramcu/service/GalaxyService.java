@@ -218,6 +218,17 @@ public class GalaxyService {
     public com.yisy.modules.doramcu.model.Galaxy persistGalaxy(String name,
             com.yisy.modules.doramcu.hex.Galaxy inMemoryGalaxy,
             double hyperlaneDensity) {
+        return persistGalaxy(name, inMemoryGalaxy, hyperlaneDensity, null);
+    }
+
+    /**
+     * Persists an in-memory galaxy to the database with game type.
+     */
+    @Transactional
+    public com.yisy.modules.doramcu.model.Galaxy persistGalaxy(String name,
+            com.yisy.modules.doramcu.hex.Galaxy inMemoryGalaxy,
+            double hyperlaneDensity,
+            String gameType) {
 
         // Notify progress listener of persistence start
         if (progressListener != null) {
@@ -228,6 +239,9 @@ public class GalaxyService {
         com.yisy.modules.doramcu.model.Galaxy dbGalaxy = new com.yisy.modules.doramcu.model.Galaxy();
         dbGalaxy.setName(name);
         dbGalaxy.setHyperlaneDensity(hyperlaneDensity);
+        if (gameType != null) {
+            dbGalaxy.setGameType(gameType);
+        }
         dbGalaxy = galaxyRepository.save(dbGalaxy);
 
         // Persist all sectors and subsectors with their names
@@ -854,6 +868,32 @@ public class GalaxyService {
             Double cometChance,
             Double spaceStationChance,
             Double hyperlaneDensity) {
+        return generateAndSaveGalaxyFromTemplate(name, empires, gameType, null, seed,
+                systemCount, planetsPerSystem, moonChance, asteroidBeltChance,
+                gasGiantChance, nebulaChance, blackHoleChance, cometChance,
+                spaceStationChance, hyperlaneDensity);
+    }
+
+    /**
+     * Generates and saves a galaxy from a template with lore slug.
+     */
+    @Transactional
+    public GalaxyGenerationResult generateAndSaveGalaxyFromTemplate(
+            String name,
+            java.util.Map<Integer, com.yisy.modules.doramcu.hex.Empire> empires,
+            String gameType,
+            String loreSlug,
+            long seed,
+            Integer systemCount,
+            Integer planetsPerSystem,
+            Double moonChance,
+            Double asteroidBeltChance,
+            Double gasGiantChance,
+            Double nebulaChance,
+            Double blackHoleChance,
+            Double cometChance,
+            Double spaceStationChance,
+            Double hyperlaneDensity) {
 
         com.yisy.modules.doramcu.hex.Galaxy inMemoryGalaxy = generateGalaxyInMemory(
                 name, systemCount, planetsPerSystem, moonChance, asteroidBeltChance,
@@ -863,7 +903,11 @@ public class GalaxyService {
             assignPlanetsAndEstablishCapitals(inMemoryGalaxy, empires, new java.util.Random(seed));
         }
 
-        com.yisy.modules.doramcu.model.Galaxy dbGalaxy = persistGalaxy(name, inMemoryGalaxy, hyperlaneDensity);
+        com.yisy.modules.doramcu.model.Galaxy dbGalaxy = persistGalaxy(name, inMemoryGalaxy, hyperlaneDensity, gameType);
+        if (loreSlug != null) {
+            dbGalaxy.setLoreSlug(loreSlug);
+            dbGalaxy = galaxyRepository.save(dbGalaxy);
+        }
         return new GalaxyGenerationResult(dbGalaxy, inMemoryGalaxy);
     }
 
@@ -903,6 +947,7 @@ public class GalaxyService {
     /**
      * Returns the completion percentage for a galaxy.
      */
+    @Transactional(readOnly = true)
     public int getGalaxyCompletionPercent(String name) {
         return getGalaxyByName(name)
                 .map(g -> g.getSolarSystems() != null ? g.getSolarSystems().size() : 0)

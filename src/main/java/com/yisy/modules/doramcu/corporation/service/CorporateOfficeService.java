@@ -55,6 +55,8 @@ public class CorporateOfficeService {
     private final CorporationPersistenceService persistenceService;
     private final MultiUniverseContractService multiUniverseContractService;
     private final EveCorporationRepository eveCorporationRepository;
+    private final CharacterTrainingService characterTrainingService;
+    private final CrewService crewService;
 
     private final Random random = new Random();
 
@@ -67,7 +69,9 @@ public class CorporateOfficeService {
             CorporationInteractionService interactionService,
             CorporationPersistenceService persistenceService,
             MultiUniverseContractService multiUniverseContractService,
-            EveCorporationRepository eveCorporationRepository) {
+            EveCorporationRepository eveCorporationRepository,
+            CharacterTrainingService characterTrainingService,
+            CrewService crewService) {
         this.contractRepository = contractRepository;
         this.hiringRepository = hiringRepository;
         this.aiCharacterRepository = aiCharacterRepository;
@@ -77,6 +81,8 @@ public class CorporateOfficeService {
         this.persistenceService = persistenceService;
         this.multiUniverseContractService = multiUniverseContractService;
         this.eveCorporationRepository = eveCorporationRepository;
+        this.characterTrainingService = characterTrainingService;
+        this.crewService = crewService;
     }
 
     // ---- Contract Operations ----
@@ -464,6 +470,8 @@ public class CorporateOfficeService {
         state.put("officeBuildingLevel", buildingLevel);
         state.put("currentRole", "CEO");
         state.put("aiAssistantActive", false);
+        state.put("activeTrainingTours", characterTrainingService.getActiveTrainingTours(corporationId).size());
+        state.put("activeCrews", crewService.getActiveCrews(corporationId).size());
         state.put("bonuses", Map.of(
                 "contractSlotBonus", contractSlotBonus,
                 "hiringCostDiscount", hiringCostDiscount
@@ -594,5 +602,15 @@ public class CorporateOfficeService {
         }
 
         return baseSalary;
+    }
+
+    // ---- Getters for controller access ----
+
+    public CorporateContractRepository getContractRepository() {
+        return contractRepository;
+    }
+
+    public CorporateHiringRepository getHiringRepository() {
+        return hiringRepository;
     }
 }

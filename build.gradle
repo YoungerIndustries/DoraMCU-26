@@ -19,12 +19,12 @@ bootRun {
 }
 
 group = 'com.YISY.modules'
-version = project.property('app.version')
+version = findProperty('app.version')
 description = 'DoraMCU'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(project.property('java.version').toInteger())
+        languageVersion = JavaLanguageVersion.of(findProperty('java.version').toString().toInteger())
     }
     sourceSets {
         main {
@@ -74,8 +74,8 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
     // Kafka - optional, only needed when neuron.kafka.enabled=true
     compileOnly 'org.springframework.kafka:spring-kafka'
-    // Redis - for distributed event bus and cache (optional, falls back to in-memory)
-    compileOnly 'org.springframework.boot:spring-boot-starter-data-redis'
+    // Redis - for distributed event bus and cache (required in Docker/K8s deployments)
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     // JSON logging for production (Logstash encoder for ELK/Grafana Loki)
     implementation "net.logstash.logback:logstash-logback-encoder:${findProperty('logstash.logback.version')}"
     implementation "io.jsonwebtoken:jjwt-api:${findProperty('jjwt.version')}"
@@ -107,9 +107,9 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
     maxHeapSize = '4G'
-    def jvmArgs = project.property('app.jvm.args').toString().split() +
-                   project.property('app.javacpp.args').toString().split()
-    jvmArgs jvmArgs
+    def jvmArgs = findProperty('app.jvm.args').toString().split() +
+                   findProperty('app.javacpp.args').toString().split()
+    jvmArgs = jvmArgs
     
     // Exclude heavy galaxy generation tests from default build to keep it fast
     exclude '**/GalaxyGeneratorTest.class'
@@ -138,7 +138,7 @@ tasks.register('heavyTests', Test) {
     
     useJUnitPlatform()
     maxHeapSize = '8G'
-    def jvmArgs = project.property('app.javacpp.args').toString().split()
+    def jvmArgs = findProperty('app.javacpp.args').toString().split()
     jvmArgs jvmArgs
     
     include '**/GalaxyGeneratorTest.class'
@@ -156,9 +156,9 @@ tasks.register('heavyTests', Test) {
 }
 
 tasks.named('bootRun') {
-    def jvmArgs = project.property('app.jvm.args').toString().split() +
-                   project.property('app.javacpp.args').toString().split()
-    jvmArgs = jvmArgs
+    def jvmArgsList = findProperty('app.jvm.args').toString().split(' ') +
+                      findProperty('app.javacpp.args').toString().split(' ')
+    jvmArgs(jvmArgsList)
 }
 
 // Build the standalone desktop distribution (Electron + embedded Spring Boot JAR)
@@ -302,7 +302,7 @@ def webDefaultApiUrls = [
 if (!webApiUrl) {
     webApiUrl = webDefaultApiUrls.get(webEnv, webDefaultApiUrls['dev'])
 }
-def webAppVersion = project.property('app.version') as String
+def webAppVersion = findProperty('app.version') as String
 def webOutputFile = file('dora-web/config.json')
 def webOutputDir = file('dora-web')
 
@@ -338,6 +338,31 @@ tasks.register('prepareWebClient') {
     description = 'Prepares the web client for deployment (generates config.json)'
     group = 'build'
     dependsOn 'generateWebConfig'
+}
+
+// ---- Production Build Task ----
+
+tasks.register('productionBuild') {
+    description = 'Builds a production-optimized JAR (excludes tests, sets production profile)'
+    group = 'build'
+    dependsOn 'bootJar'
+
+    doFirst {
+        // Set production profile system property
+        System.setProperty('spring.profiles.active', 'production')
+        logger.lifecycle('Building production JAR with profile: production')
+    }
+}
+
+// Production JAR that excludes test dependencies and enables optimization
+tasks.named('bootJar') {
+    // Include rule files in the JAR
+    from('starship-troopers-rules') {
+        into('starship-troopers-rules')
+    }
+    from('star-wars-rules') {
+        into('star-wars-rules')
+    }
 }
 
 // ---- OWASP Dependency-Check Configuration ----

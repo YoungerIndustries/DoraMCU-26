@@ -251,7 +251,7 @@ class SessionBrowser {
     async loadSessions() {
         try {
             // Try to fetch from API
-            const response = await fetch(`${this.serverUrl}/api/v1/sessions`, {
+            const response = await fetch(`${this.serverUrl}/api/v1/4x/sessions`, {
                 headers: {
                     'Authorization': window.authService ? `Bearer ${window.authService.authToken}` : ''
                 }
@@ -563,7 +563,7 @@ class SessionBrowser {
 
         try {
             // Try API join
-            const response = await fetch(`${this.serverUrl}/api/v1/sessions/${this.selectedSession.id}/join`, {
+            const response = await fetch(`${this.serverUrl}/api/v1/4x/sessions/${this.selectedSession.id}/join`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -596,7 +596,7 @@ class SessionBrowser {
         if (!this.selectedSession) return;
 
         try {
-            await fetch(`${this.serverUrl}/api/v1/sessions/${this.selectedSession.id}/leave`, {
+            await fetch(`${this.serverUrl}/api/v1/4x/sessions/${this.selectedSession.id}/leave`, {
                 method: 'POST',
                 headers: {
                     'Authorization': window.authService ? `Bearer ${window.authService.authToken}` : ''
@@ -648,7 +648,7 @@ class SessionBrowser {
         }
 
         try {
-            const response = await fetch(`${this.serverUrl}/api/v1/sessions`, {
+            const response = await fetch(`${this.serverUrl}/api/v1/4x/sessions`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

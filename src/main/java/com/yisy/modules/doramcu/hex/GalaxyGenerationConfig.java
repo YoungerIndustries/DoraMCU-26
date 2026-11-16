@@ -182,7 +182,7 @@ public class GalaxyGenerationConfig {
         private int adventureHookCount;
         private double npcDensity;
         private String systemTheme;
-        private boolean enable4xLayer;
+        private boolean enable4xLayer = true;
 
         public Builder systemCount(int systemCount) {
             if (systemCount < 0) {

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoraMCU — Player Login</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Starfield background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.6), transparent),
+                radial-gradient(1px 1px at 50% 10%, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.5), transparent),
+                radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,0.6), transparent),
+                radial-gradient(1px 1px at 45% 45%, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 85% 15%, rgba(255,255,255,0.5), transparent),
+                radial-gradient(1px 1px at 25% 35%, rgba(255,255,255,0.6), transparent),
+                radial-gradient(1px 1px at 65% 55%, rgba(255,255,255,0.7), transparent);
+            animation: twinkle 4s ease-in-out infinite alternate;
+            z-index: -1;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 420px;
+            width: 100%;
+            padding: 40px;
+            background: #131926;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            color: #00d4ff;
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: #9aa0a6;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #1e2840;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px 0;
+            cursor: pointer;
+            color: #9aa0a6;
+            font-size: 1em;
+            transition: color 0.2s, border-color 0.2s;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab.active {
+            color: #00d4ff;
+            border-bottom-color: #00d4ff;
+        }
+
+        .tab:hover { color: #e0e0e0; }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #9aa0a6;
+            font-size: 0.85em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            background: #151d30;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #e8eaed;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: #00d4ff;
+        }
+
+        .form-group input::placeholder {
+            color: #5f6368;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #00d4ff;
+            color: #0a0a1a;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+
+        .btn:hover { background: #00b8d4; }
+        .btn:disabled { background: #3c4043; color: #5f6368; cursor: not-allowed; }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 0.9em;
+            text-align: center;
+            display: none;
+        }
+
+        .message.error {
+            display: block;
+            background: rgba(239,83,80,0.12);
+            color: #ef5350;
+            border: 1px solid rgba(239,83,80,0.3);
+        }
+
+        .message.success {
+            display: block;
+            background: rgba(102,187,106,0.12);
+            color: #66bb6a;
+            border: 1px solid rgba(102,187,106,0.3);
+        }
+
+        .panel { display: none; }
+        .panel.active { display: block; }
+
+        .footer {
+            text-align: center;
+            margin-top: 24px;
+            color: #5f6368;
+            font-size: 0.8em;
+        }
+
+        .footer a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+
+        .footer a:hover { text-decoration: underline; }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(10,10,26,0.3);
+            border-top-color: #0a0a1a;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .server-status {
+            text-align: center;
+            margin-bottom: 16px;
+            font-size: 0.85em;
+            color: #9aa0a6;
+        }
+
+        .server-status .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #5f6368;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        .server-status .dot.online { background: #66bb6a; }
+        .server-status .dot.offline { background: #ef5350; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 DoraMCU</h1>
+        <p class="subtitle">Player Login — Access Your Corporation Dashboard</p>
+
+        <div class="server-status" id="serverStatus">
+            <span class="dot" id="statusDot"></span>
+            <span id="statusText">Checking server...</span>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" id="tab-login" onclick="switchTab('login')">Log In</div>
+            <div class="tab" id="tab-pin" onclick="switchTab('pin')">PIN Login</div>
+            <div class="tab" id="tab-register" onclick="switchTab('register')">Register</div>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <!-- Login Panel -->
+        <div class="panel active" id="panel-login">
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" placeholder="Enter your username" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn" id="loginBtn">Sign In</button>
+            </form>
+        </div>
+
+        <!-- PIN Login Panel -->
+        <div class="panel" id="panel-pin">
+            <form id="pinForm" onsubmit="handlePinLogin(event)">
+                <div class="form-group">
+                    <label for="pinInput">Player PIN</label>
+                    <input type="text" id="pinInput" placeholder="Enter 4-6 digit PIN" maxlength="10" pattern="[0-9]*" style="font-family: monospace; letter-spacing: 2px;" required>
+                </div>
+                <button type="submit" class="btn" id="pinBtn">Sign In with PIN</button>
+            </form>
+        </div>
+
+        <!-- Register Panel -->
+        <div class="panel" id="panel-register">
+            <form id="registerForm" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="registerUsername">Username</label>
+                    <input type="text" id="registerUsername" placeholder="Choose a username" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" placeholder="Choose a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmpire">Empire Name</label>
+                    <input type="text" id="registerEmpire" placeholder="Name your empire" required>
+                </div>
+                <button type="submit" class="btn" id="registerBtn">Create Account</button>
+            </form>
+        </div>
+
+        <div class="footer">
+            <p>Default: <code style="color: #00d4ff;">Butch Younger</code> / PIN <code style="color: #00d4ff;">3214</code></p>
+            <p style="margin-top: 8px;"><a href="index.html">Back to News Feed</a></p>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.getElementById('panel-' + tab).classList.add('active');
+            hideMessage();
+        }
+
+        function showMessage(text, type) {
+            const el = document.getElementById('message');
+            el.textContent = text;
+            el.className = 'message ' + type;
+        }
+
+        function hideMessage() {
+            const el = document.getElementById('message');
+            el.className = 'message';
+        }
+
+        function setLoading(btnId, loading) {
+            const btn = document.getElementById(btnId);
+            btn.disabled = loading;
+            btn.innerHTML = loading ? '<span class="spinner"></span>Signing In...' : btn.innerHTML;
+        }
+
+        async function checkServer() {
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+            try {
+                const res = await fetch('/api/v1/4x/auth/server-info');
+                if (res.ok) {
+                    dot.className = 'dot online';
+                    const data = await res.json();
+                    text.textContent = 'Server online — ' + (data.version || 'DoraMCU');
+                } else {
+                    throw new Error('Server error');
+                }
+            } catch (e) {
+                dot.className = 'dot offline';
+                text.textContent = 'Server offline';
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            setLoading('loginBtn', true);
+            hideMessage();
+
+            try {
+                const res = await fetch('/api/v1/4x/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('doramcu_token', data.token || '');
+                    localStorage.setItem('doramcu_username', username);
+                    showMessage('Login successful! Redirecting to dashboard...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'game.html';
+                    }, 500);
+                } else {
+                    const err = await res.json().catch(() => ({ message: 'Login failed' }));
+                    showMessage(err.message || 'Login failed', 'error');
+                }
+            } catch (err) {
+                showMessage('Connection error: ' + err.message, 'error');
+            } finally {
+                setLoading('loginBtn', false);
+            }
+        }
+
+        async function handlePinLogin(e) {
+            e.preventDefault();
+            const pin = document.getElementById('pinInput').value.trim();
+            setLoading('pinBtn', true);
+            hideMessage();
+
+            try {
+                const res = await fetch('/api/v1/4x/auth/pin-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pin })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('doramcu_token', data.token || '');
+                    localStorage.setItem('doramcu_username', data.username || '');
+                    showMessage('Login successful! Redirecting to dashboard...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'game.html';
+                    }, 500);
+                } else {
+                    const err = await res.json().catch(() => ({ message: 'PIN login failed' }));
+                    showMessage(err.message || 'PIN login failed', 'error');
+                }
+            } catch (err) {
+                showMessage('Connection error: ' + err.message, 'error');
+            } finally {
+                setLoading('pinBtn', false);
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const username = document.getElementById('registerUsername').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const empireName = document.getElementById('registerEmpire').value.trim();
+            setLoading('registerBtn', true);
+            hideMessage();
+
+            try {
+                const res = await fetch('/api/v1/4x/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, empireName })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('doramcu_token', data.token || '');
+                    localStorage.setItem('doramcu_username', username);
+                    showMessage('Account created! Redirecting to dashboard...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'game.html';
+                    }, 500);
+                } else {
+                    const err = await res.json().catch(() => ({ message: 'Registration failed' }));
+                    showMessage(err.message || 'Registration failed', 'error');
+                }
+            } catch (err) {
+                showMessage('Connection error: ' + err.message, 'error');
+            } finally {
+                setLoading('registerBtn', false);
+            }
+        }
+
+        // Check if already logged in — auto-redirect to dashboard
+        (function() {
+            const token = localStorage.getItem('doramcu_token');
+            if (token) {
+                fetch('/api/v1/4x/auth/server-info', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                }).then(res => {
+                    if (res.ok) {
+                        window.location.href = 'game.html';
+                    }
+                }).catch(() => {
+                    // Token invalid, continue to login
+                });
+            }
+        })();
+
+        // Check server status on load
+        checkServer();
+        setInterval(checkServer, 10000);
+    </script>
+</body>
+</html>

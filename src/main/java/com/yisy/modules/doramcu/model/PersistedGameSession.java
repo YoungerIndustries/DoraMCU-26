@@ -40,6 +40,18 @@ public class PersistedGameSession {
     @Column(name = "player_ids", length = 1000)
     private String playerIds;
 
+    /**
+     * The galaxy name this session is associated with (for multi-galaxy portal travel).
+     */
+    @Column(name = "galaxy_name", length = 255)
+    private String galaxyName;
+
+    /**
+     * The game type for this session (e.g., STAR_WARS, TRAVELLER).
+     */
+    @Column(name = "game_type", length = 50)
+    private String gameType;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -114,5 +126,21 @@ public class PersistedGameSession {
 
     public void setLastActivityAt(LocalDateTime lastActivityAt) {
         this.lastActivityAt = lastActivityAt;
+    }
+
+    public String getGalaxyName() {
+        return galaxyName;
+    }
+
+    public void setGalaxyName(String galaxyName) {
+        this.galaxyName = galaxyName;
+    }
+
+    public String getGameType() {
+        return gameType;
+    }
+
+    public void setGameType(String gameType) {
+        this.gameType = gameType;
     }
 }

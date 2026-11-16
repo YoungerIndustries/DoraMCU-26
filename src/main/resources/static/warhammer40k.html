@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warhammer 40,000</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #1a0a0a; color: #e0e0e0; }
+
+        .header {
+            background: linear-gradient(135deg, #b71c1c 0%, #1a0a0a 100%);
+            padding: 16px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid #d32f2f;
+        }
+        .header h1 { font-size: 24px; color: #fff; }
+        .header .subtitle { font-size: 12px; color: #a0a0a0; margin-top: 2px; }
+        .btn-back {
+            background: #d32f2f; color: #fff; padding: 8px 16px;
+            border-radius: 6px; text-decoration: none; font-size: 14px;
+        }
+        .btn-back:hover { background: #b71c1c; }
+
+        .layout { display: flex; height: calc(100vh - 70px); }
+        .sidebar {
+            width: 220px; background: #200e0e; padding: 16px;
+            overflow-y: auto; border-right: 1px solid #b71c1c;
+        }
+        .sidebar-section { margin-bottom: 20px; }
+        .sidebar-title {
+            font-size: 11px; text-transform: uppercase; color: #d32f2f;
+            margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;
+        }
+        .sidebar-item {
+            padding: 8px 12px; margin: 2px 0; border-radius: 6px;
+            cursor: pointer; font-size: 14px; transition: all 0.2s;
+        }
+        .sidebar-item:hover { background: #b71c1c; }
+        .sidebar-item.active { background: #d32f2f; color: #fff; }
+
+        .main-content { flex: 1; padding: 24px; overflow-y: auto; }
+        .card {
+            background: #200e0e; border-radius: 8px; padding: 20px;
+            margin-bottom: 16px; border: 1px solid #b71c1c;
+        }
+        .card h3 { color: #d32f2f; margin-bottom: 12px; font-size: 16px; }
+        .grid { display: grid; gap: 16px; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+        .btn {
+            background: #d32f2f; color: #fff; border: none;
+            padding: 8px 16px; border-radius: 6px; cursor: pointer;
+            font-size: 14px; margin: 4px;
+        }
+        .btn:hover { background: #b71c1c; }
+
+        .item-row {
+            background: #1a0a0a; border: 1px solid #b71c1c;
+            border-radius: 6px; padding: 12px; margin: 6px 0;
+        }
+        .item-row .name { font-weight: 600; color: #fff; }
+        .item-row .detail { font-size: 12px; color: #a0a0a0; margin-top: 4px; }
+
+        .loading { text-align: center; padding: 40px; color: #a0a0a0; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>⚔️ Warhammer 40,000</h1>
+            <div class="subtitle">Factions, Units, Codexes & The Grim Dark</div>
+        </div>
+        <a href="younger-hq.html" class="btn-back">← Back to HQ Portal</a>
+    </div>
+
+    <div class="layout">
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Universe</div>
+                <div class="sidebar-item active" onclick="switchView('dashboard')">📊 Dashboard</div>
+                <div class="sidebar-item" onclick="switchView('factions')">⚔️ Factions</div>
+                <div class="sidebar-item" onclick="switchView('units')">🛡️ Units</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Codex</div>
+                <div class="sidebar-item" onclick="switchView('rules')">📖 Rules</div>
+                <div class="sidebar-item" onclick="switchView('weapons')">🔫 Weapons</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Campaign</div>
+                <div class="sidebar-item" onclick="switchView('battles')">💀 Battles</div>
+            </div>
+        </div>
+
+        <div class="main-content" id="mainContent">
+            <div class="loading">In the grim darkness of the far future, there is only war...</div>
+        </div>
+    </div>
+
+    <script>
+        const API = '/api/v1/warhammer40k';
+        let currentView = 'dashboard';
+        let factions = [], units = [], rules = [], weapons = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFactions();
+            loadUnits();
+            loadRules();
+            loadWeapons();
+            switchView('dashboard');
+        });
+
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            event?.target?.classList.add('active');
+            const content = document.getElementById('mainContent');
+            switch(view) {
+                case 'dashboard': renderDashboard(content); break;
+                case 'factions': renderFactions(content); break;
+                case 'units': renderUnits(content); break;
+                case 'rules': renderRules(content); break;
+                case 'weapons': renderWeapons(content); break;
+                case 'battles': renderBattles(content); break;
+            }
+        }
+
+        async function renderDashboard(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">⚔️ Warhammer 40K Dashboard</h2>
+                <div class="grid grid-3">
+                    <div class="card">
+                        <h3>⚔️ Factions</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#d32f2f;">${factions.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Known factions</div>
+                    </div>
+                    <div class="card">
+                        <h3>🛡️ Units</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#d32f2f;">${units.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Unit entries</div>
+                    </div>
+                    <div class="card">
+                        <h3>📖 Rules</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#d32f2f;">${rules.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Codex rules</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>⚡ Quick Actions</h3>
+                    <button class="btn" onclick="switchView('factions')">Browse Factions</button>
+                    <button class="btn" onclick="switchView('units')">View Units</button>
+                    <button class="btn" onclick="switchView('rules')">Read Codex</button>
+                    <button class="btn" onclick="switchView('battles')">Battle Report</button>
+                </div>
+            `;
+        }
+
+        function renderFactions(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">⚔️ Factions</h2>
+                <div class="card">
+                    ${factions.map(f => `
+                        <div class="item-row">
+                            <div class="name">${f.name || 'Unknown'}</div>
+                            <div class="detail">${f.factionType || ''} ${f.description ? '• ' + f.description.substring(0, 80) : ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No factions loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderUnits(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🛡️ Units</h2>
+                <div class="card">
+                    ${units.map(u => `
+                        <div class="item-row">
+                            <div class="name">${u.name || 'Unknown'}</div>
+                            <div class="detail">${u.faction || ''} • ${u.type || 'Infantry'} • ${u.cost || '?'} MC</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No units loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderRules(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">📖 Codex Rules</h2>
+                <div class="card">
+                    ${rules.map(r => `
+                        <div class="item-row">
+                            <div class="name">${r.title || 'Unknown'}</div>
+                            <div class="detail">${r.content ? r.content.substring(0, 120) + '...' : ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No rules loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderWeapons(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🔫 Weapons</h2>
+                <div class="card">
+                    ${weapons.map(w => `
+                        <div class="item-row">
+                            <div class="name">${w.name || 'Unknown'}</div>
+                            <div class="detail">${w.type || ''} • Range: ${w.range || '?'} • Strength: ${w.strength || '?'}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No weapons loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderBattles(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">💀 Battle Reports</h2>
+                <div class="card">
+                    <h3>Recent Battles</h3>
+                    <p style="color:#a0a0a0;margin-bottom:12px;">The Emperor protects... sometimes.</p>
+                    <button class="btn" onclick="alert('Battle system coming soon!')">Start New Battle</button>
+                    <div id="battleLog" style="margin-top:12px;"></div>
+                </div>
+            `;
+        }
+
+        async function loadFactions() {
+            try { factions = await fetch(`${API}/factions`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load factions:', e); }
+        }
+
+        async function loadUnits() {
+            try { units = await fetch(`${API}/units`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load units:', e); }
+        }
+
+        async function loadRules() {
+            try { rules = await fetch(`${API}/rules`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load rules:', e); }
+        }
+
+        async function loadWeapons() {
+            try { weapons = await fetch(`${API}/weapons`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load weapons:', e); }
+        }
+    </script>
+</body>
+</html>

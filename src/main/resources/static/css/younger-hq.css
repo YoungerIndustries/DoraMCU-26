@@ -1,0 +1,1189 @@
+/**
+ * Younger Industries HQ Portal Hub Styles
+ * Corporate sci-fi theme with glowing portal effects
+ */
+
+/* ============================================================ */
+/* CSS Variables                                                */
+/* ============================================================ */
+:root {
+    --hq-bg-dark: #0a0e14;
+    --hq-bg-panel: rgba(15, 25, 35, 0.9);
+    --hq-bg-card: rgba(20, 35, 50, 0.85);
+    --hq-bg-card-hover: rgba(30, 50, 70, 0.95);
+
+    --hq-primary: #00d4ff;
+    --hq-primary-glow: rgba(0, 212, 255, 0.4);
+    --hq-secondary: #7b68ee;
+    --hq-secondary-glow: rgba(123, 104, 238, 0.4);
+    --hq-accent: #00ff88;
+    --hq-danger: #ff3333;
+    --hq-warning: #ffaa00;
+
+    --hq-text: #e0f0ff;
+    --hq-text-dim: #6688aa;
+    --hq-text-bright: #ffffff;
+
+    --hq-border: rgba(0, 212, 255, 0.2);
+    --hq-border-strong: rgba(0, 212, 255, 0.5);
+
+    --hq-font-heading: 'Orbitron', sans-serif;
+    --hq-font-body: 'Inter', sans-serif;
+    --hq-font-mono: 'Share Tech Mono', monospace;
+}
+
+/* ============================================================ */
+/* Reset & Base                                                 */
+/* ============================================================ */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--hq-font-body);
+    background: var(--hq-bg-dark);
+    color: var(--hq-text);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ============================================================ */
+/* Background Effects                                            */
+/* ============================================================ */
+.hq-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: linear-gradient(135deg, #0a0e14 0%, #0d1b2a 50%, #1b2838 100%);
+}
+
+.hq-grid-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridPulse 8s ease-in-out infinite;
+}
+
+@keyframes gridPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+}
+
+.hq-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--hq-primary);
+    border-radius: 50%;
+    animation: particleFloat linear infinite;
+    opacity: 0;
+}
+
+@keyframes particleFloat {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.8; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
+
+/* ============================================================ */
+/* Header                                                        */
+/* ============================================================ */
+.hq-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: var(--hq-bg-panel);
+    border-bottom: 1px solid var(--hq-border);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.hq-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.hq-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    font-size: 2rem;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-title {
+    font-family: var(--hq-font-heading);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--hq-primary);
+    text-shadow: 0 0 10px var(--hq-primary-glow);
+}
+
+.logo-subtitle {
+    font-size: 0.75rem;
+    color: var(--hq-text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.hq-nav {
+    display: flex;
+    gap: 8px;
+}
+
+.nav-btn {
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--hq-border);
+    border-radius: 6px;
+    color: var(--hq-text-dim);
+    font-family: var(--hq-font-mono);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    border-color: var(--hq-primary);
+    color: var(--hq-primary);
+    background: rgba(0, 212, 255, 0.1);
+}
+
+.nav-btn.active {
+    border-color: var(--hq-primary);
+    color: var(--hq-primary);
+    background: rgba(0, 212, 255, 0.15);
+    box-shadow: 0 0 10px var(--hq-primary-glow);
+}
+
+.hq-header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.character-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.character-name {
+    font-weight: 600;
+    color: var(--hq-text-bright);
+}
+
+.character-level {
+    font-size: 0.8rem;
+    color: var(--hq-text-dim);
+}
+
+.hq-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-secondary {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--hq-border);
+    border-radius: 6px;
+    color: var(--hq-text);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--hq-border-strong);
+}
+
+.btn-primary {
+    padding: 10px 24px;
+    background: linear-gradient(135deg, var(--hq-primary), var(--hq-secondary));
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px var(--hq-primary-glow);
+}
+
+/* ============================================================ */
+/* Main Content                                                  */
+/* ============================================================ */
+.hq-main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+/* ============================================================ */
+/* HQ Overview Panel                                             */
+/* ============================================================ */
+.hq-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.overview-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    background: var(--hq-bg-card);
+    border: 1px solid var(--hq-border);
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+.overview-card:hover {
+    border-color: var(--hq-border-strong);
+    transform: translateY(-2px);
+}
+
+.overview-icon {
+    font-size: 1.5rem;
+}
+
+.overview-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.overview-label {
+    font-size: 0.7rem;
+    color: var(--hq-text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.overview-value {
+    font-size: 0.9rem;
+    color: var(--hq-text-bright);
+    font-weight: 500;
+}
+
+/* ============================================================ */
+/* Section Headers                                               */
+/* ============================================================ */
+.section-header {
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-family: var(--hq-font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--hq-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.section-icon {
+    font-size: 1.3rem;
+}
+
+.section-description {
+    color: var(--hq-text-dim);
+    font-size: 0.9rem;
+}
+
+/* ============================================================ */
+/* Portal Grid                                                    */
+/* ============================================================ */
+.portal-section {
+    margin-bottom: 40px;
+}
+
+.portals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.portals-loading {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--hq-text-dim);
+}
+
+.portals-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--hq-text-dim);
+    font-size: 1.1rem;
+}
+
+/* ============================================================ */
+/* Portal Card                                                    */
+/* ============================================================ */
+.portal-card {
+    position: relative;
+    background: var(--hq-bg-card);
+    border: 1px solid var(--hq-border);
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    overflow: hidden;
+}
+
+.portal-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--hq-primary), var(--hq-secondary));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.portal-card:hover {
+    border-color: var(--hq-primary);
+    background: var(--hq-bg-card-hover);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 212, 255, 0.2);
+}
+
+.portal-card:hover::before {
+    opacity: 1;
+}
+
+.portal-card.inactive {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.portal-card.inactive:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.portal-card.locked {
+    border-color: var(--hq-warning);
+}
+
+.portal-card.locked::after {
+    content: '🔒';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2rem;
+}
+
+.portal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.portal-icon {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 212, 255, 0.1);
+    border-radius: 10px;
+    animation: portalGlow 3s ease-in-out infinite;
+}
+
+@keyframes portalGlow {
+    0%, 100% { box-shadow: 0 0 5px var(--hq-primary-glow); }
+    50% { box-shadow: 0 0 20px var(--hq-primary-glow), 0 0 40px var(--hq-secondary-glow); }
+}
+
+.portal-title {
+    flex: 1;
+}
+
+.portal-name {
+    font-family: var(--hq-font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--hq-text-bright);
+    margin-bottom: 4px;
+}
+
+.portal-game {
+    font-size: 0.8rem;
+    color: var(--hq-primary);
+    font-family: var(--hq-font-mono);
+}
+
+.portal-status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.portal-status.active {
+    background: rgba(0, 255, 136, 0.15);
+    color: var(--hq-accent);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+.portal-status.inactive {
+    background: rgba(255, 51, 51, 0.15);
+    color: var(--hq-danger);
+    border: 1px solid rgba(255, 51, 51, 0.3);
+}
+
+.portal-description {
+    font-size: 0.85rem;
+    color: var(--hq-text-dim);
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.portal-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--hq-border);
+}
+
+.portal-level {
+    font-size: 0.75rem;
+    color: var(--hq-text-dim);
+}
+
+.portal-level span {
+    color: var(--hq-primary);
+    font-weight: 600;
+}
+
+.portal-clearance {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    background: rgba(255, 170, 0, 0.15);
+    color: var(--hq-warning);
+    border-radius: 4px;
+    font-family: var(--hq-font-mono);
+}
+
+.portal-basement {
+    font-size: 0.75rem;
+    color: var(--hq-text-dim);
+    font-family: var(--hq-font-mono);
+}
+
+/* ============================================================ */
+/* Themed Portal Styles — Each game module gets unique visuals   */
+/* ============================================================ */
+
+/* --- Transport Tube (Star Trek) --- */
+.portal-card[data-style="transport-tube"] {
+    border-color: rgba(0, 180, 255, 0.4);
+    background: linear-gradient(135deg, rgba(0, 30, 60, 0.9), rgba(0, 60, 100, 0.85));
+}
+.portal-card[data-style="transport-tube"]::before {
+    background: linear-gradient(90deg, #00b4ff, #00ffcc, #00b4ff);
+    opacity: 0.6;
+    height: 4px;
+    animation: transportBeam 2s ease-in-out infinite;
+}
+.portal-card[data-style="transport-tube"] .portal-icon {
+    background: radial-gradient(circle, rgba(0, 180, 255, 0.3), rgba(0, 60, 100, 0.2));
+    border: 2px solid rgba(0, 180, 255, 0.5);
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(0, 180, 255, 0.4), inset 0 0 15px rgba(0, 180, 255, 0.2);
+}
+.portal-card[data-style="transport-tube"]:hover {
+    border-color: #00b4ff;
+    box-shadow: 0 0 30px rgba(0, 180, 255, 0.3), 0 8px 30px rgba(0, 180, 255, 0.2);
+}
+.portal-card[data-style="transport-tube"] .portal-game {
+    color: #00b4ff;
+}
+@keyframes transportBeam {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+}
+
+/* --- Dungeon Door (D&D 5E) --- */
+.portal-card[data-style="dungeon-door"] {
+    border-color: rgba(180, 80, 200, 0.4);
+    background: linear-gradient(135deg, rgba(30, 10, 40, 0.9), rgba(50, 20, 60, 0.85));
+}
+.portal-card[data-style="dungeon-door"]::before {
+    background: linear-gradient(90deg, #b450c8, #ff4466, #b450c8);
+    opacity: 0.6;
+    height: 4px;
+}
+.portal-card[data-style="dungeon-door"] .portal-icon {
+    background: linear-gradient(135deg, rgba(180, 80, 200, 0.3), rgba(100, 30, 140, 0.2));
+    border: 2px solid rgba(180, 80, 200, 0.5);
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(180, 80, 200, 0.4), inset 0 0 10px rgba(255, 68, 102, 0.2);
+}
+.portal-card[data-style="dungeon-door"]:hover {
+    border-color: #b450c8;
+    box-shadow: 0 0 30px rgba(180, 80, 200, 0.3), 0 8px 30px rgba(180, 80, 200, 0.2);
+}
+.portal-card[data-style="dungeon-door"] .portal-game {
+    color: #d080ff;
+}
+
+/* --- Station Airlock (Babylon 5) --- */
+.portal-card[data-style="station-airlock"] {
+    border-color: rgba(255, 165, 0, 0.4);
+    background: linear-gradient(135deg, rgba(40, 25, 10, 0.9), rgba(60, 40, 15, 0.85));
+}
+.portal-card[data-style="station-airlock"]::before {
+    background: linear-gradient(90deg, #ffa500, #ffcc00, #ffa500);
+    opacity: 0.6;
+    height: 4px;
+}
+.portal-card[data-style="station-airlock"] .portal-icon {
+    background: radial-gradient(circle, rgba(255, 165, 0, 0.3), rgba(100, 60, 0, 0.2));
+    border: 2px solid rgba(255, 165, 0, 0.5);
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(255, 165, 0, 0.4), inset 0 0 10px rgba(255, 204, 0, 0.2);
+}
+.portal-card[data-style="station-airlock"]:hover {
+    border-color: #ffa500;
+    box-shadow: 0 0 30px rgba(255, 165, 0, 0.3), 0 8px 30px rgba(255, 165, 0, 0.2);
+}
+.portal-card[data-style="station-airlock"] .portal-game {
+    color: #ffa500;
+}
+
+/* --- Warp Rift (Warhammer 40K) --- */
+.portal-card[data-style="warp-rift"] {
+    border-color: rgba(200, 50, 50, 0.5);
+    background: linear-gradient(135deg, rgba(40, 5, 5, 0.95), rgba(80, 10, 10, 0.9));
+}
+.portal-card[data-style="warp-rift"]::before {
+    background: linear-gradient(90deg, #c83232, #ff0044, #8b0000, #c83232);
+    opacity: 0.8;
+    height: 4px;
+    animation: warpRift 1.5s ease-in-out infinite;
+}
+.portal-card[data-style="warp-rift"] .portal-icon {
+    background: radial-gradient(circle, rgba(200, 50, 50, 0.4), rgba(80, 0, 0, 0.3));
+    border: 2px solid rgba(200, 50, 50, 0.6);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(200, 50, 50, 0.5), inset 0 0 15px rgba(255, 0, 68, 0.3);
+    animation: warpPulse 2s ease-in-out infinite;
+}
+.portal-card[data-style="warp-rift"]:hover {
+    border-color: #ff0044;
+    box-shadow: 0 0 40px rgba(200, 50, 50, 0.4), 0 8px 30px rgba(200, 50, 50, 0.3);
+}
+.portal-card[data-style="warp-rift"] .portal-game {
+    color: #ff4444;
+}
+@keyframes warpRift {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+@keyframes warpPulse {
+    0%, 100% { box-shadow: 0 0 15px rgba(200, 50, 50, 0.4); }
+    50% { box-shadow: 0 0 30px rgba(255, 0, 68, 0.6), inset 0 0 20px rgba(255, 0, 68, 0.4); }
+}
+
+/* --- Holo Display (Captain's Log) --- */
+.portal-card[data-style="holo-display"] {
+    border-color: rgba(0, 200, 150, 0.4);
+    background: linear-gradient(135deg, rgba(5, 30, 25, 0.9), rgba(10, 50, 40, 0.85));
+}
+.portal-card[data-style="holo-display"]::before {
+    background: linear-gradient(90deg, #00c896, #00ffcc, #00c896);
+    opacity: 0.5;
+    height: 3px;
+}
+.portal-card[data-style="holo-display"] .portal-icon {
+    background: linear-gradient(135deg, rgba(0, 200, 150, 0.2), rgba(0, 100, 80, 0.15));
+    border: 1px solid rgba(0, 200, 150, 0.4);
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0, 200, 150, 0.3);
+}
+.portal-card[data-style="holo-display"]:hover {
+    border-color: #00c896;
+    box-shadow: 0 0 25px rgba(0, 200, 150, 0.25), 0 8px 30px rgba(0, 200, 150, 0.15);
+}
+.portal-card[data-style="holo-display"] .portal-game {
+    color: #00c896;
+}
+
+/* --- Jump Gate (Traveller, Star Frontiers) --- */
+.portal-card[data-style="jump-gate"] {
+    border-color: rgba(100, 180, 255, 0.4);
+    background: linear-gradient(135deg, rgba(10, 20, 50, 0.9), rgba(20, 40, 80, 0.85));
+}
+.portal-card[data-style="jump-gate"]::before {
+    background: linear-gradient(90deg, #64b4ff, #a0d0ff, #64b4ff);
+    opacity: 0.6;
+    height: 4px;
+    animation: jumpGateSpin 3s linear infinite;
+}
+.portal-card[data-style="jump-gate"] .portal-icon {
+    background: radial-gradient(circle, rgba(100, 180, 255, 0.3), rgba(30, 60, 120, 0.2));
+    border: 2px solid rgba(100, 180, 255, 0.5);
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(100, 180, 255, 0.4), inset 0 0 10px rgba(160, 208, 255, 0.2);
+}
+.portal-card[data-style="jump-gate"]:hover {
+    border-color: #64b4ff;
+    box-shadow: 0 0 30px rgba(100, 180, 255, 0.3), 0 8px 30px rgba(100, 180, 255, 0.2);
+}
+.portal-card[data-style="jump-gate"] .portal-game {
+    color: #64b4ff;
+}
+@keyframes jumpGateSpin {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+/* --- Empire Gate (DoraMCU 4X) --- */
+.portal-card[data-style="empire-gate"] {
+    border-color: rgba(150, 100, 255, 0.4);
+    background: linear-gradient(135deg, rgba(20, 10, 50, 0.9), rgba(40, 20, 80, 0.85));
+}
+.portal-card[data-style="empire-gate"]::before {
+    background: linear-gradient(90deg, #9664ff, #c080ff, #9664ff);
+    opacity: 0.6;
+    height: 4px;
+}
+.portal-card[data-style="empire-gate"] .portal-icon {
+    background: radial-gradient(circle, rgba(150, 100, 255, 0.3), rgba(60, 30, 120, 0.2));
+    border: 2px solid rgba(150, 100, 255, 0.5);
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(150, 100, 255, 0.4), inset 0 0 10px rgba(192, 128, 255, 0.2);
+}
+.portal-card[data-style="empire-gate"]:hover {
+    border-color: #9664ff;
+    box-shadow: 0 0 30px rgba(150, 100, 255, 0.3), 0 8px 30px rgba(150, 100, 255, 0.2);
+}
+.portal-card[data-style="empire-gate"] .portal-game {
+    color: #b080ff;
+}
+
+/* --- Hyperdrive Ring (Star Wars) --- */
+.portal-card[data-style="hyperdrive-ring"] {
+    border-color: rgba(0, 150, 255, 0.4);
+    background: linear-gradient(135deg, rgba(5, 15, 40, 0.9), rgba(10, 30, 70, 0.85));
+}
+.portal-card[data-style="hyperdrive-ring"]::before {
+    background: linear-gradient(90deg, #0096ff, #00ccff, #0096ff);
+    opacity: 0.7;
+    height: 4px;
+    animation: hyperdriveSpin 2s linear infinite;
+}
+.portal-card[data-style="hyperdrive-ring"] .portal-icon {
+    background: radial-gradient(circle, rgba(0, 150, 255, 0.35), rgba(0, 50, 120, 0.2));
+    border: 2px solid rgba(0, 150, 255, 0.6);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(0, 150, 255, 0.5), inset 0 0 15px rgba(0, 204, 255, 0.3);
+    animation: hyperdrivePulse 2.5s ease-in-out infinite;
+}
+.portal-card[data-style="hyperdrive-ring"]:hover {
+    border-color: #0096ff;
+    box-shadow: 0 0 35px rgba(0, 150, 255, 0.35), 0 8px 30px rgba(0, 150, 255, 0.25);
+}
+.portal-card[data-style="hyperdrive-ring"] .portal-game {
+    color: #0096ff;
+}
+@keyframes hyperdriveSpin {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+@keyframes hyperdrivePulse {
+    0%, 100% { box-shadow: 0 0 15px rgba(0, 150, 255, 0.4); }
+    50% { box-shadow: 0 0 30px rgba(0, 204, 255, 0.6), inset 0 0 20px rgba(0, 204, 255, 0.4); }
+}
+
+/* --- Drop Pod (FPS, Starship Troopers) --- */
+.portal-card[data-style="drop-pod"] {
+    border-color: rgba(255, 100, 0, 0.4);
+    background: linear-gradient(135deg, rgba(40, 15, 5, 0.9), rgba(70, 25, 10, 0.85));
+}
+.portal-card[data-style="drop-pod"]::before {
+    background: linear-gradient(90deg, #ff6400, #ffaa00, #ff6400);
+    opacity: 0.6;
+    height: 4px;
+}
+.portal-card[data-style="drop-pod"] .portal-icon {
+    background: linear-gradient(135deg, rgba(255, 100, 0, 0.3), rgba(120, 40, 0, 0.2));
+    border: 2px solid rgba(255, 100, 0, 0.5);
+    border-radius: 6px;
+    box-shadow: 0 0 15px rgba(255, 100, 0, 0.4);
+}
+.portal-card[data-style="drop-pod"]:hover {
+    border-color: #ff6400;
+    box-shadow: 0 0 30px rgba(255, 100, 0, 0.3), 0 8px 30px rgba(255, 100, 0, 0.2);
+}
+.portal-card[data-style="drop-pod"] .portal-game {
+    color: #ff8800;
+}
+
+/* --- Mech Bay (MechWarrior) --- */
+.portal-card[data-style="mech-bay"] {
+    border-color: rgba(180, 180, 180, 0.4);
+    background: linear-gradient(135deg, rgba(25, 25, 25, 0.9), rgba(45, 45, 45, 0.85));
+}
+.portal-card[data-style="mech-bay"]::before {
+    background: linear-gradient(90deg, #b4b4b4, #e0e0e0, #b4b4b4);
+    opacity: 0.5;
+    height: 4px;
+}
+.portal-card[data-style="mech-bay"] .portal-icon {
+    background: linear-gradient(135deg, rgba(180, 180, 180, 0.25), rgba(80, 80, 80, 0.2));
+    border: 2px solid rgba(180, 180, 180, 0.5);
+    border-radius: 6px;
+    box-shadow: 0 0 12px rgba(180, 180, 180, 0.3);
+}
+.portal-card[data-style="mech-bay"]:hover {
+    border-color: #b4b4b4;
+    box-shadow: 0 0 25px rgba(180, 180, 180, 0.25), 0 8px 30px rgba(180, 180, 180, 0.15);
+}
+.portal-card[data-style="mech-bay"] .portal-game {
+    color: #c0c0c0;
+}
+
+/* --- Sim Bay (Third Reich) --- */
+.portal-card[data-style="sim-bay"] {
+    border-color: rgba(120, 160, 80, 0.4);
+    background: linear-gradient(135deg, rgba(15, 25, 10, 0.9), rgba(30, 45, 20, 0.85));
+}
+.portal-card[data-style="sim-bay"]::before {
+    background: linear-gradient(90deg, #78a050, #a0c870, #78a050);
+    opacity: 0.5;
+    height: 3px;
+}
+.portal-card[data-style="sim-bay"] .portal-icon {
+    background: linear-gradient(135deg, rgba(120, 160, 80, 0.25), rgba(50, 70, 30, 0.2));
+    border: 1px solid rgba(120, 160, 80, 0.4);
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(120, 160, 80, 0.3);
+}
+.portal-card[data-style="sim-bay"]:hover {
+    border-color: #78a050;
+    box-shadow: 0 0 25px rgba(120, 160, 80, 0.25), 0 8px 30px rgba(120, 160, 80, 0.15);
+}
+.portal-card[data-style="sim-bay"] .portal-game {
+    color: #78a050;
+}
+
+/* --- Secret Tunnel (007) --- */
+.portal-card[data-style="secret-tunnel"] {
+    border-color: rgba(200, 180, 100, 0.4);
+    background: linear-gradient(135deg, rgba(20, 18, 10, 0.9), rgba(40, 35, 20, 0.85));
+}
+.portal-card[data-style="secret-tunnel"]::before {
+    background: linear-gradient(90deg, #c8b464, #e8d890, #c8b464);
+    opacity: 0.5;
+    height: 3px;
+}
+.portal-card[data-style="secret-tunnel"] .portal-icon {
+    background: linear-gradient(135deg, rgba(200, 180, 100, 0.25), rgba(80, 70, 30, 0.2));
+    border: 1px solid rgba(200, 180, 100, 0.4);
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(200, 180, 100, 0.3);
+}
+.portal-card[data-style="secret-tunnel"]:hover {
+    border-color: #c8b464;
+    box-shadow: 0 0 25px rgba(200, 180, 100, 0.25), 0 8px 30px rgba(200, 180, 100, 0.15);
+}
+.portal-card[data-style="secret-tunnel"] .portal-game {
+    color: #c8b464;
+}
+
+/* --- Train Station (Transport Tycoon) --- */
+.portal-card[data-style="train-station"] {
+    border-color: rgba(80, 160, 80, 0.4);
+    background: linear-gradient(135deg, rgba(10, 30, 10, 0.9), rgba(20, 50, 20, 0.85));
+}
+.portal-card[data-style="train-station"]::before {
+    background: linear-gradient(90deg, #50a050, #80d080, #50a050);
+    opacity: 0.5;
+    height: 3px;
+}
+.portal-card[data-style="train-station"] .portal-icon {
+    background: linear-gradient(135deg, rgba(80, 160, 80, 0.25), rgba(30, 70, 30, 0.2));
+    border: 2px solid rgba(80, 160, 80, 0.4);
+    border-radius: 8px;
+    box-shadow: 0 0 12px rgba(80, 160, 80, 0.3);
+}
+.portal-card[data-style="train-station"]:hover {
+    border-color: #50a050;
+    box-shadow: 0 0 25px rgba(80, 160, 80, 0.25), 0 8px 30px rgba(80, 160, 80, 0.15);
+}
+.portal-card[data-style="train-station"] .portal-game {
+    color: #50a050;
+}
+
+/* --- Hologram (Earth 2026) --- */
+.portal-card[data-style="hologram"] {
+    border-color: rgba(0, 200, 200, 0.4);
+    background: linear-gradient(135deg, rgba(5, 25, 30, 0.9), rgba(10, 50, 60, 0.85));
+}
+.portal-card[data-style="hologram"]::before {
+    background: linear-gradient(90deg, #00c8c8, #00ffdd, #00c8c8);
+    opacity: 0.5;
+    height: 3px;
+    animation: hologramFlicker 3s ease-in-out infinite;
+}
+.portal-card[data-style="hologram"] .portal-icon {
+    background: radial-gradient(circle, rgba(0, 200, 200, 0.25), rgba(0, 80, 90, 0.15));
+    border: 1px solid rgba(0, 200, 200, 0.4);
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(0, 200, 200, 0.3);
+}
+.portal-card[data-style="hologram"]:hover {
+    border-color: #00c8c8;
+    box-shadow: 0 0 25px rgba(0, 200, 200, 0.25), 0 8px 30px rgba(0, 200, 200, 0.15);
+}
+.portal-card[data-style="hologram"] .portal-game {
+    color: #00c8c8;
+}
+@keyframes hologramFlicker {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+    75% { opacity: 0.4; }
+}
+
+/* ============================================================ */
+/* Floor Map                                                      */
+/* ============================================================ */
+.floor-map-section {
+    margin-bottom: 40px;
+}
+
+.floor-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.floor-panel {
+    background: var(--hq-bg-card);
+    border: 1px solid var(--hq-border);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.floor-title {
+    font-family: var(--hq-font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--hq-primary);
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--hq-border);
+}
+
+.floor-portals {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.floor-portal-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(0, 212, 255, 0.05);
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.floor-portal-item:hover {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: var(--hq-border);
+}
+
+.floor-portal-icon {
+    font-size: 1.2rem;
+}
+
+.floor-portal-name {
+    flex: 1;
+    font-size: 0.85rem;
+    color: var(--hq-text);
+}
+
+.floor-portal-game {
+    font-size: 0.75rem;
+    color: var(--hq-text-dim);
+    font-family: var(--hq-font-mono);
+}
+
+/* ============================================================ */
+/* Modal                                                           */
+/* ============================================================ */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: var(--hq-bg-panel);
+    border: 1px solid var(--hq-border-strong);
+    border-radius: 15px;
+    width: 90%;
+    max-width: 550px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid var(--hq-border);
+}
+
+.modal-title {
+    font-family: var(--hq-font-heading);
+    font-size: 1.2rem;
+    color: var(--hq-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-icon {
+    font-size: 1.5rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--hq-text-dim);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.modal-close:hover {
+    color: var(--hq-text-bright);
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.portal-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.detail-label {
+    color: var(--hq-text-dim);
+    font-size: 0.85rem;
+}
+
+.detail-value {
+    color: var(--hq-text-bright);
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+.portal-description {
+    margin-top: 10px;
+    padding: 15px;
+    background: rgba(0, 212, 255, 0.05);
+    border-radius: 8px;
+    color: var(--hq-text);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 20px 25px;
+    border-top: 1px solid var(--hq-border);
+}
+
+/* ============================================================ */
+/* Loading Overlay                                                */
+/* ============================================================ */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid var(--hq-border);
+    border-top-color: var(--hq-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    color: var(--hq-text-dim);
+    font-size: 0.9rem;
+}
+
+/* ============================================================ */
+/* Toast Notifications                                            */
+/* ============================================================ */
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    padding: 12px 20px;
+    background: var(--hq-bg-panel);
+    border: 1px solid var(--hq-border);
+    border-radius: 8px;
+    color: var(--hq-text);
+    font-size: 0.85rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    animation: toastSlideIn 0.3s ease;
+    max-width: 350px;
+}
+
+.toast.success {
+    border-color: var(--hq-accent);
+}
+
+.toast.error {
+    border-color: var(--hq-danger);
+}
+
+@keyframes toastSlideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* ============================================================ */
+/* Responsive                                                     */
+/* ============================================================ */
+@media (max-width: 768px) {
+    .hq-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .hq-header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .hq-overview {
+        grid-template-columns: 1fr;
+    }
+
+    .portals-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .floor-map {
+        grid-template-columns: 1fr;
+    }
+}

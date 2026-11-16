@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.ai;
 
+import com.yisy.modules.doramcu.ai.framework.PersonalityProfile;
+import com.yisy.modules.doramcu.ai.framework.PersonalityProfile.PersonalityType;
 import com.yisy.modules.doramcu.hex.Player;
 
 import java.util.HashMap;
@@ -13,7 +15,7 @@ import java.util.Map;
  * and selects actions during decision making.
  * </p>
  */
-public class AiPersonality {
+public class AiPersonality implements PersonalityProfile {
 
     private final Player.GovernmentType governmentType;
     private final Player.Ethos ethos;
@@ -218,5 +220,30 @@ public class AiPersonality {
                 ", diplomatic=" + String.format("%.2f", diplomaticStance) +
                 ", risk=" + String.format("%.2f", riskTolerance) +
                 '}';
+    }
+
+    // --- PersonalityProfile implementation ---
+
+    @Override
+    public double getTrait(String axis) {
+        return switch (axis) {
+            case "aggression" -> aggression;
+            case "expansionDrive" -> expansionDrive;
+            case "economicFocus" -> economicFocus;
+            case "scientificFocus" -> scientificFocus;
+            case "diplomaticStance" -> diplomaticStance;
+            case "riskTolerance" -> riskTolerance;
+            default -> 0.5;
+        };
+    }
+
+    @Override
+    public void setTrait(String axis, double value) {
+        // Static personalities are immutable
+    }
+
+    @Override
+    public PersonalityType getType() {
+        return PersonalityType.STATIC;
     }
 }

@@ -1,8 +1,21 @@
-FROM python:3.11-slim
+# NVIDIA CUDA base image with Python 3.11 and cuDNN for GPU-accelerated PyTorch
+FROM nvidia/cuda:12.6.3-runtime-ubuntu22.04
+
+# Install Python 3.11 and build essentials
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.11 python3.11-venv python3.11-dev python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create symlink for python command
+RUN ln -s /usr/bin/python3.11 /usr/bin/python
 
 WORKDIR /app
 
-# Install dependencies
+# Install CUDA-enabled PyTorch first, so the torch>=2.0.0 requirement in pyproject.toml
+# is satisfied without downloading a separate CPU version
+RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126
+
+# Install the rest of the project dependencies (torch is already satisfied by CUDA version above)
 COPY pyproject.toml ./
 RUN pip install --no-cache-dir -e .
 

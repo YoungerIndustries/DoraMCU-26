@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>007 - James Bond</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #1a0a0a; color: #e0e0e0; }
+
+        .header {
+            background: linear-gradient(135deg, #b71c1c 0%, #1a0a0a 100%);
+            padding: 16px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid #d32f2f;
+        }
+        .header h1 { font-size: 24px; color: #fff; }
+        .header .subtitle { font-size: 12px; color: #a0a0a0; margin-top: 2px; }
+        .btn-back {
+            background: #d32f2f; color: #fff; padding: 8px 16px;
+            border-radius: 6px; text-decoration: none; font-size: 14px;
+        }
+        .btn-back:hover { background: #b71c1c; }
+
+        .layout { display: flex; height: calc(100vh - 70px); }
+        .sidebar {
+            width: 220px; background: #200e0e; padding: 16px;
+            overflow-y: auto; border-right: 1px solid #b71c1c;
+        }
+        .sidebar-section { margin-bottom: 20px; }
+        .sidebar-title {
+            font-size: 11px; text-transform: uppercase; color: #d32f2f;
+            margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;
+        }
+        .sidebar-item {
+            padding: 8px 12px; margin: 2px 0; border-radius: 6px;
+            cursor: pointer; font-size: 14px; transition: all 0.2s;
+        }
+        .sidebar-item:hover { background: #b71c1c; }
+        .sidebar-item.active { background: #d32f2f; color: #fff; }
+
+        .main-content { flex: 1; padding: 24px; overflow-y: auto; }
+        .card {
+            background: #200e0e; border-radius: 8px; padding: 20px;
+            margin-bottom: 16px; border: 1px solid #b71c1c;
+        }
+        .card h3 { color: #d32f2f; margin-bottom: 12px; font-size: 16px; }
+        .grid { display: grid; gap: 16px; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+        .btn {
+            background: #d32f2f; color: #fff; border: none;
+            padding: 8px 16px; border-radius: 6px; cursor: pointer;
+            font-size: 14px; margin: 4px;
+        }
+        .btn:hover { background: #b71c1c; }
+
+        .item-row {
+            background: #1a0a0a; border: 1px solid #b71c1c;
+            border-radius: 6px; padding: 12px; margin: 6px 0;
+        }
+        .item-row .name { font-weight: 600; color: #fff; }
+        .item-row .detail { font-size: 12px; color: #a0a0a0; margin-top: 4px; }
+
+        .loading { text-align: center; padding: 40px; color: #a0a0a0; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🔫 007 - James Bond</h1>
+            <div class="subtitle">Missions, Gadgets & Espionage</div>
+        </div>
+        <a href="younger-hq.html" class="btn-back">← Back to HQ Portal</a>
+    </div>
+
+    <div class="layout">
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">MI6</div>
+                <div class="sidebar-item active" onclick="switchView('dashboard')">📊 Dashboard</div>
+                <div class="sidebar-item" onclick="switchView('missions')">📋 Missions</div>
+                <div class="sidebar-item" onclick="switchView('agents')">🕵️ Agents</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Q Branch</div>
+                <div class="sidebar-item" onclick="switchView('gadgets')">🔧 Gadgets</div>
+                <div class="sidebar-item" onclick="switchView('vehicles')">🚗 Vehicles</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Intelligence</div>
+                <div class="sidebar-item" onclick="switchView('villains')">🎭 Villains</div>
+                <div class="sidebar-item" onclick="switchView('locations')">📍 Locations</div>
+            </div>
+        </div>
+
+        <div class="main-content" id="mainContent">
+            <div class="loading">Shaking me up, M...</div>
+        </div>
+    </div>
+
+    <script>
+        const API = '/api/v1/zero07';
+        let currentView = 'dashboard';
+        let missions = [], agents = [], gadgets = [], vehicles = [], villains = [], locations = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMissions();
+            loadAgents();
+            loadGadgets();
+            loadVehicles();
+            loadVillains();
+            loadLocations();
+            switchView('dashboard');
+        });
+
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            event?.target?.classList.add('active');
+            const content = document.getElementById('mainContent');
+            switch(view) {
+                case 'dashboard': renderDashboard(content); break;
+                case 'missions': renderMissions(content); break;
+                case 'agents': renderAgents(content); break;
+                case 'gadgets': renderGadgets(content); break;
+                case 'vehicles': renderVehicles(content); break;
+                case 'villains': renderVillains(content); break;
+                case 'locations': renderLocations(content); break;
+            }
+        }
+
+        async function renderDashboard(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🔫 007 Dashboard</h2>
+                <div class="grid grid-3">
+                    <div class="card">
+                        <h3>📋 Missions</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#d32f2f;">${missions.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Active missions</div>
+                    </div>
+                    <div class="card">
+                        <h3>🕵️ Agents</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#d32f2f;">${agents.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Field agents</div>
+                    </div>
+                    <div class="card">
+                        <h3>🔧 Gadgets</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#d32f2f;">${gadgets.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Q Branch inventory</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>⚡ Quick Actions</h3>
+                    <button class="btn" onclick="switchView('missions')">View Missions</button>
+                    <button class="btn" onclick="switchView('gadgets')">Q Branch</button>
+                    <button class="btn" onclick="switchView('villains')">Villain Intel</button>
+                    <button class="btn" onclick="switchView('locations')">Mission Locations</button>
+                </div>
+            `;
+        }
+
+        function renderMissions(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">📋 Missions</h2>
+                <div class="card">
+                    ${missions.map(m => `
+                        <div class="item-row">
+                            <div class="name">${m.name || 'Classified'}</div>
+                            <div class="detail">${m.status || 'Active'} • ${m.location || 'Unknown'} • ${m.priority || 'Normal'}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No active missions. M will brief you soon.</div>'}
+                </div>
+            `;
+        }
+
+        function renderAgents(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🕵️ Agents</h2>
+                <div class="card">
+                    ${agents.map(a => `
+                        <div class="item-row">
+                            <div class="name">${a.name || 'Unknown'}</div>
+                            <div class="detail">${a.codeName || ''} • ${a.status || 'Active'} • ${a.specialty || 'General'}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No agents loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderGadgets(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🔧 Q Branch Gadgets</h2>
+                <div class="card">
+                    ${gadgets.map(g => `
+                        <div class="item-row">
+                            <div class="name">${g.name || 'Unknown'}</div>
+                            <div class="detail">${g.type || ''} • ${g.status || 'Available'} • ${g.description ? g.description.substring(0, 80) : ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No gadgets loaded. Visit Q for equipment.</div>'}
+                </div>
+            `;
+        }
+
+        function renderVehicles(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🚗 Vehicles</h2>
+                <div class="card">
+                    ${vehicles.map(v => `
+                        <div class="item-row">
+                            <div class="name">${v.name || 'Unknown'}</div>
+                            <div class="detail">${v.type || ''} • ${v.features || 'Standard'} • ${v.status || 'Available'}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No vehicles loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderVillains(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🎭 Villain Intel</h2>
+                <div class="card">
+                    ${villains.map(v => `
+                        <div class="item-row">
+                            <div class="name">${v.name || 'Unknown'}</div>
+                            <div class="detail">${v.organization || ''} • Threat: ${v.threat || 'Unknown'} • ${v.status || 'At Large'}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No villain intel loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderLocations(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">📍 Mission Locations</h2>
+                <div class="card">
+                    ${locations.map(l => `
+                        <div class="item-row">
+                            <div class="name">${l.name || 'Unknown'}</div>
+                            <div class="detail">${l.country || ''} • ${l.type || 'Unknown'} • ${l.status || 'Active'}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No locations loaded</div>'}
+                </div>
+            `;
+        }
+
+        async function loadMissions() {
+            try { missions = await fetch(`${API}/missions`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load missions:', e); }
+        }
+
+        async function loadAgents() {
+            try { agents = await fetch(`${API}/agents`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load agents:', e); }
+        }
+
+        async function loadGadgets() {
+            try { gadgets = await fetch(`${API}/gadgets`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load gadgets:', e); }
+        }
+
+        async function loadVehicles() {
+            try { vehicles = await fetch(`${API}/vehicles`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load vehicles:', e); }
+        }
+
+        async function loadVillains() {
+            try { villains = await fetch(`${API}/villains`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load villains:', e); }
+        }
+
+        async function loadLocations() {
+            try { locations = await fetch(`${API}/locations`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load locations:', e); }
+        }
+    </script>
+</body>
+</html>

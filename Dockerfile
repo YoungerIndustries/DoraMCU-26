@@ -1,41 +1,48 @@
-# Stage 1: Build Java application
+# Stage 0: Download dependencies (cached unless build.gradle changes)
+FROM eclipse-temurin:27-jdk AS deps
+WORKDIR /app
+COPY build.gradle settings.gradle gradlew gradle.properties ./
+COPY gradle/wrapper gradle/wrapper
+COPY dora-neuron/build.gradle dora-neuron/build.gradle
+RUN chmod +x gradlew && ./gradlew dependencies --no-daemon --no-configuration-cache
+
+# Stage 1: Build Java application (leverages dependency cache from Stage 0)
 FROM eclipse-temurin:27-jdk AS build
 WORKDIR /app
-COPY build.gradle settings.gradle gradlew ./
+COPY --from=deps /root/.gradle/caches /root/.gradle/caches
+COPY build.gradle settings.gradle gradlew gradle.properties ./
 COPY gradle/wrapper gradle/wrapper
 COPY src src
 COPY dora-neuron dora-neuron
+# Rule files are needed by processResources to include them in the JAR
+COPY starship-troopers-rules starship-troopers-rules
+COPY star-wars-rules star-wars-rules
+COPY openttd-rules openttd-rules
+COPY star-trek-rules star-trek-rules
 RUN chmod +x gradlew
-RUN ./gradlew bootJar --no-daemon
+RUN ./gradlew bootJar --no-daemon --no-configuration-cache
 
 # Stage 1b: Generate web client config (runs after Java build)
 FROM eclipse-temurin:27-jdk AS web-config
 WORKDIR /app
-COPY build.gradle settings.gradle gradlew ./
+COPY build.gradle settings.gradle gradlew gradle.properties ./
 COPY gradle/wrapper gradle/wrapper
 COPY dora-web dora-web
 ARG WEB_ENV=prod
 ARG WEB_API_URL=
 RUN chmod +x gradlew && \
     if [ -n "$WEB_API_URL" ]; then \
-        ./gradlew generateWebConfig --no-daemon -Dweb.env=$WEB_ENV -Dweb.api.url=$WEB_API_URL; \
+        ./gradlew generateWebConfig --no-daemon --no-configuration-cache -Dweb.env=$WEB_ENV -Dweb.api.url=$WEB_API_URL; \
     else \
-        ./gradlew generateWebConfig --no-daemon -Dweb.env=$WEB_ENV; \
+        ./gradlew generateWebConfig --no-daemon --no-configuration-cache -Dweb.env=$WEB_ENV; \
     fi
 
 # Stage 2: Run Java application
 FROM eclipse-temurin:27-jre
 WORKDIR /app
 
-# Create swap file on disk for local DL4J mode (must be done as root).
-# When DL_MODE=rest, swap is not needed (Python service handles ML separately).
-# Override at build time: docker build --build-arg SWAP_SIZE=8G ...
-ARG SWAP_SIZE=8G
-
-# Create the swap file at build time using the ARG value
-RUN dd if=/dev/zero of=/swapfile bs=1M count=$(( ${SWAP_SIZE%G} * 1024 )) \
-    && chmod 600 /swapfile \
-    && mkswap /swapfile
+# Swap is created at runtime only when DL_MODE!=rest to avoid baking an 8GB file into the image.
+# The ENTRYPOINT will create and activate swap on first start if needed.
 
 # Run as non-root user for security
 RUN groupadd -r doramcu && useradd -r -g doramcu -d /app -s /sbin/nologin doramcu
@@ -60,18 +67,24 @@ ENV DL_MODE=local
 # Default: "" (disabled)
 ENV DEBUG=
 
-# JVM memory standardized to match gradle.properties (app.jvm.args, app.javacpp.args).
+# JVM memory defaults match gradle.properties: app.jvm.args + app.javacpp.args.
 # Override at runtime: docker run -e JVM_XMX="-Xmx8G" ...
 # When DL_MODE=rest, DL4J is not loaded — lower memory is sufficient.
 # When DL_MODE=local, DL4J memory args are needed for neural network training.
-# JVM defaults match gradle.properties: app.jvm.args + app.javacpp.args
 ENV JVM_ARGS="-Xmx4G -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
 ENV JAVACPP_ARGS="-Dorg.bytedeco.javacpp.maxbytes=2G -Dorg.bytedeco.javacpp.maxphysicalbytes=2G -Dorg.bytedeco.javacpp.alloctype=direct"
+
 ENTRYPOINT ["sh", "-c", "\
-  # Activate swap file if not already active (only needed for local DL4J mode; \
-  # requires privileged container — silently skip if permission denied) \
-  if [ \"$DL_MODE\" != \"rest\" ] && ! swapon --show 2>/dev/null | grep -q /swapfile; then \
-    swapon /swapfile 2>/dev/null && echo 'Swap activated on disk' || echo 'Swap activation skipped (container not privileged)'; \
+  # Create and activate swap at runtime only when DL_MODE!=rest (avoids 8GB image bloat) \
+  if [ \"$DL_MODE\" != \"rest\" ] && [ ! -f /swapfile ]; then \
+    SWAP_SIZE=${SWAP_SIZE:-8G} && \
+    SWAP_MB=$(( ${SWAP_SIZE%G} * 1024 )) && \
+    dd if=/dev/zero of=/swapfile bs=1M count=$SWAP_MB 2>/dev/null && \
+    chmod 600 /swapfile && \
+    mkswap /swapfile && \
+    swapon /swapfile 2>/dev/null && echo \"Swap activated (${SWAP_SIZE})\" || echo \"Swap activation skipped (container not privileged)\"; \
+  elif [ \"$DL_MODE\" != \"rest\" ] && [ -f /swapfile ]; then \
+    swapon /swapfile 2>/dev/null && echo 'Swap activated from existing file' || echo 'Swap activation skipped'; \
   fi && \
   # Set DL REST client property based on DL_MODE \
   DL_ARGS=\"\" && \
@@ -84,10 +97,7 @@ ENTRYPOINT ["sh", "-c", "\
     DEBUG_ARGS=\"-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005\" && \
     echo 'Debug mode enabled on port 5005'; \
   fi && \
-  java ${JVM_XMX:--Xmx4G} -XX:+UseG1GC -XX:MaxGCPauseMillis=200 \
-    -Dorg.bytedeco.javacpp.maxbytes=2G \
-    -Dorg.bytedeco.javacpp.maxphysicalbytes=2G \
-    -Dorg.bytedeco.javacpp.alloctype=direct \
+  java ${JVM_XMX:-$JVM_ARGS} $JAVACPP_ARGS \
     $DL_ARGS \
     $DEBUG_ARGS \
     -jar app.jar"]

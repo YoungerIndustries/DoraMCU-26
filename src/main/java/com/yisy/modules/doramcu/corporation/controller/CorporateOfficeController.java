@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.corporation.controller;
 
 import com.yisy.modules.doramcu.corporation.model.AiAssistantAction;
+import com.yisy.modules.doramcu.corporation.model.CharacterTrainingTour;
 import com.yisy.modules.doramcu.corporation.model.CorporateContract;
 import com.yisy.modules.doramcu.corporation.model.CorporateFinanceTransaction;
 import com.yisy.modules.doramcu.corporation.model.CorporateHiring;
@@ -8,9 +9,12 @@ import com.yisy.modules.doramcu.corporation.model.CorporatePosition;
 import com.yisy.modules.doramcu.model.TravellerContractAssignment;
 import com.yisy.modules.doramcu.corporation.service.AiAssistantService;
 import com.yisy.modules.doramcu.corporation.service.CareerProgressionService;
+import com.yisy.modules.doramcu.corporation.service.CharacterTrainingService;
 import com.yisy.modules.doramcu.corporation.service.ContractExecutionService;
 import com.yisy.modules.doramcu.corporation.service.CorporationEconomyService;
 import com.yisy.modules.doramcu.corporation.service.CorporateOfficeService;
+import com.yisy.modules.doramcu.corporation.service.CrewService;
+import com.yisy.modules.doramcu.corporation.service.TreasuryLoanService;
 import com.yisy.modules.doramcu.corporation.service.TravellerCorporationService;
 import com.yisy.modules.doramcu.traveller.TravellerCharacter;
 import org.slf4j.Logger;
@@ -19,6 +23,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -46,6 +52,9 @@ public class CorporateOfficeController {
     private final AiAssistantService aiAssistantService;
     private final CareerProgressionService careerProgressionService;
     private final TravellerCorporationService travellerCorporationService;
+    private final TreasuryLoanService treasuryLoanService;
+    private final CharacterTrainingService characterTrainingService;
+    private final CrewService crewService;
 
     public CorporateOfficeController(
             CorporateOfficeService officeService,
@@ -53,13 +62,19 @@ public class CorporateOfficeController {
             CorporationEconomyService economyService,
             AiAssistantService aiAssistantService,
             CareerProgressionService careerProgressionService,
-            TravellerCorporationService travellerCorporationService) {
+            TravellerCorporationService travellerCorporationService,
+            TreasuryLoanService treasuryLoanService,
+            CharacterTrainingService characterTrainingService,
+            CrewService crewService) {
         this.officeService = officeService;
         this.executionService = executionService;
         this.economyService = economyService;
         this.aiAssistantService = aiAssistantService;
         this.careerProgressionService = careerProgressionService;
         this.travellerCorporationService = travellerCorporationService;
+        this.treasuryLoanService = treasuryLoanService;
+        this.characterTrainingService = characterTrainingService;
+        this.crewService = crewService;
     }
 
     // ---- Office State ----
@@ -390,6 +405,44 @@ public class CorporateOfficeController {
         }
     }
 
+    /**
+     * Get detailed financial breakdown by category.
+     *
+     * @param corporationId the corporation ID
+     * @return breakdown with revenue categories, expense categories, and payroll details
+     */
+    @GetMapping("/office/{corporationId}/finance/breakdown")
+    public ResponseEntity<Map<String, Object>> getFinancialBreakdown(@PathVariable Long corporationId) {
+        log.debug("GET /api/v1/corporate/office/{}/finance/breakdown - getting financial breakdown", corporationId);
+
+        try {
+            Map<String, Object> breakdown = economyService.getFinancialBreakdown(corporationId);
+            return ResponseEntity.ok(breakdown);
+        } catch (IllegalArgumentException e) {
+            log.warn("Financial breakdown failed: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Get payroll summary for a corporation.
+     *
+     * @param corporationId the corporation ID
+     * @return payroll summary with daily/period totals and hire details
+     */
+    @GetMapping("/office/{corporationId}/finance/payroll")
+    public ResponseEntity<Map<String, Object>> getPayrollSummary(@PathVariable Long corporationId) {
+        log.debug("GET /api/v1/corporate/office/{}/finance/payroll - getting payroll summary", corporationId);
+
+        try {
+            Map<String, Object> payroll = economyService.getPayrollSummary(corporationId);
+            return ResponseEntity.ok(payroll);
+        } catch (IllegalArgumentException e) {
+            log.warn("Payroll summary failed: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
     // ---- Contract Execution Endpoints ----
 
     /**
@@ -446,6 +499,106 @@ public class CorporateOfficeController {
         } catch (IllegalArgumentException e) {
             log.warn("Contract crew query failed: {}", e.getMessage());
             return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    /**
+     * Assign a crew member to a contract.
+     *
+     * @param contractId the contract ID
+     * @param body request body containing hiringId of the crew member to assign
+     * @return updated contract with crew assignment
+     */
+    @PostMapping("/office/contracts/{contractId}/assign-crew")
+    public ResponseEntity<Map<String, Object>> assignCrewToContract(
+            @PathVariable Long contractId,
+            @RequestBody Map<String, Object> body) {
+        log.debug("POST /api/v1/corporate/office/contracts/{}/assign-crew - assigning crew", contractId);
+
+        try {
+            Long hiringId = Long.valueOf(body.get("hiringId").toString());
+
+            // Validate contract exists and is active
+            CorporateContract contract = officeService.getContractRepository().findById(contractId)
+                    .orElseThrow(() -> new IllegalArgumentException("Contract not found: " + contractId));
+            if (contract.getStatus() != CorporateContract.Status.ACTIVE) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Contract is not active"));
+            }
+
+            // Validate hiring exists and is active
+            CorporateHiring hiring = officeService.getHiringRepository().findById(hiringId)
+                    .orElseThrow(() -> new IllegalArgumentException("Hiring not found: " + hiringId));
+            if (hiring.getStatus() != CorporateHiring.Status.ACTIVE) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Hire is not active"));
+            }
+
+            // Add crew member to contract's assigned crew list
+            List<Long> assignedCrewIds = contract.getAssignedCrewIds();
+            if (assignedCrewIds == null) {
+                assignedCrewIds = new java.util.ArrayList<>();
+                contract.setAssignedCrewIds(assignedCrewIds);
+            }
+            if (!assignedCrewIds.contains(hiring.getAiCharacterId())) {
+                assignedCrewIds.add(hiring.getAiCharacterId());
+            }
+
+            // Save the contract
+            officeService.getContractRepository().save(contract);
+
+            log.info("Assigned crew member {} (hiring {}) to contract {}",
+                    hiring.getAiCharacterId(), hiringId, contractId);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("contractId", contractId);
+            result.put("assignedCrewIds", contract.getAssignedCrewIds());
+            result.put("assignedCrewCount", contract.getAssignedCrewIds().size());
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            log.warn("Crew assignment failed: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Remove a crew member from a contract.
+     *
+     * @param contractId the contract ID
+     * @param body request body containing hiringId of the crew member to remove
+     * @return updated contract with crew removed
+     */
+    @PostMapping("/office/contracts/{contractId}/remove-crew")
+    public ResponseEntity<Map<String, Object>> removeCrewFromContract(
+            @PathVariable Long contractId,
+            @RequestBody Map<String, Object> body) {
+        log.debug("POST /api/v1/corporate/office/contracts/{}/remove-crew - removing crew", contractId);
+
+        try {
+            Long hiringId = Long.valueOf(body.get("hiringId").toString());
+
+            CorporateContract contract = officeService.getContractRepository().findById(contractId)
+                    .orElseThrow(() -> new IllegalArgumentException("Contract not found: " + contractId));
+
+            CorporateHiring hiring = officeService.getHiringRepository().findById(hiringId)
+                    .orElseThrow(() -> new IllegalArgumentException("Hiring not found: " + hiringId));
+
+            List<Long> assignedCrewIds = contract.getAssignedCrewIds();
+            if (assignedCrewIds != null) {
+                assignedCrewIds.remove(hiring.getAiCharacterId());
+            }
+
+            officeService.getContractRepository().save(contract);
+
+            log.info("Removed crew member {} (hiring {}) from contract {}",
+                    hiring.getAiCharacterId(), hiringId, contractId);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("contractId", contractId);
+            result.put("assignedCrewIds", contract.getAssignedCrewIds());
+            result.put("assignedCrewCount", contract.getAssignedCrewIds() != null ? contract.getAssignedCrewIds().size() : 0);
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            log.warn("Crew removal failed: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 
@@ -822,5 +975,376 @@ public class CorporateOfficeController {
             }
         }
         return ResponseEntity.ok(assignments);
+    }
+
+    // ---- Treasury Loan Endpoints ----
+
+    /**
+     * Get the treasury loan details for a corporation.
+     *
+     * @param corporationId the corporation ID
+     * @return loan details including outstanding balance, payment history, and interest
+     */
+    @GetMapping("/office/{corporationId}/loan")
+    public ResponseEntity<Map<String, Object>> getLoanDetails(@PathVariable Long corporationId) {
+        log.debug("GET /api/v1/corporate/office/{}/loan - getting loan details", corporationId);
+
+        try {
+            Map<String, Object> loanDetails = treasuryLoanService.getLoanDetails(corporationId);
+            return ResponseEntity.ok(loanDetails);
+        } catch (Exception e) {
+            log.warn("Loan details failed: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Process a monthly loan payment for a corporation.
+     * This can be called manually or triggered by the turn scheduler.
+     *
+     * @param corporationId the corporation ID
+     * @return updated loan details
+     */
+    @PostMapping("/office/{corporationId}/loan/payment")
+    public ResponseEntity<Map<String, Object>> processLoanPayment(@PathVariable Long corporationId) {
+        log.debug("POST /api/v1/corporate/office/{}/loan/payment - processing loan payment", corporationId);
+
+        try {
+            var loanOpt = treasuryLoanService.processMonthlyPayment(corporationId);
+            if (loanOpt.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "No active loan found for this corporation"));
+            }
+            Map<String, Object> loanDetails = treasuryLoanService.getLoanDetails(corporationId);
+            loanDetails.put("paymentProcessed", true);
+            return ResponseEntity.ok(loanDetails);
+        } catch (Exception e) {
+            log.warn("Loan payment failed: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // ---- Training Panel Endpoints ----
+
+    /**
+     * Get training panel data for the corporation HUD.
+     *
+     * @param corporationId the corporation ID
+     * @return active tours, available skills, and training costs
+     */
+    @GetMapping("/office/{corporationId}/training")
+    public ResponseEntity<Map<String, Object>> getTrainingPanel(@PathVariable Long corporationId) {
+        log.debug("GET /api/v1/corporate/office/{}/training", corporationId);
+        try {
+            Map<String, Object> panel = new HashMap<>();
+            panel.put("activeTours", characterTrainingService.getActiveTrainingTours(corporationId));
+            panel.put("allTours", characterTrainingService.getAllTours(corporationId));
+            panel.put("availableSkills", characterTrainingService.getAvailableTrainingSkills());
+            return ResponseEntity.ok(panel);
+        } catch (Exception e) {
+            log.warn("Training panel error: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Enroll a character in training.
+     *
+     * @param corporationId the corporation ID
+     * @param request enrollment request body
+     * @return the created training tour
+     */
+    @PostMapping("/office/{corporationId}/training/enroll")
+    public ResponseEntity<Map<String, Object>> enrollInTraining(
+            @PathVariable Long corporationId,
+            @RequestBody Map<String, Object> request) {
+        log.debug("POST /api/v1/corporate/office/{}/training/enroll", corporationId);
+        try {
+            String characterTypeStr = (String) request.get("characterType");
+            CharacterTrainingTour.CharacterType characterType =
+                    CharacterTrainingTour.CharacterType.valueOf(characterTypeStr);
+            Integer characterId = ((Number) request.get("characterId")).intValue();
+            Long hiringId = request.get("hiringId") != null
+                    ? ((Number) request.get("hiringId")).longValue() : null;
+            String skill = (String) request.get("skill");
+            String profession = (String) request.get("profession");
+            int durationYears = ((Number) request.get("durationYears")).intValue();
+
+            CharacterTrainingTour tour = characterTrainingService.enrollInTraining(
+                    corporationId, characterType, characterId, hiringId, skill, profession, durationYears);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("tour", tour);
+            result.put("cost", characterTrainingService.calculateTrainingCost(skill, durationYears));
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            log.warn("Training enrollment error: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Instant train button: simulate the entire training tour immediately.
+     *
+     * @param corporationId the corporation ID
+     * @param tourId the training tour ID
+     * @return the completed training tour with narrative
+     */
+    @PostMapping("/office/{corporationId}/training/{tourId}/simulate")
+    public ResponseEntity<Map<String, Object>> simulateInstantTraining(
+            @PathVariable Long corporationId,
+            @PathVariable Long tourId) {
+        log.debug("POST /api/v1/corporate/office/{}/training/{}/simulate", corporationId, tourId);
+        try {
+            CharacterTrainingTour tour = characterTrainingService.simulateInstantTraining(tourId);
+            Map<String, Object> result = new HashMap<>();
+            result.put("tour", tour);
+            result.put("narrative", tour.getNarrative());
+            result.put("events", tour.getEventsSummary());
+            result.put("xpAwarded", tour.getXpAwarded());
+            result.put("skillLevelAfter", tour.getSkillLevelAfter());
+            result.put("ageAtEnd", tour.getAgeAtEnd());
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            log.warn("Instant training error: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Dismiss a character from training.
+     *
+     * @param corporationId the corporation ID
+     * @param tourId the training tour ID
+     * @return the dismissed tour
+     */
+    @PostMapping("/office/{corporationId}/training/{tourId}/dismiss")
+    public ResponseEntity<Map<String, Object>> dismissFromTraining(
+            @PathVariable Long corporationId,
+            @PathVariable Long tourId) {
+        log.debug("POST /api/v1/corporate/office/{}/training/{}/dismiss", corporationId, tourId);
+        try {
+            CharacterTrainingTour tour = characterTrainingService.dismissFromTraining(tourId);
+            return ResponseEntity.ok(Map.of("tour", tour));
+        } catch (Exception e) {
+            log.warn("Training dismissal error: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Get training history for a character (character book).
+     *
+     * @param characterId the character ID
+     * @param characterType the character type (PLAYER_CHARACTER or AI_CHARACTER)
+     * @return completed training tours
+     */
+    @GetMapping("/office/character/{characterId}/training-history")
+    public ResponseEntity<Map<String, Object>> getTrainingHistory(
+            @PathVariable Integer characterId,
+            @RequestParam(defaultValue = "PLAYER_CHARACTER") String characterType) {
+        log.debug("GET /api/v1/corporate/office/character/{}/training-history", characterId);
+        try {
+            CharacterTrainingTour.CharacterType type =
+                    CharacterTrainingTour.CharacterType.valueOf(characterType);
+            List<CharacterTrainingTour> history = characterTrainingService.getTrainingHistory(
+                    null, type, characterId);
+            return ResponseEntity.ok(Map.of("history", history));
+        } catch (Exception e) {
+            log.warn("Training history error: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // ---- Crew Management Endpoints ----
+
+    /**
+     * List active crews for a corporation.
+     *
+     * @param corporationId the corporation ID
+     * @return list of active crews
+     */
+    @GetMapping("/office/{corporationId}/crews")
+    public ResponseEntity<Map<String, Object>> getCrews(@PathVariable Long corporationId) {
+        log.debug("GET /api/v1/corporate/office/{}/crews", corporationId);
+        try {
+            var crews = crewService.getActiveCrews(corporationId);
+            return ResponseEntity.ok(Map.of("crews", crews));
+        } catch (Exception e) {
+            log.warn("Crews list error: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Get crew details with members.
+     *
+     * @param corporationId the corporation ID
+     * @param crewId the crew ID
+     * @return crew details
+     */
+    @GetMapping("/office/{corporationId}/crews/{crewId}")
+    public ResponseEntity<Map<String, Object>> getCrewDetails(
+            @PathVariable Long corporationId,
+            @PathVariable Long crewId) {
+        log.debug("GET /api/v1/corporate/office/{}/crews/{}", corporationId, crewId);
+        try {
+            var crew = crewService.getCrewById(crewId);
+            return ResponseEntity.ok(Map.of("crew", crew));
+        } catch (Exception e) {
+            log.warn("Crew details error: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Create a crew manually.
+     *
+     * @param corporationId the corporation ID
+     * @param request creation request body
+     * @return the created crew
+     */
+    @PostMapping("/office/{corporationId}/crews")
+    public ResponseEntity<Map<String, Object>> createCrew(
+            @PathVariable Long corporationId,
+            @RequestBody Map<String, Object> request) {
+        log.debug("POST /api/v1/corporate/office/{}/crews", corporationId);
+        try {
+            String name = (String) request.get("name");
+            Long leaderHiringId = ((Number) request.get("leaderHiringId")).longValue();
+            String description = (String) request.getOrDefault("description", "");
+
+            var crew = crewService.createCrew(corporationId, name, leaderHiringId, description);
+            return ResponseEntity.ok(Map.of("crew", crew));
+        } catch (Exception e) {
+            log.warn("Crew creation error: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Add a member to a crew.
+     *
+     * @param corporationId the corporation ID
+     * @param crewId the crew ID
+     * @param request member request body
+     * @return the created crew member
+     */
+    @PostMapping("/office/{corporationId}/crews/{crewId}/members")
+    public ResponseEntity<Map<String, Object>> addCrewMember(
+            @PathVariable Long corporationId,
+            @PathVariable Long crewId,
+            @RequestBody Map<String, Object> request) {
+        log.debug("POST /api/v1/corporate/office/{}/crews/{}/members", corporationId, crewId);
+        try {
+            Long hiringId = ((Number) request.get("hiringId")).longValue();
+            var member = crewService.addMemberToCrew(crewId, hiringId);
+            return ResponseEntity.ok(Map.of("member", member));
+        } catch (Exception e) {
+            log.warn("Add crew member error: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Remove a member from a crew.
+     *
+     * @param corporationId the corporation ID
+     * @param crewId the crew ID
+     * @param hiringId the hiring ID to remove
+     * @return success status
+     */
+    @DeleteMapping("/office/{corporationId}/crews/{crewId}/members/{hiringId}")
+    public ResponseEntity<Map<String, Object>> removeCrewMember(
+            @PathVariable Long corporationId,
+            @PathVariable Long crewId,
+            @PathVariable Long hiringId) {
+        log.debug("DELETE /api/v1/corporate/office/{}/crews/{}/members/{}", corporationId, crewId, hiringId);
+        try {
+            crewService.removeMemberFromCrew(crewId, hiringId);
+            return ResponseEntity.ok(Map.of("success", true));
+        } catch (Exception e) {
+            log.warn("Remove crew member error: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Disband a crew.
+     *
+     * @param corporationId the corporation ID
+     * @param crewId the crew ID
+     * @return success status
+     */
+    @DeleteMapping("/office/{corporationId}/crews/{crewId}")
+    public ResponseEntity<Map<String, Object>> disbandCrew(
+            @PathVariable Long corporationId,
+            @PathVariable Long crewId) {
+        log.debug("DELETE /api/v1/corporate/office/{}/crews/{}", corporationId, crewId);
+        try {
+            crewService.disbandCrew(crewId);
+            return ResponseEntity.ok(Map.of("success", true));
+        } catch (Exception e) {
+            log.warn("Disband crew error: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * One-button crew assembly: auto-assemble a crew from employees and assign to a contract.
+     *
+     * @param corporationId the corporation ID
+     * @param contractId the contract ID
+     * @return the assembled crew
+     */
+    @PostMapping("/office/{corporationId}/contracts/{contractId}/assemble-crew")
+    public ResponseEntity<Map<String, Object>> assembleCrew(
+            @PathVariable Long corporationId,
+            @PathVariable Long contractId) {
+        log.debug("POST /api/v1/corporate/office/{}/contracts/{}/assemble-crew", corporationId, contractId);
+        try {
+            var crew = crewService.autoAssembleCrew(corporationId, contractId);
+            return ResponseEntity.ok(Map.of("crew", crew));
+        } catch (Exception e) {
+            log.warn("Crew assembly error: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * List employee pool (hires not in a crew).
+     *
+     * @param corporationId the corporation ID
+     * @return list of available employees
+     */
+    @GetMapping("/office/{corporationId}/employees")
+    public ResponseEntity<Map<String, Object>> getEmployeePool(@PathVariable Long corporationId) {
+        log.debug("GET /api/v1/corporate/office/{}/employees", corporationId);
+        try {
+            var employees = crewService.getEmployeePool(corporationId);
+            return ResponseEntity.ok(Map.of("employees", employees));
+        } catch (Exception e) {
+            log.warn("Employee pool error: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Migrate all existing corporations to the silver-backed credit system.
+     * This is a one-time admin endpoint that updates all corporation credit balances
+     * to 100,000 credits ($500 USD) and creates treasury loans where needed.
+     *
+     * @return migration statistics
+     */
+    @PostMapping("/migrate-credits")
+    public ResponseEntity<Map<String, Object>> migrateCorporationCredits() {
+        log.info("POST /api/v1/corporate/migrate-credits - migrating all corporations to silver-backed credits");
+
+        try {
+            Map<String, Object> result = treasuryLoanService.migrateExistingCorporations();
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            log.error("Migration failed: {}", e.getMessage(), e);
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 }

@@ -1,0 +1,400 @@
+{
+  "scenarios": [
+    {
+      "id": "battle_of_wolf_359",
+      "name": "Battle of Wolf 359 — The Fall of the Fleet",
+      "source_game": "Star Fleet Battles",
+      "era": "TNG (2367)",
+      "description": "The Borg Cube emerges at Wolf 359 and encounters a Starfleet task force of 40 ships. Despite a valiant defense, the fleet is overwhelmed and assimilated. Only the USS Enterprise-D arrives in time to witness the aftermath and rescue survivors.",
+      "map": "Space combat at the Wolf 359 star system",
+      "players": 2,
+      "factions": {
+        "player_1": "Starfleet",
+        "player_2": "Borg"
+      },
+      "objective": {
+        "starfleet": "Delay the Borg Cube long enough for reinforcements to arrive. Protect the civilian transports.",
+        "borg": "Assimilate the Starfleet fleet and continue toward the Alpha Quadrant core worlds."
+      },
+      "setup": {
+        "starfleet_forces": [
+          "USS Voyager (NCC-74656) — flagship, Captain Hanson",
+          "39 additional Starfleet ships (various classes)",
+          "Civilian transports (non-combatant)"
+        ],
+        "borg_forces": [
+          "Single Borg Cube",
+          "Adaptive shielding",
+          "Nanoprobe assimilation technology"
+        ]
+      },
+      "special_rules": [
+        "Borg shields adapt to each weapon type after the first volley — subsequent volleys of the same type deal reduced damage",
+        "Starfleet ships can be assimilated when destroyed, joining the Borg fleet",
+        "Enterprise-D arrives after Round 4 if the scenario allows",
+        "Civilian transports must be protected; their loss is an automatic Starfleet failure"
+      ],
+      "victory_conditions": {
+        "starfleet_victory": "Survive until reinforcements arrive (Round 8) OR force the Borg Cube to retreat",
+        "borg_victory": "Assimilate 30+ Starfleet ships OR destroy all Starfleet combatants"
+      },
+      "difficulty": "Very Hard",
+      "playtime": "90-120 minutes"
+    },
+    {
+      "id": "enterprise_vs_hunter",
+      "name": "Enterprise vs. Klingon Hunter — The Omega Directive",
+      "source_game": "Star Trek Adventures (2d20)",
+      "era": "TNG",
+      "description": "The USS Enterprise-E discovers a Klingon battle cruiser, the IKS Hunter, secretly searching for Omega molecules — a substance so dangerous that its existence is classified. Picard must decide whether to follow the Omega Directive or intervene.",
+      "map": "Space combat near a remote star system",
+      "players": 2,
+      "factions": {
+        "player_1": "Starfleet (Enterprise-E)",
+        "player_2": "Klingon Empire (IKS Hunter)"
+      },
+      "objective": {
+        "starfleet": "Prevent the Klingons from weaponizing Omega molecules without violating the Omega Directive's secrecy requirements.",
+        "klingon": "Secure the Omega molecules and eliminate the Enterprise before it reports back to Starfleet."
+      },
+      "setup": {
+        "starfleet_forces": [
+          "USS Enterprise-E (Sovereign-class)",
+          "Full bridge crew: Picard, Riker, Data, Worf, Troi, La Forge, Crusher"
+        ],
+        "klingon_forces": [
+          "IKS Hunter (Klingon battle cruiser)",
+          "Klingon crew with superior numbers",
+          "Omega molecule weapons (experimental)"
+        ]
+      },
+      "special_rules": [
+        "Omega molecules can destroy entire star systems if weaponized",
+        "Picard knows the Omega Directive; the Klingons do not know Picard knows",
+        "Diplomatic resolution is possible if both captains can be reasoned with",
+        "Worf has divided loyalties between Starfleet and the Klingons"
+      ],
+      "victory_conditions": {
+        "starfleet_victory": "Neutralize the Omega threat without revealing the Omega Directive",
+        "klingon_victory": "Secure Omega molecules and destroy or disable the Enterprise"
+      },
+      "difficulty": "Medium",
+      "playtime": "60-90 minutes"
+    },
+    {
+      "id": "dominion_war_battle_of_cardassia",
+      "name": "Battle of Cardassia — The End of the Dominion War",
+      "source_game": "Star Fleet Battles",
+      "era": "DS9 (2375)",
+      "description": "The final battle of the Dominion War. A combined Federation-Klingon-Romulan fleet assaults Cardassia Prime to end the Dominion's grip on the Alpha Quadrant. Gul Dukat, empowered by the Pah-wraiths, commands the defense from the Negh'Var.",
+      "map": "Space combat above Cardassia Prime",
+      "players": 2,
+      "factions": {
+        "player_1": "Federation-Klingon-Romulan Alliance",
+        "player_2": "Dominion (Cardassian forces under Dukat)"
+      },
+      "objective": {
+        "alliance": "Destroy the Dominion forces and liberate Cardassia Prime.",
+        "dominion": "Defend Cardassia Prime and destroy the allied fleet."
+      },
+      "setup": {
+        "alliance_forces": [
+          "USS Enterprise-E (Picard)",
+          "USS Voyager (Sisko)",
+          "IKS Domination (Martok)",
+          "Romulan Warbird squadron",
+          "Supporting fleet: 20+ ships"
+        ],
+        "dominion_forces": [
+          "IKS Negh'Var (Dukat — empowered by Pah-wraiths)",
+          "Jem'Hadar warship squadron",
+          "Cardassian fleet (Damar's forces — may defect)",
+          "Dominion reinforcements through the wormhole"
+        ]
+      },
+      "special_rules": [
+        "Dukat's Pah-wraith empowerment gives the Negh'Var enhanced weapons and shields",
+        "Damar's Cardassian forces may defect to the alliance if morale breaks",
+        "Dominion reinforcements can arrive through the Bajoran wormhole",
+        "The Founders may call for a ceasefire at any time, ending the battle"
+      ],
+      "victory_conditions": {
+        "alliance_victory": "Destroy the Negh'Var AND eliminate Dominion forces in system",
+        "dominion_victory": "Destroy the allied fleet OR hold Cardassia Prime for 8 rounds"
+      },
+      "difficulty": "Hard",
+      "playtime": "90-120 minutes"
+    },
+    {
+      "id": "voyager_home",
+      "name": "Voyager's Journey Home — The Delta Quadrant",
+      "source_game": "Star Trek Adventures (2d20)",
+      "era": "VOY",
+      "description": "The USS Voyager is stranded 70,000 light-years from home in the Delta Quadrant. Captain Janeway and her crew must navigate hostile territory, encounter new species, and find a way home against impossible odds.",
+      "map": "Delta Quadrant star systems (campaign scenario)",
+      "players": 1-6 (cooperative),
+      "factions": {
+        "player_1": "Starfleet (USS Voyager)"
+      },
+      "objective": {
+        "voyager": "Navigate the Delta Quadrant, survive encounters with hostile species, and find a way home to the Alpha Quadrant."
+      },
+      "setup": {
+        "voyager_forces": [
+          "USS Voyager (Intrepid-class)",
+          "Crew: Janeway, Chakotay, Tuvok, Paris, Torres, Kim, The Doctor, Seven of Nine (later)",
+          "Maquis crew members (initial tension with Starfleet crew)"
+        ]
+      },
+      "special_rules": [
+        "Each game session represents one episode of the journey",
+        "Encounters include: Hirogen hunters, Kazon raiders, Vidiians, Borg, Ocampa, Holographic Voyager",
+        "Seven of Nine joins the crew mid-campaign, providing Borg knowledge",
+        "The crew must manage resources: food, fuel, and spare parts are limited",
+        "Shortcuts home (wormholes, transwarp) are rare and often come with a price"
+      ],
+      "victory_conditions": {
+        "voyager_victory": "Return to the Alpha Quadrant within a reasonable timeframe",
+        "defeat": "Voyager is destroyed or the crew is assimilated by the Borg"
+      },
+      "difficulty": "Variable (campaign)",
+      "playtime": "Multiple sessions"
+    },
+    {
+      "id": "klingon_boarding_action",
+      "name": "Klingon Boarding Action — Honor in Battle",
+      "source_game": "Star Trek Adventures (2d20)",
+      "era": "TOS",
+      "description": "A Klingon Bird-of-Prey has boarded the USS Enterprise. Klingon warriors, armed with bat'leths, move through the corridors seeking Captain Kirk. The Enterprise crew must defend their ship and either repel the boarders or negotiate a resolution.",
+      "map": "USS Enterprise corridors and key rooms (bridge, engineering, sickbay)",
+      "players": 2,
+      "factions": {
+        "player_1": "Starfleet (Enterprise crew)",
+        "player_2": "Klingon Empire (Boarding party)"
+      },
+      "objective": {
+        "starfleet": "Repel the Klingon boarding party and secure the ship. Capture or eliminate the boarders.",
+        "klingon": "Capture or kill Captain Kirk to prove honor. Escape with the prize or die trying."
+      },
+      "setup": {
+        "starfleet_forces": [
+          "Enterprise security teams",
+          "Key crew members: Kirk, Spock, McCoy, Scotty, Sulu, Uhura",
+          "Phasers set to stun (initially)"
+        ],
+        "klingon_forces": [
+          "Klingon boarding party: 6-8 warriors",
+          "Klingon commander with bat'leth",
+          "Hand lasers and explosive charges"
+        ]
+      },
+      "special_rules": [
+        "Klingons fight for honor; they will challenge Kirk to single combat",
+        "Enterprise crew initially uses stun settings; can switch to injure if necessary",
+        "Scotty can seal off sections of the ship to contain the boarders",
+        "Spock can use a mind meld to understand the Klingon commander's intentions"
+      ],
+      "victory_conditions": {
+        "starfleet_victory": "Repel all Klingon boarders and secure the ship",
+        "klingon_victory": "Capture or kill Captain Kirk and escape in the Bird-of-Prey"
+      },
+      "difficulty": "Medium",
+      "playtime": "45-60 minutes"
+    },
+    {
+      "id": "first_contact",
+      "name": "First Contact — The Prime Directive Test",
+      "source_game": "Star Trek Adventures (2d20)",
+      "era": "Any",
+      "description": "The crew discovers a pre-warp civilization on the verge of a major technological breakthrough. An accident threatens to cause a catastrophe, but intervening would violate the Prime Directive. The crew must find a way to prevent disaster without revealing themselves.",
+      "map": "Pre-warp planet surface with cities and natural features",
+      "players": 1-6 (cooperative),
+      "factions": {
+        "player_1": "Starfleet (away team)"
+      },
+      "objective": {
+        "starfleet": "Prevent the catastrophe without violating the Prime Directive. The crew must find creative solutions that appear natural to the indigenous population."
+      },
+      "setup": {
+        "starfleet_forces": [
+          "Away team: Captain, Science Officer, Security Officer, Medical Officer",
+          "Limited equipment: tricorders, mediscanners, phasers (stun only)",
+          "Prime Directive constraints: no direct interference with pre-warp civilization"
+        ]
+      },
+      "special_rules": [
+        "The Prime Directive forbids direct interference with pre-warp civilizations",
+        "The crew must use indirect methods: manipulating events, using environmental factors, or working through indigenous intermediaries",
+        "If the crew is discovered, they must erase memories and leave immediately",
+        "Multiple solutions are possible; creativity is rewarded"
+      ],
+      "victory_conditions": {
+        "starfleet_victory": "Prevent the catastrophe without the indigenous population knowing Starfleet intervened",
+        "failure": "The catastrophe occurs OR the Prime Directive is violated"
+      },
+      "difficulty": "Medium",
+      "playtime": "60-90 minutes"
+    },
+    {
+      "id": "romulan_cloak_chase",
+      "name": "Romulan Cloak Chase — Through the Neutral Zone",
+      "source_game": "Star Fleet Battles",
+      "era": "TOS-TNG",
+      "description": "A Romulan Warbird has crossed the Neutral Zone, violating the Federation-Romulan treaty. The pursuing Starfleet ship must track and intercept the cloaked Warbird without crossing into Romulan space and starting a war.",
+      "map": "Space combat near the Federation-Romulan Neutral Zone",
+      "players": 2,
+      "factions": {
+        "player_1": "Starfleet",
+        "player_2": "Romulan Star Empire"
+      },
+      "objective": {
+        "starfleet": "Track and intercept the Romulan Warbird. Gather evidence of the treaty violation without firing first.",
+        "romulan": "Evade capture and deliver your mission objective. Deny any treaty violation."
+      },
+      "setup": {
+        "starfleet_forces": [
+          "Starfleet pursuit ship (Constitution, Galaxy, or Sovereign class)",
+          "Enhanced sensors for cloak detection",
+          "Orders: do not fire first, do not cross the Neutral Zone"
+        ],
+        "romulan_forces": [
+          "Romulan Warbird (cloaked)",
+          "Plasma torpedoes",
+          "Mission objective: deliver data, plant a device, or extract an agent"
+        ]
+      },
+      "special_rules": [
+        "The Romulan Warbird is cloaked; it appears on sensors only when it fires or chooses to decloak",
+        "Starfleet cannot cross the Neutral Zone without authorization",
+        "If Starfleet fires first, it's an act of war",
+        "The Romulans have a time limit to complete their mission"
+      ],
+      "victory_conditions": {
+        "starfleet_victory": "Force the Warbird to decloak and gather evidence of the treaty violation",
+        "romulan_victory": "Complete the mission objective and escape back into Romulan space"
+      },
+      "difficulty": "Medium",
+      "playtime": "45-60 minutes"
+    },
+    {
+      "id": "ds9_defense",
+      "name": "Defense of Deep Space 9 — The Dominion Assault",
+      "source_game": "Star Fleet Battles",
+      "era": "DS9",
+      "description": "The Dominion launches a massive assault on Deep Space 9. Captain Sisko must defend the station with the USS Defiant and whatever reinforcements can arrive through the wormhole or from nearby systems.",
+      "map": "Space combat around Deep Space 9 and the Bajoran wormhole",
+      "players": 2,
+      "factions": {
+        "player_1": "Federation (DS9 garrison)",
+        "player_2": "Dominion"
+      },
+      "objective": {
+        "federation": "Defend Deep Space 9 against the Dominion assault. Hold the station until reinforcements arrive.",
+        "dominion": "Capture or destroy Deep Space 9 and control the wormhole."
+      },
+      "setup": {
+        "federation_forces": [
+          "Deep Space 9 (station with defensive weapons)",
+          "USS Defiant (heavily armed escort)",
+          "Bajoran support ships",
+          "Reinforcements may arrive through the wormhole (Gamma Quadrant allies)"
+        ],
+        "dominion_forces": [
+          "Jem'Hadar warship squadron: 6-8 ships",
+          "Cardassian support fleet",
+          "Vorta overseer ship",
+          "Additional waves can arrive"
+        ]
+      },
+      "special_rules": [
+        "DS9 has limited defensive weapons but can repair and resupply ships",
+        "The wormhole can provide reinforcements from the Gamma Quadrant (Prophets' allies)",
+        "Jem'Hadar ships are heavily armed but vulnerable when deprived of Ketracel-white",
+        "Station personnel can be evacuated if the situation becomes critical"
+      ],
+      "victory_conditions": {
+        "federation_victory": "Hold DS9 for 6 rounds OR destroy the Dominion fleet",
+        "dominion_victory": "Destroy DS9 OR capture it with the wormhole under Dominion control"
+      },
+      "difficulty": "Hard",
+      "playtime": "60-90 minutes"
+    },
+    {
+      "id": "borg_cube_assault",
+      "name": "Assault on the Borg Cube — Regeneration One",
+      "source_game": "Star Trek Adventures (2d20)",
+      "era": "VOY",
+      "description": "Voyager encounters a damaged Borg Cube in the Delta Quadrant. Seven of Nine recognizes the opportunity to learn about Borg weaknesses. The crew must board the Cube, gather intelligence, and escape before the Borg recover.",
+      "map": "Interior of a damaged Borg Cube",
+      "players": 1-6 (cooperative),
+      "factions": {
+        "player_1": "Starfleet (Voyager away team)"
+      },
+      "objective": {
+        "voyager": "Board the Borg Cube, gather intelligence about Borg technology and weaknesses, and escape before the Cube's defenses recover."
+      },
+      "setup": {
+        "voyager_forces": [
+          "Away team: Janeway, Seven of Nine, Paris, Torres, The Doctor",
+          "Equipment: phasers, tricorders, isolinear chips for data extraction",
+          "Seven of Nine can interface with Borg systems but risks re-assimilation"
+        ]
+      },
+      "special_rules": [
+        "The Cube is damaged but still has active defenses",
+        "Borg drones will attempt to assimilate the away team",
+        "Seven of Nine can hack Borg systems but each interface roll risks a Complication",
+        "The Cube's defenses recover over time; the team has a limited window",
+        "Data extracted from the Cube can provide lasting benefits to Voyager"
+      ],
+      "victory_conditions": {
+        "voyager_victory": "Extract significant Borg intelligence and escape with all team members",
+        "failure": "Team members are assimilated OR the team is trapped on the Cube"
+      },
+      "difficulty": "Hard",
+      "playtime": "60-90 minutes"
+    },
+    {
+      "id": "kelvin_timeline_vulcan",
+      "name": "Attack on Vulcan — The Nero's Vengeance",
+      "source_game": "Star Fleet Battles",
+      "era": "Kelvin Timeline (2258)",
+      "description": "The Romulan mining vessel Nero, displaced through a wormhole, arrives in the 23rd century and destroys Vulcan in revenge for Spock's actions. The USS Enterprise under Captain Kirk must pursue Nero through a wormhole to prevent further attacks.",
+      "map": "Space combat at Vulcan, then through a wormhole to Nero's mining site",
+      "players": 2,
+      "factions": {
+        "player_1": "Starfleet (USS Enterprise NCC-1701)",
+        "player_2": "Nero (Narada — Romulan mining ship)"
+      },
+      "objective": {
+        "starfleet": "Pursue Nero through the wormhole and stop him from destroying Earth.",
+        "nero": "Destroy Earth's Starfleet Headquarters and complete your revenge against Spock."
+      },
+      "setup": {
+        "starfleet_forces": [
+          "USS Enterprise (refit Constitution-class, NCC-1701)",
+          "Captain Kirk, Spock, McCoy, Scotty, Sulu, Uhura, Chekov",
+          "Supporting Starfleet ships (limited)"
+        ],
+        "nero_forces": [
+          "Narada (Romulan mining ship with advanced technology)",
+          "Tetryon weapons (can disable shields)",
+          "Temporal knowledge of Starfleet tactics",
+          "Spock (older) aboard the Narada"
+        ]
+      },
+      "special_rules": [
+        "Nero's tetryon weapons can bypass Enterprise shields",
+        "The wormhole is unstable and may close, stranding either side",
+        "Nero has future knowledge of Starfleet tactics and technology",
+        "Spock Prime aboard the Narada can be reasoned with or must be captured"
+      ],
+      "victory_conditions": {
+        "starfleet_victory": "Disable the Narada and prevent Earth's destruction",
+        "nero_victory": "Destroy Earth's Starfleet Headquarters OR force the Enterprise to retreat"
+      },
+      "difficulty": "Hard",
+      "playtime": "60-90 minutes"
+    }
+  ]
+}

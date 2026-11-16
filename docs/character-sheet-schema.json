@@ -1,0 +1,553 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DoraMCU Character Sheet",
+  "description": "Universal character sheet schema for creating and importing characters into the DoraMCU galaxy lore system. Supports player characters, AI characters, and shared characters across all game systems.",
+  "type": "object",
+  "required": ["identity"],
+  "properties": {
+    "identity": {
+      "type": "object",
+      "description": "Core character identity information",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Character's primary name"
+        },
+        "alias": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Alias or codename"
+        },
+        "pronouns": {
+          "type": "string",
+          "enum": ["he/him", "she/her", "they/them", "it/its", "other"],
+          "description": "Character pronouns"
+        },
+        "age": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Character's age in years"
+        },
+        "species": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Species or race (e.g., Human, Zabrak, Elf, Asgardian)"
+        },
+        "homeworld": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Planet of origin"
+        },
+        "gender": {
+          "type": "string",
+          "maxLength": 30
+        },
+        "height": {
+          "type": "string",
+          "description": "Character height (e.g., '6ft', '180cm')"
+        },
+        "weight": {
+          "type": "string",
+          "description": "Character weight (e.g., '180lbs', '82kg')"
+        },
+        "eyeColor": {
+          "type": "string",
+          "maxLength": 30
+        },
+        "hairColor": {
+          "type": "string",
+          "maxLength": 30
+        },
+        "distinguishingFeatures": {
+          "type": "string",
+          "description": "Notable physical features, scars, markings"
+        }
+      }
+    },
+    "characterType": {
+      "type": "object",
+      "description": "Character classification and game system metadata",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["player", "ai", "shared"],
+          "description": "Whether this is a PC, AI NPC, or shared cross-game character"
+        },
+        "originSystem": {
+          "type": "string",
+          "enum": ["traveller", "dnd5e", "earth2026", "captains_log", "babylon5", "star_wars", "warhammer40k", "mechwarrior", "star_trek_4x", "zero_zero_seven", "other"],
+          "description": "Game system where character was created"
+        },
+        "currentGalaxy": {
+          "type": "string",
+          "description": "Current galaxy the character resides in"
+        },
+        "currentLocation": {
+          "type": "string",
+          "description": "Current planet, station, or location"
+        },
+        "affiliation": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Faction, organization, or empire"
+        },
+        "rank": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Military or organizational rank"
+        },
+        "occupation": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Character's occupation or profession"
+        }
+      }
+    },
+    "abilities": {
+      "type": "object",
+      "description": "Universal ability scores (1-20 scale). These map to game-specific stats when transitioning between systems.",
+      "properties": {
+        "strength": { "type": "integer", "minimum": 1, "maximum": 20, "default": 10 },
+        "dexterity": { "type": "integer", "minimum": 1, "maximum": 20, "default": 10 },
+        "constitution": { "type": "integer", "minimum": 1, "maximum": 20, "default": 10 },
+        "intelligence": { "type": "integer", "minimum": 1, "maximum": 20, "default": 10 },
+        "wisdom": { "type": "integer", "minimum": 1, "maximum": 20, "default": 10 },
+        "charisma": { "type": "integer", "minimum": 1, "maximum": 20, "default": 10 },
+        "technical": { "type": "integer", "minimum": 1, "maximum": 20, "default": 10, "description": "Traveller/Star Trek technical attribute" },
+        "fitness": { "type": "integer", "minimum": 1, "maximum": 20, "default": 10, "description": "Captain's Log fitness attribute" },
+        "reason": { "type": "integer", "minimum": 1, "maximum": 20, "default": 10, "description": "Captain's Log reason attribute" },
+        "insight": { "type": "integer", "minimum": 1, "maximum": 20, "default": 10, "description": "Captain's Log insight attribute" },
+        "presence": { "type": "integer", "minimum": 1, "maximum": 20, "default": 10, "description": "Captain's Log presence attribute" }
+      }
+    },
+    "combat": {
+      "type": "object",
+      "description": "Combat statistics",
+      "properties": {
+        "hitPoints": { "type": "integer", "minimum": 0 },
+        "maxHitPoints": { "type": "integer", "minimum": 0 },
+        "armorClass": { "type": "integer", "minimum": 0, "default": 10 },
+        "speed": { "type": "integer", "minimum": 0, "default": 30 },
+        "initiativeBonus": { "type": "integer" },
+        "proficiencyBonus": { "type": "integer", "default": 2 },
+        "level": { "type": "integer", "minimum": 1, "default": 1 },
+        "experiencePoints": { "type": "integer", "minimum": 0, "default": 0 },
+        "hitDice": { "type": "string", "description": "e.g., '4d8'" },
+        "tempHitPoints": { "type": "integer", "minimum": 0, "default": 0 },
+        "deathSaveSuccesses": { "type": "integer", "minimum": 0, "maximum": 3, "default": 0 },
+        "deathSaveFailures": { "type": "integer", "minimum": 0, "maximum": 3, "default": 0 },
+        "exhaustionLevel": { "type": "integer", "minimum": 0, "maximum": 6, "default": 0 },
+        "constitutionTrack": { "type": "integer", "minimum": 0, "description": "Captain's Log constitution track" }
+      }
+    },
+    "skills": {
+      "type": "object",
+      "description": "Skills and proficiencies",
+      "properties": {
+        "standardSkills": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "enum": ["acrobatics", "animal_handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight_of_hand", "stealth", "survival"]
+              },
+              "base": { "type": "integer" },
+              "proficient": { "type": "boolean", "default": false },
+              "expertise": { "type": "boolean", "default": false },
+              "total": { "type": "integer" }
+            }
+          }
+        },
+        "gameSpecificSkills": {
+          "type": "array",
+          "description": "Additional skills from game-specific systems (Traveller, Star Trek, etc.)",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "rating": { "type": "integer", "minimum": 0 },
+              "source": { "type": "string", "description": "Career, class feature, background, etc." }
+            }
+          }
+        },
+        "toolProficiencies": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of tool proficiencies"
+        },
+        "languages": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of known languages"
+        }
+      }
+    },
+    "background": {
+      "type": "object",
+      "description": "Character background and personality",
+      "properties": {
+        "background": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Background class or archetype"
+        },
+        "personalityTraits": {
+          "type": "array",
+          "items": { "type": "string" },
+          "maxItems": 2,
+          "description": "Personality trait descriptions"
+        },
+        "ideals": {
+          "type": "array",
+          "items": { "type": "string" },
+          "maxItems": 1,
+          "description": "Character ideals"
+        },
+        "bonds": {
+          "type": "array",
+          "items": { "type": "string" },
+          "maxItems": 2,
+          "description": "Character bonds and connections"
+        },
+        "flaws": {
+          "type": "array",
+          "items": { "type": "string" },
+          "maxItems": 2,
+          "description": "Character flaws"
+        },
+        "story": {
+          "type": "string",
+          "description": "Full background story narrative"
+        },
+        "traits": {
+          "type": "object",
+          "description": "Captain's Log background traits",
+          "properties": {
+            "trait1": { "type": "string" },
+            "trait2": { "type": "string" },
+            "trait3": { "type": "string" },
+            "environment": {
+              "type": "string",
+              "enum": ["city", "rural", "space", "wild"]
+            },
+            "outlook": {
+              "type": "string",
+              "enum": ["optimistic", "pessimistic", "pragmatic", "idealistic"]
+            },
+            "education": {
+              "type": "string",
+              "enum": ["academic", "military", "self_taught", "apprentice"]
+            }
+          }
+        }
+      }
+    },
+    "equipment": {
+      "type": "object",
+      "description": "Equipment, weapons, armor, and wealth",
+      "properties": {
+        "wealth": {
+          "type": "object",
+          "properties": {
+            "credits": { "type": "number", "minimum": 0, "description": "Credits (Traveller/Star Trek)" },
+            "goldPieces": { "type": "integer", "minimum": 0, "description": "Gold pieces (D&D)" },
+            "other": { "type": "string" }
+          }
+        },
+        "inventory": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "quantity": { "type": "integer", "minimum": 1, "default": 1 },
+              "weight": { "type": "number", "minimum": 0 },
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "weapons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "type": "string", "enum": ["melee", "ranged", "energy", "explosive", "force", "magic"] },
+              "damage": { "type": "string", "description": "e.g., '1d8+3', '2d6'" },
+              "range": { "type": "string", "description": "e.g., '30ft', '100/400ft'" },
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "armor": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "type": "string", "enum": ["light", "medium", "heavy", "shield", "energy_shield"] },
+              "armorClass": { "type": "integer" },
+              "shieldPoints": { "type": "integer", "description": "Shield hit points (Star Trek/Sci-Fi)" },
+              "notes": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "specialAbilities": {
+      "type": "object",
+      "description": "Special abilities, powers, and supernatural capabilities",
+      "properties": {
+        "abilities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "source": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "forceSensitivity": {
+          "type": "object",
+          "description": "Star Wars Force abilities",
+          "properties": {
+            "sensitive": { "type": "boolean", "default": false },
+            "alignment": {
+              "type": "string",
+              "enum": ["light", "dark", "balanced"]
+            },
+            "midichlorianCount": { "type": "integer", "minimum": 0 },
+            "forceAbilities": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "e.g., ['telekinesis', 'force_push', 'mind_trick']"
+            }
+          }
+        },
+        "psionics": {
+          "type": "object",
+          "description": "Psionic abilities (Traveller, etc.)",
+          "properties": {
+            "discipline": { "type": "string" },
+            "abilities": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "spellcasting": {
+          "type": "object",
+          "description": "Spellcasting capabilities (D&D, fantasy systems)",
+          "properties": {
+            "class": { "type": "string" },
+            "castingAbility": { "type": "string" },
+            "spellSaveDC": { "type": "integer" },
+            "spellAttackBonus": { "type": "integer" },
+            "cantripsKnown": { "type": "integer" },
+            "spellsKnown": { "type": "integer" },
+            "spellSlots": {
+              "type": "object",
+              "properties": {
+                "1st": { "type": "object", "properties": { "total": { "type": "integer" }, "remaining": { "type": "integer" } } },
+                "2nd": { "type": "object", "properties": { "total": { "type": "integer" }, "remaining": { "type": "integer" } } },
+                "3rd": { "type": "object", "properties": { "total": { "type": "integer" }, "remaining": { "type": "integer" } } },
+                "4th": { "type": "object", "properties": { "total": { "type": "integer" }, "remaining": { "type": "integer" } } },
+                "5th": { "type": "object", "properties": { "total": { "type": "integer" }, "remaining": { "type": "integer" } } },
+                "6th": { "type": "object", "properties": { "total": { "type": "integer" }, "remaining": { "type": "integer" } } },
+                "7th": { "type": "object", "properties": { "total": { "type": "integer" }, "remaining": { "type": "integer" } } },
+                "8th": { "type": "object", "properties": { "total": { "type": "integer" }, "remaining": { "type": "integer" } } },
+                "9th": { "type": "object", "properties": { "total": { "type": "integer" }, "remaining": { "type": "integer" } } }
+              }
+            },
+            "spells": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "level": { "type": "integer" },
+                  "school": { "type": "string" },
+                  "prepared": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "career": {
+      "type": "object",
+      "description": "Career and service record (Traveller, Captain's Log)",
+      "properties": {
+        "tours": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "career": { "type": "string" },
+              "rank": { "type": "string" },
+              "yearsServed": { "type": "integer" },
+              "skillsGained": { "type": "array", "items": { "type": "string" } },
+              "wealthRoll": { "type": "string" }
+            }
+          }
+        },
+        "assignment": {
+          "type": "string",
+          "enum": ["command", "science", "security", "engineering", "medical", "other"],
+          "description": "Captain's Log assignment"
+        }
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "description": "Character relationships and connections to other characters",
+      "items": {
+        "type": "object",
+        "properties": {
+          "characterName": { "type": "string" },
+          "relationship": { "type": "string", "description": "e.g., 'ally', 'enemy', 'mentor', 'rival', 'family' },
+          "faction": { "type": "string" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "lore": {
+      "type": "object",
+      "description": "Galaxy lore integration — connects character to the broader universe",
+      "properties": {
+        "category": {
+          "type": "string",
+          "enum": ["planet", "species", "event", "faction", "character"],
+          "description": "Lore category for GameLore entity"
+        },
+        "loreId": {
+          "type": "string",
+          "description": "URL-friendly slug for lore entry"
+        },
+        "significance": {
+          "type": "string",
+          "description": "Character's significance to the galaxy"
+        },
+        "keyEvents": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Key events the character was involved in"
+        },
+        "notableLocations": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Notable locations visited"
+        },
+        "jediStatus": {
+          "type": "string",
+          "description": "Jedi/Sith status (Star Wars)"
+        },
+        "sithStatus": {
+          "type": "string",
+          "description": "Sith status (Star Wars)"
+        },
+        "notableAllies": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "notableEnemies": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "aiConfig": {
+      "type": "object",
+      "description": "AI character configuration — only for AI-controlled characters",
+      "properties": {
+        "personalityType": {
+          "type": "string",
+          "enum": ["heroic", "villainous", "neutral", "chaotic", "lawful"],
+          "description": "Overall personality alignment"
+        },
+        "behavioralArchetype": {
+          "type": "string",
+          "enum": ["leader", "scholar", "warrior", "diplomat", "scout", "merchant", "spy", "healer", "other"],
+          "description": "Behavioral archetype for AI decision-making"
+        },
+        "speechStyle": {
+          "type": "string",
+          "description": "How the AI character speaks (formal, casual, archaic, technical, etc.)"
+        },
+        "decisionPattern": {
+          "type": "string",
+          "enum": ["logical", "emotional", "intuitive", "random"],
+          "description": "Primary decision-making pattern"
+        },
+        "loyaltyTarget": {
+          "type": "string",
+          "description": "Who or what the AI character is loyal to"
+        },
+        "motivation": {
+          "type": "string",
+          "description": "Primary motivation driving the character"
+        },
+        "fear": {
+          "type": "string",
+          "description": "Character's fear or weakness"
+        },
+        "difficultyLevel": {
+          "type": "string",
+          "enum": ["easy", "normal", "hard", "legendary"],
+          "description": "AI difficulty level for gameplay"
+        },
+        "neuronModel": {
+          "type": "string",
+          "description": "Neuron AI model identifier"
+        },
+        "dialoguePrompts": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Sample dialogue lines for the AI character"
+        }
+      }
+    },
+    "notes": {
+      "type": "string",
+      "description": "Free-form notes and adventure log"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "System metadata — auto-filled on import",
+      "properties": {
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Character creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp"
+        },
+        "playerId": {
+          "type": "integer",
+          "description": "Player ID who owns this character (null for AI characters)"
+        },
+        "version": {
+          "type": "string",
+          "description": "Character sheet schema version"
+        }
+      }
+    }
+  }
+}

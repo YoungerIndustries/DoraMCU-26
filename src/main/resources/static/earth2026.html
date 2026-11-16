@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoraMCU — Earth 2026 RPG Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/earth2026.css">
+    <style>
+        /* ============================================================ */
+        /* RPG HUD — Main landing layer for Earth 2026                  */
+        /* ============================================================ */
+        .rpg-hud {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f4e 50%, #0d1b2a 100%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        }
+
+        .rpg-hud.hidden {
+            display: none !important;
+        }
+
+        /* Top bar */
+        .rpg-top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 24px;
+            background: rgba(0,0,0,0.4);
+            border-bottom: 1px solid rgba(100,255,218,0.2);
+            flex-shrink: 0;
+        }
+
+        .rpg-top-bar h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            color: #64ffda;
+            margin: 0;
+        }
+
+        .rpg-top-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .rpg-top-btn {
+            padding: 6px 16px;
+            background: rgba(100,255,218,0.1);
+            border: 1px solid rgba(100,255,218,0.3);
+            border-radius: 6px;
+            color: #64ffda;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .rpg-top-btn:hover {
+            background: rgba(100,255,218,0.2);
+            border-color: #64ffda;
+        }
+
+        /* Main content area */
+        .rpg-main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Left sidebar — Character stats */
+        .rpg-sidebar {
+            width: 300px;
+            flex-shrink: 0;
+            background: rgba(0,0,0,0.3);
+            border-right: 1px solid rgba(100,255,218,0.1);
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .rpg-char-header {
+            text-align: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(100,255,218,0.1);
+            margin-bottom: 16px;
+        }
+
+        .rpg-char-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #64ffda, #7c4dff);
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .rpg-char-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.1rem;
+            color: #e0e0e0;
+            margin-bottom: 4px;
+        }
+
+        .rpg-char-location {
+            font-size: 0.85rem;
+            color: #9aa0a6;
+        }
+
+        .rpg-stat-group {
+            margin-bottom: 16px;
+        }
+
+        .rpg-stat-group h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #64ffda;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .rpg-stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 0.85rem;
+            color: #c0c0c0;
+        }
+
+        .rpg-stat-row .stat-val {
+            color: #e0e0e0;
+            font-weight: 600;
+        }
+
+        .rpg-bar-container {
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+
+        .rpg-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .rpg-bar-fill.health { background: linear-gradient(90deg, #e06c75, #64ffda); }
+        .rpg-bar-fill.xp { background: linear-gradient(90deg, #7c4dff, #64ffda); }
+
+        /* Center — Game mode cards */
+        .rpg-center {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .rpg-center h2 {
+            font-family: 'Orbitron', monospace;
+            font-size: 1rem;
+            color: #64ffda;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .rpg-mode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .rpg-mode-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(100,255,218,0.15);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rpg-mode-card:hover {
+            border-color: #64ffda;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(100,255,218,0.15);
+        }
+
+        .rpg-mode-card .mode-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .rpg-mode-card .mode-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1rem;
+            color: #e0e0e0;
+            margin-bottom: 6px;
+        }
+
+        .rpg-mode-card .mode-desc {
+            font-size: 0.8rem;
+            color: #9aa0a6;
+            margin-bottom: 12px;
+        }
+
+        .rpg-mode-card .mode-status {
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .rpg-mode-card .mode-status.available {
+            background: rgba(100,255,218,0.15);
+            color: #64ffda;
+        }
+
+        .rpg-mode-card .mode-status.locked {
+            background: rgba(224,108,117,0.15);
+            color: #e06c75;
+        }
+
+        /* Right sidebar — Locations & Scenarios */
+        .rpg-right-panel {
+            width: 320px;
+            flex-shrink: 0;
+            background: rgba(0,0,0,0.3);
+            border-left: 1px solid rgba(100,255,218,0.1);
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .rpg-right-panel h3 {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.8rem;
+            color: #64ffda;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .rpg-location-item, .rpg-scenario-item {
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .rpg-location-item:hover, .rpg-scenario-item:hover {
+            background: rgba(100,255,218,0.05);
+            border-color: rgba(100,255,218,0.2);
+        }
+
+        .rpg-location-item .loc-name, .rpg-scenario-item .scen-name {
+            font-size: 0.9rem;
+            color: #e0e0e0;
+            margin-bottom: 2px;
+        }
+
+        .rpg-location-item .loc-detail, .rpg-scenario-item .scen-detail {
+            font-size: 0.75rem;
+            color: #9aa0a6;
+        }
+
+        /* Bottom bar */
+        .rpg-bottom-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 24px;
+            background: rgba(0,0,0,0.4);
+            border-top: 1px solid rgba(100,255,218,0.1);
+            flex-shrink: 0;
+        }
+
+        .rpg-bottom-bar .rpg-resource {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #9aa0a6;
+        }
+
+        .rpg-bottom-bar .rpg-resource .res-val {
+            color: #e0e0e0;
+            font-weight: 600;
+        }
+
+        /* FPS canvas hidden by default when RPG HUD is active */
+        .fps-canvas {
+            display: none;
+        }
+
+        .fps-canvas.active {
+            display: block;
+        }
+
+        /* FPS HUD hidden by default */
+        .fps-hud {
+            display: none;
+        }
+
+        .fps-hud.active {
+            display: block;
+        }
+
+        /* Lobby overlay hidden by default */
+        .lobby-overlay {
+            display: none;
+        }
+
+        .lobby-overlay.active {
+            display: flex;
+        }
+
+        /* No character state */
+        .rpg-no-char {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .rpg-no-char h2 {
+            font-family: 'Orbitron', monospace;
+            color: #64ffda;
+            margin-bottom: 12px;
+        }
+
+        .rpg-no-char p {
+            color: #9aa0a6;
+            margin-bottom: 24px;
+        }
+
+        .rpg-no-char .rpg-btn {
+            padding: 12px 32px;
+            background: linear-gradient(135deg, #64ffda, #7c4dff);
+            border: none;
+            border-radius: 8px;
+            color: #0a0e27;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .rpg-no-char .rpg-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Toast notifications */
+        .rpg-toast-container {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .rpg-toast {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #e0e0e0;
+            animation: rpgToastIn 0.3s ease;
+        }
+
+        .rpg-toast.success { background: rgba(100,255,218,0.2); border: 1px solid #64ffda; }
+        .rpg-toast.error { background: rgba(224,108,117,0.2); border: 1px solid #e06c75; }
+        .rpg-toast.info { background: rgba(124,77,255,0.2); border: 1px solid #7c4dff; }
+
+        @keyframes rpgToastIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- ============================================================ -->
+    <!-- RPG HUD — Main landing page for Earth 2026                   -->
+    <!-- ============================================================ -->
+    <div id="rpgHud" class="rpg-hud">
+        <!-- Top Bar -->
+        <div class="rpg-top-bar">
+            <h1>🌍 Earth 2026</h1>
+            <div class="rpg-top-actions">
+                <button class="rpg-top-btn" id="rpgBtnRefresh" title="Refresh">🔄 Refresh</button>
+                <button class="rpg-top-btn" id="rpgBtnHQ" title="HQ Portal Hub">🏢 HQ Portal</button>
+                <button class="rpg-top-btn" id="rpgBtnOffice" title="Corporation Office">📊 Office</button>
+                <button class="rpg-top-btn" id="rpgBtnLogout" title="Logout">🚪 Logout</button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="rpg-main">
+            <!-- Left Sidebar — Character Stats -->
+            <div class="rpg-sidebar" id="rpgSidebar">
+                <div class="rpg-char-header">
+                    <div class="rpg-char-avatar" id="rpgCharAvatar">👤</div>
+                    <div class="rpg-char-name" id="rpgCharName">Loading...</div>
+                    <div class="rpg-char-location" id="rpgCharLocation">📍 --</div>
+                </div>
+
+                <div class="rpg-stat-group">
+                    <h3>Vitals</h3>
+                    <div class="rpg-stat-row">
+                        <span>Health</span>
+                        <span class="stat-val" id="rpgHealth">100/100</span>
+                    </div>
+                    <div class="rpg-bar-container">
+                        <div class="rpg-bar-fill health" id="rpgHealthBar" style="width:100%"></div>
+                    </div>
+                    <div class="rpg-stat-row" style="margin-top:8px;">
+                        <span>Level</span>
+                        <span class="stat-val" id="rpgLevel">1</span>
+                    </div>
+                    <div class="rpg-stat-row">
+                        <span>XP</span>
+                        <span class="stat-val" id="rpgXP">0 / 1000</span>
+                    </div>
+                    <div class="rpg-bar-container">
+                        <div class="rpg-bar-fill xp" id="rpgXPBar" style="width:0%"></div>
+                    </div>
+                </div>
+
+                <div class="rpg-stat-group">
+                    <h3>Attributes</h3>
+                    <div class="rpg-stat-row"><span>STR</span><span class="stat-val" id="rpgStr">10</span></div>
+                    <div class="rpg-stat-row"><span>DEX</span><span class="stat-val" id="rpgDex">10</span></div>
+                    <div class="rpg-stat-row"><span>CON</span><span class="stat-val" id="rpgCon">10</span></div>
+                    <div class="rpg-stat-row"><span>INT</span><span class="stat-val" id="rpgInt">10</span></div>
+                    <div class="rpg-stat-row"><span>WIS</span><span class="stat-val" id="rpgWis">10</span></div>
+                    <div class="rpg-stat-row"><span>CHA</span><span class="stat-val" id="rpgCha">10</span></div>
+                </div>
+
+                <div class="rpg-stat-group">
+                    <h3>Inventory</h3>
+                    <div id="rpgInventory" style="font-size:0.8rem; color:#9aa0a6;">
+                        No items
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center — Game Mode Selection -->
+            <div class="rpg-center">
+                <h2>⚔️ Game Modes</h2>
+                <div class="rpg-mode-grid" id="rpgModeGrid">
+                    <!-- FPS Battlefield -->
+                    <div class="rpg-mode-card" id="rpgModeFps" data-mode="fps">
+                        <div class="mode-icon">🔫</div>
+                        <div class="mode-title">FPS Battlefield</div>
+                        <div class="mode-desc">First-person shooter combat in modern Earth locations</div>
+                        <span class="mode-status available">Available</span>
+                    </div>
+                    <!-- RPG Adventure -->
+                    <div class="rpg-mode-card" id="rpgModeRpg" data-mode="rpg">
+                        <div class="mode-icon">📜</div>
+                        <div class="mode-title">RPG Adventure</div>
+                        <div class="mode-desc">Story-driven missions and scenarios on Earth</div>
+                        <span class="mode-status available">Available</span>
+                    </div>
+                    <!-- Exploration -->
+                    <div class="rpg-mode-card" id="rpgModeExplore" data-mode="explore">
+                        <div class="mode-icon">🗺️</div>
+                        <div class="mode-title">Exploration</div>
+                        <div class="mode-desc">Travel between locations and discover portals</div>
+                        <span class="mode-status available">Available</span>
+                    </div>
+                    <!-- Corporation -->
+                    <div class="rpg-mode-card" id="rpgModeCorp" data-mode="corp">
+                        <div class="mode-icon">🏢</div>
+                        <div class="mode-title">Corporation</div>
+                        <div class="mode-desc">Manage your corporate empire and resources</div>
+                        <span class="mode-status available">Available</span>
+                    </div>
+                </div>
+
+                <!-- Active Scenarios -->
+                <h2>🎯 Active Scenarios</h2>
+                <div id="rpgScenarioList">
+                    <div style="color:#9aa0a6; font-size:0.85rem; padding:16px; text-align:center;">
+                        Loading scenarios...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel — Locations & Portals -->
+            <div class="rpg-right-panel">
+                <h3>📍 Locations</h3>
+                <div id="rpgLocationList">
+                    <div style="color:#9aa0a6; font-size:0.85rem; padding:8px;">
+                        Loading locations...
+                    </div>
+                </div>
+
+                <h3 style="margin-top:24px;">🌀 Portals</h3>
+                <div id="rpgPortalList">
+                    <div style="color:#9aa0a6; font-size:0.85rem; padding:8px;">
+                        No portals available
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="rpg-bottom-bar">
+            <div style="display:flex; gap:24px;">
+                <div class="rpg-resource">💰 Credits: <span class="res-val" id="rpgCredits">0</span></div>
+                <div class="rpg-resource">📈 Influence: <span class="res-val" id="rpgInfluence">0</span></div>
+                <div class="rpg-resource">⚡ Tech: <span class="res-val" id="rpgTech">0</span></div>
+            </div>
+            <div class="rpg-resource">🌐 Galaxy: <span class="res-val">Earth 2026</span></div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="rpg-toast-container" id="rpgToastContainer"></div>
+
+    <!-- ============================================================ -->
+    <!-- FPS Game Canvas (full-screen 3D viewport)                    -->
+    <!-- ============================================================ -->
+    <canvas id="fpsCanvas" class="fps-canvas"></canvas>
+
+    <!-- ============================================================ -->
+    <!-- FPS HUD Overlay                                              -->
+    <!-- ============================================================ -->
+    <div id="fpsHud" class="fps-hud">
+
+        <!-- Top Bar: Match Info -->
+        <div class="hud-top-bar">
+            <div class="hud-top-left">
+                <div class="hud-match-info">
+                    <span class="match-mode" id="matchMode">FREE FOR ALL</span>
+                    <span class="match-map" id="matchMap">San Diego Streets</span>
+                </div>
+                <div class="hud-timer" id="matchTimer">00:00</div>
+            </div>
+            <div class="hud-top-center">
+                <div class="hud-scoreboard-mini" id="scoreboardMini">
+                    <!-- Dynamic player scores -->
+                </div>
+            </div>
+            <div class="hud-top-right">
+                <div class="hud-ping" id="hudPing">--ms</div>
+                <div class="hud-fps-counter" id="hudFps">60 FPS</div>
+                <button class="hud-btn" id="btnPause" title="Pause">⏸</button>
+                <button class="hud-btn" id="btnMenu" title="Menu">☰</button>
+            </div>
+        </div>
+
+        <!-- Crosshair -->
+        <div class="hud-crosshair" id="crosshair">
+            <div class="crosshair-line crosshair-top"></div>
+            <div class="crosshair-line crosshair-bottom"></div>
+            <div class="crosshair-line crosshair-left"></div>
+            <div class="crosshair-line crosshair-right"></div>
+            <div class="crosshair-dot"></div>
+        </div>
+
+        <!-- Hit Marker -->
+        <div class="hud-hitmarker hidden" id="hitmarker">
+            <div class="hitmarker-line hl1"></div>
+            <div class="hitmarker-line hl2"></div>
+            <div class="hitmarker-line hl3"></div>
+            <div class="hitmarker-line hl4"></div>
+        </div>
+
+        <!-- Damage Indicator -->
+        <div class="hud-damage-overlay" id="damageOverlay"></div>
+
+        <!-- Kill Feed (top-right) -->
+        <div class="hud-kill-feed" id="killFeed">
+            <!-- Dynamic kill feed entries -->
+        </div>
+
+        <!-- Center Messages (respawn, match start, etc.) -->
+        <div class="hud-center-message hidden" id="centerMessage">
+            <div class="center-message-text" id="centerMessageText"></div>
+        </div>
+
+        <!-- Bottom HUD -->
+        <div class="hud-bottom">
+
+            <!-- Bottom Left: Player Stats -->
+            <div class="hud-bottom-left">
+                <!-- Health Bar -->
+                <div class="hud-health-section">
+                    <div class="hud-stat-label">HEALTH</div>
+                    <div class="hud-bar-container hud-health-bar">
+                        <div class="hud-bar-fill hud-health-fill" id="healthBar" style="width:100%"></div>
+                        <span class="hud-bar-value" id="healthValue">100</span>
+                    </div>
+                </div>
+
+                <!-- Armor Bar -->
+                <div class="hud-armor-section">
+                    <div class="hud-stat-label">ARMOR</div>
+                    <div class="hud-bar-container hud-armor-bar">
+                        <div class="hud-bar-fill hud-armor-fill" id="armorBar" style="width:0%"></div>
+                        <span class="hud-bar-value" id="armorValue">0</span>
+                    </div>
+                </div>
+
+                <!-- Player Name & Stats -->
+                <div class="hud-player-info">
+                    <span class="player-name" id="playerName">Player</span>
+                    <span class="player-team" id="playerTeam">Team 0</span>
+                    <div class="player-kda">
+                        <span class="kda-kills" id="playerKills">K: 0</span>
+                        <span class="kda-sep">|</span>
+                        <span class="kda-deaths" id="playerDeaths">D: 0</span>
+                        <span class="kda-sep">|</span>
+                        <span class="kda-assists" id="playerAssists">A: 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Center: Minimap -->
+            <div class="hud-minimap-container">
+                <canvas id="minimapCanvas" class="hud-minimap" width="200" height="200"></canvas>
+                <div class="minimap-legend" id="minimapLegend">
+                    <span class="legend-item legend-ally">Ally</span>
+                    <span class="legend-item legend-enemy">Enemy</span>
+                    <span class="legend-item legend-player">You</span>
+                </div>
+            </div>
+
+            <!-- Bottom Right: Weapon & Ammo -->
+            <div class="hud-bottom-right">
+                <!-- Weapon Info -->
+                <div class="hud-weapon-section">
+                    <div class="weapon-name" id="weaponName">M4 Assault Rifle</div>
+                    <div class="weapon-type" id="weaponType">RIFLE</div>
+                </div>
+
+                <!-- Ammo Display -->
+                <div class="hud-ammo-section">
+                    <div class="ammo-mag" id="ammoMag">30</div>
+                    <div class="ammo-sep">/</div>
+                    <div class="ammo-reserve" id="ammoReserve">120</div>
+                </div>
+
+                <!-- Reload Indicator -->
+                <div class="hud-reload-indicator hidden" id="reloadIndicator">
+                    <div class="reload-bar-container">
+                        <div class="reload-bar-fill" id="reloadBar"></div>
+                    </div>
+                    <span class="reload-text">RELOADING</span>
+                </div>
+
+                <!-- Weapon Switch -->
+                <div class="hud-weapon-slots" id="weaponSlots">
+                    <!-- Dynamic weapon slots -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Side Panels (toggleable) -->
+        <!-- Left Panel: Radar/Compass -->
+        <div class="hud-side-panel hud-left-panel hidden" id="leftPanel">
+            <div class="panel-header">RADAR</div>
+            <div class="panel-content" id="radarContent">
+                <!-- Radar content -->
+            </div>
+        </div>
+
+        <!-- Right Panel: Scoreboard -->
+        <div class="hud-side-panel hud-right-panel hidden" id="rightPanel">
+            <div class="panel-header">SCOREBOARD</div>
+            <div class="panel-content" id="scoreboardContent">
+                <table class="scoreboard-table" id="scoreboardTable">
+                    <thead>
+                        <tr>
+                            <th>Player</th>
+                            <th>Team</th>
+                            <th>K</th>
+                            <th>D</th>
+                            <th>A</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scoreboardBody">
+                        <!-- Dynamic rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- Pre-Game Lobby Overlay                                       -->
+    <!-- ============================================================ -->
+    <div class="lobby-overlay" id="lobbyOverlay">
+        <div class="lobby-container">
+            <div class="lobby-header">
+                <h1 class="lobby-title">🌍 Earth 2026</h1>
+                <h2 class="lobby-subtitle">FPS Battlefield</h2>
+            </div>
+
+            <div class="lobby-body">
+                <!-- Character Selection -->
+                <div class="lobby-section">
+                    <h3 class="section-title">Character</h3>
+                    <div class="character-select" id="characterSelect">
+                        <div class="char-info" id="charInfo">
+                            <span class="char-label">Name:</span>
+                            <span class="char-value" id="lobbyCharName">Not Selected</span>
+                        </div>
+                        <div class="char-info">
+                            <span class="char-label">Level:</span>
+                            <span class="char-value" id="lobbyCharLevel">--</span>
+                        </div>
+                        <div class="char-info">
+                            <span class="char-label">Location:</span>
+                            <span class="char-value" id="lobbyCharLocation">--</span>
+                        </div>
+                        <button class="lobby-btn lobby-btn-secondary" id="btnSelectChar">Select Character</button>
+                    </div>
+                </div>
+
+                <!-- Map Selection -->
+                <div class="lobby-section">
+                    <h3 class="section-title">Battlefield Map</h3>
+                    <div class="map-grid" id="mapGrid">
+                        <!-- Dynamic map cards -->
+                    </div>
+                </div>
+
+                <!-- Game Mode Selection -->
+                <div class="lobby-section">
+                    <h3 class="section-title">Game Mode</h3>
+                    <div class="mode-grid" id="modeGrid">
+                        <div class="mode-card active" data-mode="DEATHMATCH">
+                            <div class="mode-icon">💀</div>
+                            <div class="mode-name">Deathmatch</div>
+                            <div class="mode-desc">Free for all combat</div>
+                        </div>
+                        <div class="mode-card" data-mode="TEAM_DEATHMATCH">
+                            <div class="mode-icon">⚔️</div>
+                            <div class="mode-name">Team Deathmatch</div>
+                            <div class="mode-desc">Team-based combat</div>
+                        </div>
+                        <div class="mode-card" data-mode="CAPTURE_THE_POINT">
+                            <div class="mode-icon">🚩</div>
+                            <div class="mode-name">Capture the Point</div>
+                            <div class="mode-desc">Control objectives</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weapon Loadout -->
+                <div class="lobby-section">
+                    <h3 class="section-title">Weapon Loadout</h3>
+                    <div class="weapon-grid" id="weaponGrid">
+                        <!-- Dynamic weapon cards -->
+                    </div>
+                </div>
+
+                <!-- Active Matches -->
+                <div class="lobby-section">
+                    <h3 class="section-title">Active Matches</h3>
+                    <div class="matches-list" id="matchesList">
+                        <div class="matches-empty">No active matches</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lobby-footer">
+                <button class="lobby-btn lobby-btn-secondary" id="btnBackToOffice">← Back to Office</button>
+                <button class="lobby-btn lobby-btn-secondary" id="btnEnterHQ">🏢 Younger HQ Portal Hub</button>
+                <button class="lobby-btn lobby-btn-primary" id="btnCreateMatch">Create Match</button>
+                <button class="lobby-btn lobby-btn-primary lobby-btn-large" id="btnQuickPlay">⚡ Quick Play</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- Pause Menu Overlay                                           -->
+    <!-- ============================================================ -->
+    <div class="pause-overlay hidden" id="pauseOverlay">
+        <div class="pause-container">
+            <h2 class="pause-title">PAUSED</h2>
+            <div class="pause-menu">
+                <button class="pause-btn" id="btnResume">▶ Resume</button>
+                <button class="pause-btn" id="btnRestart">🔄 Restart Match</button>
+                <button class="pause-btn" id="btnLeaveMatch">🚪 Leave Match</button>
+                <button class="pause-btn" id="btnSettings">⚙ Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- Death/Respawn Overlay                                        -->
+    <!-- ============================================================ -->
+    <div class="death-overlay hidden" id="deathOverlay">
+        <div class="death-container">
+            <div class="death-skull">💀</div>
+            <h2 class="death-title">YOU DIED</h2>
+            <div class="death-info">
+                <span class="death-killer" id="deathKiller">Killed by: Unknown</span>
+                <span class="death-weapon" id="deathWeapon">Weapon: Unknown</span>
+            </div>
+            <div class="death-respawn-timer">
+                Respawn in <span id="respawnCountdown">5</span>s
+            </div>
+            <button class="death-btn" id="btnRespawn">Respawn Now</button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- Match End Overlay                                            -->
+    <!-- ============================================================ -->
+    <div class="match-end-overlay hidden" id="matchEndOverlay">
+        <div class="match-end-container">
+            <h2 class="match-end-title" id="matchEndTitle">MATCH OVER</h2>
+            <div class="match-end-stats" id="matchEndStats">
+                <!-- Dynamic stats -->
+            </div>
+            <div class="match-end-actions">
+                <button class="match-end-btn" id="btnPlayAgain">Play Again</button>
+                <button class="match-end-btn" id="btnBackToLobby">Back to Lobby</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- Chat Overlay                                                 -->
+    <!-- ============================================================ -->
+    <div class="hud-chat" id="hudChat">
+        <div class="chat-messages" id="chatMessages">
+            <!-- Dynamic chat messages -->
+        </div>
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Press Enter to chat..." maxlength="200">
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- Loading Overlay                                              -->
+    <!-- ============================================================ -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p class="loading-text" id="loadingText">Loading battlefield...</p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- Toast Notifications                                          -->
+    <!-- ============================================================ -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/earth2026-client.js?v=3"></script>
+</body>
+</html>

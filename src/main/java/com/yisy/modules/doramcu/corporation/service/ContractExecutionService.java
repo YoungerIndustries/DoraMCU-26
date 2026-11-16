@@ -6,11 +6,15 @@ import com.yisy.modules.doramcu.corporation.model.CorporateContract;
 import com.yisy.modules.doramcu.corporation.model.CorporateContractAssignment;
 import com.yisy.modules.doramcu.corporation.model.CorporateHiring;
 import com.yisy.modules.doramcu.corporation.model.CorporatePosition;
+import com.yisy.modules.doramcu.corporation.model.Crew;
+import com.yisy.modules.doramcu.corporation.model.CrewMember;
 import com.yisy.modules.doramcu.model.TravellerContractAssignment;
 import com.yisy.modules.doramcu.repository.AiCharacterRepository;
 import com.yisy.modules.doramcu.corporation.repository.CorporateContractAssignmentRepository;
 import com.yisy.modules.doramcu.corporation.repository.CorporateContractRepository;
 import com.yisy.modules.doramcu.corporation.repository.CorporateHiringRepository;
+import com.yisy.modules.doramcu.corporation.repository.CrewMemberRepository;
+import com.yisy.modules.doramcu.corporation.repository.CrewRepository;
 import com.yisy.modules.doramcu.service.MultiUniverseContractService;
 import com.yisy.modules.doramcu.traveller.TravellerCharacter;
 import org.slf4j.Logger;
@@ -64,6 +68,8 @@ public class ContractExecutionService {
     private final CareerProgressionService careerProgressionService;
     private final TravellerCorporationService travellerCorporationService;
     private final MultiUniverseContractService multiUniverseContractService;
+    private final CrewRepository crewRepository;
+    private final CrewMemberRepository crewMemberRepository;
 
     public ContractExecutionService(
             CorporateContractRepository contractRepository,
@@ -73,7 +79,9 @@ public class ContractExecutionService {
             CorporationEconomyService economyService,
             CareerProgressionService careerProgressionService,
             TravellerCorporationService travellerCorporationService,
-            MultiUniverseContractService multiUniverseContractService) {
+            MultiUniverseContractService multiUniverseContractService,
+            CrewRepository crewRepository,
+            CrewMemberRepository crewMemberRepository) {
         this.contractRepository = contractRepository;
         this.hiringRepository = hiringRepository;
         this.assignmentRepository = assignmentRepository;
@@ -82,6 +90,8 @@ public class ContractExecutionService {
         this.careerProgressionService = careerProgressionService;
         this.travellerCorporationService = travellerCorporationService;
         this.multiUniverseContractService = multiUniverseContractService;
+        this.crewRepository = crewRepository;
+        this.crewMemberRepository = crewMemberRepository;
     }
 
     /**
@@ -109,12 +119,62 @@ public class ContractExecutionService {
             throw new IllegalArgumentException("Contract is not active: " + contract.getStatus());
         }
 
+        // Check if a Crew is already assigned to this contract
+        if (contract.getCrewId() != null) {
+            log.info("Contract {} has crew {} assigned. Using crew-based assignment.", contractId, contract.getCrewId());
+            return assignCrewToContractExecution(contract);
+        }
+
+        // Fall back to ad-hoc assignment
+        return autoAssignCrewAdHoc(contract);
+    }
+
+    /**
+     * Assign crew members from a Crew entity to contract execution.
+     */
+    private List<CorporateContractAssignment> assignCrewToContractExecution(CorporateContract contract) {
+        Long crewId = contract.getCrewId();
+        List<CrewMember> crewMembers = crewMemberRepository.findByCrewId(crewId);
+
+        List<CorporateContractAssignment> assignments = new ArrayList<>();
+        List<Long> crewIds = new ArrayList<>();
+
+        for (CrewMember member : crewMembers) {
+            Optional<CorporateHiring> hireOpt = hiringRepository.findById(member.getHiringId());
+            if (hireOpt.isPresent()) {
+                CorporateHiring hire = hireOpt.get();
+                CorporateContractAssignment assignment = new CorporateContractAssignment(
+                        contract.getId(), hire.getId(), hire.getAiCharacterId());
+                assignment = assignmentRepository.save(assignment);
+                assignments.add(assignment);
+                crewIds.add(hire.getAiCharacterId());
+            }
+        }
+
+        contract.setAssignedCrewIds(crewIds);
+        contract.setTurnsRemaining(contract.getDurationTurns());
+        contract.setProgressPercent(0.0);
+        contractRepository.save(contract);
+
+        log.info("Assigned {} crew members from crew {} to contract {}",
+                assignments.size(), crewId, contract.getId());
+        return assignments;
+    }
+
+    /**
+     * Original ad-hoc crew assignment logic (fallback when no Crew entity is assigned).
+     */
+    private List<CorporateContractAssignment> autoAssignCrewAdHoc(CorporateContract contract) {
         Long corporationId = contract.getCorporationId();
+        Long contractId = contract.getId();
         CorporateContract.ContractType contractType = contract.getType();
 
-        // Get all active hires for the corporation
+        // Get all active hires for the corporation not in a crew
         List<CorporateHiring> activeHires = hiringRepository
-                .findByCorporationIdAndStatus(corporationId, CorporateHiring.Status.ACTIVE);
+                .findByCorporationIdAndStatus(corporationId, CorporateHiring.Status.ACTIVE)
+                .stream()
+                .filter(h -> h.getCrewId() == null)
+                .collect(java.util.stream.Collectors.toList());
 
         if (activeHires.isEmpty()) {
             log.warn("No active hires found for corporation {} to assign to contract {}", corporationId, contractId);
@@ -488,6 +548,36 @@ public class ContractExecutionService {
     }
 
     /**
+     * Get crew details from a Crew entity.
+     */
+    private List<Map<String, Object>> getCrewFromEntity(Long crewId) {
+        List<Map<String, Object>> crew = new ArrayList<>();
+        List<CrewMember> crewMembers = crewMemberRepository.findByCrewId(crewId);
+
+        for (CrewMember member : crewMembers) {
+            Optional<CorporateHiring> hireOpt = hiringRepository.findById(member.getHiringId());
+            if (hireOpt.isPresent()) {
+                CorporateHiring hire = hireOpt.get();
+                Optional<AiCharacter> aiOpt = aiCharacterRepository.findById(hire.getAiCharacterId());
+                if (aiOpt.isPresent()) {
+                    AiCharacter ai = aiOpt.get();
+                    Map<String, Object> entry = new HashMap<>();
+                    entry.put("aiCharacterId", ai.getId());
+                    entry.put("name", ai.getName());
+                    entry.put("position", hire.getPosition().getDisplayName());
+                    entry.put("careerLevel", hire.getCareerLevel().name());
+                    entry.put("xpEarned", hire.getXpEarned());
+                    entry.put("performanceRating", hire.getPerformanceRating());
+                    entry.put("isLeader", Boolean.TRUE.equals(member.getIsLeader()));
+                    crew.add(entry);
+                }
+            }
+        }
+
+        return crew;
+    }
+
+    /**
      * Get assigned crew details for a contract.
      */
     @Transactional(readOnly = true)
@@ -495,6 +585,12 @@ public class ContractExecutionService {
         CorporateContract contract = contractRepository.findById(contractId)
                 .orElseThrow(() -> new IllegalArgumentException("Contract not found: " + contractId));
 
+        // Check if a Crew entity is assigned
+        if (contract.getCrewId() != null) {
+            return getCrewFromEntity(contract.getCrewId());
+        }
+
+        // Fall back to ad-hoc crew IDs
         List<Map<String, Object>> crew = new ArrayList<>();
         List<Long> crewIds = contract.getAssignedCrewIds();
 

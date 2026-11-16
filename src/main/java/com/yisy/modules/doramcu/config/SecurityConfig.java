@@ -57,7 +57,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/neuron/**", "/api/v1/co-server/**").permitAll()
                         .requestMatchers("/ws/neuron/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
-                        .requestMatchers("/", "/index.html", "/static/**", "/game.html", "/health.html", "/traveller-rules.html", "/css/**", "/js/**", "/favicon.ico", "/icons/**", "/manifest.json", "/sw.js", "/config/**", "/clients/**", "/config.json").permitAll()
+                        .requestMatchers("/", "/index.html", "/static/**", "/game.html", "/earth2026.html", "/younger-hq.html", "/landing.html", "/health.html", "/traveller-rules.html", "/css/**", "/js/**", "/favicon.ico", "/icons/**", "/manifest.json", "/sw.js", "/config/**", "/clients/**", "/config.json").permitAll()
                         .requestMatchers("/corporation/**", "/game/**").permitAll()
                         .requestMatchers("/api/v1/events/**").permitAll()
                         .requestMatchers("/api/v1/4x/characters").permitAll()

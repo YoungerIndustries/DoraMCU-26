@@ -1,538 +1,707 @@
 /* ============================================
-   LOGIN PAGE — Index.html specific styles
-   (Shared design system variables in variables.css)
+   D&D DARK FANTASY LOGIN THEME
+   Dungeon portal aesthetic with glowing runes
    ============================================ */
 
-@import url('variables.css');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=MedievalSharp&family=Uncial+Antiqua&display=swap');
 
-/* Auth Tab Styles (extracted from index.html inline styles) */
-.auth-tab-group {
-    display: flex;
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-sm);
-    padding: 4px;
-    margin-bottom: 20px;
-    gap: 4px;
+/* ============================================
+   D&D Dark Fantasy Variables
+   ============================================ */
+
+:root {
+    /* Dark stone background colors */
+    --dnd-bg-primary: #0a0a0f;
+    --dnd-bg-secondary: #12101a;
+    --dnd-bg-tertiary: #1a1525;
+    --dnd-bg-stone: #1e1a28;
+    --dnd-bg-stone-light: #2a2438;
+    
+    /* Magical accent colors */
+    --dnd-magic-purple: #9b59b6;
+    --dnd-magic-red: #c0392b;
+    --dnd-magic-gold: #f39c12;
+    --dnd-magic-blue: #3498db;
+    --dnd-magic-green: #27ae60;
+    
+    /* Rune glow colors */
+    --dnd-rune-glow: #9b59b6;
+    --dnd-rune-glow-strong: #e74c3c;
+    --dnd-rune-text: #d4a5ff;
+    
+    /* Text colors */
+    --dnd-text-primary: #e8dcc8;
+    --dnd-text-secondary: #c4b5a0;
+    --dnd-text-muted: #8b7d6b;
+    --dnd-text-bright: #ffffff;
+    
+    /* Stone textures */
+    --dnd-stone-border: rgba(155, 89, 182, 0.3);
+    --dnd-stone-border-hover: rgba(155, 89, 182, 0.6);
+    --dnd-stone-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+    
+    /* Glass effects for portal */
+    --dnd-glass-bg: rgba(26, 21, 37, 0.85);
+    --dnd-glass-border: rgba(155, 89, 182, 0.2);
+    --dnd-glass-blur: blur(12px);
+    
+    /* Typography */
+    --dnd-font-display: 'Cinzel', 'MedievalSharp', serif;
+    --dnd-font-body: 'MedievalSharp', 'Segoe UI', serif;
+    --dnd-font-rune: 'Uncial Antiqua', 'Cinzel', serif;
+    
+    /* Spacing */
+    --dnd-radius-sm: 4px;
+    --dnd-radius-md: 8px;
+    --dnd-radius-lg: 16px;
+    
+    /* Transitions */
+    --dnd-transition: 0.3s ease;
 }
-.auth-tab-btn {
-    flex: 1;
-    padding: 8px 12px;
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    font-size: 0.8rem;
-    font-weight: 600;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-}
-.auth-tab-btn.active {
-    background: rgba(0, 212, 255, 0.15);
-    color: var(--accent-cyan);
-    border: 1px solid rgba(0, 212, 255, 0.3);
-    box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
-}
-.server-status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.72rem;
-    color: var(--text-secondary);
-    margin-top: 6px;
-    padding: 2px 8px;
-    border-radius: 10px;
-    background: rgba(0, 0, 0, 0.3);
-}
-.status-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #00ff88;
-    box-shadow: 0 0 6px #00ff88;
-}
-.status-dot.offline {
-    background: #ff4444;
-    box-shadow: 0 0 6px #ff4444;
-}
-.pin-display-box {
-    background: rgba(0, 212, 255, 0.08);
-    border: 1px dashed var(--accent-cyan);
-    border-radius: var(--radius-sm);
-    padding: 12px;
-    margin-top: 14px;
-    text-align: center;
-}
-.pin-code-text {
-    font-family: var(--font-display, monospace);
-    font-size: 1.4rem;
-    letter-spacing: 4px;
-    color: var(--accent-cyan);
-    font-weight: 700;
+
+/* ============================================
+   Base Styles
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
     min-height: 100vh;
+    background: var(--dnd-bg-primary);
+    font-family: var(--dnd-font-body);
+    color: var(--dnd-text-primary);
+    overflow-x: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
 }
 
-/* Deep space background */
+/* ============================================
+   Dark Stone Background
+   ============================================ */
+
 body::before {
     content: '';
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: 
-        radial-gradient(ellipse at 20% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(168, 85, 247, 0.06) 0%, transparent 50%),
-        radial-gradient(ellipse at 60% 80%, rgba(0, 212, 255, 0.05) 0%, transparent 50%),
-        radial-gradient(1.5px 1.5px at 10% 20%, rgba(255,255,255,0.9), transparent),
-        radial-gradient(1.5px 1.5px at 30% 10%, rgba(255,255,255,0.9), transparent),
-        radial-gradient(1.5px 1.5px at 55% 45%, rgba(255,255,255,0.9), transparent),
-        radial-gradient(1.5px 1.5px at 80% 20%, rgba(255,255,255,0.9), transparent),
-        radial-gradient(1px 1px at 20% 40%, rgba(255,255,255,0.6), transparent),
-        radial-gradient(1px 1px at 40% 60%, rgba(255,255,255,0.5), transparent),
-        radial-gradient(1px 1px at 70% 50%, rgba(255,255,255,0.6), transparent),
-        radial-gradient(1px 1px at 90% 70%, rgba(255,255,255,0.5), transparent),
-        radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,0.7), transparent),
-        radial-gradient(1px 1px at 45% 15%, rgba(255,255,255,0.6), transparent),
-        radial-gradient(1px 1px at 75% 35%, rgba(255,255,255,0.7), transparent),
-        radial-gradient(1px 1px at 95% 85%, rgba(255,255,255,0.8), transparent),
-        radial-gradient(1px 1px at 25% 55%, rgba(255,255,255,0.4), transparent),
-        radial-gradient(1px 1px at 35% 75%, rgba(255,255,255,0.8), transparent),
-        radial-gradient(1px 1px at 65% 95%, rgba(255,255,255,0.5), transparent),
-        radial-gradient(1px 1px at 85% 65%, rgba(255,255,255,0.4), transparent);
+        /* Dark stone texture overlay */
+        radial-gradient(ellipse at 20% 20%, rgba(155, 89, 182, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(192, 57, 43, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(243, 156, 18, 0.05) 0%, transparent 70%),
+        /* Stone grain effect */
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 0, 0, 0.03) 2px,
+            rgba(0, 0, 0, 0.03) 4px
+        ),
+        /* Base dark gradient */
+        linear-gradient(180deg, #0a0a0f 0%, #12101a 50%, #0a0a0f 100%);
+    z-index: -2;
+}
+
+/* ============================================
+   Particle Effects
+   ============================================ */
+
+.particles-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     pointer-events: none;
     z-index: -1;
+    overflow: hidden;
 }
 
-/* Login Container */
+.particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--dnd-magic-purple);
+    border-radius: 50%;
+    animation: float-particle linear infinite;
+    opacity: 0;
+}
+
+@keyframes float-particle {
+    0% {
+        opacity: 0;
+        transform: translateY(100vh) scale(0);
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(1);
+    }
+}
+
+/* ============================================
+   Rune Circle Background
+   ============================================ */
+
+.rune-circle {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.15;
+}
+
+.rune-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+}
+
+.outer-ring {
+    width: 500px;
+    height: 500px;
+    animation: rotate-ring 60s linear infinite;
+}
+
+.inner-ring {
+    width: 350px;
+    height: 350px;
+    animation: rotate-ring 45s linear infinite reverse;
+}
+
+@keyframes rotate-ring {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.rune {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-family: var(--dnd-font-rune);
+    font-size: 2rem;
+    color: var(--dnd-rune-glow);
+    text-shadow: 0 0 10px var(--dnd-rune-glow), 0 0 20px var(--dnd-rune-glow);
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(-250px);
+    animation: glow-rune 3s ease-in-out infinite alternate;
+}
+
+.inner-ring .rune {
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(-175px);
+    font-size: 1.5rem;
+    color: var(--dnd-rune-glow-strong);
+}
+
+@keyframes glow-rune {
+    0% {
+        opacity: 0.5;
+        text-shadow: 0 0 5px var(--dnd-rune-glow);
+    }
+    100% {
+        opacity: 1;
+        text-shadow: 0 0 15px var(--dnd-rune-glow), 0 0 30px var(--dnd-rune-glow);
+    }
+}
+
+/* ============================================
+   Login Container
+   ============================================ */
+
 .login-container {
-    background: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
-    padding: 48px 40px;
-    max-width: 440px;
-    width: 90%;
-    text-align: center;
-    box-shadow: var(--glass-shadow), 0 0 60px rgba(0, 212, 255, 0.08);
+    width: 100%;
+    max-width: 480px;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================
+   Dungeon Portal Card
+   ============================================ */
+
+.dungeon-portal {
+    background: var(--dnd-glass-bg);
+    border: 2px solid var(--dnd-stone-border);
+    border-radius: var(--dnd-radius-lg);
+    padding: 40px 30px;
+    box-shadow: 
+        var(--dnd-stone-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    backdrop-filter: var(--dnd-glass-blur);
     position: relative;
     overflow: hidden;
 }
 
-.login-container::before {
+/* Stone texture overlay on portal */
+.dungeon-portal::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent-cyan), var(--accent-purple), transparent);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 1px,
+            rgba(0, 0, 0, 0.02) 1px,
+            rgba(0, 0, 0, 0.02) 2px
+        );
+    pointer-events: none;
 }
 
-.app-logo {
-    font-size: 4rem;
-    margin-bottom: 12px;
-    filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.4));
-    animation: float 3s ease-in-out infinite;
+/* ============================================
+   Portal Header
+   ============================================ */
+
+.portal-header {
+    text-align: center;
+    margin-bottom: 30px;
 }
 
-@keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-}
-
-.app-title {
-    font-family: var(--font-display);
-    font-size: 2rem;
+.portal-title {
+    font-family: var(--dnd-font-display);
+    font-size: 2.5rem;
     font-weight: 800;
-    background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-blue) 50%, var(--accent-purple) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 6px;
-    letter-spacing: 3px;
-}
-
-.app-subtitle {
-    color: var(--text-muted);
-    margin-bottom: 28px;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-}
-
-.form-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-secondary);
+    color: var(--dnd-text-bright);
+    text-shadow: 
+        0 0 10px var(--dnd-magic-purple),
+        0 0 20px var(--dnd-magic-purple),
+        0 2px 4px rgba(0, 0, 0, 0.8);
     margin-bottom: 8px;
-    display: block;
-}
-
-.input-group {
-    margin-bottom: 18px;
-}
-
-.input-group-text {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-right: none;
-    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-    color: var(--text-muted);
-    padding: 12px 10px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    gap: 12px;
 }
 
-.form-control {
-    width: 100%;
-    padding: 12px 14px;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-    color: var(--text-primary);
-    font-size: 0.9rem;
-    font-family: var(--font-primary);
-    transition: all 0.15s ease;
+.title-icon {
+    font-size: 2rem;
+    animation: pulse-icon 2s ease-in-out infinite;
 }
 
-.form-control:focus {
-    outline: none;
-    border-color: var(--accent-cyan);
-    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1), var(--glow-cyan);
-    background: var(--glass-bg-hover);
+@keyframes pulse-icon {
+    0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 5px var(--dnd-magic-purple));
+    }
+    50% {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 15px var(--dnd-magic-red));
+    }
 }
 
-.form-control::placeholder {
-    color: var(--text-muted);
-}
-
-/* Galaxy select dropdown styling */
-select.form-control {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239ca3af' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 32px;
-    cursor: pointer;
-}
-
-select.form-control:focus {
-    outline: none;
-    border-color: var(--accent-cyan);
-    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1), var(--glow-cyan);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2300d4ff' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-}
-
-.btn-signin {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.4), rgba(168, 85, 247, 0.4));
-    border: 1px solid rgba(59, 130, 246, 0.5);
-    padding: 14px;
+.portal-subtitle {
+    font-family: var(--dnd-font-body);
     font-size: 1rem;
+    color: var(--dnd-text-secondary);
+    font-style: italic;
+}
+
+/* ============================================
+   Server Selection
+   ============================================ */
+
+.server-selection {
+    margin-bottom: 20px;
+}
+
+/* ============================================
+   Form Labels
+   ============================================ */
+
+.form-label {
+    display: block;
+    font-family: var(--dnd-font-display);
+    font-size: 0.85rem;
     font-weight: 600;
-    font-family: var(--font-display);
-    letter-spacing: 2px;
-    border-radius: var(--radius-sm);
-    color: var(--text-bright);
-    transition: all 0.25s ease;
+    color: var(--dnd-text-secondary);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.label-icon {
+    margin-right: 4px;
+}
+
+/* ============================================
+   Form Inputs
+   ============================================ */
+
+.form-input,
+.form-select {
     width: 100%;
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--dnd-stone-border);
+    border-radius: var(--dnd-radius-sm);
+    color: var(--dnd-text-primary);
+    font-family: var(--dnd-font-body);
+    font-size: 1rem;
+    transition: var(--dnd-transition);
+}
+
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--dnd-magic-purple);
+    box-shadow: 0 0 10px rgba(155, 89, 182, 0.3);
+}
+
+.form-input::placeholder {
+    color: var(--dnd-text-muted);
+    font-style: italic;
+}
+
+.form-select {
     cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239b59b6' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+}
+
+.form-select option {
+    background: var(--dnd-bg-secondary);
+    color: var(--dnd-text-primary);
+}
+
+.custom-server-container {
+    margin-top: 10px;
+}
+
+/* ============================================
+   Server Status
+   ============================================ */
+
+.server-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: var(--dnd-text-muted);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #666;
+    transition: var(--dnd-transition);
+}
+
+.status-dot.online {
+    background: var(--dnd-magic-green);
+    box-shadow: 0 0 8px var(--dnd-magic-green);
+}
+
+.status-dot.offline {
+    background: var(--dnd-magic-red);
+    box-shadow: 0 0 8px var(--dnd-magic-red);
+}
+
+.status-dot.checking {
+    background: var(--dnd-magic-gold);
+    animation: pulse-dot 1s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.status-label {
+    font-size: 0.8rem;
+}
+
+/* ============================================
+   Auth Tab Group
+   ============================================ */
+
+.auth-tab-group {
+    display: flex;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--dnd-stone-border);
+    border-radius: var(--dnd-radius-md);
+    padding: 4px;
+    margin-bottom: 20px;
+    gap: 4px;
+}
+
+.auth-tab-btn {
+    flex: 1;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    color: var(--dnd-text-muted);
+    font-family: var(--dnd-font-display);
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: var(--dnd-radius-sm);
+    cursor: pointer;
+    transition: var(--dnd-transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    letter-spacing: 0.5px;
+}
+
+.auth-tab-btn:hover {
+    color: var(--dnd-text-secondary);
+    background: rgba(155, 89, 182, 0.1);
+}
+
+.auth-tab-btn.active {
+    background: rgba(155, 89, 182, 0.2);
+    color: var(--dnd-rune-text);
+    border: 1px solid rgba(155, 89, 182, 0.4);
+    box-shadow: 0 0 10px rgba(155, 89, 182, 0.2);
+}
+
+.tab-icon {
+    font-size: 1rem;
+}
+
+/* ============================================
+   Auth Forms
+   ============================================ */
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    margin-bottom: 0;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+/* ============================================
+   Error Messages
+   ============================================ */
+
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: rgba(192, 57, 43, 0.15);
+    border: 1px solid rgba(192, 57, 43, 0.4);
+    border-radius: var(--dnd-radius-sm);
+    font-size: 0.9rem;
+    color: #e74c3c;
+}
+
+.error-icon {
+    font-size: 1.1rem;
+}
+
+.error-text {
+    flex: 1;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+
+.btn {
+    padding: 14px 24px;
+    border: none;
+    border-radius: var(--dnd-radius-sm);
+    font-family: var(--dnd-font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--dnd-transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
     position: relative;
     overflow: hidden;
 }
 
-.btn-signin::before {
+.btn::before {
     content: '';
     position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-    transition: left 0.6s ease;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: 0.5s;
 }
 
-.btn-signin:hover:not(:disabled)::before {
+.btn:hover::before {
     left: 100%;
 }
 
-.btn-signin:hover:not(:disabled) {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.6), rgba(168, 85, 247, 0.6));
-    box-shadow: var(--glow-blue);
-    transform: translateY(-2px);
-    color: var(--text-bright);
+.btn-primary {
+    background: linear-gradient(135deg, var(--dnd-magic-purple), var(--dnd-magic-red));
+    color: var(--dnd-text-bright);
+    box-shadow: 
+        0 4px 15px rgba(155, 89, 182, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.btn-signin:disabled {
-    transform: none;
-    box-shadow: none;
-    opacity: 0.4;
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 6px 20px rgba(155, 89, 182, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: rgba(0, 0, 0, 0.4);
+    color: var(--dnd-text-secondary);
+    border: 1px solid var(--dnd-stone-border);
+}
+
+.btn-secondary:hover {
+    background: rgba(155, 89, 182, 0.1);
+    border-color: var(--dnd-stone-border-hover);
+}
+
+.btn-small {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+}
+
+.btn-icon {
+    font-size: 1.1rem;
+}
+
+.btn:disabled {
+    opacity: 0.5;
     cursor: not-allowed;
 }
 
-.error-message {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    border-radius: var(--radius-sm);
-    color: var(--accent-red);
-    padding: 12px;
-    margin-top: 1rem;
-    font-size: 0.85rem;
-    display: none;
-    text-align: left;
+/* ============================================
+   Auth Navigation
+   ============================================ */
+
+.auth-navigation {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--dnd-stone-border);
 }
 
-.divider {
-    display: flex;
-    align-items: center;
-    margin: 1.5rem 0;
-    color: var(--text-muted);
-    font-size: 0.8rem;
-}
-
-.divider::before,
-.divider::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid var(--glass-border);
-}
-
-.divider::before { margin-right: 1rem; }
-.divider::after { margin-left: 1rem; }
-
-.footer-text {
-    margin-top: 2rem;
-    color: var(--text-muted);
-    font-size: 0.8rem;
-}
-
-/* Dashboard View */
-.dashboard-view {
-    display: none;
-}
-
-.user-info-card {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(168, 85, 247, 0.2));
-    border: 1px solid rgba(59, 130, 246, 0.3);
-    border-radius: var(--radius-md);
-    padding: 1.5rem;
-    color: var(--text-bright);
-    margin-bottom: 1.5rem;
-}
-
-.user-info-card .username {
-    font-family: var(--font-display);
-    font-size: 1.3rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-}
-
-.btn-dashboard {
-    background: var(--glass-bg-light);
-    border: 1px solid var(--glass-border);
-    color: var(--text-primary);
-    padding: 12px;
+.nav-text {
     font-size: 0.9rem;
-    font-weight: 500;
-    font-family: var(--font-primary);
-    border-radius: var(--radius-sm);
-    transition: all 0.2s ease;
-    width: 100%;
-    margin-bottom: 0.75rem;
-    cursor: pointer;
-    text-decoration: none;
-    display: block;
+    color: var(--dnd-text-muted);
 }
 
-.btn-dashboard:hover {
-    background: var(--glass-bg-hover);
-    border-color: var(--accent-cyan);
-    color: var(--text-bright);
-    transform: translateY(-1px);
-}
-
-.btn-logout {
-    background: rgba(239, 68, 68, 0.15);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    padding: 12px;
+.nav-link {
+    background: none;
+    border: none;
+    color: var(--dnd-magic-purple);
+    font-family: var(--dnd-font-display);
     font-size: 0.9rem;
-    font-weight: 500;
-    font-family: var(--font-primary);
-    border-radius: var(--radius-sm);
-    color: var(--accent-red);
-    transition: all 0.2s ease;
-    width: 100%;
-    cursor: pointer;
-}
-
-.btn-logout:hover {
-    background: rgba(239, 68, 68, 0.25);
-    transform: translateY(-1px);
-    color: var(--accent-red);
-}
-
-/* New Empire Button */
-.btn-new-empire {
-    background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(168, 85, 247, 0.3));
-    border: 1px solid rgba(0, 212, 255, 0.4);
-    padding: 12px;
-    font-size: 0.95rem;
     font-weight: 600;
-    font-family: var(--font-display);
-    letter-spacing: 1.5px;
-    border-radius: var(--radius-sm);
-    color: var(--text-bright);
-    transition: all 0.25s ease;
-    width: 100%;
-    margin-bottom: 0.75rem;
     cursor: pointer;
-    position: relative;
-    overflow: hidden;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: var(--dnd-transition);
 }
 
-.btn-new-empire::before {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-    transition: left 0.6s ease;
+.nav-link:hover {
+    color: var(--dnd-rune-text);
+    text-shadow: 0 0 8px var(--dnd-magic-purple);
 }
 
-.btn-new-empire:hover::before {
-    left: 100%;
-}
+/* ============================================
+   Empire List
+   ============================================ */
 
-.btn-new-empire:hover {
-    background: linear-gradient(135deg, rgba(0, 212, 255, 0.5), rgba(168, 85, 247, 0.5));
-    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
-    transform: translateY(-2px);
-    color: var(--text-bright);
-}
-
-/* Back to Login Button */
-.btn-back {
-    background: transparent;
-    border: 1px solid var(--glass-border);
-    padding: 10px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    font-family: var(--font-primary);
-    border-radius: var(--radius-sm);
-    color: var(--text-secondary);
-    transition: all 0.2s ease;
-    width: 100%;
-    margin-top: 1rem;
-    cursor: pointer;
-}
-
-.btn-back:hover {
-    background: var(--glass-bg-hover);
-    border-color: var(--accent-cyan);
-    color: var(--text-bright);
-    transform: translateY(-1px);
-}
-
-/* Animations */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.fade-in {
-    animation: fadeIn 0.3s ease-out;
-}
-
-/* Empire List */
-.empire-list {
-    max-height: 320px;
+.empire-list-container {
+    display: none;
+    max-height: 400px;
     overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding-right: 4px;
+    padding-right: 8px;
 }
 
-.empire-list::-webkit-scrollbar {
-    width: 6px;
-}
-
-.empire-list::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 3px;
-}
-
-.empire-list::-webkit-scrollbar-thumb {
-    background: rgba(0, 212, 255, 0.3);
-    border-radius: 3px;
+.empire-list-container.active {
+    display: block;
 }
 
 .empire-list-loading {
     text-align: center;
-    color: var(--text-muted);
-    font-size: 0.85rem;
     padding: 20px;
+    color: var(--dnd-text-muted);
+    font-style: italic;
 }
 
-/* Empire Card */
 .empire-card {
     background: rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-sm);
-    padding: 14px;
-    transition: all 0.2s ease;
-    cursor: default;
+    border: 1px solid var(--dnd-stone-border);
+    border-radius: var(--dnd-radius-md);
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: var(--dnd-transition);
 }
 
 .empire-card:hover {
-    border-color: rgba(0, 212, 255, 0.4);
-    background: rgba(0, 212, 255, 0.05);
-    box-shadow: 0 0 15px rgba(0, 212, 255, 0.1);
+    border-color: var(--dnd-stone-border-hover);
+    box-shadow: 0 0 10px rgba(155, 89, 182, 0.2);
 }
 
 .empire-card-header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .empire-icon {
-    font-size: 1.8rem;
-    flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 212, 255, 0.1);
-    border-radius: var(--radius-sm);
+    font-size: 2rem;
 }
 
 .empire-card-info {
     flex: 1;
-    min-width: 0;
 }
 
 .empire-name {
-    font-family: var(--font-display);
-    font-size: 1rem;
+    font-family: var(--dnd-font-display);
+    font-size: 1.1rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--dnd-text-bright);
     margin-bottom: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .empire-meta {
@@ -542,262 +711,193 @@ select.form-control:focus {
 }
 
 .empire-badge {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     padding: 2px 8px;
+    background: rgba(155, 89, 182, 0.15);
+    border: 1px solid rgba(155, 89, 182, 0.3);
     border-radius: 10px;
-    background: rgba(0, 212, 255, 0.1);
-    border: 1px solid rgba(0, 212, 255, 0.2);
-    color: var(--text-secondary);
-    white-space: nowrap;
+    color: var(--dnd-rune-text);
 }
 
 .empire-card-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 10px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 12px;
+    border-top: 1px solid var(--dnd-stone-border);
 }
 
 .empire-commander {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 0.85rem;
+    color: var(--dnd-text-muted);
 }
 
 .empire-login-btn {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.4), rgba(168, 85, 247, 0.4));
-    border: 1px solid rgba(59, 130, 246, 0.5);
     padding: 6px 16px;
+    background: linear-gradient(135deg, var(--dnd-magic-purple), var(--dnd-magic-red));
+    border: none;
+    border-radius: var(--dnd-radius-sm);
+    color: var(--dnd-text-bright);
+    font-family: var(--dnd-font-display);
     font-size: 0.8rem;
     font-weight: 600;
-    font-family: var(--font-display);
-    border-radius: var(--radius-sm);
-    color: var(--text-bright);
     cursor: pointer;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
+    transition: var(--dnd-transition);
 }
 
-.empire-login-btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.6), rgba(168, 85, 247, 0.6));
-    box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+.empire-login-btn:hover {
     transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(155, 89, 182, 0.4);
 }
 
-.empire-login-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-}
-
-/* Empty State */
 .empty-state {
     text-align: center;
     padding: 30px 20px;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px dashed var(--glass-border);
-    border-radius: var(--radius-sm);
-}
-
-/* Login container wider for empire list */
-#loginView {
-    max-width: 500px;
-}
-
-/* Health Status Section */
-.health-status-section {
-    margin-top: 16px;
-    padding: 14px;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-sm);
-}
-
-.health-status-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-secondary);
-}
-
-.health-status-header .icon {
-    width: 1rem;
-    height: 1rem;
-    color: var(--accent-cyan);
-}
-
-.health-refresh-btn {
-    margin-left: auto;
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    padding: 2px;
-    display: flex;
-    align-items: center;
-    transition: color 0.2s ease;
-}
-
-.health-refresh-btn:hover {
-    color: var(--accent-cyan);
-}
-
-.health-refresh-btn .icon {
-    width: 0.9rem;
-    height: 0.9rem;
-}
-
-.health-status-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-}
-
-.health-item {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: 6px 8px;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-}
-
-.health-label {
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--text-muted);
-}
-
-.health-value {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.health-value.up {
-    color: #00ff88;
-}
-
-.health-value.down {
-    color: #ff4444;
-}
-
-.health-value.warning {
-    color: #ffaa00;
-}
-
-.health-status-footer {
-    margin-top: 10px;
-    text-align: center;
-}
-
-.health-status-footer a {
-    font-size: 0.72rem;
-    color: var(--accent-cyan);
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-.health-status-footer a:hover {
-    color: var(--text-bright);
-    text-decoration: underline;
+    color: var(--dnd-text-muted);
 }
 
 /* ============================================
-   Inline style replacements (extracted from index.html)
+   Registration Success
    ============================================ */
 
-/* Logo icon size */
-.app-logo .icon {
-    width: 4rem;
-    height: 4rem;
+.registration-success {
+    text-align: center;
+    padding: 20px;
+    background: rgba(39, 174, 96, 0.1);
+    border: 1px solid rgba(39, 174, 96, 0.3);
+    border-radius: var(--dnd-radius-md);
+    margin-top: 16px;
 }
 
-/* Input wrapper flexbox pattern */
-.input-wrapper {
-    display: flex;
+.success-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
 }
 
-/* Input with left icon - border radius */
-.input-with-icon {
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+.success-title {
+    font-family: var(--dnd-font-display);
+    font-size: 1.5rem;
+    color: var(--dnd-magic-green);
+    margin-bottom: 8px;
 }
 
-/* Custom server container */
-.custom-server-container {
-    display: none;
-    margin-top: 8px;
+.success-message {
+    color: var(--dnd-text-secondary);
+    margin-bottom: 16px;
 }
 
-.custom-server-container.visible {
-    display: block;
+.pin-display-box {
+    background: rgba(155, 89, 182, 0.1);
+    border: 1px dashed var(--dnd-magic-purple);
+    border-radius: var(--dnd-radius-sm);
+    padding: 16px;
+    margin-top: 16px;
 }
 
-/* Custom server input */
-.custom-server-input {
-    border-radius: var(--radius-sm);
+.pin-label {
+    font-size: 0.85rem;
+    color: var(--dnd-text-muted);
+    margin-bottom: 8px;
 }
 
-/* Auth tab group margin */
-.auth-tab-group {
-    margin-top: 12px;
+.pin-code-text {
+    font-family: 'Courier New', monospace;
+    font-size: 1.8rem;
+    letter-spacing: 6px;
+    color: var(--dnd-magic-gold);
+    font-weight: 700;
+    text-shadow: 0 0 10px var(--dnd-magic-gold);
+    margin-bottom: 8px;
 }
 
-/* Form hidden state */
-.auth-form {
-    display: none;
+.pin-warning {
+    font-size: 0.8rem;
+    color: var(--dnd-magic-red);
 }
 
-.auth-form.active {
-    display: block;
-}
+/* ============================================
+   Health Status
+   ============================================ */
 
-/* Empire list container */
-.empire-list-container {
-    display: none;
-}
-
-.empire-list-container.active {
-    display: block;
-}
-
-/* Registration container */
-.registration-container {
-    display: none;
-}
-
-.registration-container.active {
-    display: block;
-}
-
-/* PIN display container */
-.pin-container {
-    display: none;
-}
-
-.pin-container.visible {
-    display: block;
-}
-
-/* Health status container */
 .health-container {
     display: none;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--dnd-stone-border);
 }
 
 .health-container.visible {
     display: block;
 }
 
-/* Toast container */
+.health-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.health-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: var(--dnd-radius-sm);
+}
+
+.health-label {
+    font-size: 0.75rem;
+    color: var(--dnd-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.health-value {
+    font-family: var(--dnd-font-display);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.health-value.up {
+    color: var(--dnd-magic-green);
+}
+
+.health-value.down {
+    color: var(--dnd-magic-red);
+}
+
+/* ============================================
+   Dashboard View
+   ============================================ */
+
+.dashboard-view {
+    display: none;
+}
+
+.dashboard-view.visible {
+    display: block;
+}
+
+.dashboard-info {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.welcome-message {
+    font-size: 1.1rem;
+    color: var(--dnd-text-secondary);
+}
+
+.username {
+    color: var(--dnd-magic-gold);
+    font-weight: 700;
+}
+
+/* ============================================
+   Toast Container
+   ============================================ */
+
 .toast-container {
     position: fixed;
     top: 20px;
@@ -808,14 +908,38 @@ select.form-control:focus {
     gap: 8px;
 }
 
-/* Loading overlay */
+.toast {
+    padding: 12px 20px;
+    background: var(--dnd-glass-bg);
+    border: 1px solid var(--dnd-stone-border);
+    border-radius: var(--dnd-radius-sm);
+    color: var(--dnd-text-primary);
+    box-shadow: var(--dnd-stone-shadow);
+    animation: slide-in 0.3s ease;
+}
+
+@keyframes slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ============================================
+   Loading Overlay
+   ============================================ */
+
 .loading-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -826,41 +950,119 @@ select.form-control:focus {
     display: none;
 }
 
-/* Spinner */
 .spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid var(--glass-border);
-    border-top-color: var(--accent-cyan);
+    width: 50px;
+    height: 50px;
+    border: 3px solid var(--dnd-stone-border);
+    border-top-color: var(--dnd-magic-purple);
     border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
 
-/* Fade in animation */
-.fade-in {
-    animation: fadeIn 0.3s ease-in;
-}
+/* ============================================
+   PIN Input Styling
+   ============================================ */
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* PIN input styling */
 .pin-input {
-    font-family: monospace;
-    letter-spacing: 2px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 4px;
+    text-align: center;
+    font-size: 1.2rem;
 }
 
-/* Register view hidden state */
+/* ============================================
+   View Visibility
+   ============================================ */
+
+.view {
+    display: none;
+}
+
+.view.visible,
+#loginView {
+    display: block;
+}
+
 #registerView {
     display: none;
 }
 
 #registerView.visible {
     display: block;
+}
+
+/* ============================================
+   Scrollbar Styling
+   ============================================ */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--dnd-stone-border);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--dnd-stone-border-hover);
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+@media (max-width: 600px) {
+    .login-container {
+        padding: 10px;
+    }
+    
+    .dungeon-portal {
+        padding: 30px 20px;
+    }
+    
+    .portal-title {
+        font-size: 2rem;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .health-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .rune-circle {
+        width: 400px;
+        height: 400px;
+    }
+    
+    .outer-ring {
+        width: 350px;
+        height: 350px;
+    }
+    
+    .inner-ring {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .rune {
+        transform: translate(-50%, -50%) rotate(var(--angle)) translateY(-175px);
+        font-size: 1.5rem;
+    }
+    
+    .inner-ring .rune {
+        transform: translate(-50%, -50%) rotate(var(--angle)) translateY(-125px);
+    }
 }

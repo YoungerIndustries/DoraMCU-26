@@ -69,8 +69,34 @@ public final class GameCalendarDefaults {
                 return CAPTAINS_LOG_START_DATE;
             case DORAMCU_4X:
                 return DORAMCU_4X_START_DATE;
+            case STAR_WARS:
+                return LocalDate.of(0, 1, 1); // 0 BBY/ABY — Battle of Yavin epoch
+            case STAR_TREK_4X:
+                return LocalDate.of(2370, 1, 1); // Voyager era
+            case BABYLON_5:
+                return LocalDate.of(2258, 1, 1); // Babylon 5 launch
+            case DND_5E:
+                return LocalDate.of(1370, 1, 1); // Faerûn 1370 DR (Battles of the Succession Wars)
+            case EARTH_2026:
+                return LocalDate.of(2026, 1, 1);
+            case FPS:
+                return LocalDate.of(2026, 1, 1);
+            case MECHWARRIOR:
+                return LocalDate.of(3025, 1, 1); // Succession Wars era
+            case STARSHIP_TROOPERS:
+                return LocalDate.of(2060, 1, 1); // Bug War era
+            case WARHAMMER_40K:
+                return LocalDate.of(40000, 1, 1); // 41st Millennium
+            case SFB:
+                return LocalDate.of(1999, 1, 1); // Star Frontiers setting
+            case ZERO_ZERO_SEVEN:
+                return LocalDate.of(2024, 1, 1); // Modern espionage
+            case TRANSPORT_TYCOON:
+                return LocalDate.of(1830, 1, 1); // Industrial revolution
+            case THIRD_REICH:
+                return LocalDate.of(1939, 9, 1); // WWII start
             default:
-                throw new IllegalArgumentException("Unknown game type: " + gameType);
+                return LocalDate.of(2000, 1, 1); // Generic fallback
         }
     }
 
@@ -88,8 +114,34 @@ public final class GameCalendarDefaults {
                 return "Voyager Era (2370 AD)";
             case DORAMCU_4X:
                 return "New Empire Era (2330 AD)";
+            case STAR_WARS:
+                return "Galactic Standard (0 BBY/ABY)";
+            case STAR_TREK_4X:
+                return "Stardate Era (2370 AD)";
+            case BABYLON_5:
+                return "Babylon Era (2258 AD)";
+            case DND_5E:
+                return "Dalereckoning (1370 DR)";
+            case EARTH_2026:
+                return "Modern Era (2026 AD)";
+            case FPS:
+                return "Combat Era (2026 AD)";
+            case MECHWARRIOR:
+                return "Succession Wars (3025)";
+            case STARSHIP_TROOPERS:
+                return "Bug War Era (2060 AD)";
+            case WARHAMMER_40K:
+                return "41st Millennium (40,000)";
+            case SFB:
+                return "Kzinti Era (1999 AD)";
+            case ZERO_ZERO_SEVEN:
+                return "Modern Espionage (2024 AD)";
+            case TRANSPORT_TYCOON:
+                return "Industrial Age (1830 AD)";
+            case THIRD_REICH:
+                return "WWII Era (1939 AD)";
             default:
-                return "Unknown Era";
+                return "Standard Calendar";
         }
     }
 }

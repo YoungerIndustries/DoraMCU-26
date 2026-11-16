@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
  * Can also be included as a library in DoraMCU via DoraMcuLauncher.
  * When included as a library, this class is skipped unless neuron.standalone=true.
  */
+@SpringBootApplication
 @Configuration
 @ConditionalOnProperty(name = "neuron.standalone", havingValue = "true", matchIfMissing = false)
 public class NeuronApplication {

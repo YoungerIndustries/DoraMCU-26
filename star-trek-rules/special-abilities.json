@@ -1,0 +1,569 @@
+{
+  "special_abilities": {
+    "species_abilities": {
+      "description": "Racial and species-specific abilities that provide bonuses or unique capabilities in Star Trek Adventures.",
+      "human": {
+        "name": "Human",
+        "abilities": [
+          {
+            "name": "Indomitable Will",
+            "type": "Passive",
+            "effect": "Once per session, when you would take a Complication, you may choose to take a Threat instead. Humans are known for their ability to overcome impossible odds."
+          },
+          {
+            "name": "Adaptability",
+            "type": "Passive",
+            "effect": "You can use any Skill you haven't trained at a -1 penalty, representing human versatility."
+          }
+        ]
+      },
+      "vulcan": {
+        "name": "Vulcan",
+        "abilities": [
+          {
+            "name": "Logic",
+            "type": "Passive",
+            "effect": "You may reroll 1 die on any Intelligence or Cunning-based Skill check. Vulcans' logical training allows them to find solutions others miss."
+          },
+          {
+            "name": "Mental Discipline",
+            "type": "Passive",
+            "effect": "You have +1 to all Empathy-based checks to resist emotional manipulation or psychological attacks."
+          },
+          {
+            "name": "Vulcan Nerve Pinch",
+            "type": "Action",
+            "effect": "As a melee attack, you can render a target unconscious with a single touch. Target must pass a Brawn + Resilience check or be stunned for 1d4 rounds."
+          },
+          {
+            "name": "Mind Meld",
+            "type": "Action",
+            "effect": "By placing your hand on a target's face and saying 'It is against the Vulcan tradition to reveal the nature of the mind meld,' you can read the target's memories or implant suggestions. Requires Intelligence + Science vs target's Cunning + Resilience."
+          }
+        ]
+      },
+      "klingon": {
+        "name": "Klingon",
+        "abilities": [
+          {
+            "name": "Warrior's Blood",
+            "type": "Passive",
+            "effect": "You have +1 to all Brawn-based Skill checks and +1 to your Toughness. Klingons are natural warriors."
+          },
+          {
+            "name": "Honor in Battle",
+            "type": "Passive",
+            "effect": "When you are the target of a sneak attack or ambush, you may reroll your initiative check. Klingons are always ready for combat."
+          },
+          {
+            "name": "Bat'leth Mastery",
+            "type": "Passive",
+            "effect": "When wielding a bat'leth, you gain +1 to Weapon Skill checks and deal 1 extra Action Die on a hit."
+          },
+          {
+            "name": "Battle Cry",
+            "type": "Action",
+            "effect": "Let loose a terrifying war cry. All enemy units within 10 meters must pass a Cunning + Resilience check or be disrupted for 1 round. Allied units within 10 meters gain +1 to their next attack roll."
+          }
+        ]
+      },
+      "romulan": {
+        "name": "Romulan",
+        "abilities": [
+          {
+            "name": "Deception",
+            "type": "Passive",
+            "effect": "You have +1 to all Cunning-based Skill checks involving stealth, espionage, or deception. Romulans are masters of subterfuge."
+          },
+          {
+            "name": "Cloaking Technology",
+            "type": "Passive",
+            "effect": "When piloting a Romulan vessel, you may decloak and fire weapons in the same impulse without the telltale decloak signature that Starfleet sensors can detect."
+          }
+        ]
+      },
+      "andorian": {
+        "name": "Andorian",
+        "abilities": [
+          {
+            "name": "Cold-Blooded",
+            "type": "Passive",
+            "effect": "You are unaffected by cold temperatures and have +1 to Resilience checks in cold environments. Andorians thrive in cold climates."
+          },
+          {
+            "name": "Antenna Sensitivity",
+            "type": "Passive",
+            "effect": "Your cranial antennae can detect electromagnetic fields. You have +1 to Science checks involving sensor analysis or electronic systems."
+          }
+        ]
+      },
+      "betazoid": {
+        "name": "Betazoid",
+        "abilities": [
+          {
+            "name": "Empath",
+            "type": "Passive",
+            "effect": "You can sense the emotions of beings within 10 meters. You have +2 to Empathy-based checks to detect deception or assess emotional states."
+          },
+          {
+            "name": "Telepathy",
+            "type": "Action",
+            "effect": "You can communicate telepathically with a target within line of sight. The target must pass a Cunning + Resilience check to resist. Once connected, you can exchange thoughts and images."
+          }
+        ]
+      },
+      "trill": {
+        "name": "Trill",
+        "abilities": [
+          {
+            "name": "Symbiont Host",
+            "type": "Passive",
+            "effect": "If you are a joined Trill, you have access to the memories and skills of your previous hosts. You may use any Skill from a previous host at a -1 penalty. You have +1 to all Intelligence-based checks."
+          }
+        ]
+      },
+      "borg": {
+        "name": "Borg Drone",
+        "abilities": [
+          {
+            "name": "Assimilation Tubey",
+            "type": "Action",
+            "effect": "Fire an assimilation tube at a target within 5 meters. On hit, the target begins the assimilation process. They must pass a Brawn + Resilience check each round or lose 1 Stress. After 3 failed checks, they are assimilated."
+          },
+          {
+            "name": "Nanoprobes",
+            "type": "Passive",
+            "effect": "Your nanoprobes continuously repair your systems. At the start of each of your turns, you recover 1 Stress."
+          },
+          {
+            "name": "Collective Link",
+            "type": "Passive",
+            "effect": "You share sensory input and knowledge with all nearby Borg drones. You have access to any Skill that any nearby drone has."
+          },
+          {
+            "name": "Adaptive Shielding",
+            "type": "Passive",
+            "effect": "After being hit by a weapon type, your shields adapt. Subsequent attacks with the same weapon type deal 1 less Action Die of damage."
+          }
+        ]
+      },
+      "changeling": {
+        "name": "Changeling (Founder)",
+        "abilities": [
+          {
+            "name": "Shapeshifting",
+            "type": "Action",
+            "effect": "You can assume the form of any humanoid being you have observed. The transformation takes 1 round. While in another form, you have access to that being's appearance and voice, but not their skills or memories."
+          },
+          {
+            "name": "Fluid Form",
+            "type": "Passive",
+            "effect": "In your natural fluid form, you can flow through small openings, resist physical attacks (attacks against you have +2 to TN), and squeeze through ventilation systems."
+          },
+          {
+            "name": "Divide",
+            "type": "Action",
+            "effect": "You can split into two separate entities, each with half your capabilities. Both entities share consciousness and can remerge at will."
+          }
+        ]
+      },
+      "jemhadar": {
+        "name": "Jem'Hadar",
+        "abilities": [
+          {
+            "name": "Ketracel-White Enhancement",
+            "type": "Passive",
+            "effect": "While under the influence of Ketracel-white, you have +2 to all Brawn-based checks, +1 to Toughness, and ignore the first 2 Stress you would take. Without Ketracel-white, you suffer withdrawal: -2 to all checks and take 1 Stress per hour."
+          },
+          {
+            "name": "Regeneration",
+            "type": "Passive",
+            "effect": "Your enhanced biology allows rapid healing. At the start of each combat round, you recover 1 Stress if you have Ketracel-white in your system."
+          },
+          {
+            "name": "Absolute Loyalty",
+            "type": "Passive",
+            "effect": "You cannot be intimidated, coerced, or mind-controlled. Your loyalty to the Dominion is absolute."
+          }
+        ]
+      }
+    },
+    "ship_systems": {
+      "description": "Special starship systems and technologies that provide unique capabilities in space combat.",
+      "deflector_shields": {
+        "name": "Deflector Shields",
+        "type": "Ship System",
+        "effects": [
+          {
+            "name": "Shield Modulation",
+            "effect": "As a ship action, modulate shield frequency to resist a specific weapon type. Incoming attacks of that type deal 1 less Action Die of damage. Lasts until the end of the next round."
+          },
+          {
+            "name": "Directional Shields",
+            "effect": "Redirect shield power to one arc (Forward, Aft, or Broadside). Shields in that arc are doubled; shields in other arcs are halved."
+          },
+          {
+            "name": "Shield Inversion",
+            "effect": "As a desperate measure, invert the shields inside the hull for 1 impulse. The next weapon that hits the ship deals double damage to the attacker's weapon system. Then shields are offline for 1d4 impulses."
+          },
+          {
+            "name": "Shield Regeneration",
+            "effect": "When not taking damage, shields regenerate 10% of their maximum capacity per impulse."
+          }
+        ]
+      },
+      "cloaking_device": {
+        "name": "Cloaking Device",
+        "type": "Ship System",
+        "description": "Renders the ship invisible to conventional sensors. Primarily used by Romulans and Klingons.",
+        "effects": [
+          {
+            "name": "Cloak",
+            "effect": "The ship becomes invisible to sensors. Attacks against the cloaked ship have +4 to TN. The ship can maintain cloak while moving at impulse but not warp (Romulan technology allows warp while cloaked)."
+          },
+          {
+            "name": "Decloak and Fire",
+            "effect": "The ship may decloak, fire weapons, and recloak in the same impulse. However, the decloak signature is detectable, and the ship is vulnerable for that impulse."
+          },
+          {
+            "name": "Cloak Detection",
+            "effect": "Advanced sensors (like those on the Enterprise) can detect the subtle distortions caused by a cloaked ship. The sensor operator rolls Intelligence + Science vs the pilot's Cunning + Starship Operations."
+          }
+        ]
+      },
+      "warp_drive": {
+        "name": "Warp Drive",
+        "type": "Ship System",
+        "description": "Enables faster-than-light travel by creating a warp bubble around the ship.",
+        "effects": [
+          {
+            "name": "Warp Travel",
+            "effect": "At warp, a ship can traverse interstellar distances in hours or days instead of years. Warp factor determines speed: Warp 6 = 402x light speed, Warp 8 = 512x, Warp 9 = 1512x."
+          },
+          {
+            "name": "Warp Core Breach",
+            "effect": "If the warp core is critically damaged, it will breach, causing a catastrophic explosion. The crew has approximately 20 minutes to evacuate before the breach occurs."
+          },
+          {
+            "name": "Warp Core Trek",
+            "effect": "As a last resort, the warp core can be ejected and detonated as a weapon. The resulting explosion deals massive damage to all ships within range."
+          }
+        ]
+      },
+      "transporter": {
+        "name": "Transporter",
+        "type": "Ship System",
+        "description": "Dematerializes matter and energy, transmits it, and rematerializes it at a destination.",
+        "effects": [
+          {
+            "name": "Beam Over",
+            "effect": "Transport personnel or objects between the ship and a planet surface or another ship. Range: up to 40,000 kilometers."
+          },
+          {
+            "name": "Emergency Transporter",
+            "effect": "In an emergency, the transporter can beam out injured crewmates without precise coordinates. The target materializes in the nearest available transporter room."
+          },
+          {
+            "name": "Transporter Interference",
+            "effect": "Warp cores, plasma storms, and certain alien technologies can interfere with transporter function, causing failed beam-outs or matter/anti-matter displacement."
+          }
+        ]
+      },
+      "holodeck": {
+        "name": "Holodeck",
+        "type": "Ship System",
+        "description": "Creates fully immersive holographic environments with matter simulation.",
+        "effects": [
+          {
+            "name": "Simulation",
+            "effect": "Create any environment for training, recreation, or scientific study. Holographic objects can be programmed to feel solid and interact with the physical world."
+          },
+          {
+            "name": "Emergency Medical Hologram",
+            "effect": "The EMH (The Doctor) is a holographic program that can function independently, providing medical treatment even during red alert."
+          },
+          {
+            "name": "Holodeck Malfunction",
+            "effect": "If the holodeck malfunctions, holographic objects can become trapped in the physical world, and the environment can become dangerous."
+          }
+        ]
+      },
+      "red_matter": {
+        "name": "Red Matter",
+        "type": "Rare Resource",
+        "description": "A rare substance that can trigger a controlled supernova, creating an artificial singularity (black hole).",
+        "effects": [
+          {
+            "name": "Singularity Creation",
+            "effect": "When detonated, red matter creates a black hole that consumes everything in its path. The black hole can be controlled or directed, but is extremely dangerous."
+          },
+          {
+            "name": "Planet Destruction",
+            "effect": "A red matter detonation can destroy an entire planet by triggering its core to collapse into a singularity."
+          }
+        ]
+      }
+    },
+    "leader_abilities": {
+      "description": "Unique leader abilities for iconic Star Trek captains and officers.",
+      "starfleet": [
+        {
+          "leader": "James T. Kirk",
+          "abilities": [
+            {
+              "name": "The Kirk Maneuver",
+              "type": "Ship Action",
+              "effect": "Execute a daring and seemingly impossible maneuver. The ship can make a movement action at double speed, and the next attack this round deals 1 extra Action Die. However, the crew takes 1 Stress from the strain."
+            },
+            {
+              "name": "Inspiring Leadership",
+              "type": "Passive",
+              "effect": "All crew members within the ship gain +1 to Empathy-based checks. Kirk's charisma and confidence inspire his crew to perform at their best."
+            },
+            {
+              "name": "Instinctive Decision-Making",
+              "type": "Passive",
+              "effect": "Once per session, when faced with a critical decision, Kirk can make an instinctive choice that automatically succeeds, representing his uncanny ability to do the right thing."
+            }
+          ]
+        },
+        {
+          "leader": "Spock",
+          "abilities": [
+            {
+              "name": "Logical Analysis",
+              "type": "Action",
+              "effect": "Spock analyzes a situation and identifies the optimal solution. All crew members gain +1 to their next Skill check related to the analyzed situation."
+            },
+            {
+              "name": "Vulcan Mind Meld",
+              "type": "Action",
+              "effect": "Spock performs a mind meld with a target to extract information or heal psychological trauma. The target must pass a Cunning + Resilience check to resist."
+            },
+            {
+              "name": "Half-Human Emotion",
+              "type": "Passive",
+              "effect": "Spock's human heritage allows him to understand and connect with emotions, even if he cannot fully express them. He has +1 to all Empathy-based checks."
+            }
+          ]
+        },
+        {
+          "leader": "Jean-Luc Picard",
+          "abilities": [
+            {
+              "name": "Picard Maneuver",
+              "type": "Ship Action",
+              "effect": "Picard orders a precise and calculated maneuver that positions the ship for a tactical advantage. The ship gains +2 to its next defense roll and +1 to its next attack roll."
+            },
+            {
+              "name": "Picard's Whisper",
+              "type": "Action",
+              "effect": "Picard speaks in a calm, authoritative tone that compels compliance. A target must pass an Empathy + Resilience check or be compelled to follow a simple, reasonable command."
+            },
+            {
+              "name": "Diplomatic Immunity",
+              "type": "Passive",
+              "effect": "Picard's reputation as a diplomat means that hostile forces are more likely to negotiate than fight. When Picard is on the bridge, enemies may choose to parley instead of attacking."
+            },
+            {
+              "name": "Scholar's Knowledge",
+              "type": "Passive",
+              "effect": "Picard's vast knowledge of alien cultures and history gives him +2 to all Intelligence-based checks involving xenolinguistics, archaeology, or cultural analysis."
+            }
+          ]
+        },
+        {
+          "leader": "Benjamin Sisko",
+          "abilities": [
+            {
+              "name": "Emissary of the Prophets",
+              "type": "Passive",
+              "effect": "As the Emissary, Sisko has a connection to the Prophets (Bajoran Gods). Once per session, he can call upon their aid to automatically succeed on a critical check or gain forewarning of a threat."
+            },
+            {
+              "name": "Station Commander",
+              "type": "Passive",
+              "effect": "When defending Deep Space 9, Sisko gains +2 to all Starship Command checks. His knowledge of the station and its defenses is unmatched."
+            },
+            {
+              "name": "Military Background",
+              "type": "Passive",
+              "effect": "Sisko's Starfleet Academy and military experience give him +1 to all Weapon Skill and Starship Command checks."
+            }
+          ]
+        },
+        {
+          "leader": "Kathryn Janeway",
+          "abilities": [
+            {
+              "name": "Scientific Curiosity",
+              "type": "Passive",
+              "effect": "Janeway's scientific background gives her +2 to all Science checks. She can identify alien technology and biological phenomena more easily than most officers."
+            },
+            {
+              "name": "Determination",
+              "type": "Passive",
+              "effect": "Janeway's determination to bring Voyager home gives all crew members +1 to checks made while trying to find a way home or overcome obstacles in the Delta Quadrant."
+            },
+            {
+              "name": "Moral Compass",
+              "type": "Passive",
+              "effect": "Janeway's strong moral principles mean she will never order an action that violates her ethics. However, this can sometimes limit her options in difficult situations."
+            }
+          ]
+        }
+      ],
+      "klingon": [
+        {
+          "leader": "Worf",
+          "abilities": [
+            {
+              "name": "Klingon Warrior",
+              "type": "Passive",
+              "effect": "Worf has +2 to all Brawn-based Weapon Skill checks and +1 to Toughness. He is one of the most skilled Klingon warriors to serve in Starfleet."
+            },
+            {
+              "name": "Bat'leth Mastery",
+              "type": "Passive",
+              "effect": "When wielding a bat'leth, Worf deals 2 extra Action Dice on a hit and can disarm opponents with a successful melee attack."
+            },
+            {
+              "name": "Security Chief",
+              "type": "Passive",
+              "effect": "When Worf is on the bridge, the ship's security team gains +1 to all Security checks. His presence alone deters mutiny and sabotage."
+            }
+          ]
+        },
+        {
+          "leader": "Martok",
+          "abilities": [
+            {
+              "name": "Chancellor's Authority",
+              "type": "Passive",
+              "effect": "As Klingon Chancellor, Martok can call upon the Klingon Defense Force for support. Once per session, he can summon a Klingon reinforcement fleet."
+            },
+            {
+              "name": "Battle Scars",
+              "type": "Passive",
+              "effect": "Martok's battle scars represent his experience. He has +1 to all Resilience checks and ignores the first Threat he would take each session."
+            }
+          ]
+        }
+      ],
+      "dominion": [
+        {
+          "leader": "Gul Dukat",
+          "abilities": [
+            {
+              "name": "Pah-wraith Empowerment",
+              "type": "Passive",
+              "effect": "Empowered by the Pah-wraiths, Dukat has enhanced strength and resilience. He gains +2 to all Brawn-based checks and is immune to fear and intimidation."
+            },
+            {
+              "name": "Charismatic Tyrant",
+              "type": "Passive",
+              "effect": "Dukat's charisma and ruthlessness inspire loyalty in his followers. Cardassian and Dominion forces under his command gain +1 to all checks."
+            },
+            {
+              "name": "Obsidian Order Training",
+              "type": "Passive",
+              "effect": "Dukat's training in the Obsidian Order gives him +2 to all Security checks involving espionage, interrogation, and sabotage."
+            }
+          ]
+        }
+      ],
+      "borg": [
+        {
+          "leader": "Seven of Nine",
+          "abilities": [
+            {
+              "name": "Borg Interface",
+              "type": "Action",
+              "effect": "Seven can interface with Borg technology to hack systems, extract data, or disable defenses. She rolls Intelligence + Computer Programming vs the system's difficulty."
+            },
+            {
+              "name": "Augmented Physiology",
+              "type": "Passive",
+              "effect": "Seven's Borg augmentations give her enhanced strength, speed, and reflexes. She has +1 to all Brawn and Agility-based checks."
+            },
+            {
+              "name": "Tactical Drone Training",
+              "type": "Passive",
+              "effect": "Seven's experience as a tactical drone gives her +2 to all Weapon Skill checks and +1 to Starship Command checks involving combat tactics."
+            },
+            {
+              "name": "Reclaiming Humanity",
+              "type": "Passive",
+              "effect": "Seven's journey back to humanity gives her +1 to all Empathy-based checks. She is learning to understand and express emotions."
+            }
+          ]
+        }
+      ]
+    },
+    "unit_keywords": {
+      "description": "Common unit keywords and abilities found across Star Trek tabletop games.",
+      "keywords": [
+        {
+          "name": "Starfleet",
+          "effect": "Unit is a member of Starfleet. Gains bonuses when operating with other Starfleet units and can use Starfleet technology."
+        },
+        {
+          "name": "Klingon Warrior",
+          "effect": "Unit is a trained Klingon warrior. Gains bonuses in melee combat and has resistance to fear and intimidation."
+        },
+        {
+          "name": "Cloaked",
+          "effect": "Unit is invisible to conventional sensors. Attacks against the unit have +4 to TN. The unit can decloak to attack."
+        },
+        {
+          "name": "Shielded",
+          "effect": "Unit has deflector shields that absorb damage before hull. Shields regenerate when not under fire."
+        },
+        {
+          "name": "Warp Capable",
+          "effect": "Unit can travel at faster-than-light speeds using warp drive."
+        },
+        {
+          "name": "Transporter",
+          "effect": "Unit has access to transporter technology for personnel and cargo transfer."
+        },
+        {
+          "name": "Borg Drone",
+          "effect": "Unit is a member of the Borg Collective. Shares knowledge and abilities with nearby drones. Can assimilate targets."
+        },
+        {
+          "name": "Changeling",
+          "effect": "Unit can shapeshift into other forms. Has resistance to physical attacks in fluid form."
+        },
+        {
+          "name": "Jem'Hadar",
+          "effect": "Unit is a Jem'Hadar warrior. Has enhanced abilities when under the influence of Ketracel-white."
+        },
+        {
+          "name": "Vorta",
+          "effect": "Unit is a Vorta supervisor. Has diplomatic and administrative abilities. Serves the Founders."
+        },
+        {
+          "name": "Holodeck",
+          "effect": "Unit is a holographic projection. Cannot be physically harmed but can be disrupted by electromagnetic interference."
+        },
+        {
+          "name": "Android",
+          "effect": "Unit is a synthetic being (like Data). Has superhuman strength, speed, and processing power. Does not require air, food, or water."
+        },
+        {
+          "name": "Prophet",
+          "effect": "Unit is a non-corporeal being from the Gamma Quadrant. Exists outside normal time and space. Can manipulate the wormhole."
+        },
+        {
+          "name": "Prime Directive",
+          "effect": "Unit is bound by the Prime Directive and cannot interfere with pre-warp civilizations. Violating the directive has serious consequences."
+        },
+        {
+          "name": "Red Alert",
+          "effect": "Unit is on red alert. All systems are at maximum readiness. Crew gains +1 to combat-related checks but takes 1 Stress per hour."
+        }
+      ]
+    }
+  }
+}

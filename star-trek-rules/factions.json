@@ -1,0 +1,298 @@
+{
+  "factions": [
+    {
+      "id": "starfleet",
+      "name": "Starfleet (United Federation of Planets)",
+      "era": "All Eras (TOS-TNG-DS9-VOY)",
+      "ideology": "Exploration, diplomacy, and the betterment of all sentient life",
+      "description": "The exploratory and defensive service of the United Federation of Planets. Starfleet represents the ideals of cooperation, scientific discovery, and peaceful first contact. Its officers serve on starships and outposts throughout the galaxy, upholding the Prime Directive and defending the Federation from threats.",
+      "military_branches": [
+        {
+          "name": "Starfleet Command",
+          "description": "Administrative and strategic leadership based on Earth",
+          "unit_types": ["Fleet Admirals", "Starfleet Academy Graduates", "Intelligence Division"]
+        },
+        {
+          "name": "Starfleet Operations",
+          "description": "Frontline starship crews and ground operations",
+          "unit_types": ["Starship Crews", "Security Teams", "Science Officers", "Engineering Teams"]
+        },
+        {
+          "name": "Starfleet Intelligence",
+          "description": "Covert operations and intelligence gathering",
+          "unit_types": ["Spies", "Saboteurs", "Deep Cover Agents"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "James T. Kirk", "role": "Captain of the USS Enterprise (TOS era)"},
+        {"name": "Spock", "role": "Science Officer and First Officer (TOS era)"},
+        {"name": "Jean-Luc Picard", "role": "Captain of the USS Enterprise-D/E (TNG era)"},
+        {"name": "Benjamin Sisko", "role": "Captain of the USS Defiant / Station Commander (DS9 era)"},
+        {"name": "Kathryn Janeway", "role": "Captain of the USS Voyager (VOY era)"},
+        {"name": "George Kirk", "role": "Captain of the USS Kelvin (Kelvin timeline)"},
+        {"name": "Fleet AdmiralPICARD", "role": "Fleet Commander (Kelvin timeline)"}
+      ],
+      "strengths": ["Advanced technology", "Diplomatic reach", "Scientific expertise", "Large starship fleet", "Allied species"],
+      "weaknesses": ["Bound by the Prime Directive", "Reluctance to use lethal force", "Bureaucratic constraints", "Overextension across the galaxy"],
+      "home_world": "Earth (Starfleet Headquarters, San Francisco)",
+      "colors": ["Red", "Blue", "Gold", "Black"],
+      "allies": ["Vulcan", "Andoria", "Tellarite", "Mirror Universe counterparts (sometimes)"],
+      "enemies": ["Klingon Empire (TOS era)", "Romulan Star Empire", "Cardassian Union", "Dominion", "Borg"]
+    },
+    {
+      "id": "klingon_empire",
+      "name": "Klingon Empire",
+      "era": "All Eras",
+      "ideology": "Honor, warrior culture, and strength through conquest",
+      "description": "A powerful militaristic empire ruled by the Klingon High Council. Klingons value honor above all else, and their warrior culture demands constant proof of bravery in battle. Despite their aggressive nature, they have been both fierce enemies and valuable allies of the Federation.",
+      "military_branches": [
+        {
+          "name": "Klingon Defense Force",
+          "description": "The military arm of the Klingon Empire",
+          "unit_types": ["Warrior Houses", "Bird-of-Prey Squadrons", "D7 Battlecruisers", "Ground Assault Teams"]
+        },
+        {
+          "name": "Klingon High Council",
+          "description": "Political and judicial body governing the Empire",
+          "unit_types": ["Chancellors", "Councilors", "Judges"]
+        },
+        {
+          "name": "House Armies",
+          "description": "Private military forces of noble Klingon houses",
+          "unit_types": ["House Warriors", "Retinues", "Personal Ships"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Kor", "role": "Klingon Commander and rival of Kirk"},
+        {"name": "Worf", "role": "Security Chief (TNG era), first Klingon on Starfleet Bridge"},
+        {"name": "Martok", "role": "Klingon Chancellor and wartime leader"},
+        {"name": "Gowron", "role": "Klingon Chancellor (DS9 era)"},
+        {"name": "Azetbur", "role": "Klingon Chancellor, daughter of Cheng"},
+        {"name": "Chang", "role": "Klingon Ambassador and politician"}
+      ],
+      "strengths": ["Fearless warriors", "Advanced warship design", "Honor-bound discipline", "Strong naval tradition", "Ferocious ground combat"],
+      "weaknesses": ["Internal political intrigue", "Honor can be exploited", "House rivalries weaken unity", "Overconfidence in battle"],
+      "home_world": "Qo'noS (Klingon homeworld)",
+      "colors": ["Green", "Brown", "Red"],
+      "allies": ["Federation (TNG-DS9 era)", "Romulan Star Empire (Khitomer Accords)"],
+      "enemies": ["Romulan Star Empire", "Cardassian Union", "Federation (TOS era)"]
+    },
+    {
+      "id": "romulan_star_empire",
+      "name": "Romulan Star Empire",
+      "era": "All Eras",
+      "ideology": "Survival through secrecy, deception, and strategic superiority",
+      "description": "A secretive and powerful empire founded by Romulans who split from Vulcan millennia ago. The Romulans embrace emotion and passion, in contrast to Vulcan logic, but channel it through cunning strategy and deception. Their empire is shrouded in mystery, protected by the Great Link and the Tal Shiar.",
+      "military_branches": [
+        {
+          "name": "Romulan Star Fleet",
+          "description": "The naval force of the Romulan Empire",
+          "unit_types": ["Warbirds", "Scouts", "Attack Ships", "Reconnaissance Vessels"]
+        },
+        {
+          "name": "Tal Shiar",
+          "description": "Intelligence and security agency; feared throughout the galaxy",
+          "unit_types": ["Spies", "Assassins", "Interrogators", "Informants"]
+        },
+        {
+          "name": "High Council",
+          "description": "Ruling body of the Romulan Empire",
+          "unit_types": ["Proconsuls", "Councilors"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Zefram Cochrane", "role": "Inventor of the warp drive (pre-Romulan contact)"},
+        {"name": "The Tal Shiar Director", "role": "Head of Romulan intelligence"},
+        {"name": "V'Lar", "role": "Romulan Commander (TOS era)"},
+        {"name": "Shinzaron", "role": "Romulan Commander (TNG era)"}
+      ],
+      "strengths": ["Cloaking device technology", "Strategic genius", "Extensive spy network", "Nobly Array defense system", "Diplomatic manipulation"],
+      "weaknesses": ["Internal political instability", "Paranoia and distrust", "Tal Shiar overreach", "Isolationist tendencies"],
+      "home_world": "Romulus",
+      "colors": ["Red", "Black"],
+      "allies": ["Klingon Empire (Khitomer Accords)", "Cardassian Union (occasionally)"],
+      "enemies": ["Federation (rivalry)", "Cardassian Union", "Borg"]
+    },
+    {
+      "id": "cardassian_union",
+      "name": "Cardassian Union",
+      "era": "TNG-DS9 Era",
+      "ideology": "Order, discipline, and the supremacy of Cardassian civilization",
+      "description": "An expansionist empire in the Alpha Quadrant that occupied Bajor for 26 years. The Cardassians are a pragmatic and ruthless species that values order and efficiency above all. Their empire was built on conquest and exploitation, but they maintained it through sophisticated bureaucracy and military might.",
+      "military_branches": [
+        {
+          "name": "Cardassian Military",
+          "description": "The armed forces of the Cardassian Union",
+          "unit_types": ["Galaxy-class Warships", "Ground Forces", "Occupation Troops"]
+        },
+        {
+          "name": "Obsidian Order",
+          "description": "Secret police and intelligence agency",
+          "unit_types": ["Agents", "Informants", "Torturers"]
+        },
+        {
+          "name": "Central Command",
+          "description": "Military high command",
+          "unit_types": ["Generals", "Admirals", "Strategists"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Gul Dukat", "role": "Cardassian Governor of Bajor, later allied with the Dominion"},
+        {"name": "Legate Damar", "role": "Cardassian resistance leader who turned against the Dominion"},
+        {"name": "Silic", "role": "Cardassian Head of State"},
+        {"name": "Gul Madred", "role": "Obsidian Order agent"}
+      ],
+      "strengths": ["Advanced technology", "Ruthless efficiency", "Strong military", "Sophisticated bureaucracy", "Willingness to use any means"],
+      "weaknesses": ["Overextension", "Internal dissent", "Loss of moral legitimacy", "Dominion alliance destroyed them"],
+      "home_world": "Cardassia Prime",
+      "colors": ["Green", "Gray"],
+      "allies": ["Dominion (DS9 era — forced alliance)"],
+      "enemies": ["Bajor", "Federation", "Dominion (later)", "Klingon Empire"]
+    },
+    {
+      "id": "dominion",
+      "name": "The Dominion",
+      "era": "DS9 Era",
+      "ideology": "Absolute control and the perfection of all species through Dominion rule",
+      "description": "A powerful interstellar empire controlled by the Founders, a shapeshifting species from the Gamma Quadrant. The Dominion encompasses the Changelings (Founders), the Jem'Hadar (warrior drones), the Vorta (supervisors), and the Founders themselves. They waged a devastating war against the Federation-Klingon alliance.",
+      "military_branches": [
+        {
+          "name": "Jem'Hadar War Fleet",
+          "description": "The military arm of the Dominion",
+          "unit_types": ["Jem'Hadar Warships", "Assault Teams", "Blockade Runners"]
+        },
+        {
+          "name": "Vorta Diplomatic Corps",
+          "description": "Negotiators and administrators who manage Dominion affairs",
+          "unit_types": ["Ambassadors", "Administrators", "Negotiators"]
+        },
+        {
+          "name": "Changeling Infiltration Network",
+          "description": "Founders who infiltrate enemy organizations by shapeshifting",
+          "unit_types": ["Spies", "Assassins", "Long-term Infiltrators"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "The Founders", "role": "The shapeshifting rulers of the Dominion"},
+        {"name": "Gul Dukat", "role": "Dominion ally and governor of Deep Space 9"},
+        {"name": "Voyeur", "role": "Vorta Ambassador"},
+        {"name": "Gul Macet", "role": "Jem'Hadar commander"}
+      ],
+      "strengths": ["Jem'Hadar warriors (enhanced by Ketracel-white)", "Changeling infiltration", "Vorta diplomatic skill", "Gamma Quadrant resources", "Unwavering loyalty to the Founders"],
+      "weaknesses": ["Ketracel-white dependency (Jem'Hadar)", "Overconfidence", "Inability to understand individualism", "Changeling civil war"],
+      "home_world": "Gamma Quadrant (Founders' homeworld)",
+      "colors": ["Yellow", "Black"],
+      "allies": ["Cardassian Union (DS9 era)"],
+      "enemies": ["Federation", "Klingon Empire", "Romulan Star Empire", "Bajor"]
+    },
+    {
+      "id": "borg",
+      "name": "The Borg Collective",
+      "era": "TNG-VOY Era",
+      "ideology": "Assimilation and perfection through technological and biological integration",
+      "description": "A hive mind of assimilated beings connected through a vast network. The Borg represent one of the greatest threats in the Star Trek universe, seeking to assimilate all species and incorporate their unique characteristics into the Collective. Individuality is erased; resistance is futile.",
+      "military_branches": [
+        {
+          "name": "Borg Fleet",
+          "description": "Cube-class and Sphere-class warships",
+          "unit_types": ["Borg Cubes", "Borg Spheres", "Hive Ships", "Nanoprobes"]
+        },
+        {
+          "name": "Assimilation Teams",
+          "description": "Borg drones that board enemy vessels to assimilate crews",
+          "unit_types": ["Hazard Drones", "Tactical Drones", "Medical Drones"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "The Collective", "role": "The hive mind itself — no single leader"},
+        {"name": "Seven of Nine", "role": "Former Borg drone, liberated by Voyager"},
+        {"name": "The Borg Queen", "role": "Interface between the Collective and outsiders (debated existence)"}
+      ],
+      "strengths": ["Assimilation technology (nanoprobes)", "Adaptive shielding", "Vast numbers", "No fear or hesitation", "Technological superiority"],
+      "weaknesses": ["Vulnerability to electromagnetic pulses", "Dependence on the Transwarp Network", "Individual drones can be liberated", "Adaptation can be outmaneuvered"],
+      "home_world": "Borg Cube (nomadic; no fixed homeworld)",
+      "colors": ["Gray", "Black"],
+      "allies": ["None — the Borg assimilate rather than ally"],
+      "enemies": ["All sentient species", "Federation", "Scorpius (VOY era)"]
+    },
+    {
+      "id": "bajor",
+      "name": "Bajor (Bajoran Provisional Government)",
+      "era": "DS9 Era",
+      "ideology": "Faith, independence, and resilience after occupation",
+      "description": "A small planet that suffered 26 years of Cardassian occupation before regaining its independence. The Bajorans are a deeply spiritual people who worship the Prophets (the 'Gods'), which are actually alien beings residing in the Bajoran wormhole. Despite their small size, Bajor plays a pivotal role in Alpha Quadrant politics.",
+      "military_branches": [
+        {
+          "name": "Bajoran Resistance",
+          "description": "Former guerrilla fighters who liberated Bajor from Cardassia",
+          "unit_types": ["Partisans", "Saboteurs", "Intelligence Network"]
+        },
+        {
+          "name": "Bajoran Security Force",
+          "description": "Post-independence security and defense force",
+          "unit_types": ["Security Officers", "Border Patrol"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Kira Nerys", "role": "Former resistance fighter, DS9 Operations Officer"},
+        {"name": "Elim Garak", "role": "Former Obsidian Order agent, tailor"},
+        {"name": "Ezri Dax", "role": "DS9 Counselor, former Ambassador"},
+        {"name": "The Emissary (Sisko)", "role": "Prophet-chosen representative on Bajor"}
+      ],
+      "strengths": ["Strong faith and unity", "Guerrilla warfare experience", "Wormhole strategic value", "Moral authority"],
+      "weaknesses": ["Small population", "Limited military", "Political fragmentation", "Religious divisions"],
+      "home_world": "Bajor",
+      "colors": ["Gold", "Brown"],
+      "allies": ["Federation", "Deep Space 9 garrison"],
+      "enemies": ["Cardassian Union", "Dominion"]
+    },
+    {
+      "id": "maquis",
+      "name": "The Maquis",
+      "era": "TNG-VOY Era",
+      "ideology": "Resistance against perceived Federation betrayal of border worlds",
+      "description": "A paramilitary group composed of citizens from Federation border worlds that were ceded to the Cardassians in a peace treaty. The Maquis believe the Federation abandoned them and fight against Cardassian reoccupation. Some members are former Starfleet officers.",
+      "military_branches": [
+        {
+          "name": "Maquis Cells",
+          "description": "Small, independent guerrilla cells operating in Cardassian space",
+          "unit_types": ["Saboteurs", "Hit-and-Run Teams", "Intelligence Gatherers"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Chakotay", "role": "Maquis leader, later Captain of Voyager"},
+        {"name": "Ezri Dax (previous host: Curzon)", "role": "Maquis member"},
+        {"name": "Sabra", "role": "Maquis leader"}
+      ],
+      "strengths": ["Guerrilla tactics", "Knowledge of border regions", "Starfleet-trained members", "Moral cause"],
+      "weaknesses": ["Outnumbered", "Limited resources", "Internal divisions", "Federation considers them terrorists"],
+      "home_world": "Cardassian border worlds (disputed)",
+      "colors": ["Red", "Black"],
+      "allies": ["Syrrann Annexation Movement (Cardassian dissidents)"],
+      "enemies": ["Cardassian Union", "Federation (considered terrorists)"]
+    },
+    {
+      "id": "romulans",
+      "name": "Romulan Resistance",
+      "era": "Post-DS9 Era",
+      "ideology": "Freedom from the Praetor and Tal Shiar tyranny",
+      "description": "Dissident groups within the Romulan Star Empire seeking to overthrow the corrupt Praetor and Tal Shiar regime. These resistance movements operate in secret, risking execution if discovered.",
+      "military_branches": [
+        {
+          "name": "Underground Cells",
+          "description": "Secret resistance networks operating within Romulan space",
+          "unit_types": ["Saboteurs", "Informants", "Defectors"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "D'Arnox", "role": "Romulan dissident leader"}
+      ],
+      "strengths": ["Inside knowledge of Romulan operations", "Support from dissident fleet elements"],
+      "weaknesses": ["Heavily suppressed by Tal Shiar", "Limited resources", "Constant surveillance"],
+      "home_world": "Romulus (underground)",
+      "colors": ["Red", "Gold"],
+      "allies": ["Federation (sympathetic)"],
+      "enemies": ["Tal Shiar", "Romulan High Council"]
+    }
+  ]
+}

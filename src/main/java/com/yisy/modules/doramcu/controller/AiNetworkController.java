@@ -29,6 +29,8 @@ public class AiNetworkController {
     /**
      * GET /api/v1/ai-network
      * Get AI network status summaries for all empires.
+     * Uses the underlying AiNetworkService; the AiNetworkManager framework interface
+     * provides the same topology data through getNetworkTopology().
      */
     @GetMapping
     public ResponseEntity<List<AiNetworkStatus>> getAllNetworks() {

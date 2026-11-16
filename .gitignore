@@ -115,3 +115,13 @@ LOG_FILE_IS_UNDEFINED
 
 ### Neuron backups ###
 dora-neuron/backups/
+
+### Dev utility scripts ###
+convert-to-pdf.js
+convert_to_pdf.py
+
+### Replay logs ###
+replay_pid*.log
+
+### Data directory (local development data) ###
+data/

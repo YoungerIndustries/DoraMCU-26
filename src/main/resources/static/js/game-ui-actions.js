@@ -43,7 +43,7 @@
         try {
             const body = { stationType };
             if (planetId) body.planetId = parseInt(planetId);
-            const response = await GameAPI.post('/api/v1/sessions/' + GameUIState.sessionId + '/actions/build-station', body);
+            const response = await GameAPI.post('/api/v1/4x/sessions/' + GameUIState.sessionId + '/actions/build-station', body);
             GameUIState.gameState = response;
             updateGameStateDisplay();
             GameUI.hideModal('buildStationModal');
@@ -112,7 +112,7 @@
         }
 
         try {
-            const response = await GameAPI.post('/api/v1/sessions/' + GameUIState.sessionId + '/actions/build-facility',
+            const response = await GameAPI.post('/api/v1/4x/sessions/' + GameUIState.sessionId + '/actions/build-facility',
                 { planetId: parseInt(planetId), facilityType });
             GameUIState.gameState = response;
             updateGameStateDisplay();
@@ -148,7 +148,7 @@
         }
 
         try {
-            const response = await GameAPI.post('/api/v1/sessions/' + GameUIState.sessionId + '/actions/create-fleet',
+            const response = await GameAPI.post('/api/v1/4x/sessions/' + GameUIState.sessionId + '/actions/create-fleet',
                 { fleetName });
             GameUIState.gameState = response;
             updateGameStateDisplay();
@@ -166,7 +166,7 @@
     async function handleViewBattlesClick() {
         if (!GameUIState.sessionId || !GameUIState.elements.battleStatusModal) return;
         try {
-            const battles = await GameAPI.get('/api/v1/sessions/' + GameUIState.sessionId + '/battles');
+            const battles = await GameAPI.get('/api/v1/4x/sessions/' + GameUIState.sessionId + '/battles');
             renderBattleStatus(battles);
             GameUIState.elements.battleStatusModal.classList.remove('hidden');
         } catch (err) {

@@ -1,6 +1,10 @@
-# Build output
+# Build output — exclude build directory except the production JARs
 build/
+!build/libs/DoraMCU-0.4.0.jar
 *.jar
+!DoraMCU-0.4.0.jar
+dora-neuron/build/
+!dora-neuron/build/libs/dora-neuron-0.4.0.jar
 *.war
 
 # Gradle

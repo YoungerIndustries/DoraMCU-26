@@ -131,6 +131,8 @@ public class CorporateOfficeTestConfig {
         CorporationEconomyService economyService = Mockito.mock(CorporationEconomyService.class);
         CorporationInteractionService interactionService = Mockito.mock(CorporationInteractionService.class);
         MultiUniverseContractService multiUniverseService = Mockito.mock(MultiUniverseContractService.class);
+        CharacterTrainingService characterTrainingService = Mockito.mock(CharacterTrainingService.class);
+        CrewService crewService = Mockito.mock(CrewService.class);
         return new CorporateOfficeService(
                 contractRepository,
                 hiringRepository,
@@ -140,7 +142,9 @@ public class CorporateOfficeTestConfig {
                 interactionService,
                 persistenceService,
                 multiUniverseService,
-                eveCorporationRepository
+                eveCorporationRepository,
+                characterTrainingService,
+                crewService
         );
     }
 }

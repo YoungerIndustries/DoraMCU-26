@@ -29,7 +29,9 @@ metadata:
     app.kubernetes.io/part-of: doramcu-neuron-network
 data:
   # DoraMCU application properties
-  SPRING_PROFILES_ACTIVE: "mysql"
+  # Production profile enables: narrowed actuator endpoints, WARN-level logging,
+  # HikariCP tuning, DL memory guard, and disables dev-only features.
+  SPRING_PROFILES_ACTIVE: "mysql,production"
   DL_MODE: "rest"
   # Database connection
   DB_HOST: "doramcu-mysql"

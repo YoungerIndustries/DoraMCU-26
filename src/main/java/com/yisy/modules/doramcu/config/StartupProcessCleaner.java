@@ -97,8 +97,7 @@ public class StartupProcessCleaner {
         if (info.commandLine().isPresent()) {
             String commandLine = info.commandLine().orElse("").toLowerCase();
             return commandLine.contains("doramcu")
-                || commandLine.contains("doramculauncher")
-                || commandLine.contains("gamelauncher");
+                || commandLine.contains("doramculauncher");
         }
 
         // Fallback: check process arguments
@@ -107,8 +106,7 @@ public class StartupProcessCleaner {
             for (String arg : args) {
                 String lower = arg.toLowerCase();
                 if (lower.contains("doramcu")
-                    || lower.contains("doramculauncher")
-                    || lower.contains("gamelauncher")) {
+                    || lower.contains("doramculauncher")) {
                     return true;
                 }
             }

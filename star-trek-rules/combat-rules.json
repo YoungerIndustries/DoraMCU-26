@@ -1,0 +1,252 @@
+{
+  "game_info": {
+    "title": "Star Trek Rules & Lore Database",
+    "description": "Synthesized rules from major Star Trek tabletop games: Star Trek Adventures (2d20), Star Fleet Battles, and Star Trek: Alien Worlds",
+    "source_games": [
+      "Star Trek Adventures (Modiphius, 2017, 2nd Ed 2022)",
+      "Star Fleet Battles (Amarillo Design Bureau, 1979, 5th Ed 2019)",
+      "Star Trek: Alien Worlds (Decipher, 1996)"
+    ]
+  },
+  "ground_combat": {
+    "source": "Star Trek Adventures (2d20)",
+    "description": "Narrative ground combat using 2d20 pool system with Action Dice for damage resolution",
+    "core_mechanic": {
+      "description": "Roll 2d20 + Attribute + Skill vs Target Number (TN). Results generate Successes, Advantages, Threats, and Complications.",
+      "target_numbers": {
+        "routine": 6,
+        "challenging": 10,
+        "formidable": 14,
+        "daunting": 18
+      },
+      "action_dice": {
+        "description": "When an action could cause harm or stress, roll Action Dice (d6s) to determine the degree of effect.",
+        "results": {
+          "1": "Minor — negligible effect",
+          "2": "Moderate — noticeable but manageable",
+          "3": "Significant — meaningful impact",
+          "4": "Severe — serious consequences",
+          "5": "Critical — devastating effect"
+        }
+      }
+    },
+    "combat_phases": {
+      "description": "Ground combat resolves in turns, with each character taking actions based on their initiative.",
+      "initiative": "Dexterity + Awareness vs TN 6; higher total acts first",
+      "actions_per_turn": [
+        "Move — up to Agility + Athletics meters",
+        "Attack — melee or ranged weapon attack",
+        "Defend — active defense roll (Agility + Athletics vs attacker's Brawn + Weapon Skill)",
+        "Use Skill — any non-combat skill action",
+        "Draw/Reload — prepare weapon for next attack"
+      ],
+      "melee_attack": {
+        "steps": [
+          "Attacker rolls Brawn + Weapon Skill vs TN 6 (unarmed) or weapon TN",
+          "Each Success deals 1 damage (Action Dice determine severity)",
+          "Defender may attempt Active Defense: Agility + Athletics vs attacker's total",
+          "If defense equals or exceeds attack, the attack is blocked"
+        ]
+      },
+      "ranged_attack": {
+        "steps": [
+          "Attacker rolls Dexterity + Weapon Skill vs TN based on range",
+          "Range modifiers: Point-blank (no modifier), Short (+0), Medium (+2), Long (+4)",
+          "Each Success deals damage equal to weapon's Action Dice rating",
+          "Cover provides bonus to defense: Light cover (+2), Heavy cover (+4)"
+        ]
+      },
+      "damage": {
+        "description": "Characters have two damage tracks: Stress (temporary) and Damage (permanent).",
+        "stress": "Absorbs damage first; when Stress is full, excess becomes Damage",
+        "damage": "Permanent wounds; when Damage equals Toughness, the character is incapacitated",
+        "toughness": "Brawn + Resilience; determines total Stress and Damage capacity"
+      }
+    },
+    "weapon_types": {
+      "phaser": {
+        "description": "Standard Starfleet energy weapon with adjustable settings",
+        "settings": {
+          "stun": "Non-lethal; targets accumulate Stress instead of Damage",
+          "injure": "Lethal setting; deals direct Damage",
+          "disintegrate": "Maximum setting; deals extra Action Dice but risks collateral damage"
+        },
+        "action_dice": "2d6 (standard issue)",
+        "range": "Short: 10m, Medium: 30m, Long: 60m"
+      },
+      "phasgun": {
+        "description": "Heavy phaser rifle with increased range and power",
+        "action_dice": "3d6",
+        "range": "Short: 20m, Medium: 60m, Long: 120m"
+      },
+      "hand_laser": {
+        "description": "Klingon sidearm; less precise but devastating at close range",
+        "action_dice": "2d6",
+        "range": "Short: 5m, Medium: 15m, Long: 30m"
+      },
+      "melee_weapons": {
+        "bat'leth": {
+          "description": "Klingon curved sword; requires two hands",
+          "action_dice": "2d6",
+          "skill": "Brawn + Weapon Skill"
+        },
+        "mek'leth": {
+          "description": "Klingon dagger; one-handed",
+          "action_dice": "1d6",
+          "skill": "Brawn + Weapon Skill"
+        }
+      }
+    }
+  },
+  "space_combat": {
+    "source": "Star Fleet Battles",
+    "description": "Tactical ship-to-ship combat using hex-based movement and impulse-based turns",
+    "game_round": {
+      "description": "Each game round represents 1 minute of in-game time, divided into 6 Impulse Segments and 1 Missile Segment.",
+      "impulse_segments": 6,
+      "missile_segment": "Resolved after impulse 6; all missiles launched this round resolve here",
+      "phases": {
+        "movement_phase": {
+          "description": "Ships move using their warp or impulse drive ratings on a hex grid.",
+          "steps": [
+            "Declare movement: Warp, Impulse, or Stationary",
+            "Move ship along a course using drive rating",
+            "Resolve collision if ships occupy the same hex"
+          ]
+        },
+        "weapon_fire_phase": {
+          "description": "Ships fire weapons based on arc (Forward, Aft, Broadside) and range.",
+          "steps": [
+            "Declare target and weapon type",
+            "Roll to hit: Ship's firing number vs target's evasion",
+            "Resolve damage: Hit points applied to target's hull or shields",
+            "Check for critical hits on shielded targets"
+          ]
+        },
+        "missile_segment": {
+          "description": "All missiles launched this round reach their targets.",
+          "steps": [
+            "Missiles travel to target hex",
+            "Target may attempt countermeasures (chaff, ECM)",
+            "Resolve missile damage on hit"
+          ]
+        }
+      }
+    },
+    "ship_statistics": {
+      "hull_points": "Structural integrity; when reduced to 0, the ship is destroyed",
+      "shield_points": "Energy barrier; absorbs damage before hull. Regenerates when not under fire.",
+      "warp_drive": "FTL travel; measured in warp factors (Warp 1-9+)",
+      "impulse_drive": "Sublight maneuvering; measured in impulse factors per segment",
+      "phaser_bank": "Primary energy weapon; measured in phaser factors per arc",
+      "photon_torpedoes": "Primary projectile weapon; limited supply",
+      "deflector_shields": "Shield strength; measured in shield factors"
+    },
+    "weapon_systems": {
+      "phasers": {
+        "description": "Directed energy weapons; primary armament of most ships",
+        "types": {
+          "forward": "Fired from the front arc; highest firepower",
+          "aft": "Fired from the rear arc; lower firepower",
+          "broadside": "Fired from the sides; medium firepower"
+        },
+        "range": "Measured in hexes; effective range varies by ship class"
+      },
+      "photon_torpedoes": {
+        "description": "Antimatter warhead projectiles; devastating but limited in number",
+        "damage": "Rolls on torpedo damage table; can cause catastrophic damage",
+        "types": {
+          "standard": "Standard antimatter warhead",
+          "quantum": "Enhanced yield; introduced in TNG era",
+          "torpedo_spread": "Multiple warheads; covers wider area"
+        }
+      },
+      "deflector_shields": {
+        "description": "Energy barriers that absorb incoming damage",
+        "regeneration": "Shields regenerate when not taking damage; rate varies by ship",
+        "modulation": "Shield frequency can be shifted to reduce incoming damage",
+        "directional": "Shields can be focused forward, aft, or broadside"
+      }
+    },
+    "damage_system": {
+      "description": "Damage is tracked on a ship's damage track, with specific systems that can be disabled.",
+      "damage_types": {
+        "hull_damage": "Permanent structural damage; reduces ship capabilities",
+        "shield_damage": "Temporary; shields regenerate when not under fire",
+        "system_disruption": "Temporary loss of a system (warp, impulse, weapons)",
+        "system_destruction": "Permanent loss of a system; requires repair",
+        "crew_casualties": "Loss of crew members; reduces ship effectiveness"
+      },
+      "critical_hits": {
+        "description": "When shields are down, hits can cause critical system failures",
+        "examples": [
+          "Warp drive failure — ship cannot use warp",
+          "Impulse failure — ship cannot maneuver at sublight",
+          "Phaser failure — weapon bank offline",
+          "Torpedo magazine breach — catastrophic explosion",
+          "Bridge casualty — command and control degraded"
+        ]
+      }
+    }
+  },
+  "rpg_mechanics": {
+    "source": "Star Trek Adventures (Modiphius 2d20)",
+    "description": "2d20 narrative dice system for roleplaying adventures across all Star Trek eras",
+    "core_mechanic": {
+      "description": "Roll 2d20 + Attribute + Skill vs Target Number. Results generate Successes, Advantages, Threats, and Complications.",
+      "outcome_table": {
+        "description": "The two d20 results are looked up on the 2d20 Outcome Table.",
+        "critical_failure": "1 Complication + 1 Threat (both dice 1)",
+        "failure": "1 Threat (highest die is 1, or both dice equal and low)",
+        "partial_success": "1 Success (no special results)",
+        "success": "1 Success + 1 Advantage (highest die is 20, or both dice equal and high)",
+        "critical_success": "1 Success + 1 Advantage + 1 extra Advantage (both dice 20)"
+      },
+      "modifiers": {
+        "description": "Circumstances modify the roll by adding or subtracting from the total.",
+        "helpful": "+1 to +3 bonus for favorable conditions",
+        "harmful": "-1 to -3 penalty for difficult conditions"
+      }
+    },
+    "attributes": {
+      "brawn": "Physical strength and endurance",
+      "agility": "Physical coordination and reflexes",
+      "intelligence": "Mental acuity and knowledge",
+      "cunning": "Tactical thinking and perception",
+      "empathy": "Social awareness and interpersonal skills"
+    },
+    "skills": {
+      "description": "Skills represent trained abilities, paired with attributes.",
+      "examples": [
+        "Athletics (Agility)", "Weapon Skill (Dexterity)", "Science (Intelligence)",
+        "Security (Cunning)", "Negotiation (Empathy)", "Leadership (Empathy)",
+        "Computer Programming (Intelligence)", "Starship Command (Cunning)",
+        "Starship Operations (Agility)", "Medical Treatment (Intelligence)"
+      ]
+    },
+    "stress_and_trauma": {
+      "description": "Characters accumulate Stress from dangerous situations. When Stress is full, further stress causes Trauma.",
+      "stress_track": "Based on the character's Toughness (Brawn + Resilience)",
+      "trauma": "Permanent psychological scars; each Trauma imposes a penalty or limitation",
+      "recovery": "Stress recovers during downtime; Trauma requires therapy or significant events to heal"
+    },
+      "ship_combat": {
+      "description": "Starship combat uses the same 2d20 system, with ship stats replacing character attributes.",
+      "bridge_officers": {
+        "description": "Each bridge station is managed by an officer whose skills modify the ship's capabilities.",
+        "helm": "Starship Operations (Agility) — maneuvering and speed",
+        "tactical": "Weapon Skill (Dexterity) — phasers and torpedoes",
+        "science": "Science (Intelligence) — sensor analysis and shield modulation",
+        "engineering": "Engineering (Intelligence) — warp drive and power distribution"
+      },
+      "ship_actions": [
+        "Maneuver — change course or speed",
+        "Fire Phasers — energy weapon attack",
+        "Fire Torpedoes — projectile weapon attack",
+        "Adjust Shields — redirect shield power",
+        "Red Alert — increase ship readiness",
+        "Repair — fix damage from previous rounds"
+      ]
+    }
+  }
+}

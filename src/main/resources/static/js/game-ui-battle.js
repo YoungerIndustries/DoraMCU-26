@@ -16,7 +16,7 @@
             return;
         }
         try {
-            const response = await GameAPI.post('/api/v1/sessions/' + GameUIState.sessionId + '/battles/' + battleId + '/reinforce',
+            const response = await GameAPI.post('/api/v1/4x/sessions/' + GameUIState.sessionId + '/battles/' + battleId + '/reinforce',
                 { fleetId });
             GameUIState.gameState = response;
             updateGameStateDisplay();
@@ -31,7 +31,7 @@
     async function retreatBattle(battleId) {
         if (!GameUIState.sessionId) return;
         try {
-            const response = await GameAPI.post('/api/v1/sessions/' + GameUIState.sessionId + '/battles/' + battleId + '/retreat');
+            const response = await GameAPI.post('/api/v1/4x/sessions/' + GameUIState.sessionId + '/battles/' + battleId + '/retreat');
             GameUIState.gameState = response;
             updateGameStateDisplay();
             GameUI.showToast('Retreated from battle!', 'success');

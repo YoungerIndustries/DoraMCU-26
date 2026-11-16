@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Younger Industries HQ — Portal Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/younger-hq.css">
+</head>
+<body>
+
+    <!-- ============================================================ -->
+    <!-- Background Effects                                            -->
+    <!-- ============================================================ -->
+    <div class="hq-background">
+        <div class="hq-grid-overlay"></div>
+        <div class="hq-particles" id="hqParticles"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- Header                                                        -->
+    <!-- ============================================================ -->
+    <header class="hq-header">
+        <div class="hq-header-left">
+            <div class="hq-logo">
+                <span class="logo-icon">🏢</span>
+                <div class="logo-text">
+                    <span class="logo-title">Younger Industries</span>
+                    <span class="logo-subtitle">Headquarters — Portal Hub</span>
+                </div>
+            </div>
+            <nav class="hq-nav">
+                <button class="nav-btn active" data-floor="all">All Portals</button>
+                <button class="nav-btn" data-floor="-1">Basement B1</button>
+                <button class="nav-btn" data-floor="-2">Basement B2</button>
+                <button class="nav-btn" data-floor="-3">Basement B3</button>
+            </nav>
+        </div>
+        <div class="hq-header-right">
+            <div class="character-info">
+                <span class="character-name" id="characterName">Guest</span>
+                <span class="character-level" id="characterLevel">Level --</span>
+            </div>
+            <div class="hq-actions">
+                <button class="btn-secondary" id="btnBackToEarth">
+                    <span class="btn-icon">🌍</span> Earth 2026
+                </button>
+                <button class="btn-secondary" id="btnBackToOffice">
+                    <span class="btn-icon">🏢</span> Corp Office
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================ -->
+    <!-- Main Content                                                  -->
+    <!-- ============================================================ -->
+    <main class="hq-main">
+
+        <!-- HQ Overview Panel -->
+        <section class="hq-overview">
+            <div class="overview-card">
+                <div class="overview-icon">📍</div>
+                <div class="overview-text">
+                    <span class="overview-label">Location</span>
+                    <span class="overview-value">4906 Campo Road, Spring Valley, San Diego, CA 91977</span>
+                </div>
+            </div>
+            <div class="overview-card">
+                <div class="overview-icon">🏗️</div>
+                <div class="overview-text">
+                    <span class="overview-label">Structure</span>
+                    <span class="overview-value">3 Office Floors + 3 Basement Levels</span>
+                </div>
+            </div>
+            <div class="overview-card">
+                <div class="overview-icon">👤</div>
+                <div class="overview-text">
+                    <span class="overview-label">CEO</span>
+                    <span class="overview-value">Butch Younger</span>
+                </div>
+            </div>
+            <div class="overview-card">
+                <div class="overview-icon">🤖</div>
+                <div class="overview-text">
+                    <span class="overview-label">AI VP</span>
+                    <span class="overview-value">Sif Younger</span>
+                </div>
+            </div>
+            <div class="overview-card">
+                <div class="overview-icon">🌀</div>
+                <div class="overview-text">
+                    <span class="overview-label">Active Portals</span>
+                    <span class="overview-value" id="activePortalCount">--</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portal Grid -->
+        <section class="portal-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="section-icon">🌀</span> Galaxy Portals
+                </h2>
+                <p class="section-description">
+                    Choose a portal to transition to another game galaxy. Each portal is located in the HQ basement levels.
+                </p>
+            </div>
+
+            <!-- Portal Grid Container -->
+            <div class="portals-grid" id="portalsGrid">
+                <!-- Portals will be rendered here dynamically -->
+                <div class="portals-loading">
+                    <div class="spinner"></div>
+                    <p>Loading portal data...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Floor Map Section -->
+        <section class="floor-map-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="section-icon">🗺️</span> HQ Floor Map
+                </h2>
+            </div>
+            <div class="floor-map" id="floorMap">
+                <!-- Floor map rendered dynamically -->
+            </div>
+        </section>
+    </main>
+
+    <!-- ============================================================ -->
+    <!-- Portal Entry Modal                                            -->
+    <!-- ============================================================ -->
+    <div class="modal-overlay hidden" id="portalEntryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <span class="modal-icon" id="modalPortalIcon">🌀</span>
+                    <span id="modalPortalName">Portal Name</span>
+                </h3>
+                <button class="modal-close" id="closePortalModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="portal-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Destination:</span>
+                        <span class="detail-value" id="modalDestination">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Basement Level:</span>
+                        <span class="detail-value" id="modalBasement">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Required Level:</span>
+                        <span class="detail-value" id="modalRequiredLevel">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Clearance:</span>
+                        <span class="detail-value" id="modalClearance">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="detail-value" id="modalStatus">--</span>
+                    </div>
+                    <div class="portal-description" id="modalDescription">
+                        <!-- Portal description -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelPortalEntry">Cancel</button>
+                <button class="btn-primary" id="confirmPortalEntry">
+                    <span class="btn-icon">🌀</span> Enter Portal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- Loading Overlay                                               -->
+    <!-- ============================================================ -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p class="loading-text" id="loadingText">Initializing portal systems...</p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- Toast Notifications                                           -->
+    <!-- ============================================================ -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/younger-hq-client.js?v=1"></script>
+</body>
+</html>

@@ -8,6 +8,7 @@ import com.yisy.modules.doramcu.earth2026.repository.*;
 import com.yisy.modules.doramcu.event.GalaxyEventService;
 import com.yisy.modules.doramcu.event.GalaxyEventType;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
+import com.yisy.modules.doramcu.ai.framework.AiPlayerServiceAdapter;
 import com.yisy.modules.doramcu.hex.PlanetPopulationProgress;
 import com.yisy.modules.doramcu.model.GameSession;
 import com.yisy.modules.doramcu.repository.AiCharacterRepository;
@@ -58,6 +59,7 @@ public class Earth2026Service implements PlanetService {
     private final AiCharacterRepository aiCharacterRepository;
     private final Earth2026RulesDatabaseService rulesDatabaseService;
     private final AiPlayerService aiPlayerService;
+    private final AiPlayerServiceAdapter aiPlayerServiceAdapter;
     private final GameSessionService gameSessionService;
     private final GalaxyEventService galaxyEventService;
     private final GalaxyMetricsService galaxyMetricsService;
@@ -84,6 +86,7 @@ public class Earth2026Service implements PlanetService {
                             AiCharacterRepository aiCharacterRepository,
                             Earth2026RulesDatabaseService rulesDatabaseService,
                             AiPlayerService aiPlayerService,
+                            AiPlayerServiceAdapter aiPlayerServiceAdapter,
                             GameSessionService gameSessionService,
                             GalaxyEventService galaxyEventService,
                             GalaxyMetricsService galaxyMetricsService,
@@ -107,6 +110,7 @@ public class Earth2026Service implements PlanetService {
         this.aiCharacterRepository = aiCharacterRepository;
         this.rulesDatabaseService = rulesDatabaseService;
         this.aiPlayerService = aiPlayerService;
+        this.aiPlayerServiceAdapter = aiPlayerServiceAdapter;
         this.gameSessionService = gameSessionService;
         this.galaxyEventService = galaxyEventService;
         this.galaxyMetricsService = galaxyMetricsService;

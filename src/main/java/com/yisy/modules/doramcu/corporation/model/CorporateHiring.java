@@ -67,6 +67,16 @@ public class CorporateHiring {
     @Column(name = "skill_level")
     private Map<String, Integer> skills = new HashMap<>();
 
+    // ---- Crew assignment ----
+
+    /**
+     * Links this hire to a Crew group.
+     * Null means the hire is in the general employee pool.
+     * Non-null means the hire is assigned to a crew.
+     */
+    @Column(name = "crew_id")
+    private Long crewId;
+
     /**
      * Hiring status lifecycle.
      */
@@ -187,6 +197,14 @@ public class CorporateHiring {
 
     public void setSkills(Map<String, Integer> skills) {
         this.skills = skills;
+    }
+
+    public Long getCrewId() {
+        return crewId;
+    }
+
+    public void setCrewId(Long crewId) {
+        this.crewId = crewId;
     }
 
     /**

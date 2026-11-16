@@ -86,6 +86,13 @@ public class CorporateContract {
     private String universeDisplayName = "Traveller";
 
     /**
+     * Links this contract to a Crew group assigned to execute it.
+     * Replaces the ad-hoc assignedCrewIds for formal crew-based execution.
+     */
+    @Column(name = "crew_id")
+    private Long crewId;
+
+    /**
      * Types of business contracts available in the corporate office.
      */
     public enum ContractType {
@@ -315,6 +322,14 @@ public class CorporateContract {
      */
     public boolean isComplete() {
         return turnsRemaining != null && turnsRemaining <= 0;
+    }
+
+    public Long getCrewId() {
+        return crewId;
+    }
+
+    public void setCrewId(Long crewId) {
+        this.crewId = crewId;
     }
 
     @Override

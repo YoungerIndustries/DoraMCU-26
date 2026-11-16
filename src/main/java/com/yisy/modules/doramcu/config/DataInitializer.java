@@ -1,5 +1,11 @@
 package com.yisy.modules.doramcu.config;
 
+import com.yisy.modules.doramcu.corporation.model.CorporateContract;
+import com.yisy.modules.doramcu.corporation.model.CorporateHiring;
+import com.yisy.modules.doramcu.corporation.model.CorporatePosition;
+import com.yisy.modules.doramcu.corporation.repository.CorporateContractRepository;
+import com.yisy.modules.doramcu.corporation.repository.CorporateHiringRepository;
+import com.yisy.modules.doramcu.corporation.repository.CorporationRelationshipRepository;
 import com.yisy.modules.doramcu.earth2026.model.Earth2026Character;
 import com.yisy.modules.doramcu.earth2026.repository.Earth2026CharacterRepository;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
@@ -7,31 +13,9 @@ import com.yisy.modules.doramcu.eve.model.EveCorporation;
 import com.yisy.modules.doramcu.hex.Empire;
 import com.yisy.modules.doramcu.hex.GalaxyFactory;
 import com.yisy.modules.doramcu.hex.GalaxyGenerationProgress;
-import com.yisy.modules.doramcu.hex.GalaxyGenerator;
-import com.yisy.modules.doramcu.model.CareerLevel;
-import com.yisy.modules.doramcu.corporation.model.CorporateContract;
-import com.yisy.modules.doramcu.corporation.model.CorporateHiring;
-import com.yisy.modules.doramcu.corporation.model.CorporatePosition;
-import com.yisy.modules.doramcu.corporation.model.CorporationRelationship;
-import com.yisy.modules.doramcu.model.Device;
-import com.yisy.modules.doramcu.model.Player;
-import com.yisy.modules.doramcu.model.PromoCode;
-import com.yisy.modules.doramcu.model.User;
-import com.yisy.modules.doramcu.repository.AiCharacterRepository;
-import com.yisy.modules.doramcu.corporation.repository.CorporateContractRepository;
-import com.yisy.modules.doramcu.corporation.repository.CorporateHiringRepository;
-import com.yisy.modules.doramcu.corporation.repository.CorporationRelationshipRepository;
-import com.yisy.modules.doramcu.repository.DeviceRepository;
-import com.yisy.modules.doramcu.repository.EveCorporationRepository;
-import com.yisy.modules.doramcu.repository.PlayerRepository;
-import com.yisy.modules.doramcu.repository.PromoCodeRepository;
-import com.yisy.modules.doramcu.repository.UserRepository;
-import com.yisy.modules.doramcu.service.AiPlayerService;
-import com.yisy.modules.doramcu.service.CharacterService;
-import com.yisy.modules.doramcu.service.GalaxyCreationService;
-import com.yisy.modules.doramcu.service.GalaxyProgressService;
-import com.yisy.modules.doramcu.service.GalaxyService;
-import com.yisy.modules.doramcu.service.GameSessionService;
+import com.yisy.modules.doramcu.model.*;
+import com.yisy.modules.doramcu.repository.*;
+import com.yisy.modules.doramcu.service.*;
 import com.yisy.modules.doramcu.traveller.AbilityScore;
 import com.yisy.modules.doramcu.traveller.TravellerCharacter;
 import org.slf4j.Logger;
@@ -43,11 +27,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Configuration
 public class DataInitializer {
@@ -413,9 +393,24 @@ public class DataInitializer {
     }
 
     /**
+     * CommandLineRunner: signals that multi-galaxy build queue is handled by
+     * GalaxyStartupRegistry via ApplicationReadyEvent with high priority order.
+     * The registry fires after all game modules have registered themselves.
+     * This bean is kept for documentation purposes; the actual work is done
+     * by GalaxyStartupRegistry.registerAndProcessGalaxies().
+     */
+    @Bean
+    @ConditionalOnProperty(name = "doramcu.galaxy.multi-galaxy.enabled", havingValue = "true", matchIfMissing = false)
+    CommandLineRunner initMultiGalaxyQueue() {
+        return args -> {
+            log.info("Multi-galaxy build queue is handled by GalaxyStartupRegistry at ApplicationReadyEvent");
+        };
+    }
+
+    /**
      * Last CommandLineRunner: signals that all server-side initialization is complete.
-     * GameLauncher waits for this runner to finish before launching the desktop app.
-     * The desktop app is launched by GameLauncher.launchDesktopApp() after SpringApplication.run() returns,
+     * DoraMcuLauncher waits for this runner to finish before launching the desktop app.
+     * The desktop app is launched by DoraMcuLauncher after SpringApplication.run() returns,
      * so this runner only logs the completion status.
      */
     @Bean

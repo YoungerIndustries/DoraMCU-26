@@ -3,1301 +3,364 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DoraMCU - 4X Space Strategy</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/game.css">
+    <title>DoraMCU — Corporation Office</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/corporation.css">
 </head>
 <body>
-    <!-- SVG Icon Sprite -->
-    <object data="icons/icons.svg" type="image/svg+xml" style="display:none"></object>
-    <!-- Toast Notification Container -->
-    <div class="toast-container" id="toastContainer"></div>
+    <!-- City skyline background -->
+    <div class="skyline-background"></div>
 
-    <!-- Command Bar (Ctrl+K) -->
-    <div class="command-bar hidden" id="commandBar">
-        <div class="command-bar-content">
-            <input type="text" class="command-bar-input" id="commandBarInput" placeholder="Type a command or search..." autocomplete="off">
-            <div class="command-bar-results" id="commandBarResults">
-                <div class="command-bar-item" data-action="advance-turn">
-                    <span class="command-bar-item-icon"><svg class="icon"><use href="#icon-skip"></use></svg></span>
-                    <div class="command-bar-item-text">
-                        <div class="command-bar-item-title">Advance Turn</div>
-                        <div class="command-bar-item-desc">Move to the next game turn</div>
-                    </div>
-                    <span class="command-bar-item-shortcut">Enter</span>
-                </div>
-                <div class="command-bar-item" data-action="build-ship">
-                    <span class="command-bar-item-icon"><svg class="icon"><use href="#icon-hammer"></use></svg></span>
-                    <div class="command-bar-item-text">
-                        <div class="command-bar-item-title">Build Ship</div>
-                        <div class="command-bar-item-desc">Open ship building interface</div>
-                    </div>
-                    <span class="command-bar-item-shortcut">B</span>
-                </div>
-                <div class="command-bar-item" data-action="move-fleet">
-                    <span class="command-bar-item-icon"><svg class="icon"><use href="#icon-target"></use></svg></span>
-                    <div class="command-bar-item-text">
-                        <div class="command-bar-item-title">Move Fleet</div>
-                        <div class="command-bar-item-desc">Select and move a fleet</div>
-                    </div>
-                    <span class="command-bar-item-shortcut">M</span>
-                </div>
-                <div class="command-bar-item" data-action="engage-combat">
-                    <span class="command-bar-item-icon"><svg class="icon"><use href="#icon-sword"></use></svg></span>
-                    <div class="command-bar-item-text">
-                        <div class="command-bar-item-title">Engage Combat</div>
-                        <div class="command-bar-item-desc">Attack an enemy fleet</div>
-                    </div>
-                    <span class="command-bar-item-shortcut">C</span>
-                </div>
-                <div class="command-bar-item" data-action="zoom-in">
-                    <span class="command-bar-item-icon"><svg class="icon"><use href="#icon-zoom-in"></use></svg></span>
-                    <div class="command-bar-item-text">
-                        <div class="command-bar-item-title">Zoom In</div>
-                        <div class="command-bar-item-desc">Zoom into the galaxy map</div>
-                    </div>
-                    <span class="command-bar-item-shortcut">+</span>
-                </div>
-                <div class="command-bar-item" data-action="zoom-out">
-                    <span class="command-bar-item-icon"><svg class="icon"><use href="#icon-zoom-out"></use></svg></span>
-                    <div class="command-bar-item-text">
-                        <div class="command-bar-item-title">Zoom Out</div>
-                        <div class="command-bar-item-desc">Zoom out of the galaxy map</div>
-                    </div>
-                    <span class="command-bar-item-shortcut">-</span>
-                </div>
-                <div class="command-bar-item" data-action="reset-view">
-                    <span class="command-bar-item-icon"><svg class="icon"><use href="#icon-reset"></use></svg></span>
-                    <div class="command-bar-item-text">
-                        <div class="command-bar-item-title">Reset View</div>
-                        <div class="command-bar-item-desc">Reset the galaxy map view</div>
-                    </div>
-                    <span class="command-bar-item-shortcut">R</span>
-                </div>
-                <div class="command-bar-item" data-action="develop-character">
-                    <span class="command-bar-item-icon"><svg class="icon"><use href="#icon-user"></use></svg></span>
-                    <div class="command-bar-item-text">
-                        <div class="command-bar-item-title">Develop Character</div>
-                        <div class="command-bar-item-desc">Open character development panel</div>
-                    </div>
-                </div>
-                <div class="command-bar-item" data-action="trade-market">
-                    <span class="command-bar-item-icon"><svg class="icon"><use href="#icon-diamond"></use></svg></span>
-                    <div class="command-bar-item-text">
-                        <div class="command-bar-item-title">Trade Market</div>
-                        <div class="command-bar-item-desc">Open trade market for current system</div>
-                    </div>
-                </div>
-                <div class="command-bar-item" data-action="psionics" id="psionicBtn">
-                    <span class="command-bar-item-icon"><svg class="icon"><use href="#icon-star"></use></svg></span>
-                    <div class="command-bar-item-text">
-                        <div class="command-bar-item-title">Psionics</div>
-                        <div class="command-bar-item-desc">Psionic detection, powers, and encounters</div>
-                    </div>
-                </div>
+    <!-- Top Navigation Bar -->
+    <header class="corp-header">
+        <div class="corp-header-left">
+            <div class="corp-logo">
+                <span class="logo-icon">🏢</span>
+                <span class="logo-text">DoraMCU Corp</span>
             </div>
+            <nav class="corp-nav">
+                <button class="nav-btn active" data-tab="dashboard">
+                    <span class="nav-icon">📊</span> Dashboard
+                </button>
+                <button class="nav-btn" data-tab="buildings">
+                    <span class="nav-icon">🏗️</span> Buildings
+                </button>
+                <button class="nav-btn" data-tab="employees">
+                    <span class="nav-icon">👥</span> Employees
+                </button>
+                <button class="nav-btn" data-tab="research">
+                    <span class="nav-icon">🔬</span> Research
+                </button>
+                <button class="nav-btn" data-tab="missions">
+                    <span class="nav-icon">🎯</span> Missions
+                </button>
+            </nav>
         </div>
-    </div>
-    <!-- Connection Status Indicator -->
-    <div id="connectionStatus" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(2,6,23,0.95); z-index:10000; display:flex; align-items:center; justify-content:center; flex-direction:column;">
-        <div style="text-align:center; color:#e2e8f0; font-family:inherit;">
-            <div style="font-size:3rem; margin-bottom:1rem;">🌌</div>
-            <div style="font-size:1.5rem; font-weight:700; margin-bottom:0.5rem;">Connecting to Galaxy...</div>
-            <div id="connectionStatusText" style="font-size:0.9rem; color:#94a3b8; margin-bottom:2rem;">Establishing connection</div>
-            <div style="width:200px; height:4px; background:rgba(255,255,255,0.1); border-radius:2px; margin:0 auto; overflow:hidden;">
-                <div id="connectionProgressBar" style="width:0%; height:100%; background:linear-gradient(90deg,#06b6d4,#8b5cf6); border-radius:2px; transition:width 0.3s;"></div>
+        <div class="corp-header-right">
+            <div class="corp-info">
+                <span class="corp-name" id="corporationName">Loading...</span>
+                <span class="corp-level" id="corporationLevel">Level 1</span>
             </div>
-            <div id="connectionError" style="display:none; margin-top:1.5rem; padding:1rem; background:rgba(239,68,68,0.2); border:1px solid rgba(239,68,68,0.5); border-radius:0.5rem; color:#fca5a5; font-size:0.85rem; max-width:400px; margin-left:auto; margin-right:auto;"></div>
-            <button id="retryConnectionBtn" style="display:none; margin-top:1rem; padding:0.5rem 1.5rem; background:#06b6d4; color:white; border:none; border-radius:0.5rem; cursor:pointer; font-size:0.9rem;">Retry Connection</button>
+            <div class="corp-resources">
+                <div class="resource-pill">
+                    <span class="resource-icon">💰</span>
+                    <span class="resource-value" id="resourceCredits">0</span>
+                </div>
+                <div class="resource-pill">
+                    <span class="resource-icon">📈</span>
+                    <span class="resource-value" id="resourceInfluence">0</span>
+                </div>
+                <div class="resource-pill">
+                    <span class="resource-icon">⚡</span>
+                    <span class="resource-value" id="resourceTech">0</span>
+                </div>
+                <div class="resource-pill">
+                    <span class="resource-icon">🔧</span>
+                    <span class="resource-value" id="resourceMaterials">0</span>
+                </div>
+            </div>
+            <button class="btn-logout" id="btnLogout">
+                <span class="btn-icon">🚪</span> Logout
+            </button>
         </div>
-    </div>
+    </header>
 
-    <!-- Login Screen -->
-    <div class="login-overlay" id="loginOverlay">
-        <div class="login-container">
-            <div class="login-logo"><svg class="icon" style="width:3rem;height:3rem"><use href="#icon-rocket"></use></svg></div>
-            <div class="login-title">DoraMCU</div>
-            <div class="login-subtitle">4X Space Strategy Game</div>
-
-            <!-- Server Selection -->
-            <div class="form-group" style="text-align: left; margin-bottom: 12px;">
-                <label for="gameServerSelect" style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-secondary);">Galactic Server</label>
-                <select class="form-input" id="gameServerSelect">
-                    <option value="">Current Host (Default)</option>
-                    <option value="http://localhost:8080">Local Dev Server (8080)</option>
-                    <option value="custom">Custom Server Address...</option>
-                </select>
-                <div id="gameCustomServerContainer" style="display: none; margin-top: 6px;">
-                    <input type="text" class="form-input" id="gameCustomServerUrl" placeholder="http://192.168.1.100:8080">
-                </div>
-            </div>
-
-            <!-- Login Tabs -->
-            <div style="display: flex; gap: 4px; background: rgba(0,0,0,0.3); padding: 4px; border-radius: var(--radius-sm); margin-bottom: 14px;">
-                <button type="button" class="btn-small primary" id="tabCommanderLogin" style="flex: 1; padding: 6px;">Commander</button>
-                <button type="button" class="btn-small" id="tabPinLogin" style="flex: 1; padding: 6px;">Player PIN</button>
-            </div>
-
-            <!-- Password Form -->
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="loginUsername">Username</label>
-                    <input type="text" class="form-input" id="loginUsername" value="admin" placeholder="Enter your username" required autocomplete="username">
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Password</label>
-                    <input type="password" class="form-input" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password">
-                </div>
-                <div class="login-error" id="loginError"></div>
-                <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
-                <div style="text-align: center; margin-top: 10px; font-size: 0.75rem; color: var(--text-muted);">
-                    Default: <code style="color: var(--accent-cyan);">Butch Younger</code> / <code style="color: var(--accent-cyan);">3214</code>
-                </div>
-            </form>
-
-            <!-- PIN Form -->
-            <form id="pinLoginForm" style="display: none;">
-                <div class="form-group">
-                    <label for="loginPinInput">Player PIN / Code</label>
-                    <input type="text" class="form-input" id="loginPinInput" placeholder="Enter 4-6 digit PIN (e.g. 123456)" maxlength="10" pattern="[0-9]*" style="font-family: monospace; letter-spacing: 2px;">
-                </div>
-                <div class="login-error" id="loginPinError"></div>
-                <button type="submit" class="login-btn" id="loginPinBtn">Sign In with PIN</button>
-                <div style="text-align: center; margin-top: 10px; font-size: 0.75rem; color: var(--text-muted);">
-                    Default PIN: <code style="color: var(--accent-cyan);">3214</code> (Butch Younger)
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Session Selection Screen -->
-    <div class="session-overlay hidden" id="sessionOverlay">
-        <div class="session-container">
-            <h2><svg class="icon"><use href="#icon-galaxy"></use></svg> Game Sessions</h2>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 0.8rem; color: var(--text-secondary);">
-                <span id="sessionServerIndicator">Server: Connected</span>
-                <a href="index.html" style="color: var(--accent-cyan); text-decoration: none;">Account Portal</a>
-            </div>
-
-            <!-- Create Session Section -->
-            <div class="session-form">
-                <div class="form-group">
-                    <label for="sessionNameInput">New Session Name</label>
-                    <input type="text" class="form-input" id="sessionNameInput" placeholder="Enter session name">
-                </div>
-                <button class="btn-small primary" id="createSessionBtn">Create Session</button>
-            </div>
-
-            <!-- Join / Add Player by PIN Section -->
-            <div class="session-form" style="margin-top: 10px; border-top: 1px solid var(--glass-border); padding-top: 10px;">
-                <div class="form-group">
-                    <label for="joinByPinInput">Add / Join with Player PIN Code</label>
-                    <input type="text" class="form-input" id="joinByPinInput" placeholder="Enter 4-6 digit Player PIN code" maxlength="10" style="font-family: monospace;">
-                </div>
-                <button class="btn-small" id="joinByPinBtn" style="border: 1px solid var(--accent-cyan); color: var(--accent-cyan);">Connect Player PIN</button>
-            </div>
-            <div id="joinByPinError" class="login-error" style="display: none; margin-bottom: 8px;"></div>
-
-            <!-- Register New Player Section -->
-            <div class="session-form" style="margin-top: 10px; border-top: 1px solid var(--glass-border); padding-top: 10px;">
-                <h4 style="margin: 0 0 8px 0; font-size: 0.9rem; color: var(--text-primary);">Register New Player</h4>
-                <div class="form-group">
-                    <label for="registerUsername">Username</label>
-                    <input type="text" class="form-input" id="registerUsername" placeholder="Choose a username">
-                </div>
-                <div class="form-group">
-                    <label for="registerPassword">Password</label>
-                    <input type="password" class="form-input" id="registerPassword" placeholder="Choose a password">
-                </div>
-                <button class="btn-small primary" id="registerPlayerBtn">Register &amp; Join</button>
-            </div>
-            <div id="registerError" class="login-error" style="display: none; margin-bottom: 8px;"></div>
-
-            <div class="session-list" id="sessionList">
-                <div class="text-center" style="color: var(--text-muted); padding: 20px;">Loading sessions...</div>
-            </div>
-            <div class="session-actions">
-                <button class="btn-small" id="backToLoginBtn">Back to Login</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Game Container -->
-    <div class="game-container hidden" id="gameContainer">
-        <!-- Header -->
-        <header class="game-header">
-            <div class="game-title">DORAMCU</div>
-            <div class="header-info">
-                <!-- Turn display with timer -->
-                <div class="turn-display" id="turnDisplay">
-                    <span class="turn-number" id="currentTurn">
-                        <svg class="icon"><use href="#icon-clock"></use></svg> Turn <span id="turnNumber">0</span>
-                    </span>
-                    <span class="turn-timer" id="turnTimer" title="Seconds until next turn">
-                        <svg class="icon"><use href="#icon-timer"></use></svg> <span id="turnTimerValue">--</span>s
-                    </span>
-                    <span class="turn-interval" id="turnInterval" title="Turn interval">
-                        (<span id="turnIntervalValue">5</span>s/turn)
-                    </span>
-                </div>
-                <!-- Turn progress bar -->
-                <div class="turn-progress-bar" id="turnProgressBar" title="Progress to next turn">
-                    <div class="turn-progress-fill" id="turnProgressFill" style="width: 0%"></div>
-                </div>
-                <!-- Player and turn status -->
-                <span class="current-player-badge" id="currentPlayerName">
-                    <svg class="icon"><use href="#icon-user"></use></svg> <span id="currentPlayerLabel">Player</span>
-                </span>
-                <span class="turn-indicator not-my-turn" id="turnIndicator">
-                    <svg class="icon"><use href="#icon-clock"></use></svg> <span id="turnIndicatorText">Waiting...</span>
-                </span>
-                <!-- Scheduler status -->
-                <span class="scheduler-status" id="schedulerStatus" title="Auto-turn scheduler">
-                    <span class="scheduler-dot" id="schedulerDot"></span> <span id="schedulerLabel">Auto</span>
-                </span>
-                <div class="player-badge">
-                    <span><svg class="icon"><use href="#icon-user"></use></svg></span>
-                    <span id="playerName">Commander</span>
-                </div>
-                <a href="admin.html" class="btn-small" id="adminPanelBtn" target="_blank" data-tooltip="Open admin panel">⚙️ Admin</a>
-                <button class="btn-small" id="logoutBtn"><svg class="icon"><use href="#icon-door"></use></svg> Logout</button>
-            </div>
-        </header>
-
-        <!-- Left Panel - Empire -->
-        <aside class="left-panel">
-            <!-- Empire Info -->
-            <div class="panel-section">
-                <h3><svg class="icon"><use href="#icon-galaxy"></use></svg> Empire</h3>
-                <div class="empire-info-panel" id="empireInfoPanel">
-                    <div class="empire-name-row">
-                        <span class="empire-name" id="empireName">—</span>
+    <!-- Main Content Area -->
+    <main class="corp-main">
+        <!-- Dashboard Tab -->
+        <section id="tab-dashboard" class="corp-tab active">
+            <div class="dashboard-grid">
+                <!-- Overview Card -->
+                <div class="corp-card overview-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">📊</span> Corporation Overview
+                        </h2>
+                        <button class="btn-refresh" id="btnRefresh">
+                            <span class="btn-icon">🔄</span> Refresh
+                        </button>
                     </div>
-                    <div class="empire-details">
-                        <div class="empire-detail-row">
-                            <span class="empire-detail-label">Government</span>
-                            <span class="empire-detail-value" id="empireGovernment">—</span>
-                        </div>
-                        <div class="empire-detail-row">
-                            <span class="empire-detail-label">Ethos</span>
-                            <span class="empire-detail-value" id="empireEthos">—</span>
-                        </div>
-                        <div class="empire-detail-row">
-                            <span class="empire-detail-label">Planets</span>
-                            <span class="empire-detail-value" id="empirePlanets">0</span>
-                        </div>
-                        <div class="empire-detail-row">
-                            <span class="empire-detail-label">Fleets</span>
-                            <span class="empire-detail-value" id="empireFleets">0</span>
-                        </div>
-                        <div class="empire-detail-row">
-                            <span class="empire-detail-label">Capital</span>
-                            <span class="empire-detail-value" id="empireCapital">—</span>
-                        </div>
-                        <div class="empire-detail-row">
-                            <span class="empire-detail-label">Sector</span>
-                            <span class="empire-detail-value" id="empireSector">—</span>
-                        </div>
-                        <div class="empire-detail-row">
-                            <span class="empire-detail-label">Subsector</span>
-                            <span class="empire-detail-value" id="empireSubSector">—</span>
-                        </div>
-                        <div class="empire-detail-row">
-                            <span class="empire-detail-label">System</span>
-                            <span class="empire-detail-value" id="empireSystem">—</span>
-                        </div>
-                    </div>
-                    <!-- Empire Status Bar -->
-                    <div class="empire-status-bar" id="empireStatusBar">
-                        <div class="empire-status-item">
-                            <span class="empire-status-label">Integrity</span>
-                            <div class="empire-integrity-bar">
-                                <div class="empire-integrity-fill" id="empireIntegrityFill" style="width: 100%"></div>
+                    <div class="card-body">
+                        <div class="overview-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Reputation</span>
+                                <span class="stat-value" id="statReputation">0</span>
                             </div>
-                            <span class="empire-status-value" id="empireIntegrity">100%</span>
+                            <div class="stat-item">
+                                <span class="stat-label">Level</span>
+                                <span class="stat-value" id="statLevel">1</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Experience</span>
+                                <span class="stat-value" id="statExperience">0 / 1000</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Missions</span>
+                                <span class="stat-value" id="statMissions">0</span>
+                            </div>
                         </div>
-                        <div class="empire-status-row">
-                            <div class="empire-status-item">
-                                <span class="empire-status-label">⚔️ Power</span>
-                                <span class="empire-status-value" id="empireMilitaryPower">0</span>
+                        <div class="experience-bar">
+                            <div class="experience-fill" id="experienceFill" style="width: 0%"></div>
+                        </div>
+                        <p class="experience-text" id="experienceText">0 / 1000 XP to next level</p>
+                    </div>
+                </div>
+
+                <!-- Resource Generation Card -->
+                <div class="corp-card resource-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">💹</span> Resource Generation
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="resource-generation">
+                            <div class="gen-item">
+                                <span class="gen-label">Credits/Hour</span>
+                                <span class="gen-value" id="genCredits">0</span>
                             </div>
-                            <div class="empire-status-item">
-                                <span class="empire-status-label">🔨 Queue</span>
-                                <span class="empire-status-value" id="empireShipQueue">0</span>
+                            <div class="gen-item">
+                                <span class="gen-label">Buildings</span>
+                                <span class="gen-value" id="genBuildings">0</span>
                             </div>
-                            <div class="empire-status-item">
-                                <span class="empire-status-label">💥 Battles</span>
-                                <span class="empire-status-value" id="empireActiveBattles">0</span>
+                            <div class="gen-item">
+                                <span class="gen-label">Employees</span>
+                                <span class="gen-value" id="genEmployees">0</span>
+                            </div>
+                            <div class="gen-item">
+                                <span class="gen-label">Research Active</span>
+                                <span class="gen-value" id="genResearch">0</span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Commander Section (Traveller RPG) -->
-            <div class="panel-section" id="commanderSection" style="display:none;">
-                <h3><svg class="icon"><use href="#icon-user"></use></svg> Commander</h3>
-                <div class="empire-component-panel" id="commanderPanel">
-                    <div class="commander-header">
-                        <span class="commander-name" id="commanderName">—</span>
-                        <span class="commander-career" id="commanderCareer">—</span>
+                <!-- Quick Actions Card -->
+                <div class="corp-card actions-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">⚡</span> Quick Actions
+                        </h2>
                     </div>
-                    <div class="ability-grid" id="abilityGrid">
-                        <div class="ability-item"><span class="ability-label">ST</span><span class="ability-value" id="abilityST">—</span></div>
-                        <div class="ability-item"><span class="ability-label">DX</span><span class="ability-value" id="abilityDX">—</span></div>
-                        <div class="ability-item"><span class="ability-label">EN</span><span class="ability-value" id="abilityEN">—</span></div>
-                        <div class="ability-item"><span class="ability-label">IN</span><span class="ability-value" id="abilityIN">—</span></div>
-                        <div class="ability-item"><span class="ability-label">ED</span><span class="ability-value" id="abilityED">—</span></div>
-                        <div class="ability-item"><span class="ability-label">SO</span><span class="ability-value" id="abilitySO">—</span></div>
-                    </div>
-                    <div class="skills-list" id="skillsList"></div>
-                    <button class="btn-small primary" id="developCharacterBtn" style="margin-top:8px; width:100%;">Develop Character</button>
-                </div>
-            </div>
-
-            <!-- Army Component -->
-            <div class="panel-section">
-                <h3><svg class="icon"><use href="#icon-shield"></use></svg> Army</h3>
-                <div class="empire-component-panel" id="armyPanel">
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Units</span>
-                        <span class="component-stat-value" id="armyUnitCount">0</span>
-                    </div>
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Offense</span>
-                        <span class="component-stat-value" id="armyOffense">0</span>
-                    </div>
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Defense</span>
-                        <span class="component-stat-value" id="armyDefense">0</span>
-                    </div>
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Supply Cost</span>
-                        <span class="component-stat-value" id="armySupplyCost">0</span>
+                    <div class="card-body">
+                        <div class="quick-actions">
+                            <button class="action-btn" id="btnTick">
+                                <span class="action-icon">⏱️</span>
+                                <span class="action-label">Process Tick</span>
+                            </button>
+                            <button class="action-btn" id="btnBuild">
+                                <span class="action-icon">🏗️</span>
+                                <span class="action-label">New Building</span>
+                            </button>
+                            <button class="action-btn" id="btnHire">
+                                <span class="action-icon">👤</span>
+                                <span class="action-label">Hire Employee</span>
+                            </button>
+                            <button class="action-btn" id="btnMission">
+                                <span class="action-icon">🎯</span>
+                                <span class="action-label">Start Mission</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Navy Component -->
-            <div class="panel-section">
-                <h3><svg class="icon"><use href="#icon-rocket"></use></svg> Navy</h3>
-                <div class="empire-component-panel" id="navyPanel">
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Fleets</span>
-                        <span class="component-stat-value" id="navyFleetCount">0</span>
+                <!-- Navigation to Earth 2026 -->
+                <div class="corp-card earth2026-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">🌍</span> Earth 2026 Portal
+                        </h2>
                     </div>
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Ships</span>
-                        <span class="component-stat-value" id="navyShipCount">0</span>
+                    <div class="card-body">
+                        <p class="portal-description">
+                            Your corporation is ready. Transition to Earth 2026 to begin your character's adventure on modern-day Earth.
+                        </p>
+                        <button class="btn-portal" id="btnEarth2026">
+                            <span class="btn-icon">🚀</span> Enter Earth 2026
+                        </button>
                     </div>
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Damage</span>
-                        <span class="component-stat-value" id="navyDamage">0</span>
+                </div>
+
+                <!-- Navigation to Younger HQ Portal Hub -->
+                <div class="corp-card hq-portal-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="card-icon">🏢</span> Younger Industries HQ
+                        </h2>
                     </div>
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Shields</span>
-                        <span class="component-stat-value" id="navyShields">0</span>
-                    </div>
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Hull</span>
-                        <span class="component-stat-value" id="navyHull">0</span>
+                    <div class="card-body">
+                        <p class="portal-description">
+                            Visit the Younger Industries HQ portal hub to access all game galaxies. Choose from 16 portals across 3 basement levels.
+                        </p>
+                        <button class="btn-portal" id="btnYoungerHQ">
+                            <span class="btn-icon">🌀</span> Enter HQ Portal Hub
+                        </button>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Mercenary Section (Traveller RPG) -->
-            <div class="panel-section" id="mercenarySection" style="display:none;">
-                <h3><svg class="icon"><use href="#icon-shield"></use></svg> Mercenaries</h3>
-                <div class="empire-component-panel" id="mercenaryPanel">
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Units</span>
-                        <span class="component-stat-value" id="mercenaryUnitCount">0</span>
-                    </div>
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Ground Strength</span>
-                        <span class="component-stat-value" id="mercenaryGroundStrength">0</span>
-                    </div>
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Ticket Status</span>
-                        <span class="component-stat-value" id="mercenaryTicketStatus">—</span>
-                    </div>
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Ticket Income</span>
-                        <span class="component-stat-value" id="mercenaryTicketIncome">0</span>
+        <!-- Buildings Tab -->
+        <section id="tab-buildings" class="corp-tab">
+            <div class="buildings-container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="section-icon">🏗️</span> Corporation Buildings
+                    </h2>
+                    <p class="section-description">Manage your physical office buildings and facilities</p>
+                </div>
+                <div class="buildings-grid" id="buildingsGrid">
+                    <!-- Buildings will be rendered here -->
+                </div>
+                <div class="available-buildings">
+                    <h3 class="subsection-title">Available Buildings</h3>
+                    <div class="available-grid" id="availableBuildingsGrid">
+                        <!-- Available buildings will be rendered here -->
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Facilities Component -->
-            <div class="panel-section">
-                <h3><svg class="icon"><use href="#icon-diamond"></use></svg> Facilities</h3>
-                <div class="empire-component-panel" id="facilitiesPanel">
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Facilities</span>
-                        <span class="component-stat-value" id="facilityCount">0</span>
-                    </div>
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Stations</span>
-                        <span class="component-stat-value" id="spaceStationCount">0</span>
-                    </div>
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Minerals</span>
-                        <span class="component-stat-value" id="mineralProduction">0</span>
-                    </div>
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Energy</span>
-                        <span class="component-stat-value" id="energyProduction">0</span>
-                    </div>
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Food</span>
-                        <span class="component-stat-value" id="foodProduction">0</span>
-                    </div>
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Research</span>
-                        <span class="component-stat-value" id="researchOutput">0</span>
-                    </div>
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Defense Bonus</span>
-                        <span class="component-stat-value" id="facilityDefenseBonus">0</span>
-                    </div>
-                    <div class="component-stat-row">
-                        <span class="component-stat-label">Income</span>
-                        <span class="component-stat-value" id="creditIncome">0</span>
-                    </div>
+        <!-- Employees Tab -->
+        <section id="tab-employees" class="corp-tab">
+            <div class="employees-container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="section-icon">👥</span> Employee Roster
+                    </h2>
+                    <p class="section-description">Your corporation's workforce</p>
                 </div>
-            </div>
-
-            <!-- Resources -->
-            <div class="panel-section">
-                <h3><svg class="icon"><use href="#icon-lightning"></use></svg> Resources</h3>
-                <div class="resource-grid">
-                    <div class="resource-item" data-tooltip="Hull Modules: Ship structure and armor">
-                        <div class="resource-icon minerals">H</div>
-                        <span class="resource-value" id="resourceMinerals">0</span>
-                        <span class="resource-change positive" id="resourceMineralsChange">+0</span>
-                    </div>
-                    <div class="resource-item" data-tooltip="Weapon Modules: Ship armament">
-                        <div class="resource-icon energy">W</div>
-                        <span class="resource-value" id="resourceEnergy">0</span>
-                        <span class="resource-change positive" id="resourceEnergyChange">+0</span>
-                    </div>
-                    <div class="resource-item" data-tooltip="Shield Modules: Ship defense systems">
-                        <div class="resource-icon influence">S</div>
-                        <span class="resource-value" id="resourceInfluence">0</span>
-                        <span class="resource-change positive" id="resourceInfluenceChange">+0</span>
-                    </div>
-                    <div class="resource-item" data-tooltip="Engine Modules: Ship propulsion">
-                        <div class="resource-icon science">E</div>
-                        <span class="resource-value" id="resourceScience">0</span>
-                        <span class="resource-change positive" id="resourceScienceChange">+0</span>
-                    </div>
-                    <div class="resource-item" data-tooltip="Facility Modules: Station and planet upgrades">
-                        <div class="resource-icon food">F</div>
-                        <span class="resource-value" id="resourceFood">0</span>
-                        <span class="resource-change positive" id="resourceFoodChange">+0</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Players -->
-            <div class="panel-section">
-                <h3><svg class="icon"><use href="#icon-user"></use></svg> Players</h3>
-                <div class="item-list" id="playerList">
-                    <div class="text-center" style="color: var(--text-muted); padding: 10px; font-size: 0.8rem;">No players</div>
-                </div>
-            </div>
-
-            <!-- Fleets -->
-            <div class="panel-section">
-                <h3><svg class="icon"><use href="#icon-rocket"></use></svg> Fleets</h3>
-                <div class="item-list" id="fleetList">
-                    <div class="text-center" style="color: var(--text-muted); padding: 10px; font-size: 0.8rem;">No fleets</div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Subsector Panel -->
-        <aside class="subsector-panel">
-            <div class="panel-section">
-                <h3><svg class="icon"><use href="#icon-diamond"></use></svg> Subsectors</h3>
-                <div class="subsector-stats" id="subsectorStats">
-                    <span class="stat-item">Generated: <span id="subsectorGeneratedCount">0</span></span>
-                    <span class="stat-item">Systems: <span id="subsectorSystemCount">0</span></span>
-                </div>
-                <div class="subsector-list" id="subsectorList">
-                    <div class="text-center" style="color: var(--text-muted); padding: 10px; font-size: 0.8rem;">No subsectors</div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Galaxy Map -->
-        <main class="galaxy-panel">
-            <!-- View 1: Sector Cards (default) -->
-            <div class="galaxy-view" id="sectorCardsView">
-                <div class="galaxy-view-header">
-                    <h2 class="galaxy-view-title">Galaxy Map</h2>
-                    <div class="galaxy-view-stats" id="galaxyViewStats">
-                        <!-- Dynamically populated: sectors, subsectors, systems -->
-                    </div>
-                </div>
-                <div class="galaxy-view-toolbar">
-                    <input type="text" class="search-input" id="sectorSearchInput" placeholder="🔍 Search sectors..." />
-                    <div class="search-results-count" id="sectorSearchResults"></div>
-                </div>
-                <div class="galaxy-view-body">
-                    <div class="sector-cards-grid" id="sectorCardsGrid">
-                        <!-- Dynamically populated: sector cards -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- View 2: Subsector Cards (drill down from sector) -->
-            <div class="galaxy-view hidden" id="subsectorCardsView">
-                <div class="galaxy-view-header">
-                    <button class="btn-small" id="backToSectorsBtn">
-                        <svg class="icon"><use href="#icon-arrow-left"></use></svg> Back to Sectors
-                    </button>
-                    <h2 class="galaxy-view-title" id="subsectorViewTitle">Sector Subsectors</h2>
-                    <div class="galaxy-view-stats" id="subsectorViewStats">
-                        <!-- Dynamically populated -->
-                    </div>
-                    <label class="owned-filter-toggle">
-                        <input type="checkbox" id="showOnlyOwnedSubsectors" />
-                        <span>Show Only Owned</span>
-                    </label>
-                </div>
-                <div class="galaxy-view-body">
-                    <div class="subsector-cards-grid" id="subsectorCardsGrid">
-                        <!-- Dynamically populated: subsector cards -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- View 3: Subsector Hex Grid (10x10 drilldown of all systems) -->
-            <div class="galaxy-view hidden" id="subsectorHexGridView">
-                <div class="galaxy-view-header">
-                    <button class="btn-small" id="backToSubsectorCardsBtn">
-                        <svg class="icon"><use href="#icon-arrow-left"></use></svg> Back to Subsectors
-                    </button>
-                    <h2 class="galaxy-view-title" id="subsectorHexGridTitle">Subsector Map</h2>
-                    <div class="system-detail-stats" id="subsectorHexGridStats">
-                        <!-- Dynamically populated -->
-                    </div>
-                </div>
-                <div class="galaxy-view-body hex-grid-body">
-                    <!-- View Toggle: 2D/3D Switch -->
-                    <div class="view-toggle-container" id="viewToggleContainer" style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center;">
-                        <button class="btn-small" id="view2DBtn" style="background: var(--accent-cyan); color: white;">2D Isometric</button>
-                        <button class="btn-small" id="view3DBtn" style="background: var(--accent-purple); color: white;">3D View</button>
-                        <span id="viewModeLabel" style="font-size: 0.75rem; color: var(--text-secondary);">Mode: 2D</span>
-                    </div>
-                    <!-- 2D Hex Grid Canvas -->
-                    <div class="hex-grid-container" id="hexGridContainer">
-                        <canvas id="subsectorHexGridCanvas"></canvas>
-                    </div>
-                    <!-- 3D Babylon.js Canvas (hidden by default) -->
-                    <div class="hex-grid-container" id="tycoon3DContainer" style="display: none;">
-                        <canvas id="tycoon3DCanvas" style="width: 100%; height: 100%;"></canvas>
-                    </div>
-                    <div class="hex-grid-legend" id="hexGridLegend">
-                        <!-- Dynamically populated -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- View 4: System Detail (drill down from hex grid) -->
-            <div class="galaxy-view hidden" id="systemDetailView">
-                <div class="galaxy-view-header">
-                    <button class="btn-small" id="backToSubsectorsBtn2">
-                        <svg class="icon"><use href="#icon-arrow-left"></use></svg> Back to Hex Grid
-                    </button>
-                    <h2 class="galaxy-view-title" id="systemDetailTitle">System Detail</h2>
-                    <select class="system-selector" id="systemSelector" title="Switch between systems in this subsector">
-                        <!-- Dynamically populated -->
-                    </select>
-                    <div class="system-detail-stats" id="systemDetailStats">
-                        <!-- Dynamically populated -->
-                    </div>
-                    <button class="btn-small primary" id="tradeSystemBtn" style="display:none;" data-tooltip="Open trade market for this system">
-                        <svg class="icon"><use href="#icon-diamond"></use></svg> Trade
+                <div class="employee-actions">
+                    <button class="btn-primary" id="btnHireEmployee">
+                        <span class="btn-icon">➕</span> Hire New Employee
                     </button>
                 </div>
-                <div class="galaxy-view-body system-detail-body">
-                    <!-- Left: System map with MDrive range -->
-                    <div class="system-map-container" id="systemMapContainer">
-                        <canvas id="systemMapCanvas"></canvas>
-                        <div class="system-map-legend" id="systemMapLegend">
-                            <!-- Dynamically populated -->
-                        </div>
+                <div class="employees-grid" id="employeesGrid">
+                    <!-- Employees will be rendered here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Research Tab -->
+        <section id="tab-research" class="corp-tab">
+            <div class="research-container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="section-icon">🔬</span> Research Projects
+                    </h2>
+                    <p class="section-description">Active and available research initiatives</p>
+                </div>
+                <div class="research-active">
+                    <h3 class="subsection-title">Active Projects</h3>
+                    <div class="research-grid" id="researchGrid">
+                        <!-- Active research will be rendered here -->
                     </div>
-                    <!-- Right: System info panel -->
-                    <div class="system-info-panel" id="systemInfoPanel">
-                        <h3>Planets</h3>
-                        <div class="planet-list" id="planetList">
-                            <!-- Dynamically populated -->
-                        </div>
-                        <h3>Fleets</h3>
-                        <div class="fleet-list-system" id="fleetListSystem">
-                            <!-- Dynamically populated -->
-                        </div>
-                    </div>
                 </div>
-            </div>
-
-            <!-- Minimap -->
-            <div class="minimap" id="minimap">
-                <canvas id="minimapCanvas"></canvas>
-                <div class="minimap-viewport" id="minimapViewport"></div>
-            </div>
-        </main>
-
-        <!-- Right Panel - Actions -->
-        <aside class="right-panel">
-            <div class="panel-section">
-                <h3><svg class="icon"><use href="#icon-sword"></use></svg> Actions</h3>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <button class="action-btn primary" id="advanceTurnBtn" disabled data-tooltip="Advance to the next turn (Enter)">
-                        <svg class="icon"><use href="#icon-skip"></use></svg> Advance Turn
-                        <span class="kbd-shortcut">Enter</span>
-                    </button>
-                    <button class="action-btn" id="buildShipBtn" disabled data-tooltip="Build a new ship (B)">
-                        <svg class="icon"><use href="#icon-hammer"></use></svg> Build Ship
-                        <span class="kbd-shortcut">B</span>
-                    </button>
-                    <button class="action-btn" id="moveFleetBtn" disabled data-tooltip="Move selected fleet (M)">
-                        <svg class="icon"><use href="#icon-target"></use></svg> Move Fleet
-                        <span class="kbd-shortcut">M</span>
-                    </button>
-                    <button class="action-btn danger" id="engageCombatBtn" disabled data-tooltip="Attack enemy fleet (C)">
-                        <svg class="icon"><use href="#icon-sword"></use></svg> Engage Combat
-                        <span class="kbd-shortcut">C</span>
-                    </button>
-                    <button class="action-btn" id="buildStationBtn" disabled data-tooltip="Build a space station">
-                        <svg class="icon"><use href="#icon-diamond"></use></svg> Build Station
-                    </button>
-                    <button class="action-btn" id="buildFacilityBtn" disabled data-tooltip="Build a planet facility">
-                        <svg class="icon"><use href="#icon-hammer"></use></svg> Build Facility
-                    </button>
-                    <button class="action-btn" id="createFleetBtn" disabled data-tooltip="Create a new fleet">
-                        <svg class="icon"><use href="#icon-rocket"></use></svg> Create Fleet
-                    </button>
-                    <button class="action-btn" id="viewBattlesBtn" disabled data-tooltip="View active battles">
-                        <svg class="icon"><use href="#icon-sword"></use></svg> Battles
-                        <span class="badge" id="battleCountBadge" style="display:none">0</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="panel-section">
-                <h3><svg class="icon"><use href="#icon-shield"></use></svg> Session</h3>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <button class="action-btn" id="leaveSessionBtn">
-                        <svg class="icon"><use href="#icon-door"></use></svg> Leave Session
-                    </button>
-                </div>
-            </div>
-
-            <div class="panel-section" id="targetPanel">
-                <h3><svg class="icon"><use href="#icon-target"></use></svg> Target</h3>
-                <div class="form-group">
-                    <label for="targetCoords">Coordinates</label>
-                    <input type="text" class="form-input" id="targetCoords" placeholder="Click hex on map" readonly>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Event Log -->
-        <div class="event-log-panel">
-            <div class="event-log-header">
-                <svg class="icon"><use href="#icon-antenna"></use></svg> Event Log
-            </div>
-            <div class="event-log-filter">
-                <button class="event-log-filter-btn active" data-filter="all">All</button>
-                <button class="event-log-filter-btn" data-filter="TURN_CHANGED">Turns</button>
-                <button class="event-log-filter-btn" data-filter="ACTION_RESULT">Actions</button>
-                <button class="event-log-filter-btn" data-filter="PLAYER_JOINED">Players</button>
-                <button class="event-log-filter-btn" data-filter="GAME_STATE">State</button>
-            </div>
-            <div class="event-log" id="eventLog"></div>
-        </div>
-    </div>
-
-    <!-- Turn Phase Modal -->
-    <div class="modal-overlay hidden" id="turnPhaseModal">
-        <div class="modal-content turn-phase-modal">
-            <div class="turn-phase-header">
-                <h3 id="turnPhaseTitle">Turn Phase</h3>
-                <div class="turn-phase-progress">
-                    <span id="turnPhaseStep">1/4</span>
-                    <div class="phase-progress-bar">
-                        <div class="phase-progress-fill" id="phaseProgressFill"></div>
+                <div class="research-available">
+                    <h3 class="subsection-title">Available Research</h3>
+                    <div class="available-grid" id="availableResearchGrid">
+                        <!-- Available research will be rendered here -->
                     </div>
                 </div>
             </div>
-            <div class="turn-phase-body" id="turnPhaseBody">
-                <!-- Dynamic phase content -->
-            </div>
-            <div class="turn-phase-actions">
-                <button class="btn-small" id="turnPhaseSkip">Skip Phase</button>
-                <button class="btn-small primary" id="turnPhaseNext">Next Phase</button>
-            </div>
-        </div>
-    </div>
+        </section>
 
-    <!-- Resource Collection Phase Modal -->
-    <div class="modal-overlay hidden" id="resourcePhaseModal">
-        <div class="modal-content turn-phase-modal">
-            <div class="turn-phase-header">
-                <h3><svg class="icon"><use href="#icon-lightning"></use></svg> Resource Collection</h3>
-                <div class="turn-phase-progress">
-                    <span>Phase 1/4</span>
-                    <div class="phase-progress-bar">
-                        <div class="phase-progress-fill" style="width: 25%"></div>
-                    </div>
+        <!-- Missions Tab -->
+        <section id="tab-missions" class="corp-tab">
+            <div class="missions-container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="section-icon">🎯</span> Corporation Missions
+                    </h2>
+                    <p class="section-description">Complete missions to earn credits and experience</p>
                 </div>
-            </div>
-            <div class="turn-phase-body">
-                <p class="phase-description">Your planets are generating resources. Review your production and manage your economy.</p>
-                <div class="phase-resource-summary" id="phaseResourceSummary">
-                    <!-- Dynamic resource production summary -->
-                </div>
-                <button class="btn-small" id="viewPipelineDetailsBtn" style="margin-top:8px;">View Pipeline Details</button>
-                <div class="phase-pipeline-details hidden" id="phasePipelineDetails">
-                    <!-- Dynamic pipeline details: mining, transport, construction -->
-                </div>
-                <div class="phase-options">
-                    <h4>Available Actions</h4>
-                    <div class="phase-option-list">
-                        <div class="phase-option-item" data-action="view-production">
-                            <span class="phase-option-icon">📊</span>
-                            <div class="phase-option-info">
-                                <span class="phase-option-name">View Production Details</span>
-                                <span class="phase-option-desc">See detailed resource output from each planet</span>
-                            </div>
-                        </div>
-                        <div class="phase-option-item" data-action="allocate-resources">
-                            <span class="phase-option-icon">🔄</span>
-                            <div class="phase-option-info">
-                                <span class="phase-option-name">Allocate Resources</span>
-                                <span class="phase-option-desc">Redirect resources between planets</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="turn-phase-actions">
-                <button class="btn-small" id="resourcePhaseSkip">Skip</button>
-                <button class="btn-small primary" id="resourcePhaseNext">Continue to Ship Building</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Ship Building Phase Modal -->
-    <div class="modal-overlay hidden" id="shipBuildPhaseModal">
-        <div class="modal-content turn-phase-modal">
-            <div class="turn-phase-header">
-                <h3><svg class="icon"><use href="#icon-hammer"></use></svg> Ship Building</h3>
-                <div class="turn-phase-progress">
-                    <span>Phase 2/4</span>
-                    <div class="phase-progress-bar">
-                        <div class="phase-progress-fill" style="width: 50%"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="turn-phase-body">
-                <p class="phase-description">Design and build new ships to expand your fleet. Choose ship types and assign them to fleets.</p>
-                <div class="phase-ship-queue" id="phaseShipQueue">
-                    <!-- Dynamic ship build queue -->
-                </div>
-                <div class="phase-options">
-                    <h4>Build Options</h4>
-                    <div class="phase-option-list">
-                        <div class="phase-option-item" data-action="build-frigate">
-                            <span class="phase-option-icon">🚀</span>
-                            <div class="phase-option-info">
-                                <span class="phase-option-name">Build Frigate</span>
-                                <span class="phase-option-desc">Light, fast scout ship. Cost: 50 minerals, 30 energy</span>
-                            </div>
-                        </div>
-                        <div class="phase-option-item" data-action="build-destroyer">
-                            <span class="phase-option-icon">⚔️</span>
-                            <div class="phase-option-info">
-                                <span class="phase-option-name">Build Destroyer</span>
-                                <span class="phase-option-desc">Medium combat ship. Cost: 100 minerals, 60 energy</span>
-                            </div>
-                        </div>
-                        <div class="phase-option-item" data-action="build-cruiser">
-                            <span class="phase-option-icon">🛡️</span>
-                            <div class="phase-option-info">
-                                <span class="phase-option-name">Build Cruiser</span>
-                                <span class="phase-option-desc">Heavy support ship. Cost: 200 minerals, 120 energy</span>
-                            </div>
-                        </div>
-                        <div class="phase-option-item" data-action="build-battleship">
-                            <span class="phase-option-icon">💥</span>
-                            <div class="phase-option-info">
-                                <span class="phase-option-name">Build Battleship</span>
-                                <span class="phase-option-desc">Capital warship. Cost: 400 minerals, 250 energy</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="turn-phase-actions">
-                <button class="btn-small" id="shipBuildPhaseSkip">Skip</button>
-                <button class="btn-small primary" id="shipBuildPhaseNext">Continue to Fleet Movement</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Fleet Movement Phase Modal -->
-    <div class="modal-overlay hidden" id="fleetMovePhaseModal">
-        <div class="modal-content turn-phase-modal">
-            <div class="turn-phase-header">
-                <h3><svg class="icon"><use href="#icon-target"></use></svg> Fleet Movement</h3>
-                <div class="turn-phase-progress">
-                    <span>Phase 3/4</span>
-                    <div class="phase-progress-bar">
-                        <div class="phase-progress-fill" style="width: 75%"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="turn-phase-body">
-                <p class="phase-description">Position your fleets strategically across the galaxy. Select a fleet and choose a destination.</p>
-                <div class="phase-fleet-list" id="phaseFleetList">
-                    <!-- Dynamic fleet list -->
-                </div>
-                <div class="phase-options">
-                    <h4>Movement Options</h4>
-                    <div class="phase-option-list">
-                        <div class="phase-option-item" data-action="move-selected-fleet">
-                            <span class="phase-option-icon">🎯</span>
-                            <div class="phase-option-info">
-                                <span class="phase-option-name">Move Selected Fleet</span>
-                                <span class="phase-option-desc">Move the selected fleet to a new position</span>
-                            </div>
-                        </div>
-                        <div class="phase-option-item" data-action="scout-sector">
-                            <span class="phase-option-icon">🔭</span>
-                            <div class="phase-option-info">
-                                <span class="phase-option-name">Scout Sector</span>
-                                <span class="phase-option-desc">Send a fleet to scout an unexplored sector</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="turn-phase-actions">
-                <button class="btn-small" id="fleetMovePhaseSkip">Skip</button>
-                <button class="btn-small primary" id="fleetMovePhaseNext">Continue to Combat</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Combat Phase Modal -->
-    <div class="modal-overlay hidden" id="combatPhaseModal">
-        <div class="modal-content turn-phase-modal">
-            <div class="turn-phase-header">
-                <h3><svg class="icon"><use href="#icon-sword"></use></svg> Combat Phase</h3>
-                <div class="turn-phase-progress">
-                    <span>Phase 4/4</span>
-                    <div class="phase-progress-bar">
-                        <div class="phase-progress-fill" style="width: 100%"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="turn-phase-body">
-                <p class="phase-description">Engage enemy fleets and defend your territory. Select target fleets for combat.</p>
-                <div class="phase-enemy-list" id="phaseEnemyList">
-                    <!-- Dynamic enemy fleet list -->
-                </div>
-                <div class="phase-options">
-                    <h4>Combat Options</h4>
-                    <div class="phase-option-list">
-                        <div class="phase-option-item" data-action="engage-combat">
-                            <span class="phase-option-icon">⚔️</span>
-                            <div class="phase-option-info">
-                                <span class="phase-option-name">Engage Combat</span>
-                                <span class="phase-option-desc">Attack an enemy fleet in range</span>
-                            </div>
-                        </div>
-                        <div class="phase-option-item" data-action="defensive-stance">
-                            <span class="phase-option-icon">🛡️</span>
-                            <div class="phase-option-info">
-                                <span class="phase-option-name">Defensive Stance</span>
-                                <span class="phase-option-desc">Put fleets in defensive mode for bonus shields</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="turn-phase-actions">
-                <button class="btn-small" id="combatPhaseSkip">Skip</button>
-                <button class="btn-small primary" id="combatPhaseNext">End Turn</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Galaxy Creation Progress Modal -->
-    <div class="modal-overlay hidden" id="galaxyCreationModal">
-        <div class="modal-content galaxy-creation-modal">
-            <div class="galaxy-creation-header">
-                <div class="galaxy-creation-icon">🌌</div>
-                <h3>Generating Galaxy</h3>
-                <p class="galaxy-creation-subtitle">Creating the Milky Way galaxy and all solar systems...</p>
-            </div>
-            <div class="galaxy-creation-body">
-                <div class="galaxy-progress-section">
-                    <div class="galaxy-progress-header">
-                        <span>Progress</span>
-                        <span id="galaxyProgressPercent">0%</span>
-                    </div>
-                    <div class="galaxy-progress-bar">
-                        <div class="galaxy-progress-fill" id="galaxyProgressFill"></div>
-                    </div>
-                    <div class="galaxy-progress-stats">
-                        <span id="galaxySystemsGenerated">0 systems</span>
-                        <span id="galaxySystemsTotal">of 0 total</span>
-                    </div>
-                </div>
-                <div class="galaxy-creation-log" id="galaxyCreationLog">
-                    <div class="galaxy-log-entry">Waiting for galaxy generation to start...</div>
-                </div>
-            </div>
-            <div class="galaxy-creation-footer">
-                <span class="galaxy-creation-status" id="galaxyCreationStatus">⏳ Initializing...</span>
-                <button class="btn-small primary hidden" id="galaxyCloseBtn" onclick="hideGalaxyCreationModal()">Done</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Build Station Modal -->
-    <div class="modal-overlay hidden" id="buildStationModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>🛸 Build Space Station</h3>
-                <button class="modal-close" id="closeBuildStationModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="stationTypeSelect">Station Type</label>
-                    <select class="form-input" id="stationTypeSelect">
-                        <option value="MILITARY">Military (500 hull, 100 shields, 4 slots)</option>
-                        <option value="SHIPYARD">Shipyard (300 hull, 50 shields, 3 slots)</option>
-                        <option value="MINING">Mining (200 hull, 30 shields, 2 slots)</option>
-                        <option value="RESEARCH">Research (250 hull, 40 shields, 2 slots)</option>
-                        <option value="TRADE">Trade (150 hull, 20 shields, 2 slots)</option>
-                        <option value="COLONY">Colony (200 hull, 30 shields, 3 slots)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="stationPlanetSelect">Planet (optional)</label>
-                    <select class="form-input" id="stationPlanetSelect">
-                        <option value="">Home Planet (default)</option>
-                    </select>
-                </div>
-                <div id="buildStationError" class="login-error" style="display:none;"></div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-small" id="cancelBuildStation">Cancel</button>
-                <button class="btn-small primary" id="confirmBuildStation">Build Station</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Build Facility Modal -->
-    <div class="modal-overlay hidden" id="buildFacilityModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>🏗️ Build Planet Facility</h3>
-                <button class="modal-close" id="closeBuildFacilityModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="facilityPlanetSelect">Planet</label>
-                    <select class="form-input" id="facilityPlanetSelect">
-                        <option value="">Select a planet...</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="facilityTypeSelect">Facility Type</label>
-                    <select class="form-input" id="facilityTypeSelect">
-                        <option value="COLONY_DOME">Colony Dome (+2 food)</option>
-                        <option value="SHIPYARD">Shipyard (+3 minerals)</option>
-                        <option value="SENSOR_ARRAY">Sensor Array (+1 research)</option>
-                        <option value="MINING_FACILITY">Mining Facility (+4 minerals)</option>
-                        <option value="POWER_PLANT">Power Plant (+3 energy)</option>
-                        <option value="DEFENSE_TURRET">Defense Turret (+10 defense)</option>
-                        <option value="RESEARCH_LAB">Research Lab (+3 research)</option>
-                        <option value="TRADE_PORT">Trade Port (+2 influence, +1 energy)</option>
-                        <option value="MILITARY_BASE">Military Base (+2 minerals, +5 defense)</option>
-                        <option value="AGRICULTURAL_CENTER">Agricultural Center (+4 food)</option>
-                    </select>
-                </div>
-                <div id="buildFacilityError" class="login-error" style="display:none;"></div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-small" id="cancelBuildFacility">Cancel</button>
-                <button class="btn-small primary" id="confirmBuildFacility">Build Facility</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Create Fleet Modal -->
-    <div class="modal-overlay hidden" id="createFleetModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>🚀 Create New Fleet</h3>
-                <button class="modal-close" id="closeCreateFleetModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="fleetNameInput">Fleet Name</label>
-                    <input type="text" class="form-input" id="fleetNameInput" placeholder="Enter fleet name...">
-                </div>
-                <div id="createFleetError" class="login-error" style="display:none;"></div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-small" id="cancelCreateFleet">Cancel</button>
-                <button class="btn-small primary" id="confirmCreateFleet">Create Fleet</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Battle Status Modal -->
-    <div class="modal-overlay hidden" id="battleStatusModal">
-        <div class="modal-content" style="max-width:700px;">
-            <div class="modal-header">
-                <h3>⚔️ Active Battles</h3>
-                <button class="modal-close" id="closeBattleStatusModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div id="battleStatusList">
-                    <div class="text-center" style="color: var(--text-muted); padding: 20px;">No active battles</div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-small" id="closeBattleStatus">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Character Creation Modal -->
-    <div class="modal-overlay hidden" id="characterModal">
-        <div class="modal-content" style="max-width:600px;">
-            <div class="turn-phase-header">
-                <h3><svg class="icon"><use href="#icon-user"></use></svg> Character Development</h3>
-            </div>
-            <div class="turn-phase-body">
-                <div id="characterCreationForm">
+                <div class="mission-form">
                     <div class="form-group">
-                        <label>Character Name</label>
-                        <input type="text" class="form-input" id="characterNameInput" placeholder="Enter character name">
-                    </div>
-                    <div class="form-group">
-                        <label>Career</label>
-                        <select class="form-input" id="careerSelect">
-                            <option value="SOLDIER">Soldier</option>
-                            <option value="EXPLORER">Explorer</option>
-                            <option value="GUNNER">Gunner</option>
-                            <option value="PILOT">Pilot</option>
-                            <option value="MERCHANT">Merchant</option>
-                            <option value="SCOUT">Scout</option>
-                            <option value="SPY">Spy</option>
-                            <option value="NOBLE">Noble</option>
+                        <label for="missionDifficulty">Difficulty Level</label>
+                        <select id="missionDifficulty" class="form-select">
+                            <option value="1">Level 1 - Easy (500 credits)</option>
+                            <option value="2">Level 2 - Easy (1,000 credits)</option>
+                            <option value="3">Level 3 - Medium (2,000 credits)</option>
+                            <option value="4">Level 4 - Medium (4,000 credits)</option>
+                            <option value="5">Level 5 - Hard (8,000 credits)</option>
+                            <option value="6">Level 6 - Hard (15,000 credits)</option>
+                            <option value="7">Level 7 - Very Hard (25,000 credits)</option>
+                            <option value="8">Level 8 - Very Hard (50,000 credits)</option>
+                            <option value="9">Level 9 - Extreme (100,000 credits)</option>
+                            <option value="10">Level 10 - Extreme (200,000 credits)</option>
                         </select>
                     </div>
-                    <div id="characterPreview" style="margin-top:16px;"></div>
-                </div>
-            </div>
-            <div class="turn-phase-actions">
-                <button class="btn-small" id="characterModalClose">Cancel</button>
-                <button class="btn-small" id="characterGenerateBtn">Random Character</button>
-                <button class="btn-small primary" id="characterServeBtn">Serve Career Term</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Ship Design Modal -->
-    <div class="modal-overlay hidden" id="shipDesignModal">
-        <div class="modal-content" style="max-width:700px;">
-            <div class="turn-phase-header">
-                <h3><svg class="icon"><use href="#icon-hammer"></use></svg> Ship Design Editor</h3>
-            </div>
-            <div class="turn-phase-body">
-                <div class="form-group">
-                    <label>Ship Name</label>
-                    <input type="text" class="form-input" id="shipDesignName" placeholder="Enter ship name">
-                </div>
-                <div class="form-group">
-                    <label>Total Tonnage: <span id="tonnageValue">2000</span></label>
-                    <input type="range" class="form-input" id="shipDesignTonnage" min="1000" max="30000" step="1000" value="2000">
-                </div>
-                <div class="form-group">
-                    <label>Jump Rating</label>
-                    <select class="form-input" id="shipDesignJump">
-                        <option value="0">None</option>
-                        <option value="1">J-1</option>
-                        <option value="2">J-2</option>
-                        <option value="3" selected>J-3</option>
-                        <option value="4">J-4</option>
-                        <option value="5">J-5</option>
-                        <option value="6">J-6</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Maneuver Rating</label>
-                    <select class="form-input" id="shipDesignManeuver">
-                        <option value="0">None</option>
-                        <option value="1">M-1</option>
-                        <option value="2" selected>M-2</option>
-                        <option value="3">M-3</option>
-                        <option value="4">M-4</option>
-                        <option value="5">M-5</option>
-                        <option value="6">M-6</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Cargo Tons</label>
-                    <input type="number" class="form-input" id="shipDesignCargo" min="0" value="500">
-                </div>
-                <div class="form-group">
-                    <label>Fuel Tons</label>
-                    <input type="number" class="form-input" id="shipDesignFuel" min="0" value="200">
-                </div>
-                <div class="form-group">
-                    <label>Passengers</label>
-                    <input type="number" class="form-input" id="shipDesignPassengers" min="0" value="0">
-                </div>
-                <div id="shipDesignSummary" style="margin-top:16px; padding:12px; background:rgba(255,255,255,0.05); border-radius:8px;"></div>
-            </div>
-            <div class="turn-phase-actions">
-                <button class="btn-small" id="shipDesignModalClose">Cancel</button>
-                <button class="btn-small primary" id="shipDesignBuildBtn">Build Ship</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Psionics Modal -->
-    <div class="modal-overlay hidden" id="psionicModal">
-        <div class="modal-content" style="max-width:900px;">
-            <div class="turn-phase-header">
-                <h3><svg class="icon"><use href="#icon-star"></use></svg> Psionics (B03)</h3>
-            </div>
-            <div class="turn-phase-body">
-                <div style="display:flex;gap:4px;margin-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:8px;">
-                    <button class="psionic-tab active" data-tab="detection" onclick="PsionicUI.switchTab('detection')" style="padding:4px 12px;background:rgba(167,139,250,0.2);color:#a78bfa;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;">🔮 Detection</button>
-                    <button class="psionic-tab" data-tab="disciplines" onclick="PsionicUI.switchTab('disciplines')" style="padding:4px 12px;background:rgba(255,255,255,0.05);color:var(--text-secondary);border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;">📚 Disciplines</button>
-                    <button class="psionic-tab" data-tab="powercheck" onclick="PsionicUI.switchTab('powercheck')" style="padding:4px 12px;background:rgba(255,255,255,0.05);color:var(--text-secondary);border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;">⚡ Power Check</button>
-                    <button class="psionic-tab" data-tab="encounter" onclick="PsionicUI.switchTab('encounter')" style="padding:4px 12px;background:rgba(255,255,255,0.05);color:var(--text-secondary);border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;">🌀 Encounters</button>
-                </div>
-                <div class="psionic-panel" id="detectionPanel"></div>
-                <div class="psionic-panel hidden" id="disciplinesPanel"></div>
-                <div class="psionic-panel hidden" id="powerCheckPanel"></div>
-                <div class="psionic-panel hidden" id="encounterPanel"></div>
-            </div>
-            <div class="turn-phase-actions">
-                <button class="btn-small" id="psionicModalClose">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Trade Modal -->
-    <div class="modal-overlay hidden" id="tradeModal">
-        <div class="modal-content" style="max-width:900px;">
-            <div class="turn-phase-header">
-                <h3><svg class="icon"><use href="#icon-diamond"></use></svg> Trade Market</h3>
-            </div>
-            <div class="turn-phase-body">
-                <div id="tradeMarketInfo" style="margin-bottom:12px; color:var(--text-secondary);"></div>
-                
-                <!-- Tabs for trade panels -->
-                <div style="display:flex;gap:4px;margin-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:8px;">
-                    <button class="trade-tab active" data-tab="commodities" onclick="TradeUI.switchTab('commodities')" style="padding:4px 12px;background:rgba(6,182,212,0.2);color:#06b6d4;border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;">📦 Commodities</button>
-                    <button class="trade-tab" data-tab="routes" onclick="TradeUI.switchTab('routes')" style="padding:4px 12px;background:rgba(255,255,255,0.05);color:var(--text-secondary);border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;">🗺️ Routes</button>
-                    <button class="trade-tab" data-tab="career" onclick="TradeUI.switchTab('career')" style="padding:4px 12px;background:rgba(255,255,255,0.05);color:var(--text-secondary);border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;">🎖️ Career</button>
-                    <button class="trade-tab" data-tab="exchange" onclick="TradeUI.switchTab('exchange')" style="padding:4px 12px;background:rgba(255,255,255,0.05);color:var(--text-secondary);border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;">💰 Exchange</button>
-                    <button class="trade-tab" data-tab="events" onclick="TradeUI.switchTab('events')" style="padding:4px 12px;background:rgba(255,255,255,0.05);color:var(--text-secondary);border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;">⚡ Events</button>
-                    <button class="trade-tab" data-tab="mission" onclick="TradeUI.switchTab('mission')" style="padding:4px 12px;background:rgba(255,255,255,0.05);color:var(--text-secondary);border:none;border-radius:4px;cursor:pointer;font-size:0.8rem;">🚀 Missions</button>
-                </div>
-                
-                <!-- Commodities Panel -->
-                <div class="trade-panel" id="commoditiesPanel">
-                    <div id="tradeCommodityList" style="max-height:400px; overflow-y:auto;"></div>
-                </div>
-                
-                <!-- Trade Routes Panel -->
-                <div class="trade-panel hidden" id="routesPanel">
-                    <div id="tradeRoutesList" style="max-height:400px; overflow-y:auto;"></div>
-                </div>
-                
-                <!-- Career Bonuses Panel -->
-                <div class="trade-panel hidden" id="careerPanel">
-                    <div id="careerBonuses"></div>
-                </div>
-                
-                <!-- Exchange Info Panel -->
-                <div class="trade-panel hidden" id="exchangePanel">
-                    <div id="exchangeInfo"></div>
-                </div>
-                
-                <!-- Economic Events Panel -->
-                <div class="trade-panel hidden" id="eventsPanel">
-                    <div id="economicEvents"></div>
-                </div>
-                
-                <!-- Trade Mission Panel -->
-                <div class="trade-panel hidden" id="missionPanel">
-                    <div style="margin-bottom:12px;">
-                        <h4 style="margin:0 0 8px 0; color:var(--text-primary);">🚀 Execute Trade Mission</h4>
-                        <p style="font-size:0.8rem; color:var(--text-secondary); margin:0 0 12px 0;">
-                            Select a destination world, commodity, and quantity to execute a trade mission.
-                        </p>
+                    <div class="form-row">
                         <div class="form-group">
-                            <label>Destination World ID</label>
-                            <input type="number" class="form-input" id="tradeMissionDest" min="1" value="2" style="width:200px;">
+                            <label for="missionKills">Kills</label>
+                            <input type="number" id="missionKills" class="form-input" min="0" value="0">
                         </div>
                         <div class="form-group">
-                            <label>Commodity</label>
-                            <select class="form-input" id="tradeMissionCommodity" style="width:200px;"></select>
+                            <label for="missionScore">Score</label>
+                            <input type="number" id="missionScore" class="form-input" min="0" value="100">
                         </div>
-                        <div class="form-group">
-                            <label>Quantity</label>
-                            <input type="number" class="form-input" id="tradeMissionQty" min="1" value="1" style="width:200px;">
-                        </div>
-                        <div id="tradeMissionResult" style="margin-top:12px; padding:10px; background:rgba(255,255,255,0.05); border-radius:6px; display:none;"></div>
                     </div>
+                    <button class="btn-primary" id="btnCompleteMission">
+                        <span class="btn-icon">✅</span> Complete Mission
+                    </button>
                 </div>
             </div>
-            <div class="turn-phase-actions">
-                <button class="btn-small primary" id="tradeMissionBtn" style="margin-right:8px;">🚀 Execute Mission</button>
-                <button class="btn-small" id="tradeModalClose">Close</button>
+        </section>
+    </main>
+
+    <!-- Hire Employee Modal -->
+    <div class="modal-overlay hidden" id="hireModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <span class="modal-icon">👤</span> Hire New Employee
+                </h3>
+                <button class="modal-close" id="closeHireModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="employeeName">Employee Name</label>
+                    <input type="text" id="employeeName" class="form-input" placeholder="Enter employee name...">
+                </div>
+                <div class="form-group">
+                    <label for="employeeRole">Role</label>
+                    <select id="employeeRole" class="form-select">
+                        <option value="ANALYST">📊 Analyst</option>
+                        <option value="ENGINEER">⚙️ Engineer</option>
+                        <option value="MARKETER">📢 Marketer</option>
+                        <option value="SECURITY">🔒 Security</option>
+                        <option value="RESEARCHER">🔬 Researcher</option>
+                        <option value="MANAGER">👔 Manager</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="employeeSalary">Monthly Salary (credits)</label>
+                    <input type="number" id="employeeSalary" class="form-input" min="100" value="1000">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelHire">Cancel</button>
+                <button class="btn-primary" id="confirmHire">
+                    <span class="btn-icon">✅</span> Hire Employee
+                </button>
             </div>
         </div>
     </div>
 
-    <script src="js/auth.js"></script>
-    <script src="js/game-api.js?v=30"></script>
-    <script src="js/game-sse.js?v=30"></script>
-    <script src="js/game-ui-core.js?v=33"></script>
-    <script src="js/game-ui-galaxy-progress.js?v=32"></script>
-    <script src="js/character-ui.js?v=1"></script>
-    <script src="js/ship-design-ui.js?v=1"></script>
-    <script src="js/trade-ui.js?v=2"></script>
-    <script src="js/psionic-ui.js?v=1"></script>
-    <script src="js/game-ui-main.js?v=33"></script>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Tycoon 3D Renderer - Lazy loaded Babylon.js -->
-    <script src="js/tycoon-view-controller.js?v=1"></script>
-
-    <noscript>
-        <style>
-            .login-overlay { display: flex !important; }
-            .session-overlay, .game-container, .modal-overlay { display: none !important; }
-        </style>
-        <div style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#ef4444;color:white;padding:10px 20px;border-radius:8px;z-index:9999;">
-            ⚠️ JavaScript is required to play this game. Please enable JavaScript in your browser.
+    <!-- Loading Overlay -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p class="loading-text">Loading corporation data...</p>
         </div>
-    </noscript>
+    </div>
+
+    <script src="js/corporation-client.js?v=2"></script>
+    <script src="js/corporation-dashboard.js?v=1"></script>
 </body>
 </html>

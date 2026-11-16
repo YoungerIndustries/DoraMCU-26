@@ -1,0 +1,579 @@
+{
+  "units": {
+    "starships": [
+      {
+        "id": "enterprise_a",
+        "name": "USS Enterprise (NCC-1701-A)",
+        "faction": "starfleet",
+        "type": "exploration",
+        "era": "TOS Movie Era",
+        "description": "The refitted Constitution-class starship commanded by Captain James T. Kirk. The third ship to bear the name Enterprise, it served as a flagship for exploration and diplomacy in the post-TOS era.",
+        "stats": {
+          "hull": 40,
+          "shields": 30,
+          "maneuverability": 8,
+          "sensors": 7,
+          "weapons": 6,
+          "warp_factor": 8,
+          "impulse_factor": 6
+        },
+        "weapons": ["Type IV Phaser Banks (Forward/Aft/Broadside)", "Photon Torpedo Launchers (Forward/Aft)"],
+        "crew": 430,
+        "notable_crew": ["James T. Kirk (Captain)", "Spock (Science Officer)", "Leonard McCoy (Chief Medical Officer)", "Montgomery Scott (Chief Engineer)", "Hikaru Sulu (Helm)", "Nyota Uhura (Communications)"],
+        "abilities": ["Shuttlebay", "Transporter Room", "Sickbay", "Observation Lounge"]
+      },
+      {
+        "id": "enterprise_d",
+        "name": "USS Enterprise-D (NCC-1701-D)",
+        "faction": "starfleet",
+        "type": "exploration",
+        "era": "TNG",
+        "description": "The Galaxy-class starship commanded by Captain Jean-Luc Picard. The first starship designed primarily for exploration and diplomacy rather than war. Features a massive crew complement and advanced scientific facilities.",
+        "stats": {
+          "hull": 60,
+          "shields": 45,
+          "maneuverability": 6,
+          "sensors": 9,
+          "weapons": 7,
+          "warp_factor": 9,
+          "impulse_factor": 7
+        },
+        "weapons": ["Type VI Phaser Banks (Forward/Aft/Broadside)", "Photon Torpedo Launchers (Forward/Aft)"],
+        "crew": 1014,
+        "notable_crew": ["Jean-Luc Picard (Captain)", "William Riker (First Officer)", "Data (Second Officer)", "Worf (Security Chief)", "Deanna Troi (Counselor)", "Geordi La Forge (Chief Engineer)", "Beverly Crusher (Chief Medical Officer)"],
+        "abilities": ["Holodeck", "Ten-Forward Lounge", "Shuttlebay", "Ten Transporters", "Advanced Science Labs"]
+      },
+      {
+        "id": "enterprise_e",
+        "name": "USS Enterprise-E (NCC-1701-E)",
+        "faction": "starfleet",
+        "type": "exploration",
+        "era": "TNG Movies",
+        "description": "The Sovereign-class starship commanded by Captain Jean-Luc Picard. Combines the scientific capabilities of the Enterprise-D with enhanced weapons and speed for combat situations.",
+        "stats": {
+          "hull": 55,
+          "shields": 50,
+          "maneuverability": 8,
+          "sensors": 9,
+          "weapons": 9,
+          "warp_factor": 9.6,
+          "impulse_factor": 8
+        },
+        "weapons": ["Type VI Phaser Banks (Forward/Aft/Broadside)", "Photon and Quantum Torpedo Launchers"],
+        "crew": 869,
+        "notable_crew": ["Jean-Luc Picard (Captain)", "William Riker (First Officer)", "Data (Second Officer)", "Worf (Security Chief)", "Deanna Troi (Counselor)", "Geordi La Forge (Chief Engineer)", "Beverly Crusher (Chief Medical Officer)"],
+        "abilities": ["Holodeck", "Enhanced Weapons", "Improved Speed", "Advanced Science Labs"]
+      },
+      {
+        "id": "uss_voyager",
+        "name": "USS Voyager (NCC-74656)",
+        "faction": "starfleet",
+        "type": "exploration",
+        "era": "VOY",
+        "description": "The Intrepid-class starship commanded by Captain Kathryn Janeway. Stranded in the Delta Quadrant, 70,000 light-years from home. The most advanced Starfleet ship of its time, with twin warp cores and advanced weaponry.",
+        "stats": {
+          "hull": 45,
+          "shields": 40,
+          "maneuverability": 9,
+          "sensors": 9,
+          "weapons": 8,
+          "warp_factor": 9.975,
+          "impulse_factor": 8
+        },
+        "weapons": ["Type VI Phaser Arrays", "Photon and Quantum Torpedo Launchers", "Transphaser Marksmanship Array"],
+        "crew": 148 (Starfleet) + 39 (Maquis),
+        "notable_crew": ["Kathryn Janeway (Captain)", "Chakotay (First Officer)", "Tuvok (Security Chief)", "B'Elanna Torres (Chief Engineer)", "Tom Paris (Helm)", "The Doctor (EMH)", "Seven of Nine (Borg drone)"],
+        "abilities": ["Twin Warp Cores", "Emergency Warp Core", "Holodeck", "Advanced Sensors"]
+      },
+      {
+        "id": "uss_defiant",
+        "name": "USS Defiant (NCC-1764)",
+        "faction": "starfleet",
+        "type": "warship",
+        "era": "DS9",
+        "description": "The Defiant-class warship commanded by Captain Benjamin Sisko. Designed specifically for combat, the Defiant is heavily armed and armored for a ship of its size. Serves as the primary defense of Deep Space 9.",
+        "stats": {
+          "hull": 35,
+          "shields": 35,
+          "maneuverability": 9,
+          "sensors": 7,
+          "weapons": 10,
+          "warp_factor": 8,
+          "impulse_factor": 7
+        },
+        "weapons": ["Type VI Phaser Banks", "Photon Torpedo Launchers", "Dilithium Wave Disruptors"],
+        "crew": 65,
+        "notable_crew": ["Benjamin Sisko (Captain)", "Kira Nerys (First Officer/DS9 Operations)", "Worf (Security Chief, later)", "Julian Bashir (Chief Medical Officer)"],
+        "abilities": ["Heavy Armor", "Combat-Optimized", "Dilithium Wave Disruptors"]
+      },
+      {
+        "id": "klingon_d7",
+        "name": "IKS D7 Battlecruiser",
+        "faction": "klingon_empire",
+        "type": "warship",
+        "era": "TNG-DS9",
+        "description": "The D7-class battlecruiser is the backbone of the Klingon Defense Force. Heavily armed and armored, it is designed for combat and intimidation. The D7 is a symbol of Klingon military might.",
+        "stats": {
+          "hull": 50,
+          "shields": 35,
+          "maneuverability": 5,
+          "sensors": 6,
+          "weapons": 9,
+          "warp_factor": 6,
+          "impulse_factor": 5
+        },
+        "weapons": ["Klingon Phaser Banks", "Disruptor Banks", "Torpedo Launchers"],
+        "crew": 450,
+        "abilities": ["Heavy Armor", "Cloaking Device", "Boarding Craft", "Intimidation"]
+      },
+      {
+        "id": "klingon_bird_of_prey",
+        "name": "Klingon Bird-of-Prey",
+        "faction": "klingon_empire",
+        "type": "scout",
+        "era": "All Eras",
+        "description": "The Bird-of-Prey is a small, fast Klingon warship used for reconnaissance, raiding, and boarding actions. Equipped with a cloaking device, it is a feared opponent in hit-and-run tactics.",
+        "stats": {
+          "hull": 20,
+          "shields": 15,
+          "maneuverability": 9,
+          "sensors": 6,
+          "weapons": 7,
+          "warp_factor": 5,
+          "impulse_factor": 7
+        },
+        "weapons": ["Disruptor Banks", "Torpedo Launchers"],
+        "crew": 15,
+        "abilities": ["Cloaking Device", "High Maneuverability", "Boarding Craft", "Stealth"]
+      },
+      {
+        "id": "romulan_warbird",
+        "name": "Romulan Warbird (D'deridex-class)",
+        "faction": "romulan_star_empire",
+        "type": "warship",
+        "era": "TNG-DS9",
+        "description": "The D'deridex-class Warbird is the flagship of the Romulan Star Fleet. Its distinctive wing-like pylons house powerful plasma torpedoes and phaser arrays. Equipped with an advanced cloaking device that allows warp while cloaked.",
+        "stats": {
+          "hull": 55,
+          "shields": 40,
+          "maneuverability": 6,
+          "sensors": 8,
+          "weapons": 9,
+          "warp_factor": 7,
+          "impulse_factor": 6
+        },
+        "weapons": ["Romulan Phaser Banks", "Plasma Torpedo Launchers"],
+        "crew": 750,
+        "abilities": ["Cloaking Device (warp-capable)", "Plasma Torpedoes", "Advanced Sensors", "Stealth"]
+      },
+      {
+        "id": "borg_cube",
+        "name": "Borg Cube",
+        "faction": "borg",
+        "type": "warship",
+        "era": "TNG-VOY",
+        "description": "The Borg Cube is a kilometer-long warship that serves as a mobile base for the Borg Collective. It houses millions of drones and possesses adaptive shielding that makes it nearly invulnerable. A single Cube can destroy an entire star system.",
+        "stats": {
+          "hull": 200,
+          "shields": 150,
+          "maneuverability": 2,
+          "sensors": 10,
+          "weapons": 12,
+          "warp_factor": 6,
+          "impulse_factor": 4
+        },
+        "weapons": ["Transphaser Arrays", "Torpedo Launchers", "Assimilation Tubes"],
+        "crew": "Millions of drones",
+        "abilities": ["Adaptive Shielding", "Assimilation Technology", "Nanoprobes", "Self-Repair", "Transwarp Capability"]
+      },
+      {
+        "id": "jemhadar_warship",
+        "name": "Jem'Hadar Warship",
+        "faction": "dominion",
+        "type": "warship",
+        "era": "DS9",
+        "description": "The Jem'Hadar warship is the primary combat vessel of the Dominion. Designed by the Cardassians for the Jem'Hadar, it is fast, heavily armed, and equipped with a cloaking device. Powered by a warp core that runs on Ketracel-white.",
+        "stats": {
+          "hull": 40,
+          "shields": 35,
+          "maneuverability": 8,
+          "sensors": 7,
+          "weapons": 10,
+          "warp_factor": 8,
+          "impulse_factor": 7
+        },
+        "weapons": ["Type IV Phaser Banks", "Quantum Torpedo Launchers"],
+        "crew": 200 (Jem'Hadar warriors + Vorta overseer),
+        "abilities": ["Cloaking Device", "Ketracel-white Power", "Heavy Weapons", "Speed"]
+      },
+      {
+        "id": "cardassian_galaxy",
+        "name": "Cardassian Galaxy-class Warship",
+        "faction": "cardassian_union",
+        "type": "warship",
+        "era": "DS9",
+        "description": "The Galaxy-class warship (not to be confused with the Starfleet Galaxy-class) is a versatile Cardassian warship used for patrol, occupation, and combat. It is the workhorse of the Cardassian military.",
+        "stats": {
+          "hull": 45,
+          "shields": 30,
+          "maneuverability": 6,
+          "sensors": 7,
+          "weapons": 7,
+          "warp_factor": 6,
+          "impulse_factor": 5
+        },
+        "weapons": ["Disruptor Banks", "Torpedo Launchers"],
+        "crew": 400,
+        "abilities": ["Versatile Design", "Occupation Capable", "Heavy Armor"]
+      },
+      {
+        "id": "narada",
+        "name": "Narada (Romulan Mining Ship)",
+        "faction": "romulan_star_empire",
+        "type": "warship",
+        "era": "Kelvin Timeline",
+        "description": "The Narada is a Romulan mining ship commanded by Nero. Displaced through a wormhole from the future, it possesses technology far beyond 23rd-century Starfleet capabilities, including tetryon weapons that can disable shields.",
+        "stats": {
+          "hull": 80,
+          "shields": 60,
+          "maneuverability": 5,
+          "sensors": 9,
+          "weapons": 11,
+          "warp_factor": 9,
+          "impulse_factor": 7
+        },
+        "weapons": ["Tetryon Cannons (shield-piercing)", "Plasma Torpedoes", "Mining Lasers"],
+        "crew": 500,
+        "abilities": ["Tetryon Weapons", "Temporal Knowledge", "Advanced Technology", "Planet-Destroying Capability"]
+      }
+    ],
+    "ground_units": [
+      {
+        "id": "starfleet_security",
+        "name": "Starfleet Security Team",
+        "faction": "starfleet",
+        "type": "infantry",
+        "era": "All Eras",
+        "description": "Standard Starfleet security personnel trained in combat, shipboard security, and planetary protection. Equipped with phasers and standard-issue uniforms.",
+        "stats": {
+          "brawn": 3,
+          "agility": 4,
+          "intelligence": 4,
+          "cunning": 4,
+          "empathy": 3,
+          "toughness": 6
+        },
+        "weapons": ["Type II Phaser (stun/injure)"],
+        "abilities": ["Starfleet Training", "Phaser Proficiency", "Team Tactics"]
+      },
+      {
+        "id": "klingon_warrior",
+        "name": "Klingon Warrior",
+        "faction": "klingon_empire",
+        "type": "elite_infantry",
+        "era": "All Eras",
+        "description": "A trained Klingon warrior, skilled in the use of the bat'leth and hand laser. Klingon warriors fight for honor and glory, and are feared throughout the galaxy.",
+        "stats": {
+          "brawn": 5,
+          "agility": 4,
+          "intelligence": 3,
+          "cunning": 3,
+          "empathy": 2,
+          "toughness": 8
+        },
+        "weapons": ["Bat'leth", "Hand Laser"],
+        "abilities": ["Warrior's Blood", "Honor in Battle", "Bat'leth Mastery", "Battle Cry"]
+      },
+      {
+        "id": "jemhadar_warrior",
+        "name": "Jem'Hadar Warrior",
+        "faction": "dominion",
+        "type": "elite_infantry",
+        "era": "DS9",
+        "description": "A Jem'Hadar warrior, genetically engineered for combat. Under the influence of Ketracel-white, they are fearless, incredibly strong, and completely loyal to the Dominion.",
+        "stats": {
+          "brawn": 6,
+          "agility": 5,
+          "intelligence": 2,
+          "cunning": 2,
+          "empathy": 1,
+          "toughness": 10
+        },
+        "weapons": ["Type IV Phaser", "Disruptor Pistol"],
+        "abilities": ["Ketracel-White Enhancement", "Regeneration", "Absolute Loyalty", "Fearless"]
+      },
+      {
+        "id": "borg_drone",
+        "name": "Borg Drone",
+        "faction": "borg",
+        "type": "assimilator",
+        "era": "TNG-VOY",
+        "description": "A Borg drone, assimilated into the Collective. Each drone is a specialized component of the whole, equipped with cybernetic implants and nanoprobes for assimilation.",
+        "stats": {
+          "brawn": 5,
+          "agility": 4,
+          "intelligence": 6,
+          "cunning": 4,
+          "empathy": 0,
+          "toughness": 9
+        },
+        "weapons": ["Assimilation Tubey", "Phaser Array"],
+        "abilities": ["Assimilation", "Nanoprobes", "Collective Link", "Adaptive Shielding", "Self-Repair"]
+      },
+      {
+        "id": "cardassian_soldier",
+        "name": "Cardassian Soldier",
+        "faction": "cardassian_union",
+        "type": "infantry",
+        "era": "DS9",
+        "description": "A Cardassian military soldier, trained in occupation warfare and combat. Equipped with disruptors and standard Cardassian armor.",
+        "stats": {
+          "brawn": 3,
+          "agility": 3,
+          "intelligence": 4,
+          "cunning": 4,
+          "empathy": 2,
+          "toughness": 6
+        },
+        "weapons": ["Disruptor Rifle", "Disruptor Pistol"],
+        "abilities": ["Military Training", "Occupation Experience", "Discipline"]
+      },
+      {
+        "id": "bajoran_resistance",
+        "name": "Bajoran Resistance Fighter",
+        "faction": "bajor",
+        "type": "guerrilla",
+        "era": "DS9",
+        "description": "A Bajoran resistance fighter who fought against Cardassian occupation. Skilled in guerrilla tactics and sabotage.",
+        "stats": {
+          "brawn": 3,
+          "agility": 4,
+          "intelligence": 3,
+          "cunning": 5,
+          "empathy": 4,
+          "toughness": 6
+        },
+        "weapons": ["Captured Cardassian Disruptor", "Explosives"],
+        "abilities": ["Guerrilla Tactics", "Sabotage", "Knowledge of Terrain", "Faith"]
+      }
+    ],
+    "characters": [
+      {
+        "id": "james_t_kirk",
+        "name": "James T. Kirk",
+        "faction": "starfleet",
+        "type": "commander",
+        "era": "TOS / Movie Era / Kelvin Timeline",
+        "description": "Captain of the USS Enterprise. Bold, charismatic, and instinctive, Kirk is one of Starfleet's most celebrated commanders. Known for his daring maneuvers and ability to inspire his crew.",
+        "stats": {
+          "brawn": 5,
+          "agility": 5,
+          "intelligence": 5,
+          "cunning": 5,
+          "empathy": 6,
+          "toughness": 10
+        },
+        "weapons": ["Type II Phaser"],
+        "abilities": ["The Kirk Maneuver", "Inspiring Leadership", "Instinctive Decision-Making", "Starfleet Command"]
+      },
+      {
+        "id": "spock",
+        "name": "Spock",
+        "faction": "starfleet",
+        "type": "science_officer",
+        "era": "TOS / Movie Era / Kelvin Timeline",
+        "description": "Vulcan-Human Science Officer and First Officer of the USS Enterprise. Master of logic, the Vulcan mind meld, and scientific analysis. Spock's unique heritage allows him to bridge the gap between logic and emotion.",
+        "stats": {
+          "brawn": 5,
+          "agility": 4,
+          "intelligence": 8,
+          "cunning": 6,
+          "empathy": 5,
+          "toughness": 9
+        },
+        "weapons": ["Type II Phaser"],
+        "abilities": ["Logical Analysis", "Vulcan Mind Meld", "Vulcan Nerve Pinch", "Mental Discipline", "Scientific Expertise"]
+      },
+      {
+        "id": "jean_luc_picard",
+        "name": "Jean-Luc Picard",
+        "faction": "starfleet",
+        "type": "commander",
+        "era": "TNG / Movie Era",
+        "description": "Captain of the USS Enterprise-D/E. A scholar, diplomat, and strategist, Picard represents the ideal Starfleet officer. His command style emphasizes diplomacy, reason, and moral integrity.",
+        "stats": {
+          "brawn": 3,
+          "agility": 3,
+          "intelligence": 7,
+          "cunning": 6,
+          "empathy": 7,
+          "toughness": 8
+        },
+        "weapons": ["Type II Phaser"],
+        "abilities": ["Picard Maneuver", "Picard's Whisper", "Diplomatic Immunity", "Scholar's Knowledge", "Starfleet Command"]
+      },
+      {
+        "id": "benjamin_sisko",
+        "name": "Benjamin Sisko",
+        "faction": "starfleet",
+        "type": "commander",
+        "era": "DS9",
+        "description": "Captain of the USS Defiant and Station Commander of Deep Space 9. A military man and the Emissary of the Bajoran Prophets, Sisko balances his duties as a Starfleet officer with his role as a religious figure.",
+        "stats": {
+          "brawn": 4,
+          "agility": 4,
+          "intelligence": 5,
+          "cunning": 6,
+          "empathy": 5,
+          "toughness": 9
+        },
+        "weapons": ["Type II Phaser"],
+        "abilities": ["Emissary of the Prophets", "Station Commander", "Military Background", "Starfleet Command"]
+      },
+      {
+        "id": "kathryn_janeway",
+        "name": "Kathryn Janeway",
+        "faction": "starfleet",
+        "type": "commander",
+        "era": "VOY",
+        "description": "Captain of the USS Voyager. A brilliant scientist and determined leader, Janeway commands Voyager through the Delta Quadrant, 70,000 light-years from home. Her scientific curiosity and moral compass guide her decisions.",
+        "stats": {
+          "brawn": 3,
+          "agility": 4,
+          "intelligence": 7,
+          "cunning": 5,
+          "empathy": 6,
+          "toughness": 8
+        },
+        "weapons": ["Type II Phaser"],
+        "abilities": ["Scientific Curiosity", "Determination", "Moral Compass", "Starfleet Command"]
+      },
+      {
+        "id": "worf",
+        "name": "Worf",
+        "faction": "starfleet",
+        "type": "security_chief",
+        "era": "TNG / DS9",
+        "description": "Klingon Security Chief serving on the USS Enterprise-D and later Deep Space 9. The first Klingon to serve on a Starfleet bridge, Worf is a skilled warrior and bat'leth master who struggles with his dual loyalty to Klingon honor and Starfleet duty.",
+        "stats": {
+          "brawn": 6,
+          "agility": 5,
+          "intelligence": 4,
+          "cunning": 4,
+          "empathy": 3,
+          "toughness": 11
+        },
+        "weapons": ["Bat'leth", "Type II Phaser"],
+        "abilities": ["Klingon Warrior", "Bat'leth Mastery", "Security Chief", "Honor in Battle"]
+      },
+      {
+        "id": "data",
+        "name": "Data",
+        "faction": "starfleet",
+        "type": "android",
+        "era": "TNG",
+        "description": "An android (synthetic being) serving as Second Officer of the USS Enterprise-D. Created by Dr. Noonien Soong, Data seeks to understand and become human. His superhuman abilities include immense strength, speed, and processing power.",
+        "stats": {
+          "brawn": 8,
+          "agility": 7,
+          "intelligence": 9,
+          "cunning": 6,
+          "empathy": 4,
+          "toughness": 12
+        },
+        "weapons": ["Type II Phaser", "Positronic Brain"],
+        "abilities": ["Superhuman Strength", "Superhuman Speed", "Encyclopedia Brain", "Photographic Memory", "Underwater Breathing", "No Need for Air"]
+      },
+      {
+        "id": "seven_of_nine",
+        "name": "Seven of Nine",
+        "faction": "starfleet",
+        "type": "former_borg",
+        "era": "VOY",
+        "description": "A former Borg drone liberated by Voyager. Seven retains her Borg augmentations and knowledge while struggling to reclaim her humanity. Her tactical skills and Borg knowledge make her invaluable to Voyager.",
+        "stats": {
+          "brawn": 6,
+          "agility": 5,
+          "intelligence": 7,
+          "cunning": 5,
+          "empathy": 4,
+          "toughness": 11
+        },
+        "weapons": ["Type II Phaser", "Borg Implants"],
+        "abilities": ["Borg Interface", "Augmented Physiology", "Tactical Drone Training", "Reclaiming Humanity"]
+      },
+      {
+        "id": "gul_dukat",
+        "name": "Gul Dukat",
+        "faction": "dominion",
+        "type": "commander",
+        "era": "DS9",
+        "description": "Cardassian Gul and former Governor of Bajor. A charismatic and ruthless leader, Dukat allies with the Dominion to regain power. In the afterlife, he is empowered by the Pah-wraiths and commands the Negh'Var.",
+        "stats": {
+          "brawn": 4,
+          "agility": 3,
+          "intelligence": 6,
+          "cunning": 7,
+          "empathy": 3,
+          "toughness": 9
+        },
+        "weapons": ["Disruptor Pistol"],
+        "abilities": ["Pah-wraith Empowerment", "Charismatic Tyrant", "Obsidian Order Training", "Command Authority"]
+      },
+      {
+        "id": "kira_nerys",
+        "name": "Kira Nerys",
+        "faction": "bajor",
+        "type": "operations_officer",
+        "era": "DS9",
+        "description": "Former Bajoran resistance fighter and Operations Officer of Deep Space 9. A devout Bajoran and skilled warrior, Kira is the first non-Federation officer to command a Starfleet vessel.",
+        "stats": {
+          "brawn": 4,
+          "agility": 5,
+          "intelligence": 4,
+          "cunning": 6,
+          "empathy": 5,
+          "toughness": 9
+        },
+        "weapons": ["Type II Phaser", "Explosives"],
+        "abilities": ["Guerrilla Tactics", "Sabotage", "Faith", "Station Operations"]
+      },
+      {
+        "id": "elim_garak",
+        "name": "Elim Garak",
+        "faction": "cardassian_union",
+        "type": "espionage",
+        "era": "DS9",
+        "description": "A Cardassian tailor on Deep Space 9 with a secret past as an agent of the Obsidian Order. Brilliant, manipulative, and enigmatic, Garak's true loyalties are always in question.",
+        "stats": {
+          "brawn": 3,
+          "agility": 4,
+          "intelligence": 6,
+          "cunning": 8,
+          "empathy": 4,
+          "toughness": 7
+        },
+        "weapons": ["Various (improvised)"],
+        "abilities": ["Obsidian Order Training", "Espionage", "Manipulation", "Improvised Weapons", "Shapeshifting Disguise"]
+      },
+      {
+        "id": "leonard_mccoy",
+        "name": "Leonard 'Bones' McCoy",
+        "faction": "starfleet",
+        "type": "medical_officer",
+        "era": "TOS / Movie Era / Kelvin Timeline",
+        "description": "Chief Medical Officer of the USS Enterprise. A human doctor in a starfleet full of scientists, McCoy provides the moral compass and emotional grounding for the Enterprise crew. His medical expertise is unmatched.",
+        "stats": {
+          "brawn": 3,
+          "agility": 3,
+          "intelligence": 6,
+          "cunning": 4,
+          "empathy": 7,
+          "toughness": 7
+        },
+        "weapons": ["Hypodermic Injector", "Type II Phaser"],
+        "abilities": ["Medical Expertise", "Moral Compass", "Southern Sarcasm", "Triage Under Pressure"]
+      }
+    ]
+  }
+}

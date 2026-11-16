@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoraMCU 4X</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0a1a1a; color: #e0e0e0; }
+
+        .header {
+            background: linear-gradient(135deg, #00838f 0%, #0a1a1a 100%);
+            padding: 16px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid #00acc1;
+        }
+        .header h1 { font-size: 24px; color: #fff; }
+        .header .subtitle { font-size: 12px; color: #a0a0a0; margin-top: 2px; }
+        .btn-back {
+            background: #00acc1; color: #fff; padding: 8px 16px;
+            border-radius: 6px; text-decoration: none; font-size: 14px;
+        }
+        .btn-back:hover { background: #00838f; }
+
+        .layout { display: flex; height: calc(100vh - 70px); }
+        .sidebar {
+            width: 220px; background: #0d2020; padding: 16px;
+            overflow-y: auto; border-right: 1px solid #00838f;
+        }
+        .sidebar-section { margin-bottom: 20px; }
+        .sidebar-title {
+            font-size: 11px; text-transform: uppercase; color: #00acc1;
+            margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;
+        }
+        .sidebar-item {
+            padding: 8px 12px; margin: 2px 0; border-radius: 6px;
+            cursor: pointer; font-size: 14px; transition: all 0.2s;
+        }
+        .sidebar-item:hover { background: #00838f; }
+        .sidebar-item.active { background: #00acc1; color: #fff; }
+
+        .main-content { flex: 1; padding: 24px; overflow-y: auto; }
+        .card {
+            background: #0d2020; border-radius: 8px; padding: 20px;
+            margin-bottom: 16px; border: 1px solid #00838f;
+        }
+        .card h3 { color: #00acc1; margin-bottom: 12px; font-size: 16px; }
+        .grid { display: grid; gap: 16px; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+        .btn {
+            background: #00acc1; color: #fff; border: none;
+            padding: 8px 16px; border-radius: 6px; cursor: pointer;
+            font-size: 14px; margin: 4px;
+        }
+        .btn:hover { background: #00838f; }
+
+        .item-row {
+            background: #0a1a1a; border: 1px solid #00838f;
+            border-radius: 6px; padding: 12px; margin: 6px 0;
+        }
+        .item-row .name { font-weight: 600; color: #fff; }
+        .item-row .detail { font-size: 12px; color: #a0a0a0; margin-top: 4px; }
+
+        .loading { text-align: center; padding: 40px; color: #a0a0a0; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🌐 DoraMCU 4X</h1>
+            <div class="subtitle">Explore, Expand, Exploit, Exterminate</div>
+        </div>
+        <a href="younger-hq.html" class="btn-back">← Back to HQ Portal</a>
+    </div>
+
+    <div class="layout">
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Empire</div>
+                <div class="sidebar-item active" onclick="switchView('dashboard')">📊 Dashboard</div>
+                <div class="sidebar-item" onclick="switchView('empires')">🏛️ Empires</div>
+                <div class="sidebar-item" onclick="switchView('sectors')">🗺️ Sectors</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Economy</div>
+                <div class="sidebar-item" onclick="switchView('trade')">💰 Trade</div>
+                <div class="sidebar-item" onclick="switchView('resources')">⚙️ Resources</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Military</div>
+                <div class="sidebar-item" onclick="switchView('fleets')">🚀 Fleets</div>
+                <div class="sidebar-item" onclick="switchView('diplomacy')">🤝 Diplomacy</div>
+            </div>
+        </div>
+
+        <div class="main-content" id="mainContent">
+            <div class="loading">Initializing 4X galaxy...</div>
+        </div>
+    </div>
+
+    <script>
+        const API = '/api/v1/fourx';
+        let currentView = 'dashboard';
+        let empires = [], sectors = [], trade = [], resources = [], fleets = [], diplomacy = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadEmpires();
+            loadSectors();
+            loadTrade();
+            loadResources();
+            loadFleets();
+            loadDiplomacy();
+            switchView('dashboard');
+        });
+
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            event?.target?.classList.add('active');
+            const content = document.getElementById('mainContent');
+            switch(view) {
+                case 'dashboard': renderDashboard(content); break;
+                case 'empires': renderEmpires(content); break;
+                case 'sectors': renderSectors(content); break;
+                case 'trade': renderTrade(content); break;
+                case 'resources': renderResources(content); break;
+                case 'fleets': renderFleets(content); break;
+                case 'diplomacy': renderDiplomacy(content); break;
+            }
+        }
+
+        async function renderDashboard(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🌐 DoraMCU 4X Dashboard</h2>
+                <div class="grid grid-3">
+                    <div class="card">
+                        <h3>🏛️ Empires</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#00acc1;">${empires.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Known empires</div>
+                    </div>
+                    <div class="card">
+                        <h3>🗺️ Sectors</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#00acc1;">${sectors.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Controlled sectors</div>
+                    </div>
+                    <div class="card">
+                        <h3>🚀 Fleets</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#00acc1;">${fleets.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Active fleets</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>⚡ Quick Actions</h3>
+                    <button class="btn" onclick="switchView('empires')">View Empires</button>
+                    <button class="btn" onclick="switchView('sectors')">Explore Sectors</button>
+                    <button class="btn" onclick="switchView('trade')">Trade Routes</button>
+                    <button class="btn" onclick="switchView('diplomacy')">Diplomacy</button>
+                </div>
+            `;
+        }
+
+        function renderEmpires(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🏛️ Empires</h2>
+                <div class="card">
+                    ${empires.map(e => `
+                        <div class="item-row">
+                            <div class="name">${e.name || 'Unknown'}</div>
+                            <div class="detail">${e.race || ''} • ${e.sectors || 0} sectors • ${e.influence || '?'} influence</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No empires loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderSectors(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🗺️ Sectors</h2>
+                <div class="card">
+                    ${sectors.map(s => `
+                        <div class="item-row">
+                            <div class="name">${s.name || 'Unknown'}</div>
+                            <div class="detail">${s.owner || 'Unclaimed'} • ${s.resources || 0} resources • ${s.systems || '?'} systems</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No sectors loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderTrade(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">💰 Trade Routes</h2>
+                <div class="card">
+                    ${trade.map(t => `
+                        <div class="item-row">
+                            <div class="name">${t.name || 'Unknown'}</div>
+                            <div class="detail">${t.from || ''} → ${t.to || ''} • Profit: ${t.profit || '?'} credits</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No trade routes loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderResources(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">⚙️ Resources</h2>
+                <div class="card">
+                    ${resources.map(r => `
+                        <div class="item-row">
+                            <div class="name">${r.name || 'Unknown'}</div>
+                            <div class="detail">${r.type || ''} • Stock: ${r.stock || '?'} • Value: ${r.value || '?'} credits</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No resources loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderFleets(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🚀 Fleets</h2>
+                <div class="card">
+                    ${fleets.map(f => `
+                        <div class="item-row">
+                            <div class="name">${f.name || 'Unknown'}</div>
+                            <div class="detail">${f.empire || ''} • ${f.ships || 0} ships • ${f.location || 'Unknown'}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No fleets loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderDiplomacy(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🤝 Diplomacy</h2>
+                <div class="card">
+                    ${diplomacy.map(d => `
+                        <div class="item-row">
+                            <div class="name">${d.partner || 'Unknown'}</div>
+                            <div class="detail">${d.relation || 'Neutral'} • ${d.treaty || 'None'} • ${d.trust || '?'} trust</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No diplomatic relations loaded</div>'}
+                </div>
+            `;
+        }
+
+        async function loadEmpires() {
+            try { empires = await fetch(`${API}/empires`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load empires:', e); }
+        }
+
+        async function loadSectors() {
+            try { sectors = await fetch(`${API}/sectors`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load sectors:', e); }
+        }
+
+        async function loadTrade() {
+            try { trade = await fetch(`${API}/trade`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load trade:', e); }
+        }
+
+        async function loadResources() {
+            try { resources = await fetch(`${API}/resources`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load resources:', e); }
+        }
+
+        async function loadFleets() {
+            try { fleets = await fetch(`${API}/fleets`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load fleets:', e); }
+        }
+
+        async function loadDiplomacy() {
+            try { diplomacy = await fetch(`${API}/diplomacy`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load diplomacy:', e); }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MechWarrior</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #1a1a0a; color: #e0e0e0; }
+
+        .header {
+            background: linear-gradient(135deg, #e65100 0%, #1a1a0a 100%);
+            padding: 16px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid #ef6c00;
+        }
+        .header h1 { font-size: 24px; color: #fff; }
+        .header .subtitle { font-size: 12px; color: #a0a0a0; margin-top: 2px; }
+        .btn-back {
+            background: #ef6c00; color: #fff; padding: 8px 16px;
+            border-radius: 6px; text-decoration: none; font-size: 14px;
+        }
+        .btn-back:hover { background: #e65100; }
+
+        .layout { display: flex; height: calc(100vh - 70px); }
+        .sidebar {
+            width: 220px; background: #20200e; padding: 16px;
+            overflow-y: auto; border-right: 1px solid #e65100;
+        }
+        .sidebar-section { margin-bottom: 20px; }
+        .sidebar-title {
+            font-size: 11px; text-transform: uppercase; color: #ef6c00;
+            margin-bottom: 8px; font-weight: 600; letter-spacing: 1px;
+        }
+        .sidebar-item {
+            padding: 8px 12px; margin: 2px 0; border-radius: 6px;
+            cursor: pointer; font-size: 14px; transition: all 0.2s;
+        }
+        .sidebar-item:hover { background: #e65100; }
+        .sidebar-item.active { background: #ef6c00; color: #fff; }
+
+        .main-content { flex: 1; padding: 24px; overflow-y: auto; }
+        .card {
+            background: #20200e; border-radius: 8px; padding: 20px;
+            margin-bottom: 16px; border: 1px solid #e65100;
+        }
+        .card h3 { color: #ef6c00; margin-bottom: 12px; font-size: 16px; }
+        .grid { display: grid; gap: 16px; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+        .btn {
+            background: #ef6c00; color: #fff; border: none;
+            padding: 8px 16px; border-radius: 6px; cursor: pointer;
+            font-size: 14px; margin: 4px;
+        }
+        .btn:hover { background: #e65100; }
+
+        .item-row {
+            background: #1a1a0a; border: 1px solid #e65100;
+            border-radius: 6px; padding: 12px; margin: 6px 0;
+        }
+        .item-row .name { font-weight: 600; color: #fff; }
+        .item-row .detail { font-size: 12px; color: #a0a0a0; margin-top: 4px; }
+
+        .loading { text-align: center; padding: 40px; color: #a0a0a0; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🤖 MechWarrior</h1>
+            <div class="subtitle">BattleMechs, Missions & Combat</div>
+        </div>
+        <a href="younger-hq.html" class="btn-back">← Back to HQ Portal</a>
+    </div>
+
+    <div class="layout">
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Mechs</div>
+                <div class="sidebar-item active" onclick="switchView('dashboard')">📊 Dashboard</div>
+                <div class="sidebar-item" onclick="switchView('mechs')">🤖 BattleMechs</div>
+                <div class="sidebar-item" onclick="switchView('loadouts')">🔧 Loadouts</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Combat</div>
+                <div class="sidebar-item" onclick="switchView('missions')">📋 Missions</div>
+                <div class="sidebar-item" onclick="switchView('battles')">⚔️ Battles</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Reference</div>
+                <div class="sidebar-item" onclick="switchView('rules')">📖 Rules</div>
+                <div class="sidebar-item" onclick="switchView('factions')">🏴 Factions</div>
+            </div>
+        </div>
+
+        <div class="main-content" id="mainContent">
+            <div class="loading">Initializing BattleMech systems...</div>
+        </div>
+    </div>
+
+    <script>
+        const API = '/api/v1/mechwarrior';
+        let currentView = 'dashboard';
+        let mechs = [], loadouts = [], missions = [], rules = [], factions = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMechs();
+            loadLoadouts();
+            loadMissions();
+            loadRules();
+            loadFactions();
+            switchView('dashboard');
+        });
+
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            event?.target?.classList.add('active');
+            const content = document.getElementById('mainContent');
+            switch(view) {
+                case 'dashboard': renderDashboard(content); break;
+                case 'mechs': renderMechs(content); break;
+                case 'loadouts': renderLoadouts(content); break;
+                case 'missions': renderMissions(content); break;
+                case 'battles': renderBattles(content); break;
+                case 'rules': renderRules(content); break;
+                case 'factions': renderFactions(content); break;
+            }
+        }
+
+        async function renderDashboard(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🤖 MechWarrior Dashboard</h2>
+                <div class="grid grid-3">
+                    <div class="card">
+                        <h3>🤖 BattleMechs</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#ef6c00;">${mechs.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Registered mechs</div>
+                    </div>
+                    <div class="card">
+                        <h3>🔧 Loadouts</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#ef6c00;">${loadouts.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Configurations</div>
+                    </div>
+                    <div class="card">
+                        <h3>📋 Missions</h3>
+                        <div style="font-size:32px;font-weight:bold;color:#ef6c00;">${missions.length}</div>
+                        <div style="font-size:12px;color:#a0a0a0;">Available missions</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>⚡ Quick Actions</h3>
+                    <button class="btn" onclick="switchView('mechs')">Browse Mechs</button>
+                    <button class="btn" onclick="switchView('missions')">View Missions</button>
+                    <button class="btn" onclick="switchView('battles')">Start Battle</button>
+                    <button class="btn" onclick="switchView('rules')">Read Rules</button>
+                </div>
+            `;
+        }
+
+        function renderMechs(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🤖 BattleMechs</h2>
+                <div class="card">
+                    ${mechs.map(m => `
+                        <div class="item-row">
+                            <div class="name">${m.name || 'Unknown'}</div>
+                            <div class="detail">${m.class || m.type || ''} • ${m.tonnage || '?'} tons • ${m.heat || '?'} heat</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No BattleMechs loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderLoadouts(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🔧 Loadouts</h2>
+                <div class="card">
+                    ${loadouts.map(l => `
+                        <div class="item-row">
+                            <div class="name">${l.name || 'Unknown'}</div>
+                            <div class="detail">${l.mech || ''} • ${l.weapons || 0} weapons • ${l.armor || '?'} armor</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No loadouts loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderMissions(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">📋 Missions</h2>
+                <div class="card">
+                    ${missions.map(m => `
+                        <div class="item-row">
+                            <div class="name">${m.name || 'Unknown'}</div>
+                            <div class="detail">${m.type || ''} • ${m.difficulty || 'Normal'} • ${m.reward || '?'} C-Bills</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No missions loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderBattles(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">⚔️ Battles</h2>
+                <div class="card">
+                    <h3>Battle Simulator</h3>
+                    <p style="color:#a0a0a0;margin-bottom:12px;">Engage enemy BattleMechs in hex-based tactical combat.</p>
+                    <button class="btn" onclick="alert('Battle simulator coming soon!')">Start Battle</button>
+                    <div id="battleLog" style="margin-top:12px;"></div>
+                </div>
+            `;
+        }
+
+        function renderRules(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">📖 Rules</h2>
+                <div class="card">
+                    ${rules.map(r => `
+                        <div class="item-row">
+                            <div class="name">${r.title || 'Unknown'}</div>
+                            <div class="detail">${r.content ? r.content.substring(0, 120) + '...' : ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No rules loaded</div>'}
+                </div>
+            `;
+        }
+
+        function renderFactions(container) {
+            container.innerHTML = `
+                <h2 style="margin-bottom:20px;">🏴 Factions</h2>
+                <div class="card">
+                    ${factions.map(f => `
+                        <div class="item-row">
+                            <div class="name">${f.name || 'Unknown'}</div>
+                            <div class="detail">${f.description || f.capital ? f.capital : ''}</div>
+                        </div>
+                    `).join('') || '<div style="color:#a0a0a0;">No factions loaded</div>'}
+                </div>
+            `;
+        }
+
+        async function loadMechs() {
+            try { mechs = await fetch(`${API}/mechs`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load mechs:', e); }
+        }
+
+        async function loadLoadouts() {
+            try { loadouts = await fetch(`${API}/loadouts`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load loadouts:', e); }
+        }
+
+        async function loadMissions() {
+            try { missions = await fetch(`${API}/missions`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load missions:', e); }
+        }
+
+        async function loadRules() {
+            try { rules = await fetch(`${API}/rules`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load rules:', e); }
+        }
+
+        async function loadFactions() {
+            try { factions = await fetch(`${API}/factions`).then(r => r.json()); }
+            catch (e) { console.error('Failed to load factions:', e); }
+        }
+    </script>
+</body>
+</html>
