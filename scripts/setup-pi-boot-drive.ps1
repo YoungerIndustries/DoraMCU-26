@@ -560,7 +560,18 @@ function Copy-ToDrive {
         Write-Step "Systemd service not found: ${serviceFile}" "WARN"
     }
 
-    # 4. Copy DoraMCU project files (docker-compose files and Dockerfiles)
+    # 4. Copy test runner script
+    Write-Step "Copying test runner script..."
+    $testScript = Join-Path $PSScriptRoot "pi-test-runner.sh"
+    if (Test-Path $testScript) {
+        Copy-Item -Path $testScript -Destination "$BootPath\pi-test-runner.sh" -Force
+        Write-Step "Test runner script copied" "OK"
+    }
+    else {
+        Write-Step "Test runner script not found: ${testScript}" "WARN"
+    }
+
+    # 5. Copy DoraMCU project files (docker-compose files and Dockerfiles)
     Write-Step "Copying DoraMCU project files..."
     $projectFiles = @(
         "docker-compose.yml",
@@ -600,7 +611,7 @@ function Copy-ToDrive {
 
     Write-Step "Project files copied to: ${doramcuDir}" "OK"
 
-    # 5. Create .env file template
+    # 6. Create .env file template
     Write-Step "Creating .env file template..."
     $envFile = @"
 # DoraMCU Environment Variables
