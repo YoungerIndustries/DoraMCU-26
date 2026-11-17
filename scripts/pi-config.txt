@@ -1,0 +1,111 @@
+# =============================================================================
+# DoraMCU Raspberry Pi OS Configuration Template
+# =============================================================================
+#
+# This file contains the recommended configuration settings for running
+# DoraMCU as a dedicated game server on Raspberry Pi 4/5.
+#
+# These settings are applied by setup-pi-boot-drive.ps1 to the boot partition's
+# config.txt file. You can also apply them manually.
+#
+# Location: /boot/firmware/config.txt (or /boot/config.txt on older Pi OS)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Memory Configuration
+# -----------------------------------------------------------------------------
+
+# Reduce GPU memory to 16MB to maximize RAM for Docker containers
+# Default is 128MB or 256MB; we don't need GPU for headless server
+gpu_mem=16
+
+# -----------------------------------------------------------------------------
+# Swap Configuration
+# -----------------------------------------------------------------------------
+
+# Swap size is configured in /etc/dphys-swapfile, not here.
+# The first-boot script sets CONF_SWAPSIZE=2048 (2GB) for Docker operations.
+#
+# Manual configuration:
+#   sudo sed -i 's/CONF_SWAPSIZE=.*/CONF_SWAPSIZE=2048/' /etc/dphys-swapfile
+#   sudo systemctl restart dphys-swapfile
+
+# -----------------------------------------------------------------------------
+# UART / Serial Console
+# -----------------------------------------------------------------------------
+
+# Enable UART for serial console access (useful for headless debugging)
+enable_uart=1
+
+# -----------------------------------------------------------------------------
+# USB Boot Mode
+# -----------------------------------------------------------------------------
+
+# USB boot is enabled by default on Pi 4/5 with updated firmware.
+# If your Pi doesn't boot from USB, update the bootloader:
+#
+#   1. Boot from SD card first
+#   2. Run: sudo rpi-eeprom-update -a
+#   3. Reboot
+#   4. Check: sudo rpi-eeprom-update -d -f /lib/firmware/rpi-eeprom/internals.db
+#
+# For Pi 4, you may also need to set boot_order in config.txt:
+# boot_order=0x2 (USB only)
+# boot_order=0xf (SD → USB → network → retry)
+# boot_order=0x1 (USB only, no fallback)
+
+# -----------------------------------------------------------------------------
+# Overclock Settings (Optional - Commented Out)
+# -----------------------------------------------------------------------------
+
+# WARNING: Overclocking may void warranty and reduce hardware lifespan.
+# Only enable if you have proper cooling (heatsink + fan).
+# Monitor temperature: vcgencmd measure_temp
+
+# Raspberry Pi 4 Overclock (Moderate)
+# arm_freq=2000
+# gpu_freq=500
+# h264_freq=500
+# isp_freq=500
+# v3d_freq=500
+# over_voltage=2
+# under_voltage_frequency=0
+
+# Raspberry Pi 5 Overclock (Moderate)
+# arm_freq=2400
+# over_voltage=2
+# under_voltage_frequency=0
+
+# -----------------------------------------------------------------------------
+# Power Management
+# -----------------------------------------------------------------------------
+
+# Avoid USB device disconnection due to power saving
+# usb_max_current_enable=1
+
+# -----------------------------------------------------------------------------
+# Display (Disabled for Headless Server)
+# -----------------------------------------------------------------------------
+
+# Disable HDMI output to save power (headless server)
+# hdmi_blanking=1
+
+# Force HDMI hotplug detect (if using HDMI for monitoring)
+# hdmi_force_hotplug=1
+
+# -----------------------------------------------------------------------------
+# Advanced Settings
+# -----------------------------------------------------------------------------
+
+# Disable WiFi power saving (important for stable network connection)
+# Add to /etc/network/interfaces or wpa_supplicant.conf:
+#   wifi-power-save off
+
+# Increase file descriptor limit for Docker
+# Add to /etc/security/limits.conf:
+#   * soft nofile 65536
+#   * hard nofile 65536
+
+# Increase inotify watches for Docker monitoring
+# Add to /etc/sysctl.conf:
+#   fs.inotify.max_user_watches=524288
