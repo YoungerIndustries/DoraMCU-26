@@ -93,9 +93,9 @@ Committed (e0f7fc4) and pushed to Lapis111426. 10 files changed (1192 insertions
 ### ✓ Step 7: Merge Lapis111426 into master and push to origin
 All 37 commits from Lapis111426 merged into local master via fast-forward, then pushed to origin/master. The AI admin 3D visibility feature along with all other features (SFB combat, DL4j fixes, tests, etc.) are now on the master branch.
 
-## Phase 4: Seed Remaining AI Admin Positions — In Progress
+## Phase 4: Seed Remaining AI Admin Positions — Complete ✓
 
-V105 migration seeds 22 Younger Industries office managers and positions 5 entity-linked AI characters.
+V105 migration seeds 22 Younger Industries office managers and positions 5 entity-linked AI characters. Committed and pushed to master.
 
 ### ✓ Step 8: Create V105 migration for remaining AI admin positions
 Created V105__seed_remaining_ai_admin_positions.sql with 22 office managers (IDs 35-56) and 5 entity-linked AI characters (IDs 2001-2005) positioned in 3D space.
@@ -142,3 +142,25 @@ Real-time dashboard for monitoring AI admin workload, dispatch status, 3D positi
 **dora-web/clients/desktop/index.html:**
 - Added "🤖 AI Admin Dashboard" sidebar nav item
 - Added iframe section panel loading the standalone dashboard page
+
+### ✓ Step 11: Commit and push admin dashboard to master
+Committed (9b0c894) and pushed to origin/master. 8 files changed (1534 insertions, 9 deletions). The admin activity dashboard is now on the master branch, accessible as a standalone page and via the desktop client sidebar navigation.
+
+## Phase 6: Frontend 3D Rendering in Unity — In Progress
+
+Make AI admin characters visible as 3D entities in the Unity client in both galaxy view and planet surface view.
+
+### ✓ Step 12: Add AiAdminData and NetworkManager API client
+Created AiAdminData.cs and updated NetworkManager.cs with API client for fetching AI admin positions.
+
+### ✓ Step 13: Create AiAdminRenderer for galaxy view
+Created AiAdminRenderer.cs with color-coded markers, labels, and position updates.
+
+### ✓ Step 14: Extend PlanetSurfaceRenderer for AI admins
+Added CreateAiAdminMarkers, ClearAiAdmins, and color coding to PlanetSurfaceRenderer.
+
+### ✓ Step 15: Add click interaction and tooltip UI
+Created AiAdminTooltip.cs and updated AiAdminRenderer with click detection and admin data map.
+
+### * Step 16: Commit and push Unity client changes to master
+In progress — committing Unity AI admin 3D rendering files.

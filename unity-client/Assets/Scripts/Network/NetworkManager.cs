@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using DoraMCU.Client.Core;
 using UnityEngine.Networking;
 
 namespace DoraMCU.Client.Network
@@ -32,6 +33,13 @@ namespace DoraMCU.Client.Network
         public event Action<string, GameState> OnStateSync;
         public event Action<string, Dictionary<string, object>> OnEvent;
         public event Action<string> OnError;
+        public event Action<List<AiAdminData>> OnAiAdminsFetched;
+
+        // AI Admin polling
+        [Header("AI Admin Configuration")]
+        [SerializeField] private float aiAdminPollInterval = 30f;
+        private Coroutine aiAdminPollCoroutine;
+        private string currentGalaxyName;
 
         public string SessionId => sessionId;
         public string PlayerId => playerId;
@@ -52,6 +60,98 @@ namespace DoraMCU.Client.Network
         void OnDestroy()
         {
             Disconnect();
+            StopAiAdminPolling();
+        }
+
+        /// <summary>
+        /// Set the current galaxy name for AI admin queries.
+        /// </summary>
+        public void SetCurrentGalaxy(string galaxyName)
+        {
+            currentGalaxyName = galaxyName;
+        }
+
+        /// <summary>
+        /// Start polling for AI admin positions.
+        /// </summary>
+        public void StartAiAdminPolling()
+        {
+            if (aiAdminPollCoroutine != null || string.IsNullOrEmpty(currentGalaxyName)) return;
+            aiAdminPollCoroutine = StartCoroutine(PollAiAdminsCoroutine());
+        }
+
+        /// <summary>
+        /// Stop polling for AI admin positions.
+        /// </summary>
+        public void StopAiAdminPolling()
+        {
+            if (aiAdminPollCoroutine != null)
+            {
+                StopCoroutine(aiAdminPollCoroutine);
+                aiAdminPollCoroutine = null;
+            }
+        }
+
+        /// <summary>
+        /// Polling coroutine that fetches AI admin positions at regular intervals.
+        /// </summary>
+        private IEnumerator PollAiAdminsCoroutine()
+        {
+            while (isConnected && !string.IsNullOrEmpty(currentGalaxyName))
+            {
+                FetchAiAdminsForGalaxy(currentGalaxyName, (admins) =>
+                {
+                    OnAiAdminsFetched?.Invoke(admins);
+                });
+                yield return new WaitForSeconds(aiAdminPollInterval);
+            }
+        }
+
+        /// <summary>
+        /// Fetch AI admin positions for a specific galaxy.
+        /// </summary>
+        public void FetchAiAdminsForGalaxy(string galaxyName, Action<List<AiAdminData>> callback)
+        {
+            StartCoroutine(FetchAiAdminsCoroutine(galaxyName, callback));
+        }
+
+        /// <summary>
+        /// Coroutine to fetch AI admin positions from the server.
+        /// </summary>
+        private IEnumerator FetchAiAdminsCoroutine(string galaxyName, Action<List<AiAdminData>> callback)
+        {
+            string url = $"{serverUrl}/api/v1/galaxy-3d/galaxy/{Uri.EscapeDataString(galaxyName)}/ai-admins";
+            using (var request = UnityWebRequest.Get(url))
+            {
+                yield return request.SendWebRequest();
+
+                if (request.result == UnityWebRequest.Result.Success)
+                {
+                    var response = JsonUtility.FromJson<AiAdminResponse>(request.downloadHandler.text);
+                    if (response != null && response.admins != null)
+                    {
+                        callback?.Invoke(response.admins);
+                    }
+                    else
+                    {
+                        callback?.Invoke(new List<AiAdminData>());
+                    }
+                }
+                else
+                {
+                    Debug.LogError($"Fetch AI admins failed: {request.error}");
+                    callback?.Invoke(new List<AiAdminData>());
+                }
+            }
+        }
+
+        /// <summary>
+        /// Response wrapper for AI admin API.
+        /// </summary>
+        [Serializable]
+        public class AiAdminResponse
+        {
+            public AiAdminData[] admins;
         }
 
         /// <summary>

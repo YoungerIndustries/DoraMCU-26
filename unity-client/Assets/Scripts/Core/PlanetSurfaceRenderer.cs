@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using DoraMCU.Client.Core;
 
 namespace DoraMCU.Rendering
 {
@@ -27,6 +29,7 @@ namespace DoraMCU.Rendering
         private GameObject planetMesh;
         private GameObject atmosphere;
         private GameObject citiesContainer;
+        private GameObject aiAdminsContainer;
 
         /// <summary>
         /// Renders a planet surface with terrain and atmosphere.
@@ -50,6 +53,95 @@ namespace DoraMCU.Rendering
             }
 
             Debug.Log($"[PlanetSurfaceRenderer] Rendered planet: {data.name}");
+        }
+
+        /// <summary>
+        /// Creates AI admin markers on the planet surface.
+        /// </summary>
+        public void CreateAiAdminMarkers(List<AiAdminData> admins)
+        {
+            if (admins == null || admins.Count == 0) return;
+
+            ClearAiAdmins();
+
+            aiAdminsContainer = new GameObject("AiAdmins");
+            aiAdminsContainer.transform.SetParent(transform);
+
+            foreach (var admin in admins)
+            {
+                if (!admin.hasPosition) continue;
+
+                var adminGo = new GameObject($"AiAdmin_{admin.id}_{admin.name}");
+                adminGo.transform.SetParent(aiAdminsContainer.transform);
+
+                // AI admin marker (small capsule)
+                var capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                capsule.transform.SetParent(adminGo.transform);
+                capsule.transform.localPosition = Vector3.zero;
+                capsule.transform.localScale = new Vector3(0.05f, 0.1f, 0.05f);
+
+                // Color based on role
+                var renderer = capsule.GetComponent<Renderer>();
+                var mat = new Material(Shader.Find("Standard"));
+                mat.color = GetAiAdminColor(admin);
+                mat.EnableKeyword("_EMISSION");
+                mat.SetColor("_EmissionColor", GetAiAdminColor(admin) * 0.5f);
+                renderer.material = mat;
+
+                // Position on planet surface using the admin's coordinates
+                // Map posX/posZ to latitude/longitude for planet surface placement
+                float lat = Mathf.Clamp((admin.posZ / 10f) * 90f, -90f, 90f);
+                float lon = Mathf.Clamp((admin.posX / 10f) * 180f, -180f, 180f);
+                Vector3 pos = LatitudeLongitudeToVector3(lat, lon, planetRadius * 1.02f);
+                adminGo.transform.position = pos;
+                adminGo.transform.rotation = Quaternion.LookRotation(pos);
+
+                // Add a label
+                try
+                {
+                    var labelGo = new GameObject("Label");
+                    labelGo.transform.SetParent(adminGo.transform);
+                    labelGo.transform.localPosition = new Vector3(0, 0.15f, 0);
+
+                    var textMesh = labelGo.AddComponent<TextMesh>();
+                    textMesh.text = $"{admin.name}\n({admin.role})";
+                    textMesh.fontSize = 10;
+                    textMesh.anchor = TextAnchor.MiddleCenter;
+                    textMesh.alignment = TextAlignment.Center;
+                    textMesh.characterSize = 0.03f;
+                    textMesh.color = Color.white;
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogWarning($"Could not create label for {admin.name}: {e.Message}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get the color for an AI admin based on their role.
+        /// </summary>
+        private Color GetAiAdminColor(AiAdminData admin)
+        {
+            if (admin.isGalaxyOverseer) return new Color(1f, 0.84f, 0f, 1f); // Gold
+
+            var role = admin.role?.ToLower() ?? "";
+            if (role.Contains("leader")) return new Color(0.25f, 0.41f, 0.88f, 1f); // Blue
+            if (role.Contains("governor")) return new Color(0.2f, 0.8f, 0.2f, 1f); // Green
+            if (role.Contains("manager")) return new Color(1f, 1f, 0f, 1f); // Yellow
+            if (admin.characterType != null && admin.characterType.Contains("ENTITY"))
+                return new Color(0.5f, 0.2f, 0.8f, 1f); // Purple
+
+            return new Color(0.7f, 0.7f, 0.7f, 1f); // Gray
+        }
+
+        /// <summary>
+        /// Clear AI admin markers.
+        /// </summary>
+        public void ClearAiAdmins()
+        {
+            if (aiAdminsContainer != null) Destroy(aiAdminsContainer);
+            aiAdminsContainer = null;
         }
 
         /// <summary>
@@ -196,6 +288,7 @@ namespace DoraMCU.Rendering
             if (planetMesh != null) Destroy(planetMesh);
             if (atmosphere != null) Destroy(atmosphere);
             if (citiesContainer != null) Destroy(citiesContainer);
+            ClearAiAdmins();
 
             planetMesh = null;
             atmosphere = null;
