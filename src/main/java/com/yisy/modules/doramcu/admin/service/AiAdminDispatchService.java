@@ -72,9 +72,12 @@ public class AiAdminDispatchService {
     private final AiCharacterRepository aiCharacterRepository;
     private final GalaxyRepository galaxyRepository;
     private final TestExecutor testExecutor;
+    private final TestRegistry testRegistry;
     private final TestReportGenerator testReportGenerator;
     private final AiAdminNotificationService notificationService;
     private final AiAdminLlmService llmService;
+    private final AiAdminOrderProgressService progressService;
+    private final AiAdminProductionService productionService;
     private final PresenceWebSocketHandler presenceWebSocketHandler;
     private final ThreadPoolTaskExecutor dispatchExecutor;
 
@@ -85,17 +88,23 @@ public class AiAdminDispatchService {
                                      AiCharacterRepository aiCharacterRepository,
                                      GalaxyRepository galaxyRepository,
                                      TestExecutor testExecutor,
+                                     TestRegistry testRegistry,
                                      TestReportGenerator testReportGenerator,
                                      AiAdminNotificationService notificationService,
                                      AiAdminLlmService llmService,
+                                     AiAdminOrderProgressService progressService,
+                                     AiAdminProductionService productionService,
                                      PresenceWebSocketHandler presenceWebSocketHandler) {
         this.orderRepository = orderRepository;
         this.aiCharacterRepository = aiCharacterRepository;
         this.galaxyRepository = galaxyRepository;
         this.testExecutor = testExecutor;
+        this.testRegistry = testRegistry;
         this.testReportGenerator = testReportGenerator;
         this.notificationService = notificationService;
         this.llmService = llmService;
+        this.progressService = progressService;
+        this.productionService = productionService;
         this.presenceWebSocketHandler = presenceWebSocketHandler;
 
         this.dispatchExecutor = new ThreadPoolTaskExecutor();
@@ -383,19 +392,87 @@ public class AiAdminDispatchService {
             try {
                 log.info("AI admin '{}' executing order {}...", admin.getName(), order.getId());
 
-                // Determine execution path: test categories vs LLM analysis
+                // Determine execution path: production order, test categories, or LLM analysis
                 List<AiAdminTestCase> testCases;
                 AiAdminTestReport report;
 
+                // Path 1: Production order — execute build contract
+                if (order.isProductionOrder()) {
+                    log.info("AI admin '{}' executing production order {} (build contract {})",
+                            admin.getName(), order.getId(), order.getBuildContractId());
+
+                    // Assign and start the build contract
+                    productionService.assignAndStartContract(admin, order);
+
+                    // Simulate contract execution progress
+                    int estimatedTurns = order.getTestsTotal() != null ? order.getTestsTotal() : 1;
+                    for (int turn = 1; turn <= estimatedTurns; turn++) {
+                        int progress = (int) Math.round((turn / (double) estimatedTurns) * 100);
+                        productionService.updateContractAndOrderProgress(order, progress);
+                        progressService.updateProgress(order.getId(),
+                                "Turn " + turn + "/" + estimatedTurns + ": " + progress + "%",
+                                turn, estimatedTurns);
+                    }
+
+                    // Complete the build contract
+                    productionService.completeContract(admin, order);
+
+                    // Mark order as completed
+                    order.setStatus(OrderStatus.COMPLETED);
+                    order.setCompletedAt(LocalDateTime.now());
+                    orderRepository.save(order);
+
+                    // Update AI admin's workload
+                    completeOrderForAdmin(admin, order, null);
+
+                    // Notify the AI admin about the completion
+                    try {
+                        notificationService.notifyOrderCompleted(admin, order, null);
+                    } catch (Exception e) {
+                        log.warn("Failed to send completion notification for order {}: {}",
+                                order.getId(), e.getMessage());
+                    }
+
+                    log.info("Production order {} completed by AI admin '{}': build contract {} finished",
+                            order.getId(), admin.getName(), order.getBuildContractId());
+
+                    executingOrderToAdminId.remove(order.getId());
+                    return;
+                }
+
+                // Path 2: Test category order — run predefined tests
                 if (isTestOrder(order.getOrderText())) {
                     // Test category order: run predefined tests
                     List<String> categories = parseOrderCategories(order.getOrderText());
+                    
+                    // Create progress callback for this order
+                    Long orderId = order.getId();
+                    OrderProgressCallback progressCallback = new OrderProgressCallback() {
+                        @Override
+                        public void onTestStarted(String testName) {
+                            progressService.setCurrentTest(orderId, testName);
+                        }
+
+                        @Override
+                        public void onProgressUpdate(int testsCompleted, int testsTotal) {
+                            progressService.updateProgress(orderId, null, testsCompleted, testsTotal);
+                        }
+                    };
+                    
                     if (categories.isEmpty()) {
-                        testCases = testExecutor.runAllTests();
+                        testCases = testExecutor.runAllTests(progressCallback);
                     } else {
                         List<AiAdminTestCase> allResults = new ArrayList<>();
+                        int totalCount = 0;
                         for (String category : categories) {
-                            allResults.addAll(testExecutor.runTestsByCategory(category));
+                            totalCount += testRegistry.getTestsByCategory(category).size();
+                        }
+                        order.setTestsTotal(totalCount);
+                        orderRepository.save(order);
+                        
+                        for (String category : categories) {
+                            List<AiAdminTestCase> categoryResults = testExecutor.runTestsByCategory(category, progressCallback);
+                            allResults.addAll(categoryResults);
                         }
                         testCases = allResults;
                     }
@@ -403,10 +480,20 @@ public class AiAdminDispatchService {
                 } else {
                     // Natural language order: use LLM for analysis
                     log.info("AI admin '{}' using LLM to analyze order {}", admin.getName(), order.getId());
+
+                    // Set progress for LLM orders
+                    order.setTestsTotal(1);
+                    order.setTestsCompleted(0);
+                    order.setProgressPercent(0);
+                    order.setCurrentTestName("LLM Analysis");
+                    orderRepository.save(order);
+
                     AiAdminLlmService.LlmAnalysisResult llmResult = llmService.analyzeOrder(admin, order);
 
                     // Store LLM response for auditability
                     order.setLlmResponse(llmResult.getRawResponse());
+                    order.setTestsCompleted(1);
+                    order.setProgressPercent(100);
                     orderRepository.save(order);
 
                     // Generate a test report from LLM results

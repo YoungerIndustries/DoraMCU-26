@@ -31,6 +31,12 @@ public class AiAdminOrderRequest {
      */
     private Double targetPosZ;
 
+    /**
+     * Build contract ID to execute instead of running tests (optional).
+     * When set, the AI admin will execute the build contract as a production task.
+     */
+    private Long buildContractId;
+
     public AiAdminOrderRequest() {
     }
 
@@ -76,5 +82,13 @@ public class AiAdminOrderRequest {
 
     public void setTargetPosZ(Double targetPosZ) {
         this.targetPosZ = targetPosZ;
+    }
+
+    public Long getBuildContractId() {
+        return buildContractId;
+    }
+
+    public void setBuildContractId(Long buildContractId) {
+        this.buildContractId = buildContractId;
     }
 }

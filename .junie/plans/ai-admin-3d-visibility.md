@@ -164,3 +164,22 @@ Created AiAdminTooltip.cs and updated AiAdminRenderer with click detection and a
 
 ### ✓ Step 16: Commit and push Unity client changes to master
 Committed (58c8d1d) and pushed to origin/master. 6 files changed (697 insertions, 3 deletions). The Unity 3D rendering for AI admin characters is now on the master branch, including galaxy view markers, planet surface markers, click tooltips, and API polling.
+
+## Phase 7: AI Admin × Economic Production Integration — Pending
+
+Bridge AI admin work orders to build contracts so AI admins can execute economic production tasks (mining, processing, assembly, construction, repair).
+
+### ✓ Step 17: Add buildContractId to AiAdminOrder (V106 migration)
+Created V106 migration, added buildContractId field to AiAdminOrder, updated AiAdminOrderRequest DTO, and AiAdminService.submitOrder() overload.
+
+### ✓ Step 18: Create AiAdminProductionService
+Created AiAdminProductionService with assignAndStartContract, updateContractProgress, completeContract, and failContract methods.
+
+### ✓ Step 19: Integrate production execution into AiAdminDispatchService
+Injected AiAdminProductionService, added production execution path in executeOrderAsync.
+
+### ✓ Step 20: Add production order submission API endpoint
+Updated AiAdminController.submitOrder() to pass buildContractId, added orderType and buildContractId to the response and orderToMap helper.
+
+### * Step 21: Commit and push economic production integration to master
+In progress

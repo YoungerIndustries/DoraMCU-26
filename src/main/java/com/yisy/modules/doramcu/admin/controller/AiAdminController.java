@@ -12,6 +12,7 @@ import com.yisy.modules.doramcu.admin.repository.AiAdminTestCaseRepository;
 import com.yisy.modules.doramcu.admin.service.AiAdminDispatchService;
 import com.yisy.modules.doramcu.admin.service.AiAdminLlmService;
 import com.yisy.modules.doramcu.admin.service.AiAdminNotificationService;
+import com.yisy.modules.doramcu.admin.service.AiAdminOrderProgressService;
 import com.yisy.modules.doramcu.admin.service.AiAdminService;
 import com.yisy.modules.doramcu.admin.service.TestRegistry;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
@@ -57,6 +58,7 @@ public class AiAdminController {
     private final AiCharacterRepository aiCharacterRepository;
     private final AiAdminLlmService llmService;
     private final AiAdminVisibilityService visibilityService;
+    private final AiAdminOrderProgressService progressService;
 
     public AiAdminController(AiAdminService aiAdminService,
                              AiAdminDispatchService aiAdminDispatchService,
@@ -67,7 +69,8 @@ public class AiAdminController {
                              TestRegistry testRegistry,
                              AiCharacterRepository aiCharacterRepository,
                              AiAdminLlmService llmService,
-                             AiAdminVisibilityService visibilityService) {
+                             AiAdminVisibilityService visibilityService,
+                             AiAdminOrderProgressService progressService) {
         this.aiAdminService = aiAdminService;
         this.aiAdminDispatchService = aiAdminDispatchService;
         this.notificationService = notificationService;
@@ -78,6 +81,7 @@ public class AiAdminController {
         this.aiCharacterRepository = aiCharacterRepository;
         this.llmService = llmService;
         this.visibilityService = visibilityService;
+        this.progressService = progressService;
     }
 
     /**
@@ -100,7 +104,8 @@ public class AiAdminController {
         String username = authentication.getName();
         AiAdminOrder order = aiAdminService.submitOrder(username, orderText,
                 request.getTargetGalaxy(), request.getTargetPosX(),
-                request.getTargetPosY(), request.getTargetPosZ());
+                request.getTargetPosY(), request.getTargetPosZ(),
+                request.getBuildContractId());
 
         Map<String, Object> result = new HashMap<>();
         result.put("id", order.getId());
@@ -113,8 +118,13 @@ public class AiAdminController {
             result.put("targetPosY", order.getTargetPosY());
             result.put("targetPosZ", order.getTargetPosZ());
         }
+        if (order.isProductionOrder()) {
+            result.put("buildContractId", order.getBuildContractId());
+            result.put("orderType", "production");
+        }
 
-        log.info("Order {} submitted by {}", order.getId(), username);
+        log.info("Order {} submitted by {} (type: {})", order.getId(), username,
+                order.isProductionOrder() ? "production" : "test");
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
@@ -259,6 +269,20 @@ public class AiAdminController {
         map.put("assignedAiAdminId", order.getAssignedAiAdminId());
         map.put("createdAt", order.getCreatedAt());
         map.put("completedAt", order.getCompletedAt());
+        map.put("progressPercent", order.getProgressPercent());
+        map.put("currentTestName", order.getCurrentTestName());
+        if (order.hasTargetLocation()) {
+            map.put("targetGalaxy", order.getTargetGalaxy());
+            map.put("targetPosX", order.getTargetPosX());
+            map.put("targetPosY", order.getTargetPosY());
+            map.put("targetPosZ", order.getTargetPosZ());
+        }
+        if (order.isProductionOrder()) {
+            map.put("buildContractId", order.getBuildContractId());
+            map.put("orderType", "production");
+        } else {
+            map.put("orderType", "test");
+        }
         return map;
     }
 
@@ -736,6 +760,31 @@ public class AiAdminController {
         map.put("runningOrders", summary.getRunningOrders());
         map.put("executingOrders", summary.getExecutingOrders());
         return map;
+    }
+
+    // ------------------------------------------------------------------
+    // Progress Endpoints
+    // ------------------------------------------------------------------
+
+    /**
+     * Get the current progress for a specific order.
+     */
+    @GetMapping("/orders/{id}/progress")
+    public ResponseEntity<?> getOrderProgress(@PathVariable Long id) {
+        Optional<AiAdminOrderProgressService.OrderProgress> progress = progressService.getOrderProgress(id);
+        if (progress.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found");
+        }
+        return ResponseEntity.ok(progress.get());
+    }
+
+    /**
+     * Get progress for all running orders.
+     */
+    @GetMapping("/orders/progress")
+    public ResponseEntity<List<AiAdminOrderProgressService.OrderProgress>> getRunningOrdersProgress() {
+        List<AiAdminOrderProgressService.OrderProgress> progressList = progressService.getRunningOrdersProgress();
+        return ResponseEntity.ok(progressList);
     }
 
     // ------------------------------------------------------------------

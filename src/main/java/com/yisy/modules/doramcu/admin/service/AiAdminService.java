@@ -90,13 +90,37 @@ public class AiAdminService {
     @Transactional
     public AiAdminOrder submitOrder(String submittedBy, String orderText,
                                      String targetGalaxy, Double targetPosX, Double targetPosY, Double targetPosZ) {
+        return submitOrder(submittedBy, orderText, targetGalaxy, targetPosX, targetPosY, targetPosZ, null);
+    }
+
+    /**
+     * Submits a new production order linked to a build contract.
+     * The AI admin assigned to this order will execute the build contract instead of running tests.
+     *
+     * @param submittedBy the admin username
+     * @param orderText the natural language order description
+     * @param targetGalaxy target galaxy (optional)
+     * @param targetPosX target X coordinate (optional)
+     * @param targetPosY target Y coordinate (optional)
+     * @param targetPosZ target Z coordinate (optional)
+     * @param buildContractId build contract ID to execute (optional)
+     * @return the saved order with PENDING status
+     */
+    @Transactional
+    public AiAdminOrder submitOrder(String submittedBy, String orderText,
+                                     String targetGalaxy, Double targetPosX, Double targetPosY, Double targetPosZ,
+                                     Long buildContractId) {
         AiAdminOrder order = new AiAdminOrder(submittedBy, orderText);
         order.setTargetGalaxy(targetGalaxy);
         order.setTargetPosX(targetPosX);
         order.setTargetPosY(targetPosY);
         order.setTargetPosZ(targetPosZ);
+        order.setBuildContractId(buildContractId);
         order = orderRepository.save(order);
-        if (order.hasTargetLocation()) {
+        if (buildContractId != null) {
+            log.info("Submitted production order {} by {}: {} -> build contract {} (target: {}, {}, {} in {})",
+                    order.getId(), submittedBy, orderText, buildContractId, targetPosX, targetPosY, targetPosZ, targetGalaxy);
+        } else if (order.hasTargetLocation()) {
             log.info("Submitted order {} by {}: {} -> target ({}, {}, {}) in {}",
                     order.getId(), submittedBy, orderText, targetPosX, targetPosY, targetPosZ, targetGalaxy);
         } else {
@@ -300,5 +324,13 @@ public class AiAdminService {
     @Transactional(readOnly = true)
     public List<AiAdminOrder> getOrdersByPrefixAndStatus(String prefix, AiAdminOrder.OrderStatus status) {
         return orderRepository.findBySubmittedByContainingAndStatus(prefix, status);
+    }
+
+    /**
+     * Saves an existing order (used by LLM retry to update the LLM response).
+     */
+    @Transactional
+    public AiAdminOrder saveOrder(AiAdminOrder order) {
+        return orderRepository.save(order);
     }
 }

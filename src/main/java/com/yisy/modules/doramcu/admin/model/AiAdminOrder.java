@@ -97,6 +97,13 @@ public class AiAdminOrder {
     private Double targetPosZ;
 
     /**
+     * ID of the build contract this order is executing.
+     * When set, the AI admin will execute the build contract instead of running tests.
+     */
+    @Column(name = "build_contract_id")
+    private Long buildContractId;
+
+    /**
      * Current status of the order.
      */
     @Enumerated(EnumType.STRING)
@@ -114,6 +121,30 @@ public class AiAdminOrder {
      */
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
+
+    /**
+     * Progress percentage (0-100) for tracking order execution progress.
+     */
+    @Column(name = "progress_percent")
+    private Integer progressPercent = 0;
+
+    /**
+     * Name of the currently executing test, for real-time progress display.
+     */
+    @Column(name = "current_test_name", length = 200)
+    private String currentTestName;
+
+    /**
+     * Number of tests completed so far.
+     */
+    @Column(name = "tests_completed")
+    private Integer testsCompleted = 0;
+
+    /**
+     * Total number of tests to run.
+     */
+    @Column(name = "tests_total")
+    private Integer testsTotal = 0;
 
     @PrePersist
     void onCreate() {
@@ -245,5 +276,52 @@ public class AiAdminOrder {
      */
     public boolean hasTargetLocation() {
         return targetPosX != null && targetPosY != null && targetPosZ != null;
+    }
+
+    public Integer getProgressPercent() {
+        return progressPercent;
+    }
+
+    public void setProgressPercent(Integer progressPercent) {
+        this.progressPercent = progressPercent;
+    }
+
+    public String getCurrentTestName() {
+        return currentTestName;
+    }
+
+    public void setCurrentTestName(String currentTestName) {
+        this.currentTestName = currentTestName;
+    }
+
+    public Integer getTestsCompleted() {
+        return testsCompleted;
+    }
+
+    public void setTestsCompleted(Integer testsCompleted) {
+        this.testsCompleted = testsCompleted;
+    }
+
+    public Integer getTestsTotal() {
+        return testsTotal;
+    }
+
+    public void setTestsTotal(Integer testsTotal) {
+        this.testsTotal = testsTotal;
+    }
+
+    public Long getBuildContractId() {
+        return buildContractId;
+    }
+
+    public void setBuildContractId(Long buildContractId) {
+        this.buildContractId = buildContractId;
+    }
+
+    /**
+     * Check if this order is a production order (linked to a build contract).
+     */
+    public boolean isProductionOrder() {
+        return buildContractId != null;
     }
 }
