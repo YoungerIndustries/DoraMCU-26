@@ -6,11 +6,15 @@ import com.yisy.modules.doramcu.admin.dto.AiAdminReportDto.AiAdminTestCaseDto;
 import com.yisy.modules.doramcu.admin.model.AiAdminNotification;
 import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
 import com.yisy.modules.doramcu.admin.model.AiAdminQuest;
+import com.yisy.modules.doramcu.admin.model.AiAdminQuestStep;
 import com.yisy.modules.doramcu.admin.model.AiAdminTestCase;
 import com.yisy.modules.doramcu.admin.model.AiAdminTestReport;
 import com.yisy.modules.doramcu.admin.model.TestDefinition;
 import com.yisy.modules.doramcu.admin.repository.AiAdminTestCaseRepository;
+import com.yisy.modules.doramcu.admin.model.AiAdminIncident;
 import com.yisy.modules.doramcu.admin.service.AiAdminAnalyticsService;
+import com.yisy.modules.doramcu.admin.service.AiAdminDashboardService;
+import com.yisy.modules.doramcu.admin.service.AiAdminIncidentService;
 import com.yisy.modules.doramcu.admin.service.AiAdminDispatchService;
 import com.yisy.modules.doramcu.admin.service.AiAdminInteractionService;
 import com.yisy.modules.doramcu.admin.service.AiAdminLlmService;
@@ -35,6 +39,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +69,8 @@ public class AiAdminController {
     private final AiAdminOrderProgressService progressService;
     private final AiAdminInteractionService interactionService;
     private final AiAdminAnalyticsService analyticsService;
+    private final AiAdminDashboardService dashboardService;
+    private final AiAdminIncidentService incidentService;
 
     public AiAdminController(AiAdminService aiAdminService,
                              AiAdminDispatchService aiAdminDispatchService,
@@ -77,21 +84,25 @@ public class AiAdminController {
                              AiAdminVisibilityService visibilityService,
                              AiAdminOrderProgressService progressService,
                              AiAdminInteractionService interactionService,
-                             AiAdminAnalyticsService analyticsService) {
-        this.aiAdminService = aiAdminService;
-        this.aiAdminDispatchService = aiAdminDispatchService;
-        this.notificationService = notificationService;
-        this.playerRepository = playerRepository;
-        this.userRepository = userRepository;
-        this.testCaseRepository = testCaseRepository;
-        this.testRegistry = testRegistry;
-        this.aiCharacterRepository = aiCharacterRepository;
-        this.llmService = llmService;
-        this.visibilityService = visibilityService;
-        this.progressService = progressService;
-        this.interactionService = interactionService;
-        this.analyticsService = analyticsService;
-    }
+                             AiAdminAnalyticsService analyticsService,
+                             AiAdminDashboardService dashboardService,
+                             AiAdminIncidentService incidentService) {
+       this.aiAdminService = aiAdminService;
+       this.aiAdminDispatchService = aiAdminDispatchService;
+       this.notificationService = notificationService;
+       this.playerRepository = playerRepository;
+       this.userRepository = userRepository;
+       this.testCaseRepository = testCaseRepository;
+       this.testRegistry = testRegistry;
+       this.aiCharacterRepository = aiCharacterRepository;
+       this.llmService = llmService;
+       this.visibilityService = visibilityService;
+       this.progressService = progressService;
+       this.interactionService = interactionService;
+       this.analyticsService = analyticsService;
+       this.dashboardService = dashboardService;
+       this.incidentService = incidentService;
+   }
 
     /**
      * Submit a new test order.
@@ -699,63 +710,22 @@ public class AiAdminController {
 
     /**
      * Combined dashboard summary endpoint for the admin activity dashboard.
-     * Returns dispatch summary, all AI admins with positions, galaxy list, and notification counts.
+     * Returns dispatch overview, system health, admins with positions, galaxy list,
+     * notification counts, recent trends, category breakdown, top performers, and running orders.
      */
     @GetMapping("/dashboard/summary")
     public ResponseEntity<?> getDashboardSummary() {
-        AiAdminDispatchService.DispatchSummary dispatchSummary = aiAdminDispatchService.getDispatchSummary();
-        List<AiCharacter> allAdmins = aiAdminDispatchService.getAiAdminWorkload();
+        AiAdminDashboardService.DashboardSummary summary = dashboardService.getDashboardSummary();
+        return ResponseEntity.ok(summary);
+    }
 
-        // Build admin list with position info
-        List<Map<String, Object>> admins = allAdmins.stream().map(admin -> {
-            Map<String, Object> map = new HashMap<>();
-            map.put("id", admin.getId());
-            map.put("name", admin.getName());
-            map.put("role", admin.getRole());
-            map.put("empireName", admin.getEmpireName());
-            map.put("galaxyName", admin.getGalaxyName());
-            map.put("characterType", admin.getCharacterType() != null ? admin.getCharacterType().name() : "HUMAN_LEADER");
-            map.put("posX", admin.getPosX());
-            map.put("posY", admin.getPosY());
-            map.put("posZ", admin.getPosZ());
-            map.put("homePosX", admin.getHomePosX());
-            map.put("homePosY", admin.getHomePosY());
-            map.put("homePosZ", admin.getHomePosZ());
-            map.put("currentOrderId", admin.getCurrentOrderId());
-            map.put("activeOrderCount", admin.getActiveOrderCount());
-            map.put("active", admin.isActive());
-            map.put("status", admin.getActiveOrderCount() >= AiAdminDispatchService.MAX_ORDERS_PER_ADMIN ? "busy" : "available");
-            return map;
-        }).collect(Collectors.toList());
-
-        // Collect unique galaxy names
-        List<String> galaxies = allAdmins.stream()
-                .map(AiCharacter::getGalaxyName)
-                .filter(name -> name != null && !name.isBlank())
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList());
-
-        // Notification summary: count unread notifications across all admins
-        List<AiAdminNotification> unreadNotifications = allAdmins.stream()
-                .flatMap(admin -> notificationService.getUnreadNotificationsForAdmin(admin.getId()).stream())
-                .collect(Collectors.toList());
-        int totalUnread = unreadNotifications.size();
-        Map<String, Integer> unreadByAdmin = unreadNotifications.stream()
-                .collect(Collectors.groupingBy(
-                        n -> String.valueOf(n.getAiAdminId()),
-                        Collectors.summingInt(n -> 1)
-                ));
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("dispatchSummary", toMap(dispatchSummary));
-        response.put("admins", admins);
-        response.put("galaxies", galaxies);
-        response.put("notificationsSummary", Map.of(
-                "totalUnread", totalUnread,
-                "unreadByAdmin", unreadByAdmin
-        ));
-        return ResponseEntity.ok(response);
+    /**
+     * Lightweight health check for the dashboard.
+     */
+    @GetMapping("/dashboard/health")
+    public ResponseEntity<?> getDashboardHealth() {
+        Map<String, Object> health = dashboardService.getHealthCheck();
+        return ResponseEntity.ok(health);
     }
 
     private Map<String, Object> toMap(AiAdminDispatchService.DispatchSummary summary) {
@@ -981,6 +951,157 @@ public class AiAdminController {
     }
 
     // ------------------------------------------------------------------
+    // Advanced Quest endpoints (chains, steps, rewards)
+    // ------------------------------------------------------------------
+
+    /**
+     * Assign a quest chain to a player (admin-only).
+     */
+    @PostMapping("/admins/{adminId}/quest-chain")
+    public ResponseEntity<?> assignQuestChain(@PathVariable Long adminId,
+                                               @RequestBody AiAdminQuestChainRequest request,
+                                               Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Admin access required"));
+        }
+        try {
+            List<AiAdminQuest> quests = new ArrayList<>();
+            for (AiAdminQuestRequest qReq : request.getQuests()) {
+                AiAdminQuest quest = new AiAdminQuest(
+                        adminId, request.getPlayerId(),
+                        qReq.getTitle(), qReq.getDescription(),
+                        AiAdminQuest.QuestType.valueOf(qReq.getQuestType()),
+                        qReq.getXpReward() != null ? qReq.getXpReward() : 10,
+                        qReq.getDispositionReward() != null ? qReq.getDispositionReward() : 1,
+                        qReq.getTargetDescription(),
+                        qReq.getTargetCount() != null ? qReq.getTargetCount() : 1);
+                quests.add(quest);
+            }
+            List<AiAdminQuest> saved = interactionService.assignQuestChain(
+                    adminId, request.getPlayerId(), request.getChainId(), quests);
+            List<Map<String, Object>> result = new ArrayList<>();
+            for (AiAdminQuest q : saved) {
+                result.add(questToMap(q));
+            }
+            return ResponseEntity.ok(Map.of(
+                    "chainId", request.getChainId(),
+                    "quests", result,
+                    "message", "Quest chain assigned successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Get quest steps for a quest.
+     */
+    @GetMapping("/quests/{questId}/steps")
+    public ResponseEntity<?> getQuestSteps(@PathVariable Long questId) {
+        try {
+            List<AiAdminQuestStep> steps = interactionService.getQuestSteps(questId);
+            List<Map<String, Object>> result = new ArrayList<>();
+            for (AiAdminQuestStep step : steps) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", step.getId());
+                map.put("questId", step.getQuestId());
+                map.put("stepOrder", step.getStepOrder());
+                map.put("title", step.getTitle());
+                map.put("description", step.getDescription());
+                map.put("targetCount", step.getTargetCount());
+                map.put("currentCount", step.getCurrentCount());
+                map.put("completed", step.isCompleted());
+                map.put("progressPercent", step.getProgressPercent());
+                result.add(map);
+            }
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Complete a specific step.
+     */
+    @PostMapping("/quests/{questId}/steps/{stepOrder}/complete")
+    public ResponseEntity<?> completeStep(@PathVariable Long questId,
+                                           @PathVariable int stepOrder) {
+        try {
+            AiAdminQuestStep step = interactionService.completeStep(questId, stepOrder);
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", step.getId());
+            map.put("stepOrder", step.getStepOrder());
+            map.put("title", step.getTitle());
+            map.put("completed", step.isCompleted());
+            return ResponseEntity.ok(map);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Update progress on a specific step.
+     */
+    @PostMapping("/quests/{questId}/steps/{stepOrder}/progress")
+    public ResponseEntity<?> updateStepProgress(@PathVariable Long questId,
+                                                  @PathVariable int stepOrder,
+                                                  @RequestBody QuestProgressRequest request) {
+        try {
+            AiAdminQuestStep step = interactionService.updateStepProgress(
+                    questId, stepOrder, request.getAmount());
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", step.getId());
+            map.put("stepOrder", step.getStepOrder());
+            map.put("currentCount", step.getCurrentCount());
+            map.put("targetCount", step.getTargetCount());
+            map.put("completed", step.isCompleted());
+            return ResponseEntity.ok(map);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Get all rewards for a quest.
+     */
+    @GetMapping("/quests/{questId}/rewards")
+    public ResponseEntity<?> getQuestRewards(@PathVariable Long questId) {
+        try {
+            Map<String, Object> summary = interactionService.getQuestRewardSummary(questId);
+            return ResponseEntity.ok(summary);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Get chain progress for a player.
+     */
+    @GetMapping("/chains/{chainId}/progress")
+    public ResponseEntity<?> getChainProgress(@PathVariable String chainId,
+                                               @RequestParam Long playerId) {
+        try {
+            Map<String, Object> progress = interactionService.getChainProgress(chainId, playerId);
+            return ResponseEntity.ok(progress);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Get all active chains for a player.
+     */
+    @GetMapping("/player/{playerId}/chains")
+    public ResponseEntity<?> getPlayerChains(@PathVariable Long playerId) {
+        try {
+            List<String> chains = interactionService.getAllChainsForPlayer(playerId);
+            return ResponseEntity.ok(Map.of("chains", chains, "count", chains.size()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // ------------------------------------------------------------------
     // Quest helpers
     // ------------------------------------------------------------------
 
@@ -1002,6 +1123,16 @@ public class AiAdminController {
         map.put("assignedAt", quest.getAssignedAt());
         map.put("completedAt", quest.getCompletedAt());
         map.put("isActive", quest.isActive());
+        // Chain fields
+        map.put("chainId", quest.getChainId());
+        map.put("chainOrder", quest.getChainOrder());
+        map.put("parentQuestId", quest.getParentQuestId());
+        map.put("isPartOfChain", quest.isPartOfChain());
+        // Reward fields
+        map.put("rewardCredits", quest.getRewardCredits());
+        map.put("rewardReputation", quest.getRewardReputation());
+        map.put("rewardItemId", quest.getRewardItemId());
+        map.put("rewardTitle", quest.getRewardTitle());
         return map;
     }
 
@@ -1051,5 +1182,279 @@ public class AiAdminController {
 
         public String getReason() { return reason; }
         public void setReason(String reason) { this.reason = reason; }
+    }
+
+    /**
+     * Request body for quest chain assignment.
+     */
+    public static class AiAdminQuestChainRequest {
+        private String chainId;
+        private Long playerId;
+        private List<AiAdminQuestRequest> quests;
+
+        public String getChainId() { return chainId; }
+        public void setChainId(String chainId) { this.chainId = chainId; }
+        public Long getPlayerId() { return playerId; }
+        public void setPlayerId(Long playerId) { this.playerId = playerId; }
+        public List<AiAdminQuestRequest> getQuests() { return quests; }
+        public void setQuests(List<AiAdminQuestRequest> quests) { this.quests = quests; }
+    }
+
+    // ==================== INCIDENT MANAGEMENT ENDPOINTS ====================
+
+    /**
+     * Create a new incident manually.
+     */
+    @PostMapping("/incidents")
+    public ResponseEntity<?> createIncident(@RequestBody Map<String, Object> body, Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        String type = (String) body.get("type");
+        String severity = (String) body.get("severity");
+        String title = (String) body.get("title");
+        String description = (String) body.get("description");
+        String galaxyName = (String) body.get("galaxyName");
+        if (title == null || title.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Title is required"));
+        }
+        if (galaxyName == null || galaxyName.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Galaxy name is required"));
+        }
+        AiAdminIncident.IncidentType incidentType = parseIncidentType(type);
+        AiAdminIncident.Severity incidentSeverity = parseSeverity(severity);
+        AiAdminIncident incident = incidentService.createIncident(
+                incidentType, incidentSeverity, title, description, galaxyName);
+        return ResponseEntity.status(HttpStatus.CREATED).body(incidentToMap(incident));
+    }
+
+    /**
+     * List incidents with optional filters.
+     */
+    @GetMapping("/incidents")
+    public ResponseEntity<?> listIncidents(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String severity,
+            @RequestParam(required = false) String galaxyName,
+            Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        List<AiAdminIncident> incidents;
+        if (galaxyName != null && !galaxyName.isBlank()) {
+            incidents = incidentService.getIncidentsForGalaxy(galaxyName);
+        } else if (status != null && !status.isBlank()) {
+            AiAdminIncident.Status s = parseIncidentStatus(status);
+            incidents = incidentService.getIncidentsByStatus(s);
+        } else {
+            incidents = incidentService.getOpenIncidents();
+        }
+        List<Map<String, Object>> result = incidents.stream().map(this::incidentToMap).collect(Collectors.toList());
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Get incident details by ID.
+     */
+    @GetMapping("/incidents/{id}")
+    public ResponseEntity<?> getIncident(@PathVariable Long id, Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        AiAdminIncident incident = incidentService.getIncidentsByStatus(AiAdminIncident.Status.OPEN).stream()
+                .filter(i -> i.getId().equals(id)).findFirst().orElse(null);
+        if (incident == null) {
+            // Try all statuses
+            for (AiAdminIncident.Status s : AiAdminIncident.Status.values()) {
+                incident = incidentService.getIncidentsByStatus(s).stream()
+                        .filter(i -> i.getId().equals(id)).findFirst().orElse(null);
+                if (incident != null) break;
+            }
+        }
+        if (incident == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Incident not found"));
+        }
+        return ResponseEntity.ok(incidentToMap(incident));
+    }
+
+    /**
+     * Assign an incident to an AI admin.
+     */
+    @PostMapping("/incidents/{id}/assign")
+    public ResponseEntity<?> assignIncident(@PathVariable Long id, @RequestBody Map<String, Object> body, Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        Long adminId = ((Number) body.get("adminId")).longValue();
+        try {
+            AiAdminIncident incident = incidentService.assignIncident(id, adminId);
+            return ResponseEntity.ok(incidentToMap(incident));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Investigate an incident with optional LLM analysis.
+     */
+    @PostMapping("/incidents/{id}/investigate")
+    public ResponseEntity<?> investigateIncident(@PathVariable Long id, @RequestBody Map<String, Object> body, Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        Long adminId = ((Number) body.get("adminId")).longValue();
+        String notes = (String) body.get("notes");
+        boolean useLlm = body.getOrDefault("useLlm", true).equals(true);
+        try {
+            AiAdminIncident incident = incidentService.investigate(id, adminId, notes, useLlm);
+            return ResponseEntity.ok(incidentToMap(incident));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Resolve an incident.
+     */
+    @PostMapping("/incidents/{id}/resolve")
+    public ResponseEntity<?> resolveIncident(@PathVariable Long id, @RequestBody Map<String, Object> body, Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        Long adminId = ((Number) body.get("adminId")).longValue();
+        String action = (String) body.get("action");
+        String rootCause = (String) body.get("rootCause");
+        try {
+            AiAdminIncident incident = incidentService.resolve(id, adminId, action, rootCause);
+            return ResponseEntity.ok(incidentToMap(incident));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Escalate an incident.
+     */
+    @PostMapping("/incidents/{id}/escalate")
+    public ResponseEntity<?> escalateIncident(@PathVariable Long id, Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        try {
+            AiAdminIncident incident = incidentService.escalate(id);
+            return ResponseEntity.ok(incidentToMap(incident));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Close an incident.
+     */
+    @PostMapping("/incidents/{id}/close")
+    public ResponseEntity<?> closeIncident(@PathVariable Long id, Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        try {
+            AiAdminIncident incident = incidentService.close(id);
+            return ResponseEntity.ok(incidentToMap(incident));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Get incidents for a galaxy.
+     */
+    @GetMapping("/incidents/galaxy/{galaxyName}")
+    public ResponseEntity<?> getIncidentsForGalaxy(@PathVariable String galaxyName, Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        List<AiAdminIncident> incidents = incidentService.getIncidentsForGalaxy(galaxyName);
+        List<Map<String, Object>> result = incidents.stream().map(this::incidentToMap).collect(Collectors.toList());
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Get incident dashboard summary.
+     */
+    @GetMapping("/incidents/dashboard")
+    public ResponseEntity<?> getIncidentDashboard(Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        Map<String, Object> summary = incidentService.getDashboardSummary();
+        return ResponseEntity.ok(summary);
+    }
+
+    /**
+     * Helper: convert incident to map for JSON response.
+     */
+    private Map<String, Object> incidentToMap(AiAdminIncident incident) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", incident.getId());
+        map.put("type", incident.getIncidentType() != null ? incident.getIncidentType().name() : null);
+        map.put("severity", incident.getSeverity() != null ? incident.getSeverity().name() : null);
+        map.put("priority", incident.getPriority());
+        map.put("status", incident.getStatus() != null ? incident.getStatus().name() : null);
+        map.put("title", incident.getTitle());
+        map.put("description", incident.getDescription());
+        map.put("galaxyName", incident.getGalaxyName());
+        map.put("assignedAiAdminId", incident.getAssignedAiAdminId());
+        map.put("investigatorNotes", incident.getInvestigatorNotes());
+        map.put("resolutionAction", incident.getResolutionAction());
+        map.put("rootCause", incident.getRootCause());
+        map.put("relatedOrderId", incident.getRelatedOrderId());
+        map.put("createdAt", incident.getCreatedAt());
+        map.put("updatedAt", incident.getUpdatedAt());
+        map.put("resolvedAt", incident.getResolvedAt());
+        map.put("escalatedAt", incident.getEscalatedAt());
+        return map;
+    }
+
+    /**
+     * Helper: parse incident type from string.
+     */
+    private AiAdminIncident.IncidentType parseIncidentType(String type) {
+        if (type == null || type.isBlank()) return AiAdminIncident.IncidentType.HEALTH;
+        try {
+            return AiAdminIncident.IncidentType.valueOf(type.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return AiAdminIncident.IncidentType.HEALTH;
+        }
+    }
+
+    /**
+     * Helper: parse severity from string.
+     */
+    private AiAdminIncident.Severity parseSeverity(String severity) {
+        if (severity == null || severity.isBlank()) return AiAdminIncident.Severity.MEDIUM;
+        try {
+            return AiAdminIncident.Severity.valueOf(severity.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return AiAdminIncident.Severity.MEDIUM;
+        }
+    }
+
+    /**
+     * Helper: parse incident status from string.
+     */
+    private AiAdminIncident.Status parseIncidentStatus(String status) {
+        if (status == null || status.isBlank()) return AiAdminIncident.Status.OPEN;
+        try {
+            return AiAdminIncident.Status.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return AiAdminIncident.Status.OPEN;
+        }
     }
 }

@@ -8,6 +8,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import com.yisy.modules.doramcu.neuron.service.CdcEntityListener;
 
@@ -105,6 +107,52 @@ public class AiAdminQuest {
      */
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
+
+    // --- Chain fields ---
+
+    /**
+     * Parent quest in a chain (null if this is the first quest or not part of a chain).
+     */
+    @Column(name = "parent_quest_id")
+    private Long parentQuestId;
+
+    /**
+     * Chain ID groups related quests together, e.g., "galaxy-defense".
+     */
+    @Column(name = "chain_id", length = 50)
+    private String chainId;
+
+    /**
+     * Position in the chain (1 = first, 2 = second, etc.).
+     */
+    @Column(name = "chain_order")
+    private Integer chainOrder;
+
+    // --- Rich reward fields ---
+
+    /**
+     * Credits awarded on quest completion.
+     */
+    @Column(name = "reward_credits", nullable = false)
+    private int rewardCredits = 0;
+
+    /**
+     * Reputation points awarded on quest completion.
+     */
+    @Column(name = "reward_reputation", nullable = false)
+    private int rewardReputation = 0;
+
+    /**
+     * Item ID unlocked on quest completion (e.g., "shield_generator").
+     */
+    @Column(name = "reward_item_id", length = 100)
+    private String rewardItemId;
+
+    /**
+     * Title/badge unlocked on quest completion (e.g., "Defender").
+     */
+    @Column(name = "reward_title", length = 100)
+    private String rewardTitle;
 
     // --- Enums ---
 
@@ -277,6 +325,62 @@ public class AiAdminQuest {
         this.completedAt = completedAt;
     }
 
+    public Long getParentQuestId() {
+        return parentQuestId;
+    }
+
+    public void setParentQuestId(Long parentQuestId) {
+        this.parentQuestId = parentQuestId;
+    }
+
+    public String getChainId() {
+        return chainId;
+    }
+
+    public void setChainId(String chainId) {
+        this.chainId = chainId;
+    }
+
+    public Integer getChainOrder() {
+        return chainOrder;
+    }
+
+    public void setChainOrder(Integer chainOrder) {
+        this.chainOrder = chainOrder;
+    }
+
+    public int getRewardCredits() {
+        return rewardCredits;
+    }
+
+    public void setRewardCredits(int rewardCredits) {
+        this.rewardCredits = rewardCredits;
+    }
+
+    public int getRewardReputation() {
+        return rewardReputation;
+    }
+
+    public void setRewardReputation(int rewardReputation) {
+        this.rewardReputation = rewardReputation;
+    }
+
+    public String getRewardItemId() {
+        return rewardItemId;
+    }
+
+    public void setRewardItemId(String rewardItemId) {
+        this.rewardItemId = rewardItemId;
+    }
+
+    public String getRewardTitle() {
+        return rewardTitle;
+    }
+
+    public void setRewardTitle(String rewardTitle) {
+        this.rewardTitle = rewardTitle;
+    }
+
     // --- Helper methods ---
 
     /**
@@ -306,9 +410,38 @@ public class AiAdminQuest {
         }
     }
 
+    /**
+     * Returns true if this quest is part of a chain.
+     */
+    public boolean isPartOfChain() {
+        return chainId != null && !chainId.isEmpty();
+    }
+
+    /**
+     * Returns true if this quest has a parent quest (is not the first in the chain).
+     */
+    public boolean hasParentQuest() {
+        return parentQuestId != null;
+    }
+
+    /**
+     * Returns true if this quest has any item or title rewards.
+     */
+    public boolean hasItemReward() {
+        return rewardItemId != null && !rewardItemId.isEmpty();
+    }
+
+    /**
+     * Returns true if this quest has a title reward.
+     */
+    public boolean hasTitleReward() {
+        return rewardTitle != null && !rewardTitle.isEmpty();
+    }
+
     @Override
     public String toString() {
         return "AiAdminQuest{id=" + id + ", title='" + title + "', type=" + questType +
-                ", status=" + status + ", progress=" + currentCount + "/" + targetCount + "}";
+                ", status=" + status + ", progress=" + currentCount + "/" + targetCount +
+                ", chain=" + chainId + ", order=" + chainOrder + "}";
     }
 }
