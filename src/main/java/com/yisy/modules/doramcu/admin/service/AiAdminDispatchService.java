@@ -5,6 +5,7 @@ import com.yisy.modules.doramcu.admin.model.AiAdminOrder.OrderStatus;
 import com.yisy.modules.doramcu.admin.model.AiAdminTestCase;
 import com.yisy.modules.doramcu.admin.model.AiAdminTestReport;
 import com.yisy.modules.doramcu.admin.repository.AiAdminOrderRepository;
+import com.yisy.modules.doramcu.controller.misc.PresenceWebSocketHandler;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
@@ -74,18 +75,20 @@ public class AiAdminDispatchService {
     private final TestReportGenerator testReportGenerator;
     private final AiAdminNotificationService notificationService;
     private final AiAdminLlmService llmService;
+    private final PresenceWebSocketHandler presenceWebSocketHandler;
     private final ThreadPoolTaskExecutor dispatchExecutor;
 
     /** Tracks which orders are currently executing, keyed by order ID. */
     private final Map<Long, Long> executingOrderToAdminId = new ConcurrentHashMap<>();
 
     public AiAdminDispatchService(AiAdminOrderRepository orderRepository,
-                                    AiCharacterRepository aiCharacterRepository,
-                                    GalaxyRepository galaxyRepository,
-                                    TestExecutor testExecutor,
-                                    TestReportGenerator testReportGenerator,
-                                    AiAdminNotificationService notificationService,
-                                    AiAdminLlmService llmService) {
+                                     AiCharacterRepository aiCharacterRepository,
+                                     GalaxyRepository galaxyRepository,
+                                     TestExecutor testExecutor,
+                                     TestReportGenerator testReportGenerator,
+                                     AiAdminNotificationService notificationService,
+                                     AiAdminLlmService llmService,
+                                     PresenceWebSocketHandler presenceWebSocketHandler) {
         this.orderRepository = orderRepository;
         this.aiCharacterRepository = aiCharacterRepository;
         this.galaxyRepository = galaxyRepository;
@@ -93,6 +96,7 @@ public class AiAdminDispatchService {
         this.testReportGenerator = testReportGenerator;
         this.notificationService = notificationService;
         this.llmService = llmService;
+        this.presenceWebSocketHandler = presenceWebSocketHandler;
 
         this.dispatchExecutor = new ThreadPoolTaskExecutor();
         this.dispatchExecutor.setCorePoolSize(2);
@@ -524,6 +528,12 @@ public class AiAdminDispatchService {
         }
 
         aiCharacterRepository.save(admin);
+        // Notify dashboard of workload change
+        try {
+            presenceWebSocketHandler.broadcastDashboardUpdate("admin_workload_changed", admin.getId());
+        } catch (Exception e) {
+            log.warn("Failed to broadcast dashboard update: {}", e.getMessage());
+        }
     }
 
     // ------------------------------------------------------------------

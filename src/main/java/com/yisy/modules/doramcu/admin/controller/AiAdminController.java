@@ -10,10 +10,12 @@ import com.yisy.modules.doramcu.admin.model.AiAdminTestReport;
 import com.yisy.modules.doramcu.admin.model.TestDefinition;
 import com.yisy.modules.doramcu.admin.repository.AiAdminTestCaseRepository;
 import com.yisy.modules.doramcu.admin.service.AiAdminDispatchService;
+import com.yisy.modules.doramcu.admin.service.AiAdminLlmService;
 import com.yisy.modules.doramcu.admin.service.AiAdminNotificationService;
 import com.yisy.modules.doramcu.admin.service.AiAdminService;
 import com.yisy.modules.doramcu.admin.service.TestRegistry;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
+import com.yisy.modules.doramcu.service.ai.AiAdminVisibilityService;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.model.user.User;
@@ -53,6 +55,8 @@ public class AiAdminController {
     private final AiAdminTestCaseRepository testCaseRepository;
     private final TestRegistry testRegistry;
     private final AiCharacterRepository aiCharacterRepository;
+    private final AiAdminLlmService llmService;
+    private final AiAdminVisibilityService visibilityService;
 
     public AiAdminController(AiAdminService aiAdminService,
                              AiAdminDispatchService aiAdminDispatchService,
@@ -61,7 +65,9 @@ public class AiAdminController {
                              UserRepository userRepository,
                              AiAdminTestCaseRepository testCaseRepository,
                              TestRegistry testRegistry,
-                             AiCharacterRepository aiCharacterRepository) {
+                             AiCharacterRepository aiCharacterRepository,
+                             AiAdminLlmService llmService,
+                             AiAdminVisibilityService visibilityService) {
         this.aiAdminService = aiAdminService;
         this.aiAdminDispatchService = aiAdminDispatchService;
         this.notificationService = notificationService;
@@ -70,6 +76,8 @@ public class AiAdminController {
         this.testCaseRepository = testCaseRepository;
         this.testRegistry = testRegistry;
         this.aiCharacterRepository = aiCharacterRepository;
+        this.llmService = llmService;
+        this.visibilityService = visibilityService;
     }
 
     /**
@@ -564,6 +572,170 @@ public class AiAdminController {
         summary.put("totalNotifications", totalNotifications[0]);
         summary.put("admins", adminSummary);
         return ResponseEntity.ok(summary);
+    }
+
+    // ------------------------------------------------------------------
+    // LLM Endpoints
+    // ------------------------------------------------------------------
+
+    /**
+     * Get the LLM response stored for an order.
+     */
+    @GetMapping("/orders/{id}/llm-response")
+    public ResponseEntity<Map<String, Object>> getLlmResponse(@PathVariable Long id) {
+        AiAdminOrder order = aiAdminService.getOrder(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("orderId", order.getId());
+        result.put("llmResponse", order.getLlmResponse());
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Re-run an order through the LLM with the assigned AI admin.
+     */
+    @PostMapping("/orders/{id}/llm-retry")
+    public ResponseEntity<Map<String, Object>> llmRetryOrder(@PathVariable Long id) {
+        AiAdminOrder order = aiAdminService.getOrder(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
+
+        if (order.getAssignedAiAdminId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Order has no assigned AI admin");
+        }
+
+        AiCharacter admin = aiCharacterRepository.findById(order.getAssignedAiAdminId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "AI admin not found"));
+
+        AiAdminLlmService.LlmAnalysisResult result = llmService.analyzeOrder(admin, order);
+
+        // Store the new LLM response
+        order.setLlmResponse(result.getRawResponse());
+        aiAdminService.saveOrder(order);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("orderId", order.getId());
+        response.put("success", result.isSuccess());
+        response.put("action", result.getAction());
+        response.put("reasoning", result.getReasoning());
+        response.put("parameters", result.getParameters());
+        response.put("rawResponse", result.getRawResponse());
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Test the LLM with a sample order and AI admin.
+     */
+    @PostMapping("/llm/test-prompt")
+    public ResponseEntity<Map<String, Object>> testLlmPrompt(@RequestBody Map<String, String> body) {
+        String adminIdStr = body.get("adminId");
+        String orderText = body.get("orderText");
+
+        if (adminIdStr == null || adminIdStr.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "adminId is required");
+        }
+        if (orderText == null || orderText.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "orderText is required");
+        }
+
+        Long adminId = Long.parseLong(adminIdStr);
+        AiCharacter admin = aiCharacterRepository.findById(adminId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "AI admin not found"));
+
+        // Create a temporary order for testing
+        AiAdminOrder tempOrder = new AiAdminOrder("ManualTest", orderText);
+
+        AiAdminLlmService.LlmAnalysisResult result = llmService.analyzeOrder(admin, tempOrder);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("adminId", admin.getId());
+        response.put("adminName", admin.getName());
+        response.put("systemPrompt", llmService.buildSystemPrompt(admin));
+        response.put("userMessage", llmService.buildUserMessage(tempOrder));
+        response.put("success", result.isSuccess());
+        response.put("action", result.getAction());
+        response.put("reasoning", result.getReasoning());
+        response.put("parameters", result.getParameters());
+        response.put("rawResponse", result.getRawResponse());
+        return ResponseEntity.ok(response);
+    }
+
+    // ------------------------------------------------------------------
+    // Dashboard
+    // ------------------------------------------------------------------
+
+    /**
+     * Combined dashboard summary endpoint for the admin activity dashboard.
+     * Returns dispatch summary, all AI admins with positions, galaxy list, and notification counts.
+     */
+    @GetMapping("/dashboard/summary")
+    public ResponseEntity<?> getDashboardSummary() {
+        AiAdminDispatchService.DispatchSummary dispatchSummary = aiAdminDispatchService.getDispatchSummary();
+        List<AiCharacter> allAdmins = aiAdminDispatchService.getAiAdminWorkload();
+
+        // Build admin list with position info
+        List<Map<String, Object>> admins = allAdmins.stream().map(admin -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", admin.getId());
+            map.put("name", admin.getName());
+            map.put("role", admin.getRole());
+            map.put("empireName", admin.getEmpireName());
+            map.put("galaxyName", admin.getGalaxyName());
+            map.put("characterType", admin.getCharacterType() != null ? admin.getCharacterType().name() : "HUMAN_LEADER");
+            map.put("posX", admin.getPosX());
+            map.put("posY", admin.getPosY());
+            map.put("posZ", admin.getPosZ());
+            map.put("homePosX", admin.getHomePosX());
+            map.put("homePosY", admin.getHomePosY());
+            map.put("homePosZ", admin.getHomePosZ());
+            map.put("currentOrderId", admin.getCurrentOrderId());
+            map.put("activeOrderCount", admin.getActiveOrderCount());
+            map.put("active", admin.isActive());
+            map.put("status", admin.getActiveOrderCount() >= AiAdminDispatchService.MAX_ORDERS_PER_ADMIN ? "busy" : "available");
+            return map;
+        }).collect(Collectors.toList());
+
+        // Collect unique galaxy names
+        List<String> galaxies = allAdmins.stream()
+                .map(AiCharacter::getGalaxyName)
+                .filter(name -> name != null && !name.isBlank())
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+
+        // Notification summary: count unread notifications across all admins
+        List<AiAdminNotification> unreadNotifications = allAdmins.stream()
+                .flatMap(admin -> notificationService.getUnreadNotificationsForAdmin(admin.getId()).stream())
+                .collect(Collectors.toList());
+        int totalUnread = unreadNotifications.size();
+        Map<String, Integer> unreadByAdmin = unreadNotifications.stream()
+                .collect(Collectors.groupingBy(
+                        n -> String.valueOf(n.getAiAdminId()),
+                        Collectors.summingInt(n -> 1)
+                ));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("dispatchSummary", toMap(dispatchSummary));
+        response.put("admins", admins);
+        response.put("galaxies", galaxies);
+        response.put("notificationsSummary", Map.of(
+                "totalUnread", totalUnread,
+                "unreadByAdmin", unreadByAdmin
+        ));
+        return ResponseEntity.ok(response);
+    }
+
+    private Map<String, Object> toMap(AiAdminDispatchService.DispatchSummary summary) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("totalAiAdmins", summary.getTotalAiAdmins());
+        map.put("availableAiAdmins", summary.getAvailableAiAdmins());
+        map.put("busyAiAdmins", summary.getBusyAiAdmins());
+        map.put("totalActiveOrders", summary.getTotalActiveOrders());
+        map.put("unassignedPendingOrders", summary.getUnassignedPendingOrders());
+        map.put("assignedPendingOrders", summary.getAssignedPendingOrders());
+        map.put("runningOrders", summary.getRunningOrders());
+        map.put("executingOrders", summary.getExecutingOrders());
+        return map;
     }
 
     // ------------------------------------------------------------------

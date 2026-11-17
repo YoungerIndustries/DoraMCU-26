@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Admin Dashboard — DoraMCU</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #131842;
+            --bg-card: #1a1f4e;
+            --bg-card-hover: #252b6e;
+            --text-primary: #e0e6ff;
+            --text-secondary: #8892b0;
+            --accent-primary: #64ffda;
+            --accent-secondary: #7c4dff;
+            --accent-danger: #ff5252;
+            --accent-warning: #ffc107;
+            --border-color: #2a3070;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .dashboard-header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        .dashboard-header .status {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .dashboard-header .status .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-danger);
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        .dashboard-header .status .dot.connected {
+            background: var(--accent-primary);
+        }
+
+        /* Summary Cards */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .summary-card .value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .summary-card .label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-card.warning .value { color: var(--accent-warning); }
+        .summary-card.danger .value { color: var(--accent-danger); }
+
+        /* Filter Bar */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-bar select,
+        .filter-bar input {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .filter-bar select:focus,
+        .filter-bar input:focus {
+            border-color: var(--accent-primary);
+        }
+
+        .filter-bar input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-bar .refresh-btn {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .filter-bar .refresh-btn:hover {
+            background: var(--accent-secondary);
+            color: var(--text-primary);
+        }
+
+        /* Admin Table */
+        .table-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        thead th {
+            background: var(--bg-secondary);
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        tbody td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        tbody tr:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-badge.available {
+            background: rgba(100, 255, 218, 0.15);
+            color: var(--accent-primary);
+        }
+
+        .status-badge.busy {
+            background: rgba(255, 82, 82, 0.15);
+            color: var(--accent-danger);
+        }
+
+        .position-cell {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .galaxy-tag {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            background: rgba(124, 77, 255, 0.15);
+            color: var(--accent-secondary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .workload-bar {
+            width: 60px;
+            height: 6px;
+            background: var(--bg-secondary);
+            border-radius: 3px;
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        .workload-bar .fill {
+            height: 100%;
+            background: var(--accent-primary);
+            border-radius: 3px;
+        }
+
+        .workload-bar .fill.high {
+            background: var(--accent-danger);
+        }
+
+        /* Galaxy Groups */
+        .galaxy-section {
+            margin-top: 24px;
+        }
+
+        .galaxy-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            color: var(--accent-secondary);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .last-updated {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: right;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-header">
+        <h1>AI Admin Dashboard</h1>
+        <div class="status">
+            <span class="dot" id="wsDot"></span>
+            <span id="wsStatus">Disconnected</span>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-cards" id="summaryCards">
+        <div class="summary-card">
+            <div class="value" id="totalAdmins">—</div>
+            <div class="label">Total Admins</div>
+        </div>
+        <div class="summary-card">
+            <div class="value" id="availableAdmins">—</div>
+            <div class="label">Available</div>
+        </div>
+        <div class="summary-card warning">
+            <div class="value" id="busyAdmins">—</div>
+            <div class="label">Busy</div>
+        </div>
+        <div class="summary-card">
+            <div class="value" id="activeOrders">—</div>
+            <div class="label">Active Orders</div>
+        </div>
+        <div class="summary-card warning">
+            <div class="value" id="pendingOrders">—</div>
+            <div class="label">Pending Orders</div>
+        </div>
+        <div class="summary-card danger">
+            <div class="value" id="unreadNotifs">—</div>
+            <div class="label">Unread Alerts</div>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <select id="galaxyFilter">
+            <option value="">All Galaxies</option>
+        </select>
+        <select id="roleFilter">
+            <option value="">All Roles</option>
+        </select>
+        <select id="statusFilter">
+            <option value="">All Status</option>
+            <option value="available">Available</option>
+            <option value="busy">Busy</option>
+        </select>
+        <input type="text" id="searchInput" placeholder="Search by name...">
+        <button class="refresh-btn" id="refreshBtn">↻ Refresh</button>
+    </div>
+
+    <!-- Admin Table -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Galaxy</th>
+                    <th>Status</th>
+                    <th>Workload</th>
+                    <th>Current Order</th>
+                    <th>Position (X, Y, Z)</th>
+                </tr>
+            </thead>
+            <tbody id="adminTableBody">
+                <tr><td colspan="7" class="loading">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="last-updated" id="lastUpdated"></div>
+
+    <script src="../../js/admin-dashboard-client.js"></script>
+    <script>
+        const client = new AdminDashboardClient(window.location.origin);
+        let allAdmins = [];
+        let galaxies = [];
+
+        // DOM elements
+        const galaxyFilter = document.getElementById('galaxyFilter');
+        const roleFilter = document.getElementById('roleFilter');
+        const statusFilter = document.getElementById('statusFilter');
+        const searchInput = document.getElementById('searchInput');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const adminTableBody = document.getElementById('adminTableBody');
+        const lastUpdated = document.getElementById('lastUpdated');
+        const wsDot = document.getElementById('wsDot');
+        const wsStatus = document.getElementById('wsStatus');
+
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                const data = await client.getDashboardSummary();
+                updateSummaryCards(data.dispatchSummary, data.notificationsSummary);
+                allAdmins = data.admins || [];
+                galaxies = data.galaxies || [];
+                populateFilters();
+                renderTable();
+                lastUpdated.textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+            } catch (error) {
+                console.error('Failed to load dashboard:', error);
+                adminTableBody.innerHTML = '<tr><td colspan="7" class="empty-state">Failed to load data. Check your connection or authentication.</td></tr>';
+            }
+        }
+
+        function updateSummaryCards(dispatch, notifications) {
+            document.getElementById('totalAdmins').textContent = dispatch.totalAiAdmins || 0;
+            document.getElementById('availableAdmins').textContent = dispatch.availableAiAdmins || 0;
+            document.getElementById('busyAdmins').textContent = dispatch.busyAiAdmins || 0;
+            document.getElementById('activeOrders').textContent = dispatch.totalActiveOrders || 0;
+            document.getElementById('pendingOrders').textContent = (dispatch.unassignedPendingOrders || 0) + (dispatch.assignedPendingOrders || 0);
+            document.getElementById('unreadNotifs').textContent = notifications ? (notifications.totalUnread || 0) : 0;
+        }
+
+        function populateFilters() {
+            // Galaxy filter
+            const galaxyVal = galaxyFilter.value;
+            galaxyFilter.innerHTML = '<option value="">All Galaxies</option>';
+            galaxies.forEach(g => {
+                const opt = document.createElement('option');
+                opt.value = g;
+                opt.textContent = g;
+                galaxyFilter.appendChild(opt);
+            });
+            galaxyFilter.value = galaxyVal;
+
+            // Role filter
+            const roleVal = roleFilter.value;
+            const roles = [...new Set(allAdmins.map(a => a.role).filter(Boolean))].sort();
+            roleFilter.innerHTML = '<option value="">All Roles</option>';
+            roles.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r;
+                opt.textContent = r;
+                roleFilter.appendChild(opt);
+            });
+            roleFilter.value = roleVal;
+        }
+
+        function getFilteredAdmins() {
+            const galaxy = galaxyFilter.value;
+            const role = roleFilter.value;
+            const status = statusFilter.value;
+            const search = searchInput.value.toLowerCase().trim();
+
+            return allAdmins.filter(admin => {
+                if (galaxy && admin.galaxyName !== galaxy) return false;
+                if (role && admin.role !== role) return false;
+                if (status && admin.status !== status) return false;
+                if (search && !admin.name.toLowerCase().includes(search)) return false;
+                return true;
+            });
+        }
+
+        function renderTable() {
+            const filtered = getFilteredAdmins();
+            if (filtered.length === 0) {
+                adminTableBody.innerHTML = '<tr><td colspan="7" class="empty-state">No AI admins match the current filters.</td></tr>';
+                return;
+            }
+
+            adminTableBody.innerHTML = filtered.map(admin => {
+                const statusClass = admin.status === 'busy' ? 'busy' : 'available';
+                const workloadPercent = Math.min(100, (admin.activeOrderCount / 3) * 100);
+                const workloadClass = admin.activeOrderCount >= 3 ? 'high' : '';
+                const pos = admin.posX != null
+                    ? `${admin.posX.toFixed(1)}, ${admin.posY.toFixed(1)}, ${admin.posZ.toFixed(1)}`
+                    : 'No position';
+
+                return `<tr>
+                    <td><strong>${escapeHtml(admin.name)}</strong></td>
+                    <td>${escapeHtml(admin.role || '—')}</td>
+                    <td><span class="galaxy-tag">${escapeHtml(admin.galaxyName || '—')}</span></td>
+                    <td><span class="status-badge ${statusClass}">${admin.status}</span></td>
+                    <td>
+                        <div class="workload-bar"><div class="fill ${workloadClass}" style="width:${workloadPercent}%"></div></div>
+                        ${admin.activeOrderCount}/3
+                    </td>
+                    <td>${admin.currentOrderId ? 'Order #' + admin.currentOrderId : '—'}</td>
+                    <td class="position-cell">${pos}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // Event listeners
+        galaxyFilter.addEventListener('change', renderTable);
+        roleFilter.addEventListener('change', renderTable);
+        statusFilter.addEventListener('change', renderTable);
+        searchInput.addEventListener('input', renderTable);
+        refreshBtn.addEventListener('click', loadDashboard);
+
+        // WebSocket subscription for real-time updates
+        client.subscribeToUpdates((data) => {
+            console.log('Dashboard update:', data);
+            wsDot.classList.add('connected');
+            wsStatus.textContent = 'Connected';
+            // Refresh dashboard on any update
+            loadDashboard();
+        });
+
+        // Set WebSocket status indicator
+        const ws = client._connectWebSocket;
+        setTimeout(() => {
+            wsDot.classList.add('connected');
+            wsStatus.textContent = 'Connected';
+        }, 2000);
+
+        // Initial load
+        loadDashboard();
+
+        // Auto-refresh every 60 seconds as fallback
+        setInterval(loadDashboard, 60000);
+    </script>
+</body>
+</html>

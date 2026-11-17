@@ -105,3 +105,40 @@ Committed (716ae77) and pushed to Lapis111426. 2 files changed (317 insertions).
 
 ### ✓ Step 10: Merge V105 into master and push to origin
 Fast-forward merged from Lapis111426 into local master, then pushed to origin/master. All 27 AI admin positions (22 office managers + 5 entity-linked) are now on the master branch.
+
+## Phase 5: Admin Activity Dashboard — Complete ✓
+
+Real-time dashboard for monitoring AI admin workload, dispatch status, 3D positions, and notifications. Accessible as a standalone page and via the desktop client sidebar.
+
+### What was implemented
+
+**AiAdminController.java:**
+- Added `GET /api/v1/admin/ai-orders/dashboard/summary` — combined endpoint returning dispatch summary, admin list with positions, galaxy list, and notification counts
+- Injected `AiAdminVisibilityService` dependency
+
+**PresenceWebSocketHandler.java:**
+- Added `broadcastDashboardUpdate(eventType, adminId)` — broadcasts `dashboard_update` WebSocket events
+
+**AiAdminDispatchService.java:**
+- Injected `PresenceWebSocketHandler` dependency
+- `completeOrderForAdmin()`: broadcasts `admin_workload_changed` after order completion
+- `releaseAdminFromOrder()`: broadcasts `admin_workload_changed` after release
+
+**AiAdminIdleMovementService.java:**
+- Injected `PresenceWebSocketHandler` dependency
+- `moveIdleAdmins()`: broadcasts `admin_position_changed` after each idle admin moves
+
+**dora-web/js/admin-dashboard-client.js (new):**
+- JavaScript API client module with `getDashboardSummary()`, `getAdminsByGalaxy()`, `getAdminPositions()`, `subscribeToUpdates()`
+- WebSocket subscription with auto-reconnect
+
+**dora-web/admin-dashboard.html (new):**
+- Standalone dashboard page with dark theme matching desktop client
+- Summary cards: total admins, available, busy, active orders, pending orders, unread alerts
+- Filter bar: galaxy, role, status dropdowns + name search + refresh button
+- Admin table: name, role, galaxy tag, status badge, workload bar, current order, 3D position
+- Real-time WebSocket updates with 60-second fallback polling
+
+**dora-web/clients/desktop/index.html:**
+- Added "🤖 AI Admin Dashboard" sidebar nav item
+- Added iframe section panel loading the standalone dashboard page

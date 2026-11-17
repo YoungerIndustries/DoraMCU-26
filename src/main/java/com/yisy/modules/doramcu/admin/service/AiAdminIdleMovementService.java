@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.admin.service;
 
+import com.yisy.modules.doramcu.controller.misc.PresenceWebSocketHandler;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 import org.slf4j.Logger;
@@ -38,9 +39,12 @@ public class AiAdminIdleMovementService {
     private final Random random = new Random();
 
     private final AiCharacterRepository aiCharacterRepository;
+    private final PresenceWebSocketHandler presenceWebSocketHandler;
 
-    public AiAdminIdleMovementService(AiCharacterRepository aiCharacterRepository) {
+    public AiAdminIdleMovementService(AiCharacterRepository aiCharacterRepository,
+                                       PresenceWebSocketHandler presenceWebSocketHandler) {
         this.aiCharacterRepository = aiCharacterRepository;
+        this.presenceWebSocketHandler = presenceWebSocketHandler;
     }
 
     /**
@@ -78,6 +82,13 @@ public class AiAdminIdleMovementService {
                 admin.setPosY(newY);
                 admin.setPosZ(newZ);
                 aiCharacterRepository.save(admin);
+
+                // Notify dashboard of position change
+                try {
+                    presenceWebSocketHandler.broadcastDashboardUpdate("admin_position_changed", admin.getId());
+                } catch (Exception e) {
+                    log.warn("Failed to broadcast dashboard update: {}", e.getMessage());
+                }
 
                 moved++;
                 log.debug("Idle movement: AI admin '{}' moved from ({}, {}, {}) to ({}, {}, {})",
