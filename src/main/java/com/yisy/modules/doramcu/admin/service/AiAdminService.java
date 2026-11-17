@@ -1,4 +1,6 @@
 package com.yisy.modules.doramcu.admin.service;
+import com.yisy.modules.doramcu.model.galaxy.Galaxy;
+
 
 import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
 import com.yisy.modules.doramcu.admin.model.AiAdminOrder.OrderStatus;
@@ -57,18 +59,65 @@ public class AiAdminService {
     }
 
     /**
-     * Submits a new test order and schedules its execution.
-     * Parses the order text to determine which tests to run.
+     * Submits a new test order. The order is saved with PENDING status and will be
+     * dispatched to an available AI admin by the AiAdminDispatchService.
+     * <p>
+     * The dispatch service runs periodically (every 30 seconds) and assigns pending
+     * orders to AI admin characters based on galaxy affinity and workload balancing.
+     * </p>
+     *
+     * @param submittedBy the admin username
+     * @param orderText the natural language order description
+     * @return the saved order with PENDING status
+     */
+    @Transactional
+    public AiAdminOrder submitOrder(String submittedBy, String orderText) {
+        return submitOrder(submittedBy, orderText, null, null, null, null);
+    }
+
+    /**
+     * Submits a new test order with a target location.
+     * The AI admin assigned to this order will move to the target location.
+     *
+     * @param submittedBy the admin username
+     * @param orderText the natural language order description
+     * @param targetGalaxy target galaxy (optional)
+     * @param targetPosX target X coordinate (optional)
+     * @param targetPosY target Y coordinate (optional)
+     * @param targetPosZ target Z coordinate (optional)
+     * @return the saved order with PENDING status
+     */
+    @Transactional
+    public AiAdminOrder submitOrder(String submittedBy, String orderText,
+                                     String targetGalaxy, Double targetPosX, Double targetPosY, Double targetPosZ) {
+        AiAdminOrder order = new AiAdminOrder(submittedBy, orderText);
+        order.setTargetGalaxy(targetGalaxy);
+        order.setTargetPosX(targetPosX);
+        order.setTargetPosY(targetPosY);
+        order.setTargetPosZ(targetPosZ);
+        order = orderRepository.save(order);
+        if (order.hasTargetLocation()) {
+            log.info("Submitted order {} by {}: {} -> target ({}, {}, {}) in {}",
+                    order.getId(), submittedBy, orderText, targetPosX, targetPosY, targetPosZ, targetGalaxy);
+        } else {
+            log.info("Submitted order {} by {}: {} (awaiting dispatch to AI admin)", order.getId(), submittedBy, orderText);
+        }
+        return order;
+    }
+
+    /**
+     * Submits a test order and immediately executes it without waiting for dispatch.
+     * Use this method for urgent orders that should not wait for the dispatch cycle.
      *
      * @param submittedBy the admin username
      * @param orderText the natural language order description
      * @return the saved order
      */
     @Transactional
-    public AiAdminOrder submitOrder(String submittedBy, String orderText) {
+    public AiAdminOrder submitAndExecuteOrder(String submittedBy, String orderText) {
         AiAdminOrder order = new AiAdminOrder(submittedBy, orderText);
         order = orderRepository.save(order);
-        log.info("Submitted order {} by {}: {}", order.getId(), submittedBy, orderText);
+        log.info("Submitted and executing order {} by {}: {}", order.getId(), submittedBy, orderText);
         scheduleTestExecution(order, orderText);
         return order;
     }

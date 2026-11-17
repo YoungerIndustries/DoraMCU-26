@@ -74,6 +74,7 @@ public class AiAdminController {
 
     /**
      * Submit a new test order.
+     * Optionally includes target location fields for order-aware positioning.
      */
     @PostMapping("/")
     public ResponseEntity<?> submitOrder(@Valid @RequestBody AiAdminOrderRequest request,
@@ -89,13 +90,21 @@ public class AiAdminController {
         }
 
         String username = authentication.getName();
-        AiAdminOrder order = aiAdminService.submitOrder(username, orderText);
+        AiAdminOrder order = aiAdminService.submitOrder(username, orderText,
+                request.getTargetGalaxy(), request.getTargetPosX(),
+                request.getTargetPosY(), request.getTargetPosZ());
 
         Map<String, Object> result = new HashMap<>();
         result.put("id", order.getId());
         result.put("status", order.getStatus().name());
         result.put("submittedBy", order.getSubmittedBy());
         result.put("createdAt", order.getCreatedAt());
+        if (order.hasTargetLocation()) {
+            result.put("targetGalaxy", order.getTargetGalaxy());
+            result.put("targetPosX", order.getTargetPosX());
+            result.put("targetPosY", order.getTargetPosY());
+            result.put("targetPosZ", order.getTargetPosZ());
+        }
 
         log.info("Order {} submitted by {}", order.getId(), username);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);

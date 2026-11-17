@@ -165,4 +165,11 @@ public interface AiCharacterRepository extends JpaRepository<AiCharacter, Long> 
      */
     @Query("SELECT ac FROM AiCharacter ac WHERE ac.aiAdmin = true AND ac.active = true AND ac.galaxyName = :galaxyName AND ac.posX IS NOT NULL AND ac.posY IS NOT NULL AND ac.posZ IS NOT NULL")
     List<AiCharacter> findByAiAdminTrueAndActiveTrueAndGalaxyNameAndPositionNotNull(@Param("galaxyName") String galaxyName);
+
+    /**
+     * Find idle AI admins (no current order) with a valid 3D position set.
+     * Used by the idle movement service to find admins eligible for position updates.
+     */
+    @Query("SELECT ac FROM AiCharacter ac WHERE ac.aiAdmin = true AND ac.active = true AND ac.currentOrderId IS NULL AND ac.posX IS NOT NULL AND ac.posY IS NOT NULL AND ac.posZ IS NOT NULL")
+    List<AiCharacter> findByAiAdminTrueAndActiveTrueAndCurrentOrderIdIsNullAndPositionNotNull();
 }

@@ -266,6 +266,25 @@ public class AiCharacter {
     private String galaxyName;
 
     /**
+     * Home X coordinate — the default position where this AI admin returns after completing orders.
+     * For country leaders, this is their capital city.
+     */
+    @Column(name = "home_pos_x")
+    private Double homePosX;
+
+    /**
+     * Home Y coordinate.
+     */
+    @Column(name = "home_pos_y")
+    private Double homePosY;
+
+    /**
+     * Home Z coordinate.
+     */
+    @Column(name = "home_pos_z")
+    private Double homePosZ;
+
+    /**
      * Type of AI character entity.
      */
     public enum CharacterType {
@@ -646,6 +665,37 @@ public class AiCharacter {
 
     public void setGalaxyName(String galaxyName) {
         this.galaxyName = galaxyName;
+    }
+
+    public Double getHomePosX() {
+        return homePosX;
+    }
+
+    public void setHomePosX(Double homePosX) {
+        this.homePosX = homePosX;
+    }
+
+    public Double getHomePosY() {
+        return homePosY;
+    }
+
+    public void setHomePosY(Double homePosY) {
+        this.homePosY = homePosY;
+    }
+
+    public Double getHomePosZ() {
+        return homePosZ;
+    }
+
+    public void setHomePosZ(Double homePosZ) {
+        this.homePosZ = homePosZ;
+    }
+
+    /**
+     * Returns true if this AI character has a valid home position set.
+     */
+    public boolean hasHomePosition() {
+        return homePosX != null && homePosY != null && homePosZ != null;
     }
 
     /**
