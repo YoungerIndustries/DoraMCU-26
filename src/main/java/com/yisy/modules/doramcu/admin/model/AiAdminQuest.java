@@ -119,6 +119,12 @@ public class AiAdminQuest {
         GATHER,
         /** Combat-related objective. */
         COMBAT,
+        /** Diplomatic mission: negotiate, mediate, or represent interests. */
+        DIPLOMACY,
+        /** Espionage: covert intelligence gathering or sabotage. */
+        ESPIONAGE,
+        /** Research: scientific study, technology development, or innovation. */
+        RESEARCH,
         /** Other miscellaneous quest type. */
         OTHER
     }

@@ -28,6 +28,14 @@ namespace DoraMCU.Client.Core
         [SerializeField] private Color managerColor = new Color(1f, 1f, 0f, 1f); // Yellow
         [Tooltip("Color for Entity-linked AIs")]
         [SerializeField] private Color entityColor = new Color(0.5f, 0.2f, 0.8f, 1f); // Purple
+        [Tooltip("Color for Military Commanders")]
+        [SerializeField] private Color militaryColor = new Color(1f, 0.25f, 0.25f, 1f); // Red
+        [Tooltip("Color for Diplomatic Envoys")]
+        [SerializeField] private Color diplomaticColor = new Color(0.25f, 0.8f, 0.8f, 1f); // Cyan
+        [Tooltip("Color for Intelligence Directors")]
+        [SerializeField] private Color intelligenceColor = new Color(0.53f, 0.53f, 0.53f, 1f); // Dark Gray
+        [Tooltip("Color for Science Officers")]
+        [SerializeField] private Color scienceColor = new Color(1f, 0.53f, 0.25f, 1f); // Orange
         [Tooltip("Default color for unknown roles")]
         [SerializeField] private Color defaultColor = new Color(0.7f, 0.7f, 0.7f, 1f); // Gray
 
@@ -243,6 +251,10 @@ namespace DoraMCU.Client.Core
             if (role.Contains("leader")) return leaderColor;
             if (role.Contains("governor")) return governorColor;
             if (role.Contains("manager")) return managerColor;
+            if (role.Contains("military commander")) return militaryColor;
+            if (role.Contains("diplomatic envoy")) return diplomaticColor;
+            if (role.Contains("intelligence director")) return intelligenceColor;
+            if (role.Contains("science officer")) return scienceColor;
             if (admin.characterType != null && admin.characterType.Contains("ENTITY")) return entityColor;
 
             return defaultColor;

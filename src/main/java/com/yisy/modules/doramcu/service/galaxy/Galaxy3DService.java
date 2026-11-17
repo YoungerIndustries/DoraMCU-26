@@ -589,10 +589,7 @@ public class Galaxy3DService {
         List<AiCharacter> admins = aiCharacterRepository.findByAiAdminTrueAndActiveTrueAndGalaxyNameAndPositionNotNull(galaxyName);
         
         for (AiCharacter admin : admins) {
-            String color = "#4488ff"; // Blue for regular AI admins
-            if ("Galaxy Overseer".equals(admin.getRole())) {
-                color = "#ffcc00"; // Gold for Galaxy Overseer
-            }
+            String color = getAiAdminColor(admin.getRole());
             
             CelestialBody3D body = CelestialBody3D.builder("ai_admin-" + admin.getId(), BodyType.AI_ADMIN)
                     .name(admin.getName())
@@ -609,6 +606,22 @@ public class Galaxy3DService {
         }
         
         return bodies;
+    }
+
+    /**
+     * Get color for an AI admin based on their role.
+     */
+    private String getAiAdminColor(String role) {
+        if (role == null) return "#4488ff";
+        if (role.contains("Overseer")) return "#ffcc00"; // Gold
+        if (role.contains("Leader")) return "#4488ff"; // Blue
+        if (role.contains("Governor")) return "#44cc44"; // Green
+        if (role.contains("Manager")) return "#ffcc44"; // Yellow
+        if (role.contains("Military Commander")) return "#ff4444"; // Red
+        if (role.contains("Diplomatic Envoy")) return "#44cccc"; // Cyan
+        if (role.contains("Intelligence Director")) return "#888888"; // Dark Gray
+        if (role.contains("Science Officer")) return "#ff8844"; // Orange
+        return "#4488ff"; // Default blue
     }
 
     /**

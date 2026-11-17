@@ -214,9 +214,19 @@ Updated AiAdminController.submitOrder() to pass buildContractId, added orderType
 ### ✓ Step 21: Commit and push economic production integration to master
 Committed (4056eb8) and pushed to origin/master. 8 files changed (533 insertions, 8 deletions). The AI admin × economic production integration is now on the master branch.
 
-## Phase 8: AI Admin Player Interaction — In Progress
+## Phase 9: More AI Admin Types — In Progress
 
-Enable players to interact with AI admin characters through dialogue, quests, and dynamic relationships.
+Adding 80 specialized AI admin characters (4 types × 20 countries): Military Commanders, Diplomatic Envoys, Intelligence Directors, and Science Officers.
+
+### ✓ Step 26: Create V108 migration for 80 specialized AI admins
+V108__seed_specialized_ai_admins.sql created with 80 AI characters (20 each: Military Commanders, Diplomatic Envoys, Intelligence Directors, Science Officers).
+
+### ✓ Step 27: Update dialogue, quest types, and 3D rendering
+Added DIPLOMACY, ESPIONAGE, RESEARCH to AiAdminQuest.QuestType enum. Updated CharacterDialogueService with role-aware prompts for Military Commander, Diplomatic Envoy, Intelligence Director, and Science Officer. Galaxy3DService getAiAdminColor method supports all 8 role types. Unity AiAdminRenderer color coding updated to match.
+
+## Phase 8: AI Admin Player Interaction — Complete ✓
+
+Enable players to interact with AI admin characters through dialogue, quests, and dynamic relationships. Committed and pushed to master.
 
 ### ✓ Step 22: Create database schema and entities for quests and disposition
 V107 migration, AiCharacter disposition fields, AiAdminQuest entity, AiAdminQuestRepository.
@@ -227,8 +237,9 @@ Quest assignment, progress tracking, completion with XP rewards, disposition cha
 ### ✓ Step 24: Extend dialogue and add REST API endpoints
 CharacterDialogueService chatWithAiAdmin with role-aware system prompts, AiAdminDialogueController for SSE chat, quest endpoints on AiAdminController (assign, progress, complete, fail, abandon, disposition).
 
+### ✓ Step 25: Commit and push AI admin player interaction to master
+Committed (dce0344) and pushed to origin/master. 12 files changed (2283 insertions, 2 deletions). The AI admin player interaction feature is now on the master branch, including dialogue, quests, and dynamic relationships.
+
 ## Phase 8 Summary
 
-All 3 steps complete. 8 files changed (V107 migration, AiCharacter disposition, AiAdminQuest entity, AiAdminQuestRepository, AiAdminInteractionService, CharacterDialogueService extension, AiAdminDialogueController, AiAdminController quest endpoints).
-
-### Next: Commit and push to master
+All 4 steps complete. 12 files changed (V107 migration, AiCharacter disposition, AiAdminQuest entity, AiAdminQuestRepository, AiAdminInteractionService, AiAdminDialogueController, AiAdminController quest endpoints, AiAdminOrderRepository fix, plus related test files).
