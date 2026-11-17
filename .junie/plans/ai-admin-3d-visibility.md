@@ -165,9 +165,39 @@ Created AiAdminTooltip.cs and updated AiAdminRenderer with click detection and a
 ### ✓ Step 16: Commit and push Unity client changes to master
 Committed (58c8d1d) and pushed to origin/master. 6 files changed (697 insertions, 3 deletions). The Unity 3D rendering for AI admin characters is now on the master branch, including galaxy view markers, planet surface markers, click tooltips, and API polling.
 
-## Phase 7: AI Admin × Economic Production Integration — Pending
+## Phase 7: AI Admin × Economic Production Integration — Complete ✓
 
-Bridge AI admin work orders to build contracts so AI admins can execute economic production tasks (mining, processing, assembly, construction, repair).
+Bridge AI admin work orders to build contracts so AI admins can execute economic production tasks (mining, processing, assembly, construction, repair). Committed and pushed to master.
+
+### What was implemented
+
+**V106__add_ai_order_build_contract.sql (new migration):**
+- Added `build_contract_id` to `ai_admin_orders` with index and foreign key constraint
+
+**AiAdminOrder.java:**
+- Added `buildContractId` field with getter/setter and `isProductionOrder()` helper
+
+**AiAdminOrderRequest.java:**
+- Added optional `buildContractId` field
+
+**AiAdminService.java:**
+- Added overloaded `submitOrder()` with `buildContractId` parameter (backward-compatible)
+
+**AiAdminProductionService.java (new):**
+- `assignAndStartContract()`: assigns AI admin as leader, starts the build contract
+- `updateContractProgress()` / `updateContractAndOrderProgress()`: tracks progress
+- `completeContract()`: completes the contract and awards XP
+- `failContract()`: marks contract as failed
+- `getContractForOrder()` / `isProductionOrder()`: query helpers
+
+**AiAdminDispatchService.java:**
+- Injected `AiAdminProductionService` dependency
+- New execution path in `executeOrderAsync()`: production orders execute build contracts instead of running tests
+
+**AiAdminController.java:**
+- Updated `submitOrder()` to pass `buildContractId` from the request
+- Response includes `buildContractId` and `orderType` for production orders
+- `orderToMap()` helper includes progress, target location, and order type
 
 ### ✓ Step 17: Add buildContractId to AiAdminOrder (V106 migration)
 Created V106 migration, added buildContractId field to AiAdminOrder, updated AiAdminOrderRequest DTO, and AiAdminService.submitOrder() overload.
@@ -181,5 +211,5 @@ Injected AiAdminProductionService, added production execution path in executeOrd
 ### ✓ Step 20: Add production order submission API endpoint
 Updated AiAdminController.submitOrder() to pass buildContractId, added orderType and buildContractId to the response and orderToMap helper.
 
-### * Step 21: Commit and push economic production integration to master
-In progress
+### ✓ Step 21: Commit and push economic production integration to master
+Committed (4056eb8) and pushed to origin/master. 8 files changed (533 insertions, 8 deletions). The AI admin × economic production integration is now on the master branch.
