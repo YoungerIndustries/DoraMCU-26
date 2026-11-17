@@ -1,0 +1,31 @@
+# ARM64-compatible DL service — CPU-only PyTorch for Raspberry Pi
+# Based on multi-arch Python 3.11 slim image (available for linux/arm64 via Docker Hub)
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install build dependencies for numpy and other packages with C extensions
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install CPU-only PyTorch first, so the torch>=2.0.0 requirement in pyproject.toml
+# is satisfied without downloading a GPU version
+RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+# Install the rest of the project dependencies (torch is already satisfied by CPU version above)
+COPY dora-dl-python/pyproject.toml ./
+RUN pip install --no-cache-dir -e .
+
+# Copy source code
+COPY dora-dl-python/src/ src/
+
+# Create model directory
+RUN mkdir -p dl-models
+
+# Expose the DL service port
+EXPOSE 8083
+
+# Run the service
+CMD ["python", "-m", "dora_dl"]
