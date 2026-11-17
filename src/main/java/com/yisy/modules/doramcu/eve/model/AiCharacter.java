@@ -285,6 +285,13 @@ public class AiCharacter {
     private Double homePosZ;
 
     /**
+     * Overall disposition score toward players (-10 to +10).
+     * Negative values mean hostile, positive values mean friendly.
+     */
+    @Column(name = "disposition_score")
+    private int dispositionScore = 0;
+
+    /**
      * Type of AI character entity.
      */
     public enum CharacterType {
@@ -696,6 +703,41 @@ public class AiCharacter {
      */
     public boolean hasHomePosition() {
         return homePosX != null && homePosY != null && homePosZ != null;
+    }
+
+    // --- Disposition methods for player interaction ---
+
+    public int getDispositionScore() {
+        return dispositionScore;
+    }
+
+    public void setDispositionScore(int dispositionScore) {
+        this.dispositionScore = Math.max(-10, Math.min(10, dispositionScore));
+    }
+
+    /**
+     * Adjusts the disposition score by the given delta, clamped to -10..+10.
+     */
+    public void modifyDisposition(int delta) {
+        this.dispositionScore = Math.max(-10, Math.min(10, this.dispositionScore + delta));
+    }
+
+    /**
+     * Returns a human-readable label for the current disposition score.
+     */
+    public String getDispositionLabel() {
+        if (dispositionScore <= -7) return "Hostile";
+        if (dispositionScore <= -3) return "Unfriendly";
+        if (dispositionScore <= 3) return "Indifferent";
+        if (dispositionScore <= 7) return "Friendly";
+        return "Helpful";
+    }
+
+    /**
+     * Returns true if this AI admin is friendly or helpful toward players.
+     */
+    public boolean isFriendlyToPlayer() {
+        return dispositionScore > 0;
     }
 
     /**

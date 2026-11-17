@@ -5,11 +5,14 @@ import com.yisy.modules.doramcu.admin.dto.AiAdminReportDto;
 import com.yisy.modules.doramcu.admin.dto.AiAdminReportDto.AiAdminTestCaseDto;
 import com.yisy.modules.doramcu.admin.model.AiAdminNotification;
 import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
+import com.yisy.modules.doramcu.admin.model.AiAdminQuest;
 import com.yisy.modules.doramcu.admin.model.AiAdminTestCase;
 import com.yisy.modules.doramcu.admin.model.AiAdminTestReport;
 import com.yisy.modules.doramcu.admin.model.TestDefinition;
 import com.yisy.modules.doramcu.admin.repository.AiAdminTestCaseRepository;
+import com.yisy.modules.doramcu.admin.service.AiAdminAnalyticsService;
 import com.yisy.modules.doramcu.admin.service.AiAdminDispatchService;
+import com.yisy.modules.doramcu.admin.service.AiAdminInteractionService;
 import com.yisy.modules.doramcu.admin.service.AiAdminLlmService;
 import com.yisy.modules.doramcu.admin.service.AiAdminNotificationService;
 import com.yisy.modules.doramcu.admin.service.AiAdminOrderProgressService;
@@ -59,6 +62,8 @@ public class AiAdminController {
     private final AiAdminLlmService llmService;
     private final AiAdminVisibilityService visibilityService;
     private final AiAdminOrderProgressService progressService;
+    private final AiAdminInteractionService interactionService;
+    private final AiAdminAnalyticsService analyticsService;
 
     public AiAdminController(AiAdminService aiAdminService,
                              AiAdminDispatchService aiAdminDispatchService,
@@ -70,7 +75,9 @@ public class AiAdminController {
                              AiCharacterRepository aiCharacterRepository,
                              AiAdminLlmService llmService,
                              AiAdminVisibilityService visibilityService,
-                             AiAdminOrderProgressService progressService) {
+                             AiAdminOrderProgressService progressService,
+                             AiAdminInteractionService interactionService,
+                             AiAdminAnalyticsService analyticsService) {
         this.aiAdminService = aiAdminService;
         this.aiAdminDispatchService = aiAdminDispatchService;
         this.notificationService = notificationService;
@@ -82,6 +89,8 @@ public class AiAdminController {
         this.llmService = llmService;
         this.visibilityService = visibilityService;
         this.progressService = progressService;
+        this.interactionService = interactionService;
+        this.analyticsService = analyticsService;
     }
 
     /**
@@ -806,5 +815,241 @@ public class AiAdminController {
         map.put("readAt", notification.getReadAt());
         map.put("expiresAt", notification.getExpiresAt());
         return map;
+    }
+
+    // ------------------------------------------------------------------
+    // Quest endpoints
+    // ------------------------------------------------------------------
+
+    /**
+     * Assign a quest from an AI admin to a player.
+     */
+    @PostMapping("/admins/{aiAdminId}/quest")
+    public ResponseEntity<Map<String, Object>> assignQuest(
+            @PathVariable Long aiAdminId,
+            @RequestBody AiAdminQuestRequest request,
+            Authentication authentication) {
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+        Player player = playerRepository.findByUser(user)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
+
+        AiAdminQuest.QuestType questType = AiAdminQuest.QuestType.OTHER;
+        try {
+            questType = AiAdminQuest.QuestType.valueOf(request.getQuestType());
+        } catch (IllegalArgumentException e) {
+            // default to OTHER
+        }
+
+        AiAdminQuest quest = interactionService.assignQuest(
+                aiAdminId, player.getId(),
+                request.getTitle(), request.getDescription(),
+                questType,
+                request.getXpReward() != null ? request.getXpReward() : 10,
+                request.getDispositionReward() != null ? request.getDispositionReward() : 1,
+                request.getTargetDescription(),
+                request.getTargetCount() != null ? request.getTargetCount() : 1);
+
+        Map<String, Object> result = questToMap(quest);
+        log.info("Quest '{}' assigned by AI admin {} to player {}", quest.getTitle(), aiAdminId, player.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
+    /**
+     * List all quests given by a specific AI admin.
+     */
+    @GetMapping("/admins/{aiAdminId}/quests")
+    public ResponseEntity<List<Map<String, Object>>> getQuestsByAdmin(@PathVariable Long aiAdminId) {
+        List<AiAdminQuest> quests = interactionService.getQuestsByGiver(aiAdminId);
+        return ResponseEntity.ok(quests.stream().map(this::questToMap).collect(Collectors.toList()));
+    }
+
+    /**
+     * Get all active quests for the current player.
+     */
+    @GetMapping("/quests/player/active")
+    public ResponseEntity<List<Map<String, Object>>> getActiveQuests(Authentication authentication) {
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+        Player player = playerRepository.findByUser(user)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
+
+        List<AiAdminQuest> quests = interactionService.getActiveQuestsForPlayer(player.getId());
+        return ResponseEntity.ok(quests.stream().map(this::questToMap).collect(Collectors.toList()));
+    }
+
+    /**
+     * Update quest progress.
+     */
+    @PostMapping("/quests/{questId}/progress")
+    public ResponseEntity<Map<String, Object>> updateQuestProgress(
+            @PathVariable Long questId,
+            @RequestBody QuestProgressRequest request) {
+        AiAdminQuest quest = interactionService.updateQuestProgress(questId, request.getAmount());
+        return ResponseEntity.ok(questToMap(quest));
+    }
+
+    /**
+     * Complete a quest.
+     */
+    @PostMapping("/quests/{questId}/complete")
+    public ResponseEntity<Map<String, Object>> completeQuest(@PathVariable Long questId) {
+        AiAdminQuest quest = interactionService.completeQuest(questId);
+        return ResponseEntity.ok(questToMap(quest));
+    }
+
+    /**
+     * Fail a quest.
+     */
+    @PostMapping("/quests/{questId}/fail")
+    public ResponseEntity<Map<String, Object>> failQuest(
+            @PathVariable Long questId,
+            @RequestBody QuestFailRequest request) {
+        AiAdminQuest quest = interactionService.failQuest(questId, request.getReason());
+        return ResponseEntity.ok(questToMap(quest));
+    }
+
+    /**
+     * Abandon a quest.
+     */
+    @PostMapping("/quests/{questId}/abandon")
+    public ResponseEntity<Map<String, Object>> abandonQuest(@PathVariable Long questId) {
+        AiAdminQuest quest = interactionService.abandonQuest(questId);
+        return ResponseEntity.ok(questToMap(quest));
+    }
+
+    /**
+     * Get disposition toward an AI admin.
+     */
+    @GetMapping("/admins/{aiAdminId}/disposition")
+    public ResponseEntity<Map<String, Object>> getDisposition(@PathVariable Long aiAdminId) {
+        return ResponseEntity.ok(interactionService.getDisposition(aiAdminId));
+    }
+
+    // ------------------------------------------------------------------
+    // Analytics endpoints
+    // ------------------------------------------------------------------
+
+    /**
+     * Get performance metrics for a specific AI admin.
+     */
+    @GetMapping("/analytics/admin/{adminId}")
+    public ResponseEntity<?> getAdminPerformance(@PathVariable Long adminId) {
+        try {
+            AiAdminAnalyticsService.AdminPerformance perf = analyticsService.getAdminPerformance(adminId);
+            return ResponseEntity.ok(perf);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Get leaderboard of all AI admins ranked by performance.
+     */
+    @GetMapping("/analytics/leaderboard")
+    public ResponseEntity<?> getAdminLeaderboard() {
+        List<AiAdminAnalyticsService.AdminLeaderboardEntry> leaderboard = analyticsService.getAdminLeaderboard();
+        return ResponseEntity.ok(leaderboard);
+    }
+
+    /**
+     * Get order trends over the last N days (default 7).
+     */
+    @GetMapping("/analytics/trends")
+    public ResponseEntity<?> getOrderTrends(@RequestParam(defaultValue = "7") int days) {
+        List<AiAdminAnalyticsService.OrderTrend> trends = analyticsService.getOrderTrends(days);
+        return ResponseEntity.ok(trends);
+    }
+
+    /**
+     * Get test results broken down by category.
+     */
+    @GetMapping("/analytics/categories")
+    public ResponseEntity<?> getCategoryBreakdown() {
+        List<AiAdminAnalyticsService.CategoryBreakdown> breakdown = analyticsService.getCategoryBreakdown();
+        return ResponseEntity.ok(breakdown);
+    }
+
+    /**
+     * Get overall system health summary.
+     */
+    @GetMapping("/analytics/health")
+    public ResponseEntity<?> getSystemHealth() {
+        AiAdminAnalyticsService.SystemHealth health = analyticsService.getSystemHealth();
+        return ResponseEntity.ok(health);
+    }
+
+    // ------------------------------------------------------------------
+    // Quest helpers
+    // ------------------------------------------------------------------
+
+    private Map<String, Object> questToMap(AiAdminQuest quest) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", quest.getId());
+        map.put("questGiverId", quest.getQuestGiverId());
+        map.put("playerId", quest.getPlayerId());
+        map.put("title", quest.getTitle());
+        map.put("description", quest.getDescription());
+        map.put("questType", quest.getQuestType().name());
+        map.put("status", quest.getStatus().name());
+        map.put("xpReward", quest.getXpReward());
+        map.put("dispositionReward", quest.getDispositionReward());
+        map.put("targetDescription", quest.getTargetDescription());
+        map.put("targetCount", quest.getTargetCount());
+        map.put("currentCount", quest.getCurrentCount());
+        map.put("progressPercent", quest.getProgressPercent());
+        map.put("assignedAt", quest.getAssignedAt());
+        map.put("completedAt", quest.getCompletedAt());
+        map.put("isActive", quest.isActive());
+        return map;
+    }
+
+    /**
+     * Request body for quest assignment.
+     */
+    public static class AiAdminQuestRequest {
+        private String title;
+        private String description;
+        private String questType = "OTHER";
+        private Integer xpReward;
+        private Integer dispositionReward;
+        private String targetDescription;
+        private Integer targetCount;
+
+        public String getTitle() { return title; }
+        public void setTitle(String title) { this.title = title; }
+        public String getDescription() { return description; }
+        public void setDescription(String description) { this.description = description; }
+        public String getQuestType() { return questType; }
+        public void setQuestType(String questType) { this.questType = questType; }
+        public Integer getXpReward() { return xpReward; }
+        public void setXpReward(Integer xpReward) { this.xpReward = xpReward; }
+        public Integer getDispositionReward() { return dispositionReward; }
+        public void setDispositionReward(Integer dispositionReward) { this.dispositionReward = dispositionReward; }
+        public String getTargetDescription() { return targetDescription; }
+        public void setTargetDescription(String targetDescription) { this.targetDescription = targetDescription; }
+        public Integer getTargetCount() { return targetCount; }
+        public void setTargetCount(Integer targetCount) { this.targetCount = targetCount; }
+    }
+
+    /**
+     * Request body for quest progress update.
+     */
+    public static class QuestProgressRequest {
+        private int amount = 1;
+
+        public int getAmount() { return amount; }
+        public void setAmount(int amount) { this.amount = amount; }
+    }
+
+    /**
+     * Request body for quest failure.
+     */
+    public static class QuestFailRequest {
+        private String reason;
+
+        public String getReason() { return reason; }
+        public void setReason(String reason) { this.reason = reason; }
     }
 }
