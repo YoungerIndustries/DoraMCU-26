@@ -87,5 +87,5 @@ All 34 Earth-based AI admins positioned in Milky Way galaxy.
 ### ✓ Step 5: Add order-aware positioning (V104)
 Orders can target specific locations; AI admins move to targets and return home. Idle admins shift periodically.
 
-### * Step 6: Commit and push order-aware positioning to Lapis111426
-Commit V104 migration, entity changes, dispatch integration, and idle movement service to the branch and push to remote.
+### ✓ Step 6: Commit and push order-aware positioning to Lapis111426
+Committed (e0f7fc4) and pushed to Lapis111426. 10 files changed (1192 insertions, 109 deletions).
