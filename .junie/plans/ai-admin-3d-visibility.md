@@ -146,7 +146,7 @@ Real-time dashboard for monitoring AI admin workload, dispatch status, 3D positi
 ### ✓ Step 11: Commit and push admin dashboard to master
 Committed (9b0c894) and pushed to origin/master. 8 files changed (1534 insertions, 9 deletions). The admin activity dashboard is now on the master branch, accessible as a standalone page and via the desktop client sidebar navigation.
 
-## Phase 6: Frontend 3D Rendering in Unity — In Progress
+## Phase 6: Frontend 3D Rendering in Unity — Complete ✓
 
 Make AI admin characters visible as 3D entities in the Unity client in both galaxy view and planet surface view.
 
@@ -162,5 +162,5 @@ Added CreateAiAdminMarkers, ClearAiAdmins, and color coding to PlanetSurfaceRend
 ### ✓ Step 15: Add click interaction and tooltip UI
 Created AiAdminTooltip.cs and updated AiAdminRenderer with click detection and admin data map.
 
-### * Step 16: Commit and push Unity client changes to master
-In progress — committing Unity AI admin 3D rendering files.
+### ✓ Step 16: Commit and push Unity client changes to master
+Committed (58c8d1d) and pushed to origin/master. 6 files changed (697 insertions, 3 deletions). The Unity 3D rendering for AI admin characters is now on the master branch, including galaxy view markers, planet surface markers, click tooltips, and API polling.
