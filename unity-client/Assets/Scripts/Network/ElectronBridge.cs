@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Text;
 using UnityEngine;
+using DoraMCU.Client.Core;
 using UnityEngine.Networking;
 
 namespace DoraMCU.Client.Network

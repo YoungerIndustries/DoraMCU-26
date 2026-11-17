@@ -24,6 +24,17 @@ public class FpsMap {
     public record CapturePoint(String id, double x, double y, double z, double radius) {
     }
 
+    /** A transition point connecting this map to another map. */
+    public record TransitionPoint(String id, double x, double y, double z,
+                                  String targetMapId, String targetTransitionId, String label) {
+    }
+
+    /** A scene object placed within the map (NPC, item, trigger, etc.). */
+    public record SceneObject(String id, String type, double x, double y, double z,
+                              double rotationY, double scaleX, double scaleY, double scaleZ,
+                              String label, String dataJson) {
+    }
+
     private String id;
     private String name;
     private String description;
@@ -31,6 +42,8 @@ public class FpsMap {
     private List<CollisionBox> collisionBoxes;
     private List<PowerUpLocation> powerUpLocations;
     private List<CapturePoint> capturePoints;
+    private List<TransitionPoint> transitionPoints;
+    private List<SceneObject> sceneObjects;
     private double mapWidth;
     private double mapDepth;
     private double mapHeight;
@@ -41,6 +54,8 @@ public class FpsMap {
         this.collisionBoxes = new ArrayList<>();
         this.powerUpLocations = new ArrayList<>();
         this.capturePoints = new ArrayList<>();
+        this.transitionPoints = new ArrayList<>();
+        this.sceneObjects = new ArrayList<>();
     }
 
     public FpsMap(String name, double width, double depth, double height) {
@@ -53,6 +68,8 @@ public class FpsMap {
         this.collisionBoxes = new ArrayList<>();
         this.powerUpLocations = new ArrayList<>();
         this.capturePoints = new ArrayList<>();
+        this.transitionPoints = new ArrayList<>();
+        this.sceneObjects = new ArrayList<>();
     }
 
     public String getId() { return id; }
@@ -77,4 +94,8 @@ public class FpsMap {
     public void setTheme(String theme) { this.theme = theme; }
     public List<CapturePoint> getCapturePoints() { return capturePoints; }
     public void setCapturePoints(List<CapturePoint> capturePoints) { this.capturePoints = capturePoints; }
+    public List<TransitionPoint> getTransitionPoints() { return transitionPoints; }
+    public void setTransitionPoints(List<TransitionPoint> transitionPoints) { this.transitionPoints = transitionPoints; }
+    public List<SceneObject> getSceneObjects() { return sceneObjects; }
+    public void setSceneObjects(List<SceneObject> sceneObjects) { this.sceneObjects = sceneObjects; }
 }

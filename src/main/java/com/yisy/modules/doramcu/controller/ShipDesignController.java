@@ -1,6 +1,6 @@
 package com.yisy.modules.doramcu.controller;
 
-import com.yisy.modules.doramcu.dto.ShipDesignRequest;
+import com.yisy.modules.doramcu.dto.ship_design.ShipDesignRequest;
 import com.yisy.modules.doramcu.dto.ShipDesignResponse;
 import com.yisy.modules.doramcu.service.ShipDesignService;
 import jakarta.validation.Valid;

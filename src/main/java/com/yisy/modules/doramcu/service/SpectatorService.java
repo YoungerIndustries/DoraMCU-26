@@ -2,7 +2,7 @@ package com.yisy.modules.doramcu.service;
 import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.dto.GameEvent;
-import com.yisy.modules.doramcu.dto.GameStateResponse;
+import com.yisy.modules.doramcu.dto.session.GameStateResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

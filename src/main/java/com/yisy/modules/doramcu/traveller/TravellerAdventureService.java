@@ -595,7 +595,7 @@ public class TravellerAdventureService {
      * Gets the current game or creates a new one.
      */
     private Game getOrCreateGame() {
-        com.yisy.modules.doramcu.model.GameSession session = gameSessionService.getDefaultSession();
+        com.yisy.modules.doramcu.model.session.GameSession session = gameSessionService.getDefaultSession();
         Game game = (session != null) ? (Game) session.getGame() : null;
         if (game == null) {
             game = new Game("Traveller Adventure");

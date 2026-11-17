@@ -125,3 +125,16 @@ replay_pid*.log
 
 ### Data directory (local development data) ###
 data/
+
+### Dev error/compile logs (root level) ###
+all_*.txt
+errors_flat.txt
+full_compile*.txt
+full_errors.txt
+java_errors.txt
+unique_errors*.txt
+unique_files*.txt
+test_compile_errors*.log
+test_errors*.log
+test_output.txt
+*.class

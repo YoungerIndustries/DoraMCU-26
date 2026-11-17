@@ -2,7 +2,7 @@ package com.yisy.modules.doramcu.service;
 import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.Game;
-import com.yisy.modules.doramcu.model.GameSession;
+import com.yisy.modules.doramcu.model.session.GameSession;
 import com.yisy.modules.doramcu.model.PersistedGameSession;
 import com.yisy.modules.doramcu.repository.GalaxyRepository;
 import com.yisy.modules.doramcu.repository.PersistedGameSessionRepository;

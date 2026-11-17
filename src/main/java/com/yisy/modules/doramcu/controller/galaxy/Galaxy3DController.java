@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.controller.galaxy;
+import com.yisy.modules.doramcu.admin.dto.AiAdminVisibilityDTO;
 import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 
 
@@ -142,9 +143,16 @@ public class Galaxy3DController {
                                               @RequestParam double x,
                                               @RequestParam double y,
                                               @RequestParam double z,
-                                              @RequestParam(defaultValue = "50") double radius) {
-        List<Map<String, Object>> admins = aiAdminVisibilityService
-                .getAiAdminsNearPlayer(galaxyName, x, y, z, radius);
+                                              @RequestParam(defaultValue = "50") double radius,
+                                              @RequestParam(required = false) Boolean availableOnly) {
+        List<AiAdminVisibilityDTO> admins;
+        if (Boolean.TRUE.equals(availableOnly)) {
+            admins = aiAdminVisibilityService
+                    .getAiAdminsNearPlayerByAvailability(galaxyName, x, y, z, radius, true);
+        } else {
+            admins = aiAdminVisibilityService
+                    .getAiAdminsNearPlayer(galaxyName, x, y, z, radius);
+        }
         return ResponseEntity.ok(admins);
     }
 
@@ -153,8 +161,28 @@ public class Galaxy3DController {
      */
     @GetMapping("/galaxy/{galaxyName}/ai-admins")
     public ResponseEntity<?> getAllAiAdminsInGalaxy(@PathVariable String galaxyName) {
-        List<Map<String, Object>> admins = aiAdminVisibilityService
+        List<AiAdminVisibilityDTO> admins = aiAdminVisibilityService
                 .getAllAiAdminsInGalaxy(galaxyName);
         return ResponseEntity.ok(admins);
+    }
+
+    /**
+     * Get available (idle) AI admins in a galaxy.
+     */
+    @GetMapping("/galaxy/{galaxyName}/ai-admins/available")
+    public ResponseEntity<?> getAvailableAiAdminsInGalaxy(@PathVariable String galaxyName) {
+        List<AiAdminVisibilityDTO> admins = aiAdminVisibilityService
+                .getAvailableAiAdminsInGalaxy(galaxyName);
+        return ResponseEntity.ok(admins);
+    }
+
+    /**
+     * Get a specific AI admin by ID with visibility information.
+     */
+    @GetMapping("/ai-admins/{adminId}")
+    public ResponseEntity<?> getAiAdminById(@PathVariable Long adminId) {
+        return aiAdminVisibilityService.getAiAdminById(adminId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

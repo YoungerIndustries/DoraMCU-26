@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using DoraMCU.Client.Core;
 
 namespace DoraMCU.Client.FPS
 {

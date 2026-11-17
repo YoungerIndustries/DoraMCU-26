@@ -78,6 +78,25 @@ public class PlanetStructure {
     private Long planetId;
 
     /**
+     * Corporation that owns this structure (nullable for public structures).
+     */
+    @Column(name = "corporation_id")
+    private Long corporationId;
+
+    /**
+     * Building level indicating the tier/quality of the structure (1-10).
+     */
+    @Column(name = "building_level")
+    private Integer buildingLevel;
+
+    /**
+     * JSON string storing production output per hour.
+     * Example: {"creditsPerHour": 100, "materialsPerHour": 50}
+     */
+    @Column(name = "production_output", columnDefinition = "TEXT")
+    private String productionOutput;
+
+    /**
      * Latitude coordinate for 3D placement.
      */
     @Column(nullable = false)
@@ -171,6 +190,30 @@ public class PlanetStructure {
 
     public void setPlanetId(Long planetId) {
         this.planetId = planetId;
+    }
+
+    public Long getCorporationId() {
+        return corporationId;
+    }
+
+    public void setCorporationId(Long corporationId) {
+        this.corporationId = corporationId;
+    }
+
+    public Integer getBuildingLevel() {
+        return buildingLevel;
+    }
+
+    public void setBuildingLevel(Integer buildingLevel) {
+        this.buildingLevel = buildingLevel;
+    }
+
+    public String getProductionOutput() {
+        return productionOutput;
+    }
+
+    public void setProductionOutput(String productionOutput) {
+        this.productionOutput = productionOutput;
     }
 
     public Double getLatitude() {

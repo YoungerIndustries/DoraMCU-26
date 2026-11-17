@@ -4,13 +4,14 @@ import org.springframework.stereotype.Service;
 import com.yisy.modules.doramcu.ai.*;
 import com.yisy.modules.doramcu.config.AiDifficultyConfig;
 import com.yisy.modules.doramcu.dto.*;
+import com.yisy.modules.doramcu.dto.session.GameStateResponse;
 import com.yisy.modules.doramcu.hex.*;
 import com.yisy.modules.doradl.dl.service.DlGameAiService;
 import com.yisy.modules.doradl.dl.service.DoraAiLearningService;
 import com.yisy.modules.doradl.model.ActionReward;
 import com.yisy.modules.doramcu.hex.Player;
-import com.yisy.modules.doramcu.model.GameSession;
-import com.yisy.modules.doramcu.service.AiNetworkService;
+import com.yisy.modules.doramcu.model.session.GameSession;
+import com.yisy.modules.doramcu.service.ai.AiNetworkService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -478,7 +479,7 @@ public class AiPlayerService {
      */
     private ActionReward.Action getDlPredictedAction(String sessionId, Long playerId) {
         try {
-            com.yisy.modules.doramcu.dto.GameStateResponse gameState = gameSessionService.getGameState(playerId, sessionId);
+            com.yisy.modules.doramcu.dto.session.GameStateResponse gameState = gameSessionService.getGameState(playerId, sessionId);
             if (gameState == null) {
                 return ActionReward.Action.WAIT;
             }
@@ -497,7 +498,7 @@ public class AiPlayerService {
      * Converts main module GameStateResponse to DL module GameStateResponse.
      */
     private com.yisy.modules.doradl.dto.GameStateResponse convertToDlGameState(
-            com.yisy.modules.doramcu.dto.GameStateResponse source) {
+            com.yisy.modules.doramcu.dto.session.GameStateResponse source) {
         com.yisy.modules.doradl.dto.GameStateResponse target = new com.yisy.modules.doradl.dto.GameStateResponse();
         target.setSessionId(source.getSessionId());
         target.setCurrentTurn(source.getCurrentTurn());
@@ -508,7 +509,7 @@ public class AiPlayerService {
         // Convert players
         java.util.List<com.yisy.modules.doradl.dto.PlayerSummary> dlPlayers = new java.util.ArrayList<>();
         if (source.getPlayers() != null) {
-            for (com.yisy.modules.doramcu.dto.PlayerSummary player : source.getPlayers()) {
+            for (com.yisy.modules.doramcu.dto.players.PlayerSummary player : source.getPlayers()) {
                 com.yisy.modules.doradl.dto.PlayerSummary dlPlayer = new com.yisy.modules.doradl.dto.PlayerSummary();
                 dlPlayer.setId(player.getId());
                 dlPlayer.setName(player.getName());
@@ -525,7 +526,7 @@ public class AiPlayerService {
         // Convert subSectors
         java.util.List<com.yisy.modules.doradl.dto.SubSectorInfo> dlSubSectors = new java.util.ArrayList<>();
         if (source.getSubSectors() != null) {
-            for (com.yisy.modules.doramcu.dto.SubSectorInfo sub : source.getSubSectors()) {
+            for (com.yisy.modules.doramcu.dto.galaxy.SubSectorInfo sub : source.getSubSectors()) {
                 com.yisy.modules.doradl.dto.SubSectorInfo dlSub = new com.yisy.modules.doradl.dto.SubSectorInfo();
                 dlSub.setId(sub.getId());
                 dlSub.setName(sub.getName());

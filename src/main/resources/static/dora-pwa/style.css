@@ -1,0 +1,243 @@
+/* ============================================
+   DoraMCU PWA Neuron Styles
+   ============================================ */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #1a1a2e;
+    color: #eee;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    padding: 20px 0;
+    border-bottom: 2px solid #0f3460;
+    margin-bottom: 20px;
+}
+
+.header h1 { color: #e94560; font-size: 1.5em; }
+.header p { color: #888; font-size: 0.9em; margin-top: 5px; }
+
+.card {
+    background: #16213e;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #0f3460;
+}
+
+.card h2 {
+    color: #e94560;
+    font-size: 1em;
+    margin-bottom: 10px;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #f44336;
+}
+
+.indicator.connected { background: #4caf50; }
+.indicator.connecting { background: #ff9800; }
+
+.btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-primary { background: #e94560; color: white; }
+.btn-secondary { background: #0f3460; color: white; }
+
+.metric {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #0f3460;
+}
+
+.metric:last-child { border: none; }
+.metric-label { color: #888; }
+.metric-value { color: #e94560; font-weight: bold; }
+
+.log {
+    background: #0a0a1a;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: monospace;
+    font-size: 0.8em;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.log-entry { margin-bottom: 3px; color: #888; }
+
+.install-banner {
+    background: #0f3460;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 15px;
+    display: none;
+}
+
+.install-banner button {
+    background: #e94560;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 3px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+/* Offline banner */
+.offline-banner {
+    background: #f44336;
+    color: white;
+    padding: 8px 15px;
+    text-align: center;
+    font-size: 0.9em;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.offline-banner.visible {
+    display: block;
+}
+
+/* Notification toast */
+.notification-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #0f3460;
+    color: #eee;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border-left: 4px solid #e94560;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    max-width: 300px;
+    z-index: 999;
+    animation: slideIn 0.3s ease-out;
+}
+
+.notification-toast h4 {
+    margin: 0 0 4px 0;
+    font-size: 0.9em;
+    color: #e94560;
+}
+
+.notification-toast p {
+    margin: 0;
+    font-size: 0.8em;
+    color: #aaa;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+
+    .header h1 {
+        font-size: 1.2em;
+    }
+
+    .card {
+        padding: 12px;
+    }
+
+    .btn {
+        padding: 10px;
+        font-size: 0.9em;
+    }
+
+    .notification-toast {
+        left: 10px;
+        right: 10px;
+        max-width: none;
+    }
+}
+
+/* Scrollbar styling */
+.log::-webkit-scrollbar {
+    width: 6px;
+}
+
+.log::-webkit-scrollbar-track {
+    background: #0a0a1a;
+    border-radius: 3px;
+}
+
+.log::-webkit-scrollbar-thumb {
+    background: #0f3460;
+    border-radius: 3px;
+}
+
+.log::-webkit-scrollbar-thumb:hover {
+    background: #e94560;
+}
+
+/* Button hover effects */
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+/* Sync status indicator */
+.sync-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    font-size: 0.85em;
+}
+
+.sync-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4caf50;
+}
+
+.sync-dot.pending {
+    background: #ff9800;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}

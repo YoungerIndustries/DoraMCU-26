@@ -404,7 +404,7 @@ public class EconomicState {
      * @param currentTurn the current turn number
      * @return an income projection DTO
      */
-    public com.yisy.modules.doramcu.dto.IncomeProjectionDto getIncomeProjection(int currentTurn) {
+    public com.yisy.modules.doramcu.dto.misc.IncomeProjectionDto getIncomeProjection(int currentTurn) {
         // Income by source for current turn
         Map<String, Long> incomeBySource = new LinkedHashMap<>();
         for (Map.Entry<IncomeSource, Long> entry : turnIncome.entrySet()) {
@@ -482,7 +482,7 @@ public class EconomicState {
             }
         }
 
-        return new com.yisy.modules.doramcu.dto.IncomeProjectionDto(
+        return new com.yisy.modules.doramcu.dto.misc.IncomeProjectionDto(
                 empireId, currentTurn, creditBalance, getNetWorth(),
                 incomeBySource, expensesBySource, netIncome, avgIncome,
                 growthRate, projectedIncome, projectedNetWorth,

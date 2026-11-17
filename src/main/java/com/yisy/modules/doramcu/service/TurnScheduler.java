@@ -8,8 +8,8 @@ import com.yisy.modules.doramcu.corporation.service.CorporationEventService;
 import com.yisy.modules.doramcu.corporation.service.TreasuryLoanService;
 import com.yisy.modules.doramcu.dto.GameEvent;
 import com.yisy.modules.doramcu.eve.model.EveCorporation;
-import com.yisy.modules.doramcu.model.CorporateRole;
-import com.yisy.modules.doramcu.model.GameSession;
+import com.yisy.modules.doramcu.model.misc.CorporateRole;
+import com.yisy.modules.doramcu.model.session.GameSession;
 import com.yisy.modules.doramcu.repository.EveCorporationRepository;
 import com.yisy.modules.doramcu.unified.GameEngine;
 import com.yisy.modules.doramcu.unified.GlobalClock;
@@ -307,14 +307,14 @@ public class TurnScheduler {
                 Map<Long, AiPlayerService.Difficulty> aiMap = Map.of(aiPlayerId, difficulty);
 
                 // Capture game state before AI action for learning (summary mode to avoid full subsector iteration)
-                com.yisy.modules.doramcu.dto.GameStateResponse stateBefore =
+                com.yisy.modules.doramcu.dto.session.GameStateResponse stateBefore =
                         gameSessionService.getGameState(aiPlayerId, sessionId, true);
 
                 // Execute AI turn
                 aiPlayerService.executeAiTurn(sessionId, aiMap);
 
                 // Capture game state after AI action for learning (summary mode to avoid full subsector iteration)
-                com.yisy.modules.doramcu.dto.GameStateResponse stateAfter =
+                com.yisy.modules.doramcu.dto.session.GameStateResponse stateAfter =
                         gameSessionService.getGameState(aiPlayerId, sessionId, true);
 
                 // Compute reward and record for learning
@@ -337,7 +337,7 @@ public class TurnScheduler {
      * Converts main module GameStateResponse to DL module GameStateResponse.
      */
     private com.yisy.modules.doradl.dto.GameStateResponse convertToDlGameState(
-            com.yisy.modules.doramcu.dto.GameStateResponse source) {
+            com.yisy.modules.doramcu.dto.session.GameStateResponse source) {
         if (source == null) {
             return null;
         }
@@ -351,7 +351,7 @@ public class TurnScheduler {
         // Convert players
         java.util.List<com.yisy.modules.doradl.dto.PlayerSummary> dlPlayers = new java.util.ArrayList<>();
         if (source.getPlayers() != null) {
-            for (com.yisy.modules.doramcu.dto.PlayerSummary player : source.getPlayers()) {
+            for (com.yisy.modules.doramcu.dto.players.PlayerSummary player : source.getPlayers()) {
                 com.yisy.modules.doradl.dto.PlayerSummary dlPlayer = new com.yisy.modules.doradl.dto.PlayerSummary();
                 dlPlayer.setId(player.getId());
                 dlPlayer.setName(player.getName());
@@ -368,7 +368,7 @@ public class TurnScheduler {
         // Convert subSectors
         java.util.List<com.yisy.modules.doradl.dto.SubSectorInfo> dlSubSectors = new java.util.ArrayList<>();
         if (source.getSubSectors() != null) {
-            for (com.yisy.modules.doramcu.dto.SubSectorInfo sub : source.getSubSectors()) {
+            for (com.yisy.modules.doramcu.dto.galaxy.SubSectorInfo sub : source.getSubSectors()) {
                 com.yisy.modules.doradl.dto.SubSectorInfo dlSub = new com.yisy.modules.doradl.dto.SubSectorInfo();
                 dlSub.setId(sub.getId());
                 dlSub.setName(sub.getName());

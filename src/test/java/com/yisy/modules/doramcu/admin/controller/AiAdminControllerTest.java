@@ -11,6 +11,7 @@ import com.yisy.modules.doramcu.admin.model.AiAdminTestReport;
 import com.yisy.modules.doramcu.admin.model.TestDefinition;
 import com.yisy.modules.doramcu.admin.repository.AiAdminTestCaseRepository;
 import com.yisy.modules.doramcu.admin.service.AiAdminDispatchService;
+import com.yisy.modules.doramcu.admin.service.AiAdminLlmService;
 import com.yisy.modules.doramcu.admin.service.AiAdminNotificationService;
 import com.yisy.modules.doramcu.admin.service.AiAdminService;
 import com.yisy.modules.doramcu.admin.service.TestRegistry;
@@ -70,6 +71,9 @@ class AiAdminControllerTest {
     private TestRegistry testRegistry;
 
     @Mock
+    private AiAdminLlmService llmService;
+
+    @Mock
     private Authentication authentication;
 
     private AiAdminController controller;
@@ -87,7 +91,8 @@ class AiAdminControllerTest {
                 userRepository,
                 testCaseRepository,
                 testRegistry,
-                aiCharacterRepository
+                aiCharacterRepository,
+                llmService
         );
 
         adminPlayer = new Player();
@@ -786,6 +791,210 @@ class AiAdminControllerTest {
             assertEquals(1, body.get("totalAdmins"));
             assertEquals(2L, body.get("totalUnread"));
             assertEquals(2L, body.get("totalNotifications"));
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // LLM Endpoint Tests
+    // ------------------------------------------------------------------
+
+    @Nested
+    @DisplayName("LLM Response Tests")
+    class LlmResponseTests {
+
+        @Test
+        @DisplayName("getLlmResponse should return 404 when order not found")
+        void getLlmResponse_shouldReturn404WhenNotFound() {
+            when(aiAdminService.getOrder(999L)).thenReturn(Optional.empty());
+
+            try {
+                controller.getLlmResponse(999L);
+                fail("Expected ResponseStatusException");
+            } catch (Exception e) {
+                assertTrue(e.getMessage().contains("not found"));
+            }
+        }
+
+        @Test
+        @DisplayName("getLlmResponse should return null when no LLM response")
+        void getLlmResponse_shouldReturnNull() {
+            AiAdminOrder order = new AiAdminOrder("test", "order");
+            order.setId(1L);
+            when(aiAdminService.getOrder(1L)).thenReturn(Optional.of(order));
+
+            ResponseEntity<?> response = controller.getLlmResponse(1L);
+
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            @SuppressWarnings("unchecked")
+            Map<String, Object> body = (Map<String, Object>) response.getBody();
+            assertEquals(1L, body.get("orderId"));
+            assertNull(body.get("llmResponse"));
+        }
+
+        @Test
+        @DisplayName("getLlmResponse should return stored LLM response")
+        void getLlmResponse_shouldReturnStoredResponse() {
+            AiAdminOrder order = new AiAdminOrder("test", "order");
+            order.setId(1L);
+            order.setLlmResponse("{\"action\":\"DEPLOY\"}");
+            when(aiAdminService.getOrder(1L)).thenReturn(Optional.of(order));
+
+            ResponseEntity<?> response = controller.getLlmResponse(1L);
+
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            @SuppressWarnings("unchecked")
+            Map<String, Object> body = (Map<String, Object>) response.getBody();
+            assertEquals("{\"action\":\"DEPLOY\"}", body.get("llmResponse"));
+        }
+    }
+
+    @Nested
+    @DisplayName("LLM Retry Tests")
+    class LlmRetryTests {
+
+        @Test
+        @DisplayName("llmRetryOrder should return 404 when order not found")
+        void llmRetryOrder_shouldReturn404WhenNotFound() {
+            when(aiAdminService.getOrder(999L)).thenReturn(Optional.empty());
+
+            try {
+                controller.llmRetryOrder(999L);
+                fail("Expected ResponseStatusException");
+            } catch (Exception e) {
+                assertTrue(e.getMessage().contains("not found"));
+            }
+        }
+
+        @Test
+        @DisplayName("llmRetryOrder should return 400 when no assigned admin")
+        void llmRetryOrder_shouldReturn400WhenNoAdmin() {
+            AiAdminOrder order = new AiAdminOrder("test", "order");
+            order.setId(1L);
+            order.setAssignedAiAdminId(null);
+            when(aiAdminService.getOrder(1L)).thenReturn(Optional.of(order));
+
+            try {
+                controller.llmRetryOrder(1L);
+                fail("Expected ResponseStatusException");
+            } catch (Exception e) {
+                assertTrue(e.getMessage().contains("no assigned"));
+            }
+        }
+
+        @Test
+        @DisplayName("llmRetryOrder should return 404 when admin not found")
+        void llmRetryOrder_shouldReturn404WhenAdminNotFound() {
+            AiAdminOrder order = new AiAdminOrder("test", "order");
+            order.setId(1L);
+            order.setAssignedAiAdminId(100L);
+            when(aiAdminService.getOrder(1L)).thenReturn(Optional.of(order));
+            when(aiCharacterRepository.findById(100L)).thenReturn(Optional.empty());
+
+            try {
+                controller.llmRetryOrder(1L);
+                fail("Expected ResponseStatusException");
+            } catch (Exception e) {
+                assertTrue(e.getMessage().contains("not found"));
+            }
+        }
+
+        @Test
+        @DisplayName("llmRetryOrder should re-run LLM and store response")
+        void llmRetryOrder_shouldRerunLlm() {
+            AiAdminOrder order = new AiAdminOrder("test", "Low fleet count");
+            order.setId(1L);
+            order.setAssignedAiAdminId(100L);
+            when(aiAdminService.getOrder(1L)).thenReturn(Optional.of(order));
+
+            AiCharacter admin = new AiCharacter("Alpha Overseer", "Overseer", "Alpha");
+            admin.setId(100L);
+            when(aiCharacterRepository.findById(100L)).thenReturn(Optional.of(admin));
+
+            AiAdminLlmService.LlmAnalysisResult llmResult = new AiAdminLlmService.LlmAnalysisResult(
+                    "DEPLOY", "Sending ships", Map.of("ships", "5"),
+                    "{\"action\":\"DEPLOY\"}", true, null);
+            when(llmService.analyzeOrder(eq(admin), eq(order))).thenReturn(llmResult);
+
+            ResponseEntity<?> response = controller.llmRetryOrder(1L);
+
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            @SuppressWarnings("unchecked")
+            Map<String, Object> body = (Map<String, Object>) response.getBody();
+            assertEquals(1L, body.get("orderId"));
+            assertEquals(true, body.get("success"));
+            assertEquals("DEPLOY", body.get("action"));
+            assertEquals("Sending ships", body.get("reasoning"));
+            verify(aiAdminService).saveOrder(order);
+        }
+    }
+
+    @Nested
+    @DisplayName("LLM Test Prompt Tests")
+    class LlmTestPromptTests {
+
+        @Test
+        @DisplayName("testLlmPrompt should return 400 when adminId missing")
+        void testLlmPrompt_shouldReturn400WhenNoAdminId() {
+            Map<String, String> body = Map.of("orderText", "test");
+
+            try {
+                controller.testLlmPrompt(body);
+                fail("Expected ResponseStatusException");
+            } catch (Exception e) {
+                assertTrue(e.getMessage().contains("adminId"));
+            }
+        }
+
+        @Test
+        @DisplayName("testLlmPrompt should return 400 when orderText missing")
+        void testLlmPrompt_shouldReturn400WhenNoOrderText() {
+            Map<String, String> body = Map.of("adminId", "100");
+
+            try {
+                controller.testLlmPrompt(body);
+                fail("Expected ResponseStatusException");
+            } catch (Exception e) {
+                assertTrue(e.getMessage().contains("orderText"));
+            }
+        }
+
+        @Test
+        @DisplayName("testLlmPrompt should return 404 when admin not found")
+        void testLlmPrompt_shouldReturn404WhenAdminNotFound() {
+            Map<String, String> body = Map.of("adminId", "100", "orderText", "test");
+            when(aiCharacterRepository.findById(100L)).thenReturn(Optional.empty());
+
+            try {
+                controller.testLlmPrompt(body);
+                fail("Expected ResponseStatusException");
+            } catch (Exception e) {
+                assertTrue(e.getMessage().contains("not found"));
+            }
+        }
+
+        @Test
+        @DisplayName("testLlmPrompt should return LLM result with system prompt")
+        void testLlmPrompt_shouldReturnResult() {
+            Map<String, String> body = Map.of("adminId", "100", "orderText", "Low fleet");
+
+            AiCharacter admin = new AiCharacter("Alpha Overseer", "Overseer", "Alpha");
+            admin.setId(100L);
+            when(aiCharacterRepository.findById(100L)).thenReturn(Optional.of(admin));
+
+            AiAdminLlmService.LlmAnalysisResult llmResult = new AiAdminLlmService.LlmAnalysisResult(
+                    "DEPLOY", "Sending ships", Map.of(), "{\"action\":\"DEPLOY\"}", true, null);
+            when(llmService.analyzeOrder(any(), any())).thenReturn(llmResult);
+
+            ResponseEntity<?> response = controller.testLlmPrompt(body);
+
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            @SuppressWarnings("unchecked")
+            Map<String, Object> respBody = (Map<String, Object>) response.getBody();
+            assertEquals(100L, respBody.get("adminId"));
+            assertEquals("Alpha Overseer", respBody.get("adminName"));
+            assertNotNull(respBody.get("systemPrompt"));
+            assertEquals(true, respBody.get("success"));
+            assertEquals("DEPLOY", respBody.get("action"));
         }
     }
 }

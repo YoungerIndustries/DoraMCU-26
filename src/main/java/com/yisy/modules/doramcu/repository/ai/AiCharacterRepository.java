@@ -172,4 +172,9 @@ public interface AiCharacterRepository extends JpaRepository<AiCharacter, Long> 
      */
     @Query("SELECT ac FROM AiCharacter ac WHERE ac.aiAdmin = true AND ac.active = true AND ac.currentOrderId IS NULL AND ac.posX IS NOT NULL AND ac.posY IS NOT NULL AND ac.posZ IS NOT NULL")
     List<AiCharacter> findByAiAdminTrueAndActiveTrueAndCurrentOrderIdIsNullAndPositionNotNull();
+
+    /**
+     * Find all active AI admins ordered by total experience descending for leaderboard ranking.
+     */
+    List<AiCharacter> findByAiAdminTrueAndActiveTrueOrderByTotalExperienceDesc();
 }

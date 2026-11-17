@@ -32,6 +32,9 @@ public class CorporateHiring {
     @Column(name = "ai_character_id", nullable = false)
     private Long aiCharacterId;
 
+    @Column(name = "player_character_id")
+    private Long playerCharacterId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private CorporatePosition position;
@@ -123,6 +126,14 @@ public class CorporateHiring {
 
     public void setAiCharacterId(Long aiCharacterId) {
         this.aiCharacterId = aiCharacterId;
+    }
+
+    public Long getPlayerCharacterId() {
+        return playerCharacterId;
+    }
+
+    public void setPlayerCharacterId(Long playerCharacterId) {
+        this.playerCharacterId = playerCharacterId;
     }
 
     public CorporatePosition getPosition() {

@@ -5,7 +5,7 @@ import com.yisy.modules.doramcu.event.GalaxyEventService;
 import com.yisy.modules.doramcu.event.GalaxyEventType;
 import com.yisy.modules.doramcu.hex.BuildObjectType;
 import com.yisy.modules.doramcu.hex.spi.GalaxyStateTracker;
-import com.yisy.modules.doramcu.model.GalaxyObjectState;
+import com.yisy.modules.doramcu.model.galaxy.GalaxyObjectState;
 import com.yisy.modules.doramcu.repository.GalaxyObjectStateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

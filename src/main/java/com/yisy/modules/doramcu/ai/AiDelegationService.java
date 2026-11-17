@@ -1,10 +1,10 @@
 package com.yisy.modules.doramcu.ai;
 import org.springframework.stereotype.Service;
 
-import com.yisy.modules.doramcu.dto.GameStateResponse;
+import com.yisy.modules.doramcu.dto.session.GameStateResponse;
 import com.yisy.modules.doramcu.hex.Game;
 import com.yisy.modules.doramcu.hex.Player;
-import com.yisy.modules.doramcu.model.GameSession;
+import com.yisy.modules.doramcu.model.session.GameSession;
 import com.yisy.modules.doramcu.service.AiPlayerService;
 import com.yisy.modules.doramcu.service.GameSessionService;
 import org.slf4j.Logger;

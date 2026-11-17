@@ -181,6 +181,27 @@ public class Hyperlane {
         this.isSafe = safe;
     }
 
+    /**
+     * Returns the ID of the source world (alias for getFrom().getId()).
+     */
+    public int getFromSystemId() {
+        return from.getId();
+    }
+
+    /**
+     * Returns the ID of the destination world (alias for getTo().getId()).
+     */
+    public int getToSystemId() {
+        return to.getId();
+    }
+
+    /**
+     * Returns the distance in parsecs (alias for getDistanceParsecs()).
+     */
+    public int getDistance() {
+        return distanceParsecs;
+    }
+
     // ---- Object contract ----
 
     @Override

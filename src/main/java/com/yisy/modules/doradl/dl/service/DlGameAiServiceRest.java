@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @Service
 @ConditionalOnProperty(name = "dl.rest-client.enabled", havingValue = "true")
-public class DlGameAiServiceRest {
+public class DlGameAiServiceRest extends DlGameAiService {
 
     private static final Logger log = LoggerFactory.getLogger(DlGameAiServiceRest.class);
 

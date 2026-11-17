@@ -1,6 +1,6 @@
 package com.yisy.modules.doramcu.repository;
 
-import com.yisy.modules.doramcu.model.Hyperlane;
+import com.yisy.modules.doramcu.traveller.Hyperlane;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

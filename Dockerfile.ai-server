@@ -1,0 +1,41 @@
+# Multi-stage build for DoraAI Server
+# Stage 0: Download dependencies (cached unless build files change)
+FROM eclipse-temurin:27-jdk AS deps
+WORKDIR /app
+COPY build.gradle settings.gradle gradlew gradle.properties ./
+COPY gradle/wrapper gradle/wrapper
+COPY dora-neuron/build.gradle dora-neuron/build.gradle
+COPY dora-ai-server/build.gradle dora-ai-server/build.gradle
+RUN chmod +x gradlew && ./gradlew :dora-ai-server:dependencies --no-daemon --no-configuration-cache
+
+# Stage 1: Build (leverages dependency cache from Stage 0)
+FROM eclipse-temurin:27-jdk AS build
+WORKDIR /app
+COPY --from=deps /root/.gradle/caches /root/.gradle/caches
+COPY build.gradle settings.gradle gradlew gradle.properties ./
+COPY gradle/wrapper gradle/wrapper
+COPY src src
+COPY dora-neuron dora-neuron
+COPY dora-ai-server dora-ai-server
+RUN chmod +x gradlew
+RUN ./gradlew :dora-ai-server:bootJar --no-daemon --no-configuration-cache
+
+# Stage 2: Run
+FROM eclipse-temurin:27-jre
+WORKDIR /app
+
+# Run as non-root user for security
+RUN groupadd -r doramcu && useradd -r -g doramcu -d /app -s /sbin/nologin doramcu
+COPY --from=build /app/dora-ai-server/build/libs/*.jar app.jar
+RUN apt-get update && apt-get install -y --no-install-recommends wget && rm -rf /var/lib/apt/lists/*
+RUN chown -R doramcu:doramcu /app
+USER doramcu
+
+EXPOSE 8085
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD wget -qO- http://localhost:8085/actuator/health || exit 1
+
+ENV JVM_ARGS="-Xmx1G -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+
+ENTRYPOINT ["sh", "-c", "java ${JVM_XMX:-$JVM_ARGS} -jar app.jar"]

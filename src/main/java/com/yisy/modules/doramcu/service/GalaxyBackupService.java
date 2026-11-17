@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.yisy.modules.doramcu.event.GalaxyEventService;
 import com.yisy.modules.doramcu.event.GalaxyEventType;
 import com.yisy.modules.doramcu.model.*;
+import com.yisy.modules.doramcu.traveller.Hyperlane;
 import com.yisy.modules.doramcu.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -969,11 +970,8 @@ public class GalaxyBackupService {
     }
 
     private Hyperlane deserializeHyperlane(Map<String, Object> data, Galaxy galaxy) {
-        Hyperlane hyperlane = new Hyperlane();
-        hyperlane.setGalaxy(galaxy);
-        hyperlane.setFromSystemId((Integer) data.get("fromSystemId"));
-        hyperlane.setToSystemId((Integer) data.get("toSystemId"));
-        hyperlane.setDistance((Integer) data.get("distance"));
-        return hyperlane;
+        // Hyperlane is a Traveller domain object - cannot fully deserialize without TravellerWorld references
+        // Return null for now; full restore support requires TravellerWorld lookup
+        return null;
     }
 }

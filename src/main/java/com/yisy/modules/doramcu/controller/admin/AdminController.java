@@ -1,0 +1,1030 @@
+package com.yisy.modules.doramcu.controller.admin;
+import com.yisy.modules.doramcu.hex.Hex;
+import com.yisy.modules.doramcu.model.misc.CharacterType;
+import com.yisy.modules.doramcu.model.galaxy.Galaxy;
+import com.yisy.modules.doramcu.dto.session.GameEvent;
+import com.yisy.modules.doramcu.model.session.GameSession;
+import com.yisy.modules.doramcu.model.misc.Planet;
+import com.yisy.modules.doramcu.model.misc.PromoCode;
+import com.yisy.modules.doramcu.service.admin.PromoCodeService;
+import com.yisy.modules.doramcu.model.galaxy.Sector;
+import com.yisy.modules.doramcu.model.galaxy.SubSector;
+
+
+import com.yisy.modules.doramcu.eve.model.AiCharacter;
+import com.yisy.modules.doramcu.hex.Empire;
+import com.yisy.modules.doramcu.hex.GalaxyFactory;
+import com.yisy.modules.doramcu.hex.GalaxyGenerationConfig;
+import com.yisy.modules.doramcu.model.players.Player;
+import com.yisy.modules.doramcu.model.user.User;
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
+import com.yisy.modules.doramcu.repository.galaxy.GalaxyRepository;
+import com.yisy.modules.doramcu.repository.players.PlayerRepository;
+import com.yisy.modules.doramcu.repository.galaxy.SectorRepository;
+import com.yisy.modules.doramcu.repository.galaxy.SubSectorRepository;
+import com.yisy.modules.doramcu.repository.user.UserRepository;
+import com.yisy.modules.doramcu.service.galaxy.GalaxyProgressService;
+import com.yisy.modules.doramcu.service.galaxy.GalaxyService;
+import com.yisy.modules.doramcu.service.session.GameSessionService;
+import com.yisy.modules.doramcu.service.session.TurnScheduler;
+import com.yisy.modules.doradl.dl.service.DoraAiLearningService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
+import java.lang.management.OperatingSystemMXBean;
+import java.lang.management.RuntimeMXBean;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.Duration;
+import java.util.*;
+
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/v1/4x/admin")
+public class AdminController {
+
+    private static final Logger log = LoggerFactory.getLogger(AdminController.class);
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final GalaxyRepository galaxyRepository;
+    private final SectorRepository sectorRepository;
+    private final SubSectorRepository subSectorRepository;
+    private final GalaxyService galaxyService;
+    private final GalaxyProgressService galaxyProgressService;
+    private final PlayerRepository playerRepository;
+    private final TurnScheduler turnScheduler;
+    private final GameSessionService gameSessionService;
+    private final DoraAiLearningService doraAiLearningService;
+    private final boolean isDlEnabled;
+    private final com.yisy.modules.doramcu.service.admin.PromoCodeService promoCodeService;
+    private final AiCharacterRepository aiCharacterRepository;
+
+    @Value("${server.port:8080}")
+    private int serverPort;
+
+    @Value("${logging.file.name:logs/doramcu.log}")
+    private String logFileName;
+
+    public AdminController(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                           GalaxyRepository galaxyRepository,
+                           SectorRepository sectorRepository,
+                           SubSectorRepository subSectorRepository,
+                           GalaxyService galaxyService,
+                           GalaxyProgressService galaxyProgressService,
+                           PlayerRepository playerRepository,
+                           TurnScheduler turnScheduler,
+                           GameSessionService gameSessionService,
+                           @Autowired(required = false) DoraAiLearningService doraAiLearningService,
+                           com.yisy.modules.doramcu.service.admin.PromoCodeService promoCodeService,
+                           AiCharacterRepository aiCharacterRepository) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.galaxyRepository = galaxyRepository;
+        this.sectorRepository = sectorRepository;
+        this.subSectorRepository = subSectorRepository;
+        this.galaxyService = galaxyService;
+        this.galaxyProgressService = galaxyProgressService;
+        this.playerRepository = playerRepository;
+        this.turnScheduler = turnScheduler;
+        this.gameSessionService = gameSessionService;
+        this.doraAiLearningService = doraAiLearningService;
+        this.promoCodeService = promoCodeService;
+        this.aiCharacterRepository = aiCharacterRepository;
+        this.isDlEnabled = (doraAiLearningService != null);
+    }
+
+    // ==================== Admin Rights Check ====================
+
+    @GetMapping("/check-admin")
+    public ResponseEntity<Map<String, Object>> checkAdminRights(Authentication authentication) {
+        Map<String, Object> result = new HashMap<>();
+        String username = authentication.getName();
+
+        // Look up the player by email first
+        Optional<Player> playerOpt = playerRepository.findByEmail(username);
+        if (playerOpt.isEmpty()) {
+            playerOpt = playerRepository.findByEmail(username + "@doramcu.local");
+        }
+        // Also try to find by linked User
+        if (playerOpt.isEmpty()) {
+            Optional<User> userOpt = userRepository.findByUsername(username);
+            if (userOpt.isPresent()) {
+                playerOpt = playerRepository.findByUser(userOpt.get());
+            }
+        }
+
+        boolean hasAdminRights = playerOpt.map(Player::isAdmin).orElse(false);
+        result.put("isAdmin", hasAdminRights);
+        result.put("username", username);
+
+        if (hasAdminRights) {
+            log.info("Admin rights check passed for user: {}", username);
+            return ResponseEntity.ok(result);
+        } else {
+            log.warn("Admin rights check failed for user: {}", username);
+            result.put("message", "Admin rights required");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
+        }
+    }
+
+    // ==================== Server Status ====================
+
+    @GetMapping("/server/status")
+    public Map<String, Object> getServerStatus() {
+        log.debug("Admin requested server status");
+        Map<String, Object> status = new HashMap<>();
+
+        RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
+        OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+        MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
+
+        // Uptime
+        long uptimeMs = runtimeBean.getUptime();
+        Duration uptime = Duration.ofMillis(uptimeMs);
+        status.put("uptime", formatUptime(uptime));
+        status.put("uptimeSeconds", uptime.getSeconds());
+
+        // Memory
+        MemoryUsage heapUsage = memoryBean.getHeapMemoryUsage();
+        status.put("memory", Map.of(
+                "heapUsed", heapUsage.getUsed(),
+                "heapMax", heapUsage.getMax(),
+                "heapPercent", String.format("%.1f", heapUsage.getUsed() * 100.0 / heapUsage.getMax())
+        ));
+
+        // CPU
+        status.put("cpuCores", osBean.getAvailableProcessors());
+        status.put("loadAverage", osBean.getSystemLoadAverage());
+        status.put("osName", System.getProperty("os.name"));
+        status.put("osVersion", System.getProperty("os.version"));
+
+        // Server info
+        status.put("serverPort", serverPort);
+        status.put("javaVersion", System.getProperty("java.version"));
+        status.put("startTime", LocalDateTime.now().toString());
+
+        // User count
+        status.put("userCount", userRepository.count());
+
+        return status;
+    }
+
+    // ==================== User Management ====================
+
+    @GetMapping("/users")
+    public List<Map<String, Object>> getAllUsers() {
+        log.debug("Admin requested all users");
+        List<Map<String, Object>> users = new ArrayList<>();
+        userRepository.findAll().forEach(user -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", user.getId());
+            map.put("username", user.getUsername());
+            users.add(map);
+        });
+        return users;
+    }
+
+    @PostMapping("/users")
+    public ResponseEntity<?> createUser(@RequestBody Map<String, String> request) {
+        String username = request.get("username");
+        String password = request.get("password");
+
+        if (username == null || username.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Username is required"));
+        }
+        if (password == null || password.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Password is required"));
+        }
+
+        if (userRepository.findByUsername(username).isPresent()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Username already exists"));
+        }
+
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+
+        log.info("Admin created user: {}", username);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "User created successfully"));
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        userRepository.deleteById(id);
+        log.info("Admin deleted user with ID: {}", id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ==================== Server Configuration ====================
+
+    @GetMapping("/config")
+    public Map<String, Object> getServerConfig() {
+        log.debug("Admin requested server configuration");
+        Map<String, Object> config = new HashMap<>();
+        config.put("serverPort", serverPort);
+        config.put("logFileName", logFileName);
+        config.put("appName", "DoraMCU");
+        config.put("appVersion", "0.0.1-SNAPSHOT");
+        config.put("databaseUrl", "jdbc:mysql://localhost:3306/doramcu");
+        config.put("cacheType", "caffeine");
+        config.put("loggingLevel", "DEBUG");
+        return config;
+    }
+
+    @PutMapping("/config/logging-level")
+    public ResponseEntity<?> updateLoggingLevel(@RequestBody Map<String, String> request) {
+        String level = request.get("level");
+        if (level == null || !level.matches("^(TRACE|DEBUG|INFO|WARN|ERROR)$")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid log level. Use: TRACE, DEBUG, INFO, WARN, ERROR"));
+        }
+        log.info("Admin updated logging level to: {}", level);
+        return ResponseEntity.ok(Map.of("message", "Logging level updated to " + level));
+    }
+
+    // ==================== System Logs ====================
+
+    @GetMapping("/logs")
+    public ResponseEntity<?> getLogs(@RequestParam(defaultValue = "100") int lines) {
+        try {
+            Path logPath = Path.of(logFileName);
+            if (!Files.exists(logPath)) {
+                return ResponseEntity.ok(Map.of("logs", List.of(), "message", "Log file not found"));
+            }
+
+            List<String> logLines = new ArrayList<>();
+            try (RandomAccessFile raf = new RandomAccessFile(logFileName, "r")) {
+                long fileLength = raf.length();
+                long position = fileLength;
+                int lineCount = 0;
+                byte[] buffer = new byte[1024];
+
+                while (position > 0 && lineCount < lines) {
+                    long readPosition = Math.max(0, position - 1024);
+                    raf.seek(readPosition);
+                    int bytesRead = raf.read(buffer);
+
+                    for (int i = 0; i < bytesRead; i++) {
+                        if (buffer[i] == '\n') {
+                            if (readPosition + i + 1 < position) {
+                                long lineStart = readPosition;
+                                long lineEnd = position;
+                                raf.seek(lineStart);
+                                byte[] lineBytes = new byte[(int) (lineEnd - lineStart)];
+                                raf.read(lineBytes);
+                                logLines.add(new String(lineBytes).trim());
+                                lineCount++;
+                            }
+                            position = readPosition + i;
+                        }
+                    }
+                    position = readPosition;
+                }
+            }
+
+            Collections.reverse(logLines);
+            return ResponseEntity.ok(Map.of("logs", logLines));
+        } catch (IOException e) {
+            log.error("Failed to read log file", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to read log file"));
+        }
+    }
+
+    // ==================== Galaxy Management ====================
+
+    @GetMapping("/galaxies")
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public ResponseEntity<?> getGalaxies() {
+        log.debug("Admin requested galaxy list");
+        try {
+            long count = galaxyRepository.count();
+            log.info("Galaxy repository returned {} galaxies", count);
+            List<Map<String, Object>> galaxies = new ArrayList<>();
+            galaxyRepository.findAll().forEach(galaxy -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", galaxy.getId());
+                map.put("name", galaxy.getName());
+                map.put("totalSectors", galaxy.getTotalSectors());
+                map.put("hyperlaneDensity", galaxy.getHyperlaneDensity());
+                galaxies.add(map);
+            });
+            return ResponseEntity.ok(galaxies);
+        } catch (Exception e) {
+            log.error("Failed to list galaxies", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to load galaxies: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/galaxies/rebuild")
+    public ResponseEntity<?> rebuildGalaxies(@RequestBody(required = false) Map<String, List<String>> request) {
+
+        // Determine which galaxies to rebuild
+        List<String> galaxyNames;
+        if (request != null && request.containsKey("galaxies")) {
+            galaxyNames = request.get("galaxies");
+        } else {
+            // Default: rebuild the single galaxy
+            galaxyNames = List.of(GalaxyFactory.GAME_GALAXY_NAME);
+        }
+
+        log.info("Admin requested rebuild of galaxies: {}", galaxyNames);
+
+        List<String> rebuilt = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
+
+        java.util.List<Player> players = playerRepository.findAll();
+        // Reset progress service to clear any previous completed state
+        galaxyProgressService.reset();
+        galaxyService.setProgressListener(galaxyProgressService);
+
+        for (String name : galaxyNames) {
+            try {
+                // Delete existing galaxy if present
+                galaxyRepository.findByName(name).ifPresent(g -> {
+                    log.info("Deleting existing galaxy '{}' for rebuild", name);
+                    galaxyRepository.delete(g);
+                });
+
+                // Build AI-controlled empires
+                Map<Integer, Empire> empires = new HashMap<>();
+                for (Player player : players) {
+                    int empireId = player.getId().intValue();
+                    Empire empire = new Empire(empireId, player.getEmpireName(), -1);
+                    empires.put(empireId, empire);
+                }
+
+                // Generate with appropriate config
+                GalaxyGenerationConfig config;
+                long seed;
+                if (GalaxyFactory.GAME_GALAXY_NAME.equals(name)) {
+                    config = GalaxyFactory.gameGalaxyConfig();
+                    seed = GalaxyFactory.GAME_GALAXY_SEED;
+                } else {
+                    errors.add("Unknown galaxy: " + name);
+                    continue;
+                }
+
+                galaxyService.generateAndSaveGalaxyWithEmpires(
+                        name, empires,
+                        config.getSystemCount(), config.getPlanetsPerSystem(),
+                        config.getMoonChance(), config.getAsteroidBeltChance(),
+                        config.getGasGiantChance(), config.getNebulaChance(),
+                        config.getBlackHoleChance(), config.getCometChance(),
+                        config.getSpaceStationChance(), config.getHyperlaneDensity(),
+                        seed
+                );
+                rebuilt.add(name);
+                log.info("Galaxy '{}' rebuilt successfully", name);
+            } catch (Exception e) {
+                String errorMsg = "Failed to rebuild " + name + ": " + e.getMessage();
+                errors.add(errorMsg);
+                log.error(errorMsg, e);
+            }
+        }
+
+        // Signal that all galaxy generation is finished and complete SSE emitters
+        galaxyProgressService.finishAll();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("rebuilt", rebuilt);
+        result.put("message", "Rebuilt " + rebuilt.size() + " galaxy/galaxies: " + String.join(", ", rebuilt));
+        if (!errors.isEmpty()) {
+            result.put("errors", errors);
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    // ==================== Turn Management ====================
+
+    @GetMapping("/turn/status")
+    public ResponseEntity<Map<String, Object>> getTurnStatus() {
+        Map<String, Object> status = new HashMap<>();
+        status.put("enabled", turnScheduler.isEnabled());
+        status.put("turnIntervalSeconds", turnScheduler.getTurnIntervalSeconds());
+
+        // Gather per-session turn info
+        List<Map<String, Object>> sessions = new ArrayList<>();
+        for (var entry : gameSessionService.getAllSessions().entrySet()) {
+            String sessionId = entry.getKey();
+            var session = entry.getValue();
+            com.yisy.modules.doramcu.hex.Game game = (com.yisy.modules.doramcu.hex.Game) session.getGame();
+            Map<String, Object> info = new HashMap<>();
+            info.put("sessionId", sessionId);
+            info.put("sessionName", session.getName());
+            info.put("currentTurn", game.getCurrentTurn());
+            info.put("currentTime", game.getCurrentTime());
+            info.put("playerCount", game.getPlayers().size());
+            info.put("accumulatedSeconds", turnScheduler.getAccumulatedSeconds(sessionId));
+            info.put("turnMode", "simultaneous");
+            sessions.add(info);
+        }
+        status.put("sessions", sessions);
+        return ResponseEntity.ok(status);
+    }
+
+    @PostMapping("/turn/advance")
+    public ResponseEntity<Map<String, Object>> advanceTurn(@RequestBody Map<String, String> request) {
+        String sessionId = request.get("sessionId");
+        if (sessionId == null || sessionId.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "sessionId is required"));
+        }
+
+        var session = gameSessionService.getGameSession(sessionId);
+        if (session == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Session not found: " + sessionId));
+        }
+
+        com.yisy.modules.doramcu.hex.Game game = (com.yisy.modules.doramcu.hex.Game) session.getGame();
+        session.getLock().writeLock().lock();
+        try {
+            game.nextTurn();
+            // Simultaneous turns: no nextPlayer() cycling
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("message", "Turn advanced successfully (simultaneous turns)");
+            result.put("turn", game.getCurrentTurn());
+            result.put("sessionId", sessionId);
+
+            gameSessionService.broadcastEvent(sessionId,
+                    new com.yisy.modules.doramcu.dto.session.GameEvent(
+                            com.yisy.modules.doramcu.dto.session.GameEvent.EventType.TURN_CHANGED,
+                            sessionId,
+                            Map.of(
+                                    "turn", game.getCurrentTurn(),
+                                    "adminAdvanced", true
+                            )));
+
+            return ResponseEntity.ok(result);
+        } finally {
+            session.getLock().writeLock().unlock();
+        }
+    }
+
+    @PostMapping("/turn/interval")
+    public ResponseEntity<Map<String, Object>> setTurnInterval(@RequestBody Map<String, Long> request) {
+        Long seconds = request.get("seconds");
+        if (seconds == null || seconds < 1) {
+            return ResponseEntity.badRequest().body(Map.of("error", "seconds must be >= 1"));
+        }
+
+        turnScheduler.setTurnIntervalSeconds(seconds);
+        Map<String, Object> result = new HashMap<>();
+        result.put("message", "Turn interval set to " + seconds + " seconds");
+        result.put("turnIntervalSeconds", turnScheduler.getTurnIntervalSeconds());
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/turn/toggle")
+    public ResponseEntity<Map<String, Object>> toggleTurnScheduler(@RequestBody Map<String, Boolean> request) {
+        Boolean enabled = request.get("enabled");
+        if (enabled == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "enabled is required"));
+        }
+
+        turnScheduler.setEnabled(enabled);
+        Map<String, Object> result = new HashMap<>();
+        result.put("message", "Turn scheduler " + (enabled ? "enabled" : "disabled"));
+        result.put("enabled", turnScheduler.isEnabled());
+        return ResponseEntity.ok(result);
+    }
+
+    // ==================== Dora AI Learning Management ====================
+
+    @GetMapping("/ai/learning/status")
+    public ResponseEntity<Map<String, Object>> getLearningStatus() {
+        if (!isDlEnabled) {
+            return ResponseEntity.ok(Map.of("error", "Deep learning is disabled"));
+        }
+        Map<String, Object> status = new HashMap<>();
+        status.put("learningEnabled", doraAiLearningService.isLearningEnabled());
+        status.put("experienceBufferSize", doraAiLearningService.getExperienceBufferSize());
+        status.put("totalActionsRecorded", doraAiLearningService.getTotalActionsRecorded());
+        status.put("totalTrainingCycles", doraAiLearningService.getTotalTrainingCycles());
+        long lastTraining = doraAiLearningService.getLastTrainingTime();
+        status.put("lastTrainingTime", lastTraining > 0 ? LocalDateTime.ofInstant(
+                java.time.Instant.ofEpochMilli(lastTraining), java.time.ZoneId.systemDefault()).toString() : "Never");
+        return ResponseEntity.ok(status);
+    }
+
+    @PostMapping("/ai/learning/toggle")
+    public ResponseEntity<Map<String, Object>> toggleLearning(@RequestBody Map<String, Boolean> request) {
+        if (!isDlEnabled) {
+            return ResponseEntity.ok(Map.of("error", "Deep learning is disabled"));
+        }
+        Boolean enabled = request.get("enabled");
+        if (enabled == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "enabled is required"));
+        }
+        doraAiLearningService.setLearningEnabled(enabled);
+        Map<String, Object> result = new HashMap<>();
+        result.put("message", "Learning " + (enabled ? "enabled" : "disabled"));
+        result.put("learningEnabled", doraAiLearningService.isLearningEnabled());
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/ai/learning/train")
+    public ResponseEntity<Map<String, Object>> triggerTraining() {
+        if (!isDlEnabled) {
+            return ResponseEntity.ok(Map.of("error", "Deep learning is disabled"));
+        }
+        int trained = doraAiLearningService.trainOnAccumulatedExperience();
+        Map<String, Object> result = new HashMap<>();
+        result.put("message", "Trained on " + trained + " samples");
+        result.put("samplesTrained", trained);
+        result.put("totalTrainingCycles", doraAiLearningService.getTotalTrainingCycles());
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/ai/learning/save-model")
+    public ResponseEntity<Map<String, Object>> saveModel() {
+        if (!isDlEnabled) {
+            return ResponseEntity.ok(Map.of("error", "Deep learning is disabled"));
+        }
+        try {
+            String path = doraAiLearningService.saveModel();
+            Map<String, Object> result = new HashMap<>();
+            result.put("message", "Model saved successfully");
+            result.put("modelPath", path);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to save model: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/ai/learning/clear-experience")
+    public ResponseEntity<Map<String, Object>> clearExperience() {
+        if (!isDlEnabled) {
+            return ResponseEntity.ok(Map.of("error", "Deep learning is disabled"));
+        }
+        doraAiLearningService.clearExperience();
+        Map<String, Object> result = new HashMap<>();
+        result.put("message", "Experience buffer cleared");
+        return ResponseEntity.ok(result);
+    }
+
+    // ==================== Sector/SubSector Renaming ====================
+
+    @PutMapping("/galaxies/{galaxyId}/sectors/{row}/{col}/name")
+    public ResponseEntity<Map<String, Object>> renameSector(
+            @PathVariable Long galaxyId,
+            @PathVariable int row,
+            @PathVariable int col,
+            @RequestBody Map<String, String> request) {
+        String name = request.get("name");
+        if (name == null || name.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "name is required"));
+        }
+
+        com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy = galaxyRepository.findById(galaxyId)
+                .orElseThrow(() -> new IllegalArgumentException("Galaxy not found: " + galaxyId));
+
+        com.yisy.modules.doramcu.model.galaxy.Sector dbSector = galaxyService.findSectorByGalaxyAndPosition(galaxyId, row, col);
+        if (dbSector == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Sector not found at (" + row + ", " + col + ")"));
+        }
+
+        dbSector.setName(name);
+        sectorRepository.save(dbSector);
+
+        // Update in-memory galaxy if present in active game sessions
+        gameSessionService.updateSectorNameInMemory(dbGalaxy.getName(), row, col, name);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("message", "Sector renamed to '" + name + "'");
+        result.put("sectorRow", row);
+        result.put("sectorCol", col);
+        result.put("name", name);
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/galaxies/{galaxyId}/sectors/{row}/{col}/subsectors/{subRow}/{subCol}/name")
+    public ResponseEntity<Map<String, Object>> renameSubSector(
+            @PathVariable Long galaxyId,
+            @PathVariable int row,
+            @PathVariable int col,
+            @PathVariable int subRow,
+            @PathVariable int subCol,
+            @RequestBody Map<String, String> request) {
+        String name = request.get("name");
+        if (name == null || name.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "name is required"));
+        }
+
+        com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy = galaxyRepository.findById(galaxyId)
+                .orElseThrow(() -> new IllegalArgumentException("Galaxy not found: " + galaxyId));
+
+        com.yisy.modules.doramcu.model.galaxy.Sector dbSector = galaxyService.findSectorByGalaxyAndPosition(galaxyId, row, col);
+        if (dbSector == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Sector not found at (" + row + ", " + col + ")"));
+        }
+
+        com.yisy.modules.doramcu.model.galaxy.SubSector dbSubSector = galaxyService.findSubSectorBySectorAndPosition(dbSector.getId(), subRow, subCol);
+        if (dbSubSector == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "SubSector not found at (" + subRow + ", " + subCol + ")"));
+        }
+
+        dbSubSector.setName(name);
+        subSectorRepository.save(dbSubSector);
+
+        // Update in-memory galaxy if present in active game sessions
+        gameSessionService.updateSubSectorNameInMemory(dbGalaxy.getName(), row, col, subRow, subCol, name);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("message", "SubSector renamed to '" + name + "'");
+        result.put("sectorRow", row);
+        result.put("sectorCol", col);
+        result.put("subSectorRow", subRow);
+        result.put("subSectorCol", subCol);
+        result.put("name", name);
+        return ResponseEntity.ok(result);
+    }
+
+    // ==================== Utility ====================
+
+    private String formatUptime(Duration duration) {
+        long days = duration.toDays();
+        long hours = duration.toHoursPart();
+        long minutes = duration.toMinutesPart();
+        long seconds = duration.getSeconds();
+
+        if (days > 0) {
+            return String.format("%dd %dh %dm %ds", days, hours, minutes, seconds);
+        }
+        if (hours > 0) {
+            return String.format("%dh %dm %ds", hours, minutes, seconds);
+        }
+        if (minutes > 0) {
+            return String.format("%dm %ds", minutes, seconds);
+        }
+        return String.format("%ds", seconds);
+    }
+
+    // ==================== Promo Code Management ====================
+
+    @GetMapping("/promo-codes")
+    public ResponseEntity<?> getAllPromoCodes() {
+        java.util.List<com.yisy.modules.doramcu.model.misc.PromoCode> codes = promoCodeService.findAll();
+        List<Map<String, Object>> promoCodeMaps = new java.util.ArrayList<>();
+        for (com.yisy.modules.doramcu.model.misc.PromoCode pc : codes) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", pc.getId());
+            map.put("code", pc.getCode());
+            map.put("description", pc.getDescription());
+            map.put("maxUses", pc.getMaxUses());
+            map.put("usedCount", pc.getUsedCount());
+            map.put("active", pc.isActive());
+            map.put("bonuses", pc.getBonuses());
+            promoCodeMaps.add(map);
+        }
+        Map<String, Object> result = new java.util.HashMap<>();
+        result.put("count", codes.size());
+        result.put("promoCodes", promoCodeMaps);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/promo-codes/{code}")
+    public ResponseEntity<?> getPromoCode(@PathVariable String code) {
+        try {
+            com.yisy.modules.doramcu.model.misc.PromoCode pc = promoCodeService.findByCode(code)
+                    .orElseThrow(() -> new IllegalArgumentException("Promo code not found: " + code));
+            Map<String, Object> result = new HashMap<>();
+            result.put("id", pc.getId());
+            result.put("code", pc.getCode());
+            result.put("description", pc.getDescription());
+            result.put("maxUses", pc.getMaxUses());
+            result.put("usedCount", pc.getUsedCount());
+            result.put("active", pc.isActive());
+            result.put("bonuses", pc.getBonuses());
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/promo-codes")
+    public ResponseEntity<?> createPromoCode(@RequestBody Map<String, Object> request) {
+        String code = (String) request.get("code");
+        if (code == null || code.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "code is required"));
+        }
+        String description = (String) request.get("description");
+        Integer maxUses = request.get("maxUses") != null ? (Integer) request.get("maxUses") : null;
+        String typeStr = (String) request.get("type");
+        com.yisy.modules.doramcu.model.misc.PromoCode.CodeType type = typeStr != null ?
+                com.yisy.modules.doramcu.model.misc.PromoCode.CodeType.valueOf(typeStr) :
+                com.yisy.modules.doramcu.model.misc.PromoCode.CodeType.PLAYER;
+        try {
+            com.yisy.modules.doramcu.model.misc.PromoCode pc = promoCodeService.createPromoCode(code, description, maxUses, type);
+            Map<String, Object> result = new HashMap<>();
+            result.put("message", "Promo code created successfully");
+            result.put("code", pc.getCode());
+            result.put("id", pc.getId());
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/promo-codes/{code}/activate")
+    public ResponseEntity<?> activatePromoCode(@PathVariable String code) {
+        try {
+            com.yisy.modules.doramcu.model.misc.PromoCode pc = promoCodeService.findByCode(code)
+                    .orElseThrow(() -> new IllegalArgumentException("Promo code not found: " + code));
+            pc.setActive(true);
+            promoCodeService.updatePromoCode(code, null, null, null, null);
+            Map<String, Object> result = new HashMap<>();
+            result.put("message", "Promo code activated successfully");
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/promo-codes/{code}/deactivate")
+    public ResponseEntity<?> deactivatePromoCode(@PathVariable String code) {
+        try {
+            com.yisy.modules.doramcu.model.misc.PromoCode pc = promoCodeService.deactivatePromoCode(code);
+            return ResponseEntity.ok(pc);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/promo-codes/{code}")
+    public ResponseEntity<?> deletePromoCode(@PathVariable String code) {
+        try {
+            boolean deleted = promoCodeService.deletePromoCode(code);
+            if (!deleted) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Promo code not found: " + code));
+            }
+            return ResponseEntity.ok(Map.of("message", "Promo code deleted successfully"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/promo-codes/generate")
+    public ResponseEntity<?> generatePromoCodes(@RequestBody(required = false) Map<String, Object> request) {
+        try {
+            int count = 10; // default
+            int length = 8; // default
+            String prefix = null;
+            String description = "Generated promo code";
+            Integer maxUses = null; // unlimited
+            String typeStr = "PLAYER";
+
+            if (request != null) {
+                count = request.get("count") != null ? ((Number) request.get("count")).intValue() : count;
+                length = request.get("length") != null ? ((Number) request.get("length")).intValue() : length;
+                Object prefixObj = request.get("prefix");
+                if (prefixObj != null) {
+                    prefix = (String) prefixObj;
+                }
+                description = request.get("description") != null ? (String) request.get("description") : description;
+                maxUses = request.get("maxUses") != null ? ((Number) request.get("maxUses")).intValue() : null;
+                typeStr = request.get("type") != null ? (String) request.get("type") : typeStr;
+            }
+
+            if (count < 1 || count > 1000) {
+                return ResponseEntity.badRequest().body(Map.of("error", "count must be between 1 and 1000"));
+            }
+
+            com.yisy.modules.doramcu.model.misc.PromoCode.CodeType type = com.yisy.modules.doramcu.model.misc.PromoCode.CodeType.valueOf(typeStr);
+
+            // Generate unique codes
+            List<String> generatedCodes;
+            if (prefix != null && !prefix.isEmpty()) {
+                generatedCodes = com.yisy.modules.doramcu.util.PromoCodeGenerator.generateBatchWithPrefix(prefix, count, length);
+            } else {
+                generatedCodes = com.yisy.modules.doramcu.util.PromoCodeGenerator.generateBatch(count, length);
+            }
+
+            // Save to database
+            List<Map<String, Object>> created = new java.util.ArrayList<>();
+            int skipped = 0;
+            for (String code : generatedCodes) {
+                try {
+                    com.yisy.modules.doramcu.model.misc.PromoCode pc = promoCodeService.createPromoCode(code, description, maxUses, type);
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", pc.getId());
+                    map.put("code", pc.getCode());
+                    map.put("description", pc.getDescription());
+                    map.put("type", pc.getCodeType().name());
+                    map.put("maxUses", pc.getMaxUses());
+                    map.put("active", pc.isActive());
+                    created.add(map);
+                } catch (IllegalArgumentException e) {
+                    // Code already exists, skip it
+                    skipped++;
+                }
+            }
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("message", "Generated " + created.size() + " promo codes" + (skipped > 0 ? " (" + skipped + " skipped - already exist)" : ""));
+            result.put("generated", created.size());
+            result.put("skipped", skipped);
+            result.put("promoCodes", created);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // ==================== Admin Info Summary ====================
+
+    /**
+     * Returns a comprehensive summary of all admin-relevant information:
+     * server health, AI character status, galaxy/planet/city counts, and game state.
+     * Used by the corporation dashboard admin info modal.
+     */
+    @GetMapping("/info-summary")
+    public Map<String, Object> getAdminInfoSummary() {
+        Map<String, Object> summary = new HashMap<>();
+
+        // --- Server Health ---
+        Map<String, Object> serverHealth = new HashMap<>();
+        long startTime = ManagementFactory.getRuntimeMXBean().getStartTime();
+        long uptime = System.currentTimeMillis() - startTime;
+        serverHealth.put("uptime", uptime);
+        serverHealth.put("port", serverPort);
+
+        MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
+        MemoryUsage heapUsage = memoryBean.getHeapMemoryUsage();
+        serverHealth.put("heapUsed", heapUsage.getUsed());
+        serverHealth.put("heapMax", heapUsage.getMax());
+        serverHealth.put("heapPercent", (int) (heapUsage.getUsed() * 100.0 / heapUsage.getMax()));
+
+        OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+        if (osBean instanceof com.sun.management.OperatingSystemMXBean) {
+            com.sun.management.OperatingSystemMXBean sunBean = (com.sun.management.OperatingSystemMXBean) osBean;
+            serverHealth.put("cpuLoad", sunBean.getCpuLoad());
+            serverHealth.put("systemCpuLoad", sunBean.getSystemCpuLoad());
+        }
+        serverHealth.put("availableProcessors", Runtime.getRuntime().availableProcessors());
+        serverHealth.put("threadCount", Thread.activeCount());
+        summary.put("server", serverHealth);
+
+        // --- AI Characters ---
+        List<AiCharacter> allCharacters = aiCharacterRepository.findAll();
+        Map<String, Object> aiChars = new HashMap<>();
+        aiChars.put("total", allCharacters.size());
+
+        long activeCount = allCharacters.stream().filter(AiCharacter::isActive).count();
+        aiChars.put("active", activeCount);
+        aiChars.put("inactive", allCharacters.size() - activeCount);
+
+        // Count by character type
+        Map<String, Long> byType = new HashMap<>();
+        for (AiCharacter.CharacterType type : AiCharacter.CharacterType.values()) {
+            long count = allCharacters.stream().filter(c -> c.getCharacterType() == type).count();
+            if (count > 0) {
+                byType.put(type.name(), count);
+            }
+        }
+        aiChars.put("byType", byType);
+
+        // Count by hiring status
+        Map<String, Long> byHiringStatus = new HashMap<>();
+        for (AiCharacter.HiringStatus status : AiCharacter.HiringStatus.values()) {
+            long count = allCharacters.stream().filter(c -> c.getHiringStatus() == status).count();
+            if (count > 0) {
+                byHiringStatus.put(status.name(), count);
+            }
+        }
+        aiChars.put("byHiringStatus", byHiringStatus);
+
+        // Count by empire
+        Map<String, Long> byEmpire = new HashMap<>();
+        for (AiCharacter c : allCharacters) {
+            String empire = c.getEmpireName() != null ? c.getEmpireName() : "Unknown";
+            byEmpire.merge(empire, 1L, Long::sum);
+        }
+        aiChars.put("byEmpire", byEmpire);
+
+        // AI Admin characters
+        long aiAdminCount = allCharacters.stream().filter(AiCharacter::isAiAdmin).count();
+        aiChars.put("aiAdmins", aiAdminCount);
+
+        // List all characters with key info
+        List<Map<String, Object>> charList = new ArrayList<>();
+        for (AiCharacter c : allCharacters) {
+            Map<String, Object> charInfo = new HashMap<>();
+            charInfo.put("id", c.getId());
+            charInfo.put("name", c.getName());
+            charInfo.put("role", c.getRole());
+            charInfo.put("empire", c.getEmpireName());
+            charInfo.put("active", c.isActive());
+            charInfo.put("characterType", c.getCharacterType() != null ? c.getCharacterType().name() : "HUMAN_LEADER");
+            charInfo.put("hiringStatus", c.getHiringStatus() != null ? c.getHiringStatus().name() : "AVAILABLE");
+            charInfo.put("aiAdmin", c.isAiAdmin());
+            charInfo.put("experience", c.getTotalExperience());
+            charInfo.put("leadership", c.getLeadershipRating());
+            charInfo.put("battles", c.getTotalBattles());
+            charInfo.put("victories", c.getTotalVictories());
+            charInfo.put("linkedPlayerId", c.getLinkedPlayerId());
+            charInfo.put("primarySkill", c.getPrimarySkill());
+            charInfo.put("description", c.getDescription());
+            charList.add(charInfo);
+        }
+        aiChars.put("characters", charList);
+        summary.put("aiCharacters", aiChars);
+
+        // --- Galaxy Data ---
+        Map<String, Object> galaxyData = new HashMap<>();
+        List<com.yisy.modules.doramcu.model.galaxy.Galaxy> galaxies = galaxyRepository.findAll();
+        galaxyData.put("galaxies", galaxies.size());
+
+        long totalSectors = 0;
+        long totalSubSectors = 0;
+        for (com.yisy.modules.doramcu.model.galaxy.Galaxy galaxy : galaxies) {
+            List<com.yisy.modules.doramcu.model.galaxy.Sector> sectors = sectorRepository.findByGalaxyId(galaxy.getId());
+            totalSectors += sectors.size();
+            for (com.yisy.modules.doramcu.model.galaxy.Sector sector : sectors) {
+                totalSubSectors += subSectorRepository.findBySectorId(sector.getId()).size();
+            }
+        }
+        galaxyData.put("sectors", totalSectors);
+        galaxyData.put("subSectors", totalSubSectors);
+        summary.put("galaxy", galaxyData);
+
+        // --- Game Sessions ---
+        Map<String, Object> gameSessions = new HashMap<>();
+        try {
+            Map<String, com.yisy.modules.doramcu.model.session.GameSession> sessions = gameSessionService.getAllSessions();
+            gameSessions.put("total", sessions.size());
+            gameSessions.put("active", sessions.size());
+        } catch (Exception e) {
+            gameSessions.put("error", e.getMessage());
+        }
+        summary.put("gameSessions", gameSessions);
+
+        // --- Turn Scheduler ---
+        Map<String, Object> turnInfo = new HashMap<>();
+        try {
+            turnInfo.put("enabled", turnScheduler.isEnabled());
+            turnInfo.put("intervalSeconds", turnScheduler.getTurnIntervalSeconds());
+        } catch (Exception e) {
+            turnInfo.put("error", e.getMessage());
+        }
+        summary.put("turnScheduler", turnInfo);
+
+        // --- DL Service ---
+        Map<String, Object> dlInfo = new HashMap<>();
+        try {
+            dlInfo.put("available", doraAiLearningService != null);
+        } catch (Exception e) {
+            dlInfo.put("error", e.getMessage());
+        }
+        summary.put("dlService", dlInfo);
+
+        return summary;
+    }
+
+    @PutMapping("/promo-codes/{code}")
+    public ResponseEntity<?> updatePromoCode(@PathVariable String code, @RequestBody Map<String, Object> request) {
+        try {
+            String description = request.get("description") != null ? (String) request.get("description") : null;
+            Integer maxUses = request.get("maxUses") != null ? (Integer) request.get("maxUses") : null;
+            java.time.LocalDateTime expiryDate = null;
+            if (request.get("expiryDate") instanceof String) {
+                expiryDate = java.time.LocalDateTime.parse((String) request.get("expiryDate"));
+            }
+            String bonuses = request.get("bonuses") != null ? (String) request.get("bonuses") : null;
+            com.yisy.modules.doramcu.model.misc.PromoCode pc = promoCodeService.updatePromoCode(code, description, maxUses, expiryDate, bonuses);
+            Map<String, Object> result = new HashMap<>();
+            result.put("message", "Promo code updated successfully");
+            result.put("description", pc.getDescription());
+            result.put("maxUses", pc.getMaxUses());
+            result.put("bonuses", pc.getBonuses());
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+        }
+    }
+}

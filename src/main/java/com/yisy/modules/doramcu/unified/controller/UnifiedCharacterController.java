@@ -11,7 +11,7 @@ import com.yisy.modules.doramcu.unified.TravellerCharacterType;
 import com.yisy.modules.doramcu.unified.TravellerTo4XIntegrationService;
 import com.yisy.modules.doramcu.unified.UnifiedCharacterCreationService;
 import com.yisy.modules.doramcu.unified.UnifiedCharacterLoginService;
-import com.yisy.modules.doramcu.model.CorporateRole;
+import com.yisy.modules.doramcu.model.misc.CorporateRole;
 import com.yisy.modules.doramcu.corporation.service.CorporateRoleService;
 import com.yisy.modules.doramcu.unified.dto.CreateCharacterRequest;
 import com.yisy.modules.doramcu.unified.dto.UnifiedCharacterSummary;

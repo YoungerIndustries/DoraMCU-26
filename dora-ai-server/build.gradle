@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.1.2'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.YISY.modules'
+version = findProperty('app.version')
+description = 'DoraAI Server — Standalone LLM and Voice AI microservice'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(findProperty('java.version').toString().toInteger())
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    
+    // Caffeine cache for AI response caching
+    implementation "com.github.ben-manes.caffeine:caffeine:${findProperty('caffeine.version')}"
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+application {
+    mainClass = 'com.yisy.modules.doraai.DoraAiServerApplication'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

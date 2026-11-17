@@ -1464,7 +1464,7 @@ public class Game implements GameContext, GameEngine {
      * @param request the ship design request
      * @return the new ship ID
      */
-    public int createShipFromDesign(Player player, com.yisy.modules.doramcu.dto.ShipDesignRequest request) {
+    public int createShipFromDesign(Player player, com.yisy.modules.doramcu.dto.ship_design.ShipDesignRequest request) {
         // Use TravellerShipFactory to convert design to ship
         int shipId = fleetManager.createShipFromDesign(player, request);
         return shipId;

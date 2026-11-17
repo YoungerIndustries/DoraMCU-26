@@ -10,7 +10,7 @@ import com.yisy.modules.doramcu.event.GalaxyEventType;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.ai.framework.AiPlayerServiceAdapter;
 import com.yisy.modules.doramcu.hex.PlanetPopulationProgress;
-import com.yisy.modules.doramcu.model.GameSession;
+import com.yisy.modules.doramcu.model.session.GameSession;
 import com.yisy.modules.doramcu.repository.AiCharacterRepository;
 import com.yisy.modules.doramcu.service.AiPlayerService;
 import com.yisy.modules.doramcu.service.GalaxyMetricsService;
@@ -194,6 +194,20 @@ public class Earth2026Service implements PlanetService {
     @Transactional
     public Earth2026Character createCharacter(String name, int age, String occupation) {
         return createCharacter(name, age, occupation, null);
+    }
+
+    /**
+     * Creates a character as an employee of a corporation.
+     */
+    @Transactional
+    public Earth2026Character createCharacterAsEmployee(String name, int age, String occupation,
+                                                        Long playerId, Long corporationId,
+                                                        boolean isOwner, String gameMode) {
+        Earth2026Character character = createCharacter(name, age, occupation, playerId);
+        character.setCorporationId(corporationId);
+        character.setIsOwner(isOwner);
+        character.setGameMode(gameMode);
+        return characterRepository.save(character);
     }
 
     /**

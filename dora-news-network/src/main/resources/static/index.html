@@ -1,0 +1,2296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Dora News Network — Galactic News Network</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Dora News Network — Galactic News Network (Warm Nebula Glassmorphism Theme) */
+        :root {
+            /* Background colors - warm nebula */
+            --bg-primary: #0c0a1a;
+            --bg-secondary: #141028;
+            --bg-tertiary: #1c1638;
+            --bg-hover: #2c244e;
+
+            /* Glassmorphism surfaces */
+            --glass-bg: rgba(28, 22, 56, 0.7);
+            --glass-bg-light: rgba(44, 36, 78, 0.6);
+            --glass-bg-hover: rgba(60, 50, 100, 0.6);
+            --glass-border: rgba(200, 170, 255, 0.15);
+            --glass-border-hover: rgba(200, 170, 255, 0.3);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --glass-blur: blur(16px);
+
+            /* Accent colors - warm nebula palette */
+            --accent-cyan: #22d3ee;
+            --accent-blue: #6366f1;
+            --accent-purple: #c084fc;
+            --accent-green: #34d399;
+            --accent-orange: #fb923c;
+            --accent-red: #f87171;
+            --accent-pink: #f472b6;
+            --accent-gold: #fcd34d;
+
+            /* Semantic colors */
+            --success: #34d399;
+            --warning: #fb923c;
+            --danger: #f87171;
+            --info: #6366f1;
+
+            /* Text colors - warmer, higher contrast */
+            --text-primary: #f0e6ff;
+            --text-secondary: #c4b5fd;
+            --text-muted: #8b7faa;
+            --text-bright: #ffffff;
+
+            /* Legacy aliases for compatibility */
+            --border-color: var(--glass-border);
+            --accent-primary: var(--accent-blue);
+            --accent-light: var(--accent-purple);
+            --accent-glow: var(--accent-cyan);
+            --accent-warning: var(--warning);
+            --accent-danger: var(--danger);
+            --accent-info: var(--accent-cyan);
+            --accent-success: var(--success);
+
+            /* Glow effects */
+            --glow-cyan: 0 0 20px rgba(34, 211, 238, 0.4);
+            --glow-blue: 0 0 20px rgba(99, 102, 241, 0.4);
+            --glow-purple: 0 0 20px rgba(192, 132, 252, 0.4);
+            --glow-green: 0 0 20px rgba(52, 211, 153, 0.4);
+            --glow-red: 0 0 20px rgba(248, 113, 113, 0.4);
+
+            /* Typography */
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-display: 'Orbitron', 'Segoe UI', sans-serif;
+
+            /* Spacing */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+
+            /* Transitions */
+            --transition-fast: 0.15s ease;
+            --transition-normal: 0.25s ease;
+            --transition-slow: 0.4s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background - warm nebula */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 50%, rgba(192, 132, 252, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(34, 211, 238, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(252, 211, 77, 0.03) 0%, transparent 50%);
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-primary) 100%);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            letter-spacing: 1px;
+            text-shadow: var(--glow-purple);
+        }
+
+        .logo-icon {
+            font-size: 1.8rem;
+        }
+
+        .header-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Tachyon Relay Animation */
+        .tachyon-relay {
+            position: relative;
+            width: 60px;
+            height: 20px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .tachyon-relay .signal-wave {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--accent-info);
+            box-shadow: 0 0 6px var(--accent-info), 0 0 12px var(--accent-info);
+            transform: translateY(-50%);
+        }
+
+        .tachyon-relay .pulse-ring {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            border: 1px solid var(--accent-info);
+            transform: translateY(-50%);
+            animation: tachyon-pulse 2s ease-out infinite;
+        }
+
+        .tachyon-relay .pulse-ring:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .tachyon-relay .pulse-ring:nth-child(3) {
+            animation-delay: 0.8s;
+        }
+
+        .tachyon-relay .pulse-ring:nth-child(4) {
+            animation-delay: 1.2s;
+        }
+
+        .tachyon-relay .pulse-ring:nth-child(5) {
+            animation-delay: 1.6s;
+        }
+
+        .tachyon-relay .relay-line {
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            width: calc(100% - 10px);
+            height: 1px;
+            background: linear-gradient(90deg, var(--accent-info), transparent);
+            transform: translateY(-50%);
+            opacity: 0.3;
+        }
+
+        .tachyon-relay .energy-dot {
+            position: absolute;
+            top: 50%;
+            width: 2px;
+            height: 2px;
+            border-radius: 50%;
+            background: var(--accent-info);
+            box-shadow: 0 0 4px var(--accent-info);
+            transform: translateY(-50%);
+            animation: tachyon-travel 2s linear infinite;
+        }
+
+        .tachyon-relay .energy-dot:nth-child(7) {
+            animation-delay: 0.3s;
+        }
+
+        .tachyon-relay .energy-dot:nth-child(8) {
+            animation-delay: 0.6s;
+        }
+
+        .tachyon-relay .energy-dot:nth-child(9) {
+            animation-delay: 0.9s;
+        }
+
+        .tachyon-relay .energy-dot:nth-child(10) {
+            animation-delay: 1.2s;
+        }
+
+        .tachyon-relay .energy-dot:nth-child(11) {
+            animation-delay: 1.5s;
+        }
+
+        .tachyon-relay .energy-dot:nth-child(12) {
+            animation-delay: 1.8s;
+        }
+
+        .tachyon-relay.disconnected .signal-wave,
+        .tachyon-relay.disconnected .pulse-ring,
+        .tachyon-relay.disconnected .energy-dot {
+            animation: none;
+            opacity: 0.2;
+        }
+
+        .tachyon-relay.disconnected .signal-wave {
+            background: var(--accent-danger);
+            box-shadow: 0 0 6px var(--accent-danger);
+        }
+
+        .tachyon-relay.disconnected .relay-line {
+            background: linear-gradient(90deg, var(--accent-danger), transparent);
+        }
+
+        @keyframes tachyon-pulse {
+            0% {
+                width: 4px;
+                height: 4px;
+                opacity: 0.8;
+                left: 0;
+                top: 50%;
+            }
+            100% {
+                width: 50px;
+                height: 20px;
+                opacity: 0;
+                left: -23px;
+                top: 50%;
+            }
+        }
+
+        @keyframes tachyon-travel {
+            0% {
+                left: 6px;
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                left: calc(100% - 4px);
+                opacity: 0;
+            }
+        }
+
+        .header-time {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Stats bar — Glassmorphism */
+        .stats-bar {
+            display: flex;
+            gap: 24px;
+            padding: 12px 24px;
+            background: var(--glass-bg);
+            border-bottom: 1px solid var(--glass-border);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .stat-icon {
+            font-size: 1.1rem;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+        }
+
+        .stat-value {
+            color: var(--accent-cyan);
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stat-value.warning {
+            color: var(--warning);
+        }
+
+        .stat-value.danger {
+            color: var(--danger);
+        }
+
+        /* News Status */
+        .news-status {
+            font-size: 0.85rem;
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+
+        .news-status.connected {
+            color: var(--success);
+            background: rgba(52, 211, 153, 0.12);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+        }
+
+        .news-status.connecting {
+            color: var(--warning);
+            background: rgba(251, 146, 60, 0.12);
+            border: 1px solid rgba(251, 146, 60, 0.25);
+        }
+
+        .news-status.disconnected {
+            color: var(--danger);
+            background: rgba(248, 113, 113, 0.12);
+            border: 1px solid rgba(248, 113, 113, 0.25);
+        }
+
+        /* Layout */
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* Sidebar — Glassmorphism */
+        .sidebar {
+            width: 220px;
+            background: var(--glass-bg);
+            padding: 16px;
+            border-right: 1px solid var(--glass-border);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            flex-shrink: 0;
+        }
+
+        .sidebar-section {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-title {
+            font-family: var(--font-display);
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--accent-purple);
+            margin-bottom: 8px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+        }
+
+        .sidebar-item {
+            padding: 9px 14px;
+            margin: 2px 0;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 13px;
+            transition: all var(--transition-fast);
+            color: var(--text-muted);
+            border: 1px solid transparent;
+        }
+
+        .sidebar-item:hover {
+            background: var(--glass-bg-hover);
+            color: var(--text-primary);
+            border-color: var(--glass-border);
+        }
+
+        .sidebar-item.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(192, 132, 252, 0.15));
+            color: var(--text-bright);
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: var(--glow-blue);
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            max-height: calc(100vh - 120px);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .card h3 {
+            color: var(--accent-glow);
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Grid layouts */
+        .grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        /* Item rows */
+        .item-row {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            margin: 6px 0;
+            transition: border-color 0.2s;
+        }
+
+        .item-row:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .item-row .name {
+            font-weight: 600;
+            color: #fff;
+            font-size: 15px;
+        }
+
+        .item-row .detail {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .item-row .description {
+            font-size: 13px;
+            color: var(--text-primary);
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        .item-row .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            margin: 2px;
+            background: rgba(57, 73, 171, 0.2);
+            color: var(--accent-glow);
+        }
+
+        /* Race card */
+        .race-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.2s;
+        }
+
+        .race-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .race-card .race-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .race-card .race-homeworld {
+            font-size: 12px;
+            color: var(--accent-glow);
+            margin-bottom: 8px;
+        }
+
+        .race-card .race-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .race-card .race-stats {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .race-card .race-stat {
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(57, 73, 171, 0.15);
+            color: var(--accent-light);
+        }
+
+        /* Character card */
+        .character-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.2s;
+        }
+
+        .character-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .character-card .char-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .character-card .char-role {
+            font-size: 12px;
+            color: var(--accent-glow);
+            margin-bottom: 8px;
+        }
+
+        .character-card .char-quote {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-style: italic;
+            line-height: 1.4;
+            border-left: 3px solid var(--accent-primary);
+            padding-left: 8px;
+            margin-top: 8px;
+        }
+
+        /* Storyline card */
+        .storyline-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.2s;
+        }
+
+        .storyline-card:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .storyline-card .sl-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .storyline-card .sl-seasons {
+            font-size: 12px;
+            color: var(--accent-glow);
+            margin-bottom: 8px;
+        }
+
+        .storyline-card .sl-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Dialogue card */
+        .dialogue-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .dialogue-card .dl-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .dialogue-card .dl-scene {
+            font-size: 12px;
+            color: var(--accent-glow);
+            margin-bottom: 8px;
+        }
+
+        .dialogue-card .dl-line {
+            font-size: 13px;
+            color: var(--text-primary);
+            margin: 4px 0;
+            padding-left: 12px;
+            border-left: 2px solid var(--border-color);
+        }
+
+        .dialogue-card .dl-speaker {
+            font-weight: 600;
+            color: var(--accent-glow);
+        }
+
+        /* Location card */
+        .location-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.2s;
+        }
+
+        .location-card:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .location-card .loc-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .location-card .loc-type {
+            font-size: 12px;
+            color: var(--accent-glow);
+            margin-bottom: 8px;
+        }
+
+        .location-card .loc-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* News Feed */
+        .news-feed {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding: 12px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) transparent;
+        }
+
+        .news-feed::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .news-feed::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .news-feed::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .news-event {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            transition: background 0.2s, border-color 0.2s;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .news-event:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent-primary);
+        }
+
+        .event-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(57, 73, 171, 0.1);
+            border-radius: 8px;
+        }
+
+        .event-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .event-title {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .event-galaxy {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .event-time {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            opacity: 0.7;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .event-details {
+            font-size: 0.8rem;
+            color: var(--accent-info);
+            margin-top: 4px;
+            padding: 4px 8px;
+            background: rgba(64, 196, 255, 0.05);
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        /* Loading state */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .loading-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+
+        /* Section title */
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-bright);
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(200, 170, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Button style */
+        .gnn-btn {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(192, 132, 252, 0.2));
+            color: var(--text-bright);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 13px;
+            font-family: var(--font-display);
+            letter-spacing: 0.5px;
+            transition: all var(--transition-fast);
+        }
+        .gnn-btn:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(192, 132, 252, 0.35));
+            border-color: rgba(99, 102, 241, 0.6);
+            box-shadow: var(--glow-blue);
+        }
+
+        /* Galaxy Health Card — Glassmorphism */
+        .galaxy-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+        }
+
+        .galaxy-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--health-color, var(--accent-primary)), transparent);
+            box-shadow: 0 0 10px var(--health-color, var(--accent-primary));
+        }
+
+        .galaxy-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-lg);
+            box-shadow: inset 0 0 20px rgba(200, 170, 255, 0.03);
+            pointer-events: none;
+        }
+
+        .galaxy-card:hover {
+            border-color: var(--glass-border-hover);
+            transform: translateY(-4px);
+            box-shadow: var(--glass-shadow), 0 0 30px rgba(var(--health-rgb, 99, 102, 241), 0.2);
+            background: var(--glass-bg-hover);
+        }
+
+        .galaxy-card.healthy {
+            --health-color: var(--success);
+            --health-rgb: 52, 211, 153;
+        }
+        .galaxy-card.warning {
+            --health-color: var(--warning);
+            --health-rgb: 251, 146, 60;
+        }
+        .galaxy-card.critical {
+            --health-color: var(--danger);
+            --health-rgb: 248, 113, 113;
+        }
+
+        .galaxy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .galaxy-name {
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-bright);
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 8px rgba(200, 170, 255, 0.3);
+        }
+
+        .galaxy-type {
+            font-size: 10px;
+            font-family: var(--font-display);
+            padding: 3px 10px;
+            border-radius: 12px;
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .galaxy-health-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            border-radius: 14px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            letter-spacing: 0.3px;
+        }
+
+        .galaxy-health-badge.healthy {
+            background: rgba(52, 211, 153, 0.12);
+            color: var(--success);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+            box-shadow: var(--glow-green);
+        }
+
+        .galaxy-health-badge.warning {
+            background: rgba(251, 146, 60, 0.12);
+            color: var(--warning);
+            border: 1px solid rgba(251, 146, 60, 0.25);
+            box-shadow: 0 0 20px rgba(251, 146, 60, 0.3);
+        }
+
+        .galaxy-health-badge.critical {
+            background: rgba(248, 113, 113, 0.12);
+            color: var(--danger);
+            border: 1px solid rgba(248, 113, 113, 0.25);
+            box-shadow: var(--glow-red);
+        }
+
+        .galaxy-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .galaxy-stat {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .galaxy-stat-value {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Progress Bar with gradient and glow */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+            border: 1px solid rgba(99, 102, 241, 0.15);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--health-color, var(--accent-primary)), 
+                color-mix(in srgb, var(--health-color, var(--accent-primary)) 70%, white));
+            border-radius: 4px;
+            transition: width 0.8s ease;
+            box-shadow: 0 0 8px var(--health-color, var(--accent-primary));
+            position: relative;
+        }
+
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: progress-shimmer 2s infinite;
+        }
+
+        @keyframes progress-shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Dashboard summary cards — Glassmorphism */
+        .summary-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            transition: all var(--transition-normal);
+        }
+
+        .summary-card:hover {
+            border-color: var(--glass-border-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--glass-shadow);
+            background: var(--glass-bg-hover);
+        }
+
+        .summary-card .summary-value {
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            text-shadow: var(--glow-cyan);
+        }
+
+        .summary-card .summary-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .layout {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding: 12px;
+            }
+            .sidebar-section {
+                display: inline-block;
+                margin-bottom: 8px;
+            }
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            .main-content {
+                max-height: none;
+                padding: 16px;
+            }
+            .header {
+                padding: 12px 16px;
+            }
+            .stats-bar {
+                padding: 8px 16px;
+                gap: 12px;
+            }
+            .stat-item {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <span class="logo-icon">🛸</span>
+            <div>
+                <div class="logo">Dora News Network</div>
+                <div class="header-subtitle">
+                    <span>Galactic News Network — Broadcasting via Tachyon Relay</span>
+                    <div class="tachyon-relay" id="tachyonRelay">
+                        <div class="signal-wave"></div>
+                        <div class="pulse-ring"></div>
+                        <div class="pulse-ring"></div>
+                        <div class="pulse-ring"></div>
+                        <div class="pulse-ring"></div>
+                        <div class="pulse-ring"></div>
+                        <div class="relay-line"></div>
+                        <div class="energy-dot"></div>
+                        <div class="energy-dot"></div>
+                        <div class="energy-dot"></div>
+                        <div class="energy-dot"></div>
+                        <div class="energy-dot"></div>
+                        <div class="energy-dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <span id="newsStatus" class="news-status connecting">Connecting...</span>
+            <span id="newsTime" class="header-time">--:--:--</span>
+        </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <span class="stat-icon">👥</span>
+            <span class="stat-label">Active Players:</span>
+            <span id="statPlayers" class="stat-value">--</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-icon">🌌</span>
+            <span class="stat-label">Galaxies:</span>
+            <span id="statGalaxies" class="stat-value">--</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-icon">📡</span>
+            <span class="stat-label">Events:</span>
+            <span id="statEvents" class="stat-value">--</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-icon">🖥️</span>
+            <span class="stat-label">Server:</span>
+            <span id="statServer" class="stat-value">--</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-icon">💾</span>
+            <span class="stat-label">Memory:</span>
+            <span id="statMemory" class="stat-value">--</span>
+        </div>
+    </div>
+
+    <!-- Layout -->
+    <div class="layout">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Galaxy Status</div>
+                <div class="sidebar-item active" onclick="switchView('dashboard', this)">📊 Dashboard</div>
+                <div class="sidebar-item" onclick="switchView('galaxies', this)">🌌 All Galaxies</div>
+                <div class="sidebar-item" onclick="switchView('news', this)">📡 News Feed</div>
+                <div class="sidebar-item" id="sidebarGalaxyDetail" onclick="switchView('galaxy-detail', this)" style="display:none;">🔭 Galaxy Detail</div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Babylon 5</div>
+                <div class="sidebar-item" onclick="switchView('b5-races', this)">👽 Races</div>
+                <div class="sidebar-item" onclick="switchView('b5-characters', this)">👤 Characters</div>
+                <div class="sidebar-item" onclick="switchView('b5-storylines', this)">📖 Storylines</div>
+                <div class="sidebar-item" onclick="switchView('b5-dialogues', this)">💬 Dialogues</div>
+                <div class="sidebar-item" onclick="switchView('b5-locations', this)">🌍 Locations</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <div class="section-title">📡 Galactic News Network — Dashboard</div>
+            <div class="card" style="margin-bottom:20px;">
+                <h3>🌌 Universe Overview</h3>
+                <p style="color:var(--text-secondary);line-height:1.6;">
+                    The Dora News Network broadcasts live from all known galaxies via tachyon relay,
+                    providing real-time coverage of universe events, galaxy health, and interstellar activity.
+                    Inspired by the Interstellar News Network (ISN) of Babylon 5, we serve as your window
+                    into the DoraMCU multiverse.
+                </p>
+            </div>
+            <div class="grid grid-3">
+                <div class="summary-card">
+                    <div class="summary-value" id="statGalaxiesMain">0</div>
+                    <div class="summary-label">Total Galaxies</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" style="color:var(--accent-success);">—</div>
+                    <div class="summary-label">Healthy</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" style="color:var(--accent-warning);">—</div>
+                    <div class="summary-label">Warning</div>
+                </div>
+            </div>
+            <div class="grid grid-3" style="margin-top:16px;">
+                <div class="summary-card">
+                    <div class="summary-value" style="color:var(--accent-danger);">—</div>
+                    <div class="summary-label">Critical</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" style="color:var(--accent-info);">—</div>
+                    <div class="summary-label">Building</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" style="color:var(--accent-glow);">—</div>
+                    <div class="summary-label">Playable</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        Dora News Network — Galactic News Network • Broadcasting to All Known Galaxies via Tachyon Relay
+    </div>
+
+    <script>
+    (function() {
+        'use strict';
+
+        const MAX_EVENTS = 50;
+        let eventSource = null;
+        let reconnectTimeout = null;
+        let connectTimeout = null;
+        let eventCounter = 0;
+        let currentView = 'dashboard';
+        let tachyonRelayEl = null;
+
+        function setTachyonRelayConnected(connected) {
+            if (!tachyonRelayEl) {
+                tachyonRelayEl = document.getElementById('tachyonRelay');
+            }
+            if (tachyonRelayEl) {
+                if (connected) {
+                    tachyonRelayEl.classList.remove('disconnected');
+                } else {
+                    tachyonRelayEl.classList.add('disconnected');
+                }
+            }
+        }
+        let galaxyHealthData = [];
+        let currentGalaxyName = null;
+        let galaxyDetailData = null;
+        let galaxyDetailRefreshInterval = null;
+        let previousView = 'dashboard';
+        let b5Data = {
+            races: [],
+            characters: [],
+            storylines: [],
+            dialogues: [],
+            locations: []
+        };
+
+        // ==========================================
+        // Galaxy Health Data Loading
+        // ==========================================
+
+        async function loadGalaxyHealth() {
+            try {
+                const response = await fetch('/api/galaxies/health');
+                if (response.ok) {
+                    const data = await response.json();
+                    galaxyHealthData = Array.isArray(data) ? data : [];
+                    const statEl = document.getElementById('statGalaxies');
+                    if (statEl) statEl.textContent = galaxyHealthData.length;
+                }
+            } catch (e) {
+                console.warn('Failed to load galaxy health:', e);
+                galaxyHealthData = [];
+            }
+            // Re-render current view to reflect updated galaxy data
+            renderCurrentView();
+        }
+
+        // ==========================================
+        // B5 Data Loading
+        // ==========================================
+
+        async function loadB5Data() {
+            try {
+                const [races, characters, storylines, dialogues, locations] = await Promise.all([
+                    fetch('/api/b5/races').then(r => r.json()).catch(() => []),
+                    fetch('/api/b5/characters').then(r => r.json()).catch(() => []),
+                    fetch('/api/b5/storylines').then(r => r.json()).catch(() => []),
+                    fetch('/api/b5/dialogues').then(r => r.json()).catch(() => []),
+                    fetch('/api/b5/locations').then(r => r.json()).catch(() => [])
+                ]);
+
+                b5Data.races = races || [];
+                b5Data.characters = characters || [];
+                b5Data.storylines = storylines || [];
+                b5Data.dialogues = dialogues || [];
+                b5Data.locations = locations || [];
+
+                // Render current view
+                renderCurrentView();
+            } catch (e) {
+                console.warn('Failed to load B5 data:', e);
+            }
+        }
+
+        // ==========================================
+        // View Switching
+        // ==========================================
+
+        window.switchView = function(view, element) {
+            if (view !== 'galaxy-detail') {
+                previousView = currentView;
+            }
+            currentView = view;
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            if (element) {
+                element.classList.add('active');
+            }
+            // Show/hide Galaxy Detail sidebar entry
+            const detailSidebar = document.getElementById('sidebarGalaxyDetail');
+            if (detailSidebar) {
+                detailSidebar.style.display = (view === 'galaxy-detail') ? 'block' : 'none';
+            }
+            renderCurrentView();
+        };
+
+        function renderCurrentView() {
+            try {
+                const container = document.getElementById('mainContent');
+                if (!container) {
+                    console.error('DNN: mainContent element not found!');
+                    return;
+                }
+                switch(currentView) {
+                    case 'dashboard': renderDashboard(container); break;
+                    case 'galaxies': renderGalaxies(container); break;
+                    case 'galaxy-detail': renderGalaxyDetail(container); break;
+                    case 'news': renderNews(container); break;
+                    case 'b5-races': renderRaces(container); break;
+                    case 'b5-characters': renderCharacters(container); break;
+                    case 'b5-storylines': renderStorylines(container); break;
+                    case 'b5-dialogues': renderDialogues(container); break;
+                    case 'b5-locations': renderLocations(container); break;
+                }
+                console.log('DNN: rendered view', currentView, '— galaxies:', galaxyHealthData.length);
+            } catch (e) {
+                console.error('DNN: renderCurrentView failed for', currentView, e);
+            }
+        }
+
+        // ==========================================
+        // Dashboard View — Universal Galaxy Overview
+        // ==========================================
+
+        function renderDashboard(container) {
+            const healthyCount = galaxyHealthData.filter(g => g.healthStatus === 'HEALTHY').length;
+            const warningCount = galaxyHealthData.filter(g => g.healthStatus === 'WARNING').length;
+            const criticalCount = galaxyHealthData.filter(g => g.healthStatus === 'CRITICAL').length;
+            const buildingCount = galaxyHealthData.filter(g => g.buildRunning).length;
+            const playableCount = galaxyHealthData.filter(g => g.isPlayable).length;
+
+            // Update the static galaxy count if the element exists (fallback HTML)
+            const statGalaxiesMain = document.getElementById('statGalaxiesMain');
+            if (statGalaxiesMain) {
+                statGalaxiesMain.textContent = galaxyHealthData.length;
+            }
+
+            container.innerHTML = getDashboardHTML(healthyCount, warningCount, criticalCount, buildingCount, playableCount);
+
+            // Attach click handlers for quick action buttons
+            container.querySelectorAll('.gnn-btn[data-action]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const action = btn.getAttribute('data-action');
+                    const sidebarItem = document.querySelector(`.sidebar-item[onclick*="${action}"]`);
+                    if (sidebarItem) sidebarItem.click();
+                });
+            });
+        }
+
+        function getDashboardHTML(healthyCount, warningCount, criticalCount, buildingCount, playableCount) {
+            return `
+                <div class="section-title">📡 Galactic News Network — Dashboard</div>
+                <div class="card" style="margin-bottom:20px;">
+                    <h3>🌌 Universe Overview</h3>
+                    <p style="color:var(--text-secondary);line-height:1.6;">
+                        The Dora News Network broadcasts live from all known galaxies via tachyon relay, 
+                        providing real-time coverage of universe events, galaxy health, and interstellar activity.
+                        Inspired by the Interstellar News Network (ISN) of Babylon 5, we serve as your window 
+                        into the DoraMCU multiverse.
+                    </p>
+                </div>
+                <div class="grid grid-3">
+                    <div class="summary-card">
+                        <div class="summary-value">${galaxyHealthData.length}</div>
+                        <div class="summary-label">Total Galaxies</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value" style="color:var(--accent-success);">${healthyCount}</div>
+                        <div class="summary-label">Healthy</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value" style="color:var(--accent-warning);">${warningCount}</div>
+                        <div class="summary-label">Warning</div>
+                    </div>
+                </div>
+                <div class="grid grid-3" style="margin-top:16px;">
+                    <div class="summary-card">
+                        <div class="summary-value" style="color:var(--accent-danger);">${criticalCount}</div>
+                        <div class="summary-label">Critical</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value" style="color:var(--accent-info);">${buildingCount}</div>
+                        <div class="summary-label">Building</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value" style="color:var(--accent-glow);">${playableCount}</div>
+                        <div class="summary-label">Playable</div>
+                    </div>
+                </div>
+                ${galaxyHealthData.length > 0 ? `
+                <div class="card" style="margin-top:20px;">
+                    <h3>⚡ Quick Actions</h3>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <button class="gnn-btn" data-action="galaxies">View All Galaxies</button>
+                        <button class="gnn-btn" data-action="news">Live News Feed</button>
+                        <button class="gnn-btn" data-action="b5-races">B5 Races</button>
+                        <button class="gnn-btn" data-action="b5-characters">B5 Characters</button>
+                    </div>
+                </div>
+                ` : ''}
+            `;
+        }
+
+        // ==========================================
+        // Galaxy Detail Navigation
+        // ==========================================
+
+        window.viewGalaxyDetail = function(name) {
+            currentGalaxyName = name;
+            previousView = currentView;
+            currentView = 'galaxy-detail';
+            // Update sidebar
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            const detailSidebar = document.getElementById('sidebarGalaxyDetail');
+            if (detailSidebar) {
+                detailSidebar.style.display = 'block';
+                detailSidebar.classList.add('active');
+            }
+            loadGalaxyDetail();
+        };
+
+        window.backFromDetail = function() {
+            // Stop auto-refresh
+            if (galaxyDetailRefreshInterval) {
+                clearInterval(galaxyDetailRefreshInterval);
+                galaxyDetailRefreshInterval = null;
+            }
+            galaxyDetailData = null;
+            currentGalaxyName = null;
+            currentView = previousView || 'galaxies';
+            const detailSidebar = document.getElementById('sidebarGalaxyDetail');
+            if (detailSidebar) {
+                detailSidebar.style.display = 'none';
+                detailSidebar.classList.remove('active');
+            }
+            // Re-activate the previous view's sidebar item
+            const viewMap = {'dashboard': 0, 'galaxies': 1, 'news': 2, 'b5-races': 3, 'b5-characters': 4, 'b5-storylines': 5, 'b5-dialogues': 6, 'b5-locations': 7};
+            const items = document.querySelectorAll('.sidebar-item');
+            items.forEach(el => el.classList.remove('active'));
+            const idx = viewMap[currentView];
+            if (idx !== undefined && items[idx]) {
+                items[idx].classList.add('active');
+            }
+            renderCurrentView();
+        };
+
+        async function loadGalaxyDetail() {
+            if (!currentGalaxyName) return;
+            try {
+                const response = await fetch('/api/galaxies/' + encodeURIComponent(currentGalaxyName) + '/dashboard');
+                if (response.ok) {
+                    galaxyDetailData = await response.json();
+                    renderCurrentView();
+                }
+            } catch (e) {
+                console.warn('Failed to load galaxy detail:', e);
+            }
+        }
+
+        // ==========================================
+        // All Galaxies View
+        // ==========================================
+
+        function renderGalaxies(container) {
+            const galaxies = galaxyHealthData;
+            container.innerHTML = `
+                <div class="section-title">🌌 All Galaxies — Health Status</div>
+                <div class="grid grid-2">
+                    ${galaxies.map(g => {
+                        const healthClass = (g.healthStatus || '').toLowerCase() || 'warning';
+                        const healthLabel = g.healthStatus || 'UNKNOWN';
+                        const healthScore = g.healthScore != null ? g.healthScore + '/100' : 'N/A';
+                        const completion = g.completionPercent != null ? g.completionPercent : 0;
+                        const systems = g.solarSystemCount != null ? g.solarSystemCount : 0;
+                        const maxSystems = g.expectedMaxSystems != null ? g.expectedMaxSystems : '?';
+                        const aiAgents = g.aiAgentCount != null ? g.aiAgentCount : 0;
+                        const buildRunning = g.buildRunning ? '🔨 Building' : '✅ Idle';
+                        const playable = g.isPlayable ? '🎮 Playable' : '❌ Not Ready';
+                        const findings = (g.criticalFindings || 0) + (g.highFindings || 0) + (g.mediumFindings || 0);
+                        const gameType = g.gameType || g.type || 'UNKNOWN';
+                        return `
+                        <div class="galaxy-card ${healthClass}" onclick="viewGalaxyDetail('${escapeHtml(g.galaxyName || g.name || '')}")" style="cursor:pointer;">
+                            <div class="galaxy-header">
+                                <div class="galaxy-name">${escapeHtml(g.galaxyName || g.name || 'Unknown')}</div>
+                                <span class="galaxy-type">${escapeHtml(gameType)}</span>
+                            </div>
+                            <span class="galaxy-health-badge ${healthClass}">● ${healthLabel} (${healthScore})</span>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" style="width:${completion}%"></div>
+                            </div>
+                            <div style="font-size:11px;color:var(--text-secondary);margin-top:4px;">${completion}% complete</div>
+                            <div class="galaxy-stats">
+                                <div class="galaxy-stat">🪐 Systems: <span class="galaxy-stat-value">${systems}/${maxSystems}</span></div>
+                                <div class="galaxy-stat">🤖 AI Agents: <span class="galaxy-stat-value">${aiAgents}</span></div>
+                                <div class="galaxy-stat">📋 Findings: <span class="galaxy-stat-value">${findings}</span></div>
+                                <div class="galaxy-stat">🛠️ Status: <span class="galaxy-stat-value">${buildRunning}</span></div>
+                            </div>
+                            <div style="margin-top:8px;font-size:12px;color:var(--text-secondary);">${playable}</div>
+                            ${g.topRecommendations && g.topRecommendations.length ? `
+                                <div style="margin-top:8px;font-size:11px;color:var(--accent-warning);">
+                                    ⚠️ ${escapeHtml(g.topRecommendations[0])}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `}).join('') || '<div class="empty-state"><div class="empty-state-icon">🌌</div><div>No galaxy data available</div></div>'}
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // Galaxy Detail View
+        // ==========================================
+
+        function renderGalaxyDetail(container) {
+            if (!galaxyDetailData) {
+                container.innerHTML = `
+                    <div class="section-title">🔭 Galaxy Detail</div>
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔭</div>
+                        <div>Loading galaxy data...</div>
+                    </div>
+                `;
+                // Start auto-refresh
+                startGalaxyDetailRefresh();
+                return;
+            }
+            startGalaxyDetailRefresh();
+            const d = galaxyDetailData;
+            const healthClass = (d.healthStatus || '').toLowerCase() || 'warning';
+            const healthLabel = d.healthStatus || 'UNKNOWN';
+            const healthScore = d.healthScore != null ? d.healthScore : '—';
+            const completion = d.completionPercent != null ? d.completionPercent : 0;
+            const systems = d.solarSystemCount != null ? d.solarSystemCount : 0;
+            const maxSystems = d.expectedMaxSystems != null ? d.expectedMaxSystems : '?';
+            const buildRunning = d.buildRunning ? '🔨 Building' : '✅ Idle';
+            const buildPhase = d.buildPhase || 'N/A';
+            const buildError = d.buildErrorMessage || '';
+            const buildElapsed = d.buildElapsedMs != null ? formatDuration(d.buildElapsedMs) : '—';
+            const playable = d.isPlayable ? '🎮 Playable' : '❌ Not Ready';
+            const aiCount = d.aiAgentCount != null ? d.aiAgentCount : 0;
+            const overstaffed = d.isOverstaffed ? '⚠️ Overstaffed' : '✅ Not overstaffed';
+            const workforceRec = d.workforceRecommendation || '';
+            const gameType = d.gameType || 'UNKNOWN';
+            const difficulty = d.difficultyLevel || 'N/A';
+            const theme = d.theme || '';
+            const desc = d.description || '';
+            const criticalF = d.criticalFindings || 0;
+            const highF = d.highFindings || 0;
+            const mediumF = d.mediumFindings || 0;
+            const woPending = d.workOrderPending || 0;
+            const woRunning = d.workOrderRunning || 0;
+            const woCompleted = d.workOrderCompleted || 0;
+            const woFailed = d.workOrderFailed || 0;
+            const woTotal = d.workOrderTotal || 0;
+            const playerCount = d.playerCount != null ? d.playerCount : 0;
+
+            // Build workforce role breakdown
+            let workforceRolesHtml = '';
+            if (d.aiAgentsByRole && typeof d.aiAgentsByRole === 'object') {
+                const roles = Object.entries(d.aiAgentsByRole);
+                if (roles.length > 0) {
+                    workforceRolesHtml = '<div style="margin-top:10px;font-size:12px;">' +
+                        roles.map(([role, count]) =>
+                            '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--glass-border);">' +
+                            '<span style="color:var(--text-muted);">' + escapeHtml(String(role)) + '</span>' +
+                            '<span style="color:var(--text-primary);font-weight:600;">' + count + '</span>' +
+                            '</div>'
+                        ).join('') +
+                    '</div>';
+                }
+            }
+
+            // Build recommendations list
+            let recsHtml = '';
+            if (d.topRecommendations && d.topRecommendations.length > 0) {
+                recsHtml = '<div style="margin-top:10px;">' +
+                    d.topRecommendations.slice(0, 5).map(r =>
+                        '<div style="font-size:12px;color:var(--warning);padding:3px 0;">⚠️ ' + escapeHtml(String(r)) + '</div>'
+                    ).join('') +
+                '</div>';
+            }
+
+            // Build recent work orders table
+            let woTableHtml = '';
+            if (d.recentWorkOrders && d.recentWorkOrders.length > 0) {
+                const rows = d.recentWorkOrders.slice(0, 5).map(wo => {
+                    const status = wo.status || 'UNKNOWN';
+                    const statusColor = status === 'RUNNING' ? 'var(--accent-cyan)' : status === 'COMPLETED' ? 'var(--success)' : status === 'FAILED' ? 'var(--danger)' : 'var(--text-muted)';
+                    const id = wo.id || '?';
+                    const text = wo.orderText || '';
+                    const created = wo.createdAt ? new Date(wo.createdAt).toLocaleTimeString('en-US', {hour12: false}) : '—';
+                    return '<tr>' +
+                        '<td style="color:var(--text-muted);font-size:12px;">#' + id + '</td>' +
+                        '<td style="font-size:12px;">' + escapeHtml(text) + '</td>' +
+                        '<td style="font-size:12px;color:' + statusColor + ';">' + escapeHtml(status) + '</td>' +
+                        '<td style="color:var(--text-muted);font-size:11px;">' + created + '</td>' +
+                    '</tr>';
+                }).join('');
+                woTableHtml = '<table style="width:100%;border-collapse:collapse;margin-top:10px;">' +
+                    '<thead><tr style="border-bottom:1px solid var(--glass-border);text-align:left;">' +
+                    '<th style="font-size:11px;color:var(--text-muted);padding:4px 0;">ID</th>' +
+                    '<th style="font-size:11px;color:var(--text-muted);padding:4px 0;">Order</th>' +
+                    '<th style="font-size:11px;color:var(--text-muted);padding:4px 0;">Status</th>' +
+                    '<th style="font-size:11px;color:var(--text-muted);padding:4px 0;">Time</th>' +
+                    '</tr></thead><tbody>' + rows + '</tbody></table>';
+            }
+
+            // Build events timeline
+            let eventsHtml = '';
+            if (d.recentEvents && d.recentEvents.length > 0) {
+                eventsHtml = '<div style="margin-top:10px;">' +
+                    d.recentEvents.slice(0, 10).map(ev => {
+                        const type = ev.type || ev.eventType || 'EVENT';
+                        const icon = getEventIcon(type);
+                        const message = ev.message || ev.description || escapeHtml(String(type));
+                        const time = ev.timestamp || ev.createdAt ? new Date(ev.timestamp || ev.createdAt).toLocaleTimeString('en-US', {hour12: false}) : '—';
+                        return '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--glass-border);">' +
+                            '<span style="font-size:14px;">' + icon + '</span>' +
+                            '<div style="flex:1;">' +
+                            '<div style="font-size:12px;color:var(--text-primary);">' + message + '</div>' +
+                            '<div style="font-size:10px;color:var(--text-muted);margin-top:2px;">' + escapeHtml(String(type)) + ' — ' + time + '</div>' +
+                            '</div></div>';
+                    }).join('') +
+                '</div>';
+            }
+
+            // Build player population
+            let playersHtml = '';
+            if (d.playerPopulation && d.playerPopulation.length > 0) {
+                playersHtml = '<div style="margin-top:10px;">' +
+                    d.playerPopulation.slice(0, 10).map(p => {
+                        const name = p.name || p.username || 'Unknown';
+                        const status = p.status || p.state || 'UNKNOWN';
+                        return '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--glass-border);font-size:12px;">' +
+                            '<span>' + escapeHtml(name) + '</span>' +
+                            '<span style="color:var(--text-muted);">' + escapeHtml(status) + '</span>' +
+                            '</div>';
+                    }).join('') +
+                '</div>';
+            }
+
+            container.innerHTML = `
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+                    <button class="gnn-btn" onclick="backFromDetail()">← Back</button>
+                    <div class="section-title" style="margin-bottom:0;">🔭 Galaxy: ${escapeHtml(d.galaxyName || d.galaxyId || 'Unknown')}</div>
+                </div>
+                <div class="card" style="margin-bottom:20px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                        <div>
+                            <span class="galaxy-type">${escapeHtml(gameType)}</span>
+                            ${difficulty ? '<span class="galaxy-type" style="margin-left:6px;">Difficulty: ' + escapeHtml(String(difficulty)) + '</span>' : ''}
+                            ${theme ? '<span class="galaxy-type" style="margin-left:6px;">' + escapeHtml(theme) + '</span>' : ''}
+                        </div>
+                        <div style="font-size:12px;color:var(--text-muted);">${playable}</div>
+                    </div>
+                    ${desc ? '<p style="color:var(--text-secondary);margin-top:12px;line-height:1.6;">' + escapeHtml(desc) + '</p>' : ''}
+                </div>
+                <div class="grid grid-2">
+                    <!-- Health Card -->
+                    <div class="galaxy-card ${healthClass}">
+                        <div class="card-title">🏥 Health</div>
+                        <div style="display:flex;align-items:baseline;gap:10px;margin:10px 0;">
+                            <span style="font-family:var(--font-display);font-size:36px;font-weight:700;color:var(--health-color, var(--accent-primary));">${healthScore}</span>
+                            <span style="font-size:14px;color:var(--text-muted);">/ 100</span>
+                        </div>
+                        <span class="galaxy-health-badge ${healthClass}">● ${healthLabel}</span>
+                        <div class="galaxy-stats">
+                            <div class="galaxy-stat">🔴 Critical: <span class="galaxy-stat-value">${criticalF}</span></div>
+                            <div class="galaxy-stat">🟡 High: <span class="galaxy-stat-value">${highF}</span></div>
+                            <div class="galaxy-stat">🟢 Medium: <span class="galaxy-stat-value">${mediumF}</span></div>
+                        </div>
+                        ${recsHtml}
+                    </div>
+                    <!-- Build Card -->
+                    <div class="galaxy-card" style="--health-color: var(--accent-cyan);">
+                        <div class="card-title">🔨 Build Status</div>
+                        <div style="display:flex;align-items:baseline;gap:10px;margin:10px 0;">
+                            <span style="font-family:var(--font-display);font-size:36px;font-weight:700;color:var(--accent-cyan);">${completion}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-bar-fill" style="width:${completion}%;--health-color:var(--accent-cyan);"></div>
+                        </div>
+                        <div class="galaxy-stats" style="margin-top:14px;">
+                            <div class="galaxy-stat">🪐 Systems: <span class="galaxy-stat-value">${systems} / ${maxSystems}</span></div>
+                            <div class="galaxy-stat">⚙️ Phase: <span class="galaxy-stat-value">${escapeHtml(buildPhase)}</span></div>
+                            <div class="galaxy-stat">🛠️ Status: <span class="galaxy-stat-value">${buildRunning}</span></div>
+                            <div class="galaxy-stat">⏱ Elapsed: <span class="galaxy-stat-value">${buildElapsed}</span></div>
+                        </div>
+                        ${buildError ? '<div style="margin-top:10px;font-size:12px;color:var(--danger);">❌ ' + escapeHtml(buildError) + '</div>' : ''}
+                    </div>
+                </div>
+                <div class="grid grid-2" style="margin-top:20px;">
+                    <!-- Workforce Card -->
+                    <div class="galaxy-card" style="--health-color: var(--accent-purple);">
+                        <div class="card-title">🤖 Workforce</div>
+                        <div style="display:flex;align-items:baseline;gap:10px;margin:10px 0;">
+                            <span style="font-family:var(--font-display);font-size:36px;font-weight:700;color:var(--accent-purple);">${aiCount}</span>
+                            <span style="font-size:14px;color:var(--text-muted);">AI Agents</span>
+                        </div>
+                        <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">${overstaffed}</div>
+                        ${workforceRolesHtml}
+                        ${workforceRec ? '<div style="margin-top:10px;font-size:12px;color:var(--accent-cyan);">💡 ' + escapeHtml(workforceRec) + '</div>' : ''}
+                    </div>
+                    <!-- Work Orders Card -->
+                    <div class="galaxy-card" style="--health-color: var(--accent-gold);">
+                        <div class="card-title">📋 Work Orders</div>
+                        <div style="display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;font-size:13px;">
+                            <span style="color:var(--text-muted);">Total: <span style="color:var(--text-primary);font-weight:600;">${woTotal}</span></span>
+                            <span style="color:var(--warning);">Pending: <span style="font-weight:600;">${woPending}</span></span>
+                            <span style="color:var(--accent-cyan);">Running: <span style="font-weight:600;">${woRunning}</span></span>
+                            <span style="color:var(--success);">Done: <span style="font-weight:600;">${woCompleted}</span></span>
+                            <span style="color:var(--danger);">Failed: <span style="font-weight:600;">${woFailed}</span></span>
+                        </div>
+                        ${woTableHtml}
+                    </div>
+                </div>
+                <div class="grid grid-2" style="margin-top:20px;">
+                    <!-- Events Card -->
+                    <div class="galaxy-card" style="--health-color: var(--accent-green);">
+                        <div class="card-title">📡 Recent Events</div>
+                        ${eventsHtml || '<div style="font-size:12px;color:var(--text-muted);margin-top:10px;">No recent events</div>'}
+                    </div>
+                    <!-- Players Card -->
+                    <div class="galaxy-card" style="--health-color: var(--accent-pink);">
+                        <div class="card-title">👥 Players</div>
+                        <div style="display:flex;align-items:baseline;gap:10px;margin:10px 0;">
+                            <span style="font-family:var(--font-display);font-size:36px;font-weight:700;color:var(--accent-pink);">${playerCount}</span>
+                            <span style="font-size:14px;color:var(--text-muted);">Players</span>
+                        </div>
+                        ${playersHtml || '<div style="font-size:12px;color:var(--text-muted);margin-top:10px;">No player data</div>'}
+                    </div>
+                </div>
+            `;
+        }
+
+        function startGalaxyDetailRefresh() {
+            if (galaxyDetailRefreshInterval) {
+                clearInterval(galaxyDetailRefreshInterval);
+            }
+            galaxyDetailRefreshInterval = setInterval(() => {
+                if (currentView === 'galaxy-detail' && currentGalaxyName) {
+                    loadGalaxyDetail();
+                }
+            }, 15000);
+        }
+
+        function getEventIcon(type) {
+            const t = (type || '').toUpperCase();
+            if (t.includes('GALAXY')) return '🌌';
+            if (t.includes('SYSTEM') || t.includes('SOLAR')) return '🪐';
+            if (t.includes('BUILD') || t.includes('GENERAT')) return '🔨';
+            if (t.includes('AI') || t.includes('AGENT')) return '🤖';
+            if (t.includes('PLAYER') || t.includes('HUMAN')) return '👤';
+            if (t.includes('WORK') || t.includes('ORDER')) return '📋';
+            if (t.includes('WORMHOLE') || t.includes('WARP')) return '🌀';
+            if (t.includes('ERROR') || t.includes('FAIL')) return '❌';
+            if (t.includes('SUCCESS') || t.includes('COMPLETE')) return '✅';
+            return '📌';
+        }
+
+        function formatDuration(ms) {
+            if (!ms || ms <= 0) return '—';
+            const seconds = Math.floor(ms / 1000);
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            if (hours > 0) return hours + 'h ' + minutes + 'm';
+            if (minutes > 0) return minutes + 'm ' + secs + 's';
+            return secs + 's';
+        }
+
+        // ==========================================
+        // Dashboard View
+
+        // ==========================================
+        // Races View
+        // ==========================================
+
+        function renderRaces(container) {
+            const races = b5Data.races;
+            container.innerHTML = `
+                <div class="section-title">👽 Babylon 5 — Alien Races</div>
+                <div class="grid grid-2">
+                    ${races.map(r => `
+                        <div class="race-card">
+                            <div class="race-name">${escapeHtml(r.name || 'Unknown')}</div>
+                            <div class="race-homeworld">🌍 ${escapeHtml(r.homeworld || 'Unknown')}</div>
+                            <div class="race-desc">${escapeHtml(r.description || 'No description available')}</div>
+                            <div class="race-stats">
+                                <span class="race-stat">⏱️ ${r.lifespan || '?'} years</span>
+                                <span class="race-stat">🏛️ ${escapeHtml(r.government || 'Unknown')}</span>
+                                ${r.combatStyle ? `<span class="race-stat">⚔️ ${escapeHtml(r.combatStyle.substring(0, 30))}...</span>` : ''}
+                            </div>
+                            ${r.specialAbilities && r.specialAbilities.length ? `
+                                <div style="margin-top:8px;">
+                                    ${r.specialAbilities.map(a => `<span class="tag">${escapeHtml(a)}</span>`).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('') || '<div class="empty-state">No races loaded</div>'}
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // Characters View
+        // ==========================================
+
+        function renderCharacters(container) {
+            const characters = b5Data.characters;
+            container.innerHTML = `
+                <div class="section-title">👤 Babylon 5 — Characters</div>
+                <div class="grid grid-2">
+                    ${characters.map(c => {
+                        const quote = c.famousQuotes && c.famousQuotes.length ? c.famousQuotes[0] : null;
+                        return `
+                        <div class="character-card">
+                            <div class="char-name">${escapeHtml(c.name || 'Unknown')}</div>
+                            <div class="char-role">${escapeHtml(c.species || '')} ${c.role ? '• ' + escapeHtml(c.role) : ''}</div>
+                            <div class="race-desc">${escapeHtml(c.description || 'No description available')}</div>
+                            ${c.archetype ? `<span class="tag" style="margin-top:6px;">${escapeHtml(c.archetype)}</span>` : ''}
+                            ${quote ? `<div class="char-quote">"${escapeHtml(quote)}"</div>` : ''}
+                        </div>
+                    `}).join('') || '<div class="empty-state">No characters loaded</div>'}
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // Storylines View
+        // ==========================================
+
+        function renderStorylines(container) {
+            const storylines = b5Data.storylines;
+            container.innerHTML = `
+                <div class="section-title">📖 Babylon 5 — Story Arcs</div>
+                <div class="grid">
+                    ${storylines.map(sl => `
+                        <div class="storyline-card">
+                            <div class="sl-title">${escapeHtml(sl.title || 'Unknown')}</div>
+                            <div class="sl-seasons">${sl.seasons ? 'Seasons: ' + sl.seasons.join(', ') : ''}</div>
+                            <div class="sl-desc">${escapeHtml(sl.description || 'No description available')}</div>
+                            ${sl.keyCharacters && sl.keyCharacters.length ? `
+                                <div style="margin-top:8px;">
+                                    ${sl.keyCharacters.map(ch => `<span class="tag">${escapeHtml(ch)}</span>`).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('') || '<div class="empty-state">No storylines loaded</div>'}
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // Dialogues View
+        // ==========================================
+
+        function renderDialogues(container) {
+            const dialogues = b5Data.dialogues;
+            container.innerHTML = `
+                <div class="section-title">💬 Babylon 5 — Iconic Dialogues</div>
+                ${dialogues.map(dl => `
+                    <div class="dialogue-card">
+                        <div class="dl-title">${escapeHtml(dl.title || 'Unknown')}</div>
+                        <div class="dl-scene">${escapeHtml(dl.scene || '')}</div>
+                        ${(dl.dialogue || dl.lines || []).map(line => `
+                            <div class="dl-line">
+                                <span class="dl-speaker">${escapeHtml(line.speaker || '?')}:</span>
+                                ${escapeHtml(line.line || '')}
+                            </div>
+                        `).join('')}
+                    </div>
+                `).join('') || '<div class="empty-state">No dialogues loaded</div>'}
+            `;
+        }
+
+        // ==========================================
+        // Locations View
+        // ==========================================
+
+        function renderLocations(container) {
+            const locations = b5Data.locations;
+            container.innerHTML = `
+                <div class="section-title">🌍 Babylon 5 — Key Locations</div>
+                <div class="grid grid-2">
+                    ${locations.map(loc => `
+                        <div class="location-card">
+                            <div class="loc-name">${escapeHtml(loc.name || 'Unknown')}</div>
+                            <div class="loc-type">${escapeHtml(loc.type || '')} ${loc.faction ? '• ' + escapeHtml(loc.faction) : ''}</div>
+                            <div class="loc-desc">${escapeHtml(loc.description || 'No description available')}</div>
+                            ${loc.significance ? `<div style="margin-top:8px;font-size:12px;color:var(--accent-glow);">⭐ ${escapeHtml(loc.significance)}</div>` : ''}
+                        </div>
+                    `).join('') || '<div class="empty-state">No locations loaded</div>'}
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // News Feed View
+        // ==========================================
+
+        function renderNews(container) {
+            container.innerHTML = `
+                <div class="section-title">📡 Live Universe Events</div>
+                <div class="card" style="padding:0;overflow:hidden;">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <span>🌌</span>
+                            Real-time Feed
+                        </span>
+                        <span id="eventCount" style="font-size: 0.85rem; color: var(--text-secondary);">0 events</span>
+                    </div>
+                    <div class="news-feed" id="newsFeed">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📡</div>
+                            <div>Connecting to the DoraMCU Universe...</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Load feed history
+            fetchFeedHistory();
+        }
+
+        // ==========================================
+        // News Feed Functions
+        // ==========================================
+
+        function getEventIcon(type) {
+            const icons = {
+                'BUILD_STARTED': '🔨',
+                'BUILD_COMPLETED': '✅',
+                'BUILD_FAILED': '❌',
+                'SECTOR_GENERATED': '🗺️',
+                'GALAXY_CREATED': '🌌',
+                'HEALTH_THRESHOLD_CROSSED': '⚠️',
+                'CHARACTER_TRANSITIONED': '🚀',
+                'WORK_ORDER_CREATED': '📋',
+                'AI_AGENT_DEPLOYED': '🤖',
+                'ASSESSMENT_COMPLETED': '📊',
+                'WORMHOLE_CREATED': '🌀',
+                'WORMHOLE_TRAVEL': '🛸',
+                'WORMHOLE_TOGGLED': '🔀',
+                'EMPIRE_CREATED': '🏰',
+                'SHIP_LAUNCHED': '🚀',
+                'BATTLE_STARTED': '⚔️',
+                'BATTLE_ENDED': '🏳️',
+                'RESOURCE_MINED': '⛏️',
+                'TRADE_COMPLETED': '💰'
+            };
+            return icons[type] || '📰';
+        }
+
+        function formatTime(timestamp) {
+            try {
+                const date = new Date(timestamp);
+                return date.toLocaleTimeString('en-US', { hour12: false });
+            } catch (e) {
+                return '';
+            }
+        }
+
+        function formatRelativeTime(timestamp) {
+            try {
+                const now = Date.now();
+                const then = new Date(timestamp).getTime();
+                const diff = Math.floor((now - then) / 1000);
+                if (diff < 5) return 'just now';
+                if (diff < 60) return diff + 's ago';
+                if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+                return Math.floor(diff / 3600) + 'h ago';
+            } catch (e) {
+                return '';
+            }
+        }
+
+        function addEventToFeed(event) {
+            const feed = document.getElementById('newsFeed');
+            if (!feed) return;
+
+            const emptyState = feed.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
+            }
+
+            const item = document.createElement('div');
+            item.className = 'news-event';
+
+            const icon = getEventIcon(event.type || event.eventType);
+            const title = event.title || event.data?.title || formatEventType(event.type);
+            const galaxy = event.galaxyName || event.data?.galaxyName || '';
+            const time = event.timestamp ? formatTime(event.timestamp) : '';
+            const relativeTime = event.timestamp ? formatRelativeTime(event.timestamp) : '';
+            const details = event.details || event.payload || event.data?.payload;
+
+            item.innerHTML =
+                '<span class="event-icon">' + icon + '</span>' +
+                '<div class="event-content">' +
+                    '<div class="event-title">' + escapeHtml(title) + '</div>' +
+                    (galaxy ? '<div class="event-galaxy">📍 ' + escapeHtml(galaxy) + '</div>' : '') +
+                    (details ? '<div class="event-details">' + escapeHtml(JSON.stringify(details)) + '</div>' : '') +
+                    '<div class="event-time">' + time + ' — ' + relativeTime + '</div>' +
+                '</div>';
+
+            feed.insertBefore(item, feed.firstChild);
+
+            while (feed.querySelectorAll('.news-event').length > MAX_EVENTS) {
+                const last = feed.querySelector('.news-event:last-child');
+                if (last) last.remove();
+            }
+
+            eventCounter++;
+            const countEl = document.getElementById('eventCount');
+            if (countEl) countEl.textContent = eventCounter + ' events';
+        }
+
+        function formatEventType(type) {
+            if (!type) return 'Unknown Event';
+            return type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function fetchFeedHistory() {
+            const feed = document.getElementById('newsFeed');
+            if (!feed) return;
+
+            try {
+                const response = await fetch('/api/news/feed?limit=20');
+                if (!response.ok) return;
+
+                const events = await response.json();
+                if (events && events.length > 0) {
+                    const emptyState = feed.querySelector('.empty-state');
+                    if (emptyState) emptyState.remove();
+
+                    for (let i = events.length - 1; i >= 0; i--) {
+                        addEventToFeed(events[i]);
+                    }
+                }
+            } catch (e) {
+                console.warn('Could not fetch news feed history:', e);
+            }
+        }
+
+        // ==========================================
+        // Stats
+        // ==========================================
+
+        function updateStats(stats) {
+            if (stats.activePlayers != null) {
+                document.getElementById('statPlayers').textContent = stats.activePlayers;
+            }
+            if (stats.eventCount) {
+                var statEventsEl = document.getElementById('statEvents');
+                if (statEventsEl) statEventsEl.textContent = 'Active';
+            }
+            if (stats.serverReachable) {
+                document.getElementById('statServer').textContent = 'Online';
+                document.getElementById('statServer').className = 'stat-value';
+            } else {
+                document.getElementById('statServer').textContent = 'Offline';
+                document.getElementById('statServer').className = 'stat-value danger';
+            }
+            if (stats.jvmUsedMemoryMB != null) {
+                document.getElementById('statMemory').textContent = 
+                    stats.jvmUsedMemoryMB + 'MB / ' + stats.jvmTotalMemoryMB + 'MB';
+            }
+        }
+
+        async function fetchStats() {
+            try {
+                const response = await fetch('/api/stats');
+                if (response.ok) {
+                    const stats = await response.json();
+                    updateStats(stats);
+                }
+            } catch (e) {
+                console.warn('Could not fetch stats:', e);
+            }
+        }
+
+        // ==========================================
+        // SSE Connection
+        // ==========================================
+
+        function connect() {
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+
+            const statusEl = document.getElementById('newsStatus');
+            if (statusEl) {
+                statusEl.textContent = 'Connecting...';
+                statusEl.className = 'news-status connecting';
+            }
+            setTachyonRelayConnected(false);
+
+            // Timeout: if SSE doesn't connect within 10s, stop showing "Connecting..."
+            connectTimeout = setTimeout(function() {
+                if (statusEl && statusEl.textContent === 'Connecting...') {
+                    statusEl.textContent = '⚠ Feed Offline';
+                    statusEl.className = 'news-status disconnected';
+                    setTachyonRelayConnected(false);
+                }
+            }, 10000);
+
+            try {
+                eventSource = new EventSource('/api/news/live');
+
+                eventSource.onopen = function() {
+                    clearTimeout(connectTimeout);
+                    if (statusEl) {
+                        statusEl.textContent = '● Live';
+                        statusEl.className = 'news-status connected';
+                    }
+                    setTachyonRelayConnected(true);
+                };
+
+                eventSource.addEventListener('connected', function(e) {
+                    const data = JSON.parse(e.data);
+                    if (statusEl) {
+                        const players = data.activePlayers != null ? ' (' + data.activePlayers + ' players)' : '';
+                        statusEl.textContent = '● Live' + players;
+                    }
+                });
+
+                eventSource.addEventListener('history', function(e) {
+                    try {
+                        const event = JSON.parse(e.data);
+                        addEventToFeed(event);
+                    } catch (err) {
+                        console.warn('Failed to parse history event:', err);
+                    }
+                });
+
+                eventSource.onmessage = function(e) {
+                    try {
+                        const event = JSON.parse(e.data);
+                        addEventToFeed(event);
+                    } catch (err) {
+                        console.warn('Failed to parse news event:', err);
+                    }
+                };
+
+                eventSource.onerror = function() {
+                    clearTimeout(connectTimeout);
+                    if (statusEl) {
+                        statusEl.textContent = 'Disconnected — reconnecting...';
+                        statusEl.className = 'news-status disconnected';
+                    }
+                    setTachyonRelayConnected(false);
+                    eventSource.close();
+                    eventSource = null;
+
+                    if (reconnectTimeout) {
+                        clearTimeout(reconnectTimeout);
+                    }
+                    reconnectTimeout = setTimeout(connect, 5000);
+                };
+
+            } catch (e) {
+                clearTimeout(connectTimeout);
+                console.warn('SSE connection failed:', e);
+                if (statusEl) {
+                    statusEl.textContent = 'Connection failed';
+                    statusEl.className = 'news-status disconnected';
+                }
+                reconnectTimeout = setTimeout(connect, 10000);
+            }
+        }
+
+        // ==========================================
+        // Clock
+        // ==========================================
+
+        function updateNewsClock() {
+            const el = document.getElementById('newsTime');
+            if (el) {
+                const now = new Date();
+                el.textContent = now.toLocaleTimeString('en-US', { hour12: false });
+            }
+        }
+
+        // ==========================================
+        // Initialize
+        // ==========================================
+
+        function init() {
+            console.log('DNN: init() starting...');
+
+            // Start the clock immediately — always works, no dependencies
+            updateNewsClock();
+            setInterval(updateNewsClock, 1000);
+
+            // Fetch stats (async, non-blocking)
+            fetchStats();
+            setInterval(fetchStats, 10000);
+
+            // Connect to SSE news feed (async, non-blocking)
+            try {
+                connect();
+            } catch (e) {
+                console.error('DNN SSE connect failed:', e);
+            }
+
+            // Load galaxy health data (async, non-blocking)
+            try {
+                loadGalaxyHealth();
+                setInterval(loadGalaxyHealth, 15000);
+            } catch (e) {
+                console.error('DNN galaxy health load failed:', e);
+            }
+
+            // Load B5 data (async, non-blocking)
+            try {
+                loadB5Data();
+            } catch (e) {
+                console.error('DNN B5 data load failed:', e);
+            }
+
+            console.log('DNN: init() complete — static dashboard is visible, data loading in background');
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+    </script>
+</body>
+</html>

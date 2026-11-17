@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using UnityEngine;
+using DoraMCU.Client.Core;
 using UnityEngine.Networking;
 
 namespace DoraMCU.Client.FPS

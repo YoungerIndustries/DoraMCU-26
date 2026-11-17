@@ -1,7 +1,7 @@
 package com.yisy.modules.doramcu.service;
 
-import com.yisy.modules.doramcu.dto.FourxUnlockState;
-import com.yisy.modules.doramcu.model.GameSession;
+import com.yisy.modules.doramcu.dto.misc.FourxUnlockState;
+import com.yisy.modules.doramcu.model.session.GameSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

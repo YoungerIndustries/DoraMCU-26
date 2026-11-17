@@ -287,7 +287,7 @@ public class PresenceWebSocketHandler extends TextWebSocketHandler {
         }
 
         try {
-            List<Map<String, Object>> nearbyAdmins = aiAdminVisibilityService
+            List<com.yisy.modules.doramcu.admin.dto.AiAdminVisibilityDTO> nearbyAdmins = aiAdminVisibilityService
                     .getAiAdminsNearPlayer(galaxyName, player.x, player.y, player.z,
                             com.yisy.modules.doramcu.service.ai.AiAdminVisibilityService.DEFAULT_PROXIMITY_RADIUS);
 
@@ -301,17 +301,17 @@ public class PresenceWebSocketHandler extends TextWebSocketHandler {
             data.put("galaxyName", galaxyName);
             
             ArrayNode adminsArray = objectMapper.createArrayNode();
-            for (Map<String, Object> admin : nearbyAdmins) {
+            for (com.yisy.modules.doramcu.admin.dto.AiAdminVisibilityDTO admin : nearbyAdmins) {
                 ObjectNode adminNode = objectMapper.createObjectNode();
-                adminNode.put("id", String.valueOf(admin.get("id")));
-                adminNode.put("name", (String) admin.get("name"));
-                adminNode.put("role", (String) admin.get("role"));
-                adminNode.put("posX", (Double) admin.get("posX"));
-                adminNode.put("posY", (Double) admin.get("posY"));
-                adminNode.put("posZ", (Double) admin.get("posZ"));
-                adminNode.put("distance", (Double) admin.get("distance"));
-                adminNode.put("currentOrderId", admin.get("currentOrderId") != null ? 
-                        String.valueOf(admin.get("currentOrderId")) : "null");
+                adminNode.put("id", String.valueOf(admin.getId()));
+                adminNode.put("name", admin.getName());
+                adminNode.put("role", admin.getRole());
+                adminNode.put("posX", admin.getPosX());
+                adminNode.put("posY", admin.getPosY());
+                adminNode.put("posZ", admin.getPosZ());
+                adminNode.put("distance", admin.getDistance());
+                adminNode.put("currentOrderId", admin.getCurrentOrderId() != null ? 
+                        String.valueOf(admin.getCurrentOrderId()) : "null");
                 adminsArray.add(adminNode);
             }
             data.set("admins", adminsArray);

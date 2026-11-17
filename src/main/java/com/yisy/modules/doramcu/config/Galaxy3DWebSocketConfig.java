@@ -6,10 +6,12 @@ import com.yisy.modules.doramcu.controller.misc.AchievementWebSocketHandler;
 import com.yisy.modules.doramcu.controller.misc.FleetTrackerWebSocketHandler;
 import com.yisy.modules.doramcu.controller.session.GameStateWebSocketHandler;
 import com.yisy.modules.doramcu.controller.misc.NarrativeWebSocketHandler;
+import com.yisy.modules.doramcu.controller.misc.OrderProgressWebSocketHandler;
 import com.yisy.modules.doramcu.controller.misc.PresenceWebSocketHandler;
 import com.yisy.modules.doramcu.controller.session.ReplayWebSocketHandler;
 import com.yisy.modules.doramcu.controller.trade.ResourcePipelineWebSocketHandler;
 import com.yisy.modules.doramcu.controller.session.SpectatorWebSocketHandler;
+import com.yisy.modules.doramcu.admin.service.AiAdminOrderProgressService;
 import com.yisy.modules.doramcu.service.misc.AchievementService;
 import com.yisy.modules.doramcu.service.game.GameReplayService;
 import com.yisy.modules.doramcu.service.session.GameSessionService;
@@ -50,12 +52,14 @@ public class Galaxy3DWebSocketConfig implements WebSocketConfigurer {
     private AchievementService achievementService;
     private AiAdminVisibilityService aiAdminVisibilityService;
     private Galaxy3DService galaxy3DService;
+    private AiAdminOrderProgressService aiAdminOrderProgressService;
 
     public Galaxy3DWebSocketConfig(GameStateBridge gameStateBridge, GameReplayService gameReplayService,
-                                   GameSessionService gameSessionService, SpectatorService spectatorService,
-                                   AchievementService achievementService,
-                                   AiAdminVisibilityService aiAdminVisibilityService,
-                                   Galaxy3DService galaxy3DService) {
+                                    GameSessionService gameSessionService, SpectatorService spectatorService,
+                                    AchievementService achievementService,
+                                    AiAdminVisibilityService aiAdminVisibilityService,
+                                    Galaxy3DService galaxy3DService,
+                                    AiAdminOrderProgressService aiAdminOrderProgressService) {
         this.gameStateBridge = gameStateBridge;
         this.gameReplayService = gameReplayService;
         this.gameSessionService = gameSessionService;
@@ -63,6 +67,7 @@ public class Galaxy3DWebSocketConfig implements WebSocketConfigurer {
         this.achievementService = achievementService;
         this.aiAdminVisibilityService = aiAdminVisibilityService;
         this.galaxy3DService = galaxy3DService;
+        this.aiAdminOrderProgressService = aiAdminOrderProgressService;
     }
 
     @Bean
@@ -101,6 +106,11 @@ public class Galaxy3DWebSocketConfig implements WebSocketConfigurer {
     }
 
     @Bean
+    public OrderProgressWebSocketHandler orderProgressWebSocketHandler() {
+        return new OrderProgressWebSocketHandler(aiAdminOrderProgressService);
+    }
+
+    @Bean
     public GameStateWebSocketHandler gameStateWebSocketHandler() {
         return new GameStateWebSocketHandler(gameSessionService);
     }
@@ -120,6 +130,8 @@ public class Galaxy3DWebSocketConfig implements WebSocketConfigurer {
         registry.addHandler(spectatorWebSocketHandler(), "/ws/spectator")
                 .setAllowedOrigins("*");
         registry.addHandler(achievementWebSocketHandler(), "/ws/achievements")
+                .setAllowedOrigins("*");
+        registry.addHandler(orderProgressWebSocketHandler(), "/ws/order-progress")
                 .setAllowedOrigins("*");
         registry.addHandler(gameStateWebSocketHandler(), "/ws/game-state")
                 .setAllowedOrigins("*");

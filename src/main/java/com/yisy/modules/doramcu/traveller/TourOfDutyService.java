@@ -239,7 +239,7 @@ public class TourOfDutyService {
 
         // Get or create a game session
         Game game = null;
-        com.yisy.modules.doramcu.model.GameSession session = gameSessionService.getDefaultSession();
+        com.yisy.modules.doramcu.model.session.GameSession session = gameSessionService.getDefaultSession();
         if (session != null) {
             game = (Game) session.getGame();
         }

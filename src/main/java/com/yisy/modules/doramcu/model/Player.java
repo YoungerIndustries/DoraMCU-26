@@ -12,6 +12,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
+import com.yisy.modules.doramcu.model.misc.CorporateRole;
+
 /**
  * JPA entity representing a player in the 4X empire game.
  * <p>

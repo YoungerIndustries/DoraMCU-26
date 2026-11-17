@@ -5,7 +5,7 @@ import com.yisy.modules.doramcu.hex.Fleet;
 import com.yisy.modules.doramcu.hex.Game;
 import com.yisy.modules.doramcu.hex.Player;
 import com.yisy.modules.doramcu.hex.SpaceStation;
-import com.yisy.modules.doramcu.service.AiNetworkService;
+import com.yisy.modules.doramcu.service.ai.AiNetworkService;
 
 import java.util.List;
 import java.util.Map;

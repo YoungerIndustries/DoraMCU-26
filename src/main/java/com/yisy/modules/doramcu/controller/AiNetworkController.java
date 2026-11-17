@@ -1,8 +1,8 @@
 package com.yisy.modules.doramcu.controller;
 
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
-import com.yisy.modules.doramcu.service.AiNetworkService;
-import com.yisy.modules.doramcu.service.AiNetworkService.AiNetworkStatus;
+import com.yisy.modules.doramcu.service.ai.AiNetworkService;
+import com.yisy.modules.doramcu.service.ai.AiNetworkService.AiNetworkStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

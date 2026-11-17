@@ -95,6 +95,13 @@ public class FpsMapService {
     }
 
     /**
+     * Get a map by its ID.
+     */
+    public Optional<FpsMap> getMapById(String id) {
+        return Optional.ofNullable(maps.get(id));
+    }
+
+    /**
      * Get maps by theme.
      */
     public List<FpsMap> getMapsByTheme(String theme) {

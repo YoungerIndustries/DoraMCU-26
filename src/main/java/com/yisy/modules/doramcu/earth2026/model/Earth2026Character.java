@@ -146,6 +146,30 @@ public class Earth2026Character {
     private Long promoCodeId;
 
     /**
+     * Apartment unit this character rents (nullable).
+     */
+    @Column(name = "apartment_unit_id")
+    private Long apartmentUnitId;
+
+    /**
+     * Corporation this character works for (nullable for independent characters).
+     */
+    @Column(name = "corporation_id")
+    private Long corporationId;
+
+    /**
+     * Whether this character is the owner of their corporation.
+     */
+    @Column(name = "is_owner", nullable = false)
+    private boolean isOwner = false;
+
+    /**
+     * Game mode this character is playing in (e.g., "EARTH2026", "TRAVELLER").
+     */
+    @Column(name = "game_mode", length = 50)
+    private String gameMode;
+
+    /**
      * When the character arrived on Earth (real-world arrival date/time).
      */
     @Column(name = "arrival_date_time", nullable = false)
@@ -377,6 +401,38 @@ public class Earth2026Character {
 
     public void setPromoCodeId(Long promoCodeId) {
         this.promoCodeId = promoCodeId;
+    }
+
+    public Long getApartmentUnitId() {
+        return apartmentUnitId;
+    }
+
+    public void setApartmentUnitId(Long apartmentUnitId) {
+        this.apartmentUnitId = apartmentUnitId;
+    }
+
+    public Long getCorporationId() {
+        return corporationId;
+    }
+
+    public void setCorporationId(Long corporationId) {
+        this.corporationId = corporationId;
+    }
+
+    public boolean isIsOwner() {
+        return isOwner;
+    }
+
+    public void setIsOwner(boolean isOwner) {
+        this.isOwner = isOwner;
+    }
+
+    public String getGameMode() {
+        return gameMode;
+    }
+
+    public void setGameMode(String gameMode) {
+        this.gameMode = gameMode;
     }
 
     public LocalDateTime getArrivalDateTime() {

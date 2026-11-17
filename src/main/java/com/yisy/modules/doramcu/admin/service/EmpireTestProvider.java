@@ -5,7 +5,7 @@ import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.hex.Empire;
 import com.yisy.modules.doramcu.hex.Game;
 import com.yisy.modules.doramcu.repository.AiCharacterRepository;
-import com.yisy.modules.doramcu.service.AiNetworkService;
+import com.yisy.modules.doramcu.service.ai.AiNetworkService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

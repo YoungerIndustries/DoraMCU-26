@@ -88,4 +88,9 @@ public interface PlanetStructureRepository extends JpaRepository<PlanetStructure
     @Query("SELECT p FROM PlanetStructure p WHERE p.planetId = :planetId AND " +
             "p.structureType = 'FACTORY' AND p.active = true")
     List<PlanetStructure> findFactoriesByPlanet(@Param("planetId") Long planetId);
+
+    /**
+     * Find all structures owned by a corporation.
+     */
+    List<PlanetStructure> findByCorporationId(Long corporationId);
 }

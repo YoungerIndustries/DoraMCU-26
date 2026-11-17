@@ -40,7 +40,7 @@ class AiAdminOrderProgressServiceTest {
     void setUp() {
         progressService = new AiAdminOrderProgressService(orderRepository, orderProgressWebSocketHandler);
 
-        order = new AiAdminOrder("GalaxyOverseer:Alpha", "Deploy more ships", "API", "GalaxyOverseer:Alpha");
+        order = new AiAdminOrder("GalaxyOverseer:Alpha", "Deploy more ships");
         order.setId(100L);
         order.setStatus(AiAdminOrder.OrderStatus.RUNNING);
         order.setProgressPercent(0);
@@ -271,7 +271,7 @@ class AiAdminOrderProgressServiceTest {
     @Test
     @DisplayName("getRunningOrdersProgress should return all running orders")
     void getRunningOrdersProgress_shouldReturnAllRunningOrders() {
-        AiAdminOrder order2 = new AiAdminOrder("GalaxyOverseer:Beta", "Repair station", "GAME", "GalaxyOverseer:Beta");
+        AiAdminOrder order2 = new AiAdminOrder("GalaxyOverseer:Beta", "Repair station");
         order2.setId(101L);
         order2.setStatus(AiAdminOrder.OrderStatus.RUNNING);
         order2.setProgressPercent(75);

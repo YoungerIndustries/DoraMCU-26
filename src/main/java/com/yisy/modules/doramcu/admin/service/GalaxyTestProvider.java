@@ -5,7 +5,7 @@ import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.model.Galaxy;
 import com.yisy.modules.doramcu.repository.AiCharacterRepository;
 import com.yisy.modules.doramcu.repository.GalaxyRepository;
-import com.yisy.modules.doramcu.service.AiNetworkService;
+import com.yisy.modules.doramcu.service.ai.AiNetworkService;
 import com.yisy.modules.doramcu.service.GalaxyOverseerService;
 import com.yisy.modules.doramcu.service.GalaxyService;
 import org.slf4j.Logger;

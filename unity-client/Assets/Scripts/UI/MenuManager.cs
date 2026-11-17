@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using DoraMCU.Client.Core;
 using UnityEngine.UI;
 
 namespace DoraMCU.Client.UI
@@ -10,7 +11,6 @@ namespace DoraMCU.Client.UI
     /// </summary>
     public class MenuManager : Singleton<MenuManager>
     {
-        [Header("Menu States")]
         public enum MenuState { Playing, Paused, MainMenu, Settings, GameSelect, Inventory, Map }
         
         private MenuState currentState = MenuState.Playing;

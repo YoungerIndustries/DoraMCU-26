@@ -323,7 +323,7 @@ public class FleetManager {
      * @param request the ship design request
      * @return the new ship ID
      */
-    public int createShipFromDesign(Player player, com.yisy.modules.doramcu.dto.ShipDesignRequest request) {
+    public int createShipFromDesign(Player player, com.yisy.modules.doramcu.dto.ship_design.ShipDesignRequest request) {
         // Convert DTO to ShipDesign domain object
         int designId = context.getNextShipIdAndIncrement();
         ShipDesign design = new ShipDesign(designId, request.getName(), request.getTotalTonnage());

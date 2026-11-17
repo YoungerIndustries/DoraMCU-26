@@ -9,7 +9,7 @@ import com.yisy.modules.doramcu.corporation.model.AiAssistantAction;
 import com.yisy.modules.doramcu.corporation.model.CorporateContract;
 import com.yisy.modules.doramcu.corporation.model.CorporateHiring;
 import com.yisy.modules.doramcu.corporation.model.CorporatePosition;
-import com.yisy.modules.doramcu.model.CorporateRole;
+import com.yisy.modules.doramcu.model.misc.CorporateRole;
 import com.yisy.modules.doramcu.repository.AiAssistantActionRepository;
 import com.yisy.modules.doramcu.repository.AiCharacterRepository;
 import com.yisy.modules.doramcu.corporation.repository.CorporateContractRepository;

@@ -53,13 +53,20 @@ public enum SpaceStationType {
     private final int baseShipBayCapacity;
 
     SpaceStationType(int baseHullPoints, int baseShieldPoints, int baseModuleSlots,
-                     int mineralCost, int energyCost, int baseShipBayCapacity) {
+                      int mineralCost, int energyCost, int baseShipBayCapacity) {
         this.baseHullPoints = baseHullPoints;
         this.baseShieldPoints = baseShieldPoints;
         this.baseModuleSlots = baseModuleSlots;
         this.mineralCost = mineralCost;
         this.energyCost = energyCost;
         this.baseShipBayCapacity = baseShipBayCapacity;
+    }
+
+    /**
+     * Returns a human-readable display name for this station type.
+     */
+    public String getDisplayName() {
+        return name().replace('_', ' ').toLowerCase();
     }
 
     /**

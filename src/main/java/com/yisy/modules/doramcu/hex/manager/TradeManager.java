@@ -936,14 +936,14 @@ public class TradeManager {
      * @param empireId the empire ID
      * @return a trade summary DTO
      */
-    public com.yisy.modules.doramcu.dto.TradeSummaryDto getTradeSummary(int empireId) {
+    public com.yisy.modules.doramcu.dto.trade.TradeSummaryDto getTradeSummary(int empireId) {
         List<TradeMissionRecord> empireMissions = missionHistory.stream()
                 .filter(r -> r.playerId == empireId)
                 .collect(Collectors.toList());
 
         int totalTrades = empireMissions.size();
         if (totalTrades == 0) {
-            return new com.yisy.modules.doramcu.dto.TradeSummaryDto(
+            return new com.yisy.modules.doramcu.dto.trade.TradeSummaryDto(
                     empireId, 0, 0, 0, 0, 0, new ArrayList<>(),
                     getActiveTradeOrders(empireId).size()
             );
@@ -960,14 +960,14 @@ public class TradeManager {
                 .limit(10)
                 .collect(Collectors.toList());
 
-        List<com.yisy.modules.doramcu.dto.TradeMissionDto> recentDtos = recent.stream()
-                .map(r -> new com.yisy.modules.doramcu.dto.TradeMissionDto(
+        List<com.yisy.modules.doramcu.dto.trade.TradeMissionDto> recentDtos = recent.stream()
+                .map(r -> new com.yisy.modules.doramcu.dto.trade.TradeMissionDto(
                         r.turn, r.sourcePlanetId, r.destPlanetId,
                         r.commodity.getName(), r.units, r.cost, r.revenue, r.profit
                 ))
                 .collect(Collectors.toList());
 
-        return new com.yisy.modules.doramcu.dto.TradeSummaryDto(
+        return new com.yisy.modules.doramcu.dto.trade.TradeSummaryDto(
                 empireId, totalTrades, totalProfit, averageProfit,
                 profitableTrades, unprofitableTrades, recentDtos,
                 getActiveTradeOrders(empireId).size()

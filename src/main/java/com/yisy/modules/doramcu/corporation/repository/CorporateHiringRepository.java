@@ -32,4 +32,10 @@ public interface CorporateHiringRepository extends JpaRepository<CorporateHiring
      */
     boolean existsByCorporationIdAndPositionAndStatus(
             Long corporationId, CorporatePosition position, CorporateHiring.Status status);
+
+    /**
+     * Find active hires with a player character ID set.
+     */
+    List<CorporateHiring> findByCorporationIdAndPlayerCharacterIdIsNotNullAndStatus(
+            Long corporationId, CorporateHiring.Status status);
 }

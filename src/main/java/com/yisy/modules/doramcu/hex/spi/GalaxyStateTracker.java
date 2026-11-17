@@ -1,6 +1,6 @@
 package com.yisy.modules.doramcu.hex.spi;
 
-import com.yisy.modules.doramcu.model.GalaxyObjectState;
+import com.yisy.modules.doramcu.model.galaxy.GalaxyObjectState;
 
 import java.util.Map;
 

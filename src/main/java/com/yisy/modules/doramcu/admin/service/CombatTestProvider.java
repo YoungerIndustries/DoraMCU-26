@@ -8,7 +8,7 @@ import com.yisy.modules.doramcu.repository.AiCharacterRepository;
 import com.yisy.modules.doramcu.repository.AiCommanderExperienceRepository;
 import com.yisy.modules.doramcu.service.AiCommanderExperienceService;
 import com.yisy.modules.doramcu.service.AiEntityRegistrationService;
-import com.yisy.modules.doramcu.service.AiNetworkService;
+import com.yisy.modules.doramcu.service.ai.AiNetworkService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

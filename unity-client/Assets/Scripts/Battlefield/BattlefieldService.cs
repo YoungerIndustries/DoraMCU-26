@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using DoraMCU.Client.Core;
 using UnityEngine.Networking;
 using DoraMCU.Client.Network;
 

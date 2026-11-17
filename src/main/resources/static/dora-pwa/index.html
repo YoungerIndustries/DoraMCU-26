@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="description" content="DoraMCU Lightweight Neuron - Join the decentralized AI network from your browser">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <title>DoraMCU Neuron</title>
+</head>
+<body>
+    <!-- Offline Banner -->
+    <div class="offline-banner" id="offlineBanner">
+        ⚠ You are offline. Experiences will be synced when reconnected.
+    </div>
+
+    <div class="install-banner" id="installBanner">
+        <span>Install app for better experience</span>
+        <button id="installBtn">Install</button>
+    </div>
+
+    <div class="header">
+        <h1>DoraMCU Neuron</h1>
+        <p>Lightweight Browser Neuron</p>
+    </div>
+
+    <div class="card">
+        <h2>Connection Status</h2>
+        <div class="status">
+            <div class="indicator" id="statusIndicator"></div>
+            <span id="statusText">Disconnected</span>
+        </div>
+        <div class="sync-status" id="syncStatus" style="display:none;">
+            <div class="sync-dot" id="syncDot"></div>
+            <span id="syncText">Syncing...</span>
+        </div>
+        <button class="btn btn-primary" id="connectBtn">Connect to Network</button>
+        <button class="btn btn-secondary" id="disconnectBtn" style="display:none;">Disconnect</button>
+    </div>
+
+    <div class="card">
+        <h2>Neuron Info</h2>
+        <div class="metric">
+            <span class="metric-label">Node ID</span>
+            <span class="metric-value" id="nodeId">-</span>
+        </div>
+        <div class="metric">
+            <span class="metric-label">Connected Peers</span>
+            <span class="metric-value" id="peers">0</span>
+        </div>
+        <div class="metric">
+            <span class="metric-label">Messages Sent</span>
+            <span class="metric-value" id="messagesSent">0</span>
+        </div>
+        <div class="metric">
+            <span class="metric-label">Messages Received</span>
+            <span class="metric-value" id="messagesReceived">0</span>
+        </div>
+        <div class="metric">
+            <span class="metric-label">Service Worker</span>
+            <span class="metric-value" id="swStatus">Checking...</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Experience Streaming</h2>
+        <p style="color: #888; font-size: 0.9em; margin-bottom: 10px;">
+            Stream game experiences to the neural network for collective learning.
+        </p>
+        <button class="btn btn-primary" id="streamBtn">Start Streaming</button>
+        <div class="metric" style="margin-top: 10px;">
+            <span class="metric-label">Experiences Sent</span>
+            <span class="metric-value" id="experiencesSent">0</span>
+        </div>
+        <div class="metric">
+            <span class="metric-label">Queued (Offline)</span>
+            <span class="metric-value" id="experiencesQueued">0</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Notifications</h2>
+        <button class="btn btn-primary" id="notifyBtn">Enable Notifications</button>
+        <div class="metric" style="margin-top: 10px;">
+            <span class="metric-label">Permission</span>
+            <span class="metric-value" id="notifyPermission">Default</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Event Log</h2>
+        <div class="log" id="log">
+            <div class="log-entry">[System] PWA Neuron initialized</div>
+        </div>
+    </div>
+
+    <script>
+        // Generate unique node ID
+        const nodeId = 'pwa-' + Math.random().toString(36).substring(2, 15);
+        document.getElementById('nodeId').textContent = nodeId;
+
+        let peerConnection = null;
+        let dataChannel = null;
+        let isConnected = false;
+        let messagesSent = 0;
+        let messagesReceived = 0;
+        let experiencesSent = 0;
+        let experiencesQueued = 0;
+        let swRegistration = null;
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 5;
+        const reconnectDelay = 3000;
+
+        // WebRTC P2P Mesh
+        const configuration = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' }
+            ]
+        };
+
+        function addLog(message) {
+            const log = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            const time = new Date().toLocaleTimeString();
+            entry.textContent = `[${time}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function updateStatus(status, text) {
+            const indicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            
+            indicator.className = 'indicator ' + status;
+            statusText.textContent = text;
+        }
+
+        function showSyncStatus(pending) {
+            const syncStatus = document.getElementById('syncStatus');
+            const syncDot = document.getElementById('syncDot');
+            const syncText = document.getElementById('syncText');
+            
+            syncStatus.style.display = 'flex';
+            if (pending) {
+                syncDot.className = 'sync-dot pending';
+                syncText.textContent = 'Sync pending...';
+            } else {
+                syncDot.className = 'sync-dot';
+                syncText.textContent = 'Synced';
+            }
+        }
+
+        function showToast(title, body) {
+            const toast = document.createElement('div');
+            toast.className = 'notification-toast';
+            toast.innerHTML = `<h4>${title}</h4><p>${body}</p>`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+
+        // Online/Offline detection
+        window.addEventListener('online', () => {
+            document.getElementById('offlineBanner').classList.remove('visible');
+            addLog('Connection restored');
+            if (experiencesQueued > 0) {
+                addLog(`Syncing ${experiencesQueued} queued experiences...`);
+                showSyncStatus(false);
+            }
+        });
+
+        window.addEventListener('offline', () => {
+            document.getElementById('offlineBanner').classList.add('visible');
+            addLog('Connection lost — experiences will be queued');
+        });
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(registration => {
+                    swRegistration = registration;
+                    document.getElementById('swStatus').textContent = 'Active';
+                    addLog('Service worker registered: ' + registration.scope);
+
+                    // Check for updates
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'activated') {
+                                addLog('New service worker available — refresh to update');
+                                showToast('Update Available', 'Refresh to get the latest version.');
+                            }
+                        });
+                    });
+
+                    // Request background sync
+                    if ('sync' in registration) {
+                        registration.sync.register('sync-experiences')
+                            .then(() => addLog('Background sync registered'))
+                            .catch(err => addLog('Background sync not available'));
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('swStatus').textContent = 'Failed';
+                    addLog('Service worker registration failed: ' + error.message);
+                });
+        } else {
+            document.getElementById('swStatus').textContent = 'Not supported';
+            addLog('Service workers not supported in this browser');
+        }
+
+        // Push Notifications
+        async function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                addLog('Notifications not supported');
+                document.getElementById('notifyPermission').textContent = 'Not supported';
+                return;
+            }
+
+            if (Notification.permission === 'granted') {
+                document.getElementById('notifyPermission').textContent = 'Granted';
+                addLog('Notifications already enabled');
+                return;
+            }
+
+            try {
+                const permission = await Notification.requestPermission();
+                document.getElementById('notifyPermission').textContent = permission;
+                addLog('Notification permission: ' + permission);
+
+                if (permission === 'granted' && swRegistration) {
+                    const subscription = await swRegistration.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: urlBase64ToUint8Array('BEl62iUYgUivxShkv9m3nNOz-Yg7K15ZQwBqqEz9kqhvYHmJKZLqPKoM7WQ15XRB5KsZjAPQMp5MG3cC7Y-QQwQ')
+                    });
+                    addLog('Push subscription created');
+                    showToast('Notifications Enabled', 'You will receive neuron updates.');
+                }
+            } catch (error) {
+                addLog('Notification error: ' + error.message);
+            }
+        }
+
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+            const rawData = atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
+
+        document.getElementById('notifyBtn').addEventListener('click', requestNotificationPermission);
+        if ('Notification' in window) {
+            document.getElementById('notifyPermission').textContent = Notification.permission;
+        }
+
+        async function connectToNetwork() {
+            updateStatus('connecting', 'Connecting...');
+            addLog('Connecting to P2P mesh...');
+
+            try {
+                peerConnection = new RTCPeerConnection(configuration);
+
+                // Create data channel for mesh communication
+                dataChannel = peerConnection.createDataChannel('mesh', {
+                    ordered: true
+                });
+
+                setupDataChannel(dataChannel);
+
+                // Handle ICE candidates
+                peerConnection.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        addLog('ICE candidate generated');
+                    }
+                };
+
+                // Handle connection state changes
+                peerConnection.onconnectionstatechange = () => {
+                    addLog('Connection state: ' + peerConnection.connectionState);
+                    if (peerConnection.connectionState === 'failed' || peerConnection.connectionState === 'disconnected') {
+                        attemptReconnect();
+                    }
+                };
+
+                // Create offer
+                const offer = await peerConnection.createOffer();
+                await peerConnection.setLocalDescription(offer);
+                
+                addLog('Created WebRTC offer');
+                addLog('Waiting for peers...');
+
+                // Simulate connection for demo
+                setTimeout(() => {
+                    isConnected = true;
+                    reconnectAttempts = 0;
+                    updateStatus('connected', 'Connected');
+                    document.getElementById('connectBtn').style.display = 'none';
+                    document.getElementById('disconnectBtn').style.display = 'block';
+                    document.getElementById('peers').textContent = '1';
+                    addLog('Connected to mesh network');
+                }, 2000);
+
+            } catch (error) {
+                updateStatus('', 'Error: ' + error.message);
+                addLog('Connection failed: ' + error.message);
+            }
+        }
+
+        function attemptReconnect() {
+            if (reconnectAttempts >= maxReconnectAttempts) {
+                updateStatus('', 'Reconnect failed');
+                addLog('Max reconnect attempts reached');
+                return;
+            }
+
+            reconnectAttempts++;
+            addLog(`Reconnecting... (attempt ${reconnectAttempts}/${maxReconnectAttempts})`);
+            updateStatus('connecting', 'Reconnecting...');
+
+            setTimeout(() => {
+                if (!isConnected) {
+                    connectToNetwork();
+                }
+            }, reconnectDelay);
+        }
+
+        function setupDataChannel(channel) {
+            channel.onopen = () => {
+                addLog('Data channel opened');
+                sendMessage({
+                    type: 'HELLO',
+                    nodeId: nodeId,
+                    timestamp: Date.now()
+                });
+            };
+
+            channel.onmessage = (event) => {
+                messagesReceived++;
+                document.getElementById('messagesReceived').textContent = messagesReceived;
+                
+                try {
+                    const message = JSON.parse(event.data);
+                    addLog(`Received: ${message.type}`);
+                    handleMessage(message);
+                } catch (e) {
+                    addLog('Invalid message received');
+                }
+            };
+
+            channel.onclose = () => {
+                addLog('Data channel closed');
+                if (isConnected) {
+                    isConnected = false;
+                    attemptReconnect();
+                }
+            };
+
+            channel.onerror = (error) => {
+                addLog('Data channel error: ' + (error.message || 'Unknown error'));
+            };
+        }
+
+        function handleMessage(message) {
+            switch (message.type) {
+                case 'HELLO':
+                    addLog(`Peer connected: ${message.nodeId}`);
+                    break;
+                case 'EXPERIENCE':
+                    addLog('Experience received from peer');
+                    break;
+                case 'SYNC':
+                    addLog('Sync request from peer');
+                    break;
+                default:
+                    addLog(`Unknown message type: ${message.type}`);
+            }
+        }
+
+        function sendMessage(message) {
+            if (dataChannel && dataChannel.readyState === 'open') {
+                dataChannel.send(JSON.stringify(message));
+                messagesSent++;
+                document.getElementById('messagesSent').textContent = messagesSent;
+            }
+        }
+
+        function disconnectFromNetwork() {
+            if (dataChannel) {
+                dataChannel.close();
+            }
+            if (peerConnection) {
+                peerConnection.close();
+            }
+            isConnected = false;
+            reconnectAttempts = 0;
+            updateStatus('', 'Disconnected');
+            document.getElementById('connectBtn').style.display = 'block';
+            document.getElementById('disconnectBtn').style.display = 'none';
+            addLog('Disconnected from network');
+        }
+
+        function streamExperience() {
+            const experience = {
+                type: 'EXPERIENCE',
+                nodeId: nodeId,
+                data: {
+                    action: 'move',
+                    reward: 1,
+                    timestamp: Date.now()
+                }
+            };
+
+            if (isConnected && dataChannel && dataChannel.readyState === 'open') {
+                sendMessage(experience);
+                experiencesSent++;
+                document.getElementById('experiencesSent').textContent = experiencesSent;
+                addLog('Experience streamed');
+            } else if (swRegistration) {
+                // Queue experience for offline sync
+                if (navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.controller.postMessage({
+                        type: 'CACHE_EXPERIENCE',
+                        experience: experience
+                    });
+                }
+                experiencesQueued++;
+                document.getElementById('experiencesQueued').textContent = experiencesQueued;
+                showSyncStatus(true);
+                addLog('Experience queued for offline sync');
+            } else {
+                addLog('Not connected — experience dropped');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('connectBtn').addEventListener('click', connectToNetwork);
+        document.getElementById('disconnectBtn').addEventListener('click', disconnectFromNetwork);
+        document.getElementById('streamBtn').addEventListener('click', streamExperience);
+
+        // Install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBanner').style.display = 'block';
+        });
+
+        document.getElementById('installBtn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                addLog(`Install: ${outcome}`);
+                deferredPrompt = null;
+                document.getElementById('installBanner').style.display = 'none';
+            }
+        });
+
+        // Check initial online status
+        if (!navigator.onLine) {
+            document.getElementById('offlineBanner').classList.add('visible');
+            addLog('Starting offline — experiences will be queued');
+        }
+    </script>
+</body>
+</html>

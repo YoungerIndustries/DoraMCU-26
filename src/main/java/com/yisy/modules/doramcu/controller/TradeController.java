@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.yisy.modules.doramcu.hex.Game;
 import com.yisy.modules.doramcu.hex.RefinedResourceType;
-import com.yisy.modules.doramcu.model.GameSession;
+import com.yisy.modules.doramcu.model.session.GameSession;
 import com.yisy.modules.doramcu.traveller.Commodity;
 
 import java.util.HashMap;

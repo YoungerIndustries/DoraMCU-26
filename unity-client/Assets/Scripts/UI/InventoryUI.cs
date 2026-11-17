@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using DoraMCU.Client.Core;
 using UnityEngine.UI;
 
 namespace DoraMCU.Client.UI

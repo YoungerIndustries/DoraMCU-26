@@ -2,3 +2,6 @@ rootProject.name = 'DoraMCU'
 
 include 'dora-neuron'
 project(':dora-neuron').projectDir = file('dora-neuron')
+
+include 'dora-news-network'
+project(':dora-news-network').projectDir = file('dora-news-network')

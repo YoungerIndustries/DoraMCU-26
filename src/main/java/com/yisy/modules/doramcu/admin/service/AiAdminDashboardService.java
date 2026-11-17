@@ -1,10 +1,7 @@
 package com.yisy.modules.doramcu.admin.service;
 
 import com.yisy.modules.doramcu.admin.model.AiAdminNotification;
-import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +17,6 @@ import java.util.stream.Collectors;
  */
 @Service
 public class AiAdminDashboardService {
-
-    private static final Logger log = LoggerFactory.getLogger(AiAdminDashboardService.class);
 
     private final AiAdminDispatchService dispatchService;
     private final AiAdminAnalyticsService analyticsService;
@@ -207,7 +202,6 @@ public class AiAdminDashboardService {
         public int testsCompleted;
         public int testsTotal;
         public String orderText;
-        public Long assignedAiAdminId;
 
         public OrderProgressOverview() {
         }
@@ -292,7 +286,7 @@ public class AiAdminDashboardService {
         overview.unreadByAdmin = unreadNotifications.stream()
                 .collect(Collectors.groupingBy(
                         n -> String.valueOf(n.getAiAdminId()),
-                        Collectors.summingInt(n -> 1)
+                        Collectors.summingInt(notification -> 1)
                 ));
 
         // Get recent notifications (last 20 across all admins)
@@ -318,14 +312,13 @@ public class AiAdminDashboardService {
         List<AiAdminOrderProgressService.OrderProgress> runningProgress = progressService.getRunningOrdersProgress();
         return runningProgress.stream().map(progress -> {
             OrderProgressOverview overview = new OrderProgressOverview();
-            overview.orderId = progress.orderId;
-            overview.status = progress.status;
-            overview.progressPercent = progress.progressPercent;
-            overview.currentTestName = progress.currentTestName;
-            overview.testsCompleted = progress.testsCompleted;
-            overview.testsTotal = progress.testsTotal;
-            overview.orderText = progress.orderText;
-            overview.assignedAiAdminId = progress.assignedAiAdminId;
+            overview.orderId = progress.getOrderId();
+            overview.status = progress.getStatus();
+            overview.progressPercent = progress.getProgressPercent() != null ? progress.getProgressPercent() : 0;
+            overview.currentTestName = progress.getCurrentTestName();
+            overview.testsCompleted = progress.getTestsCompleted() != null ? progress.getTestsCompleted() : 0;
+            overview.testsTotal = progress.getTestsTotal() != null ? progress.getTestsTotal() : 0;
+            overview.orderText = progress.getOrderText();
             return overview;
         }).collect(Collectors.toList());
     }

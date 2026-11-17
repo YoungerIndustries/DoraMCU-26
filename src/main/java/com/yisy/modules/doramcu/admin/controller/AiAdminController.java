@@ -12,7 +12,10 @@ import com.yisy.modules.doramcu.admin.model.AiAdminTestReport;
 import com.yisy.modules.doramcu.admin.model.TestDefinition;
 import com.yisy.modules.doramcu.admin.repository.AiAdminTestCaseRepository;
 import com.yisy.modules.doramcu.admin.model.AiAdminIncident;
+import com.yisy.modules.doramcu.admin.model.AiAdminCollaborationNote;
+import com.yisy.modules.doramcu.admin.model.AiAdminIncidentCollaborator;
 import com.yisy.modules.doramcu.admin.service.AiAdminAnalyticsService;
+import com.yisy.modules.doramcu.admin.service.AiAdminCollaborationService;
 import com.yisy.modules.doramcu.admin.service.AiAdminDashboardService;
 import com.yisy.modules.doramcu.admin.service.AiAdminIncidentService;
 import com.yisy.modules.doramcu.admin.service.AiAdminDispatchService;
@@ -71,6 +74,7 @@ public class AiAdminController {
     private final AiAdminAnalyticsService analyticsService;
     private final AiAdminDashboardService dashboardService;
     private final AiAdminIncidentService incidentService;
+    private final AiAdminCollaborationService collaborationService;
 
     public AiAdminController(AiAdminService aiAdminService,
                              AiAdminDispatchService aiAdminDispatchService,
@@ -86,23 +90,25 @@ public class AiAdminController {
                              AiAdminInteractionService interactionService,
                              AiAdminAnalyticsService analyticsService,
                              AiAdminDashboardService dashboardService,
-                             AiAdminIncidentService incidentService) {
-       this.aiAdminService = aiAdminService;
-       this.aiAdminDispatchService = aiAdminDispatchService;
-       this.notificationService = notificationService;
-       this.playerRepository = playerRepository;
-       this.userRepository = userRepository;
-       this.testCaseRepository = testCaseRepository;
-       this.testRegistry = testRegistry;
-       this.aiCharacterRepository = aiCharacterRepository;
-       this.llmService = llmService;
-       this.visibilityService = visibilityService;
-       this.progressService = progressService;
-       this.interactionService = interactionService;
-       this.analyticsService = analyticsService;
-       this.dashboardService = dashboardService;
-       this.incidentService = incidentService;
-   }
+                             AiAdminIncidentService incidentService,
+                             AiAdminCollaborationService collaborationService) {
+      this.aiAdminService = aiAdminService;
+      this.aiAdminDispatchService = aiAdminDispatchService;
+      this.notificationService = notificationService;
+      this.playerRepository = playerRepository;
+      this.userRepository = userRepository;
+      this.testCaseRepository = testCaseRepository;
+      this.testRegistry = testRegistry;
+      this.aiCharacterRepository = aiCharacterRepository;
+      this.llmService = llmService;
+      this.visibilityService = visibilityService;
+      this.progressService = progressService;
+      this.interactionService = interactionService;
+      this.analyticsService = analyticsService;
+      this.dashboardService = dashboardService;
+      this.incidentService = incidentService;
+      this.collaborationService = collaborationService;
+  }
 
     /**
      * Submit a new test order.
@@ -1456,5 +1462,159 @@ public class AiAdminController {
         } catch (IllegalArgumentException e) {
             return AiAdminIncident.Status.OPEN;
         }
+    }
+
+    // ==================== COLLABORATION ENDPOINTS ====================
+
+    /**
+     * Add a collaborator to an incident.
+     */
+    @PostMapping("/incidents/{id}/collaborators")
+    public ResponseEntity<?> addCollaborator(@PathVariable Long id, @RequestBody Map<String, Object> body, Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        Long adminId = ((Number) body.get("adminId")).longValue();
+        String role = (String) body.get("role");
+        AiAdminIncidentCollaborator.Role collaboratorRole;
+        if (role == null || role.isBlank()) {
+            collaboratorRole = AiAdminIncidentCollaborator.Role.INVESTIGATOR;
+        } else {
+            try {
+                collaboratorRole = AiAdminIncidentCollaborator.Role.valueOf(role.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                collaboratorRole = AiAdminIncidentCollaborator.Role.INVESTIGATOR;
+            }
+        }
+        try {
+            AiAdminIncidentCollaborator collab = collaborationService.addCollaborator(id, adminId, collaboratorRole);
+            return ResponseEntity.ok(collaboratorToMap(collab));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Remove a collaborator from an incident.
+     */
+    @DeleteMapping("/incidents/{id}/collaborators/{adminId}")
+    public ResponseEntity<?> removeCollaborator(@PathVariable Long id, @PathVariable Long adminId, Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        try {
+            collaborationService.removeCollaborator(id, adminId);
+            return ResponseEntity.ok(Map.of("message", "Collaborator removed"));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * List all collaborators for an incident.
+     */
+    @GetMapping("/incidents/{id}/collaborators")
+    public ResponseEntity<?> listCollaborators(@PathVariable Long id, Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        List<AiAdminIncidentCollaborator> collaborators = collaborationService.getCollaborators(id);
+        List<Map<String, Object>> result = collaborators.stream().map(this::collaboratorToMap).collect(Collectors.toList());
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Add a collaboration note to an incident.
+     */
+    @PostMapping("/incidents/{id}/notes")
+    public ResponseEntity<?> addNote(@PathVariable Long id, @RequestBody Map<String, Object> body, Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        Long adminId = ((Number) body.get("adminId")).longValue();
+        String note = (String) body.get("note");
+        try {
+            AiAdminCollaborationNote collaborationNote = collaborationService.addNote(id, adminId, note);
+            return ResponseEntity.ok(noteToMap(collaborationNote));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Get all notes for an incident.
+     */
+    @GetMapping("/incidents/{id}/notes")
+    public ResponseEntity<?> getNotes(@PathVariable Long id, Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        List<AiAdminCollaborationNote> notes = collaborationService.getNotes(id);
+        List<Map<String, Object>> result = notes.stream().map(this::noteToMap).collect(Collectors.toList());
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Auto-invite collaborators based on expertise.
+     */
+    @PostMapping("/incidents/{id}/auto-invite")
+    public ResponseEntity<?> autoInvite(@PathVariable Long id, Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        try {
+            List<AiAdminIncidentCollaborator> invited = collaborationService.autoInviteCollaborators(id);
+            List<Map<String, Object>> result = invited.stream().map(this::collaboratorToMap).collect(Collectors.toList());
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Get collaboration summary for an incident.
+     */
+    @GetMapping("/incidents/{id}/collaboration-summary")
+    public ResponseEntity<?> getCollaborationSummary(@PathVariable Long id, Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        Map<String, Object> summary = collaborationService.getCollaborationSummary(id);
+        return ResponseEntity.ok(summary);
+    }
+
+    /**
+     * Helper: convert collaborator to map for JSON response.
+     */
+    private Map<String, Object> collaboratorToMap(AiAdminIncidentCollaborator c) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", c.getId());
+        map.put("incidentId", c.getIncidentId());
+        map.put("aiAdminId", c.getAiAdminId());
+        map.put("role", c.getRole() != null ? c.getRole().name() : null);
+        map.put("status", c.getStatus() != null ? c.getStatus().name() : null);
+        map.put("notes", c.getNotes());
+        map.put("joinedAt", c.getJoinedAt());
+        map.put("completedAt", c.getCompletedAt());
+        return map;
+    }
+
+    /**
+     * Helper: convert note to map for JSON response.
+     */
+    private Map<String, Object> noteToMap(AiAdminCollaborationNote n) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", n.getId());
+        map.put("incidentId", n.getIncidentId());
+        map.put("aiAdminId", n.getAiAdminId());
+        map.put("note", n.getNote());
+        map.put("createdAt", n.getCreatedAt());
+        return map;
     }
 }

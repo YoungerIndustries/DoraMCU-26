@@ -38,6 +38,18 @@ public class ApartmentBuilding {
     private Long locationId;
 
     /**
+     * Building level indicating the tier/quality of the building (1-10).
+     */
+    @Column(name = "building_level", nullable = false)
+    private int buildingLevel = 1;
+
+    /**
+     * Corporation that owns this building (nullable for public buildings).
+     */
+    @Column(name = "corporation_id")
+    private Long corporationId;
+
+    /**
      * Number of upper-level apartment floors.
      */
     @Column(name = "apartment_floors", nullable = false)
@@ -123,6 +135,22 @@ public class ApartmentBuilding {
 
     public void setLocationId(Long locationId) {
         this.locationId = locationId;
+    }
+
+    public int getBuildingLevel() {
+        return buildingLevel;
+    }
+
+    public void setBuildingLevel(int buildingLevel) {
+        this.buildingLevel = buildingLevel;
+    }
+
+    public Long getCorporationId() {
+        return corporationId;
+    }
+
+    public void setCorporationId(Long corporationId) {
+        this.corporationId = corporationId;
     }
 
     public int getApartmentFloors() {

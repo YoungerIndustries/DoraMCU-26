@@ -2,12 +2,12 @@ package com.yisy.modules.doramcu.controller;
 
 import com.yisy.modules.doramcu.dto.CreateGalaxyRequest;
 import com.yisy.modules.doramcu.dto.CreateSessionResponse;
-import com.yisy.modules.doramcu.dto.FourxUnlockState;
+import com.yisy.modules.doramcu.dto.misc.FourxUnlockState;
 import com.yisy.modules.doramcu.dto.ThemeGameResult;
 import com.yisy.modules.doramcu.gamecreator.GameCreatorService;
 import com.yisy.modules.doramcu.hex.GalaxyGenerationConfig;
 import com.yisy.modules.doramcu.hex.GalaxyTemplate;
-import com.yisy.modules.doramcu.model.GameSession;
+import com.yisy.modules.doramcu.model.session.GameSession;
 import com.yisy.modules.doramcu.service.FourxProgressiveUnlockService;
 import com.yisy.modules.doramcu.service.GalaxyCreationService;
 import com.yisy.modules.doramcu.service.GameSessionService;

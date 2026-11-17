@@ -19,7 +19,14 @@ public class TycoonBuilding {
         RECRUITING_OFFICE("Recruiting Office", "Attracts and trains employees"),
         BANK_BRANCH("Bank Branch", "Generates passive income through financial operations"),
         MEDIA_OFFICE("Media Office", "Generates influence and public relations"),
-        PORT_FACILITY("Port Facility", "Handles logistics and shipping operations");
+        PORT_FACILITY("Port Facility", "Handles logistics and shipping operations"),
+        MINE("Mine", "Extracts raw materials and resources"),
+        VEHICLE_DEPOT("Vehicle Depot", "Stores and maintains vehicles"),
+        HOTEL("Hotel", "Provides lodging and generates income"),
+        WAREHOUSE("Warehouse", "Stores goods and materials"),
+        POWER_PLANT("Power Plant", "Generates energy for operations"),
+        COMMUNICATION_TOWER("Communication Tower", "Provides network coverage"),
+        AGRICULTURAL_COMPLEX("Agricultural Complex", "Produces food and biological resources");
 
         private final String displayName;
         private final String description;

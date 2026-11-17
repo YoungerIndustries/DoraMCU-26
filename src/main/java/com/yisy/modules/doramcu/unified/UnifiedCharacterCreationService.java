@@ -9,7 +9,7 @@ import com.yisy.modules.doramcu.captainslog.service.CaptainLogService;
 import com.yisy.modules.doramcu.earth2026.model.Earth2026Character;
 import com.yisy.modules.doramcu.earth2026.service.Earth2026Service;
 import com.yisy.modules.doramcu.traveller.TravellerCharacter;
-import com.yisy.modules.doramcu.model.CorporateRole;
+import com.yisy.modules.doramcu.model.misc.CorporateRole;
 import com.yisy.modules.doramcu.model.Player;
 import com.yisy.modules.doramcu.model.User;
 import com.yisy.modules.doramcu.repository.PlayerRepository;
