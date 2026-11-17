@@ -2,12 +2,120 @@
 
 This guide walks you through transforming a Raspberry Pi into a fully self-contained DoraMCU dedicated game server. All six services (app, neuron, MySQL, Redis, nginx, DL) run via Docker Compose, making the Pi a standalone multiplayer game server accessible by players on your local network.
 
+---
+
+## Quick Start: Automated USB Boot Drive
+
+**The fastest way to get started:** A single PowerShell command on your PC prepares a USB drive that transforms your Raspberry Pi into a DoraMCU game server — no keyboard, monitor, or SSH needed during setup.
+
+### Prerequisites
+
+- **Windows 10/11 PC** with Administrator access
+- **USB 3.0 drive** (64GB+ recommended, will be completely erased)
+- **Docker Desktop** with Buildx support installed and running
+- **WSL (Windows Subsystem for Linux)** installed: `wsl --install`
+- **Raspberry Pi 4/5** with USB boot support
+- **20GB+ free disk space** on your PC (for temporary image files)
+
+### One-Command Setup
+
+```powershell
+# Run PowerShell as Administrator
+.\scripts\setup-pi-boot-drive.ps1 -DriveLetter D -WifiSsid "YourNetwork" -WifiPassword "YourPassword"
+```
+
+### What the Script Does
+
+1. **Downloads** Raspberry Pi OS 64-bit Bookworm (~1GB)
+2. **Flashes** the OS to your USB drive using WSL
+3. **Configures** SSH, Wi-Fi, hostname, swap, and GPU memory settings
+4. **Builds** all 6 ARM64 Docker images on your PC (30-60 minutes)
+5. **Saves** images as tar files to the USB drive (~10GB)
+6. **Copies** DoraMCU project files and auto-start scripts
+
+### After the Script Completes
+
+1. Safely eject the USB drive from Windows
+2. **Enable USB boot** on your Pi (one-time, see below)
+3. Plug the USB drive into the Raspberry Pi
+4. Power on the Pi
+5. Wait ~10 minutes for first boot (image loading + service startup)
+6. Access the server at: `http://doramcu-server.local` or `http://<pi-ip>`
+
+### Enabling USB Boot on Raspberry Pi
+
+Most Pi 4/5 models ship with USB boot disabled. Enable it once:
+
+**Method 1: Using Raspberry Pi Imager (easiest)**
+1. Install Raspberry Pi Imager
+2. Select any OS, then hold `Ctrl+Shift+X` (Windows) or `Cmd+Shift+X` (Mac) when clicking "Write"
+3. In the advanced options, enable "Boot without an operating system"
+4. Write the bootloader to a microSD card
+5. Boot the Pi from this SD card once, then shut down
+6. Remove the SD card — the Pi will now boot from USB
+
+**Method 2: Using rpi-eeprom-update**
+1. Boot the Pi from an SD card with Raspberry Pi OS
+2. Run: `sudo rpi-eeprom-update -a`
+3. Reboot
+4. The Pi will now support USB boot
+
+### First Boot Process
+
+On first boot, the Pi automatically:
+- Installs Docker Engine (if not present)
+- Loads pre-saved Docker images from the USB drive
+- Configures swap space (2GB) and hostname
+- Starts all 6 DoraMCU services via Docker Compose
+- Sets up systemd service for auto-start on future boots
+- Cleans up temporary files
+
+**Subsequent boots:** ~2 minutes until services are running.
+
+### Monitoring & Troubleshooting
+
+```bash
+# SSH into the Pi (default: pi/raspberry)
+ssh pi@doramcu-server.local
+
+# Check service status
+docker compose -f docker-compose.yml -f docker-compose.pi.yml ps
+
+# View logs
+docker compose -f docker-compose.yml -f docker-compose.pi.yml logs -f
+
+# First boot log
+sudo cat /var/log/first-boot.log
+
+# Edge health endpoint
+curl http://localhost:8090/api/v1/neuron/edge
+```
+
+### Script Options
+
+```powershell
+# Custom hostname
+.\scripts\setup-pi-boot-drive.ps1 -DriveLetter D -WifiSsid "MyWiFi" -WifiPassword "pass" -PiHostname "my-game-server"
+
+# Skip Docker image build (OS only, for testing)
+.\scripts\setup-pi-boot-drive.ps1 -DriveLetter D -WifiSsid "MyWiFi" -WifiPassword "pass" -SkipImageBuild
+
+# Custom OS image URL
+.\scripts\setup-pi-boot-drive.ps1 -DriveLetter D -WifiSsid "MyWiFi" -WifiPassword "pass" -ImageDownloadUrl "https://..."
+```
+
+---
+
+## Manual Setup Guide
+
+The section below describes the manual setup process for advanced users who prefer more control over each step.
+
 ## Prerequisites
 
 ### Hardware
 - **Raspberry Pi 4** (4GB or 8GB RAM) or **Raspberry Pi 5** (8GB recommended)
-- High-speed microSD card (32GB+ minimum, Class A1 or better)
-- USB keyboard and HDMI monitor (for initial setup)
+- High-speed microSD card (32GB+ minimum, Class A1 or better) **or** USB 3.0 drive (64GB+)
+- USB keyboard and HDMI monitor (for initial setup, or use headless setup below)
 - Ethernet cable (recommended for stable server operation)
 
 ### Software
@@ -193,7 +301,7 @@ docker buildx inspect --bootstrap
 
 # Build all ARM64 images
 docker buildx build --platform linux/arm64 -t doramcu-app:latest -f Dockerfile .
-docker buildx build --platform linux/arm64 -t doramcu-neuron:latest -f Dockerfile.neuron .
+docker buildx build --platform linux/arm64 -t doramcu-neuron:latest -f Dockerfile.neuron-edge .
 docker buildx build --platform linux/arm64 -t doramcu-nginx:latest -f Dockerfile.web .
 docker buildx build --platform linux/arm64 -t doramcu-dl:arm64 -f Dockerfile.dl.arm64 .
 
