@@ -20,9 +20,9 @@ V102 migration seeds 3D positions for all 34 Earth-based AI admins. Committed an
 - 12 region governors near regional capitals
 - UN Secretary-General at Earth center (0, 0, 0)
 
-## Phase 3: Order-Aware Positioning — Implemented, Ready to Commit
+## Phase 3: Order-Aware Positioning — Complete ✓
 
-AI admin positions are now dynamic — admins move to order target locations and return home after completion, with idle admins shifting slightly to simulate activity.
+AI admin positions are now dynamic — admins move to order target locations and return home after completion, with idle admins shifting slightly to simulate activity. Committed and pushed to `Lapis111426`.
 
 ### What was implemented
 
@@ -89,3 +89,16 @@ Orders can target specific locations; AI admins move to targets and return home.
 
 ### ✓ Step 6: Commit and push order-aware positioning to Lapis111426
 Committed (e0f7fc4) and pushed to Lapis111426. 10 files changed (1192 insertions, 109 deletions).
+
+### ✓ Step 7: Merge Lapis111426 into master and push to origin
+All 37 commits from Lapis111426 merged into local master via fast-forward, then pushed to origin/master. The AI admin 3D visibility feature along with all other features (SFB combat, DL4j fixes, tests, etc.) are now on the master branch.
+
+## Phase 4: Seed Remaining AI Admin Positions — In Progress
+
+V105 migration seeds 22 Younger Industries office managers and positions 5 entity-linked AI characters.
+
+### ✓ Step 8: Create V105 migration for remaining AI admin positions
+Created V105__seed_remaining_ai_admin_positions.sql with 22 office managers (IDs 35-56) and 5 entity-linked AI characters (IDs 2001-2005) positioned in 3D space.
+
+### → Step 9: Verify build and commit V105 migration
+Compile validation, then commit and push to master.
