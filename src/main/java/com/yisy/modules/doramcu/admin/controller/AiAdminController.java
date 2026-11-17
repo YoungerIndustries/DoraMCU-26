@@ -3,17 +3,22 @@ package com.yisy.modules.doramcu.admin.controller;
 import com.yisy.modules.doramcu.admin.dto.AiAdminOrderRequest;
 import com.yisy.modules.doramcu.admin.dto.AiAdminReportDto;
 import com.yisy.modules.doramcu.admin.dto.AiAdminReportDto.AiAdminTestCaseDto;
+import com.yisy.modules.doramcu.admin.model.AiAdminNotification;
 import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
 import com.yisy.modules.doramcu.admin.model.AiAdminTestCase;
 import com.yisy.modules.doramcu.admin.model.AiAdminTestReport;
 import com.yisy.modules.doramcu.admin.model.TestDefinition;
 import com.yisy.modules.doramcu.admin.repository.AiAdminTestCaseRepository;
+import com.yisy.modules.doramcu.admin.service.AiAdminDispatchService;
+import com.yisy.modules.doramcu.admin.service.AiAdminNotificationService;
 import com.yisy.modules.doramcu.admin.service.AiAdminService;
 import com.yisy.modules.doramcu.admin.service.TestRegistry;
-import com.yisy.modules.doramcu.model.Player;
-import com.yisy.modules.doramcu.model.User;
-import com.yisy.modules.doramcu.repository.PlayerRepository;
-import com.yisy.modules.doramcu.repository.UserRepository;
+import com.yisy.modules.doramcu.eve.model.AiCharacter;
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
+import com.yisy.modules.doramcu.model.players.Player;
+import com.yisy.modules.doramcu.model.user.User;
+import com.yisy.modules.doramcu.repository.players.PlayerRepository;
+import com.yisy.modules.doramcu.repository.user.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -41,21 +46,30 @@ public class AiAdminController {
     private static final Logger log = LoggerFactory.getLogger(AiAdminController.class);
 
     private final AiAdminService aiAdminService;
+    private final AiAdminDispatchService aiAdminDispatchService;
+    private final AiAdminNotificationService notificationService;
     private final PlayerRepository playerRepository;
     private final UserRepository userRepository;
     private final AiAdminTestCaseRepository testCaseRepository;
     private final TestRegistry testRegistry;
+    private final AiCharacterRepository aiCharacterRepository;
 
     public AiAdminController(AiAdminService aiAdminService,
+                             AiAdminDispatchService aiAdminDispatchService,
+                             AiAdminNotificationService notificationService,
                              PlayerRepository playerRepository,
                              UserRepository userRepository,
                              AiAdminTestCaseRepository testCaseRepository,
-                             TestRegistry testRegistry) {
+                             TestRegistry testRegistry,
+                             AiCharacterRepository aiCharacterRepository) {
         this.aiAdminService = aiAdminService;
+        this.aiAdminDispatchService = aiAdminDispatchService;
+        this.notificationService = notificationService;
         this.playerRepository = playerRepository;
         this.userRepository = userRepository;
         this.testCaseRepository = testCaseRepository;
         this.testRegistry = testRegistry;
+        this.aiCharacterRepository = aiCharacterRepository;
     }
 
     /**
@@ -225,6 +239,7 @@ public class AiAdminController {
         map.put("submittedBy", order.getSubmittedBy());
         map.put("orderText", order.getOrderText());
         map.put("status", order.getStatus().name());
+        map.put("assignedAiAdminId", order.getAssignedAiAdminId());
         map.put("createdAt", order.getCreatedAt());
         map.put("completedAt", order.getCompletedAt());
         return map;
@@ -266,5 +281,300 @@ public class AiAdminController {
         dto.setTestCases(caseDtos);
 
         return dto;
+    }
+
+    // ---- Dispatch endpoints ----
+
+    /**
+     * Get the current dispatch summary showing AI admin workload distribution.
+     */
+    @GetMapping("/dispatch/summary")
+    public ResponseEntity<?> getDispatchSummary(Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Admin rights required"));
+        }
+
+        AiAdminDispatchService.DispatchSummary summary = aiAdminDispatchService.getDispatchSummary();
+        Map<String, Object> result = new HashMap<>();
+        result.put("totalAiAdmins", summary.getTotalAiAdmins());
+        result.put("availableAiAdmins", summary.getAvailableAiAdmins());
+        result.put("busyAiAdmins", summary.getBusyAiAdmins());
+        result.put("totalActiveOrders", summary.getTotalActiveOrders());
+        result.put("unassignedPendingOrders", summary.getUnassignedPendingOrders());
+        result.put("assignedPendingOrders", summary.getAssignedPendingOrders());
+        result.put("runningOrders", summary.getRunningOrders());
+        result.put("executingOrders", summary.getExecutingOrders());
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * List all AI admins with their current workload.
+     */
+    @GetMapping("/dispatch/admins")
+    public ResponseEntity<?> getAiAdminWorkload(Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Admin rights required"));
+        }
+
+        List<AiCharacter> admins = aiAdminDispatchService.getAiAdminWorkload();
+        List<Map<String, Object>> result = admins.stream().map(admin -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", admin.getId());
+            map.put("name", admin.getName());
+            map.put("role", admin.getRole());
+            map.put("empireName", admin.getEmpireName());
+            map.put("active", admin.isActive());
+            map.put("currentOrderId", admin.getCurrentOrderId());
+            map.put("activeOrderCount", admin.getActiveOrderCount());
+            map.put("totalExperience", admin.getTotalExperience());
+            map.put("leadershipRating", admin.getLeadershipRating());
+            return map;
+        }).collect(Collectors.toList());
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Manually trigger dispatch of all pending unassigned orders.
+     */
+    @PostMapping("/dispatch/trigger")
+    public ResponseEntity<?> triggerDispatch(Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Admin rights required"));
+        }
+
+        aiAdminDispatchService.dispatchPendingOrders();
+        return ResponseEntity.ok(Map.of("message", "Dispatch triggered successfully"));
+    }
+
+    // ---- 3D Position endpoints ----
+
+    /**
+     * Set the 3D position of an AI admin character.
+     * Request body: {"x": double, "y": double, "z": double, "galaxyName": string}
+     */
+    @PatchMapping("/admins/{id}/position")
+    public ResponseEntity<?> setAiAdminPosition(@PathVariable Long id,
+                                                @RequestBody Map<String, Object> body,
+                                                Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Admin rights required"));
+        }
+
+        Optional<AiCharacter> adminOpt = aiCharacterRepository.findById(id);
+        if (adminOpt.isEmpty() || !adminOpt.get().isAiAdmin()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "AI admin not found"));
+        }
+
+        AiCharacter admin = adminOpt.get();
+        Double x = body.containsKey("x") ? ((Number) body.get("x")).doubleValue() : null;
+        Double y = body.containsKey("y") ? ((Number) body.get("y")).doubleValue() : null;
+        Double z = body.containsKey("z") ? ((Number) body.get("z")).doubleValue() : null;
+        
+        if (x == null || y == null || z == null) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "x, y, and z coordinates are required"));
+        }
+
+        admin.setPosX(x);
+        admin.setPosY(y);
+        admin.setPosZ(z);
+        
+        if (body.containsKey("galaxyName") && body.get("galaxyName") != null) {
+            admin.setGalaxyName((String) body.get("galaxyName"));
+        } else if (admin.getGalaxyName() == null) {
+            admin.setGalaxyName(admin.getEmpireName());
+        }
+
+        aiCharacterRepository.save(admin);
+        log.info("AI admin {} position updated to ({}, {}, {})", admin.getName(), x, y, z);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("id", admin.getId());
+        result.put("name", admin.getName());
+        result.put("posX", admin.getPosX());
+        result.put("posY", admin.getPosY());
+        result.put("posZ", admin.getPosZ());
+        result.put("galaxyName", admin.getGalaxyName());
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * List all AI admin positions in a specific galaxy.
+     */
+    @GetMapping("/admins/{galaxyName}/positions")
+    public ResponseEntity<?> getAiAdminPositions(@PathVariable String galaxyName,
+                                                 Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Admin rights required"));
+        }
+
+        List<AiCharacter> admins = aiCharacterRepository.findByAiAdminTrueAndActiveTrueAndGalaxyName(galaxyName);
+        List<Map<String, Object>> result = admins.stream().map(admin -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", admin.getId());
+            map.put("name", admin.getName());
+            map.put("role", admin.getRole());
+            map.put("posX", admin.getPosX());
+            map.put("posY", admin.getPosY());
+            map.put("posZ", admin.getPosZ());
+            map.put("galaxyName", admin.getGalaxyName());
+            map.put("hasPosition", admin.hasPosition());
+            map.put("activeOrderCount", admin.getActiveOrderCount());
+            map.put("currentOrderId", admin.getCurrentOrderId());
+            return map;
+        }).collect(Collectors.toList());
+        return ResponseEntity.ok(result);
+    }
+
+    // ------------------------------------------------------------------
+    // Notification endpoints
+    // ------------------------------------------------------------------
+
+    /**
+     * Get all notifications for a specific AI admin.
+     */
+    @GetMapping("/admins/{adminId}/notifications")
+    public ResponseEntity<?> getNotifications(@PathVariable Long adminId,
+                                              Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Admin rights required"));
+        }
+
+        List<AiAdminNotification> notifications = notificationService.getNotificationsForAdmin(adminId);
+        List<Map<String, Object>> result = notifications.stream().map(this::notificationToMap)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Get unread notifications for a specific AI admin.
+     */
+    @GetMapping("/admins/{adminId}/notifications/unread")
+    public ResponseEntity<?> getUnreadNotifications(@PathVariable Long adminId,
+                                                    Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Admin rights required"));
+        }
+
+        List<AiAdminNotification> notifications = notificationService.getUnreadNotificationsForAdmin(adminId);
+        List<Map<String, Object>> result = notifications.stream().map(this::notificationToMap)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * Get unread notification count for a specific AI admin.
+     */
+    @GetMapping("/admins/{adminId}/notifications/unread/count")
+    public ResponseEntity<?> getUnreadCount(@PathVariable Long adminId,
+                                            Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Admin rights required"));
+        }
+
+        long count = notificationService.getUnreadCountForAdmin(adminId);
+        return ResponseEntity.ok(Map.of("adminId", adminId, "unreadCount", count));
+    }
+
+    /**
+     * Mark a notification as read.
+     */
+    @PatchMapping("/notifications/{notificationId}/read")
+    public ResponseEntity<?> markNotificationRead(@PathVariable Long notificationId,
+                                                  @RequestParam Long adminId,
+                                                  Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Admin rights required"));
+        }
+
+        boolean marked = notificationService.markAsRead(notificationId, adminId);
+        if (!marked) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Notification not found"));
+        }
+        return ResponseEntity.ok(Map.of("message", "Notification marked as read"));
+    }
+
+    /**
+     * Mark all notifications for an AI admin as read.
+     */
+    @PatchMapping("/admins/{adminId}/notifications/read-all")
+    public ResponseEntity<?> markAllNotificationsRead(@PathVariable Long adminId,
+                                                      Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Admin rights required"));
+        }
+
+        int count = notificationService.markAllAsRead(adminId);
+        return ResponseEntity.ok(Map.of("message", count + " notifications marked as read"));
+    }
+
+    /**
+     * Get notifications summary across all AI admins.
+     */
+    @GetMapping("/notifications/summary")
+    public ResponseEntity<?> getNotificationsSummary(Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "Admin rights required"));
+        }
+
+        List<AiCharacter> admins = aiAdminDispatchService.getAiAdminWorkload();
+        Map<String, Object> summary = new HashMap<>();
+
+        // Use arrays to allow mutation from lambda
+        final long[] totalUnread = {0};
+        final long[] totalNotifications = {0};
+
+        List<Map<String, Object>> adminSummary = admins.stream().map(admin -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("adminId", admin.getId());
+            map.put("adminName", admin.getName());
+            long unread = notificationService.getUnreadCountForAdmin(admin.getId());
+            List<AiAdminNotification> all = notificationService.getNotificationsForAdmin(admin.getId());
+            map.put("unreadCount", unread);
+            map.put("totalCount", all.size());
+            totalUnread[0] += unread;
+            totalNotifications[0] += all.size();
+            return map;
+        }).collect(Collectors.toList());
+
+        summary.put("totalAdmins", admins.size());
+        summary.put("totalUnread", totalUnread[0]);
+        summary.put("totalNotifications", totalNotifications[0]);
+        summary.put("admins", adminSummary);
+        return ResponseEntity.ok(summary);
+    }
+
+    // ------------------------------------------------------------------
+    // Helpers
+    // ------------------------------------------------------------------
+
+    private Map<String, Object> notificationToMap(AiAdminNotification notification) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", notification.getId());
+        map.put("aiAdminId", notification.getAiAdminId());
+        map.put("type", notification.getNotificationType().name());
+        map.put("label", notification.getNotificationType().getLabel());
+        map.put("severity", notification.getNotificationType().getSeverity());
+        map.put("title", notification.getTitle());
+        map.put("message", notification.getMessage());
+        map.put("orderId", notification.getOrderId());
+        map.put("isRead", notification.isRead());
+        map.put("createdAt", notification.getCreatedAt());
+        map.put("readAt", notification.getReadAt());
+        map.put("expiresAt", notification.getExpiresAt());
+        return map;
     }
 }

@@ -1,4 +1,10 @@
 package com.yisy.modules.doramcu.eve.model;
+import com.yisy.modules.doramcu.hex.Ship;
+import com.yisy.modules.doramcu.hex.PlanetFacility;
+import com.yisy.modules.doramcu.model.misc.CharacterType;
+import com.yisy.modules.doramcu.model.players.Player;
+import com.yisy.modules.doramcu.model.galaxy.SpaceStation;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -121,6 +127,20 @@ public class AiCharacter {
     @Column(name = "ai_admin", nullable = false)
     private boolean aiAdmin = false;
 
+    /**
+     * ID of the current work order being processed by this AI admin.
+     * Null when the AI admin is idle and available for dispatch.
+     */
+    @Column(name = "current_order_id")
+    private Long currentOrderId;
+
+    /**
+     * Number of active orders currently assigned to this AI admin.
+     * Used by the dispatch service for load balancing.
+     */
+    @Column(name = "active_order_count", nullable = false)
+    private int activeOrderCount = 0;
+
     // --- Polymorphic fields for non-human AI entities ---
 
     /**
@@ -218,6 +238,32 @@ public class AiCharacter {
      */
     @Column(name = "voice_profile_id")
     private Long voiceProfileId;
+
+    // --- 3D spatial position fields for game world visibility ---
+
+    /**
+     * X coordinate in the 3D game world. Null means not yet positioned.
+     */
+    @Column(name = "pos_x")
+    private Double posX;
+
+    /**
+     * Y coordinate in the 3D game world. Null means not yet positioned.
+     */
+    @Column(name = "pos_y")
+    private Double posY;
+
+    /**
+     * Z coordinate in the 3D game world. Null means not yet positioned.
+     */
+    @Column(name = "pos_z")
+    private Double posZ;
+
+    /**
+     * Galaxy name for spatial scoping. Used to query AI admins within a specific galaxy.
+     */
+    @Column(name = "galaxy_name", length = 100)
+    private String galaxyName;
 
     /**
      * Type of AI character entity.
@@ -428,6 +474,22 @@ public class AiCharacter {
         this.aiAdmin = aiAdmin;
     }
 
+    public Long getCurrentOrderId() {
+        return currentOrderId;
+    }
+
+    public void setCurrentOrderId(Long currentOrderId) {
+        this.currentOrderId = currentOrderId;
+    }
+
+    public int getActiveOrderCount() {
+        return activeOrderCount;
+    }
+
+    public void setActiveOrderCount(int activeOrderCount) {
+        this.activeOrderCount = activeOrderCount;
+    }
+
     // --- Getters and setters for polymorphic fields ---
 
     public CharacterType getCharacterType() {
@@ -550,6 +612,72 @@ public class AiCharacter {
 
     public void setVoiceProfileId(Long voiceProfileId) {
         this.voiceProfileId = voiceProfileId;
+    }
+
+    // --- Getters and setters for 3D spatial position fields ---
+
+    public Double getPosX() {
+        return posX;
+    }
+
+    public void setPosX(Double posX) {
+        this.posX = posX;
+    }
+
+    public Double getPosY() {
+        return posY;
+    }
+
+    public void setPosY(Double posY) {
+        this.posY = posY;
+    }
+
+    public Double getPosZ() {
+        return posZ;
+    }
+
+    public void setPosZ(Double posZ) {
+        this.posZ = posZ;
+    }
+
+    public String getGalaxyName() {
+        return galaxyName;
+    }
+
+    public void setGalaxyName(String galaxyName) {
+        this.galaxyName = galaxyName;
+    }
+
+    /**
+     * Returns true if this AI character has a valid 3D position set.
+     */
+    public boolean hasPosition() {
+        return posX != null && posY != null && posZ != null;
+    }
+
+    /**
+     * Calculates the Euclidean distance from this AI character to another.
+     * Returns Double.MAX_VALUE if either character has no position set.
+     */
+    public double distanceTo(AiCharacter other) {
+        if (!hasPosition() || !other.hasPosition()) {
+            return Double.MAX_VALUE;
+        }
+        return distanceTo(other.posX, other.posY, other.posZ);
+    }
+
+    /**
+     * Calculates the Euclidean distance from this AI character to a point in 3D space.
+     * Returns Double.MAX_VALUE if this character has no position set.
+     */
+    public double distanceTo(double x, double y, double z) {
+        if (!hasPosition()) {
+            return Double.MAX_VALUE;
+        }
+        double dx = this.posX - x;
+        double dy = this.posY - y;
+        double dz = this.posZ - z;
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
     }
 
     /**

@@ -1,20 +1,22 @@
 package com.yisy.modules.doramcu.config;
+import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 
-import com.yisy.modules.doramcu.controller.AchievementWebSocketHandler;
-import com.yisy.modules.doramcu.controller.FleetTrackerWebSocketHandler;
-import com.yisy.modules.doramcu.controller.GameStateWebSocketHandler;
-import com.yisy.modules.doramcu.controller.NarrativeWebSocketHandler;
-import com.yisy.modules.doramcu.controller.PresenceWebSocketHandler;
-import com.yisy.modules.doramcu.controller.ReplayWebSocketHandler;
-import com.yisy.modules.doramcu.controller.ResourcePipelineWebSocketHandler;
-import com.yisy.modules.doramcu.controller.SpectatorWebSocketHandler;
-// dora-neuron excluded: missing servlet dependency
-// import com.yisy.modules.doraneuron.ws.GameSyncWebSocketHandler;
-import com.yisy.modules.doramcu.service.AchievementService;
-import com.yisy.modules.doramcu.service.GameReplayService;
-import com.yisy.modules.doramcu.service.GameSessionService;
-import com.yisy.modules.doramcu.service.GameStateBridge;
-import com.yisy.modules.doramcu.service.SpectatorService;
+
+import com.yisy.modules.doramcu.controller.misc.AchievementWebSocketHandler;
+import com.yisy.modules.doramcu.controller.misc.FleetTrackerWebSocketHandler;
+import com.yisy.modules.doramcu.controller.session.GameStateWebSocketHandler;
+import com.yisy.modules.doramcu.controller.misc.NarrativeWebSocketHandler;
+import com.yisy.modules.doramcu.controller.misc.PresenceWebSocketHandler;
+import com.yisy.modules.doramcu.controller.session.ReplayWebSocketHandler;
+import com.yisy.modules.doramcu.controller.trade.ResourcePipelineWebSocketHandler;
+import com.yisy.modules.doramcu.controller.session.SpectatorWebSocketHandler;
+import com.yisy.modules.doramcu.service.misc.AchievementService;
+import com.yisy.modules.doramcu.service.game.GameReplayService;
+import com.yisy.modules.doramcu.service.session.GameSessionService;
+import com.yisy.modules.doramcu.service.game.GameStateBridge;
+import com.yisy.modules.doramcu.service.ai.AiAdminVisibilityService;
+import com.yisy.modules.doramcu.service.galaxy.Galaxy3DService;
+import com.yisy.modules.doramcu.service.misc.SpectatorService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,25 +48,31 @@ public class Galaxy3DWebSocketConfig implements WebSocketConfigurer {
     private GameSessionService gameSessionService;
     private SpectatorService spectatorService;
     private AchievementService achievementService;
+    private AiAdminVisibilityService aiAdminVisibilityService;
+    private Galaxy3DService galaxy3DService;
 
     public Galaxy3DWebSocketConfig(GameStateBridge gameStateBridge, GameReplayService gameReplayService,
                                    GameSessionService gameSessionService, SpectatorService spectatorService,
-                                   AchievementService achievementService) {
+                                   AchievementService achievementService,
+                                   AiAdminVisibilityService aiAdminVisibilityService,
+                                   Galaxy3DService galaxy3DService) {
         this.gameStateBridge = gameStateBridge;
         this.gameReplayService = gameReplayService;
         this.gameSessionService = gameSessionService;
         this.spectatorService = spectatorService;
         this.achievementService = achievementService;
+        this.aiAdminVisibilityService = aiAdminVisibilityService;
+        this.galaxy3DService = galaxy3DService;
     }
 
     @Bean
     public FleetTrackerWebSocketHandler fleetTrackerWebSocketHandler() {
-        return new FleetTrackerWebSocketHandler(gameStateBridge, realDataMode);
+        return new FleetTrackerWebSocketHandler(galaxy3DService, gameStateBridge, realDataMode);
     }
 
     @Bean
     public PresenceWebSocketHandler presenceWebSocketHandler() {
-        return new PresenceWebSocketHandler(gameStateBridge, realDataMode);
+        return new PresenceWebSocketHandler(gameStateBridge, aiAdminVisibilityService, realDataMode);
     }
 
     @Bean
@@ -115,14 +123,6 @@ public class Galaxy3DWebSocketConfig implements WebSocketConfigurer {
                 .setAllowedOrigins("*");
         registry.addHandler(gameStateWebSocketHandler(), "/ws/game-state")
                 .setAllowedOrigins("*");
-        // Game sync WebSocket for player game nodes (from neuron module) - excluded
-        // registry.addHandler(gameSyncWebSocketHandler(), "/ws/game-sync")
-        //         .setAllowedOrigins("*");
     }
 
-    // dora-neuron excluded: missing servlet dependency
-    // @Bean
-    // public GameSyncWebSocketHandler gameSyncWebSocketHandler() {
-    //     return new GameSyncWebSocketHandler();
-    // }
 }

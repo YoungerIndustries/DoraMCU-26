@@ -1,24 +1,31 @@
 package com.yisy.modules.doramcu.service;
 
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
+import com.yisy.modules.doramcu.service.galaxy.Galaxy3DService;
+import com.yisy.modules.doramcu.service.galaxy.Galaxy3DService.CameraPreset;
+import com.yisy.modules.doramcu.service.galaxy.Galaxy3DService.CelestialBody3D;
+import com.yisy.modules.doramcu.service.galaxy.Galaxy3DService.Galaxy3DData;
+import com.yisy.modules.doramcu.service.galaxy.Galaxy3DService.Position3D;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.*;
 
-import static com.yisy.modules.doramcu.service.Galaxy3DService.CameraPreset;
-import static com.yisy.modules.doramcu.service.Galaxy3DService.CelestialBody3D;
-import static com.yisy.modules.doramcu.service.Galaxy3DService.Galaxy3DData;
-import static com.yisy.modules.doramcu.service.Galaxy3DService.Position3D;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class Galaxy3DServiceTest {
 
     private Galaxy3DService service;
+    private AiCharacterRepository aiCharacterRepository;
 
     @BeforeEach
     void setUp() {
-        service = new Galaxy3DService();
+        aiCharacterRepository = Mockito.mock(AiCharacterRepository.class);
+        when(aiCharacterRepository.findByAiAdminTrueAndActiveTrueAndGalaxyNameAndPositionNotNull(anyString())).thenReturn(Collections.emptyList());
+        service = new Galaxy3DService(aiCharacterRepository);
     }
 
     @Nested
@@ -26,7 +33,7 @@ class Galaxy3DServiceTest {
         @Test
         void returns_all_body_types() {
             List<Galaxy3DService.BodyType> types = service.getBodyTypes();
-            assertEquals(12, types.size());
+            assertEquals(13, types.size());
         }
 
         @Test
@@ -436,7 +443,7 @@ class Galaxy3DServiceTest {
             Map<String, Object> stats = service.getStatistics();
             assertEquals(0, stats.get("cachedGalaxies"));
             assertEquals(1, stats.get("cameraPresets"));
-            assertEquals(12, stats.get("bodyTypes"));
+            assertEquals(13, stats.get("bodyTypes"));
             assertEquals(5, stats.get("colorSchemes"));
         }
 
