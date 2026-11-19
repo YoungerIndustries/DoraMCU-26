@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yisy.modules.doramcu.controller.misc.PresenceWebSocketHandler;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +19,7 @@ import org.springframework.web.socket.WebSocketSession;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Collection;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,6 +31,12 @@ import static org.mockito.Mockito.*;
 class PresenceWebSocketHandlerTest {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    private void invokeHandleTextMessage(PresenceWebSocketHandler handler, WebSocketSession session, TextMessage message) throws Exception {
+        Method method = PresenceWebSocketHandler.class.getDeclaredMethod("handleTextMessage", WebSocketSession.class, TextMessage.class);
+        method.setAccessible(true);
+        method.invoke(handler, session, message);
+    }
 
     private PresenceWebSocketHandler handler;
 
@@ -123,7 +131,7 @@ class PresenceWebSocketHandlerTest {
             msg.put("action", "chat");
             msg.put("message", "Hello everyone!");
 
-            handler.handleTextMessage(wsSession1, new TextMessage(msg.toString()));
+            invokeHandleTextMessage(handler, wsSession1, new TextMessage(msg.toString()));
 
             verify(wsSession1, atLeast(1)).sendMessage(any(TextMessage.class));
             verify(wsSession2, atLeast(1)).sendMessage(any(TextMessage.class));
@@ -138,7 +146,7 @@ class PresenceWebSocketHandlerTest {
             msg.put("action", "chat");
             msg.put("message", "");
 
-            handler.handleTextMessage(wsSession1, new TextMessage(msg.toString()));
+            invokeHandleTextMessage(handler, wsSession1, new TextMessage(msg.toString()));
 
             assertEquals(1, handler.getOnlinePlayerCount());
         }
@@ -162,7 +170,7 @@ class PresenceWebSocketHandlerTest {
             data.put("z", 300.0);
             msg.set("data", data);
 
-            handler.handleTextMessage(wsSession1, new TextMessage(msg.toString()));
+            invokeHandleTextMessage(handler, wsSession1, new TextMessage(msg.toString()));
 
             verify(wsSession1, atLeast(1)).sendMessage(any(TextMessage.class));
             verify(wsSession2, atLeast(1)).sendMessage(any(TextMessage.class));
@@ -181,7 +189,7 @@ class PresenceWebSocketHandlerTest {
             data.put("z", 300.0);
             msg.set("data", data);
 
-            handler.handleTextMessage(wsSession1, new TextMessage(msg.toString()));
+            invokeHandleTextMessage(handler, wsSession1, new TextMessage(msg.toString()));
 
             Collection<PresenceWebSocketHandler.PlayerData> players = handler.getPlayers();
             assertFalse(players.isEmpty());
@@ -202,7 +210,7 @@ class PresenceWebSocketHandlerTest {
             msg.put("action", "activity");
             msg.put("type", "mining");
 
-            handler.handleTextMessage(wsSession1, new TextMessage(msg.toString()));
+            invokeHandleTextMessage(handler, wsSession1, new TextMessage(msg.toString()));
 
             verify(wsSession1, atLeast(1)).sendMessage(any(TextMessage.class));
             verify(wsSession2, atLeast(1)).sendMessage(any(TextMessage.class));
@@ -218,7 +226,7 @@ class PresenceWebSocketHandlerTest {
                 ObjectNode msg = objectMapper.createObjectNode();
                 msg.put("action", "activity");
                 msg.put("type", activity);
-                handler.handleTextMessage(wsSession1, new TextMessage(msg.toString()));
+                invokeHandleTextMessage(handler, wsSession1, new TextMessage(msg.toString()));
             }
 
             assertEquals(1, handler.getOnlinePlayerCount());
@@ -237,7 +245,7 @@ class PresenceWebSocketHandlerTest {
             ObjectNode msg = objectMapper.createObjectNode();
             msg.put("action", "ping");
 
-            handler.handleTextMessage(wsSession1, new TextMessage(msg.toString()));
+            invokeHandleTextMessage(handler, wsSession1, new TextMessage(msg.toString()));
 
             verify(wsSession1, atLeast(1)).sendMessage(any(TextMessage.class));
         }
@@ -247,7 +255,7 @@ class PresenceWebSocketHandlerTest {
         void invalidJson() throws Exception {
             handler.afterConnectionEstablished(wsSession1);
 
-            handler.handleTextMessage(wsSession1, new TextMessage("not json"));
+            invokeHandleTextMessage(handler, wsSession1, new TextMessage("not json"));
 
             assertEquals(1, handler.getOnlinePlayerCount());
         }
@@ -260,7 +268,7 @@ class PresenceWebSocketHandlerTest {
             ObjectNode msg = objectMapper.createObjectNode();
             msg.put("action", "unknown");
 
-            handler.handleTextMessage(wsSession1, new TextMessage(msg.toString()));
+            invokeHandleTextMessage(handler, wsSession1, new TextMessage(msg.toString()));
 
             assertEquals(1, handler.getOnlinePlayerCount());
         }
@@ -332,7 +340,7 @@ class PresenceWebSocketHandlerTest {
             doThrow(new RuntimeException("Send failed")).when(wsSession1).sendMessage(any(TextMessage.class));
 
             assertDoesNotThrow(() -> {
-                handler.handleTextMessage(wsSession1, new TextMessage("{\"action\":\"ping\"}"));
+                invokeHandleTextMessage(handler, wsSession1, new TextMessage("{\"action\":\"ping\"}"));
             });
         }
 
@@ -342,7 +350,7 @@ class PresenceWebSocketHandlerTest {
             handler.afterConnectionEstablished(wsSession1);
 
             assertDoesNotThrow(() -> {
-                handler.handleTextMessage(wsSession1, new TextMessage(""));
+                invokeHandleTextMessage(handler, wsSession1, new TextMessage(""));
             });
         }
     }
@@ -362,7 +370,7 @@ class PresenceWebSocketHandlerTest {
             ObjectNode chat = objectMapper.createObjectNode();
             chat.put("action", "chat");
             chat.put("message", "Hello!");
-            handler.handleTextMessage(wsSession1, new TextMessage(chat.toString()));
+            invokeHandleTextMessage(handler, wsSession1, new TextMessage(chat.toString()));
 
             // Move
             ObjectNode move = objectMapper.createObjectNode();
@@ -372,13 +380,13 @@ class PresenceWebSocketHandlerTest {
             data.put("y", 200.0);
             data.put("z", 300.0);
             move.set("data", data);
-            handler.handleTextMessage(wsSession1, new TextMessage(move.toString()));
+            invokeHandleTextMessage(handler, wsSession1, new TextMessage(move.toString()));
 
             // Activity change
             ObjectNode activity = objectMapper.createObjectNode();
             activity.put("action", "activity");
             activity.put("type", "mining");
-            handler.handleTextMessage(wsSession1, new TextMessage(activity.toString()));
+            invokeHandleTextMessage(handler, wsSession1, new TextMessage(activity.toString()));
 
             // Leave
             handler.afterConnectionClosed(wsSession1, CloseStatus.NORMAL);
@@ -395,13 +403,13 @@ class PresenceWebSocketHandlerTest {
             ObjectNode chat1 = objectMapper.createObjectNode();
             chat1.put("action", "chat");
             chat1.put("message", "Hi Bob!");
-            handler.handleTextMessage(wsSession1, new TextMessage(chat1.toString()));
+            invokeHandleTextMessage(handler, wsSession1, new TextMessage(chat1.toString()));
 
             // Player 2 responds
             ObjectNode chat2 = objectMapper.createObjectNode();
             chat2.put("action", "chat");
             chat2.put("message", "Hi Alice!");
-            handler.handleTextMessage(wsSession2, new TextMessage(chat2.toString()));
+            invokeHandleTextMessage(handler, wsSession2, new TextMessage(chat2.toString()));
 
             assertEquals(2, handler.getOnlinePlayerCount());
         }
@@ -420,7 +428,7 @@ class PresenceWebSocketHandlerTest {
             ObjectNode chat = objectMapper.createObjectNode();
             chat.put("action", "chat");
             chat.put("message", "Still here!");
-            handler.handleTextMessage(wsSession2, new TextMessage(chat.toString()));
+            invokeHandleTextMessage(handler, wsSession2, new TextMessage(chat.toString()));
 
             verify(wsSession2, atLeast(1)).sendMessage(any(TextMessage.class));
         }

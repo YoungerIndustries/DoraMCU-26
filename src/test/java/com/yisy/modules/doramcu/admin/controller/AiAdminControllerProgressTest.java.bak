@@ -1,0 +1,380 @@
+package com.yisy.modules.doramcu.admin.controller;
+
+import com.yisy.modules.doramcu.admin.service.*;
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
+import com.yisy.modules.doramcu.repository.players.PlayerRepository;
+import com.yisy.modules.doramcu.repository.user.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+@DisplayName("AiAdminController Progress Endpoints Tests")
+@org.mockito.junit.jupiter.MockitoSettings(strictness = org.mockito.quality.Strictness.LENIENT)
+class AiAdminControllerProgressTest {
+
+    @Mock
+    private AiAdminService aiAdminService;
+
+    @Mock
+    private AiAdminDispatchService aiAdminDispatchService;
+
+    @Mock
+    private AiAdminNotificationService notificationService;
+
+    @Mock
+    private PlayerRepository playerRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private com.yisy.modules.doramcu.admin.repository.AiAdminTestCaseRepository testCaseRepository;
+
+    @Mock
+    private TestRegistry testRegistry;
+
+    @Mock
+    private AiCharacterRepository aiCharacterRepository;
+
+    @Mock
+    private AiAdminLlmService llmService;
+
+    @Mock
+    private com.yisy.modules.doramcu.service.ai.AiAdminVisibilityService visibilityService;
+
+    @Mock
+    private AiAdminOrderProgressService progressService;
+
+    @Mock
+    private AiAdminInteractionService interactionService;
+
+    @Mock
+    private AiAdminAnalyticsService analyticsService;
+
+    @Mock
+    private AiAdminDashboardService dashboardService;
+
+    @Mock
+    private AiAdminIncidentService incidentService;
+
+    @Mock
+    private AiAdminCollaborationService collaborationService;
+
+    @Mock
+    private AiAdminHealthReportService healthReportService;
+
+    @Mock
+    private AiAdminXpTrendService xpTrendService;
+
+    @Mock
+    private AiAdminScheduleService scheduleService;
+
+    private AiAdminController controller;
+
+    @BeforeEach
+    void setUp() {
+        controller = new AiAdminController(
+                aiAdminService,
+                aiAdminDispatchService,
+                notificationService,
+                playerRepository,
+                userRepository,
+                testCaseRepository,
+                testRegistry,
+                aiCharacterRepository,
+                llmService,
+                visibilityService,
+                progressService,
+                interactionService,
+                analyticsService,
+                dashboardService,
+                incidentService,
+                collaborationService,
+                healthReportService,
+                xpTrendService,
+                scheduleService,
+                null
+        );
+    }
+
+    // ================================================================
+    // GET /orders/{id}/progress
+    // ================================================================
+
+    @Test
+    @DisplayName("getOrderProgress should return 404 when order not found")
+    void getOrderProgress_shouldReturn404WhenNotFound() {
+        when(progressService.getOrderProgress(999L)).thenReturn(Optional.empty());
+
+        try {
+            controller.getOrderProgress(999L);
+            fail("Expected ResponseStatusException");
+        } catch (ResponseStatusException e) {
+            assertEquals(HttpStatus.NOT_FOUND, e.getStatusCode());
+            assertTrue(e.getMessage().contains("not found"));
+        }
+    }
+
+    @Test
+    @DisplayName("getOrderProgress should return OrderProgress DTO when found")
+    void getOrderProgress_shouldReturnProgressDto() {
+        AiAdminOrderProgressService.OrderProgress progress = new AiAdminOrderProgressService.OrderProgress();
+        progress.setOrderId(1L);
+        progress.setStatus("RUNNING");
+        progress.setProgressPercent(50);
+        progress.setCurrentTestName("testApiHealth");
+        progress.setTestsCompleted(5);
+        progress.setTestsTotal(10);
+        progress.setSubmittedBy("GalaxyOverseer:Alpha Centauri");
+        progress.setOrderText("API, GAME");
+        progress.setCreatedAt(LocalDateTime.of(2026, 11, 17, 10, 0));
+
+        when(progressService.getOrderProgress(1L)).thenReturn(Optional.of(progress));
+
+        ResponseEntity<?> response = controller.getOrderProgress(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody() instanceof AiAdminOrderProgressService.OrderProgress);
+        AiAdminOrderProgressService.OrderProgress body = (AiAdminOrderProgressService.OrderProgress) response.getBody();
+        assertEquals(1L, body.getOrderId());
+        assertEquals("RUNNING", body.getStatus());
+        assertEquals(50, body.getProgressPercent());
+        assertEquals("testApiHealth", body.getCurrentTestName());
+        assertEquals(5, body.getTestsCompleted());
+        assertEquals(10, body.getTestsTotal());
+        assertEquals("GalaxyOverseer:Alpha Centauri", body.getSubmittedBy());
+        assertEquals("API, GAME", body.getOrderText());
+    }
+
+    @Test
+    @DisplayName("getOrderProgress should return completed order progress")
+    void getOrderProgress_shouldReturnCompletedProgress() {
+        AiAdminOrderProgressService.OrderProgress progress = new AiAdminOrderProgressService.OrderProgress();
+        progress.setOrderId(2L);
+        progress.setStatus("COMPLETED");
+        progress.setProgressPercent(100);
+        progress.setCurrentTestName(null);
+        progress.setTestsCompleted(10);
+        progress.setTestsTotal(10);
+        progress.setSubmittedBy("GalaxyOverseer:Beta Pictoris");
+        progress.setOrderText("AUTH");
+        progress.setCreatedAt(LocalDateTime.of(2026, 11, 17, 9, 0));
+
+        when(progressService.getOrderProgress(2L)).thenReturn(Optional.of(progress));
+
+        ResponseEntity<?> response = controller.getOrderProgress(2L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        AiAdminOrderProgressService.OrderProgress body = (AiAdminOrderProgressService.OrderProgress) response.getBody();
+        assertEquals("COMPLETED", body.getStatus());
+        assertEquals(100, body.getProgressPercent());
+        assertNull(body.getCurrentTestName());
+        assertEquals(10, body.getTestsCompleted());
+    }
+
+    @Test
+    @DisplayName("getOrderProgress should return pending order progress with zero values")
+    void getOrderProgress_shouldReturnPendingProgress() {
+        AiAdminOrderProgressService.OrderProgress progress = new AiAdminOrderProgressService.OrderProgress();
+        progress.setOrderId(3L);
+        progress.setStatus("PENDING");
+        progress.setProgressPercent(0);
+        progress.setCurrentTestName(null);
+        progress.setTestsCompleted(0);
+        progress.setTestsTotal(0);
+        progress.setSubmittedBy("GalaxyOverseer:Gamma");
+        progress.setOrderText("AI_CHAT");
+        progress.setCreatedAt(LocalDateTime.of(2026, 11, 17, 11, 0));
+
+        when(progressService.getOrderProgress(3L)).thenReturn(Optional.of(progress));
+
+        ResponseEntity<?> response = controller.getOrderProgress(3L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        AiAdminOrderProgressService.OrderProgress body = (AiAdminOrderProgressService.OrderProgress) response.getBody();
+        assertEquals("PENDING", body.getStatus());
+        assertEquals(0, body.getProgressPercent());
+        assertEquals(0, body.getTestsCompleted());
+        assertEquals(0, body.getTestsTotal());
+    }
+
+    // ================================================================
+    // GET /orders/progress
+    // ================================================================
+
+    @Test
+    @DisplayName("getRunningOrdersProgress should return empty list when no running orders")
+    void getRunningOrdersProgress_shouldReturnEmptyList() {
+        when(progressService.getRunningOrdersProgress()).thenReturn(List.of());
+
+        ResponseEntity<?> response = controller.getRunningOrdersProgress();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody() instanceof List);
+        @SuppressWarnings("unchecked")
+        List<?> body = (List<?>) response.getBody();
+        assertTrue(body.isEmpty());
+    }
+
+    @Test
+    @DisplayName("getRunningOrdersProgress should return single running order")
+    void getRunningOrdersProgress_shouldReturnSingleOrder() {
+        AiAdminOrderProgressService.OrderProgress progress = new AiAdminOrderProgressService.OrderProgress();
+        progress.setOrderId(1L);
+        progress.setStatus("RUNNING");
+        progress.setProgressPercent(25);
+        progress.setCurrentTestName("testGameMechanics");
+        progress.setTestsCompleted(2);
+        progress.setTestsTotal(8);
+        progress.setSubmittedBy("GalaxyOverseer:Alpha");
+        progress.setOrderText("GAME");
+        progress.setCreatedAt(LocalDateTime.of(2026, 11, 17, 10, 0));
+
+        when(progressService.getRunningOrdersProgress()).thenReturn(List.of(progress));
+
+        ResponseEntity<?> response = controller.getRunningOrdersProgress();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<AiAdminOrderProgressService.OrderProgress> body = (List<AiAdminOrderProgressService.OrderProgress>) response.getBody();
+        assertEquals(1, body.size());
+        assertEquals(1L, body.get(0).getOrderId());
+        assertEquals("RUNNING", body.get(0).getStatus());
+        assertEquals(25, body.get(0).getProgressPercent());
+    }
+
+    @Test
+    @DisplayName("getRunningOrdersProgress should return multiple running orders")
+    void getRunningOrdersProgress_shouldReturnMultipleOrders() {
+        AiAdminOrderProgressService.OrderProgress progress1 = new AiAdminOrderProgressService.OrderProgress();
+        progress1.setOrderId(1L);
+        progress1.setStatus("RUNNING");
+        progress1.setProgressPercent(50);
+        progress1.setCurrentTestName("testApiHealth");
+        progress1.setTestsCompleted(5);
+        progress1.setTestsTotal(10);
+        progress1.setSubmittedBy("GalaxyOverseer:Alpha");
+        progress1.setOrderText("API");
+        progress1.setCreatedAt(LocalDateTime.of(2026, 11, 17, 10, 0));
+
+        AiAdminOrderProgressService.OrderProgress progress2 = new AiAdminOrderProgressService.OrderProgress();
+        progress2.setOrderId(2L);
+        progress2.setStatus("RUNNING");
+        progress2.setProgressPercent(75);
+        progress2.setCurrentTestName("testAuthFlow");
+        progress2.setTestsCompleted(6);
+        progress2.setTestsTotal(8);
+        progress2.setSubmittedBy("GalaxyOverseer:Beta");
+        progress2.setOrderText("AUTH");
+        progress2.setCreatedAt(LocalDateTime.of(2026, 11, 17, 10, 30));
+
+        when(progressService.getRunningOrdersProgress()).thenReturn(List.of(progress1, progress2));
+
+        ResponseEntity<?> response = controller.getRunningOrdersProgress();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<AiAdminOrderProgressService.OrderProgress> body = (List<AiAdminOrderProgressService.OrderProgress>) response.getBody();
+        assertEquals(2, body.size());
+        assertEquals(1L, body.get(0).getOrderId());
+        assertEquals(2L, body.get(1).getOrderId());
+        assertEquals(50, body.get(0).getProgressPercent());
+        assertEquals(75, body.get(1).getProgressPercent());
+    }
+
+    @Test
+    @DisplayName("getRunningOrdersProgress should verify service method called once")
+    void getRunningOrdersProgress_shouldCallServiceOnce() {
+        when(progressService.getRunningOrdersProgress()).thenReturn(List.of());
+
+        controller.getRunningOrdersProgress();
+
+        verify(progressService, times(1)).getRunningOrdersProgress();
+    }
+
+    @Test
+    @DisplayName("getOrderProgress should verify service method called with correct ID")
+    void getOrderProgress_shouldCallServiceWithCorrectId() {
+        AiAdminOrderProgressService.OrderProgress progress = new AiAdminOrderProgressService.OrderProgress();
+        progress.setOrderId(42L);
+        progress.setStatus("RUNNING");
+        progress.setProgressPercent(10);
+        progress.setCurrentTestName("test1");
+        progress.setTestsCompleted(1);
+        progress.setTestsTotal(10);
+        progress.setSubmittedBy("GalaxyOverseer:Test");
+        progress.setOrderText("API");
+        progress.setCreatedAt(LocalDateTime.now());
+
+        when(progressService.getOrderProgress(42L)).thenReturn(Optional.of(progress));
+
+        controller.getOrderProgress(42L);
+
+        verify(progressService, times(1)).getOrderProgress(42L);
+    }
+
+    @Test
+    @DisplayName("getOrderProgress should return failed order progress")
+    void getOrderProgress_shouldReturnFailedProgress() {
+        AiAdminOrderProgressService.OrderProgress progress = new AiAdminOrderProgressService.OrderProgress();
+        progress.setOrderId(5L);
+        progress.setStatus("FAILED");
+        progress.setProgressPercent(30);
+        progress.setCurrentTestName("testBrokenEndpoint");
+        progress.setTestsCompleted(3);
+        progress.setTestsTotal(10);
+        progress.setSubmittedBy("GalaxyOverseer:Delta");
+        progress.setOrderText("API, GAME");
+        progress.setCreatedAt(LocalDateTime.of(2026, 11, 17, 8, 0));
+
+        when(progressService.getOrderProgress(5L)).thenReturn(Optional.of(progress));
+
+        ResponseEntity<?> response = controller.getOrderProgress(5L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        AiAdminOrderProgressService.OrderProgress body = (AiAdminOrderProgressService.OrderProgress) response.getBody();
+        assertEquals("FAILED", body.getStatus());
+        assertEquals(30, body.getProgressPercent());
+        assertEquals("testBrokenEndpoint", body.getCurrentTestName());
+    }
+
+    @Test
+    @DisplayName("getRunningOrdersProgress should include createdAt field")
+    void getRunningOrdersProgress_shouldIncludeCreatedAt() {
+        LocalDateTime createdAt = LocalDateTime.of(2026, 11, 17, 10, 15, 30);
+        AiAdminOrderProgressService.OrderProgress progress = new AiAdminOrderProgressService.OrderProgress();
+        progress.setOrderId(1L);
+        progress.setStatus("RUNNING");
+        progress.setProgressPercent(10);
+        progress.setCurrentTestName("test1");
+        progress.setTestsCompleted(1);
+        progress.setTestsTotal(10);
+        progress.setSubmittedBy("GalaxyOverseer:Alpha");
+        progress.setOrderText("API");
+        progress.setCreatedAt(createdAt);
+
+        when(progressService.getRunningOrdersProgress()).thenReturn(List.of(progress));
+
+        ResponseEntity<?> response = controller.getRunningOrdersProgress();
+
+        @SuppressWarnings("unchecked")
+        List<AiAdminOrderProgressService.OrderProgress> body = (List<AiAdminOrderProgressService.OrderProgress>) response.getBody();
+        assertEquals(createdAt, body.get(0).getCreatedAt());
+    }
+}

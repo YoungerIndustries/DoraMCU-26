@@ -28,7 +28,7 @@ import java.util.List;
  * - At critical levels, character takes damage to hit points
  * </p>
  */
-@Service("earth2026SurvivalService")
+@Service("survivalService_earth2026_survival_SurvivalService")
 public class SurvivalService {
 
     private static final Logger log = LoggerFactory.getLogger(SurvivalService.class);

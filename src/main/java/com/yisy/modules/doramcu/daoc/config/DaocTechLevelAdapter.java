@@ -44,6 +44,10 @@ public class DaocTechLevelAdapter implements TechLevelAdapter {
                 Map.of("ac", 7, "hp", 250));
         putLore(TechLevel.TL3, ModuleCategory.DEFENSE, "WATCHTOWER", "Watchtower",
                 Map.of("ac", 5, "hp", 180, "visionRange", 5));
+        putLore(TechLevel.TL3, ModuleCategory.DEFENSE, "TOWER", "Frontier Tower",
+                Map.of("ac", 8, "hp", 1500, "garrison", 50, "captureTime", 30));
+        putLore(TechLevel.TL3, ModuleCategory.DEFENSE, "KEEP", "Frontier Keep",
+                Map.of("ac", 10, "hp", 5000, "garrison", 200, "captureTime", 60));
 
         // === TL4: Renaissance ===
         putLore(TechLevel.TL4, ModuleCategory.SETTLEMENT, "PLANETARY_BASE", "Fortress",
@@ -66,6 +70,8 @@ public class DaocTechLevelAdapter implements TechLevelAdapter {
                 Map.of("ac", 19, "hp", 650, "attackDamage", "6d6", "range", 12));
         putLore(TechLevel.TL5, ModuleCategory.COMMUNICATION, "RADAR_STATION", "Scrying Pool",
                 Map.of("range", 120, "detectionRange", 90));
+        putLore(TechLevel.TL5, ModuleCategory.DEFENSE, "RELIC", "Power Relic",
+                Map.of("ac", 15, "hp", 400, "realmBonus", 10, "captureTime", 120));
 
         // === TL6: Divine ===
         putLore(TechLevel.TL6, ModuleCategory.SETTLEMENT, "MOBILE_INFANTRY_BASE", "Temple of the Gods",
@@ -74,6 +80,10 @@ public class DaocTechLevelAdapter implements TechLevelAdapter {
                 Map.of("speed", 7, "capacity", 6000, "armor", 55, "weaponDamage", "9d6"));
         putLore(TechLevel.TL6, ModuleCategory.DEFENSE, "PLANETARY_SHIELD", "Divine Shield",
                 Map.of("ac", 30, "hp", 3000, "shieldHP", 6000));
+        putLore(TechLevel.TL6, ModuleCategory.SETTLEMENT, "HEALING_TENT", "Healing Tent",
+                Map.of("hp", 200, "healRate", 50, "radius", 10));
+        putLore(TechLevel.TL6, ModuleCategory.DEFENSE, "SIEGE_TOWER", "Siege Tower",
+                Map.of("ac", 12, "hp", 800, "wallBypass", true));
 
         // === TL7: Mythical ===
         putLore(TechLevel.TL7, ModuleCategory.SETTLEMENT, "FEDERATED_CAPITAL", "Realm Gate",
@@ -84,6 +94,12 @@ public class DaocTechLevelAdapter implements TechLevelAdapter {
                 Map.of("ac", 42, "hp", 8000, "shieldHP", 16000));
         putLore(TechLevel.TL7, ModuleCategory.DEFENSE, "MECH_FORTRESS", "Legendary Fortress",
                 Map.of("ac", 36, "hp", 5000, "garrison", 1500, "turretDamage", "14d6"));
+        putLore(TechLevel.TL7, ModuleCategory.SETTLEMENT, "DARKNESS_FALLS", "Darkness Falls Portal",
+                Map.of("ac", 25, "hp", 4000, "bossLevel", 70, "rvrEnabled", true));
+        putLore(TechLevel.TL7, ModuleCategory.SETTLEMENT, "LABYRINTH", "Labyrinth of the Minotaur",
+                Map.of("ac", 20, "hp", 3000, "bossLevel", 80, "threeWayRvr", true));
+        putLore(TechLevel.TL7, ModuleCategory.SETTLEMENT, "ELLAN_VANNIN", "Ellan Vannin Central Keep",
+                Map.of("ac", 22, "hp", 3500, "capacity", 5000, "neutralZone", true));
     }
 
     private static void putLore(TechLevel tl, ModuleCategory cat, String genericType,

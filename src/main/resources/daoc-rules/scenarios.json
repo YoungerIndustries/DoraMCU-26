@@ -1,0 +1,388 @@
+{
+  "scenarios": [
+    {
+      "id": "battle_for_caer_renaris",
+      "name": "Battle for Caer Renaris — The Key Keep",
+      "source_game": "RvR Combat (Keep Capture)",
+      "era": "Eternal RvR",
+      "description": "Caer Renaris is one of Albion's key keeps in Hadrian's Wall, with only 2 towers. Controlling it is essential for porting access. This scenario simulates a large-scale assault on the keep by Hibernia and/or Midgard forces.",
+      "map": "Hadrian's Wall — Caer Renaris and its surrounding towers",
+      "players": 3,
+      "factions": {
+        "player_1": "Albion (Defenders)",
+        "player_2": "Hibernia (Attackers)",
+        "player_3": "Midgard (Attackers or Opportunists)"
+      },
+      "objective": {
+        "albion": "Defend Caer Renaris for 10 rounds. Keep the capture bar from filling.",
+        "hibernia": "Capture Caer Renaris by filling the capture bar before time runs out.",
+        "midgard": "Capture Caer Renaris OR let Hibernia weaken Albion, then take it."
+      },
+      "setup": {
+        "albion_forces": [
+          "Armsman tanks: 4 units (hold capture point)",
+          "Paladins: 3 units (heal and smite)",
+          "Wizards: 3 units (area damage)",
+          "Clerics: 2 units (group healing)",
+          "Scouts: 2 units (ranged support)",
+          "Minstrel: 1 unit (group buffs)"
+        ],
+        "hibernia_forces": [
+          "Champions: 4 units (capture point assault)",
+          "Druids: 3 units (nature magic)",
+          "Rangers: 2 units (ranged support)",
+          "Bards: 1 unit (group buffs)",
+          "Vampiirs: 2 units (life-drain sustain)",
+          "Nightshades: 2 units (assassinate healers)"
+        ],
+        "midgard_forces": [
+          "Thaners: 4 units (tank and lightning)",
+          "Runemasters: 3 units (rune magic)",
+          "Berserkers: 2 units (melee DPS)",
+          "Healers: 2 units (group healing)",
+          "Spiritmasters: 2 units (summoning)"
+        ]
+      },
+      "special_rules": [
+        "Capture bar fills when enemies stand in the keep",
+        "Towers speed up capture — capturing both towers is critical",
+        "Siege towers can bypass walls",
+        "Tinderboxes destroy enemy siege equipment",
+        "Champions gain bonus points for kills in the keep",
+        "Three-way combat — any realm can attack any other"
+      ],
+      "victory_conditions": {
+        "albion": "Survive 10 rounds with Caer Renaris under Albion control",
+        "hibernia": "Capture Caer Renaris before round 10",
+        "midgard": "Capture Caer Renaris at any point"
+      },
+      "playtime": "60 minutes",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "darkness_falls_assault",
+      "name": "Assault on Darkness Falls — The Demonic Dungeon",
+      "source_game": "RvR Dungeon (Darkness Falls)",
+      "era": "Eternal RvR",
+      "description": "The dominant realm enters Darkness Falls to challenge Legion and his demonic forces. But the other two realms can follow and attack inside the dungeon, turning the raid into a three-way battle.",
+      "map": "Darkness Falls — from the entrance wing to Legion's chamber",
+      "players": 3,
+      "factions": {
+        "player_1": "Dominant Realm (Dungeon raiders)",
+        "player_2": "Second Realm (Interlopers)",
+        "player_3": "Third Realm (Interlopers)"
+      },
+      "objective": {
+        "dominant_realm": "Defeat Legion and claim the loot before being pushed out.",
+        "interlopers": "Kill the dominant realm's players and seize control of the dungeon portals."
+      },
+      "setup": {
+        "dominant_realm_forces": [
+          "Full RvR group: tanks, healers, casters, and DPS",
+          "Champions at various levels",
+          "Siege equipment for portal defense"
+        ],
+        "interloper_forces": [
+          "Strike teams targeting healers and casters",
+          "Portal capture squads",
+          "Ambush groups at key choke points"
+        ],
+        "dungeon_forces": [
+          "Demonic mobs throughout the dungeon",
+          "Sub-bosses at key locations",
+          "Legion — the main boss"
+        ]
+      },
+      "special_rules": [
+        "Only the dominant realm can enter initially",
+        "Interlopers can follow and attack inside",
+        "When portal control changes, the original realm can stay until they release on death",
+        "Healers can keep players alive to maintain access",
+        "Each realm has its own entrance and exit portals",
+        "Legion must be defeated for the dominant realm to win",
+        "RvR combat is fully active inside the dungeon"
+      ],
+      "victory_conditions": {
+        "dominant_realm": "Defeat Legion and claim the loot",
+        "interlopers": "Seize portal control and eliminate the dominant realm's presence"
+      },
+      "playtime": "90 minutes",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "labyrinth_of_the_minotaur",
+      "name": "The Labyrinth of the Minotaur — Three-Way RvR Dungeon",
+      "source_game": "RvR Dungeon (Labyrinth)",
+      "era": "Eternal RvR (Labyrinth expansion)",
+      "description": "The largest RvR dungeon in DaOC history, located on Ellan Vannin Island. All three realms can access it simultaneously, making it the ultimate three-way battleground.",
+      "map": "Ellan Vannin — The Labyrinth of the Minotaur",
+      "players": 3,
+      "factions": {
+        "player_1": "Albion",
+        "player_2": "Hibernia",
+        "player_3": "Midgard"
+      },
+      "objective": {
+        "all_realms": "Defeat the Labyrinth bosses, claim Mythrians, and earn Champion points."
+      },
+      "setup": {
+        "all_realm_forces": [
+          "Full RvR groups from each realm",
+          "Minotaur-class players (realm-specific variant)",
+          "Mauler players (cross-realm class)"
+        ],
+        "dungeon_forces": [
+          "Minotaur-themed enemies",
+          "Labyrinth bosses",
+          "Mythrian guardians"
+        ]
+      },
+      "special_rules": [
+        "All three realms can enter simultaneously",
+        "Three-way combat throughout the dungeon",
+        "Mythrians are awarded for boss kills",
+        "Champion levels 6-10 can be progressed here",
+        "Ellan Vannin's central keep provides a staging area",
+        "Buggane's Obelisk rotates through the frontiers"
+      ],
+      "victory_conditions": {
+        "all_realms": "Defeat the most bosses and claim the most Mythrians"
+      },
+      "playtime": "120 minutes",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "relic_war",
+      "name": "The Relic War — Capturing Enemy Relics",
+      "source_game": "RvR Combat (Relic Control)",
+      "era": "Eternal RvR",
+      "description": "Each realm's relics are located in heavily defended keeps. Capturing an enemy relic denies their bonuses and grants you theirs. This scenario simulates a coordinated assault on an enemy relic keep.",
+      "map": "Enemy frontier — the relic keep and its towers",
+      "players": 3,
+      "factions": {
+        "player_1": "Attacking Realm",
+        "player_2": "Defending Realm (relic owner)",
+        "player_3": "Third Realm (opportunist)"
+      },
+      "objective": {
+        "attacking_realm": "Capture the enemy relic and hold it for 5 rounds.",
+        "defending_realm": "Defend the relic keep and prevent capture.",
+        "third_realm": "Capture the relic for yourself OR let the other two weaken each other."
+      },
+      "setup": {
+        "attacking_forces": [
+          "Full assault group: tanks, healers, casters, DPS",
+          "Siege towers and tents",
+          "Champions at high levels"
+        ],
+        "defending_forces": [
+          "Keep garrison: tanks holding the capture point",
+          "Healers and buffers",
+          "Casters for area denial"
+        ],
+        "third_realm_forces": [
+          "Strike team ready to exploit weaknesses",
+          "Portal capture squad"
+        ]
+      },
+      "special_rules": [
+        "Relic keeps are heavily defended",
+        "Capturing the relic provides immediate realm bonuses",
+        "The third realm can opportunistically capture the relic",
+        "Siegecraft is essential for the assault",
+        "Champion points are awarded for relic captures",
+        "Relic bonuses can be viewed on the realm war map"
+      ],
+      "victory_conditions": {
+        "attacking_realm": "Hold the enemy relic for 5 rounds",
+        "defending_realm": "Prevent relic capture for 10 rounds",
+        "third_realm": "Capture the relic for yourself"
+      },
+      "playtime": "90 minutes",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "ellan_vannin_battle",
+      "name": "Battle for Ellan Vannin — The Central Island",
+      "source_game": "RvR Combat (Open Zone)",
+      "era": "Eternal RvR (New New Frontiers)",
+      "description": "Ellan Vannin is the central island connecting all three frontiers. With no keeps to capture, it's a pure open-combat zone with captureable docks and Buggane's Obelisk for solo RP bonuses.",
+      "map": "Ellan Vannin — the central island with docks and milegates",
+      "players": 3,
+      "factions": {
+        "player_1": "Albion",
+        "player_2": "Hibernia",
+        "player_3": "Midgard"
+      },
+      "objective": {
+        "all_realms": "Control the docks, capture Buggane's Obelisk, and dominate the island."
+      },
+      "setup": {
+        "all_realm_forces": [
+          "Full RvR groups from each realm",
+          "Siege equipment for dock control",
+          "Solo players for Buggane's Obelisk"
+        ]
+      },
+      "special_rules": [
+        "No keeps — pure open combat",
+        "Two captureable docks provide strategic value",
+        "Buggane's Obelisk grants RP bonus to solo players",
+        "Milegates per realm provide entry/exit points",
+        "Any realm can open the gates to the island",
+        "Central keep provides a neutral staging area"
+      ],
+      "victory_conditions": {
+        "all_realms": "Control both docks and the most territory at the end of 10 rounds"
+      },
+      "playtime": "60 minutes",
+      "difficulty": "Medium"
+    },
+    {
+      "id": "tower_sweep",
+      "name": "Tower Sweep — Clearing the Front Line",
+      "source_game": "RvR Combat (Tower Capture)",
+      "era": "Eternal RvR",
+      "description": "Before a keep can be captured, its surrounding towers must be taken. This scenario focuses on the methodical process of 'towering out' — capturing all towers around an enemy keep to speed up the keep capture.",
+      "map": "Enemy frontier — a keep and its surrounding towers",
+      "players": 3,
+      "factions": {
+        "player_1": "Attacking Realm",
+        "player_2": "Defending Realm",
+        "player_3": "Third Realm (opportunist)"
+      },
+      "objective": {
+        "attacking_realm": "Capture all towers around the enemy keep within 8 rounds.",
+        "defending_realm": "Defend at least one tower for 8 rounds.",
+        "third_realm": "Capture towers for yourself."
+      },
+      "setup": {
+        "attacking_forces": [
+          "Tower capture squads: small groups for each tower",
+          "Support group: healers and buffers",
+          "Reserve group: reinforces threatened towers"
+        ],
+        "defending_forces": [
+          "Tower defenders: small groups at each tower",
+          "Roving response team: reinforces threatened towers",
+          "Casters for area denial"
+        ]
+      },
+      "special_rules": [
+        "Each tower is captured independently",
+        "More towers captured = faster keep capture",
+        "Towers provide elevated positions for archers",
+        "Defenders can rove between towers",
+        "The third realm can capture towers opportunistically",
+        "Siege towers can help reach elevated capture points"
+      ],
+      "victory_conditions": {
+        "attacking_realm": "Capture all towers within 8 rounds",
+        "defending_realm": "Hold at least one tower for 8 rounds",
+        "third_realm": "Capture the most towers"
+      },
+      "playtime": "45 minutes",
+      "difficulty": "Medium"
+    },
+    {
+      "id": "champion_rampage",
+      "name": "Champion Rampage — Earning Champion Points",
+      "source_game": "RvR Combat (Champion System)",
+      "era": "Eternal RvR",
+      "description": "A high-level Champion player goes on a killing spree in the Frontiers, earning Champion Points with each kill. The other realms must coordinate to stop the rampage.",
+      "map": "The Frontiers — any keep or tower zone",
+      "players": 3,
+      "factions": {
+        "player_1": "Champion Player (rampaging)",
+        "player_2": "Enemy Realm 1 (hunters)",
+        "player_3": "Enemy Realm 2 (hunters)"
+      },
+      "objective": {
+        "champion": "Earn 10 Champion Points by killing enemy players.",
+        "hunters": "Kill the Champion player and prevent further kills."
+      },
+      "setup": {
+        "champion_forces": [
+          "Single high-level Champion player",
+          "Champion abilities active",
+          "Full health and mana"
+        ],
+        "hunter_forces": [
+          "Coordinated groups from both enemy realms",
+          "Tanks to taunt, casters to focus fire",
+          "Healers to sustain the hunt"
+        ]
+      },
+      "special_rules": [
+        "Champion gains abilities at each level",
+        "Champion Points are earned per kill",
+        "The Champion can port between friendly keeps",
+        "Hunters from both realms can cooperate",
+        "Champion auras buff nearby allies",
+        "If the Champion dies, they lose progress"
+      ],
+      "victory_conditions": {
+        "champion": "Reach 10 Champion Points",
+        "hunters": "Kill the Champion before they reach 10 points"
+      },
+      "playtime": "30 minutes",
+      "difficulty": "Medium"
+    },
+    {
+      "id": "siege_of_hadrians_wall",
+      "name": "Siege of Hadrian's Wall — Full Front Assault",
+      "source_game": "RvR Combat (Full Front)",
+      "era": "Eternal RvR",
+      "description": "A full-scale assault on Albion's entire front line in Hadrian's Wall. Multiple keeps and towers are targeted simultaneously in a massive three-way battle.",
+      "map": "Hadrian's Wall — all keeps and towers",
+      "players": 3,
+      "factions": {
+        "player_1": "Albion (Defenders)",
+        "player_2": "Hibernia (Attackers)",
+        "player_3": "Midgard (Attackers)"
+      },
+      "objective": {
+        "albion": "Defend at least 4 keeps for 15 rounds.",
+        "hibernia": "Capture at least 3 Albion keeps.",
+        "midgard": "Capture at least 3 Albion keeps."
+      },
+      "setup": {
+        "albion_forces": [
+          "Full realm commitment: all available players",
+          "Tanks at each keep capture point",
+          "Healers and buffers distributed across the front",
+          "Casters for area denial",
+          "Siege equipment for counter-attacks"
+        ],
+        "hibernia_forces": [
+          "Full realm commitment: all available players",
+          "Assault groups for each keep",
+          "Tower capture squads",
+          "Siege towers and tents"
+        ],
+        "midgard_forces": [
+          "Full realm commitment: all available players",
+          "Assault groups for each keep",
+          "Tower capture squads",
+          "Siege towers and tents"
+        ]
+      },
+      "special_rules": [
+        "Multiple keeps are attacked simultaneously",
+        "Albion must divide forces across the front",
+        "Hibernia and Midgard can temporarily cooperate",
+        "But Hibernia and Midgard can also fight each other",
+        "Siegecraft is essential for both offense and defense",
+        "Champion points are awarded for all kills and captures",
+        "The realm with the most keeps gains Darkness Falls access"
+      ],
+      "victory_conditions": {
+        "albion": "Hold 4+ keeps after 15 rounds",
+        "hibernia": "Capture 3+ Albion keeps",
+        "midgard": "Capture 3+ Albion keeps"
+      },
+      "playtime": "120 minutes",
+      "difficulty": "Very Hard"
+    }
+  ]
+}

@@ -7,7 +7,7 @@ import com.yisy.modules.doramcu.dnd5e.service.Dnd5eNpcService;
 import com.yisy.modules.doramcu.gamecore.AiNpcPopulator;
 import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.hex.Galaxy;
-import com.yisy.modules.doramcu.service.LoreGroupEmpireService;
+import com.yisy.modules.doramcu.service.game.LoreGroupEmpireService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

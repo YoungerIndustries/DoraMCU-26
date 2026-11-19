@@ -6,7 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
+@Repository("gameSessionRepository_1")
+    @Repository
 public interface GameSessionRepository extends JpaRepository<GameSession, Long> {
     List<GameSession> findByMode(GameSession.GameMode mode);
 }

@@ -57,5 +57,8 @@ public enum GameSystem {
     STARSHIP_TROOPERS,
 
     /** Warhammer 40K universe rules. */
-    WARHAMMER_40K
+    WARHAMMER_40K,
+
+    /** Lord of the Rings universe rules. */
+    LORD_OF_THE_RINGS
 }

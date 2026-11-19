@@ -143,6 +143,34 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      # ARM64 builds for Raspberry Pi deployment
+      - name: Build and push neuron-edge ARM64 image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.neuron
+          push: true
+          platforms: linux/arm64/v8
+          build-args: |
+            BASE_IMAGE=eclipse-temurin:27-jre-alpine
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-neuron-edge:latest,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-neuron-edge:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push main app ARM64 image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          platforms: linux/arm64/v8
+          target: prod
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-arm64:latest,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-arm64:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
       # Security scanning with Trivy
       - name: Run Trivy vulnerability scanner
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

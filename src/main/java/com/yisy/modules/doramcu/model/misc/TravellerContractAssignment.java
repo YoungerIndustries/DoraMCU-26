@@ -13,11 +13,6 @@ import java.time.LocalDateTime;
  * AI hires, using their abilities and skills to boost success.
  * </p>
  */
-@Entity
-@Table(name = "traveller_contract_assignments", indexes = {
-        @Index(name = "idx_tca_contract", columnList = "contractId"),
-        @Index(name = "idx_tca_character", columnList = "travellerCharacterId")
-})
 public class TravellerContractAssignment {
 
     @Id

@@ -1,0 +1,316 @@
+package com.yisy.modules.doramcu.admin.controller;
+
+import com.yisy.modules.doramcu.admin.model.AiAdminTrainingScenario;
+import com.yisy.modules.doramcu.admin.model.AiAdminTrainingSession;
+import com.yisy.modules.doramcu.admin.service.AiAdminTrainingService;
+import com.yisy.modules.doramcu.eve.model.AiCharacter;
+import com.yisy.modules.doramcu.repository.AiCharacterRepository;
+import com.yisy.modules.doramcu.model.user.User;
+import com.yisy.modules.doramcu.repository.UserRepository;
+import com.yisy.modules.doramcu.model.player.Player;
+import com.yisy.modules.doramcu.repository.PlayerRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@DisplayName("AiAdminController Training Tests")
+@ExtendWith(MockitoExtension.class)
+class AiAdminControllerTrainingTest {
+
+    @Mock
+    private AiAdminTrainingService trainingService;
+
+    @Mock
+    private AiCharacterRepository aiCharacterRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private PlayerRepository playerRepository;
+
+    @InjectMocks
+    private AiAdminController controller;
+
+    private User testUser;
+    private Player testPlayer;
+    private AiCharacter testAdmin;
+    private AiAdminTrainingScenario testScenario;
+    private AiAdminTrainingSession testSession;
+    private Authentication authentication;
+
+    @BeforeEach
+    void setUp() {
+        testUser = new User();
+        testUser.setId(1L);
+        testUser.setUsername("testuser");
+
+        testPlayer = new Player();
+        testPlayer.setId(1L);
+        testPlayer.setUser(testUser);
+
+        testAdmin = new AiCharacter();
+        testAdmin.setId(1L);
+        testAdmin.setName("Test Admin");
+        testAdmin.setAiAdmin(true);
+        testAdmin.setActive(true);
+
+        testScenario = new AiAdminTrainingScenario();
+        testScenario.setId(1L);
+        testScenario.setName("Fleet Deployment");
+        testScenario.setDescription("Practice fleet deployment");
+        testScenario.setDifficulty(AiAdminTrainingScenario.Difficulty.BEGINNER);
+        testScenario.setIsActive(true);
+
+        testSession = new AiAdminTrainingSession();
+        testSession.setId(1L);
+        testSession.setAiAdminId(1L);
+        testSession.setScenarioId(1L);
+        testSession.setStatus(AiAdminTrainingSession.Status.NOT_STARTED);
+        testSession.setScore(0);
+        testSession.setMaxScore(100);
+
+        authentication = new UsernamePasswordAuthenticationToken(testUser, null);
+
+        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+        when(playerRepository.findByUserId(1L)).thenReturn(Optional.of(testPlayer));
+    }
+
+    @Test
+    @DisplayName("enrollAdmin: 200 on success")
+    void enrollAdmin_success() {
+        Map<String, Object> body = Map.of("adminId", 1, "scenarioId", 1);
+        when(trainingService.enrollAdmin(1L, 1L)).thenReturn(Optional.of(testSession));
+
+        ResponseEntity<?> response = controller.enrollAdmin(body, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(trainingService).enrollAdmin(1L, 1L);
+    }
+
+    @Test
+    @DisplayName("enrollAdmin: 400 when scenario not found")
+    void enrollAdmin_notFound() {
+        Map<String, Object> body = Map.of("adminId", 1, "scenarioId", 999);
+        when(trainingService.enrollAdmin(1L, 999L)).thenReturn(Optional.empty());
+
+        ResponseEntity<?> response = controller.enrollAdmin(body, authentication);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("enrollAdmin: 403 for non-admin user")
+    void enrollAdmin_forbidden() {
+        when(userRepository.findByUsername("testuser")).thenReturn(Optional.empty());
+
+        Map<String, Object> body = Map.of("adminId", 1, "scenarioId", 1);
+        ResponseEntity<?> response = controller.enrollAdmin(body, authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("getScenarios: returns all active scenarios")
+    void getScenarios() {
+        when(trainingService.getAvailableScenarios()).thenReturn(List.of(testScenario));
+
+        ResponseEntity<?> response = controller.getScenarios(authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> result = (List<Map<String, Object>>) response.getBody();
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    @DisplayName("getScenarios: filters by difficulty")
+    void getScenarios_byDifficulty() {
+        when(trainingService.getScenariosByDifficulty(AiAdminTrainingScenario.Difficulty.BEGINNER))
+                .thenReturn(List.of(testScenario));
+
+        ResponseEntity<?> response = controller.getScenarios("BEGINNER", authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("getSession: 200 with session details")
+    void getSession_found() {
+        when(trainingService.getSession(1L)).thenReturn(Optional.of(testSession));
+
+        ResponseEntity<?> response = controller.getSession(1L, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("getSession: 404 when not found")
+    void getSession_notFound() {
+        when(trainingService.getSession(999L)).thenReturn(Optional.empty());
+
+        ResponseEntity<?> response = controller.getSession(999L, authentication);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("startSession: 200 on success")
+    void startSession_success() {
+        when(trainingService.startSession(1L)).thenReturn(Optional.of(testSession));
+
+        ResponseEntity<?> response = controller.startSession(1L, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(trainingService).startSession(1L);
+    }
+
+    @Test
+    @DisplayName("startSession: 400 when already started")
+    void startSession_alreadyStarted() {
+        when(trainingService.startSession(1L)).thenReturn(Optional.empty());
+
+        ResponseEntity<?> response = controller.startSession(1L, authentication);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("submitAction: 200 on success")
+    void submitAction_success() {
+        Map<String, String> body = Map.of("action", "Deploy fleet", "reasoning", "Low fleet count");
+        when(trainingService.submitAction(1L, "Deploy fleet", "Low fleet count"))
+                .thenReturn(Optional.of(testSession));
+
+        ResponseEntity<?> response = controller.submitAction(1L, body, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("submitAction: 400 when not in progress")
+    void submitAction_notInProgress() {
+        Map<String, String> body = Map.of("action", "Deploy fleet", "reasoning", "Low fleet count");
+        when(trainingService.submitAction(1L, "Deploy fleet", "Low fleet count"))
+                .thenReturn(Optional.empty());
+
+        ResponseEntity<?> response = controller.submitAction(1L, body, authentication);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("completeSession: 200 on success")
+    void completeSession_success() {
+        testSession.setStatus(AiAdminTrainingSession.Status.COMPLETED);
+        testSession.setFeedback("Great work!");
+        when(trainingService.completeSession(1L)).thenReturn(Optional.of(testSession));
+
+        ResponseEntity<?> response = controller.completeSession(1L, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(trainingService).completeSession(1L);
+    }
+
+    @Test
+    @DisplayName("completeSession: 400 when not in progress")
+    void completeSession_notInProgress() {
+        when(trainingService.completeSession(1L)).thenReturn(Optional.empty());
+
+        ResponseEntity<?> response = controller.completeSession(1L, authentication);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("getTrainingProgress: returns progress list")
+    void getTrainingProgress() {
+        when(trainingService.getTrainingProgress(1L)).thenReturn(List.of(testSession));
+
+        ResponseEntity<?> response = controller.getTrainingProgress(1L, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> result = (List<Map<String, Object>>) response.getBody();
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    @DisplayName("getTrainingProgress: empty list for new admin")
+    void getTrainingProgress_empty() {
+        when(trainingService.getTrainingProgress(999L)).thenReturn(List.of());
+
+        ResponseEntity<?> response = controller.getTrainingProgress(999L, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> result = (List<Map<String, Object>>) response.getBody();
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    @DisplayName("getFeedback: 200 with feedback for completed session")
+    void getFeedback_completed() {
+        when(trainingService.getFeedback(1L)).thenReturn(Optional.of("Great work!"));
+
+        ResponseEntity<?> response = controller.getFeedback(1L, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("getFeedback: 404 when session not completed")
+    void getFeedback_notCompleted() {
+        when(trainingService.getFeedback(1L)).thenReturn(Optional.empty());
+
+        ResponseEntity<?> response = controller.getFeedback(1L, authentication);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("getScenarios: 403 for non-admin user")
+    void getScenarios_forbidden() {
+        when(userRepository.findByUsername("testuser")).thenReturn(Optional.empty());
+
+        ResponseEntity<?> response = controller.getScenarios(authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("getSession: 403 for non-admin user")
+    void getSession_forbidden() {
+        when(userRepository.findByUsername("testuser")).thenReturn(Optional.empty());
+
+        ResponseEntity<?> response = controller.getSession(1L, authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("startSession: 403 for non-admin user")
+    void startSession_forbidden() {
+        when(userRepository.findByUsername("testuser")).thenReturn(Optional.empty());
+
+        ResponseEntity<?> response = controller.startSession(1L, authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+}

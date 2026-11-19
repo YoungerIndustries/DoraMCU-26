@@ -1,8 +1,6 @@
 package com.yisy.modules.doramcu.earth2026.service;
 import org.springframework.stereotype.Service;
 
-import com.yisy.modules.doramcu.earth2026.model.*;
-import com.yisy.modules.doramcu.earth2026.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;

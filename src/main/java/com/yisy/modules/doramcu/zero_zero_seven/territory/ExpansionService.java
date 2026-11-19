@@ -18,7 +18,8 @@ import java.util.Objects;
  * and updating empire controlled territories.
  * </p>
  */
-@Service
+@Service("expansionService_zero_zero_seven_territory_ExpansionService")
+    @Service
 public class ExpansionService {
 
     private final TerritoryService territoryService;

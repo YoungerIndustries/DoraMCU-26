@@ -7,8 +7,6 @@ import com.yisy.modules.doramcu.hex.DamageOverlay;
 import com.yisy.modules.doramcu.hex.SkinType;
 import com.yisy.modules.doramcu.hex.DecalType;
 
-import com.yisy.modules.doramcu.skin.*;
-import com.yisy.modules.doramcu.skin.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

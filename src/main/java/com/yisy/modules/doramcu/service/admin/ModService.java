@@ -1,7 +1,4 @@
 package com.yisy.modules.doramcu.service.admin;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-import com.yisy.modules.doramcu.model.user.User;
-
 import org.springframework.stereotype.Service;
 
 import org.springframework.stereotype.Service;import org.slf4j.Logger;

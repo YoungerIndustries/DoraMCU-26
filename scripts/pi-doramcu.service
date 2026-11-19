@@ -9,19 +9,20 @@ Wants=network-online.target
 Type=oneshot
 RemainAfterExit=yes
 WorkingDirectory=/home/pi/doramcu
-ExecStart=/usr/local/bin/docker compose -f docker-compose.yml -f docker-compose.pi.yml up -d
-ExecStop=/usr/local/bin/docker compose -f docker-compose.yml -f docker-compose.pi.yml down
-Restart=on-failure
-RestartSec=5
+ExecStart=/usr/local/bin/docker compose --profile pi up -d
+ExecStop=/usr/local/bin/docker compose --profile pi down
 StandardOutput=journal
 StandardError=journal
 Environment=COMPOSE_PROJECT_NAME=doramcu
 Environment=HOME=/home/pi
 
-# Security hardening
+# Security hardening (relaxed for Docker Compose working directory)
 ProtectSystem=full
-ProtectHome=read-only
+ReadWritePaths=/home/pi/doramcu
 PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
 
 # Resource limits for Pi
 MemoryMax=3G

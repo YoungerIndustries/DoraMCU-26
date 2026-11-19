@@ -16,12 +16,6 @@ import java.time.LocalDateTime;
  * database instead of being randomly placed again.
  * </p>
  */
-@Entity
-@Table(name = "planet_industries", indexes = {
-    @Index(name = "idx_industry_planet", columnList = "planet_id"),
-    @Index(name = "idx_industry_empire", columnList = "owner_empire_id"),
-    @Index(name = "idx_industry_hex", columnList = "hex_x,hex_y,hex_z")
-})
 public class PlanetIndustryEntity {
 
     @Id

@@ -1,6 +1,6 @@
 package com.yisy.modules.doramcu.service;
 
-import com.yisy.modules.doramcu.dto.FourxUnlockState;
+import com.yisy.modules.doramcu.dto.misc.FourxUnlockState;
 import com.yisy.modules.doramcu.hex.Game;
 import com.yisy.modules.doramcu.model.GameSession;
 import org.junit.jupiter.api.BeforeEach;

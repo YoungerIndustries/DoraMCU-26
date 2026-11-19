@@ -31,29 +31,29 @@ public interface Dnd5eDungeonRoomRepository extends JpaRepository<Dnd5eDungeonRo
 
     @Query("SELECT r FROM Dnd5eDungeonRoom r WHERE r.active = true AND " +
            "r.minLevel <= :level AND r.maxLevel >= :level")
-    List<Dnd5eDungeonRoom> findByCharacterLevel(@Param("level") int level);
+    List<Dnd5eDungeonRoom> findByCharacterLevel(@Param("level_1") int level);
 
     @Query("SELECT r FROM Dnd5eDungeonRoom r WHERE r.active = true AND " +
            "r.dungeonId = :dungeonId AND " +
            "r.minLevel <= :level AND r.maxLevel >= :level")
     List<Dnd5eDungeonRoom> findByDungeonAndLevel(
-            @Param("dungeonId") String dungeonId,
-            @Param("level") int level);
+            @Param("level_1") String dungeonId,
+            @Param("level_1") int level);
 
     @Query("SELECT r FROM Dnd5eDungeonRoom r WHERE r.active = true AND " +
            "r.minLevel <= :level AND r.maxLevel >= :level AND " +
            "r.theme = :theme")
     List<Dnd5eDungeonRoom> findByLevelAndTheme(
-            @Param("level") int level,
-            @Param("theme") String theme);
+            @Param("level_1") int level,
+            @Param("level_1") String theme);
 
     @Query("SELECT r FROM Dnd5eDungeonRoom r WHERE r.active = true AND " +
            "r.dungeonId = :dungeonId AND " +
            "r.minLevel <= :level AND r.maxLevel >= :level AND " +
            "r.discovered = false")
     List<Dnd5eDungeonRoom> findUndiscoveredByDungeonAndLevel(
-            @Param("dungeonId") String dungeonId,
-            @Param("level") int level);
+            @Param("level_1") String dungeonId,
+            @Param("level_1") int level);
 
     @Query("SELECT DISTINCT r.dungeonId FROM Dnd5eDungeonRoom r WHERE r.active = true")
     List<String> findDistinctDungeonIds();
@@ -73,5 +73,5 @@ public interface Dnd5eDungeonRoomRepository extends JpaRepository<Dnd5eDungeonRo
     @Query("SELECT r FROM Dnd5eDungeonRoom r WHERE LOWER(r.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(r.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(r.dmSecrets) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-    List<Dnd5eDungeonRoom> searchByKeyword(@Param("keyword") String keyword);
+    List<Dnd5eDungeonRoom> searchByKeyword(@Param("level_1") String keyword);
 }

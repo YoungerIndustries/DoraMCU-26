@@ -1,7 +1,6 @@
 package com.yisy.modules.doramcu.model.misc;
 import com.yisy.modules.doramcu.hex.MineralQuality;
 import com.yisy.modules.doramcu.hex.PlanetSize;
-import com.yisy.modules.doramcu.model.galaxy.SolarSystem;
 import com.yisy.modules.doramcu.model.galaxy.StrategicResource;
 
 
@@ -18,12 +17,6 @@ import java.util.Set;
  * for empire building.
  * </p>
  */
-@Entity
-@Table(name = "planets", indexes = {
-    @Index(name = "idx_planet_solar_system", columnList = "solar_system_id"),
-    @Index(name = "idx_planet_size", columnList = "planetSize"),
-    @Index(name = "idx_planet_mineral_quality", columnList = "mineralQuality")
-})
 public class Planet {
 
     @Id

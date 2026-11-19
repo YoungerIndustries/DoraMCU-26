@@ -19,9 +19,6 @@ import com.yisy.modules.doramcu.dto.ship_design.ShipDesignRequest;
 import com.yisy.modules.doramcu.dto.trade.TradeOpportunityDto;
 import com.yisy.modules.doramcu.dto.trade.TradeRequest;
 import com.yisy.modules.doramcu.dto.trade.TradeSummaryDto;
-import com.yisy.modules.doramcu.model.user.User;
-
-
 import com.yisy.modules.doramcu.service.session.GameSessionService;
 import com.yisy.modules.doramcu.util.PlayerIdExtractor;
 import jakarta.validation.Valid;

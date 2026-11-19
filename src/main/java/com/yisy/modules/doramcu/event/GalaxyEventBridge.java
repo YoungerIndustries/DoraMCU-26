@@ -3,9 +3,9 @@ package com.yisy.modules.doramcu.event;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.yisy.modules.doramcu.controller.FleetTrackerWebSocketHandler;
-import com.yisy.modules.doramcu.controller.NarrativeWebSocketHandler;
-import com.yisy.modules.doramcu.controller.ResourcePipelineWebSocketHandler;
+import com.yisy.modules.doramcu.controller.misc.FleetTrackerWebSocketHandler;
+import com.yisy.modules.doramcu.controller.misc.NarrativeWebSocketHandler;
+import com.yisy.modules.doramcu.controller.trade.ResourcePipelineWebSocketHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,15 +43,15 @@ public class GalaxyEventBridge {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired(required = false)
-    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
+    @SuppressWarnings("SpringAutowiredFieldsWarningInspection_0")
     private FleetTrackerWebSocketHandler fleetTrackerHandler;
 
     @Autowired(required = false)
-    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
+    @SuppressWarnings("SpringAutowiredFieldsWarningInspection_0")
     private NarrativeWebSocketHandler narrativeHandler;
 
     @Autowired(required = false)
-    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
+    @SuppressWarnings("SpringAutowiredFieldsWarningInspection_0")
     private ResourcePipelineWebSocketHandler resourcePipelineHandler;
 
     @Autowired

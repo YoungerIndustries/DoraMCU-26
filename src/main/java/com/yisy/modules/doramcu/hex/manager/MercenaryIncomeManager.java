@@ -4,8 +4,6 @@ import org.springframework.stereotype.Service;
 import com.yisy.modules.doramcu.hex.Empire;
 import com.yisy.modules.doramcu.hex.EmpireArmy;
 import com.yisy.modules.doramcu.hex.Player;
-import com.yisy.modules.doramcu.traveller.*;
-
 import java.util.*;
 import java.util.stream.Collectors;
 

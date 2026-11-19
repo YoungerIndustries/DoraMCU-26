@@ -1,4 +1,4 @@
-package com.yisy.modules.doramcu.hex.planet.hullmodule;
+package com.yisy.modules.doramcu.hex.planet;
 
 import com.yisy.modules.doramcu.hex.planet.CargoType;
 import jakarta.persistence.*;

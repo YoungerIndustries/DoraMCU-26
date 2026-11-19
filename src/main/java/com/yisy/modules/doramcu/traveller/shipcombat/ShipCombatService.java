@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.traveller.shipcombat;
 
-import com.yisy.modules.doramcu.traveller.*;
 import org.springframework.stereotype.Service;import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.sfb.service;
 
-import com.yisy.modules.doramcu.sfb.model.*;
 import com.yisy.modules.doramcu.util.DiceUtil;
 
 import java.util.*;
@@ -23,7 +22,7 @@ public class SfbCombatEngine {
     private final SfbAIService aiService;
     private final SfbRoleSystem roleSystem;
     private final SfbCharacterBridge characterBridge;
-    private final com.yisy.modules.doramcu.service.AiCommanderExperienceService experienceService;
+    private final com.yisy.modules.doramcu.service.ai.AiCommanderExperienceService experienceService;
 
     public SfbCombatEngine() {
         this.impulseManager = new ImpulseManager();
@@ -61,7 +60,7 @@ public class SfbCombatEngine {
                            SpecialSystemsService specialSystemsService,
                            SfbAIService aiService, SfbRoleSystem roleSystem,
                            SfbCharacterBridge characterBridge,
-                           com.yisy.modules.doramcu.service.AiCommanderExperienceService experienceService) {
+                           com.yisy.modules.doramcu.service.ai.AiCommanderExperienceService experienceService) {
         this.impulseManager = impulseManager;
         this.energyAllocationService = energyAllocationService;
         this.movementService = movementService;

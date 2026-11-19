@@ -1,7 +1,6 @@
 package com.yisy.modules.doramcu.thirdreich.combat;
 
 import com.yisy.modules.doramcu.thirdreich.commander.AICommander;
-import com.yisy.modules.doramcu.thirdreich.domain.*;
 import com.yisy.modules.doramcu.util.DiceUtil;
 
 import java.util.ArrayList;

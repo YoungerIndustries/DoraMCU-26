@@ -2,7 +2,6 @@ package com.yisy.modules.doramcu.model.galaxy;
 import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.model.misc.Planet;
 import com.yisy.modules.doramcu.model.players.Player;
-import com.yisy.modules.doramcu.model.galaxy.Sector;
 import com.yisy.modules.doramcu.model.galaxy.SubSector;
 
 
@@ -31,7 +30,6 @@ import java.util.Map;
  * </ul>
  * </p>
  */
-@Entity
 @Table(name = "galaxy_object_states", indexes = {
     @Index(name = "idx_galaxy_obj_galaxy", columnList = "galaxy_name"),
     @Index(name = "idx_galaxy_obj_type", columnList = "object_type"),

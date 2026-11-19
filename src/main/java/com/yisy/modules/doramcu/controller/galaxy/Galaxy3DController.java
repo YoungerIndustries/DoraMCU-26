@@ -1,10 +1,6 @@
 package com.yisy.modules.doramcu.controller.galaxy;
 import com.yisy.modules.doramcu.admin.dto.AiAdminVisibilityDTO;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 
-
-import com.yisy.modules.doramcu.service.galaxy.Galaxy3DService;
-import com.yisy.modules.doramcu.service.galaxy.Galaxy3DService.*;
 import com.yisy.modules.doramcu.service.ai.AiAdminVisibilityService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,8 +1,8 @@
 package com.yisy.modules.doramcu.ai.framework;
 
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
-import com.yisy.modules.doramcu.repository.AiCharacterRepository;
-import com.yisy.modules.doramcu.service.AiEntityRegistrationService;
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
+import com.yisy.modules.doramcu.service.ai.AiEntityRegistrationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

@@ -1,11 +1,9 @@
 package com.yisy.modules.doramcu.controller.misc;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.yisy.modules.doramcu.service.galaxy.Galaxy3DService;
+
 import com.yisy.modules.doramcu.service.game.GameStateBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,8 +1,4 @@
 package com.yisy.modules.doramcu.controller.session;
-import com.yisy.modules.doramcu.model.players.Player;
-import com.yisy.modules.doramcu.model.user.User;
-
-
 import com.yisy.modules.doramcu.dto.session.GameEvent;
 import com.yisy.modules.doramcu.model.session.GameSession;
 import com.yisy.modules.doramcu.service.session.GameSessionService;

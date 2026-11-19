@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.config;
 
-import com.yisy.modules.doramcu.captainslog.model.*;
 import com.yisy.modules.doramcu.captainslog.service.CaptainLogCharacterService;
 import com.yisy.modules.doramcu.captainslog.service.CaptainLogCombatService;
 import com.yisy.modules.doramcu.captainslog.service.CaptainLogCrewService;
@@ -18,7 +17,6 @@ import com.yisy.modules.doramcu.captainslog.service.RulesService;
 import com.yisy.modules.doramcu.captainslog.service.StarshipCombatService;
 import com.yisy.modules.doramcu.captainslog.service.StarshipCreationService;
 import com.yisy.modules.doramcu.captainslog.service.CaptainsLogRulesEngine;
-import com.yisy.modules.doramcu.gamecore.*;
 import com.yisy.modules.doramcu.shared.model.RulesEntry;
 import com.yisy.modules.doramcu.shared.service.RulesAwareCombatAdapter;
 import com.yisy.modules.doramcu.shared.service.UnifiedRulesQueryService;
@@ -90,7 +88,7 @@ public class CaptainsLogGameModule extends AbstractGameModule {
             StarshipCreationService starshipCreationService,
             InjuryService injuryService,
             DowntimeService downtimeService,
-            @Qualifier("captainsLogCareerProgressionService") CareerProgressionService careerProgressionService,
+            @Qualifier("captainsLogCareerProgressionService_0") CareerProgressionService careerProgressionService,
             LifepathService lifepathService,
             RulesService captainsLogRulesService,
             DiceService captainsLogDiceService,

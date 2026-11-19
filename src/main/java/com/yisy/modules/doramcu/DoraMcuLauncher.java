@@ -44,6 +44,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ComponentScan(
     basePackages = {"com.yisy.modules.doramcu", "com.yisy.modules.doradl", "com.yisy.modules.doraai", "com.yisy.modules.doraneuron"},
     excludeFilters = {
+        // Exclude Neuron components from server scan
         @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com\\.yisy\\.modules\\.doramcu\\.neuron\\..*"),
         @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com\\.yisy\\.modules\\.doraneuron\\.controller\\..*")
     }

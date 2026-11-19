@@ -1,10 +1,5 @@
 package com.yisy.modules.doramcu.controller.galaxy;
 import com.yisy.modules.doramcu.gamecore.GameType;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-import com.yisy.modules.doramcu.model.galaxy.SubSector;
-import com.yisy.modules.doramcu.model.user.User;
-
-
 import com.yisy.modules.doramcu.dto.galaxy.CreateGalaxyRequest;
 import com.yisy.modules.doramcu.dto.session.CreateSessionResponse;
 import com.yisy.modules.doramcu.dto.misc.FourxUnlockState;

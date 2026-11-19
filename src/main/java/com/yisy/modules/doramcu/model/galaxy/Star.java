@@ -1,7 +1,4 @@
 package com.yisy.modules.doramcu.model.galaxy;
-import com.yisy.modules.doramcu.model.galaxy.SolarSystem;
-
-
 import jakarta.persistence.*;
 
 /**
@@ -11,12 +8,6 @@ import jakarta.persistence.*;
  * Each star provides energy, radiation hazards, and gravity well effects.
  * </p>
  */
-@Entity
-@Table(name = "stars", indexes = {
-    @Index(name = "idx_star_solar_system", columnList = "solar_system_id"),
-    @Index(name = "idx_star_type", columnList = "starType"),
-    @Index(name = "idx_star_size", columnList = "starSize")
-})
 public class Star {
 
     @Id

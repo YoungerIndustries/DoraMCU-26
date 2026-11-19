@@ -22,7 +22,7 @@ import java.util.*;
  * PlanetService for Earth 2026 battle environments.
  * </p>
  */
-@Service("starTrek4xGroundCombatService")
+@Service("groundCombatService_star_trek_4x_combat_GroundCombatService")
 public class GroundCombatService {
 
     private static final Logger log = LoggerFactory.getLogger(GroundCombatService.class);

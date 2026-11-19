@@ -1,7 +1,4 @@
 package com.yisy.modules.doramcu.service.admin;
-import com.yisy.modules.doramcu.model.players.Player;
-import com.yisy.modules.doramcu.model.user.User;
-
 import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.model.misc.PromoCode;

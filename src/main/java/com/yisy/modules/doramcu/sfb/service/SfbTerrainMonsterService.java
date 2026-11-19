@@ -1,8 +1,6 @@
 package com.yisy.modules.doramcu.sfb.service;
 
 import com.yisy.modules.doramcu.sfb.model.SfbTerrainMonster;
-import com.yisy.modules.doramcu.sfb.model.SfbTerrainMonster.MonsterType;
-import com.yisy.modules.doramcu.sfb.model.SfbTerrainMonster.SizeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.dto.trade.TradeRequest;
 import com.yisy.modules.doramcu.dto.trade.TradeResponse;
-import com.yisy.modules.doramcu.traveller.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

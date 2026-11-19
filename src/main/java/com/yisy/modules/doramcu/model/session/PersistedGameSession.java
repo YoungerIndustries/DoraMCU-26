@@ -21,11 +21,6 @@ import java.time.LocalDateTime;
  * in-memory {@code hex.Game} object.
  * </p>
  */
-@Entity
-@Table(name = "game_sessions_persisted",
-        indexes = {
-                @Index(name = "idx_game_session_last_activity", columnList = "lastActivityAt")
-        })
 public class PersistedGameSession {
 
     @Id

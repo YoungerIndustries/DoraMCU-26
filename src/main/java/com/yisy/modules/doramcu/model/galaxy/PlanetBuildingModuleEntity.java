@@ -20,12 +20,6 @@ import java.time.LocalDateTime;
  * {@link com.yisy.modules.doramcu.techlevel.TechLevelAdapter} implementations.
  * </p>
  */
-@Entity
-@Table(name = "planet_building_modules", indexes = {
-    @Index(name = "idx_module_tech_level", columnList = "tech_level"),
-    @Index(name = "idx_module_category", columnList = "category"),
-    @Index(name = "idx_module_tech_category", columnList = "tech_level,category")
-})
 public class PlanetBuildingModuleEntity {
 
     @Id

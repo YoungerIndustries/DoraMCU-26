@@ -1,8 +1,5 @@
 package com.yisy.modules.doramcu.unified;
 
-import com.yisy.modules.doramcu.hex.*;
-
-import com.yisy.modules.doramcu.traveller.*;
 import com.yisy.modules.doramcu.util.DiceUtil;
 
 /**

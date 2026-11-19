@@ -42,7 +42,7 @@ public class DowntimeService {
     private final CaptainLogValueRepository valueRepository;
     private final ProbabilityMatrixService probabilityMatrixService;
     private final InjuryService injuryService;
-    @Qualifier("captainsLogCareerProgressionService")
+    @Qualifier("captainsLogCareerProgressionService_2")
     private final CareerProgressionService careerProgressionService;
 
     public DowntimeService(CaptainLogCharacterRepository characterRepository,
@@ -50,7 +50,7 @@ public class DowntimeService {
                            CaptainLogValueRepository valueRepository,
                            ProbabilityMatrixService probabilityMatrixService,
                            InjuryService injuryService,
-                           @Qualifier("captainsLogCareerProgressionService") CareerProgressionService careerProgressionService) {
+                           @Qualifier("captainsLogCareerProgressionService_2") CareerProgressionService careerProgressionService) {
         this.characterRepository = characterRepository;
         this.starshipRepository = starshipRepository;
         this.valueRepository = valueRepository;

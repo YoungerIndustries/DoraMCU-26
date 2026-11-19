@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.dto.misc;
-import com.yisy.modules.doramcu.model.galaxy.Star;
 import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 
 

@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.model.galaxy;
-import com.yisy.modules.doramcu.model.galaxy.SolarSystem;
 import com.yisy.modules.doramcu.model.galaxy.StrategicResource;
 
 
@@ -8,10 +7,6 @@ import jakarta.persistence.*;
 /**
  * JPA entity representing a comet in a solar system.
  */
-@Entity
-@Table(name = "comets", indexes = {
-    @Index(name = "idx_comet_solar_system", columnList = "solar_system_id")
-})
 public class Comet {
 
     @Id

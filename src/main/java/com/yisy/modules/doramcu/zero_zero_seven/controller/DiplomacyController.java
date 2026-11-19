@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * REST controller for diplomatic relations.
  */
-@RestController("bondDiplomacyController")
+@RestController("diplomacyController_zero_zero_seven_controller_DiplomacyController")
 @RequestMapping("/api/zero-zero-seven/diplomacy")
 public class DiplomacyController {
 

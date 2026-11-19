@@ -21,7 +21,7 @@ import java.util.Random;
  * based on location and character skills.
  * </p>
  */
-@Service("earth2026ResourceService")
+@Service("resourceService_earth2026_survival_ResourceService")
 public class ResourceService {
 
     private static final Logger log = LoggerFactory.getLogger(ResourceService.class);

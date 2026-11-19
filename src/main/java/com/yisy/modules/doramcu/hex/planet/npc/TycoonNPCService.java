@@ -1,8 +1,6 @@
 package com.yisy.modules.doramcu.hex.planet.npc;
 
 import com.yisy.modules.doramcu.hex.Hex3D;
-import com.yisy.modules.doramcu.hex.planet.*;
-import com.yisy.modules.doramcu.hex.planet.npc.TycoonNPC.NpcType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

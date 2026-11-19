@@ -1,7 +1,4 @@
 package com.yisy.modules.doramcu.dto.wormhole;
-import com.yisy.modules.doramcu.model.galaxy.Wormhole;
-
-
 import java.time.LocalDateTime;
 
 /**

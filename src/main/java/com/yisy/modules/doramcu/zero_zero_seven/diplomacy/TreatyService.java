@@ -13,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
  * Handles alliance treaties, trade agreements, and non-aggression pacts.
  * </p>
  */
-@Service
+@Service("treatyService_zero_zero_seven_diplomacy_TreatyService")
+    @Service
 public class TreatyService {
 
     private final BondDiplomaticRelationRepository relationRepository;

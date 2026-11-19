@@ -1,0 +1,368 @@
+{
+  "special_abilities": {
+    "ring_powers": {
+      "description": "The Rings of Power grant extraordinary abilities to their bearers. Each Ring has unique effects, and the One Ring dominates all others.",
+      "the_one_ring": {
+        "name": "The One Ring",
+        "description": "The ultimate artifact of power. Grants invisibility, extended life, and the ability to command all other Ring-bearers.",
+        "powers": [
+          {
+            "name": "Invisibility",
+            "description": "Shifts the wearer to the Wraith-world, making them invisible to normal sight.",
+            "cost": "Passive (while wearing)",
+            "effect": "Wearer is invisible; enemy units cannot target the wearer directly",
+            "drawback": "Prolongs exposure weakens the wearer's physical form"
+          },
+          {
+            "name": "Domination",
+            "description": "Commands all bearers of the Nine Rings (Nazgûl) and weakens the will of other Ring-bearers.",
+            "cost": "Action",
+            "effect": "All Nazgûl units gain +2 attack and +2 speed; enemy Ring-bearers suffer -1 to all rolls",
+            "drawback": "Sauron knows the wearer's location"
+          },
+          {
+            "name": "Corruption",
+            "description": "The Ring gradually corrupts the wearer's soul, increasing the corruption track.",
+            "cost": "Passive (each round)",
+            "effect": "Corruption track advances by 1 stage each round the Ring is worn",
+            "drawback": "At maximum corruption, the wearer claims the Ring and is lost"
+          },
+          {
+            "name": "Extended Life",
+            "description": "Halts aging but does not grant true life. The wearer becomes unhealthily ageless.",
+            "cost": "Passive",
+            "effect": "Wearer does not age; immune to time-based effects",
+            "drawback": "The wearer cannot die of old age but can be killed; existence becomes a burden"
+          }
+        ]
+      },
+      "the_three_elven_rings": {
+        "narya": {
+          "name": "Narya (Ring of Fire)",
+          "holder": "Gandalf the Grey/White",
+          "powers": [
+            {
+              "name": "Rekindle Hope",
+              "description": "Rekindles the hearts of the free and inspires hope and courage in times of despair.",
+              "cost": "Action",
+              "effect": "All friendly units within range gain +1 attack and +1 defense dice; Hope resource increases by 2"
+            },
+            {
+              "name": "Fire of Antú",
+              "description": "Commands the fire of the Undying Lands, purifying and destroying evil.",
+              "cost": "Action",
+              "effect": "Deals 3 damage to all enemy units within range; heals 2 hull wounds to friendly units"
+            }
+          ]
+        },
+        "nenya": {
+          "name": "Nenya (Ring of Water)",
+          "holder": "Galadriel",
+          "powers": [
+            {
+              "name": "Preservation",
+              "description": "Preserves and protects, maintaining Lothlórien's timeless beauty and shielding it from decay.",
+              "cost": "Passive",
+              "effect": "All friendly units in Lothlórien system are immune to corruption and degradation; shields regenerate each round"
+            },
+            {
+              "name": "Shield of Lothlórien",
+              "description": "Creates a powerful shield of water and light around allies.",
+              "cost": "Action",
+              "effect": "All friendly units within range gain +3 shields for 2 rounds"
+            }
+          ]
+        },
+        "vilya": {
+          "name": "Vilya (Ring of Air)",
+          "holder": "Elrond",
+          "powers": [
+            {
+              "name": "Most Powerful of the Three",
+              "description": "The most powerful of the Three Elven Rings. Enhances the wearer's inherent abilities.",
+              "cost": "Passive",
+              "effect": "Wearer gains +1 to all stats; all friendly units within range gain +1 defense"
+            },
+            {
+              "name": "Refuge of Rivendell",
+              "description": "Maintains Rivendell as a safe haven, protected from the Shadow.",
+              "cost": "Passive",
+              "effect": "Rivendell system cannot be targeted by enemy actions; friendly units in Rivendell heal 2 hull wounds per round"
+            }
+          ]
+        }
+      }
+    },
+    "wizard_abilities": {
+      "description": "The Istari (Wizards) are Maiar bound in mortal form. Their powers are restricted but still formidable.",
+      "gandalf": {
+        "name": "Gandalf the White",
+        "powers": [
+          {
+            "name": "Maiar Power",
+            "description": "As a Maia, Gandalf possesses immense spiritual power, though restricted by his mortal form.",
+            "cost": "Action",
+            "effect": "Gandalf can unleash a burst of light and power, dealing 4 damage to all enemies within range and healing 3 wounds to all allies"
+          },
+          {
+            "name": "Staff of Office",
+            "description": "Gandalf's staff channels his power. Breaking it temporarily weakens him.",
+            "cost": "Action",
+            "effect": "Strike an enemy with the staff for 3 damage; can also be used to bar doors or create light"
+          },
+          {
+            "name": "Fireworks",
+            "description": "Gandalf's signature ability — creating spectacular displays of light to distract and demoralize enemies.",
+            "cost": "Action",
+            "effect": "All enemy units within range suffer -1 attack and -1 defense for 1 round; Fear effect"
+          },
+          {
+            "name": "Healing",
+            "description": "Gandalf can heal wounds and restore vitality to his allies.",
+            "cost": "Action",
+            "effect": "Restore 3 hull wounds to a friendly unit within range"
+          },
+          {
+            "name": "Pegasus Command",
+            "description": "Gandalf can command Shadowfax, Lord of all horses.",
+            "cost": "Free",
+            "effect": "Gandalf can summon Shadowfax for transport; Shadowfax is swiftest of living creatures"
+          }
+        ]
+      },
+      "saruman": {
+        "name": "Saruman the White",
+        "powers": [
+          {
+            "name": "Voice of Authority",
+            "description": "Saruman's voice can compel obedience and inspire terror.",
+            "cost": "Action",
+            "effect": "All enemy units within range must pass a will check or become stunned for 1 round"
+          },
+          {
+            "name": "Industrial Mastery",
+            "description": "Saruman's knowledge of industry and technology allows him to produce war machines.",
+            "cost": "Passive",
+            "effect": "Isengard factories produce +1 unit per round; Uruk-hai gain +1 attack"
+          },
+          {
+            "name": "Palantír User",
+            "description": "Saruman uses the Palantír of Orthanc to communicate and gather intelligence.",
+            "cost": "Action",
+            "effect": "Reveal all enemy units in one system; can communicate with Sauron (risk of domination)"
+          },
+          {
+            "name": "Uruk-hai Creation",
+            "description": "Saruman bred the Uruk-hai, an improved orc-line.",
+            "cost": "Passive",
+            "effect": "Uruk-hai units can operate in sunlight and are +1 stronger than standard orcs"
+          }
+        ]
+      },
+      "radagast": {
+        "name": "Radagast the Brown",
+        "powers": [
+          {
+            "name": "Nature's Call",
+            "description": "Radagast can command animals and plants.",
+            "cost": "Action",
+            "effect": "Summon 2 animal units (wolves, birds, etc.) or cause plants to entangle enemy units"
+          },
+          {
+            "name": "Healing of the Earth",
+            "description": "Radagast can heal the land and its creatures.",
+            "cost": "Action",
+            "effect": "Restore 2 hull wounds to all friendly units within range; restore a damaged system"
+          }
+        ]
+      }
+    },
+    "racial_traits": {
+      "description": "Each race in the Arda galaxy has unique traits that affect gameplay.",
+      "elves": {
+        "name": "Elven Traits",
+        "traits": [
+          {
+            "name": "Keen Senses",
+            "effect": "Elven units gain +1 to attack and defense dice; can detect hidden units"
+          },
+          {
+            "name": "Elven Grace",
+            "effect": "Elven units gain +1 speed; can move through difficult terrain without penalty"
+          },
+          {
+            "name": "Starlight Camouflage",
+            "effect": "Elven units in forest or night conditions gain stealth; cannot be targeted by ranged attacks at long range"
+          },
+          {
+            "name": "Immortality",
+            "effect": "Elven characters cannot die of old age; if killed, they may choose to sail to Valinor"
+          }
+        ]
+      },
+      "men": {
+        "name": "Men's Traits",
+        "traits": [
+          {
+            "name": "Númenórean Bloodline",
+            "effect": "Dúnedain units gain +1 hull and +1 wounds; longer-lived than normal Men"
+          },
+          {
+            "name": "Ambition",
+            "effect": "Men units gain +1 attack when near a commander; can achieve great feats but are susceptible to corruption"
+          },
+          {
+            "name": "The Gift of Ilúvatar",
+            "effect": "Men can depart the world entirely; death is not a curse but a gift. Men units do not suffer from fading."
+          }
+        ]
+      },
+      "dwarves": {
+        "name": "Dwarven Traits",
+        "traits": [
+          {
+            "name": "Stubborn Defense",
+            "effect": "Dwarven units gain +2 defense when holding a position; cannot be forced to retreat"
+          },
+          {
+            "name": "Underground Warfare",
+            "effect": "Dwarven units gain +1 attack and +1 defense in underground or asteroid environments"
+          },
+          {
+            "name": "Mithril Armor",
+            "effect": "Dwarven units with mithril armor gain +2 shields; lighter than steel but stronger"
+          },
+          {
+            "name": "Treasure-lust",
+            "effect": "Dwarven units gain +1 attack when near treasure or valuable resources; may refuse to leave valuable sites"
+          }
+        ]
+      },
+      "hobbits": {
+        "name": "Hobbit Traits",
+        "traits": [
+          {
+            "name": "Small and Overlooked",
+            "effect": "Hobbit units are stealthy; enemy units cannot target them at long range unless they attack first"
+          },
+          {
+            "name": "Ring Resistance",
+            "effect": "Hobbit units have +2 resistance to corruption; the Ring's power over them is weaker"
+          },
+          {
+            "name": "Unexpected Courage",
+            "effect": "When a hobbit unit is at 1 hull wound, it gains +1 attack and +1 defense for 1 round (desperation)"
+          },
+          {
+            "name": "Second Breakfast",
+            "effect": "Hobbit units can restore 1 hull wound by taking a meal action; food is a powerful resource"
+          }
+        ]
+      },
+      "ents": {
+        "name": "Ent Traits",
+        "traits": [
+          {
+            "name": "Immense Strength",
+            "effect": "Ent units deal +2 damage in melee; can destroy fortifications in a single hit"
+          },
+          {
+            "name": "Nearly Indestructible",
+            "effect": "Ent units gain +3 defense; conventional weapons deal -1 damage"
+          },
+          {
+            "name": "Ent-drum",
+            "effect": "Ents can coordinate with an Ent-drum; all Ent units within range gain +1 attack and +1 defense"
+          },
+          {
+            "name": "Slow Deliberation",
+            "effect": "Ent units have speed 1; cannot be rushed but are nearly unstoppable once committed"
+          }
+        ]
+      },
+      "orcs": {
+        "name": "Orc Traits",
+        "traits": [
+          {
+            "name": "Mass Produced",
+            "effect": "Orc units are cheap and numerous; can be produced in large quantities"
+          },
+          {
+            "name": "Hatred of Light",
+            "effect": "Orc units suffer -1 attack and -1 defense in sunlight or near elven light sources"
+          },
+          {
+            "name": "Brute Force",
+            "effect": "Orc units gain +1 attack in melee; favor overwhelming numbers over skill"
+          },
+          {
+            "name": "Infighting",
+            "effect": "Orc units may turn on each other if not properly commanded; -1 defense when no commander is nearby"
+          }
+        ]
+      },
+      "maiar": {
+        "name": "Maiar Traits",
+        "traits": [
+          {
+            "name": "Spiritual Nature",
+            "effect": "Maiar units can take physical form at will; immune to conventional weapons (take half damage)"
+          },
+          {
+            "name": "Ancient Power",
+            "effect": "Maiar units have access to powerful abilities; their true power is restricted by their mortal form"
+          },
+          {
+            "name": "Before Time",
+            "effect": "Maiar units existed before the world; they have ancient knowledge and wisdom"
+          }
+        ]
+      }
+    },
+    "unit_keywords": {
+      "description": "Common keywords that modify unit stats and behaviors.",
+      "keywords": [
+        {
+          "name": "Elite",
+          "effect": "Unit is an elite warrior. Gains +1 attack and +1 defense. More expensive but more effective."
+        },
+        {
+          "name": "Commander",
+          "effect": "Unit is a commander. Friendly units within range gain +1 attack and +1 defense."
+        },
+        {
+          "name": "Ring-bearer",
+          "effect": "Unit carries the One Ring. Subject to corruption track. Must reach Mount Doom."
+        },
+        {
+          "name": "Wraith",
+          "effect": "Unit is a wraith. Invisible to normal sight; immune to conventional weapons. Vulnerable to elven weapons and water."
+        },
+        {
+          "name": "Siege",
+          "effect": "Unit is a siege weapon. Can destroy fortifications but is slow and vulnerable to ranged attacks."
+        },
+        {
+          "name": "Fast",
+          "effect": "Unit has high speed. Can move twice per activation but has reduced defense."
+        },
+        {
+          "name": "Ancient",
+          "effect": "Unit is ancient. Has immense power but is slow to act and rare."
+        },
+        {
+          "name": "Corrupted",
+          "effect": "Unit is corrupted by the Ring. Gains +1 attack but suffers -1 defense and may turn on allies."
+        },
+        {
+          "name": "Hope",
+          "effect": "Unit generates Hope. Friendly units within range gain +1 defense dice."
+        },
+        {
+          "name": "Fear",
+          "effect": "Unit inspires Fear. Enemy units within range suffer -1 attack and -1 defense."
+        }
+      ]
+    }
+  }
+}

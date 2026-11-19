@@ -18,13 +18,6 @@ import java.time.LocalDateTime;
  * without re-running procedural generation.
  * </p>
  */
-@Entity
-@Table(name = "planet_terrain_cells", indexes = {
-    @Index(name = "idx_terrain_planet", columnList = "planet_id"),
-    @Index(name = "idx_terrain_hex", columnList = "hex_x,hex_y,hex_z"),
-    @Index(name = "idx_terrain_settlement", columnList = "settlement_id"),
-    @Index(name = "idx_terrain_industry", columnList = "industry_id")
-})
 public class PlanetTerrainCell {
 
     @Id

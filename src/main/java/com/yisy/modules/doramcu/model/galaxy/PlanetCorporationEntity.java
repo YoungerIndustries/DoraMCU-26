@@ -15,12 +15,6 @@ import java.time.LocalDateTime;
  * stations, vehicles, and trade routes on one or more planets.
  * </p>
  */
-@Entity
-@Table(name = "planet_corporations", indexes = {
-    @Index(name = "idx_corp_planet", columnList = "planet_id"),
-    @Index(name = "idx_corp_owner", columnList = "owner_empire_id"),
-    @Index(name = "idx_corp_corp_id", columnList = "corporation_id")
-})
 public class PlanetCorporationEntity {
 
     @Id

@@ -1,7 +1,4 @@
 package com.yisy.modules.doramcu.controller.galaxy;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-
-
 import com.yisy.modules.doramcu.service.galaxy.GalaxyProgressService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;

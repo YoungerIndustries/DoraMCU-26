@@ -14,10 +14,6 @@ import java.time.LocalDateTime;
  * state after a server restart instead of reinitializing from scratch.
  * </p>
  */
-@Entity
-@Table(name = "game_mode_state", indexes = {
-        @Index(name = "uk_galaxy_mode", columnList = "galaxy_name, game_mode", unique = true)
-})
 public class GameModeState {
 
     @Id

@@ -1,7 +1,7 @@
 package com.yisy.modules.doramcu.traveller;
 
 import com.yisy.modules.doramcu.eve.model.AiCommanderExperience;
-import com.yisy.modules.doramcu.service.AiCommanderExperienceService;
+import com.yisy.modules.doramcu.service.ai.AiCommanderExperienceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

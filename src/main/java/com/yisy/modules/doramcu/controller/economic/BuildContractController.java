@@ -2,7 +2,6 @@ package com.yisy.modules.doramcu.controller.economic;
 
 import com.yisy.modules.doramcu.hex.BuildContractService;
 import com.yisy.modules.doramcu.hex.model.BuildContract;
-import com.yisy.modules.doramcu.hex.model.BuildContract.BuildContractStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

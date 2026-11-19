@@ -1,0 +1,363 @@
+{
+  "special_abilities": {
+    "albion_abilities": [
+      {
+        "id": "wizard_fire_path",
+        "name": "Path of Fire (Pyromancy)",
+        "class": "Wizard",
+        "realm": "albion",
+        "type": "spell_path",
+        "description": "The Wizard's fire specialization, dealing devastating single-target and area fire damage.",
+        "spells": [
+          {"name": "Fireball", "damage": "High single-target", "description": "Launches a ball of fire at a single target."},
+          {"name": "Meteor", "damage": "Massive area", "description": "Calls down a meteor, dealing massive area damage."},
+          {"name": "Fire Storm", "damage": "Area damage over time", "description": "Creates a zone of fire that damages all enemies within."},
+          {"name": "Inferno", "damage": "Ultimate area", "description": "The ultimate fire spell, devastating everything in range."}
+        ]
+      },
+      {
+        "id": "wizard_ice_path",
+        "name": "Path of Ice (Refrigeration)",
+        "class": "Wizard",
+        "realm": "albion",
+        "type": "spell_path",
+        "description": "The Wizard's ice specialization, dealing high single-target ice damage with crowd control.",
+        "spells": [
+          {"name": "Ice Spike", "damage": "High single-target", "description": "Fires a spike of ice at a single target."},
+          {"name": "Blizzard", "damage": "Area damage", "description": "Summons a blizzard that damages and slows enemies."},
+          {"name": "Frost Nova", "damage": "Area crowd control", "description": "Freezes all enemies in range, slowing their movement."},
+          {"name": "Glacial Storm", "damage": "Ultimate area", "description": "The ultimate ice spell, freezing and damaging everything."}
+        ]
+      },
+      {
+        "id": "sorcerer_air_path",
+        "name": "Path of Air (Vapormancy)",
+        "class": "Sorcerer",
+        "realm": "albion",
+        "type": "spell_path",
+        "description": "The Sorcerer's air specialization, summoning elemental air pets and dealing lightning damage.",
+        "spells": [
+          {"name": "Lightning Bolt", "damage": "Single-target", "description": "Strikes a target with lightning."},
+          {"name": "Air Elemental", "damage": "Pet", "description": "Summons an air elemental pet to fight."},
+          {"name": "Tornado", "damage": "Area", "description": "Creates a tornado that damages and knocks back enemies."}
+        ]
+      },
+      {
+        "id": "sorcerer_earth_path",
+        "name": "Path of Earth (Abrasion)",
+        "class": "Sorcerer",
+        "realm": "albion",
+        "type": "spell_path",
+        "description": "The Sorcerer's earth specialization, summoning earth pets and dealing ground-based damage.",
+        "spells": [
+          {"name": "Earthquake", "damage": "Area", "description": "Shakes the ground, damaging all nearby enemies."},
+          {"name": "Earth Elemental", "damage": "Pet", "description": "Summons an earth elemental pet to fight."},
+          {"name": "Stone Skin", "damage": "Buff", "description": "Hardens the skin, increasing damage resistance."}
+        ]
+      },
+      {
+        "id": "paladin_divine_healing",
+        "name": "Divine Healing",
+        "class": "Paladin",
+        "realm": "albion",
+        "type": "ability",
+        "description": "Paladins channel divine power to heal themselves and nearby allies.",
+        "effects": ["Self-heal", "Group heal", "Healing over time"]
+      },
+      {
+        "id": "paladin_smite_evil",
+        "name": "Smite Evil",
+        "class": "Paladin",
+        "realm": "albion",
+        "type": "ability",
+        "description": "Paladins smite evil foes with holy damage, dealing bonus damage to undead and demons.",
+        "effects": ["Holy damage", "Bonus vs undead", "Bonus vs demons"]
+      },
+      {
+        "id": "necromancer_raise_dead",
+        "name": "Raise Dead",
+        "class": "Necromancer",
+        "realm": "albion",
+        "type": "ability",
+        "description": "Necromancers raise corpses as undead minions to fight for them.",
+        "effects": ["Summon undead", "Corpse animation", "Minion control"]
+      },
+      {
+        "id": "heretic_domination",
+        "name": "Domination",
+        "class": "Heretic",
+        "realm": "albion",
+        "type": "ability",
+        "description": "Heretics dominate the minds of enemies, forcing them to fight for the Heretic.",
+        "effects": ["Mind control", "Forced combat", "Duration-based"]
+      },
+      {
+        "id": "infiltrator_stealth",
+        "name": "Stealth",
+        "class": "Infiltrator",
+        "realm": "albion",
+        "type": "ability",
+        "description": "Infiltrators become invisible, allowing them to approach enemies undetected.",
+        "effects": ["Invisibility", "Backstab setup", "Evasion bonus"]
+      },
+      {
+        "id": "armsman_shield_block",
+        "name": "Shield Block",
+        "class": "Armsman",
+        "realm": "albion",
+        "type": "ability",
+        "description": "Armsmen use their shields to block incoming attacks, reducing damage taken.",
+        "effects": ["Damage reduction", "Attack block", "Counter-attack chance"]
+      }
+    ],
+    "hibernia_abilities": [
+      {
+        "id": "druid_arboreal_path",
+        "name": "Arboreal Path",
+        "class": "Druid",
+        "realm": "hibernia",
+        "type": "spell_path",
+        "description": "The Druid's nature magic specialization, wielding the power of the forest.",
+        "spells": [
+          {"name": "Entangle", "damage": "Crowd control", "description": "Entangles enemies in vines, immobilizing them."},
+          {"name": "Nature's Wrath", "damage": "Area", "description": "Calls upon nature to devastate an area."},
+          {"name": "Healing Spring", "damage": "Healing", "description": "Creates a healing spring that restores health over time."},
+          {"name": "Shapeshift", "damage": "Transformation", "description": "Transforms into a bear or cat for enhanced abilities."}
+        ]
+      },
+      {
+        "id": "vampiir_life_drain",
+        "name": "Vampiric Embrace",
+        "class": "Vampiir",
+        "realm": "hibernia",
+        "type": "ability",
+        "description": "Vampiirs drain the life force of their enemies, healing themselves for a portion of the damage dealt.",
+        "effects": ["Life drain", "Self-heal", "Sustain through combat"]
+      },
+      {
+        "id": "vampiir_shadow_mastery",
+        "name": "Shadow Mastery",
+        "class": "Vampiir",
+        "realm": "hibernia",
+        "type": "spell_path",
+        "description": "Vampiirs wield shadow magic, dealing dark damage and weakening enemies.",
+        "spells": [
+          {"name": "Shadow Bolt", "damage": "Single-target", "description": "Fires a bolt of shadow energy."},
+          {"name": "Darkness", "damage": "Area debuff", "description": "Envelops an area in darkness, reducing enemy accuracy."},
+          {"name": "Dementia", "damage": "Mind damage", "description": "Attacks the mind of the target, causing confusion."}
+        ]
+      },
+      {
+        "id": "champion_heavy_armor",
+        "name": "Heavy Armor Mastery",
+        "class": "Champion",
+        "realm": "hibernia",
+        "type": "ability",
+        "description": "Champions can wear the heaviest armor and use all weapon types, making them the best pure tanks.",
+        "effects": ["Heavy armor", "All weapons", "Shield block", "Damage resistance"]
+      },
+      {
+        "id": "blademaster_dual_wield",
+        "name": "Celtic Dual Wield",
+        "class": "Blademaster",
+        "realm": "hibernia",
+        "type": "ability",
+        "description": "Blademasters wield two Celtic weapons simultaneously, attacking with devastating speed.",
+        "effects": ["Dual wield", "Attack speed bonus", "Celtic Fury"]
+      },
+      {
+        "id": "bard_celtic_songs",
+        "name": "Celtic Songs",
+        "class": "Bard",
+        "realm": "hibernia",
+        "type": "ability",
+        "description": "Bards sing Celtic songs that buff allies with increased stats and provide crowd control.",
+        "effects": ["Group buffs", "Stat increases", "Crowd control", "Healing melody"]
+      },
+      {
+        "id": "animist_plant_animation",
+        "name": "Plant Animation",
+        "class": "Animist",
+        "realm": "hibernia",
+        "type": "ability",
+        "description": "Animists animate plant life, creating vine traps and summoning plant creatures.",
+        "effects": ["Vine traps", "Plant summons", "Root enemies", "Nature's Wrath"]
+      },
+      {
+        "id": "nightshade_stealth",
+        "name": "Stealth and Backstab",
+        "class": "Nightshade",
+        "realm": "hibernia",
+        "type": "ability",
+        "description": "Nightshades use stealth to approach enemies undetected, then backstab for massive damage.",
+        "effects": ["Stealth", "Backstab", "Poison", "Dark magic"]
+      },
+      {
+        "id": "valewalker_scythe_mastery",
+        "name": "Scythe Mastery",
+        "class": "Valewalker",
+        "realm": "hibernia",
+        "type": "ability",
+        "description": "Valewalkers wield scythes with deadly precision, dealing massive melee damage.",
+        "effects": ["Scythe damage", "Reaping", "Death Strike", "Glass cannon"]
+      },
+      {
+        "id": "ranger_magic_archery",
+        "name": "Magic Archery",
+        "class": "Ranger",
+        "realm": "hibernia",
+        "type": "ability",
+        "description": "Rangers combine archery with magical spells, providing versatile ranged and melee combat.",
+        "effects": ["Archery", "Magic spells", "Dual wield", "Tracking"]
+      }
+    ],
+    "midgard_abilities": [
+      {
+        "id": "runemaster_lightning_runes",
+        "name": "Lightning Runes",
+        "class": "Runemaster",
+        "realm": "midgard",
+        "type": "spell_path",
+        "description": "Runemasters inscribe runes of lightning, channeling the power of Thor.",
+        "spells": [
+          {"name": "Lightning Strike", "damage": "Single-target", "description": "Calls down lightning on a single target."},
+          {"name": "Thunder Storm", "damage": "Area", "description": "Summons a thunderstorm that damages all enemies."},
+          {"name": "Chain Lightning", "damage": "Multi-target", "description": "Lightning that chains between multiple targets."},
+          {"name": "Mjolnir's Wrath", "damage": "Ultimate", "description": "The ultimate lightning spell, channeling Thor's power."}
+        ]
+      },
+      {
+        "id": "runemaster_fire_runes",
+        "name": "Fire Runes",
+        "class": "Runemaster",
+        "realm": "midgard",
+        "type": "spell_path",
+        "description": "Runemasters inscribe runes of fire, channeling the flames of Muspelheim.",
+        "spells": [
+          {"name": "Fire Rune", "damage": "Single-target", "description": "Inscribes a fire rune that explodes."},
+          {"name": "Flame Wall", "damage": "Area", "description": "Creates a wall of fire that damages enemies."},
+          {"name": "Inferno Rune", "damage": "Ultimate", "description": "The ultimate fire rune, devastating everything."}
+        ]
+      },
+      {
+        "id": "thane_lightning_strike",
+        "name": "Lightning Strike",
+        "class": "Thane",
+        "realm": "midgard",
+        "type": "ability",
+        "description": "Thaners channel lightning through their weapons, dealing bonus lightning damage.",
+        "effects": ["Lightning damage", "Shield bash", "Thunder", "Heavy armor"]
+      },
+      {
+        "id": "berserker_rage",
+        "name": "Berserker Rage",
+        "class": "Berserker",
+        "realm": "midgard",
+        "type": "ability",
+        "description": "Berserkers enter a frenzied rage, increasing their damage output at the cost of defense.",
+        "effects": ["Damage increase", "Attack speed", "Defense decrease", "Frenzy"]
+      },
+      {
+        "id": "spiritmaster_summoning",
+        "name": "Spirit Summoning",
+        "class": "Spiritmaster",
+        "realm": "midgard",
+        "type": "ability",
+        "description": "Spiritmasters summon undead and Norse spirits to fight alongside them.",
+        "effects": ["Summon undead", "Norse spirits", "Spirit control", "Animate dead"]
+      },
+      {
+        "id": "shaman_tribal_magic",
+        "name": "Tribal Magic",
+        "class": "Shaman",
+        "realm": "midgard",
+        "type": "ability",
+        "description": "Shamans wield tribal magic, providing healing and elemental damage.",
+        "effects": ["Tribal healing", "Elemental damage", "Totems", "Group buffs"]
+      },
+      {
+        "id": "skald_norse_songs",
+        "name": "Norse Songs",
+        "class": "Skald",
+        "realm": "midgard",
+        "type": "ability",
+        "description": "Skalds sing Norse songs that buff allies with increased strength and rage.",
+        "effects": ["Group buffs", "Rage song", "Battle cry", "Stat increases"]
+      },
+      {
+        "id": "bonedancer_death_magic",
+        "name": "Death Magic",
+        "class": "Bonedancer",
+        "realm": "midgard",
+        "type": "ability",
+        "description": "Bonedancers wield bone and death magic, cursing enemies and dancing with spirits.",
+        "effects": ["Bone magic", "Death magic", "Spirit dance", "Curse"]
+      },
+      {
+        "id": "hunter_tracking",
+        "name": "Tracking and Archery",
+        "class": "Hunter",
+        "realm": "midgard",
+        "type": "ability",
+        "description": "Hunters track and hunt their prey with bow and arrow, excelling at ranged combat.",
+        "effects": ["Archery", "Tracking", "Camouflage", "Power shot"]
+      },
+      {
+        "id": "shadowblade_dual_stealth",
+        "name": "Dual Stealth",
+        "class": "Shadowblade",
+        "realm": "midgard",
+        "type": "ability",
+        "description": "Shadowblades use stealth and dual-wielding to assassinate enemies.",
+        "effects": ["Stealth", "Dual wield", "Backstab", "Tricks"]
+      },
+      {
+        "id": "savage_unarmed",
+        "name": "Unarmed Combat",
+        "class": "Savage",
+        "realm": "midgard",
+        "type": "ability",
+        "description": "Savages fight with sharp and blunt gloves, using martial arts to beat down enemies.",
+        "effects": ["Unarmed combat", "Studded leather", "Martial arts", "Glove mastery"]
+      }
+    ],
+    "cross_realm_abilities": [
+      {
+        "id": "mauler_elemental",
+        "name": "Elemental Brawling",
+        "class": "Mauler",
+        "realm": "all_realms",
+        "type": "ability",
+        "description": "Maulers combine brawling with elemental abilities like gravity and magnetism.",
+        "effects": ["Gravity", "Magnetism", "Brawling", "Elemental punch"]
+      },
+      {
+        "id": "champion_aura",
+        "name": "Champion Aura",
+        "class": "All Champions",
+        "realm": "all_realms",
+        "type": "ability",
+        "description": "Champions radiate an aura that buffs nearby allies and increases their own capabilities.",
+        "effects": ["Damage resistance", "Spell resistance", "Bonus damage", "Ally buffs"]
+      },
+      {
+        "id": "siege_tower",
+        "name": "Siege Tower",
+        "class": "Siegecraft",
+        "realm": "all_realms",
+        "type": "ability",
+        "description": "Build a siege tower to bypass walls and reach elevated capture points.",
+        "effects": ["Wall bypass", "Elevated position", "Durable structure"]
+      },
+      {
+        "id": "tinderbox",
+        "name": "Tinderbox",
+        "class": "Siegecraft",
+        "realm": "all_realms",
+        "type": "ability",
+        "description": "Throw a tinderbox to destroy enemy siege equipment.",
+        "effects": ["Destroy siege", "Counter-siege", "Throwable"]
+      }
+    ]
+  }
+}

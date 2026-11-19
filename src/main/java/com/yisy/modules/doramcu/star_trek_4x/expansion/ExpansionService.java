@@ -23,7 +23,7 @@ import java.util.Random;
  * and claiming sectors for territorial control.
  * </p>
  */
-@Service("starTrek4xExpansionService")
+@Service("expansionService_star_trek_4x_expansion_ExpansionService")
 public class ExpansionService {
 
     private static final Logger log = LoggerFactory.getLogger(ExpansionService.class);

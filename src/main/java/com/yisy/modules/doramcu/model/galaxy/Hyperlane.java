@@ -14,7 +14,6 @@ import jakarta.persistence.*;
  * generation completes.
  * </p>
  */
-@Entity
 @Table(name = "hyperlanes", indexes = {
     @Index(name = "idx_hyperlane_galaxy", columnList = "galaxy_id"),
     @Index(name = "idx_hyperlane_from", columnList = "from_system_id"),

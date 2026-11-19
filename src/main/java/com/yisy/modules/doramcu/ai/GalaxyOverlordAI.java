@@ -1,10 +1,7 @@
 package com.yisy.modules.doramcu.ai;
 
-import com.yisy.modules.doramcu.hex.*;
 import com.yisy.modules.doramcu.hex.Planet;
 import com.yisy.modules.doramcu.hex.Player;
-import com.yisy.modules.doramcu.hex.planet.*;
-
 import java.util.*;
 import java.util.stream.Collectors;
 

@@ -11,8 +11,7 @@ import com.yisy.modules.doramcu.event.GalaxyEventService;
 import com.yisy.modules.doramcu.event.GalaxyEventType;
 import com.yisy.modules.doramcu.hex.Hex3D;
 import com.yisy.modules.doramcu.hex.Planet;
-import com.yisy.modules.doramcu.hex.planet.*;
-import com.yisy.modules.doramcu.service.GalaxyStateService;
+import com.yisy.modules.doramcu.service.galaxy.GalaxyStateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

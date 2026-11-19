@@ -1,8 +1,6 @@
 package com.yisy.modules.doramcu.captainslog.service;
 import org.springframework.stereotype.Service;
 
-import com.yisy.modules.doramcu.captainslog.dto.*;
-import com.yisy.modules.doramcu.captainslog.model.*;
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogCharacterRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

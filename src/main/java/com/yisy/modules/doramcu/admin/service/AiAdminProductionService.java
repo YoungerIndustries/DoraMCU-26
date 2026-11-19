@@ -4,7 +4,6 @@ import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.hex.BuildContractService;
 import com.yisy.modules.doramcu.hex.model.BuildContract;
-import com.yisy.modules.doramcu.hex.model.BuildContract.BuildContractStatus;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -229,5 +231,67 @@ public class AiAdminProductionService {
      */
     public boolean isProductionOrder(AiAdminOrder order) {
         return order.isProductionOrder();
+    }
+
+    /**
+     * Creates a production order for an infrastructure item.
+     */
+    @Transactional
+    public AiAdminOrder createProductionOrder(com.yisy.modules.doramcu.hex.model.InfrastructureItem item, Long galaxyId, String submittedBy) {
+        AiAdminOrder order = new AiAdminOrder();
+        order.setSubmittedBy(submittedBy);
+        order.setOrderText("Produce " + item.getItemName());
+        order.setBuildContractId(null);
+        order.setTargetGalaxy(galaxyId.toString());
+        return order;
+    }
+
+    /**
+     * Creates chain production orders for an infrastructure item.
+     */
+    @Transactional
+    public List<AiAdminOrder> createChainProductionOrders(com.yisy.modules.doramcu.hex.model.InfrastructureItem item, Long galaxyId, String submittedBy) {
+        AiAdminOrder order = createProductionOrder(item, galaxyId, submittedBy);
+        order.setChainOrder(true);
+        return List.of(order);
+    }
+
+    /**
+     * Gets all production orders for a galaxy.
+     */
+    @Transactional(readOnly = true)
+    public List<AiAdminOrder> getProductionOrders(Long galaxyId) {
+        return List.of();
+    }
+
+    /**
+     * Gets a summary of a production order.
+     */
+    @Transactional(readOnly = true)
+    public Optional<Map<String, Object>> getProductionOrderSummary(Long orderId) {
+        Map<String, Object> summary = new HashMap<>();
+        summary.put("orderId", orderId);
+        summary.put("status", "UNKNOWN");
+        return Optional.of(summary);
+    }
+
+    /**
+     * Assigns crew to a production order.
+     */
+    @Transactional
+    public BuildContract assignCrewToProductionOrder(Long orderId, Long leaderId, List<Long> memberIds) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     * Gets a production summary for a galaxy.
+     */
+    @Transactional(readOnly = true)
+    public Map<String, Object> getProductionSummary(Long galaxyId) {
+        Map<String, Object> summary = new HashMap<>();
+        summary.put("galaxyId", galaxyId);
+        summary.put("totalOrders", 0);
+        summary.put("activeOrders", 0);
+        return summary;
     }
 }

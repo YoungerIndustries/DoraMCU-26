@@ -1,0 +1,404 @@
+{
+  "factions": [
+    {
+      "id": "free_peoples_alliance",
+      "name": "Free Peoples Alliance",
+      "era": "Third Age, T.A. 3018–3019",
+      "ideology": "Freedom, preservation, and resistance against the domination of Sauron",
+      "description": "A coalition of all free races in the Arda galaxy united against the Forces of Darkness. Includes Gondor, Rohan, Rivendell, Lothlórien, the Shire, Moria, and the Istari. Bound by ancient alliances and the shared threat of Sauron's return.",
+      "military_branches": [
+        {
+          "name": "Gondor Host",
+          "description": "The main military force of Gondor, including the Rangers of the North and South",
+          "unit_types": ["Gondor Soldiers", "Rangers of the North", "Rangers of Ithilien", "White Tower Guard", "Harriers"]
+        },
+        {
+          "name": "Rohan Éored",
+          "description": "The cavalry forces of Rohan, masters of fast transit and shock tactics",
+          "unit_types": ["Riders of Rohan", "Éothéod Scouts", "Shield-maidens", "Hornburg Garrison"]
+        },
+        {
+          "name": "Elven Host",
+          "description": "The forces of Rivendell and Lothlórien, led by Elrond and Galadriel",
+          "unit_types": ["Rivendell Guards", "Lórien Archers", "Elven Riders", "Galadhrim"]
+        },
+        {
+          "name": "Dwarven Companies",
+          "description": "The warriors of Moria and Erebor, masters of close combat and mining warfare",
+          "unit_types": ["Dwarven Warriors", "Battle-dwarves", "Runesmiths", "Guardians of the Gates"]
+        },
+        {
+          "name": "The Istari",
+          "description": "The five wizard-advisors, Maiar bound in mortal form",
+          "unit_types": ["Gandalf the White", "Radagast the Brown", "Blue Wizards (Alatar and Pallando)"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Aragorn II (Strider)", "role": "Heir of Isildur; King of Gondor and Arnor"},
+        {"name": "Gandalf the White", "role": "Chief of the Istari; guide and strategist"},
+        {"name": "Elrond Half-elven", "role": "Lord of Rivendell; bearer of Vilya"},
+        {"name": "Galadriel", "role": "Lady of Lothlórien; bearer of Nenya"},
+        {"name": "King Théoden", "role": "King of Rohan; ally of Gondor"},
+        {"name": "Éowyn", "role": "Shield-maiden of Rohan; slayer of the Witch-king"},
+        {"name": "Faramir", "role": "Captain of the Rangers of Ithilien; heir to the Stewardship"},
+        {"name": "Treebeard", "role": "Oldest Ent; leader of the Entmoot"}
+      ],
+      "strengths": [
+        "Unity of diverse races and cultures",
+        "Ancient knowledge and wisdom from the Elves",
+        "The Three Elven Rings provide protection and preservation",
+        "Gandalf's strategic genius and Maiar power",
+        "Rohan's fast cavalry and Gondor's disciplined infantry",
+        "Mithril armor and elven weapons of unmatched quality"
+      ],
+      "weaknesses": [
+        "Internal divisions and slow to unite",
+        "Declining elven power — the age of Elves is ending",
+        "Gondor's weakened state after centuries of decline",
+        "Saruman's betrayal from within the White Council",
+        "The One Ring's corrupting influence on allies",
+        "Numerical inferiority against Mordor's endless armies"
+      ],
+      "allies": [
+        "The Ents (when roused to action)",
+        "The Blue Wizards (operating independently)",
+        "The Faithful of Harad and Rhûn"
+      ],
+      "enemies": [
+        "Mordor (Sauron)",
+        "Isengard (Saruman)",
+        "The Nazgûl",
+        "Harad and Rhûn (when allied with Mordor)"
+      ]
+    },
+    {
+      "id": "mordor",
+      "name": "Mordor",
+      "era": "Third Age, T.A. 2951–3019",
+      "ideology": "Domination, order through fear, and the restoration of Sauron's absolute power",
+      "description": "The dark volcanic empire of Sauron, the central evil power in the Arda galaxy. A scorched system dominated by a red star, where orcs are mass-produced and war machines are forged. The Eye of Sauron watches all.",
+      "military_branches": [
+        {
+          "name": "Orc Host",
+          "description": "The primary infantry of Mordor, mass-produced in the mines and forges",
+          "unit_types": ["Orc Warriors", "Orc Archers", "Orc Berserkers", "Orc Engineers"]
+        },
+        {
+          "name": "The Nazgûl",
+          "description": "Nine wraith-commanders bound to the One Ring, captains of Sauron's air forces",
+          "unit_types": ["Witch-king of Angmar", "Nazgûl Fell Riders", "Nazgûl Fell Wings"]
+        },
+        {
+          "name": "Troll Forces",
+          "description": "Giant trolls and drakes, used as siege weapons and shock troops",
+          "unit_types": ["Hill Trolls", "Stone Trolls", "Drakes", "Troll-golems"]
+        },
+        {
+          "name": "The Eye's Surveillance",
+          "description": "Sauron's all-seeing intelligence network, using Palantíri and spies",
+          "unit_types": ["Palantír Operators", "Black Captains", "Spies and Agents"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Sauron", "role": "Dark Lord; bearer of the One Ring"},
+        {"name": "The Witch-king of Angmar", "role": "Captain of the Nazgûl; most powerful of the Nine"},
+        {"name": "Shelob", "role": "Great spider of Cirith Ungol; guardian of the passes"},
+        {"name": "Gothmog", "role": "Lord of the Orcs of Mordor"}
+      ],
+      "strengths": [
+        "Overwhelming numerical superiority",
+        "The One Ring amplifies Sauron's power",
+        "The Eye sees all — superior intelligence and surveillance",
+        "Industrial war machine — endless production of troops and weapons",
+        "Fortified defenses — the Black Gates and Barad-dûr",
+        "Allies in Harad and Rhûn provide additional forces"
+      ],
+      "weaknesses": [
+        "Dependent on the One Ring — its destruction ends Sauron's power",
+        "Orcs are disorganized and prone to infighting",
+        "The Palantíri can be used against Sauron by skilled users",
+        "Barad-dûr falls when the Ring is destroyed",
+        "Cannot operate effectively without Sauron's direct command",
+        "The fires of Orodruin are both strength and vulnerability"
+      ],
+      "allies": [
+        "Harad (Southrons)",
+        "Rhûn (Easterlings)",
+        "The Corsairs of Umbar"
+      ],
+      "enemies": [
+        "Free Peoples Alliance",
+        "The Valar (ancient enemies)",
+        "The Elves of the West"
+      ]
+    },
+    {
+      "id": "isengard",
+      "name": "Isengard",
+      "era": "Third Age, T.A. 2953–3019",
+      "ideology": "Power through industry and technology; initially independence, later servitude to Sauron",
+      "description": "A world stripped of nature, converted into a massive factory complex. Saruman the White, once chief of the Istari, corrupted by the desire for the Ring, now produces war machines and Uruk-hai. Initially independent, later allied with Sauron.",
+      "military_branches": [
+        {
+          "name": "Uruk-hai Army",
+          "description": "Saruman's improved orc-line, larger and stronger than Mordor's orcs, capable of enduring sunlight",
+          "unit_types": ["Uruk-hai Warriors", "Uruk-hai Archers", "Uruk-hai Captains", "Háma (elite guard)"]
+        },
+        {
+          "name": "War Machine Division",
+          "description": "Siege engines and mechanical weapons produced in Isengard's factories",
+          "unit_types": ["Wargs", "War Wargs", "Siege Engines", "Flame-throwers"]
+        },
+        {
+          "name": "Hunthic Forces",
+          "description": "Men of the Dunland region, led by Gríma Wormtongue's influence",
+          "unit_types": ["Dunlendings", "Hunsmen", "Mercenaries"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Saruman the White", "role": "Former chief of the Istari; fallen wizard; ruler of Isengard"},
+        {"name": "Gríma Wormtongue", "role": "Saruman's agent; corrupted Théoden for years"},
+        {"name": "Uglúk", "role": "Uruk-hai captain; led the force that captured Merry and Pippin"}
+      ],
+      "strengths": [
+        "Advanced technology and industrial production",
+        "Uruk-hai are superior to standard orcs",
+        "Orthanc is indestructible",
+        "The Palantír of Orthanc provides intelligence",
+        "Strategic location between Rohan and Mordor",
+        "War machines and siege engines"
+      ],
+      "weaknesses": [
+        "Saruman's hubris and underestimation of Gandalf",
+        "Environmental destruction weakened the realm",
+        "The Ents — ancient guardians who can destroy the factories",
+        "Dependent on Saruman's leadership",
+        "The Palantír was used by Sauron to corrupt Saruman",
+        "Helm's Deep proved harder to capture than expected"
+      ],
+      "allies": [
+        "Mordor (later alliance, through the Palantír)",
+        "Dunland (Hunsmen)"
+      ],
+      "enemies": [
+        "Free Peoples Alliance",
+        "The Ents (destroyed Isengard)",
+        "Rohan (primary target of invasion)"
+      ]
+    },
+    {
+      "id": "nazgul",
+      "name": "The Nazgûl (Ringwraiths)",
+      "era": "Second Age – Third Age, T.A. 3019",
+      "ideology": "Total servitude to Sauron; domination through fear and terror",
+      "description": "Nine human kings who were given Rings of Power by Sauron and slowly transformed into wraiths — invisible servants of the Dark Lord. They command the air forces of Mordor and inspire terror across the galaxy.",
+      "military_branches": [
+        {
+          "name": "Fell Riders",
+          "description": "The Nazgûl on Fell Beasts, capable of space and atmospheric flight",
+          "unit_types": ["Witch-king on Fell Beast", "Nazgûl Fell Riders"]
+        },
+        {
+          "name": "Wraith Host",
+          "description": "The invisible servants and thralls of the Nazgûl",
+          "unit_types": ["Black Riders", "Wraith-servants", "Morgul-blade warriors"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "The Witch-king of Angmar", "role": "Captain of the Nazgûl; most powerful of the Nine"},
+        {"name": "The Witch-lords", "role": "The other eight Nazgûl, lesser but still terrifying"}
+      ],
+      "strengths": [
+        "Invisibility — can move undetected",
+        "Terror — their presence inspires paralyzing fear",
+        "The Morgul-blade — can turn the wounded into wraiths",
+        "Fell Beasts — powerful flying mounts",
+        "Bound to Sauron's will — cannot betray him",
+        "Immune to most conventional weapons"
+      ],
+      "weaknesses": [
+        "Vulnerable to elven weapons and water",
+        "The prophecy: 'Not by the hand of man shall he fall'",
+        "Dependent on the One Ring — its destruction frees them",
+        "Sunlight weakens them (though they can still operate)",
+        "Can be resisted by those with strong will (Aragorn, Faramir)",
+        "Éowyn and Merry killed the Witch-king"
+      ],
+      "allies": [
+        "Mordor (their master)"
+      ],
+      "enemies": [
+        "Free Peoples Alliance",
+        "The Elves (their ancient enemies)",
+        "Rohan (the Witch-king founded Angmar to destroy it)"
+      ]
+    },
+    {
+      "id": "harad",
+      "name": "Harad",
+      "era": "Third Age",
+      "ideology": "Southern independence; some factions serve Sauron, others remain neutral or allied with Gondor",
+      "description": "Hot, tropical star systems with unique flora and fauna. Home to the Haradrim, diverse cultures that range from Sauron's allies to Gondor's trade partners. Known for Mûmakil (war elephants) and exotic warfare.",
+      "military_branches": [
+        {
+          "name": "Haradrim Host",
+          "description": "The southern armies, including cavalry and Mûmakil",
+          "unit_types": ["Haradrim Warriors", "Haradrim Archers", "Mûmakil", "Mûman (elephant riders)"]
+        },
+        {
+          "name": "Corsairs of Umbar",
+          "description": "Pirate fleets from the southern ports, naval threat to Gondor",
+          "unit_types": ["Corsair Ships", "Umbar Marines", "Pirate Raiders"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "The Haradrim Kings", "role": "Various chieftains and kings of the South"},
+        {"name": "The Captain of the Corsairs", "role": "Leader of the Umbar pirate fleet"}
+      ],
+      "strengths": [
+        "Mûmakil — massive war beasts that can crush fortifications",
+        "Naval power — the Corsairs threaten Gondor's ports",
+        "Exotic resources and trade goods",
+        "Diverse cultures and fighting styles",
+        "Strategic location — control of southern trade routes"
+      ],
+      "weaknesses": [
+        "Internal divisions — not all Haradrim serve Sauron",
+        "The Faithful of Harad remain loyal to Gondor",
+        "Less organized than Mordor's forces",
+        "Vulnerable to elven and Númenórean tactics",
+        "The White Hand cult divides the realm"
+      ],
+      "allies": [
+        "Mordor (the Black Hand faction)",
+        "Corsairs of Umbar"
+      ],
+      "enemies": [
+        "Gondor (primary rival)",
+        "The Faithful of Harad (internal opposition)"
+      ]
+    },
+    {
+      "id": "rhun",
+      "name": "Rhûn",
+      "era": "Third Age",
+      "ideology": "Eastern nomadic freedom; some factions serve Sauron, others remain independent",
+      "description": "Vast, open star systems on the eastern rim of the galaxy. Home to the Easterlings, nomadic and warlike peoples. Some are drawn into Sauron's service through the Palantíri, while others (the Útúlië) ally with Gondor.",
+      "military_branches": [
+        {
+          "name": "Easterling Host",
+          "description": "The eastern armies, nomadic cavalry and infantry",
+          "unit_types": ["Easterling Warriors", "Easterling Archers", "Lamedon Volunteers"]
+        },
+        {
+          "name": "Útúlië Alliance",
+          "description": "The faction that allied with Gondor against Sauron",
+          "unit_types": ["Útúlië Riders", "Eastern Allies"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "The Easterling Chieftains", "role": "Various leaders of the eastern tribes"},
+        {"name": "The Lords of Lamedon", "role": "Gondor's eastern allies"}
+      ],
+      "strengths": [
+        "Vast numbers — the eastern tribes are numerous",
+        "Cavalry tactics — skilled riders and pilots",
+        "Strategic location — gateway between Mordor and the eastern rim",
+        "The Útúlië provide loyal allies to Gondor"
+      ],
+      "weaknesses": [
+        "Internal divisions — the Útúlië oppose Sauron's faction",
+        "Manipulated by Sauron through the Palantíri",
+        "Less organized than Mordor's forces",
+        "Nomadic lifestyle makes sustained campaigns difficult"
+      ],
+      "allies": [
+        "Mordor (the Sauron-loyal faction)",
+        "Gondor (the Útúlië faction)"
+      ],
+      "enemies": [
+        "Mordor (the Útúlië faction)",
+        "The internal opposition"
+      ]
+    },
+    {
+      "id": "ents",
+      "name": "The Ents",
+      "era": "First Age – Third Age",
+      "ideology": "Protection of the forests and nature; slow to anger but devastating when roused",
+      "description": "Ancient, tree-like beings — the oldest living beings in Middle-earth. Shepherds of the trees, they are neutral in most conflicts but will act decisively when nature is threatened. Their attack on Isengard was one of the turning points of the War of the Ring.",
+      "military_branches": [
+        {
+          "name": "Entmoot Host",
+          "description": "The Ents in battle formation — slow but unstoppable",
+          "unit_types": ["Ents", "Huorns (mindless tree-creatures)", "Treebeard's Guard"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Treebeard", "role": "Oldest Ent; leader of the Entmoot"},
+        {"name": "Fastred", "role": "Second oldest Ent"},
+        {"name": "Fimbrethil", "role": "Treebeard's beloved; an Ent (rare female)"}
+      ],
+      "strengths": [
+        "Immense strength — can uproot trees and destroy fortifications",
+        "Extreme longevity — ancient wisdom and patience",
+        "Connection to nature — can command the Huorns",
+        "Nearly indestructible — conventional weapons are ineffective",
+        "Surprise — enemies do not expect trees to fight back"
+      ],
+      "weaknesses": [
+        "Extremely slow to decide on action",
+        "Few in number — their population is declining",
+        "The Entwives are lost — a source of great sorrow",
+        "Fire is their greatest weakness",
+        "Once their purpose is fulfilled, they wander and fade"
+      ],
+      "allies": [
+        "Free Peoples Alliance (when roused)",
+        "The trees of Fangorn"
+      ],
+      "enemies": [
+        "Isengard (destroyed by the Ents)",
+        "Any who threaten the forests"
+      ]
+    },
+    {
+      "id": "blue_wizards",
+      "name": "The Blue Wizards",
+      "era": "Third Age",
+      "ideology": "Independent operation in the East and South; little is known of their activities",
+      "description": "Alatar (the Brown) and Pallando (the Blue) — two of the five Istari who chose to operate in the East and South, beyond the reach of Sauron's Eye. Their fate is unknown; some say they founded cults, others that they worked secretly against Sauron.",
+      "military_branches": [
+        {
+          "name": "Eastern Agents",
+          "description": "The Blue Wizards' network of agents and allies in the East and South",
+          "unit_types": ["Alatar", "Pallando", "Eastern Disciples"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Alatar (the Blue)", "role": "Operates in the East (Rhûn)"},
+        {"name": "Pallando (the Blue)", "role": "Operates in the South (Harad)"}
+      ],
+      "strengths": [
+        "Maiar power — though restricted by mortal form",
+        "Operating beyond Sauron's direct surveillance",
+        "Knowledge of eastern and southern cultures",
+        "Independence from the politics of the West"
+      ],
+      "weaknesses": [
+        "Little is known — their effectiveness is uncertain",
+        "May have founded cults that became problematic",
+        "Isolated from the other Istari",
+        "Cannot directly reveal their power"
+      ],
+      "allies": [
+        "The Free Peoples (indirectly)",
+        "Eastern and southern cultures"
+      ],
+      "enemies": [
+        "Sauron (indirectly)",
+        "Eastern cults (possibly their own creations)"
+      ]
+    }
+  ]
+}

@@ -1,8 +1,6 @@
 package com.yisy.modules.doramcu.captainslog.service;
 import org.springframework.stereotype.Service;
 
-import com.yisy.modules.doramcu.captainslog.dto.*;
-import com.yisy.modules.doramcu.captainslog.model.*;
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogMissionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +37,7 @@ public class CaptainLogService {
     private final ProbabilityMatrixService probabilityMatrixService;
     private final LifepathService lifepathService;
     private final CaptainLogCrewService crewService;
-    @Qualifier("captainsLogCareerProgressionService")
+    @Qualifier("captainsLogCareerProgressionService_1")
     private final CareerProgressionService careerProgressionService;
     private final DifficultyScalingService difficultyScalingService;
     private final InjuryService injuryService;
@@ -65,7 +63,7 @@ public class CaptainLogService {
                              ProbabilityMatrixService probabilityMatrixService,
                              LifepathService lifepathService,
                              CaptainLogCrewService crewService,
-                             @Qualifier("captainsLogCareerProgressionService") CareerProgressionService careerProgressionService,
+                             @Qualifier("captainsLogCareerProgressionService_1") CareerProgressionService careerProgressionService,
                              DifficultyScalingService difficultyScalingService,
                              InjuryService injuryService,
                              EquipmentService equipmentService,

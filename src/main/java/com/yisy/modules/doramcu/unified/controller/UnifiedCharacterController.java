@@ -43,7 +43,7 @@ import java.util.Optional;
  * </p>
  */
 @RestController
-@RequestMapping("/api/v1/unified")
+@RequestMapping("/api/v1/unified_0")
 public class UnifiedCharacterController {
 
     private static final Logger log = LoggerFactory.getLogger(UnifiedCharacterController.class);
@@ -840,7 +840,7 @@ public class UnifiedCharacterController {
         }
 
         try {
-            com.yisy.modules.doramcu.model.Player player = corporateRoleService.switchRole(characterId, targetRole);
+            com.yisy.modules.doramcu.model.players.Player player = corporateRoleService.switchRole(characterId, targetRole);
             return ResponseEntity.ok(Map.of(
                     "characterId", player.getId(),
                     "currentRole", player.getCurrentRole().name(),

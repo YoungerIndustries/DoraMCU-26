@@ -1,10 +1,5 @@
 package com.yisy.modules.doramcu.service.galaxy;
-import com.yisy.modules.doramcu.model.galaxy.Star;
-import com.yisy.modules.doramcu.model.galaxy.Hyperlane;
 import com.yisy.modules.doramcu.model.misc.Planet;
-import com.yisy.modules.doramcu.model.galaxy.Sector;
-
-
 import com.yisy.modules.doramcu.admin.model.AiAdminIncident;
 import com.yisy.modules.doramcu.admin.service.AiAdminIncidentService;
 import com.yisy.modules.doramcu.admin.service.AiAdminService;
@@ -15,7 +10,6 @@ import com.yisy.modules.doramcu.earth2026.service.Earth2026RulesDatabaseService;
 import com.yisy.modules.doramcu.event.GalaxyEventService;
 import com.yisy.modules.doramcu.event.GalaxyEventType;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 import com.yisy.modules.doramcu.repository.galaxy.GalaxyRepository;
 import org.slf4j.Logger;

@@ -14,7 +14,6 @@ import com.yisy.modules.doramcu.hex.Player;
 import com.yisy.modules.doramcu.model.session.GameSession;
 import com.yisy.modules.doramcu.unified.GameEngine;
 import com.yisy.modules.doramcu.service.ai.AiPlayerService;
-import com.yisy.modules.doramcu.service.ai.AiPlayerService.Difficulty;
 import com.yisy.modules.doramcu.service.session.GameSessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

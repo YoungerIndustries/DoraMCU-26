@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.ai;
 
-import com.yisy.modules.doramcu.ai.framework.PersonalityProfile.PersonalityType;
 import com.yisy.modules.doramcu.hex.Player;
 
 import java.util.HashMap;

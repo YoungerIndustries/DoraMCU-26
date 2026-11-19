@@ -5,7 +5,6 @@ import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
 import com.yisy.modules.doramcu.admin.service.AiAdminService;
 import com.yisy.modules.doramcu.dto.galaxy.GalaxyComparisonDto;
 import com.yisy.modules.doramcu.dto.galaxy.GalaxyComparisonSummaryDto;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 import com.yisy.modules.doramcu.repository.galaxy.GalaxyRepository;
 import com.yisy.modules.doramcu.repository.players.PlayerRepository;

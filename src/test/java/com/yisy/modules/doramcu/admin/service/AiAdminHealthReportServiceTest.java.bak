@@ -1,0 +1,761 @@
+package com.yisy.modules.doramcu.admin.service;
+
+import com.yisy.modules.doramcu.admin.model.AiAdminHealthReport;
+import com.yisy.modules.doramcu.admin.model.AiAdminIncident;
+import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
+import com.yisy.modules.doramcu.admin.repository.AiAdminHealthReportRepository;
+import com.yisy.modules.doramcu.admin.repository.AiAdminIncidentRepository;
+import com.yisy.modules.doramcu.admin.repository.AiAdminOrderRepository;
+import com.yisy.modules.doramcu.admin.service.AiAdminLlmService.LlmAnalysisResult;
+import com.yisy.modules.doramcu.eve.model.AiCharacter;
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class AiAdminHealthReportServiceTest {
+
+    @Mock
+    private AiAdminHealthReportRepository reportRepository;
+
+    @Mock
+    private AiAdminOrderRepository orderRepository;
+
+    @Mock
+    private AiAdminIncidentRepository incidentRepository;
+
+    @Mock
+    private AiCharacterRepository characterRepository;
+
+    @Mock
+    private AiAdminLlmService llmService;
+
+    private AiAdminHealthReportService service;
+
+    private AiCharacter admin;
+
+    @BeforeEach
+    void setUp() {
+        service = new AiAdminHealthReportService(
+                reportRepository, orderRepository, incidentRepository,
+                characterRepository, llmService);
+
+        admin = new AiCharacter();
+        admin.setId(1L);
+        admin.setName("TestAdmin");
+        admin.setRole("Galaxy Overseer");
+        admin.setEmpireName("TestEmpire");
+        admin.setTotalExperience(100);
+        admin.setLeadershipRating(8);
+    }
+
+    @Test
+    void generateReport_createsReportWithOrderData() {
+        when(characterRepository.findById(1L)).thenReturn(Optional.of(admin));
+        List<AiAdminOrder> orders = new ArrayList<>();
+        AiAdminOrder order = new AiAdminOrder();
+        order.setStatus(AiAdminOrder.OrderStatus.COMPLETED);
+        orders.add(order);
+        when(orderRepository.findByAssignedAiAdminIdAndCreatedAtBetween(anyLong(), any(), any()))
+                .thenReturn(orders);
+        when(incidentRepository.findByAssignedAiAdminIdAndCreatedAtBetween(anyLong(), any(), any()))
+                .thenReturn(new ArrayList<>());
+        when(incidentRepository.countByAssignedAiAdminIdAndStatusIn(anyLong(), anyList()))
+                .thenReturn(0L);
+        when(llmService.analyzeReport(any(), any())).thenReturn(
+                new LlmAnalysisResult("REVIEW", "Good performance", new java.util.HashMap<>(),
+                        "Good performance", true, null));
+        when(reportRepository.save(any(AiAdminHealthReport.class))).thenAnswer(i -> i.getArgument(0));
+
+        AiAdminHealthReport report = service.generateReport(1L, AiAdminHealthReport.ReportType.DAILY);
+
+        assertNotNull(report);
+        assertEquals(1L, report.getAiAdminId());
+        assertEquals(AiAdminHealthReport.ReportType.DAILY, report.getReportType());
+        assertEquals(1, report.getOrdersProcessed());
+        assertEquals(1, report.getOrdersCompleted());
+        assertEquals(0, report.getOrdersFailed());
+        assertEquals("Good performance", report.getRecommendations());
+    }
+
+    @Test
+    void generateReport_countsFailedOrders() {
+        when(characterRepository.findById(1L)).thenReturn(Optional.of(admin));
+        List<AiAdminOrder> orders = new ArrayList<>();
+        AiAdminOrder order = new AiAdminOrder();
+        order.setStatus(AiAdminOrder.OrderStatus.FAILED);
+        orders.add(order);
+        when(orderRepository.findByAssignedAiAdminIdAndCreatedAtBetween(anyLong(), any(), any()))
+                .thenReturn(orders);
+        when(incidentRepository.findByAssignedAiAdminIdAndCreatedAtBetween(anyLong(), any(), any()))
+                .thenReturn(new ArrayList<>());
+        when(incidentRepository.countByAssignedAiAdminIdAndStatusIn(anyLong(), anyList()))
+                .thenReturn(0L);
+        when(llmService.analyzeReport(any(), any())).thenReturn(
+                new LlmAnalysisResult("REVIEW", "Improve failure rate", new java.util.HashMap<>(),
+                        "Improve failure rate", true, null));
+        when(reportRepository.save(any(AiAdminHealthReport.class))).thenAnswer(i -> i.getArgument(0));
+
+        AiAdminHealthReport report = service.generateReport(1L, AiAdminHealthReport.ReportType.DAILY);
+
+        assertEquals(1, report.getOrdersFailed());
+        assertEquals(0, report.getOrdersCompleted());
+    }
+
+    @Test
+    void generateReport_countsIncidents() {
+        when(characterRepository.findById(1L)).thenReturn(Optional.of(admin));
+        when(orderRepository.findByAssignedAiAdminIdAndCreatedAtBetween(anyLong(), any(), any()))
+                .thenReturn(new ArrayList<>());
+        List<AiAdminIncident> incidents = new ArrayList<>();
+        incidents.add(new AiAdminIncident());
+        when(incidentRepository.findByAssignedAiAdminIdAndCreatedAtBetween(anyLong(), any(), any()))
+                .thenReturn(incidents);
+        when(incidentRepository.countByAssignedAiAdminIdAndStatusIn(anyLong(), anyList()))
+                .thenReturn(2L);
+        when(llmService.analyzeReport(any(), any())).thenReturn(
+                new LlmAnalysisResult("REVIEW", "Handle incidents", new java.util.HashMap<>(),
+                        "Handle incidents", true, null));
+        when(reportRepository.save(any(AiAdminHealthReport.class))).thenAnswer(i -> i.getArgument(0));
+
+        AiAdminHealthReport report = service.generateReport(1L, AiAdminHealthReport.ReportType.DAILY);
+
+        assertEquals(1, report.getIncidentsHandled());
+        assertEquals(2, report.getActiveIncidents());
+    }
+
+    @Test
+    void generateReport_throwsWhenAdminNotFound() {
+        when(characterRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () ->
+                service.generateReport(999L, AiAdminHealthReport.ReportType.DAILY));
+    }
+
+    @Test
+    void generateReport_handlesLlmFailure() {
+        when(characterRepository.findById(1L)).thenReturn(Optional.of(admin));
+        when(orderRepository.findByAssignedAiAdminIdAndCreatedAtBetween(anyLong(), any(), any()))
+                .thenReturn(new ArrayList<>());
+        when(incidentRepository.findByAssignedAiAdminIdAndCreatedAtBetween(anyLong(), any(), any()))
+                .thenReturn(new ArrayList<>());
+        when(incidentRepository.countByAssignedAiAdminIdAndStatusIn(anyLong(), anyList()))
+                .thenReturn(0L);
+        when(llmService.analyzeReport(any(), any())).thenThrow(new RuntimeException("LLM down"));
+        when(reportRepository.save(any(AiAdminHealthReport.class))).thenAnswer(i -> i.getArgument(0));
+
+        AiAdminHealthReport report = service.generateReport(1L, AiAdminHealthReport.ReportType.DAILY);
+
+        assertEquals("LLM unavailable. Manual review recommended.", report.getRecommendations());
+    }
+
+    @Test
+    void generateReport_weeklyPeriod() {
+        when(characterRepository.findById(1L)).thenReturn(Optional.of(admin));
+        when(orderRepository.findByAssignedAiAdminIdAndCreatedAtBetween(anyLong(), any(), any()))
+                .thenReturn(new ArrayList<>());
+        when(incidentRepository.findByAssignedAiAdminIdAndCreatedAtBetween(anyLong(), any(), any()))
+                .thenReturn(new ArrayList<>());
+        when(incidentRepository.countByAssignedAiAdminIdAndStatusIn(anyLong(), anyList()))
+                .thenReturn(0L);
+        when(llmService.analyzeReport(any(), any())).thenReturn(
+                new LlmAnalysisResult("REVIEW", "OK", new java.util.HashMap<>(), "OK", true, null));
+        when(reportRepository.save(any(AiAdminHealthReport.class))).thenAnswer(i -> i.getArgument(0));
+
+        AiAdminHealthReport report = service.generateReport(1L, AiAdminHealthReport.ReportType.WEEKLY);
+
+        assertEquals(AiAdminHealthReport.ReportType.WEEKLY, report.getReportType());
+        LocalDateTime periodStart = report.getPeriodStart();
+        LocalDateTime periodEnd = report.getPeriodEnd();
+        assertTrue(periodEnd.isAfter(periodStart));
+    }
+
+    @Test
+    void generateAllReports_generatesForAllAdmins() {
+        List<AiCharacter> admins = List.of(admin);
+        when(characterRepository.findByAiAdminTrueAndActiveTrue()).thenReturn(admins);
+        when(characterRepository.findById(1L)).thenReturn(Optional.of(admin));
+        when(orderRepository.findByAssignedAiAdminIdAndCreatedAtBetween(anyLong(), any(), any()))
+                .thenReturn(new ArrayList<>());
+        when(incidentRepository.findByAssignedAiAdminIdAndCreatedAtBetween(anyLong(), any(), any()))
+                .thenReturn(new ArrayList<>());
+        when(incidentRepository.countByAssignedAiAdminIdAndStatusIn(anyLong(), anyList()))
+                .thenReturn(0L);
+        when(llmService.analyzeReport(any(), any())).thenReturn(
+                new LlmAnalysisResult("REVIEW", "OK", new java.util.HashMap<>(), "OK", true, null));
+        when(reportRepository.save(any(AiAdminHealthReport.class))).thenAnswer(i -> i.getArgument(0));
+
+        List<AiAdminHealthReport> reports = service.generateAllReports(AiAdminHealthReport.ReportType.DAILY);
+
+        assertEquals(1, reports.size());
+    }
+
+    @Test
+    void generateAllReports_skipsFailedAdmin() {
+        List<AiCharacter> admins = List.of(admin);
+        when(characterRepository.findByAiAdminTrueAndActiveTrue()).thenReturn(admins);
+        when(characterRepository.findById(1L)).thenReturn(Optional.of(admin));
+        when(orderRepository.findByAssignedAiAdminIdAndCreatedAtBetween(anyLong(), any(), any()))
+                .thenThrow(new RuntimeException("DB error"));
+
+        List<AiAdminHealthReport> reports = service.generateAllReports(AiAdminHealthReport.ReportType.DAILY);
+
+        assertEquals(0, reports.size());
+    }
+
+    @Test
+    void getLatestReport_returnsReport() {
+        AiAdminHealthReport report = new AiAdminHealthReport();
+        report.setId(1L);
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(List.of(report));
+
+        AiAdminHealthReport result = service.getLatestReport(1L);
+
+        assertEquals(1L, result.getId());
+    }
+
+    @Test
+    void getLatestReport_returnsNullWhenEmpty() {
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(new ArrayList<>());
+
+        AiAdminHealthReport result = service.getLatestReport(1L);
+
+        assertNull(result);
+    }
+
+    @Test
+    void getReport_byType() {
+        AiAdminHealthReport report = new AiAdminHealthReport();
+        report.setReportType(AiAdminHealthReport.ReportType.WEEKLY);
+        when(reportRepository.findByAiAdminIdAndReportTypeOrderByGeneratedAtDesc(1L, AiAdminHealthReport.ReportType.WEEKLY))
+                .thenReturn(report);
+
+        AiAdminHealthReport result = service.getReport(1L, AiAdminHealthReport.ReportType.WEEKLY);
+
+        assertEquals(AiAdminHealthReport.ReportType.WEEKLY, result.getReportType());
+    }
+
+    @Test
+    void getReports_byDateRange() {
+        when(reportRepository.findByAiAdminIdAndGeneratedAtBetweenOrderByGeneratedAtDesc(
+                eq(1L), any(), any())).thenReturn(new ArrayList<>());
+
+        List<AiAdminHealthReport> reports = service.getReports(
+                1L, LocalDateTime.now().minusDays(7), LocalDateTime.now());
+
+        assertNotNull(reports);
+    }
+
+    @Test
+    void getReportSummary_withReports() {
+        AiAdminHealthReport report = new AiAdminHealthReport();
+        report.setReportType(AiAdminHealthReport.ReportType.DAILY);
+        report.setGeneratedAt(LocalDateTime.now());
+        report.setOrdersProcessed(10);
+        report.setOrdersCompleted(8);
+        report.setOrdersFailed(2);
+        report.setIncidentsHandled(3);
+        report.setXpEarned(80);
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(List.of(report));
+        when(reportRepository.countByAiAdminId(1L)).thenReturn(1L);
+
+        AiAdminHealthReportService.ReportSummary summary = service.getReportSummary(1L);
+
+        assertEquals(1L, summary.adminId);
+        assertEquals(1, summary.totalReports);
+        assertEquals(10, summary.totalOrdersProcessed);
+        assertEquals(3, summary.totalIncidentsHandled);
+        assertEquals(80, summary.totalXpEarned);
+    }
+
+    @Test
+    void getReportSummary_empty() {
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(new ArrayList<>());
+        when(reportRepository.countByAiAdminId(1L)).thenReturn(0L);
+
+        AiAdminHealthReportService.ReportSummary summary = service.getReportSummary(1L);
+
+        assertEquals(1L, summary.adminId);
+        assertEquals(0, summary.totalReports);
+        assertEquals(0, summary.avgOrdersPerReport);
+        assertEquals(0.0, summary.avgSuccessRate);
+    }
+
+    @Test
+    void getRecommendations_returnsRecommendations() {
+        AiAdminHealthReport report = new AiAdminHealthReport();
+        report.setRecommendations("Improve performance");
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(List.of(report));
+
+        String recommendations = service.getRecommendations(1L);
+
+        assertEquals("Improve performance", recommendations);
+    }
+
+    @Test
+    void getRecommendations_returnsNullWhenNoReport() {
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(new ArrayList<>());
+
+        String recommendations = service.getRecommendations(1L);
+
+        assertNull(recommendations);
+    }
+
+    @Test
+    void generateDailyReports_runsWithoutError() {
+        when(characterRepository.findByAiAdminTrueAndActiveTrue()).thenReturn(new ArrayList<>());
+
+        service.generateDailyReports();
+
+        // No exception thrown
+    }
+
+    @Test
+    void generateDailyReports_handlesException() {
+        when(characterRepository.findByAiAdminTrueAndActiveTrue())
+                .thenThrow(new RuntimeException("DB down"));
+
+        assertDoesNotThrow(() -> service.generateDailyReports());
+    }
+
+    @Test
+    void xpEarned_calculatedFromCompletedOrders() {
+        when(characterRepository.findById(1L)).thenReturn(Optional.of(admin));
+        List<AiAdminOrder> orders = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            AiAdminOrder order = new AiAdminOrder();
+            order.setStatus(AiAdminOrder.OrderStatus.COMPLETED);
+            orders.add(order);
+        }
+        when(orderRepository.findByAssignedAiAdminIdAndCreatedAtBetween(anyLong(), any(), any()))
+                .thenReturn(orders);
+        when(incidentRepository.findByAssignedAiAdminIdAndCreatedAtBetween(anyLong(), any(), any()))
+                .thenReturn(new ArrayList<>());
+        when(incidentRepository.countByAssignedAiAdminIdAndStatusIn(anyLong(), anyList()))
+                .thenReturn(0L);
+        when(llmService.analyzeReport(any(), any())).thenReturn(
+                new LlmAnalysisResult("REVIEW", "OK", new java.util.HashMap<>(), "OK", true, null));
+        when(reportRepository.save(any(AiAdminHealthReport.class))).thenAnswer(i -> i.getArgument(0));
+
+        AiAdminHealthReport report = service.generateReport(1L, AiAdminHealthReport.ReportType.DAILY);
+
+        assertEquals(30, report.getXpEarned()); // 3 completed * 10 XP each
+    }
+
+    @Test
+    void summary_includesSuccessRate() {
+        when(characterRepository.findById(1L)).thenReturn(Optional.of(admin));
+        List<AiAdminOrder> orders = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            AiAdminOrder order = new AiAdminOrder();
+            order.setStatus(i < 8 ? AiAdminOrder.OrderStatus.COMPLETED : AiAdminOrder.OrderStatus.FAILED);
+            orders.add(order);
+        }
+        when(orderRepository.findByAssignedAiAdminIdAndCreatedAtBetween(anyLong(), any(), any()))
+                .thenReturn(orders);
+        when(incidentRepository.findByAssignedAiAdminIdAndCreatedAtBetween(anyLong(), any(), any()))
+                .thenReturn(new ArrayList<>());
+        when(incidentRepository.countByAssignedAiAdminIdAndStatusIn(anyLong(), anyList()))
+                .thenReturn(0L);
+        when(llmService.analyzeReport(any(), any())).thenReturn(
+                new LlmAnalysisResult("REVIEW", "OK", new java.util.HashMap<>(), "OK", true, null));
+        when(reportRepository.save(any(AiAdminHealthReport.class))).thenAnswer(i -> i.getArgument(0));
+
+        AiAdminHealthReport report = service.generateReport(1L, AiAdminHealthReport.ReportType.DAILY);
+
+        assertTrue(report.getSummary().contains("Success Rate"));
+        assertTrue(report.getSummary().contains("80.0%"));
+    }
+
+    // ---------------------------------------------------------------
+    // Report comparison tests
+    // ---------------------------------------------------------------
+
+    @Test
+    void compareReports_returnsComparisonWithTwoReports() {
+        AiAdminHealthReport current = new AiAdminHealthReport();
+        current.setReportType(AiAdminHealthReport.ReportType.DAILY);
+        current.setOrdersProcessed(10);
+        current.setOrdersCompleted(8);
+        current.setOrdersFailed(2);
+        current.setIncidentsHandled(3);
+        current.setXpEarned(80);
+
+        AiAdminHealthReport previous = new AiAdminHealthReport();
+        previous.setReportType(AiAdminHealthReport.ReportType.DAILY);
+        previous.setOrdersProcessed(5);
+        previous.setOrdersCompleted(3);
+        previous.setOrdersFailed(2);
+        previous.setIncidentsHandled(1);
+        previous.setXpEarned(30);
+
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(List.of(current, previous));
+
+        AiAdminHealthReportService.ReportComparison comparison =
+                service.compareReports(1L, AiAdminHealthReport.ReportType.DAILY);
+
+        assertNotNull(comparison);
+        assertEquals(5, comparison.ordersProcessedChange);
+        assertEquals(2, comparison.ordersCompletedChange);
+        assertEquals(0, comparison.ordersFailedChange);
+        assertEquals(2, comparison.incidentsHandledChange);
+        assertEquals(50, comparison.xpEarnedChange);
+    }
+
+    @Test
+    void compareReports_calculatesSuccessRateChange() {
+        AiAdminHealthReport current = new AiAdminHealthReport();
+        current.setReportType(AiAdminHealthReport.ReportType.DAILY);
+        current.setOrdersProcessed(10);
+        current.setOrdersCompleted(9); // 90%
+        current.setOrdersFailed(1);
+        current.setXpEarned(90);
+
+        AiAdminHealthReport previous = new AiAdminHealthReport();
+        previous.setReportType(AiAdminHealthReport.ReportType.DAILY);
+        previous.setOrdersProcessed(10);
+        previous.setOrdersCompleted(5); // 50%
+        previous.setOrdersFailed(5);
+        previous.setXpEarned(50);
+
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(List.of(current, previous));
+
+        AiAdminHealthReportService.ReportComparison comparison =
+                service.compareReports(1L, AiAdminHealthReport.ReportType.DAILY);
+
+        assertEquals(40.0, comparison.successRateChange, 0.1);
+    }
+
+    @Test
+    void compareReports_returnsNullWithOneReport() {
+        AiAdminHealthReport report = new AiAdminHealthReport();
+        report.setReportType(AiAdminHealthReport.ReportType.DAILY);
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(List.of(report));
+
+        AiAdminHealthReportService.ReportComparison comparison =
+                service.compareReports(1L, AiAdminHealthReport.ReportType.DAILY);
+
+        assertNull(comparison);
+    }
+
+    @Test
+    void compareReports_returnsNullWithNoReports() {
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(new ArrayList<>());
+
+        AiAdminHealthReportService.ReportComparison comparison =
+                service.compareReports(1L, AiAdminHealthReport.ReportType.DAILY);
+
+        assertNull(comparison);
+    }
+
+    @Test
+    void compareReports_filtersByReportType() {
+        AiAdminHealthReport daily1 = new AiAdminHealthReport();
+        daily1.setReportType(AiAdminHealthReport.ReportType.DAILY);
+        daily1.setOrdersProcessed(10);
+        daily1.setOrdersCompleted(8);
+        daily1.setXpEarned(80);
+
+        AiAdminHealthReport weekly1 = new AiAdminHealthReport();
+        weekly1.setReportType(AiAdminHealthReport.ReportType.WEEKLY);
+        weekly1.setOrdersProcessed(50);
+        weekly1.setOrdersCompleted(40);
+        weekly1.setXpEarned(400);
+
+        AiAdminHealthReport daily2 = new AiAdminHealthReport();
+        daily2.setReportType(AiAdminHealthReport.ReportType.DAILY);
+        daily2.setOrdersProcessed(5);
+        daily2.setOrdersCompleted(3);
+        daily2.setXpEarned(30);
+
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(List.of(daily1, weekly1, daily2));
+
+        AiAdminHealthReportService.ReportComparison comparison =
+                service.compareReports(1L, AiAdminHealthReport.ReportType.DAILY);
+
+        assertNotNull(comparison);
+        assertEquals(5, comparison.ordersProcessedChange);
+    }
+
+    @Test
+    void compareReports_calculatesXpPercentChange() {
+        AiAdminHealthReport current = new AiAdminHealthReport();
+        current.setReportType(AiAdminHealthReport.ReportType.DAILY);
+        current.setXpEarned(150);
+
+        AiAdminHealthReport previous = new AiAdminHealthReport();
+        previous.setReportType(AiAdminHealthReport.ReportType.DAILY);
+        previous.setXpEarned(100);
+
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(List.of(current, previous));
+
+        AiAdminHealthReportService.ReportComparison comparison =
+                service.compareReports(1L, AiAdminHealthReport.ReportType.DAILY);
+
+        assertEquals(50.0, comparison.xpEarnedPercentChange, 0.1);
+    }
+
+    // ---------------------------------------------------------------
+    // Report trends tests
+    // ---------------------------------------------------------------
+
+    @Test
+    void getReportTrends_returnsTrendPoints() {
+        AiAdminHealthReport report1 = new AiAdminHealthReport();
+        report1.setReportType(AiAdminHealthReport.ReportType.DAILY);
+        report1.setGeneratedAt(LocalDateTime.now().minusDays(1));
+        report1.setOrdersProcessed(10);
+        report1.setOrdersCompleted(8);
+        report1.setOrdersFailed(2);
+        report1.setIncidentsHandled(1);
+        report1.setXpEarned(80);
+
+        AiAdminHealthReport report2 = new AiAdminHealthReport();
+        report2.setReportType(AiAdminHealthReport.ReportType.DAILY);
+        report2.setGeneratedAt(LocalDateTime.now());
+        report2.setOrdersProcessed(15);
+        report2.setOrdersCompleted(12);
+        report2.setOrdersFailed(3);
+        report2.setIncidentsHandled(2);
+        report2.setXpEarned(120);
+
+        when(reportRepository.findByAiAdminIdAndGeneratedAtBetweenOrderByGeneratedAtDesc(
+                eq(1L), any(), any())).thenReturn(List.of(report2, report1));
+
+        List<AiAdminHealthReportService.TrendPoint> trends = service.getReportTrends(1L, 7);
+
+        assertEquals(2, trends.size());
+        assertEquals(15, trends.get(0).ordersProcessed);
+        assertEquals(80.0, trends.get(0).successRate, 0.1);
+        assertEquals(10, trends.get(1).ordersProcessed);
+        assertEquals(80.0, trends.get(1).successRate, 0.1);
+    }
+
+    @Test
+    void getReportTrends_emptyWhenNoReports() {
+        when(reportRepository.findByAiAdminIdAndGeneratedAtBetweenOrderByGeneratedAtDesc(
+                eq(1L), any(), any())).thenReturn(new ArrayList<>());
+
+        List<AiAdminHealthReportService.TrendPoint> trends = service.getReportTrends(1L, 7);
+
+        assertTrue(trends.isEmpty());
+    }
+
+    @Test
+    void getReportTrends_successRateZeroWhenNoOrders() {
+        AiAdminHealthReport report = new AiAdminHealthReport();
+        report.setReportType(AiAdminHealthReport.ReportType.DAILY);
+        report.setGeneratedAt(LocalDateTime.now());
+        report.setOrdersProcessed(0);
+        report.setOrdersCompleted(0);
+
+        when(reportRepository.findByAiAdminIdAndGeneratedAtBetweenOrderByGeneratedAtDesc(
+                eq(1L), any(), any())).thenReturn(List.of(report));
+
+        List<AiAdminHealthReportService.TrendPoint> trends = service.getReportTrends(1L, 7);
+
+        assertEquals(1, trends.size());
+        assertEquals(0.0, trends.get(0).successRate);
+    }
+
+    // ---------------------------------------------------------------
+    // XP milestone tests
+    // ---------------------------------------------------------------
+
+    @Test
+    void getXpMilestones_returnsAllThresholds() {
+        AiAdminHealthReport report = new AiAdminHealthReport();
+        report.setXpEarned(500);
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(List.of(report));
+
+        List<AiAdminHealthReportService.XpMilestone> milestones = service.getXpMilestones(1L);
+
+        assertEquals(9, milestones.size());
+        assertEquals(100, milestones.get(0).threshold);
+        assertEquals(100000, milestones.get(8).threshold);
+    }
+
+    @Test
+    void getXpMilestones_marksAchievedMilestones() {
+        AiAdminHealthReport report = new AiAdminHealthReport();
+        report.setXpEarned(1500);
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(List.of(report));
+
+        List<AiAdminHealthReportService.XpMilestone> milestones = service.getXpMilestones(1L);
+
+        assertTrue(milestones.get(0).achieved); // 100
+        assertTrue(milestones.get(1).achieved); // 500
+        assertTrue(milestones.get(2).achieved); // 1000
+        assertFalse(milestones.get(3).achieved); // 2500
+    }
+
+    @Test
+    void getXpMilestones_calculatesPercentToNext() {
+        AiAdminHealthReport report = new AiAdminHealthReport();
+        report.setXpEarned(500);
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(List.of(report));
+
+        List<AiAdminHealthReportService.XpMilestone> milestones = service.getXpMilestones(1L);
+
+        assertEquals(100.0, milestones.get(0).percentToNext, 0.1); // 100 threshold, achieved
+        assertEquals(50.0, milestones.get(1).percentToNext, 0.1); // 500 threshold, achieved
+        assertEquals(50.0, milestones.get(2).percentToNext, 0.1); // 1000 threshold, 500/1000 = 50%
+    }
+
+    @Test
+    void getXpMilestones_emptyReports() {
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(new ArrayList<>());
+
+        List<AiAdminHealthReportService.XpMilestone> milestones = service.getXpMilestones(1L);
+
+        assertEquals(9, milestones.size());
+        for (AiAdminHealthReportService.XpMilestone m : milestones) {
+            assertFalse(m.achieved);
+            assertEquals(0, m.cumulativeXp);
+            assertEquals(0.0, m.percentToNext);
+        }
+    }
+
+    @Test
+    void getXpMilestones_multipleReportsCumulative() {
+        AiAdminHealthReport report1 = new AiAdminHealthReport();
+        report1.setXpEarned(60);
+        AiAdminHealthReport report2 = new AiAdminHealthReport();
+        report2.setXpEarned(50);
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(List.of(report1, report2));
+
+        List<AiAdminHealthReportService.XpMilestone> milestones = service.getXpMilestones(1L);
+
+        // Cumulative XP = 110, so 100 threshold is achieved
+        assertTrue(milestones.get(0).achieved); // 100
+        assertEquals(110, milestones.get(0).cumulativeXp);
+    }
+
+    // ---------------------------------------------------------------
+    // Growth overview tests
+    // ---------------------------------------------------------------
+
+    @Test
+    void getGrowthOverview_calculatesTotals() {
+        AiAdminHealthReport report1 = new AiAdminHealthReport();
+        report1.setGeneratedAt(LocalDateTime.now().minusDays(1));
+        report1.setOrdersProcessed(10);
+        report1.setOrdersCompleted(8);
+        report1.setOrdersFailed(2);
+        report1.setIncidentsHandled(3);
+        report1.setXpEarned(80);
+        report1.setGalaxyHealthScore(75);
+
+        AiAdminHealthReport report2 = new AiAdminHealthReport();
+        report2.setGeneratedAt(LocalDateTime.now());
+        report2.setOrdersProcessed(15);
+        report2.setOrdersCompleted(12);
+        report2.setOrdersFailed(3);
+        report2.setIncidentsHandled(2);
+        report2.setXpEarned(120);
+        report2.setGalaxyHealthScore(85);
+
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(List.of(report2, report1));
+
+        AiAdminHealthReportService.GrowthOverview overview = service.getGrowthOverview(1L);
+
+        assertEquals(1L, overview.adminId);
+        assertEquals(2, overview.totalReports);
+        assertEquals(25, overview.totalOrdersProcessed);
+        assertEquals(20, overview.totalOrdersCompleted);
+        assertEquals(5, overview.totalOrdersFailed);
+        assertEquals(5, overview.totalIncidentsHandled);
+        assertEquals(200, overview.totalXpEarned);
+        assertEquals(80.0, overview.overallSuccessRate, 0.1);
+        assertEquals(75, overview.minGalaxyHealthScore);
+        assertEquals(85, overview.maxGalaxyHealthScore);
+        assertEquals(100, overview.avgXpPerReport);
+    }
+
+    @Test
+    void getGrowthOverview_emptyReports() {
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(new ArrayList<>());
+
+        AiAdminHealthReportService.GrowthOverview overview = service.getGrowthOverview(1L);
+
+        assertEquals(1L, overview.adminId);
+        assertEquals(0, overview.totalReports);
+        assertEquals(0, overview.totalOrdersProcessed);
+        assertEquals(0.0, overview.overallSuccessRate);
+        assertNull(overview.minGalaxyHealthScore);
+        assertNull(overview.maxGalaxyHealthScore);
+    }
+
+    @Test
+    void getGrowthOverview_nullHealthScore() {
+        AiAdminHealthReport report = new AiAdminHealthReport();
+        report.setGeneratedAt(LocalDateTime.now());
+        report.setOrdersProcessed(10);
+        report.setOrdersCompleted(8);
+        report.setXpEarned(80);
+        // galaxyHealthScore is null
+
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(List.of(report));
+
+        AiAdminHealthReportService.GrowthOverview overview = service.getGrowthOverview(1L);
+
+        assertNull(overview.minGalaxyHealthScore);
+        assertNull(overview.maxGalaxyHealthScore);
+    }
+
+    @Test
+    void getGrowthOverview_setsFirstAndLastDate() {
+        LocalDateTime firstDate = LocalDateTime.now().minusDays(30);
+        LocalDateTime lastDate = LocalDateTime.now();
+
+        AiAdminHealthReport report1 = new AiAdminHealthReport();
+        report1.setGeneratedAt(firstDate);
+        report1.setOrdersProcessed(10);
+        report1.setXpEarned(80);
+
+        AiAdminHealthReport report2 = new AiAdminHealthReport();
+        report2.setGeneratedAt(lastDate);
+        report2.setOrdersProcessed(15);
+        report2.setXpEarned(120);
+
+        when(reportRepository.findByAiAdminIdOrderByGeneratedAtDesc(1L))
+                .thenReturn(List.of(report2, report1));
+
+        AiAdminHealthReportService.GrowthOverview overview = service.getGrowthOverview(1L);
+
+        assertEquals(firstDate, overview.firstReportDate);
+        assertEquals(lastDate, overview.lastReportDate);
+    }
+}

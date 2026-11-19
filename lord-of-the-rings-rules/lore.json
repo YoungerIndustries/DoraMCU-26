@@ -1,0 +1,869 @@
+{
+  "lore": {
+    "the_one_ring": {
+      "description": "The One Ring is the ultimate artifact of power in the Arda galaxy, forged by Sauron in the fires of Orodruin (Mount Doom). It contains a great portion of Sauron's own power and was designed to dominate all other Rings of Power and control their bearers. In the galaxy, it is a device that can command all other Ring artifacts and exert influence across light-years.",
+      "philosophy": {
+        "light_use": {
+          "description": "The Ring cannot be used for good. Even those with pure intentions are gradually corrupted by its influence. The only safe course is to resist its temptation and ultimately destroy it.",
+          "principles": [
+            "The Ring must not be used, even for seemingly noble purposes",
+            "Resist the temptation to wield power over others",
+            "Trust in small acts of courage rather than grand displays of power",
+            "The Ring can only be unmade in the fires where it was forged"
+          ]
+        },
+        "dark_use": {
+          "description": "The Ring amplifies the wearer's desire for power and domination. It grants invisibility, extended life, and the ability to command those who wear lesser Rings, but at the cost of the wearer's soul.",
+          "effects": [
+            "Invisibility — shifts the wearer to the Wraith-world",
+            "Extended lifespan — halts aging but does not grant true life",
+            "Domination — commands bearers of the Nine Rings (Nazgûl) and Seven Rings",
+            "Corruption — gradually erodes the wearer's moral compass",
+            "Connection to Sauron — the Ring desires to return to its master"
+          ]
+        }
+      },
+      "inscription": {
+        "language": "Black Speech of Mordor",
+        "text": "Ash nazg durbatulûk, ash nazg gimbatul, ash nazg thrakatulûk agh burzum-ishi krimpatul.",
+        "translation": "One Ring to rule them all, One Ring to find them, One Ring to bring them all and in the darkness bind them."
+      }
+    },
+    "the_three_elven_rings": {
+      "description": "The Three Elven Rings were forged by Celebrimbor without Sauron's direct touch, though Sauron's knowledge of ring-making gave him inherent power over them. They were hidden from Sauron and serve to preserve, heal, and protect.",
+      "rings": [
+        {
+          "name": "Narya",
+          "element": "Fire",
+          "stone": "Ruby",
+          "holder": "Gandalf the Grey/White",
+          "description": "The Ring of Fire. It rekindles the hearts of the free and inspires hope and courage in times of despair.",
+          "galaxy_function": "An energy weapon or power source that can ignite star-drives and inspire fleets"
+        },
+        {
+          "name": "Nenya",
+          "element": "Water",
+          "stone": "White Sapphire",
+          "holder": "Galadriel",
+          "description": "The Ring of Water, also called the Ring of Truth. It preserves and protects, maintaining Lothlórien's timeless beauty.",
+          "galaxy_function": "A shield or preservation device that can protect entire systems from decay and corruption"
+        },
+        {
+          "name": "Vilya",
+          "element": "Air",
+          "stone": "Sapphire",
+          "holder": "Elrond",
+          "description": "The most powerful of the Three. It enhances the wearer's inherent abilities and maintains Rivendell as a refuge.",
+          "galaxy_function": "A command device that amplifies the wielder's abilities and maintains safe zones in the galaxy"
+        }
+      ]
+    },
+    "eras": {
+      "description": "The history of Arda is divided into Ages, each marked by great events and the rise and fall of powers.",
+      "ages": [
+        {
+          "name": "The Music of the Ainur",
+          "period": "Before Time",
+          "description": "Eru Ilúvatar created the Ainur (Holy Ones) and set them to singing the Music of the Ainur, which envisioned all of creation. This theme became the blueprint for Eä, the universe.",
+          "key_events": [
+            "The Music of the Ainur — the thematic vision of all creation",
+            "Melkor's discord — the first introduction of opposition and chaos",
+            "Ilúvatar's second theme — 'Behold! I will make powers anew ye deem not mighty or born, but they shall rise' "
+          ]
+        },
+        {
+          "name": "The Beginning of Days",
+          "period": "Before the Ages",
+          "description": "Eä was made manifest. The Ainur entered the universe, and the Valar (Powers of Arda) began shaping the world. The Two Trees grew in Valinor, illuminating the Undying Lands.",
+          "key_events": [
+            "Creation of Eä (the universe) and Arda (the world)",
+            "The Valar enter Arda and begin shaping it",
+            "Growth of the Two Trees: Telperion (Silver) and Laurelin (Gold)",
+            "Melkor's destruction of the Two Trees",
+            "Creation of the Sun (Anar) and Moon (Isil) from the last fruits of the Trees"
+          ]
+        },
+        {
+          "name": "First Age",
+          "period": "F.A. 1–590",
+          "description": "The Age of the Elves. The Noldor returned to Middle-earth in exile, waging war against Morgoth (Melkor). The Silmarils were stolen and eventually recovered at great cost.",
+          "key_events": [
+            "The Kinslaying at Alqualondë",
+            "Dagor-nuin-Giliath (Battle under the Stars)",
+            "Fall of Nogrod and Belegost",
+            "Battle of Unnumbered Years begins",
+            "Birth of Fëanor's sons and the Oath of Fëanor",
+            "Dagor Bragollach (Battle of Sudden Flame)",
+            "Nírnaeth Arnoediad (Battle of Unleashed Tears)",
+            "Hading of Hithlum",
+            "Battle of the Thousand Trees",
+            "Sack of Nogrod",
+            "Death of Húrin and captivity of Hurin",
+            "Túrin's tragedy in Doriath",
+            "Battle of Lammoth",
+            "Fall of Gondolin",
+            "Death of Túrin Turambar",
+            "Fall of Nargothrond",
+            "Death of Eärendil's father, Turgon",
+            "Dagor Dagorath prophesied",
+            "War of Wrath — Eärendil brings the Host of the Valar; Morgoth is defeated and cast into the Void"
+          ]
+        },
+        {
+          "name": "Second Age",
+          "period": "S.A. 1–4974",
+          "description": "The Age of Men and the rise of Sauron. The Elves and Men of Númenor became great powers. Sauron deceived the Elves into forging the Rings of Power, leading to the Last Alliance and the first casting of the One Ring.",
+          "key_events": [
+            "Rising of the Sun and Moon",
+            "Awakening of the Elves at Cuiviénen",
+            "Coming of the Valar and building of Valinor",
+            "Gift of the Valar: Immortality for Elves",
+            "Awakening of Men in Hildórien",
+            "Founding of Númenor as gift to faithful Men",
+            "Sauron's rise in Middle-earth",
+            "Creation of the Rings of Power: Three, Seven, and Nine",
+            "Sauron reveals himself and claims the One Ring",
+            "First Age of Númenórean power and exploration",
+            "Ar-Pharazôn's golden age and subsequent pride",
+            "Sauron captured by Ar-Pharazôn",
+            "Sauron corrupts the Númenóreans",
+            "Akallabêth — Downfall of Númenor: the land is sunk into the sea",
+            "Last Alliance of Elves and Men marches on Mordor",
+            "Battle of Dagorlad",
+            "Siege of Barad-dûr",
+            "Duel of Elendil and Sauron; Elendil falls",
+            "Isildur cuts the Ring from Sauron's hand; Sauron's spirit is defeated",
+            "Isildur takes the Ring and spares it",
+            "Founding of Arnor and Gondor",
+            "Gladden Fields massacre; the Ring is lost in the Anduin"
+          ]
+        },
+        {
+          "name": "Third Age",
+          "period": "T.A. 1–3021",
+          "description": "The Age when the Shadow returned. The Ring lay hidden for millennia, then resurfaced to become the instrument of the War of the Ring. Sauron was finally defeated when the Ring was destroyed.",
+          "key_events": [
+            "The Ring lies hidden in the River Anduin",
+            "Sméagol finds the Ring; becomes Gollum",
+            "War of the Elves and Sauron",
+            "Last Glorious Expedition of the Númenórean kings",
+            "Balrog awakens in Moria",
+            "The White Council discovers Sauron in Dol Guldur",
+            "Saruman drives Sauron from Dol Guldur; begins his own quest for the Ring",
+            "The Watchful Peace — Sauron lies hidden while rebuilding",
+            "Gandalf discovers the Eye; Saruman betrays the White Council",
+            "Gandalf sent to the Shire to search for the Ring",
+            "Bilbo finds the Ring has powers; Gandalf confirms it is the One Ring",
+            "Frodo inherits the Ring",
+            "Council of Elrond — the Fellowship is formed",
+            "The Fellowship of the Ring is broken at Moria",
+            "Faramir and Frodo in Ithilien",
+            "Shelob's Lair and Cirith Ungol",
+            "Faramir releases Frodo and Sam",
+            "Sam sees the stars above the clouds — hope renewed",
+            "Frodo and Sam enter Mordor",
+            "Capture by Orcs; Shelob kills Frodo (temporarily)",
+            "Sam takes the Ring; 'I will take the Ring, Mr. Frodo'",
+            "Scouring of the Shire (after the main events)",
+            "Battle of the Pelennor Fields",
+            "Riders of Rohan arrive at the Hornburg",
+            "Battle of the Hornburg (Helms Deep)",
+            "Treebeard and the Ents march on Isengard",
+            "Frodo reaches Mount Doom; the Ring is destroyed",
+            "Sauron is defeated; the Fourth Age begins",
+            "The Grey Havens — the Ring-bearers depart for Valinor"
+          ]
+        },
+        {
+          "name": "Fourth Age",
+          "period": "Age of Men",
+          "description": "The Age of Men begins. The Elves fade from the world, sailing West to Valinor. Aragorn rules as King Elessar, and the galaxy enters a new era of peace under human stewardship.",
+          "key_events": [
+            "Coronation of Aragorn and Arwen",
+            "The Elves begin departing for Valinor",
+            "The galaxy enters a long peace",
+            "The Dwarves rebuild Moria",
+            "The Hobbits flourish in the Shire",
+            "Aragorn dies after 120 years; the Ring-bearers have already departed"
+          ]
+        }
+      ]
+    },
+    "realms": [
+      {
+        "id": "rivendell",
+        "name": "Rivendell (Imladris)",
+        "type": "Hidden sanctuary system",
+        "description": "A hidden star system protected by spatial distortions and elven wards. An archive of ancient knowledge and a diplomatic center for the Free Peoples. Founded by Elrond after the First Age.",
+        "ruler": "Elrond Half-elven",
+        "ring": "Vilya (Ring of Air)",
+        "notable_features": [
+          "The Last Homely House — a waystation for travelers",
+          "Ancient archives containing knowledge from the First Age",
+          "Protected by the Ring Vilya and elven enchantments",
+          "Spatial distortions make it difficult for enemies to find"
+        ]
+      },
+      {
+        "id": "lothlorien",
+        "name": "Lothlórien",
+        "type": "Golden timeless realm",
+        "description": "A star system bathed in golden light where time flows differently. The Trees of Lothlórien echo the Two Trees of Valinor. A place of healing, wisdom, and preservation.",
+        "rulers": ["Galadriel", "Celeborn"],
+        "ring": "Nenya (Ring of Water)",
+        "notable_features": [
+          "Time flows differently — days feel like hours",
+          "The Mallorn trees — golden, luminous, and ancient",
+          "Galadriel's Mirror — can see past, present, and possible futures",
+          "Lambengolîr — the Silver Lake",
+          "Protected by Nenya; preserves the realm from decay"
+        ]
+      },
+      {
+        "id": "gondor",
+        "name": "Gondor",
+        "type": "Ancient Númenórean empire",
+        "description": "A powerful, centralized star empire descended from Númenor. Known for white towers, advanced palantír communication technology, and a proud martial tradition. The central human power in the galaxy.",
+        "ruler": "Denethor II (Steward); later Aragorn II (King)",
+        "capital": "Minas Tirith — a great fortress world",
+        "notable_features": [
+          "The White Tree — symbol of the realm",
+          "Palantír network — instant communication across light-years",
+          "The White Tower of Orthanc (shared with Isengard)",
+          "Ancient fortifications and star-fortresses",
+          "Descendants of the Dúnedain — long-lived and wise"
+        ]
+      },
+      {
+        "id": "rohan",
+        "name": "Rohan",
+        "type": "Nomadic horse-lord territory",
+        "description": "A system of open plains and grasslands inhabited by the Éothéod, allies of Gondor. Known for fast ships, cavalry culture, and fierce warriors who ride into battle with song and horn.",
+        "ruler": "King Théoden (later Éomer)",
+        "capital": "Edoras; fortress at Helm's Deep",
+        "notable_features": [
+          "The Éothéod — master riders and pilots",
+          "Helm's Deep — an impregnable fortress station",
+          "Meduseld — the Golden Hall",
+          "Alliance with Gondor through the Oath of Eorl",
+          "Fast transit ships and cavalry tactics"
+        ]
+      },
+      {
+        "id": "mordor",
+        "name": "Mordor",
+        "type": "Dark volcanic empire",
+        "description": "A scorched star system dominated by a red star. The industrial war machine of Sauron, where orcs are mass-produced and war machines are forged. The central evil power in the galaxy.",
+        "ruler": "Sauron, Dark Lord",
+        "capital": "Barad-dûr — a dark fortress station orbiting a lava world",
+        "notable_features": [
+          "Orodruin (Mount Doom) — a volcanic star where the One Ring was forged",
+          "Barad-dûr — the Dark Tower, Sauron's seat of power",
+          "The Eye of Sauron — an all-seeing surveillance system",
+          "Black Gates of Morannon — the main defensive line",
+          "Mines and forges producing endless armies",
+          "The Palantír of Cirith Ungor — used by Sauron to deceive enemies"
+        ]
+      },
+      {
+        "id": "isengard",
+        "name": "Isengard",
+        "type": "Industrialized fortress",
+        "description": "A world stripped of nature, converted into a massive factory complex. Saruman the White, once chief of the Istari, corrupted by the desire for the Ring, now produces war machines and Uruk-hai.",
+        "ruler": "Saruman the White (fallen)",
+        "capital": "Orthanc — an ancient tower of Adûnaic stone",
+        "notable_features": [
+          "Orthanc — an indestructible tower, one of the seven Palantíri",
+          "Massive factories and war machine production",
+          "Uruk-hai breeding programs",
+          "The Hornburg (Helm's Deep) — nearby fortress, later captured",
+          "Tree-cutting and environmental destruction",
+          "The Palantír of Orthanc — used by Saruman to communicate with Sauron"
+        ]
+      },
+      {
+        "id": "shire",
+        "name": "The Shire",
+        "type": "Peaceful agrarian system",
+        "description": "A quiet, green star system on the galactic fringe — overlooked by major powers but strategically located. Home to the Hobbits, small but resilient colonists who value peace, food, and comfort above all.",
+        "ruler": "The Thain; later Samwise Gamgee",
+        "notable_features": [
+          "Bag End — the home of the Ring-bearer",
+          "The Party Field — celebration grounds",
+          "Overlooked by major powers due to its unassuming nature",
+          "Rich agricultural output despite small size",
+          "The Scouring — later invaded by Saruman's forces"
+        ]
+      },
+      {
+        "id": "moria",
+        "name": "Moria (Khazad-dûm)",
+        "type": "Underground dwarf stronghold",
+        "description": "A hollowed-out planet or asteroid belt with vast underground forges. Once the greatest dwarf kingdom, now haunted by a Balrog. Rich in mithril, a rare and powerful metal.",
+        "ruler": "Formerly King Durin's line; now abandoned",
+        "notable_features": [
+          "The Kibil-nála and Narvi — great waterfalls",
+          "Seven halls of Durin — vast underground chambers",
+          "Mithril mines — the most valuable resource in the galaxy",
+          "The Balrog — an ancient demon of fire and shadow",
+          "The Bridge of Khazad-dûm — a key defensive position"
+        ]
+      },
+      {
+        "id": "numenor",
+        "name": "Númenor (Elenna)",
+        "type": "Lost island empire",
+        "description": "A once-great star system that was destroyed when it was sunk into a black hole by Eru Ilúvatar. Its ruins are legendary, and its descendants founded Gondor and Arnor.",
+        "ruler": "Formerly the Kings of Númenor; now lost",
+        "notable_features": [
+          "Meneltarma — the Hill of the Faithful, a sacred site",
+          "The Star of Elenna — a great beacon",
+          "Sunk into the sea (black hole) by Ilúvatar himself",
+          "The Straight Road — a path that still leads to Valinor",
+          "Legacy: the Dúnedain (Rangers of the North and South)"
+        ]
+      },
+      {
+        "id": "harad",
+        "name": "Harad",
+        "type": "Southern exotic lands",
+        "description": "Hot, tropical star systems with unique flora and fauna. Trade partners or rivals of Gondor, with diverse cultures and war elephants (Mûmakil).",
+        "ruler": "Various Haradrim chieftains and kings",
+        "notable_features": [
+          "Mûmakil — giant war beasts used in combat",
+          "Rich trade routes and exotic resources",
+          "Allied with Mordor during the War of the Ring",
+          "Diverse cultures and languages",
+          "White Hand — a cult devoted to Sauron"
+        ]
+      },
+      {
+        "id": "rhun",
+        "name": "Rhûn",
+        "type": "Eastern steppes",
+        "description": "Vast, open star systems on the eastern rim of the galaxy. Nomadic and warlike peoples, often drawn into Sauron's service.",
+        "ruler": "Various Easterling chieftains",
+        "notable_features": [
+          "The Easterlings — diverse nomadic cultures",
+          "The Útúlië — a faction that allied with Gondor",
+          "Vast open systems suitable for cavalry tactics",
+          "Often manipulated by Sauron through the Palantíri",
+          "The Ashen Mouths of Mazar — gateway to Mordor"
+        ]
+      },
+      {
+        "id": "forodwaith",
+        "name": "Forodwaith",
+        "type": "Northern ice wastes",
+        "description": "Frozen star systems at the galactic pole. Dangerous and sparsely populated, with the northern lights (aurora) visible. Home to ancient cold and the remnants of Angmar.",
+        "ruler": "None — largely abandoned",
+        "notable_features": [
+          "The Ice-crown (Himring) — a frozen mountain range",
+          "Remnants of the Witch-king's former power",
+          "Ancient cold that even the Valar feared",
+          "The aurora — spiritual lights visible from these systems",
+          "Arnor's northern remnants — the Fellowship of the Ring"
+        ]
+      },
+      {
+        "id": "mirkwood",
+        "name": "Mirkwood",
+        "type": "Dark forest system",
+        "description": "A star system shrouded in dark energy or nebula, dangerous to navigate. Once the beautiful Eryn Vorn, now corrupted by shadow. Home to giant spiders and Wood-elves.",
+        "ruler": "Thranduil, King of the Wood-elves",
+        "notable_features": [
+          "The Great Forest — shrouded in darkness",
+          "Giant spiders descended from Ungoliant",
+          "The Wood-elves — isolated and proud",
+          "The River Running — a boundary between Mirkwood and the Wild",
+          "Dol Guldur — Sauron's hidden fortress (later revealed)"
+        ]
+      },
+      {
+        "id": "fangorn",
+        "name": "Fangorn",
+        "type": "Ancient forest world",
+        "description": "A living star system where the trees themselves are sentient (Ents). The oldest and most mysterious of the Free Peoples' strongholds.",
+        "ruler": "Treebeard, the oldest Ent",
+        "notable_features": [
+          "The Ents — ancient tree-shepherds, slow to anger but devastating",
+          "Living trees that can walk and fight",
+          "Entwives — lost, seeking them is the Ents' greatest sorrow",
+          "The Entwash — a great river",
+          "Critical to the destruction of Isengard"
+        ]
+      }
+    ],
+    "species": [
+      {
+        "id": "elves",
+        "name": "Elves (Quendi)",
+        "description": "The Firstborn of Ilúvatar. Immortal, attuned to the stars, and fading from the galaxy. They are the most wise and beautiful of all peoples, with deep knowledge of craft, song, and magic.",
+        "traits": [
+          "Immortality — bound to Arda until its end",
+          "Keen senses — superior sight, hearing, and perception",
+          "Attuned to the stars — deep connection to Varda's light",
+          "Fading — gradually becoming invisible to those without elven blood",
+          "Choice — may choose to sail to Valinor or remain in Middle-earth"
+        ],
+        "subtypes": [
+          {"name": "Noldor", "description": "The Crafty; master smiths and scholars; exiled from Valinor"},
+          {"name": "Teleri", "description": "The Last; include the Wood-elves and those who sailed to Valinor"},
+          {"name": "Vanyar", "description": "The Fair; most loyal to the Valar; few remain in Middle-earth"}
+        ],
+        "galaxy_role": "Ancient diplomats, scholars, and guardians of knowledge"
+      },
+      {
+        "id": "men",
+        "name": "Men (Atani)",
+        "description": "The Secondborn of Ilúvatar. Mortal but ambitious, gifted with the Gift of Ilúvatar — the ability to depart the world entirely. They are the inheritors of Arda and the builders of great empires.",
+        "traits": [
+          "Mortality — the Gift of Ilúvatar; death is not a curse but a gift",
+          "Ambition — driven to explore, build, and conquer",
+          "Variety — diverse cultures, languages, and abilities",
+          "Susceptibility to corruption — more easily influenced by the Ring",
+          "Potential for greatness — capable of both great heroism and great evil"
+        ],
+        "subtypes": [
+          {"name": "Dúnedain", "description": "Men of the West; long-lived, wise, descendants of Númenor"},
+          {"name": "Éothéod", "description": "The horse-lords of Rohan; fierce warriors and riders"},
+          {"name": "Haradrim", "description": "Southern peoples; diverse cultures and traditions"},
+          {"name": "Easterlings", "description": "Eastern peoples; nomadic and warlike"}
+        ],
+        "galaxy_role": "Rising power; explorers, builders, and inheritors of the galaxy"
+      },
+      {
+        "id": "dwarves",
+        "name": "Dwarves (Khazad)",
+        "description": "Created by Aulë the Smith, adopted by Ilúvatar. Master engineers and miners, stubborn and resilient. They excel at underground and asteroid operations, and are renowned for their craftsmanship.",
+        "traits": [
+          "Master craftsmen — unparalleled skill in metalwork and stonework",
+          "Stubbornness — will not yield easily in conflict or negotiation",
+          "Resilience — can endure harsh conditions and long journeys",
+          "Treasure-lust — strong desire for gold, gems, and mithril",
+          "Long-lived — though mortal, they live much longer than most Men"
+        ],
+        "subtypes": [
+          {"name": "Durin's Folk", "description": "The longest-lived and most noble; of Moria and Erebor"},
+          {"name": "Fire-beards", "description": "Red-bearded dwarves of the Iron Hills"},
+          {"name": "Broad-beams", "description": "Dwarves of the Grey Mountains"}
+        ],
+        "galaxy_role": "Master engineers, miners, and traders"
+      },
+      {
+        "id": "hobbits",
+        "name": "Hobbits (Halflings)",
+        "description": "A small, unassuming people related to Men. Overlooked by major powers, they are surprisingly tough, resilient, and resistant to the Ring's corruption. Their simplicity is their strength.",
+        "traits": [
+          "Small stature — easily overlooked, which is a tactical advantage",
+          "Resilience — tougher than they appear; can endure great hardship",
+          "Resistance to corruption — the Ring's power over them is weaker",
+          "Love of comfort — food, pipe-weed, and peaceful living",
+          "Unexpected courage — when pushed, they show remarkable bravery"
+        ],
+        "subtypes": [
+          {"name": "Hobbits of the Shire", "description": "The main population; peaceful and agrarian"},
+          {"name": "Harfoots", "description": "Brown-haired, love hills; the majority of Shire hobbits"},
+          {"name": "Stoors", "description": "Tanner-skinned, love water; live near rivers"},
+          {"name": "Fallohides", "description": "Fair-haired, taller; descended from northern stock"}
+        ],
+        "galaxy_role": "Unassuming but resilient colonists; the unlikely saviors of the galaxy"
+      },
+      {
+        "id": "ents",
+        "name": "Ents (Shepherds of the Trees)",
+        "description": "Ancient, tree-like beings created by Eru Ilúvatar at the request of the Valar. The oldest living beings in Middle-earth, slow to act but devastating when roused to anger.",
+        "traits": [
+          "Extreme longevity — some are older than any other living being",
+          "Slow deliberation — take great time to decide on action",
+          "Immense strength — can uproot trees and destroy fortifications",
+          "Connection to nature — can communicate with trees",
+          "Devastating wrath — when roused, they are unstoppable"
+        ],
+        "galaxy_role": "Ancient guardians of forest worlds; last resort against industrial destruction"
+      },
+      {
+        "id": "orcs",
+        "name": "Orcs",
+        "description": "Corrupted beings created by Morgoth, possibly from tortured Elves. Mass-produced soldiers of Mordor and Isengard, serving Sauron and his allies. They are the primary infantry of the Forces of Darkness.",
+        "traits": [
+          "Mass-produced — bred and raised in vast numbers",
+          "Hatred of light — especially sunlight and elven light",
+          "Cruelty — enjoy torture and destruction",
+          "Discipline — can be organized into effective military units",
+          "Variety — many subtypes with different abilities"
+        ],
+        "subtypes": [
+          {"name": "Uruk-hai", "description": "Larger, stronger orcs bred by Saruman; can endure sunlight"},
+          {"name": "Olog-hai", "description": "Troll-blooded orcs; even larger and more powerful"},
+          {"name": "Goblin", "description": "Smaller orcs of the mountains and mines"}
+        ],
+        "galaxy_role": "War machines of Mordor; the primary enemy infantry"
+      },
+      {
+        "id": "maiar",
+        "name": "Maiar",
+        "description": "Powerful spiritual beings, lesser than the Valar but greater than all other creatures. Include the Wizards (Istari), Balrogs, and nature spirits. They are the servants of the Valar.",
+        "traits": [
+          "Immense power — far beyond Elves and Men",
+          "Spiritual nature — can take physical form at will",
+          "Ancient — existed before the world was made",
+          "Restricted — the Istari are bound in mortal bodies",
+          "Diverse — range from benevolent (Gandalf) to evil (Balrogs)"
+        ],
+        "subtypes": [
+          {"name": "Istari (Wizards)", "description": "Five Maiar sent to aid the Free Peoples; Gandalf, Saruman, Radagast, and the Blue Wizards"},
+          {"name": "Balrogs", "description": "Fallen Maiar of fire; demons of shadow and flame"},
+          {"name": "Nature spirits", "description": "Melian, Eönwë, and other benevolent spirits"}
+        ],
+        "galaxy_role": "Powerful spiritual beings; advisors, warriors, and ancient forces"
+      }
+    ],
+    "key_events": [
+      {
+        "id": "council_of_elrond",
+        "name": "Council of Elrond",
+        "era": "Third Age, T.A. 3018",
+        "description": "The great council held at Rivendell to decide the fate of the One Ring. Representatives of all Free Peoples gathered, and the Fellowship of the Ring was formed.",
+        "outcome": "The Fellowship of the Ring was formed to carry the Ring to Mount Doom"
+      },
+      {
+        "id": "fall_of_moria",
+        "name": "Fall of the Fellowship at Moria",
+        "era": "Third Age, T.A. 3018",
+        "description": "The Fellowship was attacked by a Balrog in the mines of Moria. Gandalf fell with the Balrog into the abyss, and the Fellowship was broken.",
+        "outcome": "Gandalf fell; the Fellowship was broken; Frodo chose to go to Mordor alone"
+      },
+      {
+        "id": "battle_of_helms_deep",
+        "name": "Battle of the Hornburg (Helm's Deep)",
+        "era": "Third Age, T.A. 3019",
+        "description": "The greatest battle of Rohan. Saruman's forces attacked Helm's Deep, but the Riders of Rohan, aided by Éomer's riders and an avalanche, won a decisive victory.",
+        "outcome": "Decisive victory for Rohan; Saruman's army destroyed"
+      },
+      {
+        "id": "battle_of_pelennor_fields",
+        "name": "Battle of the Pelennor Fields",
+        "era": "Third Age, T.A. 3019",
+        "description": "The largest battle in the War of the Ring. Mordor's forces besieged Minas Tirith, but the Riders of Rohan arrived at dawn, turning the tide. Éowyn killed the Witch-king.",
+        "outcome": "Victory for the Free Peoples; the Witch-king was slain; Faramir wounded; Théoden died"
+      },
+      {
+        "id": "destruction_of_the_ring",
+        "name": "Destruction of the One Ring",
+        "era": "Third Age, T.A. 3019",
+        "description": "Frodo and Sam reached Mount Doom. Though Frodo claimed the Ring at the last moment, it was cast into the fires by Gollum, who fell while biting it from Frodo's finger.",
+        "outcome": "Sauron was defeated; the Ring was destroyed; the Fourth Age began"
+      },
+      {
+        "id": "downfall_of_numenor",
+        "name": "Downfall of Númenor (Akallabêth)",
+        "era": "Second Age, S.A. 3319",
+        "description": "Ar-Pharazôn sailed against Valinor, and Eru Ilúvatar sank Númenor into the sea. The world was remade, and the Undying Lands were removed from the circles of the world.",
+        "outcome": "Númenor was destroyed; the world was remade; the Undying Lands were hidden"
+      },
+      {
+        "id": "war_of_wrath",
+        "name": "War of Wrath",
+        "era": "First Age, F.A. 545–587",
+        "description": "Eärendil brought the Host of the Valar to Middle-earth. Morgoth was defeated, his forces destroyed, and he was cast into the Void beyond the world.",
+        "outcome": "Morgoth was defeated; the Silmarils were lost (one to sea, one to earth, one to sky); the First Age ended"
+      }
+    ],
+    "constellations": [
+      {
+        "id": "valacirca",
+        "name": "Valacirca (Durin's Crown)",
+        "real_world_equivalent": "Ursa Major / Big Dipper",
+        "description": "The Lord's Chair — the most prominent constellation in the Arda galaxy, formed by seven stars arranged in a crown shape. It serves as the central navigation point and galactic hub. The Elven name means 'Chair of the Valar.'",
+        "galaxy_role": "Central hub system; the seven stars form a trade nexus connecting all sectors",
+        "stars": 7,
+        "notable_features": [
+          "The central star is the brightest in the galaxy",
+          "Used as the primary navigation reference by all factions",
+          "The crown shape is a symbol of elven authority",
+          "Dwarves call it the Seven Stars of Durin"
+        ]
+      },
+      {
+        "id": "menelmacar",
+        "name": "Menelmacar (The Crowned Stars)",
+        "real_world_equivalent": "Corona Borealis",
+        "description": "The Crowned Stars — a circular constellation representing the crown of Gil-galad, last High King of the Noldor. A symbol of elven kingship and the fading age of the Elves.",
+        "galaxy_role": "Elven diplomatic zone; neutral territory governed by elven law",
+        "notable_features": [
+          "Associated with the memory of Gil-galad",
+          "A neutral zone where elven law prevails",
+          "Contains ancient elven waystations"
+        ]
+      },
+      {
+        "id": "remmirath",
+        "name": "Remmirath (The Great Snake)",
+        "real_world_equivalent": "Hydra",
+        "description": "The Great Snake — a long, winding constellation that stretches across the galaxy. Named after Ungoliant, the great spider who devoured the light of the Two Trees. A dangerous region to navigate.",
+        "galaxy_role": "Dangerous trade route; pirates and corsairs hide among its stars",
+        "notable_features": [
+          "Named after Ungoliant, enemy of the Valar",
+          "Long and winding — easy to get lost in",
+          "Home to the Corsairs of Umbar and other pirates"
+        ]
+      },
+      {
+        "id": "thelassiel",
+        "name": "Thelassiel (The Harp)",
+        "real_world_equivalent": "Lyra",
+        "description": "The Harp — a beautiful constellation shaped like a harp, associated with the music of the Ainur and the songs of the Elves. A peaceful region of the galaxy.",
+        "galaxy_role": "Cultural and artistic center; elven music and song are preserved here",
+        "notable_features": [
+          "Associated with the Music of the Ainur",
+          "A center of elven art and culture",
+          "The stars are said to sing when viewed from Valinor"
+        ]
+      },
+      {
+        "id": "mornifel",
+        "name": "Mornifel (The Naught-star)",
+        "real_world_equivalent": "Polaris / North Star",
+        "description": "The Naught-star — the star of doom and evil, associated with Morgoth's corruption. Also called the 'Star of Doom.' It marks the northern pole of the galaxy and is a symbol of despair.",
+        "galaxy_role": "The northern pole; a dark and dangerous region influenced by Morgoth's legacy",
+        "notable_features": [
+          "Associated with Morgoth's evil",
+          "Marks the northern pole of the galaxy",
+          "A symbol of despair and doom",
+          "The region around it is cold and hostile"
+        ]
+      },
+      {
+        "id": "aldarion",
+        "name": "Aldarion's Stars (The Ship)",
+        "real_world_equivalent": "Carina / Keel",
+        "description": "Named after King Aldarion the Shipwright of Númenor, this constellation represents a great ship. It marks the Straight Road, the path that leads from the material world to Valinor.",
+        "galaxy_role": "The Straight Road — a hidden hyperspace lane leading to Valinor",
+        "notable_features": [
+          "Named after King Aldarion of Númenor",
+          "Marks the Straight Road to Valinor",
+          "Only those with elven blood can navigate it safely",
+          "The Grey Havens ships use this route"
+        ]
+      },
+      {
+        "id": "silmaril_star",
+        "name": "The Silmaril Star (Eärendil's Star)",
+        "real_world_equivalent": "Venus / Morning Star",
+        "description": "The brightest star in the sky, bearing one of the three Silmarils. Eärendil the Mariner sails the heavens in his ship Vingilot, bearing the Silmaril as a beacon of hope. Visible across the entire galaxy.",
+        "galaxy_role": "Galactic beacon of hope; visible from every system",
+        "notable_features": [
+          "Contains one of the three Silmarils",
+          "Eärendil sails eternally, a sign of hope",
+          "Visible from every point in the galaxy",
+          "Its light can repel darkness and evil"
+        ]
+      }
+    ],
+    "valar_planets": [
+      {
+        "id": "manwe",
+        "name": "Manwë's Realm",
+        "vala": "Manwë Súlimo, King of the Arda",
+        "domain": "Air and wind",
+        "description": "The highest planet in the galaxy, where Manwë sits upon his throne and hears the prayers of all free beings. A world of endless skies and storms.",
+        "galaxy_role": "The highest authority; a world of judgment and prayer",
+        "notable_features": [
+          "Taniquetil — the highest peak, visible from all worlds",
+          "Manwë's throne — from which he hears all prayers",
+          "Endless skies and storms",
+          "The winds of change blow from here"
+        ]
+      },
+      {
+        "id": "varda",
+        "name": "Varda's Realm",
+        "vala": "Varda Elentári, Queen of the Stars",
+        "domain": "Stars and light",
+        "description": "The realm of the Star-maiden, who kindled the stars. A world of brilliant light and navigation, where the constellations are most clearly visible.",
+        "galaxy_role": "Navigation and astronomy center; the source of starlight",
+        "notable_features": [
+          "Varda kindled the stars at the request of the Elves",
+          "The brightest point in the galaxy",
+          "Elves pray to Varda for guidance",
+          "The source of all starlight in the galaxy"
+        ]
+      },
+      {
+        "id": "ulmo",
+        "name": "Ulmo's Realm",
+        "vala": "Ulmo, Lord of Waters",
+        "domain": "Waters, rivers, and seas",
+        "description": "The realm of Ulmo, who has no fixed dwelling but roams the waters of Arda. A world of oceans, rivers, and underground streams. He is closest to the children of Ilúvatar.",
+        "galaxy_role": "Ocean world; controls all water in the galaxy",
+        "notable_features": [
+          "Ulmo has no fixed throne — he roams the waters",
+          "Closest of the Valar to the children of Ilúvatar",
+          "Controls all water, rivers, and seas in the galaxy",
+          "Warned the Elves of Morgoth's schemes"
+        ]
+      },
+      {
+        "id": "aule",
+        "name": "Aulë's Realm",
+        "vala": "Aulë the Smith",
+        "domain": "Craftsmanship, mining, and the earth",
+        "description": "The realm of Aulë, creator of the Dwarves. A world of mountains, forges, and precious metals. The greatest craftsman among the Valar.",
+        "galaxy_role": "Mining and manufacturing world; source of rare metals",
+        "notable_features": [
+          "Aulë created the Dwarves (though Ilúvatar gave them life)",
+          "World of mountains, forges, and treasures",
+          "Source of mithril and other rare metals",
+          "Sauron was once Aulë's Maia"
+        ]
+      },
+      {
+        "id": "yavanna",
+        "name": "Yavanna's Realm",
+        "vala": "Yavanna Kementári, Giver of Fruits",
+        "domain": "Plants, growth, and life",
+        "description": "The realm of Yavanna, who created the Two Trees and all growing things. A world of endless forests, gardens, and fertility. Mother of Arda.",
+        "galaxy_role": "Agricultural and biological world; source of life",
+        "notable_features": [
+          "Yavanna created the Two Trees of Valinor",
+          "World of endless forests and gardens",
+          "Created the Ents to protect the trees",
+          "Mother of Arda; giver of all growing things"
+        ]
+      },
+      {
+        "id": "mandos",
+        "name": "Mandos' Realm",
+        "vala": "Námo (Mandos), the Doombringer",
+        "domain": "Doom, fate, and death",
+        "description": "The Halls of Mandos, where the spirits of the dead wait before reincarnation. A solemn and mysterious world where the fates of all beings are recorded.",
+        "galaxy_role": "The afterworld; spirits wait here before passing on",
+        "notable_features": [
+          "The Halls of Mandos — where spirits of the dead wait",
+          "The fates of all beings are recorded here",
+          "Mandos prophesied the doom of the Noldor",
+          "No one leaves the Halls unless Mandos wills it"
+        ]
+      },
+      {
+        "id": "tirion",
+        "name": "Tilion's Realm",
+        "vala": "Tilion, the Moon-treader",
+        "domain": "The Moon and night",
+        "description": "The realm of Tilion, who tends the Moon (Isil). A world of darkness and silver light, where the night is beautiful and mysterious.",
+        "galaxy_role": "Night-side of the galaxy; moonlight and shadows",
+        "notable_features": [
+          "Tilion tends the Moon, made from the last fruit of Telperion",
+          "World of darkness and silver light",
+          "Associated with night and mystery",
+          "Love of Yavanna — a secret romance among the Valar"
+        ]
+      },
+      {
+        "id": "aina",
+        "name": "Ainú's Realm",
+        "vala": "Nienna, Lady of Sorrows",
+        "domain": "Wisdom through suffering and compassion",
+        "description": "The realm of Nienna, who teaches wisdom through suffering. A world of healing, compassion, and understanding. Her tears formed the rivers of Valinor.",
+        "galaxy_role": "Healing and wisdom world; a place of refuge",
+        "notable_features": [
+          "Nienna teaches wisdom through suffering",
+          "Her tears formed the rivers of Valinor",
+          "A world of healing and compassion",
+          "Mandos and Irmo are her siblings"
+        ]
+      },
+      {
+        "id": "irmo",
+        "name": "Irmo's Realm",
+        "vala": "Irmo (Lórien), Lord of Dreams",
+        "domain": "Dreams, visions, and sleep",
+        "description": "The realm of Irmo, Lord of Dreams. A world of visions, prophecies, and the healing power of sleep. The Gardens of Irmo are a place of rest and renewal.",
+        "galaxy_role": "Dream and vision world; source of prophecies",
+        "notable_features": [
+          "Irmo is the Lord of Dreams and Visions",
+          "The Gardens of Irmo — a place of rest and renewal",
+          "Prophecies and visions originate here",
+          "Dreams can reveal truth or deceive"
+        ]
+      },
+      {
+        "id": "melian",
+        "name": "Melian's Realm",
+        "vala": "Melian the Maia, Queen of Doriath",
+        "domain": "Enchantments and protection",
+        "description": "The realm of Melian, a Maia who became queen of Doriath and mother of Lúthien. Her Girdle (Maeglin's Girdle) was an enchantment that protected Doriath from all who sought to enter by force.",
+        "galaxy_role": "Protected sanctuary; a hidden zone shielded by elven enchantments",
+        "notable_features": [
+          "Melian's Girdle — an impenetrable enchantment",
+          "Mother of Lúthien Tinúviel",
+          "Wife of Thingol, King of Doriath",
+          "Her protection made Doriath inviolate"
+        ]
+      }
+    ],
+    "artifacts": [
+      {
+        "name": "The One Ring",
+        "type": "Ultimate control device",
+        "description": "A device that can command all other Rings; grants immense power but corrupts the user. Forged by Sauron in the fires of Orodruin.",
+        "location": "Destroyed in Mount Doom"
+      },
+      {
+        "name": "The Palantíri",
+        "type": "Galactic communication network",
+        "description": "Seven seeing-stones that allow instant communication across light-years. Controlled by Gondor, but some fell into enemy hands.",
+        "count": 7,
+        "locations": [
+          {"name": "Orthanc", "status": "Captured by Saruman"},
+          {"name": "Minas Tirith", "status": "Held by Denethor"},
+          {"name": "Minas Morgul", "status": "Captured by Sauron"},
+          {"name": "Osgiliath", "status": "Lost in the Anduin"},
+          {"name": "Annúminas", "status": "Found by Aragorn"},
+          {"name": "Earnwinyard", "status": "Lost"},
+          {"name": "Cirith Ungol", "status": "Held by Sauron"}
+        ]
+      },
+      {
+        "name": "The Silmarils",
+        "type": "Sacred jewels",
+        "description": "Three jewels containing the light of the Two Trees — the most precious artifacts in the galaxy. One is in the sky (with Eärendil), one is in the sea, and one is in the earth.",
+        "count": 3,
+        "locations": [
+          {"name": "Sky", "bearer": "Eärendil", "status": "Visible as the Morning Star"},
+          {"name": "Sea", "bearer": "Fëanor", "status": "Lost in the depths"},
+          {"name": "Earth", "bearer": "Maedhros", "status": "Hidden in the earth"}
+        ]
+      },
+      {
+        "name": "Andúril",
+        "type": "Sword of the Kings",
+        "description": "The reforged sword of Elendil, Narsil. Borne by Aragorn as symbol of his kingship. Flame of the West.",
+        "bearer": "Aragorn II",
+        "status": "Active"
+      },
+      {
+        "name": "Sting",
+        "type": "Elven dagger",
+        "description": "A dagger forged in Gondolin that glows blue when Orcs are near. Borne by Bilbo and Frodo.",
+        "bearer": "Frodo Baggins",
+        "status": "Active"
+      },
+      {
+        "name": "Glamdring",
+        "type": "Elven sword",
+        "description": "The Foe-hammer, sword of Elrond, later borne by Gandalf. Forged in Gondolin.",
+        "bearer": "Gandalf",
+        "status": "Active"
+      },
+      {
+        "name": "The Mithril Coat",
+        "type": "Armor",
+        "description": "A mail shirt of mithril, lighter than silk but stronger than tempered steel. Given to Frodo by Bilbo.",
+        "bearer": "Frodo Baggins",
+        "status": "Active"
+      }
+    ]
+  }
+}

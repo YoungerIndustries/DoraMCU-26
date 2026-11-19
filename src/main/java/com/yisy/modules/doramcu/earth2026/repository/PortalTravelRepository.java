@@ -1,7 +1,6 @@
 package com.yisy.modules.doramcu.earth2026.repository;
 
 import com.yisy.modules.doramcu.earth2026.model.PortalTravel;
-import com.yisy.modules.doramcu.earth2026.model.PortalTravel.TravelStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

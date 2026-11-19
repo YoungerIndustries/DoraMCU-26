@@ -1,7 +1,7 @@
 package com.yisy.modules.doramcu.dto;
 
-import com.yisy.modules.doramcu.model.CharacterRole;
-import com.yisy.modules.doramcu.model.CharacterType;
+import com.yisy.modules.doramcu.model.misc.CharacterRole;
+import com.yisy.modules.doramcu.model.misc.CharacterType;
 
 import java.time.LocalDateTime;
 

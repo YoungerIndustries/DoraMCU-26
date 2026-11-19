@@ -1,7 +1,6 @@
 package com.yisy.modules.doramcu.dto.galaxy;
 import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.model.players.Player;
-import com.yisy.modules.doramcu.model.galaxy.Sector;
 import com.yisy.modules.doramcu.model.galaxy.SubSector;
 
 

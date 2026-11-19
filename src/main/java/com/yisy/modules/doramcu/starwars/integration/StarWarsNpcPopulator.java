@@ -3,7 +3,7 @@ package com.yisy.modules.doramcu.starwars.integration;
 import com.yisy.modules.doramcu.gamecore.AiNpcPopulator;
 import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.hex.Galaxy;
-import com.yisy.modules.doramcu.service.LoreGroupEmpireService;
+import com.yisy.modules.doramcu.service.game.LoreGroupEmpireService;
 import com.yisy.modules.doramcu.starwars.model.Faction;
 import com.yisy.modules.doramcu.starwars.model.FactionLeader;
 import com.yisy.modules.doramcu.starwars.model.Unit;

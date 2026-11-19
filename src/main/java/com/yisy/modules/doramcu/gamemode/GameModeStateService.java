@@ -1,8 +1,8 @@
 package com.yisy.modules.doramcu.gamemode;
 import org.springframework.stereotype.Service;
 
-import com.yisy.modules.doramcu.model.GameModeState;
-import com.yisy.modules.doramcu.repository.GameModeStateRepository;
+import com.yisy.modules.doramcu.model.session.GameModeState;
+import com.yisy.modules.doramcu.repository.session.GameModeStateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;

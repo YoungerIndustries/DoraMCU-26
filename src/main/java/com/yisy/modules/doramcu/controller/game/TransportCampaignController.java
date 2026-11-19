@@ -1,14 +1,8 @@
 package com.yisy.modules.doramcu.controller.game;
 import com.yisy.modules.doramcu.hex.Hex;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.model.misc.Planet;
-import com.yisy.modules.doramcu.model.players.Player;
-
-
 import com.yisy.modules.doramcu.ai.GalaxyOverlordAI;
 import com.yisy.modules.doramcu.hex.Hex3D;
-import com.yisy.modules.doramcu.hex.planet.*;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

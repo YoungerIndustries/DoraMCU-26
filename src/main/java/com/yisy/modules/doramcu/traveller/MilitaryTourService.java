@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.traveller;
 
-import com.yisy.modules.doramcu.hex.*;
 import com.yisy.modules.doramcu.hex.manager.CharacterLogManager;
 
 import org.springframework.beans.factory.annotation.Autowired;

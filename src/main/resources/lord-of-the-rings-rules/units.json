@@ -1,0 +1,1063 @@
+{
+  "units": {
+    "ground_units": [
+      {
+        "id": "gondor_soldier",
+        "name": "Gondor Soldier",
+        "faction": "free_peoples_alliance",
+        "type": "infantry",
+        "era": "Third Age",
+        "description": "A disciplined soldier of Gondor, descendant of the Númenóreans. Forms the backbone of Gondor's defenses at Minas Tirith and Osgiliath.",
+        "stats": {
+          "attack": 3,
+          "defense": 3,
+          "hull": 4,
+          "shields": 1,
+          "speed": 5,
+          "wounds": 4
+        },
+        "weapons": ["Númenórean Sword", "Gondor Spear", "Short Bow"],
+        "abilities": ["Disciplined", "Númenórean Bloodline", "White Tree Banner"],
+        "variants": [
+          {"name": "White Tower Guard", "specialty": "Elite guards of Minas Tirith"},
+          {"name": "Harriers", "specialty": "Light cavalry of Gondor"},
+          {"name": "Rangers of Ithilien", "specialty": "Guerrilla warfare and scouting"}
+        ]
+      },
+      {
+        "id": "ranger_of_the_north",
+        "name": "Ranger of the North",
+        "faction": "free_peoples_alliance",
+        "type": "scout",
+        "era": "Third Age",
+        "description": "Dúnedain rangers who patrol the northern lands, protecting the Shire and the remnants of Arnor. Masters of stealth and tracking.",
+        "stats": {
+          "attack": 3,
+          "defense": 2,
+          "hull": 3,
+          "shields": 0,
+          "speed": 7,
+          "wounds": 3
+        },
+        "weapons": ["Long Bow", "Dúnedain Blade", "Daggers"],
+        "abilities": ["Stealth", "Tracking", "Healing Herbs", "Mark of the Kings"],
+        "variants": [
+          {"name": "Aragorn (Strider)", "specialty": "Heir of Isildur; master ranger and healer"},
+          {"name": "Halbarad", "specialty": "Chieftain of the Rangers; fell at the Argonath"}
+        ]
+      },
+      {
+        "id": "rohan_rider",
+        "name": "Rider of Rohan",
+        "faction": "free_peoples_alliance",
+        "type": "cavalry",
+        "era": "Third Age",
+        "description": "A mounted warrior of Rohan, master of the fast transit ships and shock cavalry tactics. Charges into battle with horn and song.",
+        "stats": {
+          "attack": 4,
+          "defense": 2,
+          "hull": 3,
+          "shields": 1,
+          "speed": 9,
+          "wounds": 3
+        },
+        "weapons": ["Rohan Lance", "Rohan Sword", "War Horn"],
+        "abilities": ["Shock Charge", "Éothéod Tactics", "Horn Call", "Fast Transit"],
+        "variants": [
+          {"name": "Éomer's Éored", "specialty": "Elite cavalry detachment"},
+          {"name": "Shield-maidens", "specialty": "Female warriors, including Éowyn"},
+          {"name": "Hornburg Garrison", "specialty": "Defensive specialists"}
+        ]
+      },
+      {
+        "id": "elven_archer",
+        "name": "Elven Archer",
+        "faction": "free_peoples_alliance",
+        "type": "ranged",
+        "era": "Third Age",
+        "description": "An elven warrior with unmatched archery skills. Their arrows never miss and can pierce most armor. Serve in the hosts of Rivendell and Lothlórien.",
+        "stats": {
+          "attack": 5,
+          "defense": 3,
+          "hull": 3,
+          "shields": 2,
+          "speed": 7,
+          "wounds": 3
+        },
+        "weapons": ["Elven Longbow", "Elven Arrows (infallible)", "Elven Blade"],
+        "abilities": ["Infallible Aim", "Elven Grace", "Keen Senses", "Starlight Camouflage"],
+        "variants": [
+          {"name": "Lórien Archers", "specialty": "Golden-helmeted archers of Galadhrim"},
+          {"name": "Rivendell Guards", "specialty": "Elite defenders of Imladris"},
+          {"name": "Legolas Greenleaf", "specialty": "Prince of Mirkwood; unmatched archer"}
+        ]
+      },
+      {
+        "id": "dwarven_warrior",
+        "name": "Dwarven Warrior",
+        "faction": "free_peoples_alliance",
+        "type": "heavy_infantry",
+        "era": "Third Age",
+        "description": "A stout and resilient warrior of the Dwarves. Masters of close combat, axe-wielding, and defensive formations. Excel in underground and asteroid warfare.",
+        "stats": {
+          "attack": 4,
+          "defense": 5,
+          "hull": 6,
+          "shields": 2,
+          "speed": 3,
+          "wounds": 6
+        },
+        "weapons": ["Dwarven Axe", "Dwarven Hammer", "Dwarven Shield"],
+        "abilities": ["Stubborn Defense", "Underground Warfare", "Runesmith Blessing", "Mithril Armor"],
+        "variants": [
+          {"name": "Gimli son of Glóin", "specialty": "Lord of the Glittering Caves; Fellowship member"},
+          {"name": "Battle-dwarves", "specialty": "Elite shock troops"},
+          {"name": "Guardians of the Gates", "specialty": "Defenders of Moria's entrances"}
+        ]
+      },
+      {
+        "id": "orc_warrior",
+        "name": "Orc Warrior",
+        "faction": "mordor",
+        "type": "infantry",
+        "era": "Third Age",
+        "description": "A mass-produced soldier of Mordor. Cruel, disciplined, and numerous. Forms the backbone of Sauron's armies.",
+        "stats": {
+          "attack": 3,
+          "defense": 2,
+          "hull": 3,
+          "shields": 0,
+          "speed": 5,
+          "wounds": 3
+        },
+        "weapons": ["Orc Scimitar", "Orc Spear", "Javelins"],
+        "abilities": ["Mass Produced", "Hatred of Light", "Brute Force"],
+        "variants": [
+          {"name": "Orc Archers", "specialty": "Ranged orc warriors"},
+          {"name": "Orc Berserkers", "specialty": "Frenzied close-combat orcs"},
+          {"name": "Orc Engineers", "specialty": "Siege weapon operators"}
+        ]
+      },
+      {
+        "id": "uruk_hai",
+        "name": "Uruk-hai",
+        "faction": "isengard",
+        "type": "heavy_infantry",
+        "era": "Third Age",
+        "description": "Saruman's improved orc-line — larger, stronger, and capable of enduring sunlight. The elite infantry of Isengard.",
+        "stats": {
+          "attack": 4,
+          "defense": 3,
+          "hull": 5,
+          "shields": 1,
+          "speed": 5,
+          "wounds": 5
+        },
+        "weapons": ["Uruk-hai Scimitar", "Uruk-hai Shield", "Crossbows"],
+        "abilities": ["Sun-tolerant", "Larger than Orcs", "Disciplined", "Isengard Training"],
+        "variants": [
+          {"name": "Uglúk", "specialty": "Uruk-hai captain; led the force that captured Merry and Pippin"},
+          {"name": "Háma", "specialty": "Elite Uruk-hai guard"}
+        ]
+      },
+      {
+        "id": "ent",
+        "name": "Ent",
+        "faction": "ents",
+        "type": "siege",
+        "era": "First Age – Third Age",
+        "description": "An ancient tree-shepherd, immensely powerful and slow. Can uproot trees, destroy fortifications, and march through any terrain. Nearly indestructible.",
+        "stats": {
+          "attack": 8,
+          "defense": 8,
+          "hull": 10,
+          "shields": 3,
+          "speed": 1,
+          "wounds": 10
+        },
+        "weapons": ["Ent-claws", "Uprooted Trees", "Ent-drums"],
+        "abilities": ["Immense Strength", "Nearly Indestructible", "Ent-drum (coordination)", "Nature's Wrath"],
+        "variants": [
+          {"name": "Treebeard", "specialty": "Oldest Ent; leader of the Entmoot"},
+          {"name": "Huorns", "specialty": "Mindless tree-creatures; swarm enemies"}
+        ]
+      },
+      {
+        "id": "troll",
+        "name": "Troll",
+        "faction": "mordor",
+        "type": "siege",
+        "era": "Third Age",
+        "description": "A giant creature of stone and malice. Used as a siege weapon and shock troop. Turns to stone in sunlight (unless enhanced).",
+        "stats": {
+          "attack": 6,
+          "defense": 5,
+          "hull": 8,
+          "shields": 1,
+          "speed": 3,
+          "wounds": 8
+        },
+        "weapons": ["Troll Club", "Boulders", "Claws"],
+        "abilities": ["Siege Breaker", "Immense Strength", "Stone Skin"],
+        "variants": [
+          {"name": "Hill Troll", "specialty": "Standard troll; turns to stone in sunlight"},
+          {"name": "Stone Troll", "specialty": "Larger and more durable"},
+          {"name": "Drake", "specialty": "Fire-breathing dragon-troll hybrid"}
+        ]
+      },
+      {
+        "id": "haradrim_warrior",
+        "name": "Haradrim Warrior",
+        "faction": "harad",
+        "type": "infantry",
+        "era": "Third Age",
+        "description": "A warrior from the southern lands of Harad. Fierce and exotic, often fighting alongside Mûmakil.",
+        "stats": {
+          "attack": 3,
+          "defense": 2,
+          "hull": 3,
+          "shields": 1,
+          "speed": 5,
+          "wounds": 3
+        },
+        "weapons": ["Haradrim Scimitar", "Haradrim Spear", "Poisoned Darts"],
+        "abilities": ["Exotic Warfare", "Heat Resistance", "Mûmakil Coordination"],
+        "variants": [
+          {"name": "Mûman", "specialty": "Elephant rider; fights from atop a Mûmakil"},
+          {"name": "White Hand Cultist", "specialty": "Devoted servant of Sauron"}
+        ]
+      },
+      {
+        "id": "mumakil",
+        "name": "Mûmakil",
+        "faction": "harad",
+        "type": "siege",
+        "era": "Third Age",
+        "description": "A massive war elephant from the South. Can crush fortifications and trample armies. Carries a howdah with Mûman riders.",
+        "stats": {
+          "attack": 7,
+          "defense": 6,
+          "hull": 10,
+          "shields": 2,
+          "speed": 3,
+          "wounds": 10
+        },
+        "weapons": ["Trampling", "Trunk", "Howdah Archers"],
+        "abilities": ["Siege Breaker", "Immense Size", "Trampling Charge", "Howdah Platform"],
+        "variants": [
+          {"name": "War Mûmakil", "specialty": "Armored and battle-trained"},
+          {"name": "Beast Mûmakil", "specialty": "Wild and unpredictable"}
+        ]
+      },
+      {
+        "id": "corsair_warrior",
+        "name": "Corsair of Umbar",
+        "faction": "harad",
+        "type": "infantry",
+        "era": "Third Age",
+        "description": "A pirate warrior from the southern ports of Umbar. Skilled in naval combat and boarding actions, they threaten Gondor's coasts and trade routes.",
+        "stats": {
+          "attack": 3,
+          "defense": 2,
+          "hull": 3,
+          "shields": 1,
+          "speed": 6,
+          "wounds": 3
+        },
+        "weapons": ["Corsair Cutlass", "Corsair Pistol", "Boarding Axe"],
+        "abilities": ["Naval Combat", "Boarding Action", "Coastal Raiding"],
+        "variants": [
+          {"name": "Captain of the Corsairs", "specialty": "Leader of the Umbar pirate fleet"}
+        ]
+      },
+      {
+        "id": "easterling_warrior",
+        "name": "Easterling Warrior",
+        "faction": "rhun",
+        "type": "infantry",
+        "era": "Third Age",
+        "description": "A warrior from the eastern steppes of Rhûn. Nomadic and fierce, they fight alongside Mordor's forces or independently.",
+        "stats": {
+          "attack": 3,
+          "defense": 2,
+          "hull": 3,
+          "shields": 0,
+          "speed": 6,
+          "wounds": 3
+        },
+        "weapons": ["Easterling Scimitar", "Easterling Bow", "Javelins"],
+        "abilities": ["Nomadic Warfare", "Steppe Cavalry", "Eastern Tactics"],
+        "variants": [
+          {"name": "Útúlië Rider", "specialty": "Allies with Gondor; fights against Sauron"}
+        ]
+      },
+      {
+        "id": "shelob",
+        "name": "Shelob",
+        "faction": "mordor",
+        "type": "monster",
+        "era": "Third Age",
+        "description": "A great spider, descendant of Ungoliant. Dwells in the passes of Cirith Ungol, ambushing travelers with venom and webs.",
+        "stats": {
+          "attack": 7,
+          "defense": 4,
+          "hull": 6,
+          "shields": 1,
+          "speed": 6,
+          "wounds": 6
+        },
+        "weapons": ["Venomous Bite", "Spider Webs", "Silk Bindings"],
+        "abilities": ["Ambush", "Venom", "Web Trap", "Darkness Affinity"],
+        "variants": []
+      }
+    ],
+    "starships": [
+      {
+        "id": "vingilot",
+        "name": "Vingilot (Ship of Eärendil)",
+        "faction": "free_peoples_alliance",
+        "type": "beacon",
+        "era": "First Age – Third Age",
+        "description": "The star-ship of Eärendil, bearing a Silmaril. Placed in the sky as a sign of hope, it serves as a galactic navigation beacon visible across light-years.",
+        "stats": {
+          "attack": 5,
+          "defense": 8,
+          "hull": 10,
+          "shields": 5,
+          "speed": 10,
+          "wounds": 10
+        },
+        "weapons": ["Silmaril Light", "Star-fire"],
+        "abilities": ["Galactic Beacon", "Silmaril Protection", "Hope's Light"],
+        "variants": []
+      },
+      {
+        "id": "minas_tirith_fortress",
+        "name": "Minas Tirith Fortress Station",
+        "faction": "free_peoples_alliance",
+        "type": "fortress",
+        "era": "Third Age",
+        "description": "The great fortress world of Gondor, a multi-tiered orbital station with the White Tower at its center. The capital of the Free Peoples' human forces.",
+        "stats": {
+          "attack": 4,
+          "defense": 9,
+          "hull": 15,
+          "shields": 5,
+          "speed": 0,
+          "wounds": 15
+        },
+        "weapons": ["Wall Batteries", "Palantír Surveillance", "Ram (gate defense)"],
+        "abilities": ["Seven Circles of Defense", "White Tree Banner", "Palantír Network"],
+        "variants": []
+      },
+      {
+        "id": "barad_dur",
+        "name": "Barad-dûr (Dark Tower)",
+        "faction": "mordor",
+        "type": "fortress",
+        "era": "Second Age – Third Age",
+        "description": "Sauron's dark fortress station, orbiting the lava world of Orodruin. The seat of the Dark Lord's power, it fell when the One Ring was destroyed.",
+        "stats": {
+          "attack": 6,
+          "defense": 10,
+          "hull": 15,
+          "shields": 5,
+          "speed": 0,
+          "wounds": 15
+        },
+        "weapons": ["Dark Energy Beams", "The Eye (surveillance)", "Siege Weapons"],
+        "abilities": ["Dark Lord's Seat", "One Ring Amplification", "Fear Aura"],
+        "variants": []
+      },
+      {
+        "id": "helms_deep",
+        "name": "Helm's Deep (Hornburg)",
+        "faction": "free_peoples_alliance",
+        "type": "fortress",
+        "era": "Third Age",
+        "description": "An impregnable fortress station in the mountains of Rohan. Withstood a massive assault by Saruman's forces, saved by an avalanche and the return of Éomer's riders.",
+        "stats": {
+          "attack": 3,
+          "defense": 9,
+          "hull": 12,
+          "shields": 3,
+          "speed": 0,
+          "wounds": 12
+        },
+        "weapons": ["Wall Batteries", "Archers' Notch", "Deeping Wall Guns"],
+        "abilities": ["Impregnable Defenses", "Avalanche Trap", "Refuge of Rohan"],
+        "variants": []
+      },
+      {
+        "id": "orthanc",
+        "name": "Orthanc Tower",
+        "faction": "isengard",
+        "type": "fortress",
+        "era": "Second Age – Third Age",
+        "description": "An indestructible tower of Adûnaic stone, one of the seven Palantíri. Saruman's seat of power within Isengard's factory complex.",
+        "stats": {
+          "attack": 3,
+          "defense": 10,
+          "hull": 20,
+          "shields": 5,
+          "speed": 0,
+          "wounds": 20
+        },
+        "weapons": ["Palantír Surveillance", "Factory Defenses"],
+        "abilities": ["Indestructible", "Palantír of Orthanc", "Saruman's Workshop"],
+        "variants": []
+      },
+      {
+        "id": "rohan_cavalry_ship",
+        "name": "Rohan Cavalry Ship",
+        "faction": "free_peoples_alliance",
+        "type": "fast_attacker",
+        "era": "Third Age",
+        "description": "A fast transit ship used by the Riders of Rohan for rapid deployment and shock attacks. Equipped for cavalry-style boarding actions.",
+        "stats": {
+          "attack": 5,
+          "defense": 2,
+          "hull": 4,
+          "shields": 1,
+          "speed": 10,
+          "wounds": 4
+        },
+        "weapons": ["Boarding Torpedoes", "Ram", "War Horns"],
+        "abilities": ["Fast Transit", "Shock Boarding", "Éothéod Tactics"],
+        "variants": []
+      },
+      {
+        "id": "mordor_war_ship",
+        "name": "Mordor War Ship",
+        "faction": "mordor",
+        "type": "warship",
+        "era": "Third Age",
+        "description": "A heavily armed warship of Mordor's fleet. Mass-produced in the forges of Barad-dûr, designed for overwhelming firepower.",
+        "stats": {
+          "attack": 6,
+          "defense": 4,
+          "hull": 6,
+          "shields": 2,
+          "speed": 5,
+          "wounds": 6
+        },
+        "weapons": ["Flame Cannons", "Missile Batteries", "Boarding Claws"],
+        "abilities": ["Mass Produced", "Dark Forging", "Eye's Guidance"],
+        "variants": []
+      },
+      {
+        "id": "fell_beast",
+        "name": "Fell Beast",
+        "faction": "nazgul",
+        "type": "air superiority",
+        "era": "Third Age",
+        "description": "A massive flying creature, capable of space and atmospheric flight. Ridden by the Nazgûl, it inspires terror and dominates the skies.",
+        "stats": {
+          "attack": 5,
+          "defense": 3,
+          "hull": 5,
+          "shields": 1,
+          "speed": 9,
+          "wounds": 5
+        },
+        "weapons": ["Claws", "Beak", "Terror Aura"],
+        "abilities": ["Space Flight", "Atmospheric Flight", "Nazgûl Rider", "Terror"],
+        "variants": [
+          {"name": "Witch-king's Fell Beast", "specialty": "The largest and most powerful; fell at the Pelennor Fields"}
+        ]
+      },
+      {
+        "id": "elven_ship",
+        "name": "Elven Ship",
+        "faction": "free_peoples_alliance",
+        "type": "explorer",
+        "era": "Third Age",
+        "description": "A graceful elven vessel, built with unmatched craftsmanship. Used for exploration, diplomacy, and rapid response.",
+        "stats": {
+          "attack": 3,
+          "defense": 4,
+          "hull": 5,
+          "shields": 3,
+          "speed": 8,
+          "wounds": 5
+        },
+        "weapons": ["Starlight Beams", "Elven Arrows"],
+        "abilities": ["Elven Craftsmanship", "Star Navigation", "Invisibility Wards"],
+        "variants": [
+          {"name": "Grey Havens Ship", "specialty": "Can sail to Valinor through the Veil of the Stars"}
+        ]
+      },
+      {
+        "id": "corsair_ship",
+        "name": "Corsair Ship of Umbar",
+        "faction": "harad",
+        "type": "raider",
+        "era": "Third Age",
+        "description": "A fast pirate vessel from the southern ports of Umbar. Used for raiding Gondor's coasts and disrupting trade routes. Fast and agile but lightly armored.",
+        "stats": {
+          "attack": 4,
+          "defense": 2,
+          "hull": 4,
+          "shields": 1,
+          "speed": 9,
+          "wounds": 4
+        },
+        "weapons": ["Boarding Claws", "Cannon", "Harpoons"],
+        "abilities": ["Coastal Raiding", "Boarding Action", "Fast Escape"],
+        "variants": [
+          {"name": "Captain's Flagship", "specialty": "Larger and better armed; commanded by the Captain of the Corsairs"}
+        ]
+      },
+      {
+        "id": "gondor_ship",
+        "name": "Gondor War Ship",
+        "faction": "free_peoples_alliance",
+        "type": "warship",
+        "era": "Third Age",
+        "description": "A powerful warship of Gondor's fleet, descended from the great ships of Númenor. Used to protect Gondor's coasts and project power across the seas.",
+        "stats": {
+          "attack": 5,
+          "defense": 5,
+          "hull": 7,
+          "shields": 3,
+          "speed": 6,
+          "wounds": 7
+        },
+        "weapons": ["Númenórean Cannons", "Ram", "Ballistae"],
+        "abilities": ["Númenórean Design", "Coastal Defense", "White Tree Banner"],
+        "variants": [
+          {"name": "Aragorn's Flagship", "specialty": "The King's ship; leads the fleet against the Corsairs"}
+        ]
+      }
+    ],
+    "ground_vehicles": [
+      {
+        "id": "warg",
+        "name": "Warg",
+        "faction": "isengard",
+        "type": "mount",
+        "era": "Third Age",
+        "description": "A giant wolf-like creature, intelligent and cruel. Used as a mount by orc warriors, particularly the Uruk-hai of Isengard.",
+        "stats": {
+          "attack": 3,
+          "defense": 2,
+          "hull": 4,
+          "shields": 0,
+          "speed": 7,
+          "wounds": 4
+        },
+        "weapons": ["Bite", "Claws"],
+        "abilities": ["Intelligent Beast", "Orc Rider", "Pack Tactics"],
+        "variants": [
+          {"name": "War Warg", "specialty": "Larger and armored; used in the attack on Helm's Deep"}
+        ]
+      },
+      {
+        "id": "isengard_siege_engine",
+        "name": "Isengard Siege Engine",
+        "faction": "isengard",
+        "type": "siege",
+        "era": "Third Age",
+        "description": "A massive mechanical weapon produced in Isengard's factories. Used to breach fortifications and crush enemy lines.",
+        "stats": {
+          "attack": 7,
+          "defense": 3,
+          "hull": 6,
+          "shields": 1,
+          "speed": 2,
+          "wounds": 6
+        },
+        "weapons": ["Battering Ram", "Flame-thrower", "Crushing Wheels"],
+        "abilities": ["Siege Breaker", "Industrial Production", "Saruman's Design"],
+        "variants": []
+      },
+      {
+        "id": "rohan_horse",
+        "name": "Rohan War Horse",
+        "faction": "free_peoples_alliance",
+        "type": "mount",
+        "era": "Third Age",
+        "description": "A swift and loyal war horse of Rohan. The bond between rider and horse is legendary, with some horses (like Shadowfax) possessing near-magical speed.",
+        "stats": {
+          "attack": 1,
+          "defense": 1,
+          "hull": 3,
+          "shields": 0,
+          "speed": 10,
+          "wounds": 3
+        },
+        "weapons": ["Hooves"],
+        "abilities": ["Swift", "Loyal Bond", "Éothéod Breeding"],
+        "variants": [
+          {"name": "Shadowfax", "specialty": "Lord of all horses; swiftest of living creatures; Gandalf's steed"}
+        ]
+      }
+    ],
+    "characters": [
+      {
+        "id": "gandalf_the_white",
+        "name": "Gandalf the White",
+        "faction": "free_peoples_alliance",
+        "type": "commander",
+        "era": "Third Age",
+        "description": "The most powerful of the Istari, returned from the Dead as Gandalf the White after falling with the Balrog. Guide, strategist, and Maiar of immense power. Wields Narya, the Ring of Fire.",
+        "stats": {
+          "attack": 5,
+          "defense": 5,
+          "hull": 5,
+          "shields": 3,
+          "speed": 6,
+          "wounds": 5,
+          "maiar_power": 9
+        },
+        "weapons": ["Glamdring (Foe-hammer)", "Staff of Office", "Palantír"],
+        "abilities": ["Maiar Power", "Narya (Ring of Fire)", "Fireworks", "Healing", "Leadership"],
+        "variants": [
+          {"name": "Gandalf the Grey", "specialty": "Earlier form; less powerful but more approachable"}
+        ]
+      },
+      {
+        "id": "aragorn",
+        "name": "Aragorn II (Strider)",
+        "faction": "free_peoples_alliance",
+        "type": "commander",
+        "era": "Third Age",
+        "description": "Heir of Isildur, rightful King of Gondor and Arnor. Master ranger, healer, and warrior. Wields Andúril, the reforged sword of Elendil.",
+        "stats": {
+          "attack": 6,
+          "defense": 5,
+          "hull": 6,
+          "shields": 2,
+          "speed": 7,
+          "wounds": 6,
+          "leadership": 9
+        },
+        "weapons": ["Andúril (Flame of the West)", "Gondor Bow", "Healing Herbs"],
+        "abilities": ["Heir of Isildur", "King's Call", "Healing", "Ranger Stealth", "Palantír User"],
+        "variants": [
+          {"name": "Strider", "specialty": "Disguised ranger form; operates in the shadows"}
+        ]
+      },
+      {
+        "id": "legolas",
+        "name": "Legolas Greenleaf",
+        "faction": "free_peoples_alliance",
+        "type": "elite",
+        "era": "Third Age",
+        "description": "Prince of Mirkwood, son of Thranduil. An elven archer of unmatched skill, his arrows never miss. Member of the Fellowship of the Ring.",
+        "stats": {
+          "attack": 7,
+          "defense": 4,
+          "hull": 3,
+          "shields": 2,
+          "speed": 8,
+          "wounds": 3
+        },
+        "weapons": ["Elven Longbow", "Elven Daggers", "Elven Blade"],
+        "abilities": ["Infallible Aim", "Elven Senses", "Water Walking", "Battle Song"],
+        "variants": []
+      },
+      {
+        "id": "gimli",
+        "name": "Gimli son of Glóin",
+        "faction": "free_peoples_alliance",
+        "type": "elite",
+        "era": "Third Age",
+        "description": "A dwarven warrior of Durin's folk, member of the Fellowship. Fierce in battle, with an unexpected friendship with Legolas. Later Lord of the Glittering Caves.",
+        "stats": {
+          "attack": 5,
+          "defense": 6,
+          "hull": 7,
+          "shields": 3,
+          "speed": 3,
+          "wounds": 7
+        },
+        "weapons": ["Dwarven Axe", "Dwarven Dagger", "Dwarven Shield"],
+        "abilities": ["Dwarven Resilience", "Underground Navigation", "Axe Mastery", "Stubborn Defense"],
+        "variants": []
+      },
+      {
+        "id": "frodo_baggins",
+        "name": "Frodo Baggins",
+        "faction": "free_peoples_alliance",
+        "type": "ring_bearer",
+        "era": "Third Age",
+        "description": "The Ring-bearer, a hobbit of the Shire who volunteered to carry the One Ring to Mount Doom. His resilience and resistance to the Ring's corruption made him the only one who could succeed.",
+        "stats": {
+          "attack": 1,
+          "defense": 1,
+          "hull": 2,
+          "shields": 1,
+          "speed": 5,
+          "wounds": 2,
+          "ring_resistance": 8
+        },
+        "weapons": ["Sting (Elven dagger)", "Mithril Coat", "Phial of Galadriel"],
+        "abilities": ["Ring-bearer", "Small and Overlooked", "Mithril Protection", "Galadriel's Light"],
+        "variants": []
+      },
+      {
+        "id": "samwise_gamgee",
+        "name": "Samwise Gamgee",
+        "faction": "free_peoples_alliance",
+        "type": "support",
+        "era": "Third Age",
+        "description": "Frodo's loyal gardener and companion. The true hero of the War of the Ring, who carried Frodo and the Ring when Frodo could go no further. 'I will take the Ring, Mr. Frodo.'",
+        "stats": {
+          "attack": 2,
+          "defense": 2,
+          "hull": 3,
+          "shields": 1,
+          "speed": 5,
+          "wounds": 3,
+          "loyalty": 10
+        },
+        "weapons": ["Harrowstone (hunting spear)", "Weathertop Blade", "Mushroom Knowledge"],
+        "abilities": ["Unwavering Loyalty", "Gardener's Resilience", "Ring Resistance", "Hope's Light"],
+        "variants": []
+      },
+      {
+        "id": "boromir",
+        "name": "Boromir",
+        "faction": "free_peoples_alliance",
+        "type": "commander",
+        "era": "Third Age",
+        "description": "Son of Denethor, Captain of the White Tower. A proud and brave warrior of Gondor who fell to the temptation of the Ring but redeemed himself at the Battle of the Fellowship.",
+        "stats": {
+          "attack": 5,
+          "defense": 4,
+          "hull": 5,
+          "shields": 2,
+          "speed": 5,
+          "wounds": 5
+        },
+        "weapons": ["Gondor Sword", "Horn of Gondor", "Gondor Shield"],
+        "abilities": ["Captain of the White Tower", "Horn Blast", "Númenórean Strength", "Redemption"],
+        "variants": []
+      },
+      {
+        "id": "eowyn",
+        "name": "Éowyn",
+        "faction": "free_peoples_alliance",
+        "type": "elite",
+        "era": "Third Age",
+        "description": "Shield-maiden of Rohan, niece of Théoden. Disguised as a man, she rode to the Battle of the Pelennor Fields and killed the Witch-king of Angmar. 'I am no man!'",
+        "stats": {
+          "attack": 5,
+          "defense": 3,
+          "hull": 4,
+          "shields": 2,
+          "speed": 7,
+          "wounds": 4
+        },
+        "weapons": ["Rohan Sword", "Merry's Sting Dagger", "Rohan Shield"],
+        "abilities": ["Shield-maiden", "Not by the Hand of Man", "Courage", "Disguise"],
+        "variants": []
+      },
+      {
+        "id": "saruman",
+        "name": "Saruman the White",
+        "faction": "isengard",
+        "type": "commander",
+        "era": "Third Age",
+        "description": "Once the chief of the Istari, corrupted by the Palantír and the desire for the One Ring. Master of industry and technology, he built Isengard's war machine and bred the Uruk-hai.",
+        "stats": {
+          "attack": 5,
+          "defense": 4,
+          "hull": 4,
+          "shields": 3,
+          "speed": 4,
+          "wounds": 4,
+          "maiar_power": 7
+        },
+        "weapons": ["Staff of Office", "Palantír of Orthanc", "Voice of Authority"],
+        "abilities": ["Maiar Power", "Industrial Mastery", "Uruk-hai Creation", "Voice of Compulsion"],
+        "variants": []
+      },
+      {
+        "id": "witch_king",
+        "name": "Witch-king of Angmar",
+        "faction": "nazgul",
+        "type": "commander",
+        "era": "Third Age",
+        "description": "Captain of the Nazgûl, most powerful of the Nine Ringwraiths. Rides a Fell Beast and commands the forces of Mordor at the Battle of the Pelennor Fields. 'Not by the hand of man shall he fall.'",
+        "stats": {
+          "attack": 7,
+          "defense": 5,
+          "hull": 5,
+          "shields": 3,
+          "speed": 7,
+          "wounds": 5,
+          "terror": 10
+        },
+        "weapons": ["Morgul-blade", "Necromantic Power", "Fell Beast"],
+        "abilities": ["Invisibility", "Terror", "Necromancy", "Fell Beast Rider", "Prophecy Protection"],
+        "variants": []
+      },
+      {
+        "id": "sauron",
+        "name": "Sauron, Dark Lord",
+        "faction": "mordor",
+        "type": "overlord",
+        "era": "Second Age – Third Age",
+        "description": "The Dark Lord, Maia of Aulë who fell to evil. Forged the One Ring to dominate all others. His spirit is bound to the Ring — its destruction ends his power. The Eye sees all.",
+        "stats": {
+          "attack": 8,
+          "defense": 7,
+          "hull": 8,
+          "shields": 5,
+          "speed": 3,
+          "wounds": 8,
+          "maiar_power": 10
+        },
+        "weapons": ["The One Ring", "The Eye", "Necromantic Power"],
+        "abilities": ["One Ring Mastery", "All-seeing Eye", "Maiar Power", "Domination", "Palantír Network"],
+        "variants": [
+          {"name": "Sauron (Second Age)", "specialty": "Fair form; deceived the Elves as Annatar"},
+          {"name": "The Eye", "specialty": "Spirit form; cannot be directly fought"}
+        ]
+      },
+      {
+        "id": "galadriel",
+        "name": "Galadriel",
+        "faction": "free_peoples_alliance",
+        "type": "archmage",
+        "era": "First Age – Third Age",
+        "description": "Lady of Lothlórien, bearer of Nenya (Ring of Water). One of the greatest Elves of the First Age, she has seen two of the Ages end. Her Mirror can see past, present, and possible futures.",
+        "stats": {
+          "attack": 4,
+          "defense": 6,
+          "hull": 5,
+          "shields": 5,
+          "speed": 5,
+          "wounds": 5,
+          "wisdom": 10
+        },
+        "weapons": ["Nenya (Ring of Water)", "Phial of Galadriel", "Mirror of Galadriel"],
+        "abilities": ["Ring of Preservation", "Mirror of Visions", "Light of Eärendil", "Ancient Wisdom"],
+        "variants": []
+      },
+      {
+        "id": "elrond",
+        "name": "Elrond Half-elven",
+        "faction": "free_peoples_alliance",
+        "type": "archmage",
+        "era": "Second Age – Third Age",
+        "description": "Lord of Rivendell, bearer of Vilya (the most powerful of the Three Elven Rings). Half-elven, son of Eärendil. He chose the fate of the Elves and will eventually sail to Valinor.",
+        "stats": {
+          "attack": 4,
+          "defense": 5,
+          "hull": 5,
+          "shields": 4,
+          "speed": 5,
+          "wounds": 5,
+          "wisdom": 9
+        },
+        "weapons": ["Vilya (Ring of Air)", "Elven Blade", "Healing Arts"],
+        "abilities": ["Most Powerful Elven Ring", "Healing", "Ancient Knowledge", "Diplomacy"],
+        "variants": []
+      },
+      {
+        "id": "treebeard",
+        "name": "Treebeard",
+        "faction": "ents",
+        "type": "ancient",
+        "era": "First Age – Third Age",
+        "description": "The oldest Ent, shepherd of Fangorn Forest. Slow to speak and slower to act, but when roused to anger, he leads the Ents to destroy Isengard.",
+        "stats": {
+          "attack": 8,
+          "defense": 8,
+          "hull": 10,
+          "shields": 3,
+          "speed": 1,
+          "wounds": 10
+        },
+        "weapons": ["Ent-claws", "Uprooted Trees", "Ent-drums"],
+        "abilities": ["Oldest Living Being", "Ent Speech", "Nature's Wrath", "Ent-drum Coordination"],
+        "variants": []
+      },
+      {
+        "id": "gollum",
+        "name": "Gollum (Sméagol)",
+        "faction": "mordor",
+        "type": "creature",
+        "era": "Third Age",
+        "description": "Once a hobbit-like creature named Sméagol, corrupted by the One Ring for over 500 years. Split personality between Gollum (evil) and Sméagol (good). His obsession with the Ring ultimately leads to its destruction.",
+        "stats": {
+          "attack": 3,
+          "defense": 1,
+          "hull": 2,
+          "shields": 0,
+          "speed": 7,
+          "wounds": 2,
+          "ring_obsession": 10
+        },
+        "weapons": ["Claws", "Bite", "Stealth"],
+        "abilities": ["Ring Knowledge", "Underground Navigation", "Split Personality", "Ambush"],
+        "variants": [
+          {"name": "Sméagol", "specialty": "The good side; occasionally helps Frodo"},
+          {"name": "Gollum", "specialty": "The evil side; obsessed with the Precious"}
+        ]
+      },
+      {
+        "id": "balrog",
+        "name": "Balrog of Moria",
+        "faction": "mordor",
+        "type": "demon",
+        "era": "First Age – Third Age",
+        "description": "A fallen Maia of fire, a demon of the ancient world. Awakened in the depths of Moria, it pursued the Fellowship and fell with Gandalf into the abyss.",
+        "stats": {
+          "attack": 9,
+          "defense": 7,
+          "hull": 8,
+          "shields": 4,
+          "speed": 6,
+          "wounds": 8,
+          "maiar_power": 8
+        },
+        "weapons": ["Flame Whip", "Sword of Fire", "Shadow and Flame"],
+        "abilities": ["Fire and Shadow", "Maiar Power", "Flame Bridge", "Ancient Evil"],
+        "variants": []
+      },
+      {
+        "id": "thranduil",
+        "name": "Thranduil",
+        "faction": "free_peoples_alliance",
+        "type": "commander",
+        "era": "Third Age",
+        "description": "King of the Wood-elves of Mirkwood, son of Orodreth. Proud and isolated, he rules from a golden hall beneath the trees. Reluctant to aid the wider world but a formidable warrior.",
+        "stats": {
+          "attack": 5,
+          "defense": 4,
+          "hull": 4,
+          "shields": 3,
+          "speed": 7,
+          "wounds": 4
+        },
+        "weapons": ["Elven Blade", "Elven Bow", "Elven Daggers"],
+        "abilities": ["Elven King", "Mirkwood Tactics", "Isolationist", "Keen Senses"],
+        "variants": []
+      },
+      {
+        "id": "arwen",
+        "name": "Arwen Undómiel",
+        "faction": "free_peoples_alliance",
+        "type": "elite",
+        "era": "Third Age",
+        "description": "Daughter of Elrond, half-elven who chose the fate of Men. She gave up her place among the Immortal Lands to marry Aragorn. Her beauty and courage are legendary.",
+        "stats": {
+          "attack": 3,
+          "defense": 3,
+          "hull": 3,
+          "shields": 2,
+          "speed": 6,
+          "wounds": 3,
+          "wisdom": 8
+        },
+        "weapons": ["Elven Blade", "Healing Arts", "Phial of Galadriel"],
+        "abilities": ["Half-elven Blood", "Healing", "Chosen Mortality", "Light of Valinor"],
+        "variants": []
+      },
+      {
+        "id": "denethor",
+        "name": "Denethor II",
+        "faction": "free_peoples_alliance",
+        "type": "commander",
+        "era": "Third Age",
+        "description": "Steward of Gondor, proud and stubborn. Corrupted by the Palantír, he descends into despair. A capable commander but broken by the weight of his office and Sauron's influence.",
+        "stats": {
+          "attack": 3,
+          "defense": 3,
+          "hull": 4,
+          "shields": 2,
+          "speed": 3,
+          "wounds": 4,
+          "leadership": 7
+        },
+        "weapons": ["Palantír of Minas Tirith", "Staff of Office", "Gondor Sword"],
+        "abilities": ["Steward of Gondor", "Palantír User", "Despair", "Pride"],
+        "variants": []
+      },
+      {
+        "id": "eomer",
+        "name": "Éomer",
+        "faction": "free_peoples_alliance",
+        "type": "commander",
+        "era": "Third Age",
+        "description": "Éored-lord of the Éothéod, later King of Rohan. Fierce and loyal, he leads the Riders of Rohan with courage and skill. Returns to save Helm's Deep and fights at the Pelennor Fields.",
+        "stats": {
+          "attack": 5,
+          "defense": 3,
+          "hull": 4,
+          "shields": 2,
+          "speed": 9,
+          "wounds": 4,
+          "leadership": 7
+        },
+        "weapons": ["Rohan Lance", "Rohan Sword", "War Horn"],
+        "abilities": ["Éored-lord", "Shock Charge", "Fast Transit", "Loyalty to Théoden"],
+        "variants": []
+      },
+      {
+        "id": "merry",
+        "name": "Meriadoc Brandybuck",
+        "faction": "free_peoples_alliance",
+        "type": "support",
+        "era": "Third Age",
+        "description": "A hobbit of the Shire, member of the Fellowship. Captured by Uruk-hai but rescued by the Ents. Later aids Éowyn in killing the Witch-king. 'I will take the Ring, Mr. Frodo.'",
+        "stats": {
+          "attack": 2,
+          "defense": 1,
+          "hull": 2,
+          "shields": 0,
+          "speed": 5,
+          "wounds": 2,
+          "ring_resistance": 7
+        },
+        "weapons": ["Sting (Elven dagger)", "Brandybuck Blade"],
+        "abilities": ["Ring-bearer Companion", "Small and Overlooked", "Ent Friend", "Courage"],
+        "variants": []
+      },
+      {
+        "id": "pippin",
+        "name": "Perian Took",
+        "faction": "free_peoples_alliance",
+        "type": "support",
+        "era": "Third Age",
+        "description": "A hobbit of the Shire, member of the Fellowship. Impulsive and curious, he accidentally reveals the Fellowship in Moria. Later becomes a Guard of the Citadel and swears fealty to Aragorn.",
+        "stats": {
+          "attack": 1,
+          "defense": 1,
+          "hull": 2,
+          "shields": 0,
+          "speed": 5,
+          "wounds": 2,
+          "ring_resistance": 7
+        },
+        "weapons": ["Took Dagger", "Fireworks (from Radagast)"],
+        "abilities": ["Ring-bearer Companion", "Small and Overlooked", "Impulsive", "Guard of the Citadel"],
+        "variants": []
+      },
+      {
+        "id": "bilbo",
+        "name": "Bilbo Baggins",
+        "faction": "free_peoples_alliance",
+        "type": "veteran",
+        "era": "Third Age",
+        "description": "A hobbit of the Shire, former Ring-bearer who found the One Ring in the depths of Gollum's home. Gave the Ring to Frodo and retired to Rivendell. Author of 'There and Back Again.'",
+        "stats": {
+          "attack": 2,
+          "defense": 2,
+          "hull": 2,
+          "shields": 1,
+          "speed": 5,
+          "wounds": 2,
+          "ring_resistance": 6
+        },
+        "weapons": ["Sting (formerly)", "Mithril Coat (formerly)", "Pipe-weed"],
+        "abilities": ["Former Ring-bearer", "Adventure Experience", "Ent Friend", "Storyteller"],
+        "variants": []
+      }
+    ]
+  }
+}

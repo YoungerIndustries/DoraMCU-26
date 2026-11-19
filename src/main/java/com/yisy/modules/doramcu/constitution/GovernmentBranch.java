@@ -1,7 +1,5 @@
 package com.yisy.modules.doramcu.constitution;
 
-import com.yisy.modules.doramcu.constitution.Article.ArticleNumber;
-
 /**
  * Represents the three branches of the U.S. federal government
  * as established by the Constitution's separation of powers.

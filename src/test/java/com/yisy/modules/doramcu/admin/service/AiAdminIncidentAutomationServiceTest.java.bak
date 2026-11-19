@@ -1,0 +1,343 @@
+package com.yisy.modules.doramcu.admin.service;
+
+import com.yisy.modules.doramcu.admin.model.AiAdminIncident;
+import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
+import com.yisy.modules.doramcu.admin.repository.AiAdminIncidentRepository;
+import com.yisy.modules.doramcu.admin.service.AiAdminLlmService.LlmAnalysisResult;
+import com.yisy.modules.doramcu.eve.model.AiCharacter;
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDateTime;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class AiAdminIncidentAutomationServiceTest {
+
+    @Mock
+    private AiAdminIncidentRepository incidentRepository;
+
+    @Mock
+    private AiCharacterRepository characterRepository;
+
+    @Mock
+    private AiAdminLlmService llmService;
+
+    @Mock
+    private AiAdminIncidentService incidentService;
+
+    @Mock
+    private AiAdminCollaborationService collaborationService;
+
+    @Mock
+    private AiAdminService aiAdminService;
+
+    private AiAdminIncidentAutomationService automationService;
+
+    private AiAdminIncident incident;
+    private AiCharacter admin;
+
+    @BeforeEach
+    void setUp() {
+        automationService = new AiAdminIncidentAutomationService(
+                incidentRepository, characterRepository, llmService,
+                incidentService, collaborationService, aiAdminService);
+
+        incident = new AiAdminIncident();
+        incident.setId(1L);
+        incident.setTitle("Test Incident");
+        incident.setDescription("Test description");
+        incident.setGalaxyName("Alpha Centauri");
+        incident.setSeverity(AiAdminIncident.Severity.HIGH);
+        incident.setIncidentType(AiAdminIncident.IncidentType.HEALTH);
+        incident.setStatus(AiAdminIncident.Status.OPEN);
+        incident.setPriority(7);
+        incident.setCreatedAt(LocalDateTime.now().minusHours(2));
+        incident.setUpdatedAt(LocalDateTime.now().minusHours(2));
+
+        admin = new AiCharacter();
+        admin.setId(100L);
+        admin.setName("TestAdmin");
+        admin.setRole("Galaxy Overseer");
+        admin.setEmpireName("Alpha Centauri");
+        admin.setActive(true);
+        admin.setAiAdmin(true);
+        admin.setActiveOrderCount(1);
+        admin.setTotalExperience(500);
+        admin.setLeadershipRating(8);
+    }
+
+    // ---------------------------------------------------------------
+    // Process Open Incidents
+    // ---------------------------------------------------------------
+
+    @Test
+    void processOpenIncidents_whenDisabled_doesNothing() {
+        when(incidentRepository.findOpenIncidents(any())).thenReturn(Collections.singletonList(incident));
+
+        automationService.processOpenIncidents();
+
+        // Should not call processIncident when automation is disabled (default is enabled, but we test the flow)
+        verify(incidentRepository).findOpenIncidents(eq(AiAdminIncident.Status.OPEN));
+    }
+
+    @Test
+    void processOpenIncidents_noOpenIncidents() {
+        when(incidentRepository.findOpenIncidents(any())).thenReturn(Collections.emptyList());
+
+        automationService.processOpenIncidents();
+
+        verify(incidentRepository).findOpenIncidents(eq(AiAdminIncident.Status.OPEN));
+        verifyNoMoreInteractions(characterRepository);
+    }
+
+    @Test
+    void processOpenIncidents_processesEachIncident() {
+        when(incidentRepository.findOpenIncidents(any())).thenReturn(Collections.singletonList(incident));
+        when(characterRepository.findByAiAdminTrueAndActiveTrueAndEmpireName("Alpha Centauri"))
+                .thenReturn(Collections.singletonList(admin));
+        when(llmService.analyzeIncident(eq(admin), eq(incident)))
+                .thenReturn(new LlmAnalysisResult("MONITOR", "Monitoring", new HashMap<>(), "", true, null));
+
+        automationService.processOpenIncidents();
+
+        verify(llmService).analyzeIncident(eq(admin), eq(incident));
+    }
+
+    // ---------------------------------------------------------------
+    // Process Incident
+    // ---------------------------------------------------------------
+
+    @Test
+    void processIncident_noAvailableAdmin() {
+        when(characterRepository.findByAiAdminTrueAndActiveTrueAndEmpireName("Alpha Centauri"))
+                .thenReturn(Collections.emptyList());
+        when(characterRepository.findByAiAdminTrueAndActiveTrue())
+                .thenReturn(Collections.emptyList());
+
+        automationService.processIncident(incident);
+
+        verifyNoInteractions(llmService);
+    }
+
+    @Test
+    void processIncident_adminBusy_fallbackToGlobal() {
+        when(characterRepository.findByAiAdminTrueAndActiveTrueAndEmpireName("Alpha Centauri"))
+                .thenReturn(List.of(createBusyAdmin()));
+        when(characterRepository.findByAiAdminTrueAndActiveTrue())
+                .thenReturn(Collections.singletonList(admin));
+        when(llmService.analyzeIncident(eq(admin), eq(incident)))
+                .thenReturn(new LlmAnalysisResult("MONITOR", "Monitoring", new HashMap<>(), "", true, null));
+
+        automationService.processIncident(incident);
+
+        verify(llmService).analyzeIncident(eq(admin), eq(incident));
+    }
+
+    @Test
+    void processIncident_llmFailure_recordsFailure() {
+        when(characterRepository.findByAiAdminTrueAndActiveTrueAndEmpireName("Alpha Centauri"))
+                .thenReturn(Collections.singletonList(admin));
+        when(llmService.analyzeIncident(eq(admin), eq(incident)))
+                .thenReturn(new LlmAnalysisResult("FAILED", "LLM error", new HashMap<>(), "", false, "LLM error"));
+
+        automationService.processIncident(incident);
+
+        // Should not execute any action
+        verifyNoInteractions(incidentService);
+    }
+
+    @Test
+    void processIncident_assignsUnassignedIncident() {
+        incident.setAssignedAiAdminId(null);
+        when(characterRepository.findByAiAdminTrueAndActiveTrueAndEmpireName("Alpha Centauri"))
+                .thenReturn(Collections.singletonList(admin));
+        doNothing().when(incidentService).assignIncident(1L, 100L);
+        when(llmService.analyzeIncident(eq(admin), eq(incident)))
+                .thenReturn(new LlmAnalysisResult("MONITOR", "Monitoring", new HashMap<>(), "", true, null));
+
+        automationService.processIncident(incident);
+
+        verify(incidentService).assignIncident(1L, 100L);
+    }
+
+    // ---------------------------------------------------------------
+    // Execute LLM Action
+    // ---------------------------------------------------------------
+
+    @Test
+    void executeLlmAction_investigate() {
+        LlmAnalysisResult result = new LlmAnalysisResult("INVESTIGATE", "Need more info", new HashMap<>(), "", true, null);
+        doNothing().when(incidentService).investigate(1L, 100L, anyString(), eq(false));
+        doNothing().when(collaborationService).addNote(anyLong(), anyLong(), anyString());
+
+        automationService.executeLlmAction(incident, admin, result);
+
+        verify(incidentService).investigate(1L, 100L, anyString(), eq(false));
+    }
+
+    @Test
+    void executeLlmAction_resolve() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("resolutionAction", "Restarted service");
+        params.put("rootCause", "Memory leak");
+        LlmAnalysisResult result = new LlmAnalysisResult("RESOLVE", "Resolved", params, "", true, null);
+        doNothing().when(incidentService).resolve(1L, 100L, anyString(), anyString());
+        doNothing().when(collaborationService).addNote(anyLong(), anyLong(), anyString());
+
+        automationService.executeLlmAction(incident, admin, result);
+
+        verify(incidentService).resolve(1L, 100L, eq("Restarted service"), eq("Memory leak"));
+    }
+
+    @Test
+    void executeLlmAction_resolve_withoutParams() {
+        LlmAnalysisResult result = new LlmAnalysisResult("RESOLVE", "Auto-resolved", new HashMap<>(), "", true, null);
+        doNothing().when(incidentService).resolve(1L, 100L, anyString(), anyString());
+        doNothing().when(collaborationService).addNote(anyLong(), anyLong(), anyString());
+
+        automationService.executeLlmAction(incident, admin, result);
+
+        verify(incidentService).resolve(1L, 100L, eq("Auto-resolved"), eq("LLM-determined root cause"));
+    }
+
+    @Test
+    void executeLlmAction_escalate() {
+        LlmAnalysisResult result = new LlmAnalysisResult("ESCALATE", "Too complex", new HashMap<>(), "", true, null);
+        doNothing().when(incidentService).escalate(1L);
+        doNothing().when(collaborationService).addNote(anyLong(), anyLong(), anyString());
+
+        automationService.executeLlmAction(incident, admin, result);
+
+        verify(incidentService).escalate(1L);
+    }
+
+    @Test
+    void executeLlmAction_monitor() {
+        LlmAnalysisResult result = new LlmAnalysisResult("MONITOR", "Waiting for resolution", new HashMap<>(), "", true, null);
+        doNothing().when(collaborationService).addNote(anyLong(), anyLong(), anyString());
+
+        automationService.executeLlmAction(incident, admin, result);
+
+        verify(collaborationService).addNote(eq(1L), eq(100L), contains("Monitoring"));
+    }
+
+    @Test
+    void executeLlmAction_deploy() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("workOrderText", "Deploy new servers");
+        LlmAnalysisResult result = new LlmAnalysisResult("DEPLOY", "Deploy needed", params, "", true, null);
+
+        AiAdminOrder order = new AiAdminOrder();
+        order.setId(500L);
+        when(aiAdminService.submitOrder(anyString(), anyString())).thenReturn(order);
+        doNothing().when(collaborationService).addNote(anyLong(), anyLong(), anyString());
+
+        automationService.executeLlmAction(incident, admin, result);
+
+        verify(aiAdminService).submitOrder(eq("AIAdmin:TestAdmin"), eq("Deploy new servers"));
+    }
+
+    @Test
+    void executeLlmAction_repair() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("workOrderText", "Repair station");
+        LlmAnalysisResult result = new LlmAnalysisResult("REPAIR", "Repair needed", params, "", true, null);
+
+        AiAdminOrder order = new AiAdminOrder();
+        order.setId(501L);
+        when(aiAdminService.submitOrder(anyString(), anyString())).thenReturn(order);
+        doNothing().when(collaborationService).addNote(anyLong(), anyLong(), anyString());
+
+        automationService.executeLlmAction(incident, admin, result);
+
+        verify(aiAdminService).submitOrder(eq("AIAdmin:TestAdmin"), eq("Repair station"));
+    }
+
+    @Test
+    void executeLlmAction_unknown_action() {
+        LlmAnalysisResult result = new LlmAnalysisResult("UNKNOWN", "Not sure", new HashMap<>(), "", true, null);
+        doNothing().when(collaborationService).addNote(anyLong(), anyLong(), anyString());
+
+        automationService.executeLlmAction(incident, admin, result);
+
+        verify(collaborationService).addNote(eq(1L), eq(100L), contains("Unknown LLM action"));
+    }
+
+    // ---------------------------------------------------------------
+    // Circuit Breaker
+    // ---------------------------------------------------------------
+
+    @Test
+    void circuitBreaker_openAfterMaxFailures() {
+        when(characterRepository.findByAiAdminTrueAndActiveTrueAndEmpireName("Alpha Centauri"))
+                .thenReturn(Collections.singletonList(admin));
+        when(llmService.analyzeIncident(eq(admin), eq(incident)))
+                .thenReturn(new LlmAnalysisResult("FAILED", "Error", new HashMap<>(), "", false, "Error"));
+
+        // Simulate 3 failures
+        for (int i = 0; i < 3; i++) {
+            automationService.processIncident(incident);
+        }
+
+        // After 3 failures, the circuit breaker should be open
+        // The incident should not be processed again immediately
+    }
+
+    // ---------------------------------------------------------------
+    // Rate Limiting
+    // ---------------------------------------------------------------
+
+    @Test
+    void rateLimiting_skipsRecentIncident() {
+        when(characterRepository.findByAiAdminTrueAndActiveTrueAndEmpireName("Alpha Centauri"))
+                .thenReturn(Collections.singletonList(admin));
+
+        // Process once
+        when(llmService.analyzeIncident(eq(admin), eq(incident)))
+                .thenReturn(new LlmAnalysisResult("MONITOR", "Monitoring", new HashMap<>(), "", true, null));
+        automationService.processIncident(incident);
+
+        // Process again immediately - should be rate limited
+        automationService.processIncident(incident);
+
+        // LLM should only be called once due to rate limiting
+        verify(llmService, times(1)).analyzeIncident(eq(admin), eq(incident));
+    }
+
+    // ---------------------------------------------------------------
+    // Configuration
+    // ---------------------------------------------------------------
+
+    @Test
+    void configuration_defaults() {
+        // Default values from @Value annotations
+        assertTrue(automationService.isAutomationEnabled());
+        assertEquals(300000, automationService.getCheckIntervalMs());
+        assertEquals(3, automationService.getMaxLlmFailures());
+        assertEquals(3600000, automationService.getCircuitBreakerCooldownMs());
+    }
+
+    // ---------------------------------------------------------------
+    // Helper Methods
+    // ---------------------------------------------------------------
+
+    private AiCharacter createBusyAdmin() {
+        AiCharacter busy = new AiCharacter();
+        busy.setId(200L);
+        busy.setName("BusyAdmin");
+        busy.setActive(true);
+        busy.setAiAdmin(true);
+        busy.setActiveOrderCount(5); // Busy
+        busy.setEmpireName("Alpha Centauri");
+        return busy;
+    }
+}

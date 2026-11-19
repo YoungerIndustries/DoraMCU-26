@@ -10,7 +10,7 @@ import com.yisy.modules.doramcu.corporation.repository.CorporateContractReposito
 import com.yisy.modules.doramcu.corporation.repository.CorporateHiringRepository;
 import com.yisy.modules.doramcu.corporation.repository.CorporationOfficeStateRepository;
 import com.yisy.modules.doramcu.corporation.repository.CorporationSaveRepository;
-import com.yisy.modules.doramcu.repository.EveCorporationRepository;
+import com.yisy.modules.doramcu.repository.misc.EveCorporationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;

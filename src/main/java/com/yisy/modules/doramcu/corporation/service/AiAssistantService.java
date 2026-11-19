@@ -10,11 +10,11 @@ import com.yisy.modules.doramcu.corporation.model.CorporateContract;
 import com.yisy.modules.doramcu.corporation.model.CorporateHiring;
 import com.yisy.modules.doramcu.corporation.model.CorporatePosition;
 import com.yisy.modules.doramcu.model.misc.CorporateRole;
-import com.yisy.modules.doramcu.repository.AiAssistantActionRepository;
-import com.yisy.modules.doramcu.repository.AiCharacterRepository;
+import com.yisy.modules.doramcu.repository.ai.AiAssistantActionRepository;
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 import com.yisy.modules.doramcu.corporation.repository.CorporateContractRepository;
 import com.yisy.modules.doramcu.corporation.repository.CorporateHiringRepository;
-import com.yisy.modules.doramcu.repository.PlayerRepository;
+import com.yisy.modules.doramcu.repository.players.PlayerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -492,7 +492,7 @@ public class AiAssistantService {
         // The model.Player ID maps to hex.Player ID
         try {
             // Look up the model.Player to get email and empire name
-            com.yisy.modules.doramcu.model.Player jpaPlayer = playerRepository.findById(playerId)
+            com.yisy.modules.doramcu.model.players.Player jpaPlayer = playerRepository.findById(playerId)
                     .orElse(null);
             if (jpaPlayer == null) {
                 log.warn("Player {} not found for personality lookup", playerId);
@@ -518,7 +518,7 @@ public class AiAssistantService {
      * Map model.Player.GovernmentType to hex.Player.GovernmentType.
      */
     private com.yisy.modules.doramcu.hex.Player.GovernmentType mapGovernmentType(
-            com.yisy.modules.doramcu.model.Player.GovernmentType modelType) {
+            com.yisy.modules.doramcu.model.players.Player.GovernmentType modelType) {
         if (modelType == null) {
             return com.yisy.modules.doramcu.hex.Player.GovernmentType.DEMOCRACY;
         }
@@ -533,7 +533,7 @@ public class AiAssistantService {
      * Map model.Player.Ethos to hex.Player.Ethos.
      */
     private com.yisy.modules.doramcu.hex.Player.Ethos mapEthos(
-            com.yisy.modules.doramcu.model.Player.Ethos modelEthos) {
+            com.yisy.modules.doramcu.model.players.Player.Ethos modelEthos) {
         if (modelEthos == null) {
             return com.yisy.modules.doramcu.hex.Player.Ethos.MATERIALIST;
         }

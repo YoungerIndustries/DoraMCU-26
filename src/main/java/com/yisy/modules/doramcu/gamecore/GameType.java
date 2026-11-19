@@ -20,7 +20,8 @@ public enum GameType {
     STARSHIP_TROOPERS("Starship Troopers", "Federated Solar System vs Arachnid tactical combat"),
     STAR_WARS("Star Wars", "Galactic-scale combat across eras: Republic, Empire, Rebels, and more"),
     TRANSPORT_TYCOON("Transport Tycoon", "Economic strategy and transport management"),
-    WARHAMMER_40K("Warhammer 40K", "Grimdark sci-fi universe: Imperium, Chaos, Orks, Necrons, Eldar, Tyranids");
+    WARHAMMER_40K("Warhammer 40K", "Grimdark sci-fi universe: Imperium, Chaos, Orks, Necrons, Eldar, Tyranids"),
+        LORD_OF_THE_RINGS("Lord of the Rings", "Middle-earth reimagined as a space-faring galaxy");
 
     private final String displayName;
     private final String description;

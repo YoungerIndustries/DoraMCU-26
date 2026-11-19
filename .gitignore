@@ -137,4 +137,10 @@ unique_files*.txt
 test_compile_errors*.log
 test_errors*.log
 test_output.txt
+test_*.txt
+*_output*.txt
+*_compile*.txt
+*_test_errors*.txt
+brain-node-startup.log
+build.log
 *.class

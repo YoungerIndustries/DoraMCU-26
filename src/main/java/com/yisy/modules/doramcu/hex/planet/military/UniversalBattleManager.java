@@ -2,7 +2,6 @@ package com.yisy.modules.doramcu.hex.planet.military;
 
 import com.yisy.modules.doramcu.hex.planet.TerrainType;
 import com.yisy.modules.doramcu.thirdreich.combat.ThirdReichCombatEngine;
-import com.yisy.modules.doramcu.thirdreich.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

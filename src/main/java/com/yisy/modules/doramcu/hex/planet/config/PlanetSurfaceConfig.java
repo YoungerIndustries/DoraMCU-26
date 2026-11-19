@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.hex.planet.config;
 
-import com.yisy.modules.doramcu.hex.planet.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;

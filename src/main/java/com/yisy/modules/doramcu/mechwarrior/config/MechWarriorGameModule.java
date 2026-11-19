@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.mechwarrior.config;
 
-import com.yisy.modules.doramcu.gamecore.*;
 import com.yisy.modules.doramcu.mechwarrior.engine.MechWarriorGameEngine;
 import com.yisy.modules.doramcu.mechwarrior.service.MechWarriorRulesEngine;
 import com.yisy.modules.doramcu.shared.model.RulesEntry;
@@ -10,9 +9,9 @@ import com.yisy.modules.doramcu.gamecore.RulesEngine;
 import com.yisy.modules.doramcu.mechwarrior.model.MechChassis;
 import com.yisy.modules.doramcu.mechwarrior.model.MechPilot;
 import com.yisy.modules.doramcu.mechwarrior.model.MechWeapon;
-import com.yisy.modules.doramcu.service.EncumbranceService;
-import com.yisy.modules.doramcu.service.FirearmsCombatService;
-import com.yisy.modules.doramcu.service.MeleeCombatService;
+import com.yisy.modules.doramcu.service.character.EncumbranceService;
+import com.yisy.modules.doramcu.service.battle.FirearmsCombatService;
+import com.yisy.modules.doramcu.service.battle.MeleeCombatService;
 import com.yisy.modules.doramcu.techlevel.TechLevelAdapter;
 import com.yisy.modules.doramcu.thirdreich.adapter.GroundCombatAdapter;
 import com.yisy.modules.doramcu.thirdreich.adapter.MechWarriorTo3R4Adapter;

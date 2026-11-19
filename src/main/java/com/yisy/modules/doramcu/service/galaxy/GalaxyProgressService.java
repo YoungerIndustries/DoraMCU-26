@@ -1,8 +1,4 @@
 package com.yisy.modules.doramcu.service.galaxy;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-import com.yisy.modules.doramcu.model.galaxy.Hyperlane;
-
-
 import com.yisy.modules.doramcu.hex.GalaxyGenerationProgress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

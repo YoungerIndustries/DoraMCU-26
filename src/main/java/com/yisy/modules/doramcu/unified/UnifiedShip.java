@@ -5,8 +5,6 @@ import com.yisy.modules.doramcu.hex.Material;
 import com.yisy.modules.doramcu.hex.Ship;
 import com.yisy.modules.doramcu.hex.ShipComponent;
 import com.yisy.modules.doramcu.hex.ShipType;
-import com.yisy.modules.doramcu.traveller.*;
-
 import java.util.Objects;
 
 /**

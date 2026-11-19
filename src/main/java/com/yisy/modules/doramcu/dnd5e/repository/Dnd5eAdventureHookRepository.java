@@ -38,19 +38,19 @@ public interface Dnd5eAdventureHookRepository extends JpaRepository<Dnd5eAdventu
 
     @Query("SELECT h FROM Dnd5eAdventureHook h WHERE h.active = true AND " +
            "h.minLevel <= :level AND h.maxLevel >= :level")
-    List<Dnd5eAdventureHook> findByCharacterLevel(@Param("level") int level);
+    List<Dnd5eAdventureHook> findByCharacterLevel(@Param("level_0") int level);
 
     @Query("SELECT h FROM Dnd5eAdventureHook h WHERE h.active = true AND " +
            "(h.targetBackground IS NULL OR h.targetBackground = :background)")
-    List<Dnd5eAdventureHook> findByBackgroundOrAny(@Param("background") String background);
+    List<Dnd5eAdventureHook> findByBackgroundOrAny(@Param("level_0") String background);
 
     @Query("SELECT h FROM Dnd5eAdventureHook h WHERE h.active = true AND " +
            "(h.targetRace IS NULL OR h.targetRace = :race)")
-    List<Dnd5eAdventureHook> findByRaceOrAny(@Param("race") String race);
+    List<Dnd5eAdventureHook> findByRaceOrAny(@Param("level_0") String race);
 
     @Query("SELECT h FROM Dnd5eAdventureHook h WHERE h.active = true AND " +
            "(h.targetClass IS NULL OR h.targetClass = :characterClass)")
-    List<Dnd5eAdventureHook> findByClassOrAny(@Param("characterClass") String characterClass);
+    List<Dnd5eAdventureHook> findByClassOrAny(@Param("level_0") String characterClass);
 
     @Query("SELECT h FROM Dnd5eAdventureHook h WHERE h.active = true AND " +
            "h.minLevel <= :level AND h.maxLevel >= :level AND " +
@@ -58,10 +58,10 @@ public interface Dnd5eAdventureHookRepository extends JpaRepository<Dnd5eAdventu
            "(h.targetRace IS NULL OR h.targetRace = :race) AND " +
            "(h.targetClass IS NULL OR h.targetClass = :characterClass)")
     List<Dnd5eAdventureHook> findByCharacterProfile(
-            @Param("level") int level,
-            @Param("background") String background,
-            @Param("race") String race,
-            @Param("characterClass") String characterClass);
+            @Param("level_0") int level,
+            @Param("level_0") String background,
+            @Param("level_0") String race,
+            @Param("level_0") String characterClass);
 
     @Query("SELECT h FROM Dnd5eAdventureHook h WHERE h.active = true AND " +
            "h.minLevel <= :level AND h.maxLevel >= :level AND " +
@@ -70,11 +70,11 @@ public interface Dnd5eAdventureHookRepository extends JpaRepository<Dnd5eAdventu
            "(h.targetClass IS NULL OR h.targetClass = :characterClass) AND " +
            "(h.theme IS NULL OR LOWER(h.theme) LIKE LOWER(CONCAT('%', :theme, '%')))")
     List<Dnd5eAdventureHook> findByCharacterProfileAndTheme(
-            @Param("level") int level,
-            @Param("background") String background,
-            @Param("race") String race,
-            @Param("characterClass") String characterClass,
-            @Param("theme") String theme);
+            @Param("level_0") int level,
+            @Param("level_0") String background,
+            @Param("level_0") String race,
+            @Param("level_0") String characterClass,
+            @Param("level_0") String theme);
 
     @Query("SELECT DISTINCT h.type FROM Dnd5eAdventureHook h WHERE h.active = true")
     List<String> findDistinctTypes();
@@ -88,5 +88,5 @@ public interface Dnd5eAdventureHookRepository extends JpaRepository<Dnd5eAdventu
     @Query("SELECT h FROM Dnd5eAdventureHook h WHERE LOWER(h.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(h.narrative) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(h.dmNotes) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-    List<Dnd5eAdventureHook> searchByKeyword(@Param("keyword") String keyword);
+    List<Dnd5eAdventureHook> searchByKeyword(@Param("level_0") String keyword);
 }

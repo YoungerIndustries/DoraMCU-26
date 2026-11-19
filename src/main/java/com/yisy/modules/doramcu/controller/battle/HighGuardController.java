@@ -2,7 +2,6 @@ package com.yisy.modules.doramcu.controller.battle;
 import com.yisy.modules.doramcu.hex.Ship;
 import com.yisy.modules.doramcu.techlevel.TechLevel;
 
-import com.yisy.modules.doramcu.traveller.*;
 import com.yisy.modules.doramcu.service.battle.HighGuardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

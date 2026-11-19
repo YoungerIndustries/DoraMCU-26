@@ -1,7 +1,6 @@
 package com.yisy.modules.doramcu.earth2026.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yisy.modules.doramcu.corporation.model.CorporateFinanceTransaction.TransactionType;
 import com.yisy.modules.doramcu.corporation.service.CorporationEconomyService;
 import com.yisy.modules.doramcu.earth2026.model.HqEvent;
 import com.yisy.modules.doramcu.earth2026.model.HqEventType;

@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.model;
 
+import com.yisy.modules.doramcu.model.CorporateRole;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

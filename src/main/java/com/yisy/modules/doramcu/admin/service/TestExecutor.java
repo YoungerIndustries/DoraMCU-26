@@ -1,7 +1,6 @@
 package com.yisy.modules.doramcu.admin.service;
 
 import com.yisy.modules.doramcu.admin.model.AiAdminTestCase;
-import com.yisy.modules.doramcu.admin.model.AiAdminTestCase.TestStatus;
 import com.yisy.modules.doramcu.admin.model.TestDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

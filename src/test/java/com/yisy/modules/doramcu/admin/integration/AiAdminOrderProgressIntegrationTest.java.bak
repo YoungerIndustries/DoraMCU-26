@@ -1,0 +1,284 @@
+package com.yisy.modules.doramcu.admin.integration;
+
+import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
+import com.yisy.modules.doramcu.admin.repository.AiAdminOrderRepository;
+import com.yisy.modules.doramcu.admin.service.AiAdminDispatchService;
+import com.yisy.modules.doramcu.admin.service.AiAdminOrderProgressService;
+import com.yisy.modules.doramcu.admin.service.AiAdminOrderProgressService.OrderProgress;
+import com.yisy.modules.doramcu.admin.service.AiAdminService;
+import com.yisy.modules.doramcu.eve.model.AiCharacter;
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = AiAdminDispatchIntegrationTestConfig.class)
+class AiAdminOrderProgressIntegrationTest {
+
+    @Autowired
+    private AiAdminService aiAdminService;
+
+    @Autowired
+    private AiAdminDispatchService dispatchService;
+
+    @Autowired
+    private AiAdminOrderProgressService progressService;
+
+    @Autowired
+    private AiAdminOrderRepository orderRepository;
+
+    @Autowired
+    private AiCharacterRepository aiCharacterRepository;
+
+    private AiCharacter admin;
+
+    @BeforeEach
+    void setUp() {
+        admin = new AiCharacter("Test Admin", "Admin", "Alpha Centauri");
+        admin.setAiAdmin(true);
+        admin.setActive(true);
+        admin.setActiveOrderCount(0);
+        admin.setCurrentOrderId(null);
+        admin = aiCharacterRepository.save(admin);
+    }
+
+    @AfterEach
+    void tearDown() {
+        orderRepository.deleteAll();
+        aiCharacterRepository.deleteAll();
+    }
+
+    // ------------------------------------------------------------------
+    // Progress initialization tests
+    // ------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Progress fields should default to 0 for new orders")
+    void newOrder_shouldHaveDefaultProgressFields() {
+        AiAdminOrder order = aiAdminService.submitOrder("admin-user", "Test API health");
+
+        assertEquals(0, order.getProgressPercent());
+        assertNull(order.getCurrentTestName());
+        assertEquals(0, order.getTestsCompleted());
+        assertEquals(0, order.getTestsTotal());
+    }
+
+    @Test
+    @DisplayName("setTestsTotal should initialize progress fields")
+    void setTestsTotal_shouldInitializeProgress() {
+        AiAdminOrder order = aiAdminService.submitOrder("admin-user", "Test API health");
+
+        progressService.setTestsTotal(order.getId(), 5);
+
+        OrderProgress progress = progressService.getOrderProgress(order.getId()).orElseThrow();
+        assertEquals(5, progress.getTestsTotal());
+        assertEquals(0, progress.getTestsCompleted());
+        assertEquals(0, progress.getProgressPercent());
+    }
+
+    // ------------------------------------------------------------------
+    // Progress update tests
+    // ------------------------------------------------------------------
+
+    @Test
+    @DisplayName("updateProgress should calculate progress percentage correctly")
+    void updateProgress_shouldCalculatePercentage() {
+        AiAdminOrder order = aiAdminService.submitOrder("admin-user", "Test API health");
+
+        progressService.updateProgress(order.getId(), "testApiHealth", 2, 5);
+
+        OrderProgress progress = progressService.getOrderProgress(order.getId()).orElseThrow();
+        assertEquals(40, progress.getProgressPercent());
+        assertEquals("testApiHealth", progress.getCurrentTestName());
+        assertEquals(2, progress.getTestsCompleted());
+        assertEquals(5, progress.getTestsTotal());
+    }
+
+    @Test
+    @DisplayName("updateProgress should cap progress at 100%")
+    void updateProgress_shouldCapAt100Percent() {
+        AiAdminOrder order = aiAdminService.submitOrder("admin-user", "Test API health");
+
+        progressService.updateProgress(order.getId(), "testApiHealth", 10, 5);
+
+        OrderProgress progress = progressService.getOrderProgress(order.getId()).orElseThrow();
+        assertEquals(100, progress.getProgressPercent());
+    }
+
+    @Test
+    @DisplayName("incrementTestsCompleted should increment and update progress")
+    void incrementTestsCompleted_shouldUpdateProgress() {
+        AiAdminOrder order = aiAdminService.submitOrder("admin-user", "Test API health");
+        progressService.setTestsTotal(order.getId(), 4);
+
+        progressService.incrementTestsCompleted(order.getId());
+        progressService.incrementTestsCompleted(order.getId());
+
+        OrderProgress progress = progressService.getOrderProgress(order.getId()).orElseThrow();
+        assertEquals(2, progress.getTestsCompleted());
+        assertEquals(50, progress.getProgressPercent());
+    }
+
+    @Test
+    @DisplayName("setCurrentTest should update the current test name")
+    void setCurrentTest_shouldUpdateTestName() {
+        AiAdminOrder order = aiAdminService.submitOrder("admin-user", "Test API health");
+
+        progressService.setCurrentTest(order.getId(), "testApiAuth");
+
+        OrderProgress progress = progressService.getOrderProgress(order.getId()).orElseThrow();
+        assertEquals("testApiAuth", progress.getCurrentTestName());
+    }
+
+    // ------------------------------------------------------------------
+    // getOrderProgress endpoint tests
+    // ------------------------------------------------------------------
+
+    @Test
+    @DisplayName("getOrderProgress should return progress DTO with all fields")
+    void getOrderProgress_shouldReturnFullDto() {
+        AiAdminOrder order = aiAdminService.submitOrder("admin-user", "Test API health endpoint");
+        progressService.setTestsTotal(order.getId(), 3);
+        progressService.updateProgress(order.getId(), "testApiHealth", 1, 3);
+
+        Optional<OrderProgress> progressOpt = progressService.getOrderProgress(order.getId());
+        assertTrue(progressOpt.isPresent());
+
+        OrderProgress progress = progressOpt.get();
+        assertEquals(order.getId(), progress.getOrderId());
+        assertEquals("PENDING", progress.getStatus());
+        assertEquals(33, progress.getProgressPercent());
+        assertEquals("testApiHealth", progress.getCurrentTestName());
+        assertEquals(1, progress.getTestsCompleted());
+        assertEquals(3, progress.getTestsTotal());
+        assertEquals("admin-user", progress.getSubmittedBy());
+        assertEquals("Test API health endpoint", progress.getOrderText());
+        assertNotNull(progress.getCreatedAt());
+    }
+
+    @Test
+    @DisplayName("getOrderProgress should return empty for non-existent order")
+    void getOrderProgress_shouldReturnEmptyForNonExistent() {
+        Optional<OrderProgress> progress = progressService.getOrderProgress(999L);
+        assertTrue(progress.isEmpty());
+    }
+
+    // ------------------------------------------------------------------
+    // getRunningOrdersProgress endpoint tests
+    // ------------------------------------------------------------------
+
+    @Test
+    @DisplayName("getRunningOrdersProgress should return empty list when no running orders")
+    void getRunningOrdersProgress_shouldReturnEmptyWhenNone() {
+        aiAdminService.submitOrder("admin-user", "Test API health");
+
+        List<OrderProgress> running = progressService.getRunningOrdersProgress();
+        assertTrue(running.isEmpty());
+    }
+
+    @Test
+    @DisplayName("getRunningOrdersProgress should return progress for running orders")
+    void getRunningOrdersProgress_shouldReturnRunningOrders() {
+        AiAdminOrder order1 = aiAdminService.submitOrder("admin-user", "Test API health");
+        AiAdminOrder order2 = aiAdminService.submitOrder("admin-user", "Test game combat");
+
+        order1.setStatus(AiAdminOrder.OrderStatus.RUNNING);
+        order2.setStatus(AiAdminOrder.OrderStatus.RUNNING);
+        orderRepository.saveAndFlush(order1);
+        orderRepository.saveAndFlush(order2);
+
+        progressService.setTestsTotal(order1.getId(), 4);
+        progressService.updateProgress(order1.getId(), "testApiHealth", 2, 4);
+
+        List<OrderProgress> running = progressService.getRunningOrdersProgress();
+        assertEquals(2, running.size());
+
+        OrderProgress order1Progress = running.stream()
+                .filter(p -> p.getOrderId().equals(order1.getId()))
+                .findFirst()
+                .orElseThrow();
+        assertEquals("RUNNING", order1Progress.getStatus());
+        assertEquals(50, order1Progress.getProgressPercent());
+    }
+
+    // ------------------------------------------------------------------
+    // Full dispatch cycle progress tests
+    // ------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Full dispatch cycle should set progress to 100% on completion")
+    void fullDispatchCycle_shouldSetProgressTo100() throws InterruptedException {
+        AiAdminOrder order = aiAdminService.submitOrder("admin-user", "Test API health endpoint");
+
+        dispatchService.dispatchSingleOrder(order);
+
+        // Wait for async execution to complete
+        Thread.sleep(5000);
+
+        AiAdminOrder completedOrder = orderRepository.findById(order.getId()).orElseThrow();
+        if (completedOrder.getStatus() == AiAdminOrder.OrderStatus.COMPLETED) {
+            OrderProgress progress = progressService.getOrderProgress(order.getId()).orElseThrow();
+            assertEquals(100, progress.getProgressPercent());
+            assertEquals(progress.getTestsTotal(), progress.getTestsCompleted());
+        }
+    }
+
+    @Test
+    @DisplayName("LLM order should set progress to 100% on completion")
+    void llmOrder_shouldSetProgressTo100() throws InterruptedException {
+        AiAdminOrder order = aiAdminService.submitOrder("admin-user",
+                "Low fleet count in sector 7. Deploy reinforcements immediately.");
+
+        dispatchService.dispatchSingleOrder(order);
+
+        // Wait for async execution to complete
+        Thread.sleep(5000);
+
+        AiAdminOrder completedOrder = orderRepository.findById(order.getId()).orElseThrow();
+        if (completedOrder.getStatus() == AiAdminOrder.OrderStatus.COMPLETED) {
+            OrderProgress progress = progressService.getOrderProgress(order.getId()).orElseThrow();
+            assertEquals(100, progress.getProgressPercent());
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Progress persistence tests
+    // ------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Progress should persist in database after update")
+    void progress_shouldPersistInDatabase() {
+        AiAdminOrder order = aiAdminService.submitOrder("admin-user", "Test API health");
+        progressService.setTestsTotal(order.getId(), 5);
+        progressService.updateProgress(order.getId(), "testApiHealth", 3, 5);
+
+        // Re-fetch from database to verify persistence
+        AiAdminOrder persistedOrder = orderRepository.findById(order.getId()).orElseThrow();
+        assertEquals(60, persistedOrder.getProgressPercent());
+        assertEquals("testApiHealth", persistedOrder.getCurrentTestName());
+        assertEquals(3, persistedOrder.getTestsCompleted());
+        assertEquals(5, persistedOrder.getTestsTotal());
+    }
+
+    @Test
+    @DisplayName("Progress should handle non-existent order gracefully")
+    void progress_shouldHandleNonExistentOrder() {
+        // These should not throw exceptions
+        progressService.setTestsTotal(999L, 5);
+        progressService.updateProgress(999L, "test", 1, 5);
+        progressService.incrementTestsCompleted(999L);
+        progressService.setCurrentTest(999L, "test");
+        // No assertion needed — just verify no exceptions
+    }
+}

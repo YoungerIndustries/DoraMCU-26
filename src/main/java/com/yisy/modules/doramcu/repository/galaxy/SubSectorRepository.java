@@ -1,9 +1,4 @@
 package com.yisy.modules.doramcu.repository.galaxy;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-import com.yisy.modules.doramcu.model.galaxy.Sector;
-
-
-import com.yisy.modules.doramcu.model.galaxy.SubSector;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

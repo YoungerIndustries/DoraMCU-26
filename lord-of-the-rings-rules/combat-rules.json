@@ -1,0 +1,197 @@
+{
+  "game_info": {
+    "title": "Lord of the Rings Galaxy — Rules & Lore Database",
+    "description": "Rules and lore for a Lord of the Rings themed space-faring galaxy, reimagining Middle-earth as a star-spanning galaxy with constellations as star systems, the Valar as planets, and the Rings of Power as galactic artifacts.",
+    "source_materials": [
+      "The Lord of the Rings by J.R.R. Tolkien (1954-1955)",
+      "The Silmarillion by J.R.R. Tolkien (1977)",
+      "Unfinished Tales by J.R.R. Tolkien (1980)",
+      "The Hobbit by J.R.R. Tolkien (1937)",
+      "Tolkien Gateway Wiki (Community, Ongoing)"
+    ]
+  },
+  "ground_combat": {
+    "source": "Adapted from Star Wars: Legion and similar miniatures wargames",
+    "description": "Miniatures-based ground combat with alternating activations and command cards, adapted for the armies of the Arda galaxy.",
+    "game_rounds": 6,
+    "phases": {
+      "command_phase": {
+        "description": "Both players secretly select a command card, then reveal and resolve effects. Priority is determined by comparing pip values.",
+        "steps": [
+          "Each player selects a command card from their hand and places it face-down",
+          "Both players reveal command cards simultaneously",
+          "Resolve command card effects",
+          "Compare pip values to determine priority",
+          "The priority player issues orders first"
+        ],
+        "command_types": [
+          "Command (issue orders to units)",
+          "Tactic (special abilities and maneuvers)",
+          "Strategy (long-term advantages and buffs)",
+          "Heroic (unique abilities of legendary characters)"
+        ]
+      },
+      "activation_phase": {
+        "description": "Players alternate activating units. Each unit can move, shoot, and/or charge.",
+        "steps": [
+          "Active player selects a unit with an order token",
+          "Unit may move up to its speed value",
+          "Unit may shoot at enemies in range (roll attack dice)",
+          "Unit may charge into melee if within charge range",
+          "Resolve melee combat (both units roll attack dice)",
+          "Remove order token; unit is exhausted until next round"
+        ]
+      },
+      "melee_phase": {
+        "description": "Units in melee engagement resolve combat.",
+        "steps": [
+          "All units in melee roll attack dice simultaneously",
+          "Resolve hits and damage",
+          "Push back effects are resolved",
+          "Eliminated units are removed"
+        ]
+      }
+    },
+    "order_types": {
+      "advance": "Unit moves toward the enemy; gains +1 attack dice in melee",
+      "hold": "Unit does not move; gains +1 defense dice",
+      "flank": "Unit moves to the side; can outflank enemy positions",
+      "ambush": "Unit hides and strikes from cover; first strike advantage"
+    }
+  },
+  "space_combat": {
+    "source": "Adapted from Star Wars: X-Wing",
+    "description": "Space combat uses secret maneuver planning with dials, firing arcs, and dice-based attacks, adapted for the starships of the Arda galaxy.",
+    "phases": {
+      "movement_phase": {
+        "description": "Players secretly select maneuvers, then reveal and execute them simultaneously.",
+        "steps": [
+          "Each player secretly selects a maneuver from their maneuver dial",
+          "Both players reveal maneuvers simultaneously",
+          "Execute maneuvers: move ships according to dial selection",
+          "Resolve collisions and overlap (push back later-moving ship)"
+        ],
+        "maneuver_types": [
+          "Straight (maintain course)",
+          "Bank (turn left or right)",
+          "Turn (sharper turn)",
+          "Boost (increase speed)",
+          "Slow (decrease speed)",
+          "K-turn (180-degree turn; high risk)"
+        ]
+      },
+      "action_phase": {
+        "description": "Players alternate performing actions with their ships.",
+        "actions": [
+          "Focus (gain focus token; converts to hit or adds defense dice)",
+          "Evade (gain evade token; adds defense dice when targeted)",
+          "Reload (reload weapons)",
+          "Repair (restore shield or hull)",
+          "Lock (target an enemy for special weapons)"
+        ]
+      },
+      "attack_phase": {
+        "description": "Ships in firing arc resolve attacks.",
+        "steps": [
+          "Attacker declares target in firing arc",
+          "Roll attack dice (modified by range, abilities, and focus)",
+          "Defender rolls defense dice (modified by evade and abilities)",
+          "Resolve hits: assign damage cards face-down",
+          "Resolve critical hits: reveal damage cards face-up"
+        ]
+      }
+    },
+    "firing_arcs": {
+      "front_arc": "Most ships can only attack in their front 120-degree arc",
+      "full_arc": "Some ships (e.g., Elven Ships, Barad-dûr) can attack in any direction",
+      "rear_arc": "Some specialized weapons can fire backward"
+    }
+  },
+  "galaxy_control": {
+    "source": "Adapted from Star Wars: Rebellion",
+    "description": "Galaxy-scale control game. The Free Peoples and Forces of Darkness compete for control of star systems across the Arda galaxy.",
+    "rounds": {
+      "structure": [
+        "Strategic Movement Phase — move fleets between systems",
+        "Action Selection Phase — secretly select action cards",
+        "Action Resolution Phase — resolve actions in order",
+        "Regroup Phase — draw cards, place resources, ready units"
+      ]
+    },
+    "actions": {
+      "space_combat": "Engage in space combat in a star system",
+      "ground_combat": "Deploy ground forces to determine system loyalty",
+      "reinforce": "Move reinforcements to a system",
+      "technology": "Research new technologies and upgrades",
+      "espionage": "Sabotage enemy systems or steal resources",
+      "rally": "Gain support from neutral systems",
+      "pass": "Skip your turn; gain a resource"
+    },
+    "victory_conditions": {
+      "free_peoples": "Destroy the One Ring in Mount Doom OR control 6 systems with 3+ influence",
+      "forces_of_darkness": "Find and capture the Ring-bearer OR control 8 systems with 3+ influence"
+    },
+    "system_types": {
+      "trade": "Generates resources for both players",
+      "technology": "Provides technology cards and upgrades",
+      "military": "Provides reinforcements and combat bonuses",
+      "influence": "Counts toward victory conditions",
+      "special": "Unique effects (e.g., Mount Doom, Valinor, the Shire)"
+    }
+  },
+  "ring_mechanics": {
+    "description": "The One Ring is a central game mechanic. Its location and bearer affect the entire game.",
+    "ring_bearer": {
+      "description": "The Ring-bearer is a hidden unit that must reach Mount Doom. The Forces of Darkness seek to find and capture the Ring-bearer.",
+      "mechanics": [
+        "The Ring-bearer is hidden from the Forces of Darkness",
+        "The Forces of Darkness can use the Palantíri and the Eye to search for the Ring-bearer",
+        "If the Ring-bearer is captured, the Forces of Darkness win",
+        "If the Ring-bearer reaches Mount Doom, the Free Peoples win",
+        "The Ring corrupts the bearer over time — a corruption track must be managed"
+      ]
+    },
+    "corruption_track": {
+      "description": "The Ring-bearer has a corruption track. If it fills, the Ring-bearer claims the Ring and the Forces of Darkness win.",
+      "stages": [
+        "Pure — no corruption; full abilities",
+        "Tempted — minor penalties; the Ring grows heavier",
+        "Burdened — significant penalties; the Ring is very heavy",
+        "Weakened — severe penalties; the Ring-bearer may need assistance",
+        "Claimed — the Ring-bearer claims the Ring; Forces of Darkness win"
+      ]
+    },
+    "palantir_mechanics": {
+      "description": "The Palantíri are seeing-stones that allow communication and surveillance across the galaxy.",
+      "mechanics": [
+        "Players with Palantíri can communicate across any distance",
+        "Sauron's Palantíri can be used to search for the Ring-bearer",
+        "Using a Palantír risks being dominated by Sauron",
+        "Aragorn's Palantír can be used to deceive Sauron"
+      ]
+    }
+  },
+  "narrative_elements": {
+    "description": "The game includes narrative elements reflecting Tolkien's themes of hope, destiny, and the power of small acts of courage.",
+    "fate_cards": {
+      "description": "Fate cards represent the hand of destiny in the game. They can be drawn at critical moments.",
+      "examples": [
+        "The Riders Arrive — Rohan reinforcements appear at a critical moment",
+        "The Entmoot — the Ents decide to march on Isengard",
+        "The Council of Elrond — the Fellowship is formed",
+        "The Breaking of the Fellowship — the Fellowship is scattered",
+        "The Last Ark — the final stand at the Black Gates",
+        "The Grey Havens — the Ring-bearers depart for Valinor"
+      ]
+    },
+    "hope_mechanic": {
+      "description": "Hope is a resource that the Free Peoples can build and spend. It represents the power of small acts of courage.",
+      "mechanics": [
+        "Hope is generated by successful actions and heroic deeds",
+        "Hope can be spent to reroll dice, gain extra actions, or activate Fate cards",
+        "Hope is lost when units are eliminated or systems fall",
+        "If hope reaches zero, the Free Peoples suffer severe penalties"
+      ]
+    }
+  }
+}

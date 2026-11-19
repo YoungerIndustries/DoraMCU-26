@@ -3,7 +3,6 @@ package com.yisy.modules.doramcu.hex;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.hex.dungeon.StationModuleTemplate;
 import com.yisy.modules.doramcu.hex.model.BuildContract;
-import com.yisy.modules.doramcu.hex.model.BuildContract.BuildContractStatus;
 import com.yisy.modules.doramcu.hex.model.ProductionChainTracking;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 import org.slf4j.Logger;

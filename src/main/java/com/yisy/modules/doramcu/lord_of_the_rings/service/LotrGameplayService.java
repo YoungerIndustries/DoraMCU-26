@@ -182,7 +182,7 @@ public class LotrGameplayService {
         response.setSpellLevel(spell.getLevel());
         response.setSuccess(success);
         response.setSpellCheck(spellCheck);
-        response.setDC(spell.getDC());
+        response.setDc(spell.getDC());
         response.setDescription(String.format("%s casts %s: %d vs DC %d (%s)",
                 character.getName(), spell.getName(), spellCheck, spell.getDC(),
                 success ? "SUCCESS" : "FAIL"));
@@ -238,7 +238,7 @@ public class LotrGameplayService {
     @Transactional
     public int corruptionCheck(Long characterId, int amount) {
         LotrCharacter character = getCharacter(characterId);
-        int currentCorruption = character.getCorruption() != null ? character.getCorruption() : 0;
+        int currentCorruption = character.getCorruption();
         int newCorruption = Math.min(10, currentCorruption + amount);
         character.setCorruption(newCorruption);
         characterRepository.save(character);
@@ -264,11 +264,11 @@ public class LotrGameplayService {
     @Transactional
     public String awardXP(Long characterId, int xp) {
         LotrCharacter character = getCharacter(characterId);
-        int currentXP = character.getExperiencePoints() != null ? character.getExperiencePoints() : 0;
+        int currentXP = character.getExperiencePoints();
         int newXP = currentXP + xp;
         character.setExperiencePoints(newXP);
 
-        int level = character.getLevel() != null ? character.getLevel() : 1;
+        int level = character.getLevel();
         if (newXP >= XP_THRESHOLDS[Math.min(level, XP_THRESHOLDS.length - 1)]) {
             level++;
             character.setLevel(level);

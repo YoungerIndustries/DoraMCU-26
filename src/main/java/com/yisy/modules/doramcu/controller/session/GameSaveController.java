@@ -1,8 +1,4 @@
 package com.yisy.modules.doramcu.controller.session;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-import com.yisy.modules.doramcu.model.players.Player;
-
-
 import com.yisy.modules.doramcu.service.game.GameSaveService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

@@ -7,8 +7,8 @@ import com.yisy.modules.doraneuron.model.NeuronDecision;
 import com.yisy.modules.doraneuron.util.InferenceEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * multi-threaded inference, GPU acceleration, model versioning, and A/B testing.
  */
 @Service
-@Conditional({BrainNodeConfig.class, InferenceEngine.class})
+@ConditionalOnBean({BrainNodeConfig.class, InferenceEngine.class})
 @EnableConfigurationProperties({BrainNodeConfig.class, NeuronConfig.class})
 public class BrainNodeAiService {
 
@@ -115,13 +115,10 @@ public class BrainNodeAiService {
             String modelPath = brainNodeConfig.getAiModelPath();
             log.info("Loading Brain Node ONNX model from: {}", modelPath);
 
-            if (engine.reloadModel(modelPath)) {
-                currentModelVersion = neuronConfig.getModelVersion();
-                prometheusMetrics.setModelVersion(currentModelVersion);
-                log.info("Brain Node model loaded successfully (version: {})", currentModelVersion);
-            } else {
-                log.warn("Failed to load Brain Node model from: {}", modelPath);
-            }
+            engine.reloadModel(modelPath);
+            currentModelVersion = neuronConfig.getModelVersion();
+            prometheusMetrics.setModelVersion(currentModelVersion);
+            log.info("Brain Node model loaded successfully (version: {})", currentModelVersion);
         } catch (Exception e) {
             log.error("Error loading Brain Node model: {}", e.getMessage(), e);
         }

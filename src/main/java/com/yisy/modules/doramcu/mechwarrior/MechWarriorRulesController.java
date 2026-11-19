@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.mechwarrior;
 
-import com.yisy.modules.doramcu.mechwarrior.MechWarriorRulesService.MechWarriorRulesSummary;
 import com.yisy.modules.doramcu.shared.model.RulesEntry;
 import com.yisy.modules.doramcu.shared.model.RulesTable;
 import org.slf4j.Logger;

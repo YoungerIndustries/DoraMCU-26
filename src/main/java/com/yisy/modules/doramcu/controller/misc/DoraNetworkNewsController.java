@@ -1,7 +1,4 @@
 package com.yisy.modules.doramcu.controller.misc;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-
-
 import com.yisy.modules.doramcu.event.GalaxyEvent;
 import com.yisy.modules.doramcu.event.GalaxyEventService;
 import org.slf4j.Logger;

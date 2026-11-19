@@ -4,8 +4,8 @@ import com.yisy.modules.doramcu.dto.CreateGalaxyRequest;
 import com.yisy.modules.doramcu.dto.GalaxyCreationCostDto;
 import com.yisy.modules.doramcu.dto.GalaxyInfoDto;
 import com.yisy.modules.doramcu.eve.model.EveCorporation;
-import com.yisy.modules.doramcu.repository.EveCorporationRepository;
-import com.yisy.modules.doramcu.service.GalaxyCreationService;
+import com.yisy.modules.doramcu.repository.misc.EveCorporationRepository;
+import com.yisy.modules.doramcu.service.galaxy.GalaxyCreationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -204,7 +204,7 @@ public class CorporationGalaxyController {
     /**
      * Converts a Galaxy entity to a GalaxyInfoDto.
      */
-    private GalaxyInfoDto toDto(com.yisy.modules.doramcu.model.Galaxy galaxy) {
+    private GalaxyInfoDto toDto(com.yisy.modules.doramcu.model.galaxy.Galaxy galaxy) {
         return new GalaxyInfoDto(
                 galaxy.getId(),
                 galaxy.getName(),

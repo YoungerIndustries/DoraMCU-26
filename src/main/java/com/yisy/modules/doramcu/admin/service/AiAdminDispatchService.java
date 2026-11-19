@@ -1,7 +1,6 @@
 package com.yisy.modules.doramcu.admin.service;
 
 import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
-import com.yisy.modules.doramcu.admin.model.AiAdminOrder.OrderStatus;
 import com.yisy.modules.doramcu.admin.model.AiAdminTestCase;
 import com.yisy.modules.doramcu.admin.model.AiAdminTestReport;
 import com.yisy.modules.doramcu.admin.repository.AiAdminOrderRepository;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yisy.modules.doramcu.corporation.service.CorporationEconomyService;
 import com.yisy.modules.doramcu.corporation.service.CorporationPersistenceService;
 import com.yisy.modules.doramcu.eve.model.EveCorporation;
-import com.yisy.modules.doramcu.repository.EveCorporationRepository;
+import com.yisy.modules.doramcu.repository.misc.EveCorporationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

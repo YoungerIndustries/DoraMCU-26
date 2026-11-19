@@ -27,11 +27,6 @@ import java.time.LocalDateTime;
  * Each promo code can have usage limits, expiry dates, and associated bonuses.
  * </p>
  */
-@Entity
-@Table(name = "promo_codes",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "uk_promo_code_code", columnNames = "code")
-        })
 @EntityListeners(CdcEntityListener.class)
 public class PromoCode {
 

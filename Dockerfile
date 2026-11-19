@@ -37,8 +37,8 @@ RUN chmod +x gradlew && \
         ./gradlew generateWebConfig --no-daemon --no-configuration-cache -Dweb.env=$WEB_ENV; \
     fi
 
-# Stage 2: Run Java application
-FROM eclipse-temurin:27-jre
+# Stage 2: Runtime base (shared by runtime and prod targets)
+FROM eclipse-temurin:27-jre AS runtime
 WORKDIR /app
 
 # Swap is created at runtime only when DL_MODE!=rest to avoid baking an 8GB file into the image.
@@ -101,3 +101,9 @@ ENTRYPOINT ["sh", "-c", "\
     $DL_ARGS \
     $DEBUG_ARGS \
     -jar app.jar"]
+
+# Production target — lower memory defaults, DL_MODE=rest by default
+FROM runtime AS prod
+ENV DL_MODE=rest
+ENV JVM_ARGS="-Xmx1G -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+ENV JAVACPP_ARGS="-Dorg.bytedeco.javacpp.maxbytes=512M -Dorg.bytedeco.javacpp.maxphysicalbytes=512M -Dorg.bytedeco.javacpp.alloctype=direct"

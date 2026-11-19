@@ -47,6 +47,32 @@ DoraMCU/
 └── unity-client/         # Unity game client
 ```
 
+### Brain Node Architecture
+
+The **Brain Node** extends `dora-neuron` as a desktop-based server for heavy AI inference, persistent storage, and game management. The Raspberry Pi acts as the primary coordinator, while the Brain Node serves as a backup server.
+
+```mermaid
+graph LR
+    A[Raspberry Pi<br/>Base Node] -->|HTTP/REST| B[Brain Node<br/>Desktop]
+    A -->|USB Serial| B
+    B -->|P2P Mesh| C[Other Neurons]
+    A -->|MySQL| D[(MySQL DB)]
+    B -->|H2 DB| E[(H2 DB)]
+    B -->|ONNX Inference| F[AI Models]
+    A -->|Data Sync| B
+    B -->|Leader Election| A
+```
+
+Key components:
+- **`BrainNodeConfig`** — Desktop-specific configuration (inference threads, storage, serial port).
+- **`BrainNodeService`** — Orchestrates storage, AI, serial communication, and data sync.
+- **`SerialConsoleService`** — USB serial communication with the Pi via jSerialComm.
+- **`BrainNodeStorageService`** — H2 database for game state, experience samples, and AI model caching.
+- **`BrainNodeAiService`** — Multi-threaded ONNX inference with larger models.
+- **`BrainNodeController`** — REST API for status, health, sync, and failover.
+
+Run the Brain Node with: `./gradlew :dora-neuron:bootRun --args='--spring.profiles.active=brain-node'`
+
 ### Player Gateway Architecture
 
 The landing page is served by **dora-neuron**, which acts as the single entry point for all players. The flow is:

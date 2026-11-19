@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.warhammer40k.controller;
 
-import com.yisy.modules.doramcu.warhammer40k.model.*;
 import com.yisy.modules.doramcu.warhammer40k.service.Warhammer40kService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

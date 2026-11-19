@@ -3,6 +3,7 @@ package com.yisy.modules.doramcu.admin.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.yisy.modules.doramcu.admin.model.AiAdminIncident;
 import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
 import com.yisy.modules.doramcu.ai.client.AiRestClient;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
@@ -218,5 +219,70 @@ public class AiAdminLlmService {
                 "INVESTIGATE",
                 "LLM unavailable (" + reason + "). Defaulting to investigation.",
                 new HashMap<>(), "", false, reason);
+    }
+
+    /**
+     * Analyzes a health report using the LLM.
+     *
+     * @param admin the AI admin character
+     * @param report the health report as a map of key-value pairs
+     * @return structured analysis result
+     */
+    public LlmAnalysisResult analyzeReport(AiCharacter admin, Map<String, Object> report) {
+        try {
+            String systemPrompt = buildSystemPrompt(admin);
+            StringBuilder sb = new StringBuilder();
+            sb.append("## Health Report\n");
+            for (Map.Entry<String, Object> entry : report.entrySet()) {
+                sb.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+            }
+            String userMessage = sb.toString();
+
+            log.info("AI admin '{}' sending health report to LLM for analysis", admin.getName());
+            String llmResponse = aiRestClient.chat(userMessage, systemPrompt, null);
+
+            if (llmResponse == null || llmResponse.isBlank()) {
+                return fallbackResult("Empty LLM response");
+            }
+
+            return parseResponse(llmResponse);
+        } catch (Exception e) {
+            log.error("LLM health report analysis failed: {}", e.getMessage(), e);
+            return fallbackResult(e.getMessage());
+        }
+    }
+
+    /**
+     * Analyzes an incident using the LLM.
+     */
+    public LlmAnalysisResult analyzeIncident(AiCharacter admin, AiAdminIncident incident) {
+        try {
+            String systemPrompt = buildSystemPrompt(admin);
+            StringBuilder sb = new StringBuilder();
+            sb.append("## Incident\n");
+            sb.append("Type: ").append(incident.getIncidentType()).append("\n");
+            sb.append("Severity: ").append(incident.getSeverity()).append("\n");
+            sb.append("Description: ").append(incident.getDescription()).append("\n");
+            String userMessage = sb.toString();
+
+            log.info("AI admin '{}' sending incident to LLM for analysis", admin.getName());
+            String llmResponse = aiRestClient.chat(userMessage, systemPrompt, null);
+
+            if (llmResponse == null || llmResponse.isBlank()) {
+                return fallbackResult("Empty LLM response");
+            }
+
+            return parseResponse(llmResponse);
+        } catch (Exception e) {
+            log.error("LLM incident analysis failed: {}", e.getMessage(), e);
+            return fallbackResult(e.getMessage());
+        }
+    }
+
+    /**
+     * Returns the underlying AI REST client.
+     */
+    public AiRestClient getAiRestClient() {
+        return aiRestClient;
     }
 }

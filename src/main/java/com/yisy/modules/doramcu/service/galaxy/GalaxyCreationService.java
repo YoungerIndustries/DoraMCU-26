@@ -10,7 +10,6 @@ import com.yisy.modules.doramcu.dto.session.CreateSessionResponse;
 import com.yisy.modules.doramcu.dto.galaxy.GalaxyCreationCostDto;
 import com.yisy.modules.doramcu.dto.session.JoinSessionResponse;
 import com.yisy.modules.doramcu.eve.model.EveCorporation;
-import com.yisy.modules.doramcu.hex.*;
 import com.yisy.modules.doramcu.repository.misc.EveCorporationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,7 +109,7 @@ public class GalaxyCreationService {
         GalaxyCreationResult result = createGalaxyWithAiPlayers(request.getName());
 
         // Create JPA galaxy entity
-        com.yisy.modules.doramcu.model.galaxy.Galaxy galaxyEntity = new com.yisy.modules.doramcu.model.galaxy.Galaxy();
+        com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy galaxyEntity = new com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy();
         galaxyEntity.setName(request.getName());
         galaxyEntity.setDescription(request.getDescription());
         galaxyEntity.setGameType(request.getGameType());
@@ -350,9 +349,9 @@ public class GalaxyCreationService {
         private final double creditsSpent;
         private final Long corporationId;
         private final String corporationName;
-        private final com.yisy.modules.doramcu.model.galaxy.Galaxy galaxy;
+        private final com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy galaxy;
 
-        public PaidGalaxyCreationResult(String sessionId, String sessionName, double creditsSpent, Long corporationId, String corporationName, com.yisy.modules.doramcu.model.galaxy.Galaxy galaxy) {
+        public PaidGalaxyCreationResult(String sessionId, String sessionName, double creditsSpent, Long corporationId, String corporationName, com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy galaxy) {
             this.sessionId = sessionId;
             this.sessionName = sessionName;
             this.creditsSpent = creditsSpent;
@@ -366,7 +365,7 @@ public class GalaxyCreationService {
         public double getCreditsSpent() { return creditsSpent; }
         public Long getCorporationId() { return corporationId; }
         public String getCorporationName() { return corporationName; }
-        public com.yisy.modules.doramcu.model.galaxy.Galaxy getGalaxy() { return galaxy; }
+        public com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy getGalaxy() { return galaxy; }
     }
 
     /**

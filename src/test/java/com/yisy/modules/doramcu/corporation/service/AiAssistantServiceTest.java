@@ -3,6 +3,7 @@ package com.yisy.modules.doramcu.corporation.service;
 import com.yisy.modules.doramcu.ai.PlayerCloneService;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.model.*;
+import com.yisy.modules.doramcu.model.CorporateRole;
 import com.yisy.modules.doramcu.corporation.model.*;
 import com.yisy.modules.doramcu.repository.*;
 import com.yisy.modules.doramcu.corporation.repository.*;

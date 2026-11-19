@@ -1,9 +1,6 @@
 package com.yisy.modules.doramcu.dto.wormhole;
 import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.model.players.Player;
-import com.yisy.modules.doramcu.model.galaxy.Wormhole;
-
-
 /**
  * Request body for initiating wormhole travel.
  * <p>

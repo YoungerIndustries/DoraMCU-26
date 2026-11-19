@@ -1,0 +1,261 @@
+package com.yisy.modules.doramcu.admin.controller;
+
+import com.yisy.modules.doramcu.admin.service.AiAdminAnalyticsService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+@DisplayName("AiAdminController Analytics Tests")
+class AiAdminControllerAnalyticsTest {
+
+    @Mock
+    private AiAdminAnalyticsService analyticsService;
+
+    private AiAdminController controller;
+
+    @BeforeEach
+    void setUp() {
+        // We only need the analytics service for these tests; other dependencies are mocked
+        controller = new AiAdminController(
+                null, null, null, null, null, null, null, null,
+                null, null, null, null, analyticsService, null, null, null, null, null, null,
+                null
+        );
+    }
+
+    // --- getAdminPerformance tests ---
+
+    @Test
+    @DisplayName("getAdminPerformance should return performance DTO")
+    void getAdminPerformance_shouldReturnPerformanceDto() {
+        AiAdminAnalyticsService.AdminPerformance perf = new AiAdminAnalyticsService.AdminPerformance();
+        perf.adminId = 1L;
+        perf.adminName = "Overseer Alpha";
+        perf.successRate = 85.0;
+        perf.totalOrders = 20;
+
+        when(analyticsService.getAdminPerformance(1L)).thenReturn(perf);
+
+        ResponseEntity<?> response = controller.getAdminPerformance(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        AiAdminAnalyticsService.AdminPerformance body = (AiAdminAnalyticsService.AdminPerformance) response.getBody();
+        assertNotNull(body);
+        assertEquals(1L, body.adminId);
+        assertEquals("Overseer Alpha", body.adminName);
+        assertEquals(85.0, body.successRate, 0.001);
+    }
+
+    @Test
+    @DisplayName("getAdminPerformance should return 404 for unknown admin")
+    void getAdminPerformance_shouldReturn404ForUnknownAdmin() {
+        when(analyticsService.getAdminPerformance(999L))
+                .thenThrow(new IllegalArgumentException("AI admin not found: 999"));
+
+        ResponseEntity<?> response = controller.getAdminPerformance(999L);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    // --- getAdminLeaderboard tests ---
+
+    @Test
+    @DisplayName("getAdminLeaderboard should return leaderboard")
+    void getAdminLeaderboard_shouldReturnLeaderboard() {
+        AiAdminAnalyticsService.AdminLeaderboardEntry entry1 = new AiAdminAnalyticsService.AdminLeaderboardEntry();
+        entry1.rank = 1;
+        entry1.adminId = 1L;
+        entry1.adminName = "Overseer Alpha";
+        entry1.successRate = 100.0;
+
+        AiAdminAnalyticsService.AdminLeaderboardEntry entry2 = new AiAdminAnalyticsService.AdminLeaderboardEntry();
+        entry2.rank = 2;
+        entry2.adminId = 2L;
+        entry2.adminName = "Overseer Beta";
+        entry2.successRate = 50.0;
+
+        when(analyticsService.getAdminLeaderboard())
+                .thenReturn(Arrays.asList(entry1, entry2));
+
+        ResponseEntity<?> response = controller.getAdminLeaderboard();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<AiAdminAnalyticsService.AdminLeaderboardEntry> body =
+                (List<AiAdminAnalyticsService.AdminLeaderboardEntry>) response.getBody();
+        assertNotNull(body);
+        assertEquals(2, body.size());
+        assertEquals(1, body.get(0).rank);
+        assertEquals(100.0, body.get(0).successRate, 0.001);
+    }
+
+    @Test
+    @DisplayName("getAdminLeaderboard should return empty list when no admins")
+    void getAdminLeaderboard_shouldReturnEmptyWhenNoAdmins() {
+        when(analyticsService.getAdminLeaderboard()).thenReturn(Collections.emptyList());
+
+        ResponseEntity<?> response = controller.getAdminLeaderboard();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<AiAdminAnalyticsService.AdminLeaderboardEntry> body =
+                (List<AiAdminAnalyticsService.AdminLeaderboardEntry>) response.getBody();
+        assertNotNull(body);
+        assertTrue(body.isEmpty());
+    }
+
+    // --- getOrderTrends tests ---
+
+    @Test
+    @DisplayName("getOrderTrends should return trends for default 7 days")
+    void getOrderTrends_shouldReturnTrendsForDefaultDays() {
+        AiAdminAnalyticsService.OrderTrend trend = new AiAdminAnalyticsService.OrderTrend();
+        trend.date = "2026-11-17";
+        trend.completed = 5;
+        trend.failed = 1;
+
+        when(analyticsService.getOrderTrends(7)).thenReturn(List.of(trend));
+
+        ResponseEntity<?> response = controller.getOrderTrends(7);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<AiAdminAnalyticsService.OrderTrend> body =
+                (List<AiAdminAnalyticsService.OrderTrend>) response.getBody();
+        assertNotNull(body);
+        assertEquals(1, body.size());
+        assertEquals("2026-11-17", body.get(0).date);
+        assertEquals(5, body.get(0).completed);
+    }
+
+    @Test
+    @DisplayName("getOrderTrends should return empty for zero days")
+    void getOrderTrends_shouldReturnEmptyForZeroDays() {
+        when(analyticsService.getOrderTrends(0)).thenReturn(Collections.emptyList());
+
+        ResponseEntity<?> response = controller.getOrderTrends(0);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<AiAdminAnalyticsService.OrderTrend> body =
+                (List<AiAdminAnalyticsService.OrderTrend>) response.getBody();
+        assertNotNull(body);
+        assertTrue(body.isEmpty());
+    }
+
+    // --- getCategoryBreakdown tests ---
+
+    @Test
+    @DisplayName("getCategoryBreakdown should return category breakdown")
+    void getCategoryBreakdown_shouldReturnBreakdown() {
+        AiAdminAnalyticsService.CategoryBreakdown api = new AiAdminAnalyticsService.CategoryBreakdown();
+        api.category = "API";
+        api.totalOrders = 10;
+        api.passed = 8;
+        api.failed = 2;
+
+        AiAdminAnalyticsService.CategoryBreakdown game = new AiAdminAnalyticsService.CategoryBreakdown();
+        game.category = "GAME";
+        game.totalOrders = 5;
+        game.passed = 4;
+        game.failed = 1;
+
+        when(analyticsService.getCategoryBreakdown())
+                .thenReturn(Arrays.asList(api, game));
+
+        ResponseEntity<?> response = controller.getCategoryBreakdown();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<AiAdminAnalyticsService.CategoryBreakdown> body =
+                (List<AiAdminAnalyticsService.CategoryBreakdown>) response.getBody();
+        assertNotNull(body);
+        assertEquals(2, body.size());
+        assertEquals("API", body.get(0).category);
+        assertEquals(8, body.get(0).passed);
+    }
+
+    @Test
+    @DisplayName("getCategoryBreakdown should return empty when no orders")
+    void getCategoryBreakdown_shouldReturnEmptyWhenNoOrders() {
+        when(analyticsService.getCategoryBreakdown()).thenReturn(Collections.emptyList());
+
+        ResponseEntity<?> response = controller.getCategoryBreakdown();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<AiAdminAnalyticsService.CategoryBreakdown> body =
+                (List<AiAdminAnalyticsService.CategoryBreakdown>) response.getBody();
+        assertNotNull(body);
+        assertTrue(body.isEmpty());
+    }
+
+    // --- getSystemHealth tests ---
+
+    @Test
+    @DisplayName("getSystemHealth should return health summary")
+    void getSystemHealth_shouldReturnHealthSummary() {
+        AiAdminAnalyticsService.SystemHealth health = new AiAdminAnalyticsService.SystemHealth();
+        health.totalAdmins = 5;
+        health.availableAdmins = 3;
+        health.busyAdmins = 2;
+        health.pendingOrders = 10;
+        health.runningOrders = 2;
+        health.completedOrders = 50;
+        health.failedOrders = 5;
+        health.overallSuccessRate = 90.9;
+        health.avgCompletionTimeMs = 3000L;
+
+        when(analyticsService.getSystemHealth()).thenReturn(health);
+
+        ResponseEntity<?> response = controller.getSystemHealth();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        AiAdminAnalyticsService.SystemHealth body =
+                (AiAdminAnalyticsService.SystemHealth) response.getBody();
+        assertNotNull(body);
+        assertEquals(5, body.totalAdmins);
+        assertEquals(3, body.availableAdmins);
+        assertEquals(90.9, body.overallSuccessRate, 0.001);
+        assertEquals(3000L, body.avgCompletionTimeMs);
+    }
+
+    @Test
+    @DisplayName("getSystemHealth should handle empty system")
+    void getSystemHealth_shouldHandleEmptySystem() {
+        AiAdminAnalyticsService.SystemHealth health = new AiAdminAnalyticsService.SystemHealth();
+        health.totalAdmins = 0;
+        health.availableAdmins = 0;
+        health.busyAdmins = 0;
+        health.pendingOrders = 0;
+        health.runningOrders = 0;
+        health.completedOrders = 0;
+        health.failedOrders = 0;
+        health.overallSuccessRate = 0.0;
+        health.avgCompletionTimeMs = 0L;
+
+        when(analyticsService.getSystemHealth()).thenReturn(health);
+
+        ResponseEntity<?> response = controller.getSystemHealth();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        AiAdminAnalyticsService.SystemHealth body =
+                (AiAdminAnalyticsService.SystemHealth) response.getBody();
+        assertNotNull(body);
+        assertEquals(0, body.totalAdmins);
+        assertEquals(0.0, body.overallSuccessRate, 0.001);
+    }
+}

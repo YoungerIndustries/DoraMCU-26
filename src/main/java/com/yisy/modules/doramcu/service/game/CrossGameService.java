@@ -1,7 +1,4 @@
 package com.yisy.modules.doramcu.service.game;
-import com.yisy.modules.doramcu.model.galaxy.Star;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;

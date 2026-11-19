@@ -1,7 +1,6 @@
 package com.yisy.modules.doramcu.controller.voice;
 
 import com.yisy.modules.doramcu.ai.client.AiRestClient;
-import com.yisy.modules.doramcu.ai.client.AiRestClient.SynthesizeResponse;
 import com.yisy.modules.doramcu.eve.model.VoiceProfile;
 import com.yisy.modules.doramcu.service.voice.VoiceProfileService;
 import org.slf4j.Logger;

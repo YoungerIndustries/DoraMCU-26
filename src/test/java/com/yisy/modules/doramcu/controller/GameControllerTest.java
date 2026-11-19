@@ -1,6 +1,10 @@
 package com.yisy.modules.doramcu.controller;
 
 import com.yisy.modules.doramcu.dto.*;
+import com.yisy.modules.doramcu.dto.battle.BattleSummaryDto;
+import com.yisy.modules.doramcu.dto.session.GameStateResponse;
+import com.yisy.modules.doramcu.dto.ship_design.ShipDesignRequest;
+import com.yisy.modules.doramcu.dto.trade.TradeOpportunityDto;
 import com.yisy.modules.doramcu.exception.NotYourTurnException;
 import com.yisy.modules.doramcu.service.GameSessionService;
 import com.yisy.modules.doramcu.util.PlayerIdExtractor;
@@ -295,15 +299,15 @@ class GameControllerTest {
     @Test
     @DisplayName("getPipelineStatus - should return 200 OK with pipeline summary")
     void getPipelineStatus_shouldReturnOk() {
-        com.yisy.modules.doramcu.dto.ResourcePipelineSummary expected =
-                new com.yisy.modules.doramcu.dto.ResourcePipelineSummary();
+        com.yisy.modules.doramcu.dto.misc.ResourcePipelineSummary expected =
+                new com.yisy.modules.doramcu.dto.misc.ResourcePipelineSummary();
 
         when(authentication.getName()).thenReturn("1");
         when(playerIdExtractor.extract(authentication)).thenReturn(1L);
         when(gameSessionService.getPipelineSummary(eq(1L), eq("sess-1")))
                 .thenReturn(expected);
 
-        ResponseEntity<com.yisy.modules.doramcu.dto.ResourcePipelineSummary> response =
+        ResponseEntity<com.yisy.modules.doramcu.dto.misc.ResourcePipelineSummary> response =
                 controller.getPipelineStatus("sess-1", authentication);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -318,7 +322,7 @@ class GameControllerTest {
         when(gameSessionService.getPipelineSummary(eq(1L), eq("sess-1")))
                 .thenReturn(null);
 
-        ResponseEntity<com.yisy.modules.doramcu.dto.ResourcePipelineSummary> response =
+        ResponseEntity<com.yisy.modules.doramcu.dto.misc.ResourcePipelineSummary> response =
                 controller.getPipelineStatus("sess-1", authentication);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -519,14 +523,14 @@ class GameControllerTest {
     @Test
     @DisplayName("getActiveBattles - should return 200 OK with battles list")
     void getActiveBattles_shouldReturnOk() {
-        java.util.List<BattleSummaryDto> expected = Collections.emptyList();
+        java.util.List<com.yisy.modules.doramcu.dto.battle.BattleSummaryDto> expected = Collections.emptyList();
 
         when(authentication.getName()).thenReturn("1");
         when(playerIdExtractor.extract(authentication)).thenReturn(1L);
         when(gameSessionService.getActiveBattles(eq(1L), eq("sess-1")))
                 .thenReturn(expected);
 
-        ResponseEntity<java.util.List<BattleSummaryDto>> response = controller.getActiveBattles("sess-1", authentication);
+        ResponseEntity<java.util.List<com.yisy.modules.doramcu.dto.battle.BattleSummaryDto>> response = controller.getActiveBattles("sess-1", authentication);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -678,14 +682,14 @@ class GameControllerTest {
     @Test
     @DisplayName("getTradeMarket - should return 200 OK with trade opportunities")
     void getTradeMarket_shouldReturnOk() {
-        java.util.List<TradeOpportunityDto> expected = Collections.emptyList();
+        java.util.List<com.yisy.modules.doramcu.dto.trade.TradeOpportunityDto> expected = Collections.emptyList();
 
         when(authentication.getName()).thenReturn("1");
         when(playerIdExtractor.extract(authentication)).thenReturn(1L);
         when(gameSessionService.getTradeMarket(eq(1L), eq("sess-1"), eq(1)))
                 .thenReturn(expected);
 
-        ResponseEntity<java.util.List<TradeOpportunityDto>> response = controller.getTradeMarket("sess-1", 1, authentication);
+        ResponseEntity<java.util.List<com.yisy.modules.doramcu.dto.trade.TradeOpportunityDto>> response = controller.getTradeMarket("sess-1", 1, authentication);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());

@@ -1,9 +1,5 @@
 package com.yisy.modules.doramcu.service.game;
-import com.yisy.modules.doramcu.model.galaxy.Star;
 import com.yisy.modules.doramcu.model.misc.CharacterType;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-
-
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 import org.slf4j.Logger;

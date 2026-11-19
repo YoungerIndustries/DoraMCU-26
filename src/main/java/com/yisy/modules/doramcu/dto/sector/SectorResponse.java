@@ -1,7 +1,4 @@
 package com.yisy.modules.doramcu.dto.sector;
-import com.yisy.modules.doramcu.model.galaxy.Sector;
-
-
 import java.util.List;
 import java.util.Map;
 

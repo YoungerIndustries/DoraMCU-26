@@ -16,7 +16,8 @@ import java.util.Optional;
  * Handles war declarations, peace treaties, and relation score modifications.
  * </p>
  */
-@Service
+@Service("diplomacyService_zero_zero_seven_diplomacy_DiplomacyService")
+    @Service
 public class DiplomacyService {
 
     private final BondDiplomaticRelationRepository relationRepository;

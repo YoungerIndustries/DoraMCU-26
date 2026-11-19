@@ -1,0 +1,345 @@
+package com.yisy.modules.doramcu.admin.controller;
+
+import com.yisy.modules.doramcu.admin.model.AiAdminSchedule;
+import com.yisy.modules.doramcu.admin.service.AiAdminScheduleService;
+import com.yisy.modules.doramcu.eve.model.AiCharacter;
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+@DisplayName("AiAdminController Schedule Tests")
+class AiAdminControllerScheduleTest {
+
+    @Mock
+    private AiAdminScheduleService scheduleService;
+
+    @Mock
+    private AiCharacterRepository aiCharacterRepository;
+
+    private AiAdminController controller;
+
+    @BeforeEach
+    void setUp() {
+        controller = new AiAdminController(
+                null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, scheduleService,
+                null
+        );
+    }
+
+    // ---------------------------------------------------------------
+    // Create schedule tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("createSchedule should create a new schedule")
+    void createSchedule_shouldCreateNewSchedule() {
+        Map<String, Object> request = new HashMap<>();
+        request.put("aiAdminId", "1");
+        request.put("shiftType", "RECURRING");
+        request.put("galaxyName", "Alpha Centauri");
+        request.put("startTime", "09:00");
+        request.put("endTime", "17:00");
+        request.put("dayOfWeek", "MONDAY");
+
+        AiAdminSchedule schedule = new AiAdminSchedule();
+        schedule.setId(100L);
+        schedule.setAiAdminId(1L);
+        schedule.setShiftType(AiAdminSchedule.ShiftType.RECURRING);
+        schedule.setGalaxyName("Alpha Centauri");
+        schedule.setStartTime(LocalTime.of(9, 0));
+        schedule.setEndTime(LocalTime.of(17, 0));
+        schedule.setDayOfWeek(DayOfWeek.MONDAY);
+        schedule.setIsActive(true);
+        schedule.setCreatedAt(LocalDateTime.now());
+        schedule.setUpdatedAt(LocalDateTime.now());
+
+        when(scheduleService.createSchedule(eq(1L), eq(AiAdminSchedule.ShiftType.RECURRING),
+                eq("Alpha Centauri"), eq(LocalTime.of(9, 0)), eq(LocalTime.of(17, 0)),
+                eq(DayOfWeek.MONDAY))).thenReturn(schedule);
+
+        ResponseEntity<?> response = controller.createSchedule(request, null);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals(100L, body.get("id"));
+        assertEquals("RECURRING", body.get("shiftType"));
+        assertEquals("Alpha Centauri", body.get("galaxyName"));
+    }
+
+    @Test
+    @DisplayName("createSchedule should handle null galaxy name")
+    void createSchedule_shouldHandleNullGalaxyName() {
+        Map<String, Object> request = new HashMap<>();
+        request.put("aiAdminId", "1");
+        request.put("shiftType", "ON_CALL");
+        request.put("startTime", "00:00");
+        request.put("endTime", "23:59");
+
+        AiAdminSchedule schedule = new AiAdminSchedule();
+        schedule.setId(100L);
+        schedule.setAiAdminId(1L);
+        schedule.setShiftType(AiAdminSchedule.ShiftType.ON_CALL);
+        schedule.setGalaxyName(null);
+        schedule.setIsActive(true);
+        schedule.setCreatedAt(LocalDateTime.now());
+        schedule.setUpdatedAt(LocalDateTime.now());
+
+        when(scheduleService.createSchedule(eq(1L), eq(AiAdminSchedule.ShiftType.ON_CALL),
+                isNull(), eq(LocalTime.of(0, 0)), eq(LocalTime.of(23, 59)), isNull()))
+                .thenReturn(schedule);
+
+        ResponseEntity<?> response = controller.createSchedule(request, null);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    }
+
+    // ---------------------------------------------------------------
+    // Update schedule tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("updateSchedule should update a schedule")
+    void updateSchedule_shouldUpdateSchedule() {
+        Map<String, Object> request = new HashMap<>();
+        request.put("shiftType", "ONCE");
+        request.put("galaxyName", "New Galaxy");
+        request.put("notes", "Updated notes");
+
+        AiAdminSchedule schedule = new AiAdminSchedule();
+        schedule.setId(100L);
+        schedule.setShiftType(AiAdminSchedule.ShiftType.ONCE);
+        schedule.setGalaxyName("New Galaxy");
+        schedule.setNotes("Updated notes");
+        schedule.setCreatedAt(LocalDateTime.now());
+        schedule.setUpdatedAt(LocalDateTime.now());
+
+        when(scheduleService.updateSchedule(eq(100L), eq(AiAdminSchedule.ShiftType.ONCE),
+                eq("New Galaxy"), isNull(), isNull(), isNull(), eq("Updated notes")))
+                .thenReturn(schedule);
+
+        ResponseEntity<?> response = controller.updateSchedule(100L, request, null);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals("ONCE", body.get("shiftType"));
+        assertEquals("New Galaxy", body.get("galaxyName"));
+    }
+
+    // ---------------------------------------------------------------
+    // Delete schedule tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("deleteSchedule should deactivate a schedule")
+    void deleteSchedule_shouldDeactivateSchedule() {
+        doNothing().when(scheduleService).deleteSchedule(100L);
+
+        ResponseEntity<?> response = controller.deleteSchedule(100L, null);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals("Schedule deactivated", body.get("message"));
+        verify(scheduleService).deleteSchedule(100L);
+    }
+
+    // ---------------------------------------------------------------
+    // Get active schedules tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("getActiveSchedules should return schedules for an admin")
+    void getActiveSchedules_shouldReturnSchedules() {
+        AiAdminSchedule schedule = new AiAdminSchedule();
+        schedule.setId(1L);
+        schedule.setAiAdminId(1L);
+        schedule.setShiftType(AiAdminSchedule.ShiftType.RECURRING);
+        schedule.setIsActive(true);
+        schedule.setCreatedAt(LocalDateTime.now());
+        schedule.setUpdatedAt(LocalDateTime.now());
+
+        when(scheduleService.getActiveSchedules(1L)).thenReturn(List.of(schedule));
+
+        ResponseEntity<?> response = controller.getActiveSchedules(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> list = (List<Map<String, Object>>) response.getBody();
+        assertEquals(1, list.size());
+        assertEquals(1L, list.get(0).get("id"));
+    }
+
+    @Test
+    @DisplayName("getActiveSchedules should return empty list when no schedules")
+    void getActiveSchedules_shouldReturnEmptyList() {
+        when(scheduleService.getActiveSchedules(1L)).thenReturn(List.of());
+
+        ResponseEntity<?> response = controller.getActiveSchedules(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> list = (List<Map<String, Object>>) response.getBody();
+        assertTrue(list.isEmpty());
+    }
+
+    // ---------------------------------------------------------------
+    // Get all active schedules tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("getAllActiveSchedules should return all active schedules")
+    void getAllActiveSchedules_shouldReturnAllActive() {
+        AiAdminSchedule schedule = new AiAdminSchedule();
+        schedule.setId(1L);
+        schedule.setIsActive(true);
+        schedule.setCreatedAt(LocalDateTime.now());
+        schedule.setUpdatedAt(LocalDateTime.now());
+
+        when(scheduleService.getAllActiveSchedules()).thenReturn(List.of(schedule));
+
+        ResponseEntity<?> response = controller.getAllActiveSchedules(null);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    // ---------------------------------------------------------------
+    // Get admins on shift tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("getAllAdminsOnShift should return admins on shift")
+    void getAllAdminsOnShift_shouldReturnAdmins() {
+        when(scheduleService.getAllAdminsOnShift()).thenReturn(List.of(1L, 2L));
+
+        AiCharacter admin1 = new AiCharacter();
+        admin1.setId(1L);
+        admin1.setName("Admin 1");
+        admin1.setEmpireName("Empire 1");
+        admin1.setRole("Galaxy Overseer");
+        admin1.setActiveOrderCount(1);
+
+        AiCharacter admin2 = new AiCharacter();
+        admin2.setId(2L);
+        admin2.setName("Admin 2");
+        admin2.setEmpireName("Empire 2");
+        admin2.setRole("Investigator");
+        admin2.setActiveOrderCount(0);
+
+        when(aiCharacterRepository.findById(1L)).thenReturn(Optional.of(admin1));
+        when(aiCharacterRepository.findById(2L)).thenReturn(Optional.of(admin2));
+
+        ResponseEntity<?> response = controller.getAllAdminsOnShift(null);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> list = (List<Map<String, Object>>) response.getBody();
+        assertEquals(2, list.size());
+    }
+
+    @Test
+    @DisplayName("getAdminsOnShiftForGalaxy should return admins for a galaxy")
+    void getAdminsOnShiftForGalaxy_shouldReturnAdmins() {
+        when(scheduleService.getAdminsOnShift("Alpha Centauri")).thenReturn(List.of(1L));
+
+        AiCharacter admin = new AiCharacter();
+        admin.setId(1L);
+        admin.setName("Admin 1");
+        admin.setEmpireName("Empire 1");
+        admin.setRole("Galaxy Overseer");
+        admin.setActiveOrderCount(1);
+
+        when(aiCharacterRepository.findById(1L)).thenReturn(Optional.of(admin));
+
+        ResponseEntity<?> response = controller.getAdminsOnShiftForGalaxy("Alpha Centauri", null);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> list = (List<Map<String, Object>>) response.getBody();
+        assertEquals(1, list.size());
+        assertEquals("Admin 1", list.get(0).get("adminName"));
+    }
+
+    // ---------------------------------------------------------------
+    // Calendar view tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("getScheduleCalendar should return calendar view")
+    void getScheduleCalendar_shouldReturnCalendarView() {
+        AiAdminSchedule schedule = new AiAdminSchedule();
+        schedule.setId(1L);
+        schedule.setCreatedAt(LocalDateTime.now());
+        schedule.setUpdatedAt(LocalDateTime.now());
+
+        when(scheduleService.getScheduleCalendar(eq(1L), any(), any())).thenReturn(List.of(schedule));
+
+        ResponseEntity<?> response = controller.getScheduleCalendar(1L, 7);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> list = (List<Map<String, Object>>) response.getBody();
+        assertEquals(1, list.size());
+    }
+
+    @Test
+    @DisplayName("getScheduleCalendar should return empty when no schedules")
+    void getScheduleCalendar_shouldReturnEmpty() {
+        when(scheduleService.getScheduleCalendar(eq(1L), any(), any())).thenReturn(List.of());
+
+        ResponseEntity<?> response = controller.getScheduleCalendar(1L, 7);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> list = (List<Map<String, Object>>) response.getBody();
+        assertTrue(list.isEmpty());
+    }
+
+    // ---------------------------------------------------------------
+    // Edge cases
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("getAllAdminsOnShift should return empty when no admins on shift")
+    void getAllAdminsOnShift_shouldReturnEmpty() {
+        when(scheduleService.getAllAdminsOnShift()).thenReturn(List.of());
+
+        ResponseEntity<?> response = controller.getAllAdminsOnShift(null);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> list = (List<Map<String, Object>>) response.getBody();
+        assertTrue(list.isEmpty());
+    }
+
+    @Test
+    @DisplayName("getAdminsOnShiftForGalaxy should return empty when no admins")
+    void getAdminsOnShiftForGalaxy_shouldReturnEmpty() {
+        when(scheduleService.getAdminsOnShift("Empty Galaxy")).thenReturn(List.of());
+
+        ResponseEntity<?> response = controller.getAdminsOnShiftForGalaxy("Empty Galaxy", null);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> list = (List<Map<String, Object>>) response.getBody();
+        assertTrue(list.isEmpty());
+    }
+}

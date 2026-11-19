@@ -3,7 +3,7 @@ package com.yisy.modules.doramcu.thirdreich.controller;
 import com.yisy.modules.doramcu.earth2026.model.Earth2026BattleEnvironment;
 import com.yisy.modules.doramcu.earth2026.service.BiosphereService;
 import com.yisy.modules.doramcu.earth2026.service.PlanetService;
-import com.yisy.modules.doramcu.service.AiCommanderExperienceService;
+import com.yisy.modules.doramcu.service.ai.AiCommanderExperienceService;
 import com.yisy.modules.doramcu.thirdreich.commander.AICommander;
 import com.yisy.modules.doramcu.thirdreich.commander.AICommanderProfile;
 import com.yisy.modules.doramcu.thirdreich.domain.BattlefieldMap;

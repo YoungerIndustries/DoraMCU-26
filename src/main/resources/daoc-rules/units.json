@@ -1,0 +1,727 @@
+{
+  "units": {
+    "ground_units": [
+      {
+        "id": "armsman",
+        "name": "Armsman",
+        "faction": "albion",
+        "type": "tank",
+        "description": "Heavy melee warrior who can use almost any weapon type, including polearms. One of the few Albion classes without magic. The backbone of Albion's defensive lines.",
+        "stats": {
+          "attack": 4,
+          "defense": 7,
+          "health": 8,
+          "mana": 0,
+          "speed": 5,
+          "spell_resistance": 3
+        },
+        "weapons": ["Sword", "Axe", "Mace", "Polearm", "Two-Handed", "Shield", "Crossbow"],
+        "abilities": ["Heavy Armor", "Shield Block", "Polearm Mastery", "Crossbow Range"],
+        "role": "Primary tank for Albion; excels at holding capture points"
+      },
+      {
+        "id": "paladin",
+        "name": "Paladin",
+        "faction": "albion",
+        "type": "holy_warrior",
+        "description": "Divine warriors who combine heavy melee combat with healing and smiting spells. Iconic Albion class that serves as both tank and healer.",
+        "stats": {
+          "attack": 5,
+          "defense": 6,
+          "health": 7,
+          "mana": 5,
+          "speed": 5,
+          "spell_resistance": 5
+        },
+        "weapons": ["Sword", "Mace", "Shield"],
+        "abilities": ["Divine Healing", "Smite Evil", "Holy Shield", "Lay on Hands"],
+        "role": "Hybrid tank-healer; essential for RvR groups"
+      },
+      {
+        "id": "wizard",
+        "name": "Wizard",
+        "faction": "albion",
+        "type": "caster",
+        "description": "High-damage elemental spellcasters specializing in fire and ice. Iconic Albion class with the most devastating single-target damage in the game.",
+        "stats": {
+          "attack": 1,
+          "defense": 2,
+          "health": 3,
+          "mana": 10,
+          "speed": 5,
+          "spell_resistance": 4
+        },
+        "weapons": ["Staff"],
+        "abilities": ["Fire Path", "Ice Path", "Meteor", "Fireball", "Ice Spike"],
+        "spell_paths": ["Path of Fire (Pyromancy)", "Path of Ice (Refrigeration)"],
+        "role": "Highest single-target DPS caster; glass cannon"
+      },
+      {
+        "id": "sorcerer",
+        "name": "Sorcerer",
+        "faction": "albion",
+        "type": "caster",
+        "description": "Elemental spellcasters who specialize in air, ice, and earth magic, summoning elemental pets. More versatile than Wizards with pet support.",
+        "stats": {
+          "attack": 1,
+          "defense": 2,
+          "health": 3,
+          "mana": 9,
+          "speed": 5,
+          "spell_resistance": 4
+        },
+        "weapons": ["Staff"],
+        "abilities": ["Air Path", "Ice Path", "Earth Path", "Elemental Pets", "Vapormancy"],
+        "spell_paths": ["Path of Air (Vapormancy)", "Path of Ice (Liquifaction)", "Path of Earth (Abrasion)"],
+        "role": "Versatile caster with pet support; area control"
+      },
+      {
+        "id": "cleric",
+        "name": "Cleric",
+        "faction": "albion",
+        "type": "healer",
+        "description": "Divine healers who wield rejuvenation, enhancements, and smiting spells. Can use staff weapons for self-defense.",
+        "stats": {
+          "attack": 2,
+          "defense": 3,
+          "health": 5,
+          "mana": 8,
+          "speed": 5,
+          "spell_resistance": 6
+        },
+        "weapons": ["Staff"],
+        "abilities": ["Rejuvenation", "Enhancements", "Smiting", "Group Heal", "Divine Shield"],
+        "role": "Primary healer for Albion groups"
+      },
+      {
+        "id": "necromancer",
+        "name": "Necromancer",
+        "faction": "albion",
+        "type": "caster",
+        "description": "Dark spellcasters who raise the dead and wield necromantic powers. Can summon undead minions and deal damage over time.",
+        "stats": {
+          "attack": 1,
+          "defense": 2,
+          "health": 3,
+          "mana": 9,
+          "speed": 5,
+          "spell_resistance": 5
+        },
+        "weapons": ["Dagger", "Scythe"],
+        "abilities": ["Raise Dead", "Life Drain", "Corpse Explosion", "Undead Minions"],
+        "role": "Dark magic DPS with undead summoning"
+      },
+      {
+        "id": "infiltrator",
+        "name": "Infiltrator",
+        "faction": "albion",
+        "type": "rogue",
+        "description": "Stealth-based assassins who specialize in backstabbing and subterfuge. High burst damage from stealth.",
+        "stats": {
+          "attack": 6,
+          "defense": 3,
+          "health": 4,
+          "mana": 3,
+          "speed": 7,
+          "spell_resistance": 2
+        },
+        "weapons": ["Dagger", "Short Sword"],
+        "abilities": ["Stealth", "Backstab", "Poison", "Evasion"],
+        "role": "Stealth assassin; high burst damage"
+      },
+      {
+        "id": "scout",
+        "name": "Scout",
+        "faction": "albion",
+        "type": "ranger",
+        "description": "Longbow-proficient rangers who excel at ranged combat and tracking. Primary ranged physical DPS for Albion.",
+        "stats": {
+          "attack": 6,
+          "defense": 3,
+          "health": 4,
+          "mana": 2,
+          "speed": 7,
+          "spell_resistance": 2
+        },
+        "weapons": ["Longbow", "Short Bow", "Dagger"],
+        "abilities": ["Longbow Mastery", "Tracking", "Camouflage", "Power Shot"],
+        "role": "Ranged physical DPS; long-range support"
+      },
+      {
+        "id": "cabalist",
+        "name": "Cabalist",
+        "faction": "albion",
+        "type": "caster",
+        "description": "Spirit magic users who manipulate matter, body destruction, essence manipulation, spirit animation, and vivification.",
+        "stats": {
+          "attack": 1,
+          "defense": 2,
+          "health": 3,
+          "mana": 9,
+          "speed": 5,
+          "spell_resistance": 5
+        },
+        "weapons": ["Staff"],
+        "abilities": ["Matter Manipulation", "Body Destruction", "Spirit Animation", "Vivification"],
+        "spell_paths": ["Matter", "Body Destruction", "Essence Manipulation", "Spirit Animation"],
+        "role": "Spirit magic caster; versatile spell paths"
+      },
+      {
+        "id": "heretic",
+        "name": "Heretic",
+        "faction": "albion",
+        "type": "caster",
+        "description": "Dark magic users who twist and dominate the minds and bodies of their enemies. Strong crowd control through domination spells.",
+        "stats": {
+          "attack": 1,
+          "defense": 2,
+          "health": 3,
+          "mana": 9,
+          "speed": 5,
+          "spell_resistance": 5
+        },
+        "weapons": ["Staff"],
+        "abilities": ["Mind Twisting", "Domination", "Disorientation", "Body Destruction"],
+        "spell_paths": ["Mind Twisting", "Domination", "Disorientation"],
+        "role": "Crowd control caster; mind domination"
+      },
+      {
+        "id": "minstrel",
+        "name": "Minstrel",
+        "faction": "albion",
+        "type": "buffer",
+        "description": "Musical support casters who buff allies with songs and provide crowd control. Essential for large RvR groups.",
+        "stats": {
+          "attack": 2,
+          "defense": 3,
+          "health": 4,
+          "mana": 7,
+          "speed": 5,
+          "spell_resistance": 4
+        },
+        "weapons": ["Musical Instrument"],
+        "abilities": ["Battle Hymn", "Healing Song", "Crowd Control", "Group Buffs"],
+        "role": "Group buffer and support"
+      },
+      {
+        "id": "friar",
+        "name": "Friar",
+        "faction": "albion",
+        "type": "healer",
+        "description": "Staff-wielding healers similar to Clerics but with different spell specializations in rejuvenation and enhancements.",
+        "stats": {
+          "attack": 2,
+          "defense": 3,
+          "health": 5,
+          "mana": 8,
+          "speed": 5,
+          "spell_resistance": 6
+        },
+        "weapons": ["Staff"],
+        "abilities": ["Rejuvenation", "Enhancements", "Group Heal", "Divine Protection"],
+        "role": "Alternative healer for Albion"
+      },
+      {
+        "id": "mercenary",
+        "name": "Mercenary",
+        "faction": "albion",
+        "type": "melee",
+        "description": "Versatile warriors who fight with blades and shields, combining offense and defense.",
+        "stats": {
+          "attack": 5,
+          "defense": 5,
+          "health": 6,
+          "mana": 0,
+          "speed": 5,
+          "spell_resistance": 2
+        },
+        "weapons": ["Sword", "Blade", "Shield"],
+        "abilities": ["Blade Mastery", "Shield Bash", "Counter Attack"],
+        "role": "Balanced melee fighter"
+      },
+      {
+        "id": "reaver",
+        "name": "Reaver",
+        "faction": "albion",
+        "type": "ranged_melee",
+        "description": "Ranged physical damage dealers who use crossbows and throwing weapons.",
+        "stats": {
+          "attack": 6,
+          "defense": 3,
+          "health": 4,
+          "mana": 2,
+          "speed": 6,
+          "spell_resistance": 2
+        },
+        "weapons": ["Crossbow", "Throwing Axes", "Dagger"],
+        "abilities": ["Crossbow Mastery", "Throwing Weapons", "Ranged DPS"],
+        "role": "Ranged physical DPS"
+      },
+      {
+        "id": "theurgist",
+        "name": "Theurgist",
+        "faction": "albion",
+        "type": "caster",
+        "description": "Divine magic users who channel the power of the gods through prayer and ritual.",
+        "stats": {
+          "attack": 1,
+          "defense": 2,
+          "health": 3,
+          "mana": 9,
+          "speed": 5,
+          "spell_resistance": 6
+        },
+        "weapons": ["Staff"],
+        "abilities": ["Divine Magic", "Prayer", "Ritual", "Holy Damage"],
+        "role": "Divine magic caster"
+      },
+      {
+        "id": "champion_hib",
+        "name": "Champion",
+        "faction": "hibernia",
+        "type": "tank",
+        "description": "Heavy melee tanks with no magic. Can use all weapons and heavy armor. Iconic Hibernian class and one of the best pure tanks in the game.",
+        "stats": {
+          "attack": 4,
+          "defense": 8,
+          "health": 9,
+          "mana": 0,
+          "speed": 5,
+          "spell_resistance": 3
+        },
+        "weapons": ["Sword", "Axe", "Mace", "Two-Handed", "Shield"],
+        "abilities": ["Heavy Armor", "Shield Block", "Taunt", "Damage Resistance"],
+        "role": "Primary tank for Hibernia; best pure tank"
+      },
+      {
+        "id": "druid",
+        "name": "Druid",
+        "faction": "hibernia",
+        "type": "caster",
+        "description": "Nature spellcasters who wield the power of the forest, healing and destruction alike. Can shapeshift and summon nature creatures.",
+        "stats": {
+          "attack": 2,
+          "defense": 3,
+          "health": 4,
+          "mana": 9,
+          "speed": 5,
+          "spell_resistance": 5
+        },
+        "weapons": ["Staff", "Scythe"],
+        "abilities": ["Nature Magic", "Shapeshift", "Healing", "Summon Nature"],
+        "spell_paths": ["Arboreal Path", "Arboreal Mastery"],
+        "role": "Nature magic caster; healing and destruction"
+      },
+      {
+        "id": "ranger_hib",
+        "name": "Ranger",
+        "faction": "hibernia",
+        "type": "ranger",
+        "description": "Archers of Hibernia with magical spells and dual-wielding capability in close combat.",
+        "stats": {
+          "attack": 6,
+          "defense": 3,
+          "health": 4,
+          "mana": 4,
+          "speed": 7,
+          "spell_resistance": 3
+        },
+        "weapons": ["Longbow", "Dual Weapons"],
+        "abilities": ["Archery", "Magic Spells", "Dual Wield", "Tracking"],
+        "role": "Hybrid ranger-mage; versatile DPS"
+      },
+      {
+        "id": "bard",
+        "name": "Bard",
+        "faction": "hibernia",
+        "type": "buffer",
+        "description": "Musical support casters who buff allies with Celtic songs and provide crowd control.",
+        "stats": {
+          "attack": 2,
+          "defense": 3,
+          "health": 4,
+          "mana": 7,
+          "speed": 5,
+          "spell_resistance": 4
+        },
+        "weapons": ["Musical Instrument"],
+        "abilities": ["Celtic Songs", "Group Buffs", "Crowd Control", "Healing Melody"],
+        "role": "Group buffer and support"
+      },
+      {
+        "id": "blademaster",
+        "name": "Blademaster",
+        "faction": "hibernia",
+        "type": "melee",
+        "description": "Dual-wielding melee fighters who use Celtic dual weapons with devastating speed.",
+        "stats": {
+          "attack": 7,
+          "defense": 3,
+          "health": 4,
+          "mana": 0,
+          "speed": 7,
+          "spell_resistance": 2
+        },
+        "weapons": ["Celtic Dual Weapons", "Blades", "Piercing"],
+        "abilities": ["Dual Wield", "Celtic Fury", "Speed Strike"],
+        "role": "Fast dual-wielding melee DPS"
+      },
+      {
+        "id": "vampiir",
+        "name": "Vampiir",
+        "faction": "hibernia",
+        "type": "hybrid",
+        "description": "Vampire fighters who cast vampiric magic with one hand while wielding a piercing weapon with the other. Unique life-drain capabilities.",
+        "stats": {
+          "attack": 5,
+          "defense": 4,
+          "health": 6,
+          "mana": 5,
+          "speed": 6,
+          "spell_resistance": 4
+        },
+        "weapons": ["Piercing Weapon"],
+        "abilities": ["Vampiric Embrace", "Life Drain", "Dementia", "Shadow Mastery"],
+        "spell_paths": ["Shadow Mastery", "Vampiiric Embrace", "Dementia"],
+        "role": "Life-drain hybrid; sustain through combat"
+      },
+      {
+        "id": "valewalker",
+        "name": "Valewalker",
+        "faction": "hibernia",
+        "type": "melee",
+        "description": "Scythe-wielding melee DPS. Glass cannon — high damage but fragile.",
+        "stats": {
+          "attack": 8,
+          "defense": 2,
+          "health": 3,
+          "mana": 0,
+          "speed": 6,
+          "spell_resistance": 1
+        },
+        "weapons": ["Scythe"],
+        "abilities": ["Scythe Mastery", "Reaping", "Death Strike"],
+        "role": "Glass cannon melee DPS"
+      },
+      {
+        "id": "nightshade",
+        "name": "Nightshade",
+        "faction": "hibernia",
+        "type": "rogue",
+        "description": "Stealth-based rogues who backstab and wield dark magic.",
+        "stats": {
+          "attack": 6,
+          "defense": 3,
+          "health": 4,
+          "mana": 4,
+          "speed": 7,
+          "spell_resistance": 3
+        },
+        "weapons": ["Dagger", "Piercing"],
+        "abilities": ["Stealth", "Backstab", "Dark Magic", "Poison"],
+        "role": "Stealth rogue with dark magic"
+      },
+      {
+        "id": "animist",
+        "name": "Animist",
+        "faction": "hibernia",
+        "type": "caster",
+        "description": "Plant-affinity spellcasters who can animate plant life to devastate enemies.",
+        "stats": {
+          "attack": 1,
+          "defense": 2,
+          "health": 3,
+          "mana": 9,
+          "speed": 5,
+          "spell_resistance": 5
+        },
+        "weapons": ["Staff"],
+        "abilities": ["Plant Animation", "Nature's Wrath", "Vine Trap", "Root"],
+        "role": "Nature magic caster; plant-based attacks"
+      },
+      {
+        "id": "berserker",
+        "name": "Berserker",
+        "faction": "midgard",
+        "type": "melee",
+        "description": "Frenzied melee warriors who fight with rage and fury. Iconic Midgard class with high damage output.",
+        "stats": {
+          "attack": 7,
+          "defense": 4,
+          "health": 6,
+          "mana": 0,
+          "speed": 6,
+          "spell_resistance": 2
+        },
+        "weapons": ["Axe", "Two-Handed", "Sword"],
+        "abilities": ["Berserker Rage", "Whirlwind", "Bloodthirst", "Frenzy"],
+        "role": "High-damage melee fighter"
+      },
+      {
+        "id": "thane",
+        "name": "Thane",
+        "faction": "midgard",
+        "type": "tank",
+        "description": "Heavy melee tanks with offensive lightning-based magic. Iconic Midgard class that combines tanking with lightning damage.",
+        "stats": {
+          "attack": 5,
+          "defense": 7,
+          "health": 8,
+          "mana": 4,
+          "speed": 5,
+          "spell_resistance": 4
+        },
+        "weapons": ["Axe", "Sword", "Shield"],
+        "abilities": ["Lightning Strike", "Heavy Armor", "Shield Bash", "Thunder"],
+        "role": "Tank with lightning magic; primary Midgard tank"
+      },
+      {
+        "id": "runemaster",
+        "name": "Runemaster",
+        "faction": "midgard",
+        "type": "caster",
+        "description": "Rune magic users who inscribe powerful runes to channel the power of the Norse gods. Iconic Midgard class with unique rune-based magic.",
+        "stats": {
+          "attack": 1,
+          "defense": 2,
+          "health": 3,
+          "mana": 10,
+          "speed": 5,
+          "spell_resistance": 5
+        },
+        "weapons": ["Staff"],
+        "abilities": ["Rune Inscription", "Lightning Runes", "Fire Runes", "Ice Runes"],
+        "role": "Rune-based magic caster; highest mana pool"
+      },
+      {
+        "id": "spiritmaster",
+        "name": "Spiritmaster",
+        "faction": "midgard",
+        "type": "caster",
+        "description": "Summoners who control undead and Norse spirits to aid them in battle. Best summoning class in the game.",
+        "stats": {
+          "attack": 1,
+          "defense": 2,
+          "health": 3,
+          "mana": 8,
+          "speed": 5,
+          "spell_resistance": 5
+        },
+        "weapons": ["Staff"],
+        "abilities": ["Summon Undead", "Norse Spirits", "Spirit Control", "Animate Dead"],
+        "role": "Summoner; best pet-based combat"
+      },
+      {
+        "id": "healer_mid",
+        "name": "Healer",
+        "faction": "midgard",
+        "type": "healer",
+        "description": "Divine healers who channel the power of the Norse gods to restore the wounded.",
+        "stats": {
+          "attack": 2,
+          "defense": 3,
+          "health": 5,
+          "mana": 8,
+          "speed": 5,
+          "spell_resistance": 6
+        },
+        "weapons": ["Staff"],
+        "abilities": ["Divine Healing", "Group Heal", "Resurrection", "Norse Blessing"],
+        "role": "Primary healer for Midgard"
+      },
+      {
+        "id": "hunter",
+        "name": "Hunter",
+        "faction": "midgard",
+        "type": "ranger",
+        "description": "Ranged specialists who track and hunt their prey with bow and arrow.",
+        "stats": {
+          "attack": 6,
+          "defense": 3,
+          "health": 4,
+          "mana": 2,
+          "speed": 7,
+          "spell_resistance": 2
+        },
+        "weapons": ["Longbow", "Short Bow", "Dagger"],
+        "abilities": ["Archery", "Tracking", "Camouflage", "Power Shot"],
+        "role": "Ranged physical DPS"
+      },
+      {
+        "id": "shadowblade",
+        "name": "Shadowblade",
+        "faction": "midgard",
+        "type": "rogue",
+        "description": "Dual-wielding rogues with tricks and stealth abilities.",
+        "stats": {
+          "attack": 6,
+          "defense": 3,
+          "health": 4,
+          "mana": 3,
+          "speed": 7,
+          "spell_resistance": 2
+        },
+        "weapons": ["Dual Daggers", "Dual Blades"],
+        "abilities": ["Stealth", "Dual Wield", "Backstab", "Tricks"],
+        "role": "Stealth dual-wielding rogue"
+      },
+      {
+        "id": "savage",
+        "name": "Savage",
+        "faction": "midgard",
+        "type": "melee",
+        "description": "Monk-like fighters who use sharp and blunt gloves to beat down enemies. Can wear studded leather.",
+        "stats": {
+          "attack": 6,
+          "defense": 4,
+          "health": 5,
+          "mana": 0,
+          "speed": 6,
+          "spell_resistance": 2
+        },
+        "weapons": ["Sharp Gloves", "Blunt Gloves"],
+        "abilities": ["Unarmed Combat", "Studded Leather", "Martial Arts"],
+        "role": "Unarmed melee fighter"
+      },
+      {
+        "id": "shaman",
+        "name": "Shaman",
+        "faction": "midgard",
+        "type": "caster",
+        "description": "Tribal spellcasters with healing and DPS magic. Troll and Kobold tribal casters.",
+        "stats": {
+          "attack": 2,
+          "defense": 3,
+          "health": 4,
+          "mana": 8,
+          "speed": 5,
+          "spell_resistance": 5
+        },
+        "weapons": ["Staff"],
+        "abilities": ["Tribal Magic", "Healing", "Elemental Damage", "Totems"],
+        "role": "Tribal caster; healing and DPS"
+      },
+      {
+        "id": "skald",
+        "name": "Skald",
+        "faction": "midgard",
+        "type": "buffer",
+        "description": "Musical support casters similar to Bards, who buff allies with Norse songs and battle cries.",
+        "stats": {
+          "attack": 2,
+          "defense": 3,
+          "health": 4,
+          "mana": 7,
+          "speed": 5,
+          "spell_resistance": 4
+        },
+        "weapons": ["Musical Instrument"],
+        "abilities": ["Norse Songs", "Battle Cry", "Group Buffs", "Rage Song"],
+        "role": "Group buffer and support"
+      },
+      {
+        "id": "bonedancer",
+        "name": "Bonedancer",
+        "faction": "midgard",
+        "type": "caster",
+        "description": "Bone and death magic users who dance with the spirits of the dead.",
+        "stats": {
+          "attack": 1,
+          "defense": 2,
+          "health": 3,
+          "mana": 8,
+          "speed": 5,
+          "spell_resistance": 5
+        },
+        "weapons": ["Staff"],
+        "abilities": ["Bone Magic", "Death Magic", "Spirit Dance", "Curse"],
+        "role": "Death magic caster"
+      },
+      {
+        "id": "mauler",
+        "name": "Mauler",
+        "faction": "all_realms",
+        "type": "hybrid",
+        "description": "Brawling melee fighters with elemental abilities like gravity and magnetism. The only class shared across all three realms.",
+        "stats": {
+          "attack": 5,
+          "defense": 4,
+          "health": 6,
+          "mana": 4,
+          "speed": 6,
+          "spell_resistance": 3
+        },
+        "weapons": ["Unarmed", "Fists"],
+        "abilities": ["Gravity", "Magnetism", "Brawling", "Elemental Punch"],
+        "role": "Hybrid melee-magic; only cross-realm class"
+      }
+    ],
+    "special_entities": [
+      {
+        "id": "legion",
+        "name": "Legion",
+        "faction": "darkness_falls_legion",
+        "type": "boss",
+        "description": "The demonic lord of Darkness Falls. The main boss of the dungeon, yielding the best loot when defeated.",
+        "stats": {
+          "attack": 10,
+          "defense": 10,
+          "health": 20,
+          "mana": 15,
+          "speed": 4,
+          "spell_resistance": 8
+        },
+        "abilities": ["Demonic Fury", "Dark Summoning", "Corruption Aura", "Legion's Wrath"],
+        "location": "Darkness Falls dungeon"
+      },
+      {
+        "id": "excalibur_relic",
+        "name": "Excalibur (Power Relic)",
+        "faction": "albion",
+        "type": "relic",
+        "description": "The legendary sword of King Arthur, source of Albion's magical power. Located in a heavily defended keep.",
+        "abilities": ["Realm Power Bonus", "Magic Resistance Boost", "Damage Boost"]
+      },
+      {
+        "id": "round_table_relic",
+        "name": "The Round Table (Strength Relic)",
+        "faction": "albion",
+        "type": "relic",
+        "description": "The great table of Arthur's knights, symbol of unity and martial strength.",
+        "abilities": ["Realm Strength Bonus", "Defense Boost", "Morale Boost"]
+      },
+      {
+        "id": "spear_of_lugh_relic",
+        "name": "The Spear of Lugh (Power Relic)",
+        "faction": "hibernia",
+        "type": "relic",
+        "description": "The legendary weapon of the Celtic god Lugh, source of Hibernia's magical power.",
+        "abilities": ["Realm Power Bonus", "Nature Magic Boost", "Damage Boost"]
+      },
+      {
+        "id": "cauldron_of_dagda_relic",
+        "name": "The Cauldron of Dagda (Strength Relic)",
+        "faction": "hibernia",
+        "type": "relic",
+        "description": "The magical cauldron of the Celtic god Dagda, from which none shall depart unsatisfied.",
+        "abilities": ["Realm Strength Bonus", "Healing Boost", "Regeneration Boost"]
+      },
+      {
+        "id": "mjolnir_relic",
+        "name": "Mjolnir (Power Relic)",
+        "faction": "midgard",
+        "type": "relic",
+        "description": "The legendary hammer of Thor, source of Midgard's divine power.",
+        "abilities": ["Realm Power Bonus", "Lightning Damage Boost", "Strength Boost"]
+      },
+      {
+        "id": "gungnir_relic",
+        "name": "Gungnir (Strength Relic)",
+        "faction": "midgard",
+        "type": "relic",
+        "description": "The spear of Odin, which never misses its mark. Symbol of Midgard's martial might.",
+        "abilities": ["Realm Strength Bonus", "Attack Bonus Boost", "Accuracy Boost"]
+      }
+    ]
+  }
+}

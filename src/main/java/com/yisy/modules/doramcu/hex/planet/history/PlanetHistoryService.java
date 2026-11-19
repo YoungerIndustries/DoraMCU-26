@@ -1,7 +1,6 @@
 package com.yisy.modules.doramcu.hex.planet.history;
 
 import com.yisy.modules.doramcu.hex.planet.CargoType;
-import com.yisy.modules.doramcu.hex.planet.history.PlanetHistoryEvent.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

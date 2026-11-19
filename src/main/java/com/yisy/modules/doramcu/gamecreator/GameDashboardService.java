@@ -1,8 +1,8 @@
 package com.yisy.modules.doramcu.gamecreator;
 import org.springframework.stereotype.Service;
 
-import com.yisy.modules.doramcu.model.Galaxy;
-import com.yisy.modules.doramcu.repository.GalaxyRepository;
+import com.yisy.modules.doramcu.model.galaxy.Galaxy;
+import com.yisy.modules.doramcu.repository.galaxy.GalaxyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

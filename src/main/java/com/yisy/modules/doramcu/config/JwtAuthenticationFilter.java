@@ -1,6 +1,6 @@
 package com.yisy.modules.doramcu.config;
 
-import com.yisy.modules.doramcu.service.JwtService;
+import com.yisy.modules.doramcu.service.auth.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

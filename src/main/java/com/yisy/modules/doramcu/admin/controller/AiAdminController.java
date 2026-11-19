@@ -2,7 +2,6 @@ package com.yisy.modules.doramcu.admin.controller;
 
 import com.yisy.modules.doramcu.admin.dto.AiAdminOrderRequest;
 import com.yisy.modules.doramcu.admin.dto.AiAdminReportDto;
-import com.yisy.modules.doramcu.admin.dto.AiAdminReportDto.AiAdminTestCaseDto;
 import com.yisy.modules.doramcu.admin.model.AiAdminNotification;
 import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
 import com.yisy.modules.doramcu.admin.model.AiAdminQuest;
@@ -1616,5 +1615,72 @@ public class AiAdminController {
         map.put("note", n.getNote());
         map.put("createdAt", n.getCreatedAt());
         return map;
+    }
+
+    /**
+     * Set the specialization for an AI admin character.
+     */
+    @PutMapping("/admins/{id}/specialization")
+    public ResponseEntity<?> setSpecialization(
+            @PathVariable Long id,
+            @RequestBody(required = false) Map<String, Object> body,
+            Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        try {
+            AiCharacter admin = aiCharacterRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("AI admin not found"));
+            if (!admin.isAiAdmin()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Not an AI admin character"));
+            }
+            if (body == null || body.get("specialization") == null) {
+                admin.setSpecialization(null);
+            } else {
+                String spec = ((String) body.get("specialization")).toUpperCase();
+                try {
+                    admin.setSpecialization(AiAdminIncident.IncidentType.valueOf(spec));
+                } catch (IllegalArgumentException e) {
+                    return ResponseEntity.badRequest().body(Map.of("error", "Invalid specialization: " + spec));
+                }
+            }
+            admin = aiCharacterRepository.save(admin);
+            Map<String, Object> result = new HashMap<>();
+            result.put("id", admin.getId());
+            result.put("name", admin.getName());
+            result.put("specialization", admin.getSpecialization() != null ? admin.getSpecialization().name() : null);
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().contains("not found")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+            }
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Get a summary of all AI admins grouped by specialization.
+     */
+    @GetMapping("/admins/specialization-summary")
+    public ResponseEntity<?> getSpecializationSummary(Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Admin access required"));
+        }
+        List<AiCharacter> admins = aiCharacterRepository.findByAiAdminTrueAndActiveTrue();
+        Map<String, List<Map<String, Object>>> grouped = new HashMap<>();
+        for (AiAdminIncident.IncidentType type : AiAdminIncident.IncidentType.values()) {
+            grouped.put(type.name(), new ArrayList<>());
+        }
+        grouped.put("NONE", new ArrayList<>());
+        for (AiCharacter admin : admins) {
+            String key = admin.getSpecialization() != null ? admin.getSpecialization().name() : "NONE";
+            Map<String, Object> info = new HashMap<>();
+            info.put("id", admin.getId());
+            info.put("name", admin.getName());
+            info.put("activeOrderCount", admin.getActiveOrderCount());
+            info.put("totalExperience", admin.getTotalExperience());
+            grouped.computeIfAbsent(key, k -> new ArrayList<>()).add(info);
+        }
+        return ResponseEntity.ok(grouped);
     }
 }

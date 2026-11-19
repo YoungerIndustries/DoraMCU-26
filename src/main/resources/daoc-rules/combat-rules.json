@@ -1,0 +1,193 @@
+{
+  "game_info": {
+    "title": "Dark Age of Camelot — Rules & Lore Database",
+    "description": "Rules and lore for the Dark Age of Camelot module, based on the legendary MMORPG featuring persistent three-way Realm vs Realm vs Realm (RvRvR) warfare between Albion, Hibernia, and Midgard.",
+    "source_materials": [
+      "Dark Age of Camelot MMORPG by Mythic Entertainment (2001-2018)",
+      "Dark Age of Camelot Official Website (darkageofcamelot.com)",
+      "Dark Age of Camelot Wiki (camelotherald.fandom.com)",
+      "Capnbry's DAOC Bestiary (capnbry.net/daoc)",
+      "Kallisti's New Frontiers Maps (kallisti-daoc.mardona.com)"
+    ]
+  },
+  "rvr_combat": {
+    "source": "Dark Age of Camelot's Realm vs Realm vs Realm system",
+    "description": "The core combat system of DaOC — persistent three-way warfare between Albion, Hibernia, and Midgard for control of the Frontiers. Unlike traditional PvP, RvRvR means two realms can temporarily ally against the third, creating dynamic political gameplay.",
+    "core_mechanics": {
+      "keep_capture": {
+        "description": "Keeps are captured by standing inside the keep's capture point. The capture bar fills over time, affected by the number of towers controlled by each realm.",
+        "rules": [
+          "Standing in a friendly keep does nothing — it's already yours",
+          "Standing in an enemy keep fills your capture bar",
+          "Enemy towers surrounding a keep speed up enemy capture",
+          "Capturing all towers around a keep makes it much faster to capture",
+          "Once captured, the keep switches to your realm's control",
+          "Capturing a keep grants Realm Points (RP) to all participants"
+        ]
+      },
+      "tower_capture": {
+        "description": "Towers surround each keep and can be captured independently. Controlling towers gives a significant advantage in keep captures.",
+        "rules": [
+          "Towers are captured by standing at the tower's capture point",
+          "Each keep has 2-4 towers (varies by keep)",
+          "More enemy towers = faster enemy capture of the keep",
+          "Capturing all towers around a keep is called 'towering out'",
+          "Towers provide elevated positions for archers and casters"
+        ]
+      },
+      "relic_control": {
+        "description": "Each realm has two relics (Power and Strength) located in their frontier. Controlling your own relics provides realm bonuses. Capturing enemy relics provides even greater bonuses.",
+        "rules": [
+          "Each realm has a Power Relic and a Strength Relic",
+          "Owning your own relics provides passive realm bonuses",
+          "Capturing an enemy relic denies their bonuses and grants you theirs",
+          "Relics are located in heavily defended keeps",
+          "Relic bonuses can be viewed on the realm war map"
+        ]
+      },
+      "realm_points": {
+        "description": "Realm Points (RP) are the currency of RvR. They are earned through combat and objective completion, and spent on realm-wide upgrades.",
+        "earning": [
+          "Killing enemy players in the Frontiers",
+          "Capturing keeps and towers",
+          "Participating in front-line combat",
+          "Capturing Buggane's Obelisk (solo bonus)",
+          "Completing RvR quests"
+        ],
+        "spending": [
+          "Realm-wide stat boosts",
+          "Enhanced porting speeds",
+          "Special realm abilities",
+          "Champion point bonuses"
+        ]
+      }
+    },
+    "champion_system": {
+      "description": "Players can become Champions by spending Champion Points, earned from RvR kills. Champions gain significant stat boosts and special abilities.",
+      "levels": 10,
+      "benefits": [
+        "Increased damage resistance",
+        "Enhanced spell resistance",
+        "Bonus damage to enemies",
+        "Special Champion abilities per level",
+        "Champion auras that buff nearby allies"
+      ]
+    },
+    "siegecraft": {
+      "description": "Siegecraft allows players to build siege equipment to assist in keep captures and defenses.",
+      "items": {
+        "siege_tower": {
+          "description": "A large mobile tower that allows players to bypass walls and reach elevated capture points.",
+          "build_time": "Several seconds",
+          "durability": "Can be destroyed by enemy Tinderboxes"
+        },
+        "healing_tent": {
+          "description": "A tent that provides continuous healing to nearby allies.",
+          "build_time": "Several seconds",
+          "durability": "Can be destroyed by enemy Tinderboxes"
+        },
+        "buff_tent": {
+          "description": "A tent that provides stat buffs to nearby allies.",
+          "build_time": "Several seconds",
+          "durability": "Can be destroyed by enemy Tinderboxes"
+        },
+        "tinderbox": {
+          "description": "A throwable device that destroys enemy siege equipment.",
+          "usage": "Thrown at enemy siege towers and tents"
+        },
+        "supply_crate": {
+          "description": "A resource needed to build siege equipment.",
+          "source": "Dropped by mobs and found in the Frontiers"
+        }
+      }
+    },
+    "porting_rules": {
+      "description": "Porting to keeps and towers requires them to be under your realm's control.",
+      "rules": [
+        "Can only port to keeps and towers your realm controls",
+        "Portal pad timer slows based on number of keeps owned",
+        "Porting from relic towns is disabled if key keeps are lost",
+        "Key keeps that restrict porting: Dun Ailinne, Dun Scathaig, Caer Renaris, Caer Hurbury, Fensalir Faste, Arvakr Faste",
+        "Ruined keeps can be ported to once all towers are captured"
+      ]
+    }
+  },
+  "darkness_falls": {
+    "description": "Darkness Falls is the premier RvR dungeon, accessible only to the realm with the most frontier keeps. It features demonic enemies, sub-bosses, and the main boss Legion.",
+    "entry_requirements": "Realm must control more frontier keeps than either of the other two realms",
+    "mechanics": [
+      "RvR combat is active inside the dungeon",
+      "Each realm has its own entrance wing",
+      "Exit portals near each boss send players to their home zone or portal keep",
+      "When portal control changes, the original realm can still stay until they release on death",
+      "Healers can keep players alive to maintain access after control changes"
+    ],
+    "bosses": {
+      "legion": {
+        "name": "Legion",
+        "role": "Main boss of Darkness Falls",
+        "description": "The demonic lord of Darkness Falls. Defeating Legion yields the best loot in the dungeon.",
+        "location": "Deep in the dungeon, past multiple sub-bosses"
+      },
+      "sub_bosses": {
+        "description": "Various demonic commanders that guard the paths to Legion. Each has an exit portal nearby.",
+        "count": "Multiple sub-bosses throughout the dungeon"
+      }
+    },
+    "rewards": [
+      "High-tier equipment",
+      "Realm Points",
+      "Rare crafting materials",
+      "Mythrians (stat-boosting items)"
+    ]
+  },
+  "labyrinth": {
+    "description": "The Labyrinth of the Minotaur is the largest RvR dungeon in DaOC history, located on Ellan Vannin Island. All three realms can access it simultaneously.",
+    "features": [
+      "Three-way RvR dungeon — all realms fight simultaneously",
+      "Minotaur-themed enemies and bosses",
+      "Mythrian rewards",
+      "Champion level progression (6-10)"
+    ]
+  },
+  "class_balance": {
+    "description": "DaOC classes are balanced at the RvR level rather than in direct comparison to other realms' equivalent classes. Each realm's classes have unique strengths and weaknesses.",
+    "principles": [
+      "Classes are very rigid with specific roles, play styles, and specialization point allocations",
+      "Each realm has unique classes that no other realm can access",
+      "The Mauler class is the only class shared across all three realms",
+      "Class balance is designed around RvR combat, not solo play",
+      "Specialization points determine a caster's spell path and effectiveness"
+    ]
+  },
+  "combat_stats": {
+    "description": "Core combat statistics in DaOC.",
+    "stats": {
+      "strength": "Affects melee damage and carrying capacity",
+      "dexterity": "Affects attack bonus, spell bonus, and critical hit chance",
+      "constitution": "Affects health points and damage resistance",
+      "magic": "Affects spell damage, spell bonus, and mana points",
+      "willpower": "Affects spell resistance and healing effectiveness",
+      "speed": "Affects movement speed and attack speed",
+      "luck": "Affects critical hit chance and loot quality"
+    },
+    "derived_stats": {
+      "health_points": "Determined by Constitution and class",
+      "mana_points": "Determined by Magic and class",
+      "attack_bonus": "Determined by Dexterity and equipment",
+      "spell_bonus": "Determined by Magic and Dexterity",
+      "damage_resistance": "Determined by Constitution and equipment",
+      "spell_resistance": "Determined by Willpower and equipment"
+    }
+  },
+  "specialization_system": {
+    "description": "Caster classes allocate Specialization Points (SP) to unlock and enhance spells. SP are earned through leveling and certain items.",
+    "rules": [
+      "Each spell has a minimum SP requirement",
+      "Higher SP increases spell effectiveness",
+      "Different spell paths require different SP allocations",
+      "Some spells require specific SP thresholds to unlock",
+      "SP allocation is permanent and must be planned carefully"
+    ]
+  }
+}

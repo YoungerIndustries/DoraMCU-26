@@ -3,8 +3,6 @@ import com.yisy.modules.doramcu.model.players.Player;
 
 
 import com.yisy.modules.doramcu.corporation.service.CorporationEconomyService;
-import com.yisy.modules.doramcu.corporation.stock.model.*;
-import com.yisy.modules.doramcu.corporation.stock.repository.*;
 import com.yisy.modules.doramcu.eve.model.EveCorporation;
 import com.yisy.modules.doramcu.repository.misc.EveCorporationRepository;
 import org.slf4j.Logger;

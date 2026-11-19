@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.zero_zero_seven.config;
 
-import com.yisy.modules.doramcu.gamecore.*;
 import com.yisy.modules.doramcu.shared.model.RulesEntry;
 import com.yisy.modules.doramcu.shared.service.RulesAwareCombatAdapter;
 import com.yisy.modules.doramcu.shared.service.UnifiedRulesQueryService;

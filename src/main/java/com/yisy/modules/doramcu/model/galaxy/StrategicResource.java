@@ -4,7 +4,6 @@ import com.yisy.modules.doramcu.hex.Hex;
 import com.yisy.modules.doramcu.model.galaxy.Asteroid;
 import com.yisy.modules.doramcu.model.galaxy.AsteroidBelt;
 import com.yisy.modules.doramcu.model.galaxy.Comet;
-import com.yisy.modules.doramcu.model.galaxy.Moon;
 import com.yisy.modules.doramcu.model.misc.Planet;
 
 

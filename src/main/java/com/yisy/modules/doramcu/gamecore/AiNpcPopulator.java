@@ -7,7 +7,7 @@ import com.yisy.modules.doramcu.hex.Galaxy;
  * <p>
  * Each game module (Star Wars, Traveller, D&D, etc.) implements this interface
  * to create and register AI NPCs as active characters in the galaxy.
- * NPCs are registered via {@link com.yisy.modules.doramcu.service.AiEntityRegistrationService}
+ * NPCs are registered via {@link com.yisy.modules.doramcu.service.ai.AiEntityRegistrationService}
  * as {@link com.yisy.modules.doramcu.model.AiCharacter} entities.
  * </p>
  * <p>

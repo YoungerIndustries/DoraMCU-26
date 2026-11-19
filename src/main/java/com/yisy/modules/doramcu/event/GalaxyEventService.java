@@ -1,6 +1,6 @@
 package com.yisy.modules.doramcu.event;
 
-import com.yisy.modules.doramcu.service.GalaxyMetricsService;
+import com.yisy.modules.doramcu.service.galaxy.GalaxyMetricsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,14 +51,14 @@ public class GalaxyEventService {
      * Metrics service for Prometheus event counters.
      */
     @Autowired(required = false)
-    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
+    @SuppressWarnings("SpringAutowiredFieldsWarningInspection_1")
     private GalaxyMetricsService galaxyMetricsService;
 
     /**
      * Bridge to WebSocket handlers for 3D visualization.
      */
     @Autowired(required = false)
-    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
+    @SuppressWarnings("SpringAutowiredFieldsWarningInspection_1")
     private GalaxyEventBridge galaxyEventBridge;
 
     /**

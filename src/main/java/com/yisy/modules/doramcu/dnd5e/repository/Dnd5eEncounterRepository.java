@@ -27,19 +27,19 @@ public interface Dnd5eEncounterRepository extends JpaRepository<Dnd5eEncounter, 
 
     @Query("SELECT e FROM Dnd5eEncounter e WHERE e.active = true AND " +
            "e.partyLevel >= :minLevel AND e.partyLevel <= :maxLevel")
-    List<Dnd5eEncounter> findByLevelRange(@Param("minLevel") int minLevel, @Param("maxLevel") int maxLevel);
+    List<Dnd5eEncounter> findByLevelRange(@Param("minLevel_0") int minLevel, @Param("minLevel_0") int maxLevel);
 
     @Query("SELECT e FROM Dnd5eEncounter e WHERE e.active = true AND " +
            "e.monsterXp >= :minXp AND e.monsterXp <= :maxXp")
-    List<Dnd5eEncounter> findByXpRange(@Param("minXp") int minXp, @Param("maxXp") int maxXp);
+    List<Dnd5eEncounter> findByXpRange(@Param("minLevel_0") int minXp, @Param("minLevel_0") int maxXp);
 
     @Query("SELECT e FROM Dnd5eEncounter e WHERE e.active = true AND " +
            "e.averageCr >= :minCr AND e.averageCr <= :maxCr")
-    List<Dnd5eEncounter> findByCrRange(@Param("minCr") double minCr, @Param("maxCr") double maxCr);
+    List<Dnd5eEncounter> findByCrRange(@Param("minLevel_0") double minCr, @Param("minLevel_0") double maxCr);
 
     @Query("SELECT e FROM Dnd5eEncounter e WHERE LOWER(e.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(e.description) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-    List<Dnd5eEncounter> searchByKeyword(@Param("keyword") String keyword);
+    List<Dnd5eEncounter> searchByKeyword(@Param("minLevel_0") String keyword);
 
     @Query("SELECT e FROM Dnd5eEncounter e WHERE e.active = true AND " +
            "e.recentEncounters > 0")

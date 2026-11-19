@@ -1,7 +1,6 @@
 package com.yisy.modules.doramcu.service.galaxy;
 import org.springframework.stereotype.Service;
 
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.repository.galaxy.GalaxyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

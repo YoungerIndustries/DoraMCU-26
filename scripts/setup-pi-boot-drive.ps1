@@ -72,15 +72,15 @@ $TempDir = Join-Path $env:TEMP "doramcu-pi-setup"
 $OsImageName = "raspios-bookworm-arm64.img"
 $OsImageXz = "raspios-bookworm-arm64.img.xz"
 
-# Default Raspberry Pi OS 64-bit Bookworm download URL
+# Default Raspberry Pi OS 64-bit Bookworm Lite download URL (headless, smaller ~424MB)
 if (-not $ImageDownloadUrl) {
-    $ImageDownloadUrl = "https://downloads.raspberrypi.com/raspios_imgs/raspios-bookworm-arm64-latest"
+    $ImageDownloadUrl = "https://downloads.raspberrypi.org/raspios_arm64/images/raspios_arm64-2026-09-15/2026-09-15-raspios-bookworm-arm64-lite.img.xz"
 }
 
 # Docker image names
 $DockerImages = @(
     @{ Name = "doramcu-app:latest"; Dockerfile = "Dockerfile"; Context = "." },
-    @{ Name = "doramcu-neuron:latest"; Dockerfile = "Dockerfile.neuron-edge"; Context = "." },
+    @{ Name = "doramcu-neuron:latest"; Dockerfile = "Dockerfile.neuron"; Context = "." },
     @{ Name = "doramcu-nginx:latest"; Dockerfile = "Dockerfile.web"; Context = "." },
     @{ Name = "doramcu-dl:arm64"; Dockerfile = "Dockerfile.dl.arm64"; Context = "." }
 )
@@ -119,14 +119,19 @@ function Test-Prerequisites {
 
     # Check WSL
     Write-Step "Checking WSL installation..."
-    $wslVersion = wsl --version 2>&1 | Out-String
+    $wslExe = "C:\Windows\System32\wsl.exe"
+    if (Test-Path $wslExe) {
+        $wslVersion = & $wslExe --version 2>&1 | Out-String
+    } else {
+        $wslVersion = wsl --version 2>&1 | Out-String
+    }
     if ($LASTEXITCODE -ne 0) {
         Write-Step "WSL is not installed. Please install WSL first:" -ForegroundColor Red
         Write-Step "  wsl --install" -ForegroundColor Yellow
         Write-Step "Then restart this script." -ForegroundColor Yellow
         return $false
     }
-    Write-Step "WSL is installed: $wslVersion" "OK"
+    Write-Step "WSL is installed" "OK"
 
     # Check Docker Desktop
     Write-Step "Checking Docker Desktop..."
@@ -150,22 +155,26 @@ function Test-Prerequisites {
 
     # Check disk space (need ~20GB for OS image + Docker images)
     Write-Step "Checking disk space..."
-    $drive = Get-PSDrive $env:SystemDrive
-    $freeSpaceGB = [math]::Round($drive.Free / 1GB, 1)
-    if ($freeSpaceGB -lt 20) {
-        Write-Step "Insufficient disk space: ${freeSpaceGB}GB free, need at least 20GB." "ERROR"
+    try {
+        $sysDrive = Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='$($env:SystemDrive)'" -ErrorAction Stop
+        $freeSpaceGB = [math]::Round($sysDrive.FreeSpace / 1GB, 1)
+    } catch {
+        $freeSpaceGB = 9999  # Assume sufficient if we can't check
+    }
+    if ($freeSpaceGB -lt 10) {
+        Write-Step "Insufficient disk space: ${freeSpaceGB}GB free, need at least 10GB." "ERROR"
         return $false
     }
     Write-Step "Disk space OK: ${freeSpaceGB}GB free" "OK"
 
     # Check USB drive exists
     Write-Step "Checking USB drive ${DriveLetter}:"
-    $usbDrive = Get-PSDrive -Name $DriveLetter -ErrorAction SilentlyContinue
-    if (-not $usbDrive) {
+    $usbVolume = Get-Volume -DriveLetter $DriveLetter -ErrorAction SilentlyContinue
+    if (-not $usbVolume) {
         Write-Step "Drive ${DriveLetter}: not found. Please connect the USB drive." "ERROR"
         return $false
     }
-    $usbFreeGB = [math]::Round($usbDrive.Free / 1GB, 1)
+    $usbFreeGB = [math]::Round($usbVolume.SizeRemaining / 1GB, 1)
     Write-Step "Drive ${DriveLetter}: found (${usbFreeGB}GB free)" "OK"
 
     if ($usbFreeGB -lt 32) {
@@ -571,13 +580,12 @@ function Copy-ToDrive {
         Write-Step "Test runner script not found: ${testScript}" "WARN"
     }
 
-    # 5. Copy DoraMCU project files (docker-compose files and Dockerfiles)
+    # 5. Copy DoraMCU project files (docker-compose file and Dockerfiles)
     Write-Step "Copying DoraMCU project files..."
     $projectFiles = @(
         "docker-compose.yml",
-        "docker-compose.pi.yml",
         "Dockerfile",
-        "Dockerfile.neuron-edge",
+        "Dockerfile.neuron",
         "Dockerfile.web",
         "Dockerfile.dl.arm64"
     )
@@ -713,8 +721,8 @@ function Show-Summary {
     Write-Host "  6. Access the server at: http://${PiHostname}.local or http://<pi-ip>" -ForegroundColor White
     Write-Host ""
     Write-Host "Monitoring:" -ForegroundColor Cyan
-    Write-Host "  - Service status: docker compose -f docker-compose.yml -f docker-compose.pi.yml ps" -ForegroundColor Gray
-    Write-Host "  - Logs: docker compose -f docker-compose.yml -f docker-compose.pi.yml logs -f" -ForegroundColor Gray
+    Write-Host "  - Service status: docker compose --profile pi ps" -ForegroundColor Gray
+    Write-Host "  - Logs: docker compose --profile pi logs -f" -ForegroundColor Gray
     Write-Host "  - Edge health: http://<pi-ip>:8090/api/v1/neuron/edge" -ForegroundColor Gray
     Write-Host ""
     Write-Host "Troubleshooting:" -ForegroundColor Cyan

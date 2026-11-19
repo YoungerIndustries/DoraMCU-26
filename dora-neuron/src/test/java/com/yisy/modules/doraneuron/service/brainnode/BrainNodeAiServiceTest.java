@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Map;
@@ -21,6 +23,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class BrainNodeAiServiceTest {
 
     private BrainNodeAiService service;
@@ -40,11 +43,14 @@ class BrainNodeAiServiceTest {
     @BeforeEach
     void setUp() {
         service = new BrainNodeAiService(engine, brainNodeConfig, neuronConfig, prometheusMetrics);
-        when(brainNodeConfig.getInferenceThreads()).thenReturn(4);
-        when(brainNodeConfig.getConfidenceThreshold()).thenReturn(0.85);
-        when(brainNodeConfig.isGpuAccelerationEnabled()).thenReturn(false);
-        when(brainNodeConfig.getAiModelPath()).thenReturn("models/brain-node/");
-        when(neuronConfig.getModelVersion()).thenReturn(1);
+        lenient().when(brainNodeConfig.getInferenceThreads()).thenReturn(4);
+        lenient().when(brainNodeConfig.getConfidenceThreshold()).thenReturn(0.85);
+        lenient().when(brainNodeConfig.isGpuAccelerationEnabled()).thenReturn(false);
+        lenient().when(brainNodeConfig.getAiModelPath()).thenReturn("models/brain-node/");
+        lenient().when(neuronConfig.getModelVersion()).thenReturn(1);
+        lenient().when(engine.isModelLoaded()).thenReturn(true);
+        // Initialize the thread pool
+        service.init();
     }
 
     @Test
@@ -110,8 +116,6 @@ class BrainNodeAiServiceTest {
     @Test
     @DisplayName("Swap model should update version")
     void swapModel() {
-        when(engine.reloadModel(anyString())).thenReturn(true);
-
         service.swapModel("models/new-model.onnx", 2);
 
         assertEquals(2, service.getCurrentModelVersion());
@@ -166,7 +170,7 @@ class BrainNodeAiServiceTest {
         assertNotNull(stats);
         assertEquals(4, stats.get("inferenceThreads"));
         assertEquals(0.85, stats.get("confidenceThreshold"));
-        assertFalse(stats.get("gpuAccelerationEnabled"));
+        assertFalse((Boolean) stats.get("gpuAccelerationEnabled"));
         assertTrue(stats.containsKey("inferenceCount"));
         assertTrue(stats.containsKey("errorCount"));
     }

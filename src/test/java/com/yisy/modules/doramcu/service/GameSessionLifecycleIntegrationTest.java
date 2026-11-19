@@ -1,7 +1,7 @@
 package com.yisy.modules.doramcu.service;
 
 import com.yisy.modules.doramcu.dto.CreateSessionResponse;
-import com.yisy.modules.doramcu.dto.GameStateResponse;
+import com.yisy.modules.doramcu.dto.session.GameStateResponse;
 import com.yisy.modules.doramcu.dto.JoinSessionResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.model.galaxy;
 import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-import com.yisy.modules.doramcu.model.galaxy.Sector;
 import com.yisy.modules.doramcu.model.galaxy.SubSector;
 
 
@@ -21,11 +20,6 @@ import java.time.LocalDateTime;
  * using the same coordinate system as solar systems (sector, subsector, x/y/z).
  * </p>
  */
-@Entity
-@Table(name = "wormholes", indexes = {
-    @Index(name = "idx_wormhole_galaxy", columnList = "galaxy_name"),
-    @Index(name = "idx_wormhole_connected", columnList = "connected_wormhole_id")
-})
 public class Wormhole {
 
     @Id

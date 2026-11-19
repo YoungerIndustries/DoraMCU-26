@@ -35,6 +35,15 @@ dependencies {
     // ONNX Runtime for Java — lightweight inference without full DL4J
     implementation "com.microsoft.onnxruntime:onnxruntime:${findProperty('onnxruntime.version')}"
 
+    // USB serial communication for Raspberry Pi control
+    implementation 'com.fazecast:jSerialComm:2.11.0'
+
+    // H2 database for Brain Node persistent storage
+    runtimeOnly 'com.h2database:h2'
+
+    // JPA for Brain Node entities
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

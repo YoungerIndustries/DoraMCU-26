@@ -2,11 +2,11 @@ package com.yisy.modules.doramcu.earth2026.service;
 
 import com.yisy.modules.doramcu.dto.JoinSessionResponse;
 import com.yisy.modules.doramcu.gamecore.GameType;
-import com.yisy.modules.doramcu.repository.GalaxyRepository;
+import com.yisy.modules.doramcu.repository.galaxy.GalaxyRepository;
 import com.yisy.modules.doramcu.ai.framework.AiPlayerServiceAdapter;
-import com.yisy.modules.doramcu.service.AiPlayerService;
-import com.yisy.modules.doramcu.service.GameInitializationService;
-import com.yisy.modules.doramcu.service.GameSessionService;
+import com.yisy.modules.doramcu.service.ai.AiPlayerService;
+import com.yisy.modules.doramcu.service.game.GameInitializationService;
+import com.yisy.modules.doramcu.service.session.GameSessionService;
 import com.yisy.modules.doramcu.unified.GlobalClockService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +72,7 @@ public class PortalTravelService {
         log.info("Portal travel: player '{}' (ID: {}) traveling to {}", playerName, playerId, gameType.getDisplayName());
 
         // Step 1: Find the galaxy for this game type
-        Optional<com.yisy.modules.doramcu.model.Galaxy> dbGalaxyOpt = findGalaxyByGameType(gameType);
+        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy> dbGalaxyOpt = findGalaxyByGameType(gameType);
         if (dbGalaxyOpt.isEmpty()) {
             log.warn("No galaxy found for game type: {}", gameType.getDisplayName());
             return PortalTravelResult.failure(
@@ -80,7 +80,7 @@ public class PortalTravelService {
                     "The " + gameType.getDisplayName() + " galaxy has not been created yet. Please try again later.");
         }
 
-        com.yisy.modules.doramcu.model.Galaxy dbGalaxy = dbGalaxyOpt.get();
+        com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy = dbGalaxyOpt.get();
         String galaxyName = dbGalaxy.getName();
         log.info("Found galaxy '{}' for game type {}", galaxyName, gameType.getDisplayName());
 
@@ -111,14 +111,14 @@ public class PortalTravelService {
      * Searches by gameType field first, then by loreSlug, then by name pattern.
      */
     @Transactional(readOnly = true)
-    public Optional<com.yisy.modules.doramcu.model.Galaxy> findGalaxyByGameType(GameType gameType) {
+    public Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy> findGalaxyByGameType(GameType gameType) {
         String typeValue = gameType.name();
         String displayName = gameType.getDisplayName();
 
-        List<com.yisy.modules.doramcu.model.Galaxy> allGalaxies = galaxyRepository.findAll();
+        List<com.yisy.modules.doramcu.model.galaxy.Galaxy> allGalaxies = galaxyRepository.findAll();
 
         // First pass: exact gameType field match
-        for (com.yisy.modules.doramcu.model.Galaxy g : allGalaxies) {
+        for (com.yisy.modules.doramcu.model.galaxy.Galaxy g : allGalaxies) {
             if (typeValue.equals(g.getGameType())) {
                 return Optional.of(g);
             }
@@ -127,7 +127,7 @@ public class PortalTravelService {
         // Second pass: lore slug match
         String loreSlug = getLoreSlugForGameType(gameType);
         if (loreSlug != null) {
-            for (com.yisy.modules.doramcu.model.Galaxy g : allGalaxies) {
+            for (com.yisy.modules.doramcu.model.galaxy.Galaxy g : allGalaxies) {
                 if (loreSlug.equals(g.getLoreSlug())) {
                     return Optional.of(g);
                 }
@@ -135,13 +135,13 @@ public class PortalTravelService {
         }
 
         // Third pass: name contains display name
-        List<com.yisy.modules.doramcu.model.Galaxy> byName = galaxyRepository.findByNameContainingIgnoreCase(displayName);
+        List<com.yisy.modules.doramcu.model.galaxy.Galaxy> byName = galaxyRepository.findByNameContainingIgnoreCase(displayName);
         if (!byName.isEmpty()) {
             return Optional.of(byName.get(0));
         }
 
         // Fourth pass: name contains gameType name (case-insensitive, underscores to spaces)
-        for (com.yisy.modules.doramcu.model.Galaxy g : allGalaxies) {
+        for (com.yisy.modules.doramcu.model.galaxy.Galaxy g : allGalaxies) {
             if (g.getName().toLowerCase().contains(typeValue.toLowerCase().replace("_", " "))) {
                 return Optional.of(g);
             }
@@ -150,7 +150,7 @@ public class PortalTravelService {
         // Fifth pass: try expected galaxy names for known game types
         String expectedName = getExpectedGalaxyName(gameType);
         if (expectedName != null) {
-            for (com.yisy.modules.doramcu.model.Galaxy g : allGalaxies) {
+            for (com.yisy.modules.doramcu.model.galaxy.Galaxy g : allGalaxies) {
                 if (expectedName.equalsIgnoreCase(g.getName())) {
                     return Optional.of(g);
                 }
@@ -213,7 +213,7 @@ public class PortalTravelService {
     /**
      * Find an existing session that has the given galaxy loaded, or create a new one.
      */
-    private String findOrCreateSessionForGalaxy(com.yisy.modules.doramcu.model.Galaxy dbGalaxy, GameType gameType) {
+    private String findOrCreateSessionForGalaxy(com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy, GameType gameType) {
         String galaxyName = dbGalaxy.getName();
 
         // Check for existing session with this galaxy

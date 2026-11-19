@@ -1,0 +1,316 @@
+package com.yisy.modules.doramcu.admin.service;
+
+import com.yisy.modules.doramcu.admin.model.AiAdminCollaborationNote;
+import com.yisy.modules.doramcu.admin.model.AiAdminIncident;
+import com.yisy.modules.doramcu.admin.model.AiAdminIncidentCollaborator;
+import com.yisy.modules.doramcu.admin.model.AiAdminNotification;
+import com.yisy.modules.doramcu.admin.repository.AiAdminCollaborationNoteRepository;
+import com.yisy.modules.doramcu.admin.repository.AiAdminIncidentCollaboratorRepository;
+import com.yisy.modules.doramcu.admin.repository.AiAdminIncidentRepository;
+import com.yisy.modules.doramcu.admin.repository.AiAdminNotificationRepository;
+import com.yisy.modules.doramcu.eve.model.AiCharacter;
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDateTime;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class AiAdminCollaborationServiceTest {
+
+    @Mock
+    private AiAdminIncidentCollaboratorRepository collaboratorRepository;
+
+    @Mock
+    private AiAdminCollaborationNoteRepository noteRepository;
+
+    @Mock
+    private AiAdminIncidentRepository incidentRepository;
+
+    @Mock
+    private AiCharacterRepository characterRepository;
+
+    @Mock
+    private AiAdminNotificationRepository notificationRepository;
+
+    @InjectMocks
+    private AiAdminCollaborationService collaborationService;
+
+    private AiAdminIncident incident;
+
+    @BeforeEach
+    void setUp() {
+        incident = new AiAdminIncident();
+        incident.setId(1L);
+        incident.setTitle("Test Incident");
+        incident.setSeverity(AiAdminIncident.Severity.CRITICAL);
+        incident.setGalaxyName("Alpha Centauri");
+    }
+
+    @Test
+    void addCollaborator_createsNewCollaborator() {
+        when(incidentRepository.findById(1L)).thenReturn(Optional.of(incident));
+        when(collaboratorRepository.findByIncidentIdAndAiAdminId(1L, 100L)).thenReturn(Optional.empty());
+        when(collaboratorRepository.findLeadCollaborator(1L)).thenReturn(Optional.empty());
+        when(collaboratorRepository.save(any(AiAdminIncidentCollaborator.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(notificationRepository.save(any(AiAdminNotification.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        AiAdminIncidentCollaborator result = collaborationService.addCollaborator(1L, 100L, AiAdminIncidentCollaborator.Role.INVESTIGATOR);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getIncidentId());
+        assertEquals(100L, result.getAiAdminId());
+        assertEquals(AiAdminIncidentCollaborator.Role.INVESTIGATOR, result.getRole());
+        assertEquals(AiAdminIncidentCollaborator.Status.ACTIVE, result.getStatus());
+        verify(collaboratorRepository).save(any(AiAdminIncidentCollaborator.class));
+    }
+
+    @Test
+    void addCollaborator_leadUniqueness() {
+        when(incidentRepository.findById(1L)).thenReturn(Optional.of(incident));
+        when(collaboratorRepository.findByIncidentIdAndAiAdminId(1L, 100L)).thenReturn(Optional.empty());
+        AiAdminIncidentCollaborator existingLead = new AiAdminIncidentCollaborator();
+        existingLead.setRole(AiAdminIncidentCollaborator.Role.LEAD);
+        existingLead.setStatus(AiAdminIncidentCollaborator.Status.ACTIVE);
+        when(collaboratorRepository.findLeadCollaborator(1L)).thenReturn(Optional.of(existingLead));
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () ->
+                collaborationService.addCollaborator(1L, 100L, AiAdminIncidentCollaborator.Role.LEAD));
+        assertTrue(ex.getMessage().contains("lead"));
+    }
+
+    @Test
+    void addCollaborator_duplicateThrows() {
+        when(incidentRepository.findById(1L)).thenReturn(Optional.of(incident));
+        AiAdminIncidentCollaborator existing = new AiAdminIncidentCollaborator();
+        existing.setStatus(AiAdminIncidentCollaborator.Status.ACTIVE);
+        when(collaboratorRepository.findByIncidentIdAndAiAdminId(1L, 100L)).thenReturn(Optional.of(existing));
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () ->
+                collaborationService.addCollaborator(1L, 100L, AiAdminIncidentCollaborator.Role.INVESTIGATOR));
+        assertTrue(ex.getMessage().contains("already"));
+    }
+
+    @Test
+    void addCollaborator_reactivatesRemoved() {
+        when(incidentRepository.findById(1L)).thenReturn(Optional.of(incident));
+        AiAdminIncidentCollaborator removed = new AiAdminIncidentCollaborator();
+        removed.setStatus(AiAdminIncidentCollaborator.Status.REMOVED);
+        when(collaboratorRepository.findByIncidentIdAndAiAdminId(1L, 100L)).thenReturn(Optional.of(removed));
+        when(collaboratorRepository.save(any(AiAdminIncidentCollaborator.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        AiAdminIncidentCollaborator result = collaborationService.addCollaborator(1L, 100L, AiAdminIncidentCollaborator.Role.ANALYST);
+
+        assertEquals(AiAdminIncidentCollaborator.Status.ACTIVE, result.getStatus());
+        assertEquals(AiAdminIncidentCollaborator.Role.ANALYST, result.getRole());
+    }
+
+    @Test
+    void removeCollaborator_marksAsRemoved() {
+        AiAdminIncidentCollaborator collab = new AiAdminIncidentCollaborator();
+        collab.setRole(AiAdminIncidentCollaborator.Role.INVESTIGATOR);
+        collab.setStatus(AiAdminIncidentCollaborator.Status.ACTIVE);
+        when(collaboratorRepository.findByIncidentIdAndAiAdminId(1L, 100L)).thenReturn(Optional.of(collab));
+        when(collaboratorRepository.save(any(AiAdminIncidentCollaborator.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        collaborationService.removeCollaborator(1L, 100L);
+
+        assertEquals(AiAdminIncidentCollaborator.Status.REMOVED, collab.getStatus());
+    }
+
+    @Test
+    void removeCollaborator_onlyLeadThrows() {
+        AiAdminIncidentCollaborator lead = new AiAdminIncidentCollaborator();
+        lead.setRole(AiAdminIncidentCollaborator.Role.LEAD);
+        lead.setStatus(AiAdminIncidentCollaborator.Status.ACTIVE);
+        when(collaboratorRepository.findByIncidentIdAndAiAdminId(1L, 100L)).thenReturn(Optional.of(lead));
+        when(collaboratorRepository.countByIncidentIdAndStatus(1L, AiAdminIncidentCollaborator.Status.ACTIVE)).thenReturn(1L);
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () ->
+                collaborationService.removeCollaborator(1L, 100L));
+        assertTrue(ex.getMessage().contains("only lead"));
+    }
+
+    @Test
+    void getCollaborators_returnsList() {
+        when(collaboratorRepository.findByIncidentIdOrderByJoinedAtAsc(1L)).thenReturn(List.of(new AiAdminIncidentCollaborator()));
+
+        List<AiAdminIncidentCollaborator> result = collaborationService.getCollaborators(1L);
+
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void getActiveCollaborators_returnsActiveOnly() {
+        when(collaboratorRepository.findActiveCollaborators(1L)).thenReturn(List.of(new AiAdminIncidentCollaborator()));
+
+        List<AiAdminIncidentCollaborator> result = collaborationService.getActiveCollaborators(1L);
+
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void addNote_createsNote() {
+        AiAdminIncidentCollaborator collab = new AiAdminIncidentCollaborator();
+        collab.setStatus(AiAdminIncidentCollaborator.Status.ACTIVE);
+        when(collaboratorRepository.findByIncidentIdAndAiAdminId(1L, 100L)).thenReturn(Optional.of(collab));
+        when(noteRepository.save(any(AiAdminCollaborationNote.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        AiAdminCollaborationNote result = collaborationService.addNote(1L, 100L, "Investigation finding");
+
+        assertNotNull(result);
+        assertEquals(1L, result.getIncidentId());
+        assertEquals(100L, result.getAiAdminId());
+        assertEquals("Investigation finding", result.getNote());
+    }
+
+    @Test
+    void addNote_emptyNoteThrows() {
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+                collaborationService.addNote(1L, 100L, ""));
+        assertTrue(ex.getMessage().contains("empty"));
+    }
+
+    @Test
+    void addNote_nonCollaboratorThrows() {
+        when(collaboratorRepository.findByIncidentIdAndAiAdminId(1L, 100L)).thenReturn(Optional.empty());
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () ->
+                collaborationService.addNote(1L, 100L, "Note"));
+        assertTrue(ex.getMessage().contains("not an active collaborator"));
+    }
+
+    @Test
+    void addNote_removedCollaboratorThrows() {
+        AiAdminIncidentCollaborator removed = new AiAdminIncidentCollaborator();
+        removed.setStatus(AiAdminIncidentCollaborator.Status.REMOVED);
+        when(collaboratorRepository.findByIncidentIdAndAiAdminId(1L, 100L)).thenReturn(Optional.of(removed));
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () ->
+                collaborationService.addNote(1L, 100L, "Note"));
+        assertTrue(ex.getMessage().contains("not an active collaborator"));
+    }
+
+    @Test
+    void getNotes_returnsOrderedNotes() {
+        when(noteRepository.findByIncidentIdOrderByCreatedAtAsc(1L)).thenReturn(List.of(new AiAdminCollaborationNote()));
+
+        List<AiAdminCollaborationNote> result = collaborationService.getNotes(1L);
+
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void autoInviteCollaborators_criticalInvitesTwo() {
+        when(incidentRepository.findById(1L)).thenReturn(Optional.of(incident));
+        when(collaboratorRepository.findByIncidentIdOrderByJoinedAtAsc(1L)).thenReturn(Collections.emptyList());
+        AiCharacter admin1 = new AiCharacter();
+        admin1.setId(200L);
+        admin1.setActiveOrderCount(0);
+        AiCharacter admin2 = new AiCharacter();
+        admin2.setId(201L);
+        admin2.setActiveOrderCount(0);
+        when(characterRepository.findByAiAdminTrueAndActiveTrueOrderByTotalExperienceDesc())
+                .thenReturn(List.of(admin1, admin2));
+        when(collaboratorRepository.findByIncidentIdAndAiAdminId(anyLong(), anyLong())).thenReturn(Optional.empty());
+        when(collaboratorRepository.findLeadCollaborator(1L)).thenReturn(Optional.empty());
+        when(collaboratorRepository.save(any(AiAdminIncidentCollaborator.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(notificationRepository.save(any(AiAdminNotification.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        List<AiAdminIncidentCollaborator> result = collaborationService.autoInviteCollaborators(1L);
+
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    void autoInviteCollaborators_highInvitesOne() {
+        incident.setSeverity(AiAdminIncident.Severity.HIGH);
+        when(incidentRepository.findById(1L)).thenReturn(Optional.of(incident));
+        when(collaboratorRepository.findByIncidentIdOrderByJoinedAtAsc(1L)).thenReturn(Collections.emptyList());
+        AiCharacter admin = new AiCharacter();
+        admin.setId(200L);
+        admin.setActiveOrderCount(0);
+        when(characterRepository.findByAiAdminTrueAndActiveTrueOrderByTotalExperienceDesc())
+                .thenReturn(List.of(admin));
+        when(collaboratorRepository.findByIncidentIdAndAiAdminId(anyLong(), anyLong())).thenReturn(Optional.empty());
+        when(collaboratorRepository.findLeadCollaborator(1L)).thenReturn(Optional.empty());
+        when(collaboratorRepository.save(any(AiAdminIncidentCollaborator.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(notificationRepository.save(any(AiAdminNotification.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        List<AiAdminIncidentCollaborator> result = collaborationService.autoInviteCollaborators(1L);
+
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void autoInviteCollaborators_lowSeveritySkips() {
+        incident.setSeverity(AiAdminIncident.Severity.LOW);
+        when(incidentRepository.findById(1L)).thenReturn(Optional.of(incident));
+
+        List<AiAdminIncidentCollaborator> result = collaborationService.autoInviteCollaborators(1L);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void autoInviteCollaborators_noCandidatesAvailable() {
+        when(incidentRepository.findById(1L)).thenReturn(Optional.of(incident));
+        when(collaboratorRepository.findByIncidentIdOrderByJoinedAtAsc(1L)).thenReturn(Collections.emptyList());
+        when(characterRepository.findByAiAdminTrueAndActiveTrueOrderByTotalExperienceDesc())
+                .thenReturn(Collections.emptyList());
+
+        List<AiAdminIncidentCollaborator> result = collaborationService.autoInviteCollaborators(1L);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void autoInviteCollaborators_filtersBusyAdmins() {
+        when(incidentRepository.findById(1L)).thenReturn(Optional.of(incident));
+        when(collaboratorRepository.findByIncidentIdOrderByJoinedAtAsc(1L)).thenReturn(Collections.emptyList());
+        AiCharacter busyAdmin = new AiCharacter();
+        busyAdmin.setId(200L);
+        busyAdmin.setActiveOrderCount(5);
+        when(characterRepository.findByAiAdminTrueAndActiveTrueOrderByTotalExperienceDesc())
+                .thenReturn(List.of(busyAdmin));
+
+        List<AiAdminIncidentCollaborator> result = collaborationService.autoInviteCollaborators(1L);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void getCollaborationSummary_returnsAllFields() {
+        when(collaboratorRepository.findByIncidentIdOrderByJoinedAtAsc(1L)).thenReturn(Collections.emptyList());
+        when(noteRepository.findByIncidentIdOrderByCreatedAtAsc(1L)).thenReturn(Collections.emptyList());
+
+        Map<String, Object> result = collaborationService.getCollaborationSummary(1L);
+
+        assertNotNull(result);
+        assertEquals(1L, result.get("incidentId"));
+        assertEquals(0, result.get("totalCollaborators"));
+        assertEquals(0, result.get("totalNotes"));
+    }
+
+    @Test
+    void markCollaboratorCompleted_updatesStatus() {
+        AiAdminIncidentCollaborator collab = new AiAdminIncidentCollaborator();
+        collab.setStatus(AiAdminIncidentCollaborator.Status.ACTIVE);
+        when(collaboratorRepository.findByIncidentIdAndAiAdminId(1L, 100L)).thenReturn(Optional.of(collab));
+        when(collaboratorRepository.save(any(AiAdminIncidentCollaborator.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        collaborationService.markCollaboratorCompleted(1L, 100L);
+
+        assertEquals(AiAdminIncidentCollaborator.Status.COMPLETED, collab.getStatus());
+        assertNotNull(collab.getCompletedAt());
+    }
+}

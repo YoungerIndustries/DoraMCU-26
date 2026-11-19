@@ -16,7 +16,8 @@ import java.util.List;
  * controlled territories and empire attributes.
  * </p>
  */
-@Service
+@Service("economyService_zero_zero_seven_economy_EconomyService")
+    @Service
 public class EconomyService {
 
     private final BondEmpireRepository empireRepository;

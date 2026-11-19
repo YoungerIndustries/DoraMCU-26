@@ -1,12 +1,6 @@
 package com.yisy.modules.doramcu.controller.misc;
 import com.yisy.modules.doramcu.hex.Ship;
-import com.yisy.modules.doramcu.model.galaxy.Star;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-import com.yisy.modules.doramcu.model.galaxy.Nebula;
 import com.yisy.modules.doramcu.model.misc.Planet;
-import com.yisy.modules.doramcu.model.galaxy.Sector;
-import com.yisy.modules.doramcu.model.galaxy.Wormhole;
-
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

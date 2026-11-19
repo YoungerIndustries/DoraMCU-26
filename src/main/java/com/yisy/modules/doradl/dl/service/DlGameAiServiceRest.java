@@ -28,6 +28,7 @@ public class DlGameAiServiceRest extends DlGameAiService {
     private final DlConfig config;
 
     public DlGameAiServiceRest(DlRestClient restClient, DlConfig config) {
+        super(null, null, config);
         this.restClient = restClient;
         this.config = config;
     }

@@ -1,7 +1,6 @@
 package com.yisy.modules.doramcu.captainslog.service;
 import org.springframework.stereotype.Service;
 
-import com.yisy.modules.doramcu.captainslog.dto.*;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogShipTalent;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogStarship;
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogStarshipRepository;
@@ -32,7 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * and saved to the database.
  * </p>
  */
-@SuppressWarnings("ClassEscapesItsScope")
+@SuppressWarnings("ClassEscapesItsScope_0")
 @Service
 public class StarshipCreationService {
 

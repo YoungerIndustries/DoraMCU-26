@@ -1,6 +1,6 @@
 package com.yisy.modules.doramcu.ai.framework;
 
-import com.yisy.modules.doramcu.service.AiCommanderExperienceService;
+import com.yisy.modules.doramcu.service.ai.AiCommanderExperienceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

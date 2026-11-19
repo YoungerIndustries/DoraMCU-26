@@ -26,7 +26,7 @@ public interface Dnd5eClassRepository extends JpaRepository<Dnd5eClass, Long> {
 
     @Query("SELECT c FROM Dnd5eClass c WHERE c.active = true AND LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
            "OR LOWER(c.description) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-    List<Dnd5eClass> searchByKeyword(@Param("keyword") String keyword);
+    List<Dnd5eClass> searchByKeyword(@Param("keyword_1") String keyword);
 
     boolean existsByName(String name);
 }

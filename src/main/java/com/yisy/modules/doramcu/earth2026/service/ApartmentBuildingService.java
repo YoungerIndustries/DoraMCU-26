@@ -2,7 +2,6 @@ package com.yisy.modules.doramcu.earth2026.service;
 import com.yisy.modules.doramcu.model.players.Player;
 
 
-import com.yisy.modules.doramcu.corporation.model.CorporateFinanceTransaction.TransactionType;
 import com.yisy.modules.doramcu.corporation.service.CorporationEconomyService;
 import com.yisy.modules.doramcu.earth2026.model.ApartmentBuilding;
 import com.yisy.modules.doramcu.earth2026.model.ApartmentUnit;

@@ -430,7 +430,7 @@ test_project_files() {
 
     # Check for required files
     separator
-    local required_files=("docker-compose.yml" "docker-compose.pi.yml" ".env")
+    local required_files=("docker-compose.yml" ".env")
     for file in "${required_files[@]}"; do
         if [[ -f "$PI_PROJECT_DIR/$file" ]]; then
             log_pass "File exists: $file"
@@ -466,22 +466,14 @@ test_docker_compose() {
         return 1
     fi
 
-    # Check if docker-compose.pi.yml exists
-    if [[ -f "$PI_PROJECT_DIR/docker-compose.pi.yml" ]]; then
-        log_pass "docker-compose.pi.yml exists"
-    else
-        log_fail "docker-compose.pi.yml not found"
-        return 1
-    fi
-
-    # Validate compose configuration
+    # Validate compose configuration with Pi profile
     separator
     log_info "Validating Docker Compose configuration..."
-    if cd "$PI_PROJECT_DIR" && docker compose -f docker-compose.yml -f docker-compose.pi.yml config &>/dev/null 2>&1; then
+    if cd "$PI_PROJECT_DIR" && docker compose --profile pi config &>/dev/null 2>&1; then
         log_pass "Docker Compose configuration is valid"
     else
         log_fail "Docker Compose configuration has errors"
-        log_info "Run 'docker compose -f docker-compose.yml -f docker-compose.pi.yml config' to see errors"
+        log_info "Run 'docker compose --profile pi config' to see errors"
     fi
 }
 
@@ -547,14 +539,14 @@ print_summary() {
         echo -e "${BOLD}Next steps:${NC}"
         echo "  1. Access the server at: http://$(hostname -I | awk '{print $1}')"
         echo "  2. Monitor services: docker ps"
-        echo "  3. View logs: docker compose -f docker-compose.yml -f docker-compose.pi.yml logs -f"
+        echo "  3. View logs: docker compose --profile pi logs -f"
         echo "  4. Edge monitoring: curl http://localhost:8090/api/v1/neuron/edge"
     else
         echo -e "${RED}${BOLD}✗ $FAIL_COUNT test(s) failed. Please review the failures above.${NC}"
         echo ""
         echo -e "${BOLD}Common fixes:${NC}"
         echo "  - Docker not running: sudo systemctl start docker"
-        echo "  - Services not started: cd /home/pi/doramcu && docker compose -f docker-compose.yml -f docker-compose.pi.yml up -d"
+        echo "  - Services not started: cd /home/pi/doramcu && docker compose --profile pi up -d"
         echo "  - No swap: sudo dphys-swapfile setup && sudo dphys-swapfile swapon"
         echo "  - Service not enabled: sudo systemctl enable doramcu.service"
     fi

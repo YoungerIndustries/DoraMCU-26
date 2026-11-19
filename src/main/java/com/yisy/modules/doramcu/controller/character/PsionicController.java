@@ -1,7 +1,6 @@
 package com.yisy.modules.doramcu.controller.character;
 
 import com.yisy.modules.doramcu.service.character.CharacterService;
-import com.yisy.modules.doramcu.traveller.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

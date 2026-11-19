@@ -8,8 +8,8 @@ import com.yisy.modules.doraneuron.model.brainnode.ExperienceSampleEntity;
 import com.yisy.modules.doraneuron.model.brainnode.AiModelCacheEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * and AI model caching, synchronized with the Pi via DataSyncService.
  */
 @Service
-@Conditional({BrainNodeConfig.class})
+@ConditionalOnBean(BrainNodeConfig.class)
 @EnableConfigurationProperties(BrainNodeConfig.class)
 public class BrainNodeStorageService {
 

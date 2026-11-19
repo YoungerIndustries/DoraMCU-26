@@ -20,8 +20,6 @@ import java.time.LocalDateTime;
  * Bonds are tied to a specific galaxy and tracked until redeemed.
  * </p>
  */
-@Entity
-@Table(name = "galaxy_bonds")
 public class GalaxyBond {
 
     @Id

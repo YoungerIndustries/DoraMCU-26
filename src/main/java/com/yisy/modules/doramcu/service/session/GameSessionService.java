@@ -470,7 +470,7 @@ public class GameSessionService {
      */
     @Transactional
     public void createSessionForGalaxy(String sessionId, String sessionName,
-                                        com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy,
+                                        com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy dbGalaxy,
                                         com.yisy.modules.doramcu.gamecore.GameType gameType) {
         log.info("Creating session {} for galaxy '{}' (gameType: {})", sessionId, dbGalaxy.getName(), gameType);
 
@@ -1436,9 +1436,9 @@ public class GameSessionService {
      * Shared by createDefaultSession() and createSession() to avoid duplication.
      */
     private GameType loadGalaxyToGame(Game game, String sessionName) {
-        List<com.yisy.modules.doramcu.model.galaxy.Galaxy> dbGalaxies = galaxyRepository.findAll();
+        List<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> dbGalaxies = galaxyRepository.findAll();
         if (!dbGalaxies.isEmpty()) {
-            com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy = dbGalaxies.get(0);
+            com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy dbGalaxy = dbGalaxies.get(0);
             com.yisy.modules.doramcu.hex.Galaxy inMemoryGalaxy =
                     gameInitializationService.convertToInMemoryGalaxy(dbGalaxy);
             if (inMemoryGalaxy != null) {

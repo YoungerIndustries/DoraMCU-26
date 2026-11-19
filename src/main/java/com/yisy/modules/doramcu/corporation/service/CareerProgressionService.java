@@ -2,13 +2,13 @@ package com.yisy.modules.doramcu.corporation.service;
 import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
-import com.yisy.modules.doramcu.model.CareerLevel;
+import com.yisy.modules.doramcu.model.misc.CareerLevel;
 import com.yisy.modules.doramcu.corporation.model.CorporateContract;
 import com.yisy.modules.doramcu.corporation.model.CorporateHiring;
 import com.yisy.modules.doramcu.corporation.model.CorporatePosition;
 import com.yisy.modules.doramcu.corporation.model.HireSkill;
 import com.yisy.modules.doramcu.corporation.repository.CorporateHiringRepository;
-import com.yisy.modules.doramcu.repository.AiCharacterRepository;
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,8 @@ import java.util.Optional;
  * through contract work, with matching contract types giving 2x XP to that skill.
  * </p>
  */
-@Service
+@Service("careerProgressionService_corporation_service_CareerProgressionService")
+    @Service
 public class CareerProgressionService {
 
     private static final Logger log = LoggerFactory.getLogger(CareerProgressionService.class);

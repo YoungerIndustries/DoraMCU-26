@@ -1,0 +1,153 @@
+{
+  "combat_tables": {
+    "description": "Attack resolution tables for the Lord of the Rings Galaxy tabletop game. Adapted from Legion (ground), X-Wing (space), and Rebellion (galaxy-scale) mechanics.",
+    "ground_combat": {
+      "source": "Adapted from Star Wars: Legion",
+      "description": "Ground combat uses red (attack) and yellow (defense) dice. Results are modified by range, cover, and unit abilities.",
+      "attack_dice_results": {
+        "hit": "Deals 1 damage to the target. Applied to shields first, then hull.",
+        "glance": "Deals 1 damage, but can be blocked by certain abilities. Less reliable than a hit.",
+        "crit": "Deals 1 damage and triggers a critical effect (e.g., suppression, disruption, or extra damage).",
+        "blank": "No effect."
+      },
+      "defense_dice_results": {
+        "evade": "Removes 1 Hit or Glance from the attack.",
+        "shield": "Removes 1 Hit or Glance. Some units have limited shield tokens.",
+        "blank": "No effect."
+      },
+      "range_modifiers": {
+        "range_1": "Close range — full attack dice, no penalty",
+        "range_2": "Medium range — full attack dice, no penalty (most weapons)",
+        "range_3": "Long range — may reduce attack dice or add penalties"
+      },
+      "cover_modifiers": {
+        "light_cover": "+1 yellow defense dice",
+        "heavy_cover": "+2 yellow defense dice; may block line of sight"
+      },
+      "damage_resolution": {
+        "shields_first": "Damage is applied to shield wounds first. Shield wounds heal during the end phase.",
+        "hull_second": "Once shields are depleted, damage is applied to hull wounds. Hull wounds are permanent until the unit is removed.",
+        "unit_eliminated": "When a unit's hull wounds reach its wound threshold, it is eliminated."
+      },
+      "special_effects": {
+        "suppression": "Unit cannot shoot until it recovers. Recovers at the end of the owner's next activation.",
+        "disruption": "Unit cannot activate next round. Affects command and strategy.",
+        "fear": "Unit flees if it takes a critical hit. Cannot return until the fear source is removed.",
+        "hope": "Free Peoples units near a Hope source gain +1 defense dice."
+      }
+    },
+    "space_combat": {
+      "source": "Adapted from Star Wars: X-Wing",
+      "description": "Space combat uses red (attack) and green (defense) dice. Critical hits impose lasting damage cards.",
+      "attack_dice_results": {
+        "hit": "Deals 1 damage. Assign a face-down damage card to the defending ship.",
+        "crit": "Deals 1 damage and reveals the damage card face-up (critical hit with ongoing effect).",
+        "focus": "Can be converted to a Hit, or used to add 1 green defense dice to a friendly ship.",
+        "blank": "No effect."
+      },
+      "defense_dice_results": {
+        "evade": "Removes 1 Hit or Crit from the attack.",
+        "shield": "If the ship has shields, removes 1 Hit or Crit and does not assign a damage card (shield absorbs it).",
+        "blank": "No effect."
+      },
+      "damage_cards": {
+        "stress": "Ship cannot perform actions next activation (most common face-down result)",
+        "hit": "No ongoing effect — just damage absorption (face-down)",
+        "critical_hits": [
+          "Engine Damage — ship loses maneuverability",
+          "Hull Breach — ship takes extra damage",
+          "Shield Modulator Failure — shields cannot regenerate",
+          "Weapon Malfunction — ship loses attack dice",
+          "Pilot Wounded — pilot skill reduced"
+        ]
+      },
+      "firing_arc_rules": {
+        "front_arc": "Most ships can only attack in their front 120-degree arc",
+        "full_arc": "Some ships (e.g., Elven Ships, Barad-dûr) can attack in any direction",
+        "overlap": "Ships cannot overlap at the end of a maneuver; if they do, the later ship is pushed back"
+      }
+    },
+    "galaxy_scale_combat": {
+      "source": "Adapted from Star Wars: Rebellion",
+      "description": "Galaxy-scale combat uses standard six-sided dice (d6) with tactic card modifiers.",
+      "space_combat": {
+        "description": "Ship-to-ship combat in a star system. Uses attack values from ships and tactic card modifiers.",
+        "steps": [
+          "Attacker declares space combat in a system",
+          "Both players draw or play a space tactic card",
+          "Each player rolls d6s equal to their total ship attack values",
+          "Results of 4, 5, 6 are hits",
+          "Hits are assigned to opposing ships' shields first, then hull",
+          "Destroyed ships are removed"
+        ],
+        "tactic_card_effects": [
+          "Add +1 to all dice rolls",
+          "Reroll 1 die",
+          "Add 1 additional die",
+          "Prevent opponent from rolling certain values",
+          "One in a Million: auto-hit (special card — e.g., Elven archers never miss)"
+        ]
+      },
+      "ground_combat": {
+        "description": "Ground combat to determine system loyalty. Winner gains loyalty markers.",
+        "steps": [
+          "Attacker declares ground combat in a system",
+          "Both players draw or play a ground tactic card",
+          "Each player rolls d6s equal to their total ground unit attack values",
+          "Results of 4, 5, 6 are hits",
+          "Player with more hits gains loyalty in the system",
+          "Tie: no change in loyalty"
+        ]
+      },
+      "loyalty_system": {
+        "description": "Systems have loyalty to either the Free Peoples or the Forces of Darkness. Loyalty is gained through ground combat and mission completion.",
+        "free_peoples_system": "System with Free Peoples loyalty marker — Free Peoples gain benefits when operating there",
+        "dark_system": "System with Forces of Darkness loyalty marker — Forces of Darkness gain benefits when operating there",
+        "neutral_system": "System with no loyalty marker — no faction benefits",
+        "contested_system": "System with both loyalty markers — combat bonuses for both sides"
+      }
+    },
+    "ring_bearer_combat": {
+      "description": "Special combat rules for encounters involving the Ring-bearer.",
+      "ring_bearer_encounters": {
+        "description": "When the Ring-bearer is discovered by enemy forces, a special combat encounter occurs.",
+        "steps": [
+          "The Ring-bearer's corruption increases by 1 stage",
+          "Companion units (e.g., Sam, Gollum) can intervene",
+          "The Ring-bearer can use the Phial of Galadriel or Sting for defense",
+          "If the Ring-bearer is captured, the Forces of Darkness win",
+          "If the Ring-bearer escapes, the corruption increases but the quest continues"
+        ]
+      },
+      "gollum_mechanic": {
+        "description": "Gollum is a wildcard unit that can switch sides based on the split personality mechanic.",
+        "mechanics": [
+          "Gollum can betray either side at any time",
+          "Sméagol personality helps the Ring-bearer",
+          "Gollum personality hinders the Ring-bearer",
+          "The player controlling Gollum can choose which personality acts",
+          "At Mount Doom, Gollum's obsession determines the outcome"
+        ]
+      }
+    },
+    "narrative_dice": {
+      "description": "For RPG-style encounters, narrative dice pools are used with success/failure, advantage/threat, and triumph/despair.",
+      "dice_types": {
+        "ability": "Represents the character's skill. Rolls for Success and Advantage.",
+        "boost": "Added by favorable circumstances. Rolls for extra Success.",
+        "advantage": "Added by favorable positioning. Rolls for extra Advantage.",
+        "difficulty": "Set by the GM. Rolls for Failure and Threat.",
+        "challenge": "Added by complications. Rolls for extra Failure.",
+        "despair": "Rare; added by extreme danger. Rolls for automatic Despair."
+      },
+      "results": {
+        "success": "The action succeeds. Each Success over Failure determines the degree.",
+        "failure": "The action fails. Each Failure over Success determines the degree.",
+        "advantage": "Side benefit — extra information, positioning, or resources.",
+        "threat": "Side cost — danger, complications, or resource loss.",
+        "triumph": "Major success — always counts as Success and triggers a major positive narrative effect.",
+        "despair": "Major failure — always counts as Failure and triggers a major negative narrative effect."
+      }
+    }
+  }
+}

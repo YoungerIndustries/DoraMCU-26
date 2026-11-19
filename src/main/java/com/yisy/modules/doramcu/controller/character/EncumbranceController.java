@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.controller.character;
 
-import com.yisy.modules.doramcu.traveller.*;
 import com.yisy.modules.doramcu.service.character.EncumbranceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

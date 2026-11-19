@@ -1,10 +1,6 @@
 package com.yisy.modules.doramcu.service.game;
 import com.yisy.modules.doramcu.hex.Hex;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.service.session.GameSessionService;
-import com.yisy.modules.doramcu.model.players.Player;
-import com.yisy.modules.doramcu.model.galaxy.SolarSystem;
-
 import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.Game;
@@ -160,7 +156,7 @@ public class GameSaveService {
         String galaxyName = (String) saveFile.get("galaxyName");
         if (galaxyName != null && !galaxyName.isBlank()) {
             try {
-                Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy> galaxyOpt = galaxyRepository.findByName(galaxyName);
+                Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> galaxyOpt = galaxyRepository.findByName(galaxyName);
                 if (galaxyOpt.isPresent()) {
                     com.yisy.modules.doramcu.hex.Galaxy hexGalaxy = convertToHexGalaxy(galaxyOpt.get());
                     if (hexGalaxy != null) {
@@ -286,7 +282,7 @@ public class GameSaveService {
     /**
      * Converts a database Galaxy model to a hex.Galaxy for game use.
      */
-    private com.yisy.modules.doramcu.hex.Galaxy convertToHexGalaxy(com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy) {
+    private com.yisy.modules.doramcu.hex.Galaxy convertToHexGalaxy(com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy dbGalaxy) {
         if (dbGalaxy == null) {
             return null;
         }
@@ -298,8 +294,8 @@ public class GameSaveService {
         );
 
         // Load systems from the database using the galaxy ID
-        List<com.yisy.modules.doramcu.model.galaxy.SolarSystem> systems = solarSystemRepository.findByGalaxyId(dbGalaxy.getId());
-        for (com.yisy.modules.doramcu.model.galaxy.SolarSystem sys : systems) {
+        List<com.yisy.modules.doramcu.model.galaxy.Galaxy.SolarSystem> systems = solarSystemRepository.findByGalaxyId(dbGalaxy.getId());
+        for (com.yisy.modules.doramcu.model.galaxy.Galaxy.SolarSystem sys : systems) {
             com.yisy.modules.doramcu.hex.SolarSystem hexSystem = new com.yisy.modules.doramcu.hex.SolarSystem(
                     sys.getId().intValue()
             );

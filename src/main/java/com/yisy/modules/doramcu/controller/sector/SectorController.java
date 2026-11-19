@@ -1,7 +1,4 @@
 package com.yisy.modules.doramcu.controller.sector;
-import com.yisy.modules.doramcu.model.galaxy.Sector;
-
-
 import com.yisy.modules.doramcu.dto.sector.SectorRequest;
 import com.yisy.modules.doramcu.dto.sector.SectorResponse;
 import com.yisy.modules.doramcu.service.sector.SectorService;

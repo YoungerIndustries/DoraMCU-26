@@ -33,7 +33,7 @@ import java.util.Map;
  * </ul>
  * </p>
  */
-@Component("captainsLogCareerProgressionService")
+@Component("careerProgressionService_captainslog_service_CareerProgressionService")
 public class CareerProgressionService {
 
     private static final Logger log = LoggerFactory.getLogger(CareerProgressionService.class);

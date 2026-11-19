@@ -27,7 +27,7 @@ import java.util.List;
  * and will be deprecated once all callers migrate.
  * </p>
  */
-@Service("unifiedRulesService")
+@Service("rulesService_shared_service_RulesService")
 public class RulesService {
 
     private static final Logger log = LoggerFactory.getLogger(RulesService.class);

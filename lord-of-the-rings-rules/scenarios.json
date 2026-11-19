@@ -1,0 +1,619 @@
+{
+  "scenarios": [
+    {
+      "id": "council_of_elrond",
+      "name": "Council of Elrond — The Fellowship is Formed",
+      "source_game": "Galaxy Control (Rebellion-style)",
+      "era": "Third Age, T.A. 3018",
+      "description": "The great council held at Rivendell to decide the fate of the One Ring. Representatives of all Free Peoples gather to form the Fellowship of the Ring. A diplomatic and strategic scenario where players must negotiate the fate of the Ring.",
+      "map": "Rivendell system — hidden sanctuary with spatial distortions",
+      "players": 2,
+      "factions": {
+        "player_1": "Free Peoples Alliance",
+        "player_2": "Forces of Darkness (Sauron's influence)"
+      },
+      "objective": {
+        "free_peoples": "Form the Fellowship of the Ring and safely escort the Ring-bearer out of Rivendell. The Fellowship must include representatives from at least 4 races.",
+        "forces_of_darkness": "Disrupt the council, corrupt a council member with the Ring, or prevent the Fellowship from forming."
+      },
+      "setup": {
+        "free_peoples_forces": [
+          "Elrond (Rivendell commander)",
+          "Gandalf the Grey (advisor)",
+          "Glorfindel (elven guard)",
+          "Representatives: Aragorn, Legolas, Gimli, Boromir, Frodo, Sam, Merry, Pippin"
+        ],
+        "forces_of_darkness_influence": [
+          "Sauron's Eye (surveillance — can observe the council)",
+          "Corruption attempts (Ring temptation cards)",
+          "Nazgûl approaching (threat timer — 6 rounds before they arrive)"
+        ]
+      },
+      "special_rules": [
+        "The Ring temptation mechanic: each council member must resist the Ring's allure",
+        "Gandalf's warning about the Palantíri provides intelligence",
+        "The Nazgûl approach — if they arrive before the Fellowship departs, the scenario fails",
+        "Gollum is captured and provides information about Mordor"
+      ],
+      "victory_conditions": {
+        "free_peoples": "Fellowship of 9 members departs Rivendell safely",
+        "forces_of_darkness": "Fellowship fails to form OR the Ring-bearer is corrupted"
+      },
+      "playtime": "60 minutes",
+      "difficulty": "Medium"
+    },
+    {
+      "id": "battle_of_helms_deep",
+      "name": "Battle of the Hornburg (Helm's Deep)",
+      "source_game": "Ground Combat (Legion-style)",
+      "era": "Third Age, T.A. 3019",
+      "description": "The greatest battle of Rohan. Saruman's forces — orcs, Uruk-hai, and Wargs — attack the impregnable fortress of Helm's Deep. The Riders of Rohan must hold out until reinforcements arrive.",
+      "map": "Helm's Deep fortress station — Deeping Wall, Hornburg, and the caves",
+      "players": 2,
+      "factions": {
+        "player_1": "Rohan (Free Peoples Alliance)",
+        "player_2": "Isengard (Saruman's forces)"
+      },
+      "objective": {
+        "rohan": "Defend Helm's Deep for 6 rounds until Éomer's reinforcements arrive. Survive the assault.",
+        "isengard": "Breach the Deeping Wall and capture the Hornburg before reinforcements arrive."
+      },
+      "setup": {
+        "rohan_forces": [
+          "King Théoden (commander)",
+          "Éomer (cavalry leader)",
+          "Gandalf the White (arrives at round 3)",
+          "Riders of Rohan: 6 units",
+          "Helm's Deep Garrison: 4 units",
+          "Women and children of the Deeping Coves (civilian tokens)"
+        ],
+        "isengard_forces": [
+          "Uruk-hai Warriors: 8 units",
+          "Orc Archers: 4 units",
+          "Wargs: 4 units",
+          "War Wargs: 2 units",
+          "Siege Engines: 2 units",
+          "Gríma Wormtongue (hidden agent)"
+        ]
+      },
+      "special_rules": [
+        "The Deeping Wall provides heavy cover to defenders",
+        "Archers' Notch gives elven archers (if present) elevated firing positions",
+        "Éomer's riders arrive at round 6 from the rear",
+        "Avalanche: at round 5, Gandalf triggers an avalanche that destroys units on the cliffs",
+        "Saruman's flame-throwers can bypass cover",
+        "Civilian tokens must be protected; if captured, Rohan suffers morale penalties"
+      ],
+      "victory_conditions": {
+        "rohan": "Survive 6 rounds with the Hornburg intact",
+        "isengard": "Capture the Hornburg OR eliminate King Théoden before round 6"
+      },
+      "playtime": "90 minutes",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "battle_of_pelennor_fields",
+      "name": "Battle of the Pelennor Fields",
+      "source_game": "Ground Combat (Legion-style) + Space Combat (X-Wing-style)",
+      "era": "Third Age, T.A. 3019",
+      "description": "The largest battle in the War of the Ring. Mordor's forces besiege Minas Tirith, but the Riders of Rohan arrive at dawn. The Witch-king falls, and the tide turns.",
+      "map": "Pelennor Fields — the plains before Minas Tirith fortress station",
+      "players": 2,
+      "factions": {
+        "player_1": "Free Peoples Alliance (Gondor + Rohan)",
+        "player_2": "Mordor + Harad"
+      },
+      "objective": {
+        "free_peoples": "Defend Minas Tirith and destroy the enemy forces. Kill the Witch-king.",
+        "mordor": "Breach the gates of Minas Tirith and capture the White Tower."
+      },
+      "setup": {
+        "free_peoples_forces": [
+          "Aragorn (commander — arrives with Reinforcements at round 3)",
+          "Faramir (defender of Minas Tirith)",
+          "Gandalf the White (commander)",
+          "Riders of Rohan: 6 units (arrive at dawn, round 2)",
+          "Gondor Soldiers: 4 units",
+          "Éowyn (disguised as Dernhelm)",
+          "Merry (with Sting)",
+          "Reinforcements of the Argonath (arrive at round 4)"
+        ],
+        "mordor_forces": [
+          "Witch-king of Angmar on Fell Beast (air unit)",
+          "Orc Warriors: 10 units",
+          "Orc Archers: 4 units",
+          "Trolls: 3 units",
+          "Haradrim Warriors: 4 units",
+          "Mûmakil: 2 units",
+          "Ram (siege weapon against the gates)"
+        ]
+      },
+      "special_rules": [
+        "Dawn: at round 2, the Riders of Rohan arrive with a shock charge",
+        "The Witch-king can be attacked from the air (Fell Beast) and ground",
+        "Éowyn's disguise: she is hidden until she reveals herself",
+        "'Not by the hand of man': the Witch-king can only be killed by a non-man (Éowyn + Merry)",
+        "Aragorn's King's Call: Gondor soldiers on the walls fire arrows, pinning enemy forces",
+        "The Black Gate feint: Aragorn's approach draws forces away from the Pelennor",
+        "Mûmakil can crush the gates but are vulnerable to cavalry"
+      ],
+      "victory_conditions": {
+        "free_peoples": "Destroy all enemy forces OR kill the Witch-king and hold Minas Tirith",
+        "mordor": "Breach the gates of Minas Tirith OR kill Faramir and Gandalf"
+      },
+      "playtime": "120 minutes",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "journey_to_mordor",
+      "name": "The Journey to Mount Doom",
+      "source_game": "Galaxy Control (Rebellion-style) + Narrative",
+      "era": "Third Age, T.A. 3019",
+      "description": "Frodo and Sam journey through Mordor to destroy the One Ring in the fires of Mount Doom. A stealth and survival scenario where the Ring-bearer must avoid detection while crossing enemy territory.",
+      "map": "Mordor system — from the Emyn Muil to Orodruin (Mount Doom)",
+      "players": 2,
+      "factions": {
+        "player_1": "Frodo and Sam (Free Peoples)",
+        "player_2": "Mordor (Sauron's forces)"
+      },
+      "objective": {
+        "frodo": "Reach Mount Doom and destroy the Ring before the corruption track fills.",
+        "mordor": "Find and capture the Ring-bearer before they reach Mount Doom."
+      },
+      "setup": {
+        "frodo_forces": [
+          "Frodo Baggins (Ring-bearer, with corruption track)",
+          "Samwise Gamgee (loyal companion)",
+          "Gollum (wildcard — can help or betray)",
+          "Sting (glows near Orcs)",
+          "Phial of Galadriel (repels darkness)",
+          "Mithril Coat (protection)"
+        ],
+        "mordor_forces": [
+          "Orc patrols (random encounters)",
+          "Shelob (guardian of Cirith Ungol)",
+          "The Eye of Sauron (surveillance — searches for the Ring)",
+          "Nazgûl on Fell Beasts (aerial search)",
+          "Orc garrisons at key locations"
+        ]
+      },
+      "special_rules": [
+        "Corruption track: Frodo's corruption increases each round and after encounters",
+        "The Ring's weight: as corruption increases, Frodo's speed decreases",
+        "Gollum's split personality: can help (Sméagol) or betray (Gollum) at any time",
+        "Sting glows when Orcs are near — provides early warning but reveals position",
+        "Phial of Galadriel: can be used to repel Shelob and darkness",
+        "Shelob's Lair: a major encounter where Frodo is captured (Sam must rescue him)",
+        "The Black Gate: Frodo and Sam must find an alternate route (Cirith Ungol)",
+        "Mount Doom: the final destination — the Ring must be cast into the fires"
+      ],
+      "victory_conditions": {
+        "frodo": "Reach Mount Doom and destroy the Ring (Gollum bites it from Frodo's finger and falls)",
+        "mordor": "Capture the Ring-bearer OR the corruption track fills (Frodo claims the Ring)"
+      },
+      "playtime": "90 minutes",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "ents_march_on_isengard",
+      "name": "The Ents March on Isengard",
+      "source_game": "Ground Combat (Legion-style)",
+      "era": "Third Age, T.A. 3019",
+      "description": "Treebeard and the Ents, roused to anger by Saruman's destruction of Fangorn, march on Isengard to destroy the factories and free the river. A scenario where slow but unstoppable forces overwhelm industrial might.",
+      "map": "Isengard — the factory complex surrounding Orthanc Tower",
+      "players": 2,
+      "factions": {
+        "player_1": "The Ents (Fangorn)",
+        "player_2": "Isengard (Saruman's forces)"
+      },
+      "objective": {
+        "ents": "Destroy Isengard's factories and dam the river. Orthanc cannot be destroyed but must be isolated.",
+        "isengard": "Defend the factories and prevent the Ents from breaching the walls."
+      },
+      "setup": {
+        "ents_forces": [
+          "Treebeard (commander)",
+          "Ents: 4 units (slow but immensely powerful)",
+          "Huorns: 6 units (mindless tree-creatures; swarm enemies)",
+          "Ent-drum (coordination bonus)"
+        ],
+        "isengard_forces": [
+          "Saruman the White (in Orthanc — cannot directly fight but provides buffs)",
+          "Uruk-hai Warriors: 6 units",
+          "Orc Archers: 4 units",
+          "Factory defenses: 4 units",
+          "Orthanc Tower (indestructible fortress)"
+        ]
+      },
+      "special_rules": [
+        "Ents are extremely slow (speed 1) but deal massive damage",
+        "Huorns swarm and entangle enemy units, reducing their speed to 0",
+        "The river: Ents can breach the dam, flooding Isengard and washing away units",
+        "Orthanc is indestructible — it cannot be damaged by any means",
+        "Saruman's Voice of Authority can stun Ent units if he gets a clear shot",
+        "Factory destruction: each destroyed factory reduces Isengard's production"
+      ],
+      "victory_conditions": {
+        "ents": "Destroy all factories and flood Isengard",
+        "isengard": "Survive 6 rounds with at least 2 factories intact"
+      },
+      "playtime": "60 minutes",
+      "difficulty": "Medium"
+    },
+    {
+      "id": "fall_of_moria",
+      "name": "The Fall of the Fellowship at Moria",
+      "source_game": "Ground Combat (Legion-style)",
+      "era": "Third Age, T.A. 3018",
+      "description": "The Fellowship is pursued by Orcs and takes the dangerous path through Moria. The Balrog awakens, and Gandalf falls with it into the abyss. A desperate defense scenario.",
+      "map": "Moria — the mines of Khazad-dûm, from the Carrock to the Khazad-dûm bridge",
+      "players": 2,
+      "factions": {
+        "player_1": "The Fellowship of the Ring",
+        "player_2": "Moria Orcs + Balrog"
+      },
+      "objective": {
+        "fellowship": "Escape Moria through the East Gate. Gandalf must hold the Bridge of Khazad-dûm long enough for the Fellowship to flee.",
+        "moria": "Kill as many Fellowship members as possible. The Balrog must reach Gandalf."
+      },
+      "setup": {
+        "fellowship_forces": [
+          "Gandalf the Grey (commander — must hold the bridge)",
+          "Frodo Baggins (Ring-bearer)",
+          "Samwise Gamgee",
+          "Merry Brandybuck",
+          "Pippin Took",
+          "Aragorn",
+          "Legolas",
+          "Gimli",
+          "Boromir"
+        ],
+        "moria_forces": [
+          "Orc Warriors: 6 units (wave 1 — the mines)",
+          "Goblin Archers: 4 units (wave 1)",
+          "Orc Warriors: 8 units (wave 2 — the bridge)",
+          "Balrog of Moria (arrives at wave 2 — demon of fire and shadow)"
+        ]
+      },
+      "special_rules": [
+        "Darkness: most units have reduced vision; only Gandalf's staff and Gimli's pick provide light",
+        "The Bridge of Khazad-dûm: Gandalf must stand on the bridge to hold it; the Balrog cannot cross until the bridge is broken",
+        "Gandalf's sacrifice: when Gandalf breaks the bridge, he falls with the Balrog and is removed from the game",
+        "Pippin's mistake: if Pippin is near the edge, he may fall and trigger the Balrog's arrival early",
+        "The Fellowship is broken: after Gandalf falls, the Fellowship disperses"
+      ],
+      "victory_conditions": {
+        "fellowship": "At least 6 Fellowship members escape through the East Gate; Gandalf holds the bridge",
+        "moria": "Kill 4+ Fellowship members OR the Balrog reaches Gandalf before the bridge is broken"
+      },
+      "playtime": "60 minutes",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "scouring_of_the_shire",
+      "name": "The Scouring of the Shire",
+      "source_game": "Ground Combat (Legion-style)",
+      "era": "Third Age, T.A. 3019 (after the Ring's destruction)",
+      "description": "After the destruction of the Ring, the returning hobbits find the Shire occupied by Saruman's forces. The hobbits must liberate their home in a final, unexpected battle.",
+      "map": "The Shire system — Bag End, the Bywater Inn, and the fields",
+      "players": 2,
+      "factions": {
+        "player_1": "Hobbits of the Shire",
+        "player_2": "Saruman's Occupiers"
+      },
+      "objective": {
+        "hobbits": "Liberate the Shire and drive out Saruman's forces. The Battle of Bywater must be won.",
+        "saruman": "Hold the Shire and suppress the hobbit rebellion."
+      },
+      "setup": {
+        "hobbit_forces": [
+          "Samwise Gamgee (commander — Mayor of the Shire)",
+          "Merry Brandybuck (with elven sword)",
+          "Pippin Took",
+          "Frodo Baggins (weakened by the Ring)",
+          "Hobbit Militia: 8 units (farmers with pitchforks and scythes)",
+          "The Merrybrandywarriors"
+        ],
+        "saruman_forces": [
+          "Saruman (Wormtongue) (commander — weakened but still dangerous)",
+          "Orc Raiders: 4 units",
+          "Thugs: 6 units (corrupted men and hobbits)",
+          "Factory defenses: 2 units"
+        ]
+      },
+      "special_rules": [
+        "Hobbits are outnumbered but fight for their homes — +1 morale",
+        "The Battle of Bywater: hobbits use farm tools as weapons",
+        "Saruman is weakened — his Maiar power is reduced",
+        "Aragorn arrives after the battle to deal with Saruman",
+        "The Shire's healing: after victory, the Shire begins to recover"
+      ],
+      "victory_conditions": {
+        "hobbits": "Defeat all enemy forces and liberate the Shire",
+        "saruman": "Hold the Shire for 6 rounds OR kill Samwise Gamgee"
+      },
+      "playtime": "45 minutes",
+      "difficulty": "Medium"
+    },
+    {
+      "id": "last_alliance",
+      "name": "The Last Alliance — Siege of Barad-dûr",
+      "source_game": "Galaxy Control (Rebellion-style) + Ground Combat",
+      "era": "Second Age, S.A. 3434–3441",
+      "description": "The Last Alliance of Elves and Men marches on Mordor to defeat Sauron. The greatest alliance in history, led by Elendil, Gil-galad, and Isildur. The siege of Barad-dûr and the duel of Elendil and Sauron.",
+      "map": "Mordor system — from Dagorlad to Barad-dûr",
+      "players": 2,
+      "factions": {
+        "player_1": "Last Alliance (Elves + Númenor)",
+        "player_2": "Mordor (Sauron's Second Age forces)"
+      },
+      "objective": {
+        "alliance": "Siege Barad-dûr and defeat Sauron. Isildur must cut the Ring from Sauron's hand.",
+        "mordor": "Defend Barad-dûr and destroy the Alliance. Prevent the Ring from being taken."
+      },
+      "setup": {
+        "alliance_forces": [
+          "Elendil (Elvenking — commander)",
+          "Gil-galad (last Elven-king — commander)",
+          "Isildur (Elendil's son — Ring-taker)",
+          "Númenórean Host: 10 units",
+          "Elven Host: 6 units",
+          "Elven Archers: 4 units"
+        ],
+        "mordor_forces": [
+          "Sauron (in Barad-dûr — overlord)",
+          "Orc Host: 12 units",
+          "Trolls: 4 units",
+          "Barad-dûr defenses: 6 units",
+          "The One Ring (Sauron's power source)"
+        ]
+      },
+      "special_rules": [
+        "Battle of Dagorlad: preliminary battle before the siege",
+        "Seven-year siege: the scenario can be played as a long campaign",
+        "Elendil falls: during the final assault, Elendil is killed",
+        "Gil-galad falls: the last Elven-king dies alongside Elendil",
+        "Isildur cuts the Ring: the Ring must be cut from Sauron's hand",
+        "Isildur's choice: he can spare the Ring (historical) or destroy it (alternate)"
+      ],
+      "victory_conditions": {
+        "alliance": "Isildur cuts the Ring from Sauron's hand; Sauron's spirit is defeated",
+        "mordor": "Destroy the Alliance forces OR prevent the Ring from being taken"
+      },
+      "playtime": "120 minutes",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "downfall_of_numenor",
+      "name": "The Downfall of Númenor (Akallabêth)",
+      "source_game": "Galaxy Control (Rebellion-style)",
+      "era": "Second Age, S.A. 3319",
+      "description": "Ar-Pharazôn sails against Valinor, and Eru Ilúvatar sinks Númenor into the sea. The greatest tragedy in the history of Arda — a once-great empire destroyed by its own hubris.",
+      "map": "The Arda galaxy — from Númenor to the shores of Valinor",
+      "players": 2,
+      "factions": {
+        "player_1": "Númenor (Ar-Pharazôn's fleet)",
+        "player_2": "Valinor (the Valar) + Eru Ilúvatar (narrative force)"
+      },
+      "objective": {
+        "numenor": "Reach the shores of Valinor and capture the Undying Lands. Immortality is the goal.",
+        "valinor": "Defend the Undying Lands. The Faithful must escape before the downfall."
+      },
+      "setup": {
+        "numenor_forces": [
+          "Ar-Pharazôn (Emperor — commander)",
+          "Númenórean Fleet: 15 units (the greatest fleet ever assembled)",
+          "Sauron (captured — advisor to Ar-Pharazôn, but secretly corrupting him)",
+          "The Faithful (endgame — must escape)"
+        ],
+        "valinor_forces": [
+          "The Valar (cannot directly fight — they have withdrawn)",
+          "Eärendil (beacon of hope)",
+          "The Two Trees (sacred sites — cannot be damaged by conventional means)",
+          "Eru Ilúvatar (narrative force — the Downfall)"
+        ]
+      },
+      "special_rules": [
+        "Sauron's corruption: Ar-Pharazôn's corruption increases each round",
+        "The Valar cannot fight — they have withdrawn from Arda",
+        "The Downfall: at round 6, Eru Ilúvatar sinks Númenor — all Númenórean units are destroyed",
+        "The Faithful: a small number of units can escape if they reach the edge of the map before the Downfall",
+        "The world is remade: after the Downfall, the Undying Lands are removed from the circles of the world"
+      ],
+      "victory_conditions": {
+        "numenor": "Reach Valinor and capture the Two Trees (nearly impossible — the Downfall is inevitable)",
+        "valinor": "The Faithful escape; Númenor is destroyed by the Downfall"
+      },
+      "playtime": "60 minutes",
+      "difficulty": "Hard (narrative-driven — Númenor always falls)"
+    },
+    {
+      "id": "battle_of_bywater",
+      "name": "The Battle of Bywater",
+      "source_game": "Ground Combat (Legion-style)",
+      "era": "Third Age, T.A. 3019 (after the Ring's destruction)",
+      "description": "The hobbits of the Shire, armed with farm tools and courage, stand against Saruman's occupiers in the fields of Bywater. A David-vs-Goliath battle where the underdogs fight for their homes.",
+      "map": "The Shire system — the fields and roads around Bywater",
+      "players": 2,
+      "factions": {
+        "player_1": "Hobbits of the Shire",
+        "player_2": "Saruman's Occupiers"
+      },
+      "objective": {
+        "hobbits": "Defeat the enemy forces in open battle and drive them from the Shire.",
+        "saruman": "Crush the hobbit rebellion and hold the field."
+      },
+      "setup": {
+        "hobbit_forces": [
+          "Samwise Gamgee (commander — 'Go back, Mr. Gamgee!')",
+          "Merry Brandybuck (with elven sword)",
+          "Hobbit Militia: 10 units (farmers with scythes, pitchforks, and slings)",
+          "Slingshot Teams: 3 units (ranged — surprisingly accurate)",
+          "The Merrybrandywarriors: 4 units"
+        ],
+        "saruman_forces": [
+          "Orc Raiders: 4 units",
+          "Thugs: 6 units (corrupted men and hobbits)",
+          "War Machines: 2 units (Saruman's industrial weapons)"
+        ]
+      },
+      "special_rules": [
+        "Hobbits fight for their homes — +2 morale; cannot retreat",
+        "Slingshot teams have long range but low damage",
+        "Merry's elven sword can cut through armor",
+        "Saruman's forces are outnumbered but better equipped",
+        "The battle is won when the enemy breaks and flees",
+        "After the battle, Aragorn arrives to deal with Saruman"
+      ],
+      "victory_conditions": {
+        "hobbits": "Destroy or rout all enemy forces",
+        "saruman": "Eliminate Samwise Gamgee OR hold the field for 6 rounds"
+      },
+      "playtime": "45 minutes",
+      "difficulty": "Easy (hobbits are heavily favored)"
+    },
+    {
+      "id": "battle_of_dagorlad",
+      "name": "The Battle of Dagorlad",
+      "source_game": "Ground Combat (Legion-style)",
+      "era": "Second Age, S.A. 3434",
+      "description": "The preliminary battle before the Siege of Barad-dûr. The Last Alliance of Elves and Men crosses the plain of Dagorlad and faces Sauron's forces in open battle. The greatest clash of arms in the Second Age.",
+      "map": "Mordor system — the plain of Dagorlad, before the Black Gates",
+      "players": 2,
+      "factions": {
+        "player_1": "Last Alliance (Elves + Númenor)",
+        "player_2": "Mordor (Sauron's Second Age forces)"
+      },
+      "objective": {
+        "alliance": "Defeat Sauron's field army and force them behind the Black Gates.",
+        "mordor": "Destroy the Alliance on the plain and prevent them from reaching the gates."
+      },
+      "setup": {
+        "alliance_forces": [
+          "Elendil (commander — Lord of Númenor)",
+          "Gil-galad (commander — last Elven-king)",
+          "Isildur (Elendil's son — elite warrior)",
+          "Númenórean Host: 12 units (heavily armored)",
+          "Elven Host: 8 units (swift and deadly)",
+          "Elven Archers: 4 units (infallible aim)"
+        ],
+        "mordor_forces": [
+          "Orc Host: 15 units (massive numbers)",
+          "Trolls: 5 units (siege weapons)",
+          "Drakes: 2 units (fire-breathing monsters)",
+          "Haradrim Allies: 4 units (with Mûmakil)",
+          "Easterling Allies: 4 units"
+        ]
+      },
+      "special_rules": [
+        "The Alliance is outnumbered but superior in quality",
+        "Númenórean armor is nearly impervious to orc weapons",
+        "Elven archers never miss — each shot kills",
+        "Sauron's forces fight with desperation — cannot retreat",
+        "The Black Gates provide heavy cover to Mordor's rear",
+        "If the Alliance wins, the scenario transitions to the Siege of Barad-dûr"
+      ],
+      "victory_conditions": {
+        "alliance": "Push all enemy forces behind the Black Gates",
+        "mordor": "Eliminate Elendil and Gil-galad OR destroy 10 Alliance units"
+      },
+      "playtime": "90 minutes",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "siege_of_minas_tirith",
+      "name": "The Siege of Minas Tirith",
+      "source_game": "Ground Combat (Legion-style) + Space Combat (X-Wing-style)",
+      "era": "Third Age, T.A. 3019",
+      "description": "Mordor's forces lay siege to the White City. The Witch-king leads the assault from the air, while trolls and orcs batter the gates. Inside, Denethor descends into madness and Faramir leads the defense.",
+      "map": "Minas Tirith fortress station — the seven circles",
+      "players": 2,
+      "factions": {
+        "player_1": "Gondor (Free Peoples)",
+        "player_2": "Mordor + Nazgûl"
+      },
+      "objective": {
+        "gondor": "Defend Minas Tirith for 6 rounds until reinforcements arrive. Protect the White Tree.",
+        "mordor": "Breach the gates and capture the White Tower before reinforcements arrive."
+      },
+      "setup": {
+        "gondor_forces": [
+          "Faramir (commander — Captain of the White Tower)",
+          "Boromir (arrives at round 2 — brings reinforcements)",
+          "Gandalf the White (arrives at round 1 — rallies the defense)",
+          "Gondor Soldiers: 6 units",
+          "White Tower Guard: 3 units (elite)",
+          "Rangers of Ithilien: 2 units (guerrilla support)",
+          "The White Tree (objective — must be protected)"
+        ],
+        "mordor_forces": [
+          "Witch-king of Angmar on Fell Beast (air unit — terror)",
+          "Orc Warriors: 10 units",
+          "Orc Archers: 4 units",
+          "Trolls: 3 units (with the Ram)",
+          "Drúgedain: 2 units (black Númenórean traitors)",
+          "The Ram (siege weapon — targets the gates)"
+        ]
+      },
+      "special_rules": [
+        "The seven circles: each circle provides layered defense",
+        "The Ram: Mordor's primary weapon against the gates; must be destroyed",
+        "The Witch-king's terror: Gondor units within range suffer -1 morale",
+        "Denethor's madness: at round 4, Denethor may sabotage the defense",
+        "Gandalf's rallying: can restore morale and activate hidden reserves",
+        "Reinforcements: Aragorn arrives at round 6 with the Army of the Dead",
+        "The White Tree: if captured, Gondor suffers severe penalties"
+      ],
+      "victory_conditions": {
+        "gondor": "Survive 6 rounds with the White Tower intact",
+        "mordor": "Capture the White Tower OR kill Faramir and Gandalf before round 6"
+      },
+      "playtime": "90 minutes",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "argarnath_confrontation",
+      "name": "The Confrontation at the Argonath",
+      "source_game": "Space Combat (X-Wing-style)",
+      "era": "Third Age, T.A. 3019",
+      "description": "Aragorn reveals himself to Sauron by using the Palantír, then sails past the Argonath with the Army of the Dead. A dramatic space race and confrontation as Aragorn draws Sauron's forces to the Black Gates.",
+      "map": "The Anduin corridor — from the Argonath to the Black Gates",
+      "players": 2,
+      "factions": {
+        "player_1": "Aragorn and the Army of the Dead",
+        "player_2": "Mordor (Sauron's forces)"
+      },
+      "objective": {
+        "aragorn": "Reach the Black Gates and feint an attack, drawing Sauron's forces away from Mordor's interior.",
+        "mordor": "Intercept and destroy Aragorn's fleet before it reaches the Black Gates."
+      },
+      "setup": {
+        "aragorn_forces": [
+          "Aragorn (commander — King of Gondor)",
+          "Army of the Dead (ghost ships — immune to conventional weapons)",
+          "Gondor War Ships: 4 units (reinforcements from the South)",
+          "Palantír of Annúminas (deception tool)"
+        ],
+        "mordor_forces": [
+          "Mordor War Ships: 6 units (interceptors)",
+          "Nazgûl Fell Wings: 3 units (aerial threat)",
+          "The Eye of Sauron (surveillance — initially deceived by Aragorn)"
+        ]
+      },
+      "special_rules": [
+        "The Argonath: Aragorn's King's Call — the statues roar, intimidating enemies",
+        "Army of the Dead: ghost ships that cannot be harmed by conventional weapons",
+        "Palantír deception: Aragorn initially hides his true strength from Sauron",
+        "The feint: Aragorn's goal is to draw forces, not win a battle",
+        "Oathbreakers: the Dead cannot be killed but can be released from their oath",
+        "Sauron's realization: when Sauron sees Aragorn, he commits his forces to the Black Gates"
+      ],
+      "victory_conditions": {
+        "aragorn": "Reach the Black Gates and hold position for 2 rounds (drawing Sauron's forces)",
+        "mordor": "Destroy Aragorn's fleet OR prevent him from reaching the Black Gates"
+      },
+      "playtime": "60 minutes",
+      "difficulty": "Medium"
+    }
+  ]
+}

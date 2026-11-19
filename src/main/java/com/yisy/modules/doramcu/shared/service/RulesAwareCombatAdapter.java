@@ -2,10 +2,6 @@ package com.yisy.modules.doramcu.shared.service;
 
 import org.springframework.stereotype.Service;
 import com.yisy.modules.doramcu.gamecore.CombatService;
-import com.yisy.modules.doramcu.gamecore.CombatService.AttackRequest;
-import com.yisy.modules.doramcu.gamecore.CombatService.AttackResult;
-import com.yisy.modules.doramcu.gamecore.CombatService.CombatInfo;
-import com.yisy.modules.doramcu.gamecore.CombatService.CombatantInfo;
 import com.yisy.modules.doramcu.shared.model.GameSystem;
 import com.yisy.modules.doramcu.shared.model.RulesContext;
 import com.yisy.modules.doramcu.shared.model.RulesEntry;

@@ -1,7 +1,6 @@
 package com.yisy.modules.doramcu.captainslog.service;
 import org.springframework.stereotype.Service;
 
-import com.yisy.modules.doramcu.captainslog.dto.*;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCombat;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogMission;

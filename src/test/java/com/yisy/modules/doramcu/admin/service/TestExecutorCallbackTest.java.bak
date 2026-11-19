@@ -1,0 +1,355 @@
+package com.yisy.modules.doramcu.admin.service;
+
+import com.yisy.modules.doramcu.admin.model.AiAdminTestCase;
+import com.yisy.modules.doramcu.admin.model.AiAdminTestCase.TestStatus;
+import com.yisy.modules.doramcu.admin.model.TestDefinition;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+@DisplayName("TestExecutor Callback Tests")
+@org.mockito.junit.jupiter.MockitoSettings(strictness = org.mockito.quality.Strictness.LENIENT)
+class TestExecutorCallbackTest {
+
+    @Mock
+    private TestRegistry testRegistry;
+
+    private TestExecutor testExecutor;
+
+    private List<TestDefinition> testCatalog;
+
+    @BeforeEach
+    void setUp() {
+        testExecutor = new TestExecutor(testRegistry);
+
+        testCatalog = new ArrayList<>();
+        testCatalog.add(new TestDefinition("api-1", "testApiHealth", "API", "Health check"));
+        testCatalog.add(new TestDefinition("api-2", "testApiAuth", "API", "Auth check"));
+        testCatalog.add(new TestDefinition("game-1", "testGameMechanics", "GAME", "Game test"));
+        testCatalog.add(new TestDefinition("chat-1", "testAiChat", "AI_CHAT", "Chat test"));
+        testCatalog.add(new TestDefinition("auth-1", "testAuthFlow", "AUTH", "Auth flow"));
+
+        when(testRegistry.getTestCatalog()).thenReturn(testCatalog);
+        when(testRegistry.executeTest(anyString())).thenReturn(true);
+    }
+
+    // ================================================================
+    // runAllTests(callback)
+    // ================================================================
+
+    @Test
+    @DisplayName("runAllTests should call onTestStarted for each test")
+    void runAllTests_shouldCallOnTestStartedForEachTest() {
+        List<String> startedTests = new ArrayList<>();
+        OrderProgressCallback callback = testName -> startedTests.add(testName);
+
+        testExecutor.runAllTests(callback);
+
+        assertEquals(5, startedTests.size());
+        assertEquals("testAuthFlow", startedTests.get(4));
+    }
+
+    @Test
+    @DisplayName("runAllTests should call onProgressUpdate after each test")
+    void runAllTests_shouldCallOnProgressUpdateAfterEachTest() {
+        AtomicInteger completedCount = new AtomicInteger();
+        AtomicInteger totalCount = new AtomicInteger();
+
+        OrderProgressCallback callback = new OrderProgressCallback() {
+            @Override
+            public void onTestStarted(String testName) {
+                // no-op
+            }
+
+            @Override
+            public void onProgressUpdate(int testsCompleted, int testsTotal) {
+                completedCount.set(testsCompleted);
+                totalCount.set(testsTotal);
+            }
+        };
+
+        testExecutor.runAllTests(callback);
+
+        assertEquals(5, completedCount.get());
+        assertEquals(5, totalCount.get());
+    }
+
+    @Test
+    @DisplayName("runAllTests should call onTestCompleted for each test")
+    void runAllTests_shouldCallOnTestCompletedForEachTest() {
+        AtomicInteger completedCalls = new AtomicInteger();
+
+        OrderProgressCallback callback = new OrderProgressCallback() {
+            @Override
+            public void onTestStarted(String testName) {
+                // no-op
+            }
+
+            @Override
+            public void onTestCompleted(AiAdminTestCase testCase) {
+                completedCalls.incrementAndGet();
+                assertNotNull(testCase.getTestName());
+            }
+        };
+
+        testExecutor.runAllTests(callback);
+
+        assertEquals(5, completedCalls.get());
+    }
+
+    @Test
+    @DisplayName("runAllTests should not call callback when null")
+    void runAllTests_shouldNotCallCallbackWhenNull() {
+        List<AiAdminTestCase> results = testExecutor.runAllTests(null);
+
+        assertEquals(5, results.size());
+        for (AiAdminTestCase result : results) {
+            assertEquals(TestStatus.PASSED, result.getStatus());
+        }
+    }
+
+    // ================================================================
+    // runTestsByCategory(callback)
+    // ================================================================
+
+    @Test
+    @DisplayName("runTestsByCategory should call callback for matching tests only")
+    void runTestsByCategory_shouldCallCallbackForMatchingTests() {
+        AtomicInteger startedCount = new AtomicInteger();
+        AtomicInteger progressCalls = new AtomicInteger();
+
+        when(testRegistry.getTestsByCategory("API")).thenReturn(
+                List.of(testCatalog.get(0), testCatalog.get(1)));
+
+        OrderProgressCallback callback = new OrderProgressCallback() {
+            @Override
+            public void onTestStarted(String testName) {
+                startedCount.incrementAndGet();
+            }
+
+            @Override
+            public void onProgressUpdate(int testsCompleted, int testsTotal) {
+                progressCalls.incrementAndGet();
+            }
+        };
+
+        List<AiAdminTestCase> results = testExecutor.runTestsByCategory("API", callback);
+
+        assertEquals(2, results.size());
+        assertEquals(2, startedCount.get());
+        assertEquals(2, progressCalls.get());
+    }
+
+    @Test
+    @DisplayName("runTestsByCategory should return empty list for unknown category")
+    void runTestsByCategory_shouldReturnEmptyForUnknownCategory() {
+        when(testRegistry.getTestsByCategory("UNKNOWN")).thenReturn(List.of());
+
+        AtomicInteger callCount = new AtomicInteger();
+        OrderProgressCallback callback = testName -> callCount.incrementAndGet();
+
+        List<AiAdminTestCase> results = testExecutor.runTestsByCategory("UNKNOWN", callback);
+
+        assertTrue(results.isEmpty());
+        assertEquals(0, callCount.get());
+    }
+
+    // ================================================================
+    // runTestById(callback)
+    // ================================================================
+
+    @Test
+    @DisplayName("runTestById should call callback for single test")
+    void runTestById_shouldCallCallbackForSingleTest() {
+        AtomicReference<String> startedTest = new AtomicReference<>();
+        AtomicInteger completedCalls = new AtomicInteger();
+        AtomicInteger progressCompleted = new AtomicInteger();
+        AtomicInteger progressTotal = new AtomicInteger();
+
+        when(testRegistry.getTestById("api-1")).thenReturn(testCatalog.get(0));
+
+        OrderProgressCallback callback = new OrderProgressCallback() {
+            @Override
+            public void onTestStarted(String testName) {
+                startedTest.set(testName);
+            }
+
+            @Override
+            public void onTestCompleted(AiAdminTestCase testCase) {
+                completedCalls.incrementAndGet();
+            }
+
+            @Override
+            public void onProgressUpdate(int testsCompleted, int testsTotal) {
+                progressCompleted.set(testsCompleted);
+                progressTotal.set(testsTotal);
+            }
+        };
+
+        AiAdminTestCase result = testExecutor.runTestById("api-1", callback);
+
+        assertNotNull(result);
+        assertEquals("testApiHealth", startedTest.get());
+        assertEquals(1, completedCalls.get());
+        assertEquals(1, progressCompleted.get());
+        assertEquals(1, progressTotal.get());
+    }
+
+    @Test
+    @DisplayName("runTestById should return null for unknown test ID")
+    void runTestById_shouldReturnNullForUnknownId() {
+        when(testRegistry.getTestById("nonexistent")).thenReturn(null);
+
+        AtomicBoolean callbackCalled = new AtomicBoolean(false);
+        OrderProgressCallback callback = testName -> callbackCalled.set(true);
+
+        AiAdminTestCase result = testExecutor.runTestById("nonexistent", callback);
+
+        assertNull(result);
+        assertFalse(callbackCalled.get());
+    }
+
+    // ================================================================
+    // runTestsByIds(callback)
+    // ================================================================
+
+    @Test
+    @DisplayName("runTestsByIds should call callback for each specified test")
+    void runTestsByIds_shouldCallCallbackForEachTest() {
+        List<String> testIds = List.of("api-1", "game-1", "auth-1");
+
+        when(testRegistry.getTestsByIds(testIds)).thenReturn(
+                List.of(testCatalog.get(0), testCatalog.get(2), testCatalog.get(4)));
+
+        AtomicInteger startedCount = new AtomicInteger();
+        AtomicInteger progressCompleted = new AtomicInteger();
+        AtomicInteger progressTotal = new AtomicInteger();
+
+        OrderProgressCallback callback = new OrderProgressCallback() {
+            @Override
+            public void onTestStarted(String testName) {
+                startedCount.incrementAndGet();
+            }
+
+            @Override
+            public void onProgressUpdate(int testsCompleted, int testsTotal) {
+                progressCompleted.set(testsCompleted);
+                progressTotal.set(testsTotal);
+            }
+        };
+
+        List<AiAdminTestCase> results = testExecutor.runTestsByIds(testIds, callback);
+
+        assertEquals(3, results.size());
+        assertEquals(3, startedCount.get());
+        assertEquals(3, progressCompleted.get());
+        assertEquals(3, progressTotal.get());
+    }
+
+    @Test
+    @DisplayName("runTestsByIds should handle empty list")
+    void runTestsByIds_shouldHandleEmptyList() {
+        when(testRegistry.getTestsByIds(List.of())).thenReturn(List.of());
+
+        AtomicBoolean callbackCalled = new AtomicBoolean(false);
+        OrderProgressCallback callback = testName -> callbackCalled.set(true);
+
+        List<AiAdminTestCase> results = testExecutor.runTestsByIds(List.of(), callback);
+
+        assertTrue(results.isEmpty());
+        assertFalse(callbackCalled.get());
+    }
+
+    // ================================================================
+    // Progress update sequence verification
+    // ================================================================
+
+    @Test
+    @DisplayName("runAllTests should update progress incrementally")
+    void runAllTests_shouldUpdateProgressIncrementally() {
+        List<Integer> progressValues = new ArrayList<>();
+
+        OrderProgressCallback callback = new OrderProgressCallback() {
+            @Override
+            public void onTestStarted(String testName) {
+                // no-op
+            }
+
+            @Override
+            public void onProgressUpdate(int testsCompleted, int testsTotal) {
+                progressValues.add(testsCompleted);
+            }
+        };
+
+        testExecutor.runAllTests(callback);
+
+        assertEquals(5, progressValues.size());
+        assertEquals(1, progressValues.get(0).intValue());
+        assertEquals(2, progressValues.get(1).intValue());
+        assertEquals(3, progressValues.get(2).intValue());
+        assertEquals(4, progressValues.get(3).intValue());
+        assertEquals(5, progressValues.get(4).intValue());
+    }
+
+    @Test
+    @DisplayName("runAllTests should pass test names in order")
+    void runAllTests_shouldPassTestNamesInOrder() {
+        List<String> testNames = new ArrayList<>();
+
+        OrderProgressCallback callback = testName -> testNames.add(testName);
+
+        testExecutor.runAllTests(callback);
+
+        assertEquals(5, testNames.size());
+        assertEquals("testApiHealth", testNames.get(0));
+        assertEquals("testApiAuth", testNames.get(1));
+        assertEquals("testGameMechanics", testNames.get(2));
+        assertEquals("testAiChat", testNames.get(3));
+        assertEquals("testAuthFlow", testNames.get(4));
+    }
+
+    @Test
+    @DisplayName("runAllTests should pass test case with correct status to onTestCompleted")
+    void runAllTests_shouldPassTestCaseWithCorrectStatus() {
+        when(testRegistry.executeTest("api-1")).thenReturn(true);
+        when(testRegistry.executeTest("api-2")).thenReturn(false);
+
+        ArgumentCaptor<AiAdminTestCase> captor = ArgumentCaptor.forClass(AiAdminTestCase.class);
+
+        OrderProgressCallback callback = new OrderProgressCallback() {
+            @Override
+            public void onTestStarted(String testName) {
+                // no-op
+            }
+
+            @Override
+            public void onTestCompleted(AiAdminTestCase testCase) {
+                // captured via captor
+            }
+        };
+
+        // Use a spy to capture the calls
+        OrderProgressCallback spyCallback = spy(callback);
+        testExecutor.runAllTests(spyCallback);
+
+        verify(spyCallback, times(5)).onTestCompleted(captor.capture());
+        List<AiAdminTestCase> captured = captor.getAllValues();
+        assertEquals(TestStatus.PASSED, captured.get(0).getStatus());
+        assertEquals(TestStatus.FAILED, captured.get(1).getStatus());
+    }
+}

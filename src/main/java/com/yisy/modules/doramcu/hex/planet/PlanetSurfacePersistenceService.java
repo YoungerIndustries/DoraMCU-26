@@ -3,8 +3,6 @@ import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.Hex3D;
 import com.yisy.modules.doramcu.hex.Planet;
-import com.yisy.modules.doramcu.model.*;
-import com.yisy.modules.doramcu.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;

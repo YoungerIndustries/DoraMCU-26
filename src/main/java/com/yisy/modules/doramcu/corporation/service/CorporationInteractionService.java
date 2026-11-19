@@ -9,7 +9,7 @@ import com.yisy.modules.doramcu.corporation.repository.CorporateContractReposito
 import com.yisy.modules.doramcu.corporation.repository.CorporateHiringRepository;
 import com.yisy.modules.doramcu.corporation.repository.CorporationInteractionProposalRepository;
 import com.yisy.modules.doramcu.corporation.repository.CorporationRelationshipRepository;
-import com.yisy.modules.doramcu.repository.EveCorporationRepository;
+import com.yisy.modules.doramcu.repository.misc.EveCorporationRepository;
 import com.yisy.modules.doramcu.eve.model.EveCorporation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

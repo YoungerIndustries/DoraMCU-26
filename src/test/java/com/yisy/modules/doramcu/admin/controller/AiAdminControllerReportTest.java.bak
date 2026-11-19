@@ -1,0 +1,488 @@
+package com.yisy.modules.doramcu.admin.controller;
+
+import com.yisy.modules.doramcu.admin.model.AiAdminHealthReport;
+import com.yisy.modules.doramcu.admin.service.AiAdminHealthReportService;
+import com.yisy.modules.doramcu.model.players.Player;
+import com.yisy.modules.doramcu.repository.players.PlayerRepository;
+import com.yisy.modules.doramcu.repository.user.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class AiAdminControllerReportTest {
+
+    @Mock
+    private PlayerRepository playerRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private AiAdminHealthReportService healthReportService;
+
+    @Mock
+    private Authentication authentication;
+
+    private AiAdminController controller;
+
+    @BeforeEach
+    void setUp() {
+        // Minimal setup - we only need the health report service and player repo for auth
+        controller = new AiAdminController(
+                null, null, null, playerRepository, userRepository, null, null, null,
+                null, null, null, null, null, null, null, null, healthReportService, null, null,
+                null);
+    }
+
+    private void mockAdminAuth() {
+        when(authentication.getName()).thenReturn("admin@test.com");
+        Player player = new Player();
+        player.setEmail("admin@test.com");
+        player.setAdmin(true);
+        when(playerRepository.findByEmail("admin@test.com")).thenReturn(Optional.of(player));
+    }
+
+    private void mockNonAdminAuth() {
+        when(authentication.getName()).thenReturn("user@test.com");
+        Player player = new Player();
+        player.setEmail("user@test.com");
+        player.setAdmin(false);
+        when(playerRepository.findByEmail("user@test.com")).thenReturn(Optional.of(player));
+    }
+
+    private AiAdminHealthReport createReport() {
+        AiAdminHealthReport report = new AiAdminHealthReport();
+        report.setId(1L);
+        report.setAiAdminId(1L);
+        report.setReportType(AiAdminHealthReport.ReportType.DAILY);
+        report.setPeriodStart(LocalDateTime.now().minusDays(1));
+        report.setPeriodEnd(LocalDateTime.now());
+        report.setGeneratedAt(LocalDateTime.now());
+        report.setOrdersProcessed(10);
+        report.setOrdersCompleted(8);
+        report.setOrdersFailed(2);
+        report.setIncidentsHandled(3);
+        report.setXpEarned(80);
+        report.setGalaxyHealthScore(85);
+        report.setActiveIncidents(1);
+        report.setSummary("Test summary");
+        report.setRecommendations("Improve failure rate");
+        report.setLlmAnalysis("LLM analysis text");
+        return report;
+    }
+
+    @Test
+    void generateReport_returns403ForNonAdmin() {
+        mockNonAdminAuth();
+
+        ResponseEntity<?> response = controller.generateReport(1L, AiAdminHealthReport.ReportType.DAILY, authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    void generateReport_createsReport() {
+        mockAdminAuth();
+        when(healthReportService.generateReport(eq(1L), eq(AiAdminHealthReport.ReportType.DAILY)))
+                .thenReturn(createReport());
+
+        ResponseEntity<?> response = controller.generateReport(1L, AiAdminHealthReport.ReportType.DAILY, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals(1L, body.get("aiAdminId"));
+        assertEquals("DAILY", body.get("reportType"));
+        assertEquals(10, body.get("ordersProcessed"));
+    }
+
+    @Test
+    void generateAllReports_returns403ForNonAdmin() {
+        mockNonAdminAuth();
+
+        ResponseEntity<?> response = controller.generateAllReports(AiAdminHealthReport.ReportType.DAILY, authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    void generateAllReports_createsReports() {
+        mockAdminAuth();
+        when(healthReportService.generateAllReports(eq(AiAdminHealthReport.ReportType.DAILY)))
+                .thenReturn(List.of(createReport()));
+
+        ResponseEntity<?> response = controller.generateAllReports(AiAdminHealthReport.ReportType.DAILY, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void getLatestReport_returns403ForNonAdmin() {
+        mockNonAdminAuth();
+
+        ResponseEntity<?> response = controller.getLatestReport(1L, authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    void getLatestReport_returnsReport() {
+        mockAdminAuth();
+        when(healthReportService.getLatestReport(1L)).thenReturn(createReport());
+
+        ResponseEntity<?> response = controller.getLatestReport(1L, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals(10, body.get("ordersProcessed"));
+        assertEquals("Improve failure rate", body.get("recommendations"));
+    }
+
+    @Test
+    void getLatestReport_returns404WhenNoReport() {
+        mockAdminAuth();
+        when(healthReportService.getLatestReport(1L)).thenReturn(null);
+
+        assertThrows(ResponseStatusException.class, () ->
+                controller.getLatestReport(1L, authentication));
+    }
+
+    @Test
+    void getReportHistory_returns403ForNonAdmin() {
+        mockNonAdminAuth();
+
+        ResponseEntity<?> response = controller.getReportHistory(1L, null, null, authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    void getReportHistory_returnsReports() {
+        mockAdminAuth();
+        when(healthReportService.getReports(eq(1L), any(), any()))
+                .thenReturn(List.of(createReport()));
+
+        ResponseEntity<?> response = controller.getReportHistory(1L, null, null, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void getReportSummary_returns403ForNonAdmin() {
+        mockNonAdminAuth();
+
+        ResponseEntity<?> response = controller.getReportSummary(1L, authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    void getReportSummary_returnsSummary() {
+        mockAdminAuth();
+        AiAdminHealthReportService.ReportSummary summary = new AiAdminHealthReportService.ReportSummary();
+        summary.adminId = 1L;
+        summary.totalReports = 5;
+        summary.recentReports = 5;
+        summary.latestReportType = AiAdminHealthReport.ReportType.DAILY;
+        summary.latestGeneratedAt = LocalDateTime.now();
+        summary.totalOrdersProcessed = 50;
+        summary.totalIncidentsHandled = 10;
+        summary.totalXpEarned = 500;
+        summary.avgOrdersPerReport = 10;
+        summary.avgSuccessRate = 80.0;
+        when(healthReportService.getReportSummary(1L)).thenReturn(summary);
+
+        ResponseEntity<?> response = controller.getReportSummary(1L, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals(5, body.get("totalReports"));
+        assertEquals(50, body.get("totalOrdersProcessed"));
+        assertEquals(80.0, body.get("avgSuccessRate"));
+    }
+
+    @Test
+    void getRecommendations_returns403ForNonAdmin() {
+        mockNonAdminAuth();
+
+        ResponseEntity<?> response = controller.getRecommendations(1L, authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    void getRecommendations_returnsRecommendations() {
+        mockAdminAuth();
+        when(healthReportService.getRecommendations(1L)).thenReturn("Improve failure rate");
+
+        ResponseEntity<?> response = controller.getRecommendations(1L, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals("Improve failure rate", body.get("recommendations"));
+    }
+
+    @Test
+    void getRecommendations_returnsNullRecommendations() {
+        mockAdminAuth();
+        when(healthReportService.getRecommendations(1L)).thenReturn(null);
+
+        ResponseEntity<?> response = controller.getRecommendations(1L, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertNull(body.get("recommendations"));
+    }
+
+    // ---------------------------------------------------------------
+    // Report comparison tests
+    // ---------------------------------------------------------------
+
+    @Test
+    void compareReports_returns403ForNonAdmin() {
+        mockNonAdminAuth();
+
+        ResponseEntity<?> response = controller.compareReports(1L, AiAdminHealthReport.ReportType.DAILY, authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    void compareReports_returnsComparison() {
+        mockAdminAuth();
+        AiAdminHealthReportService.ReportComparison comparison = new AiAdminHealthReportService.ReportComparison();
+        comparison.adminId = 1L;
+        comparison.reportType = AiAdminHealthReport.ReportType.DAILY;
+        comparison.currentPeriod = createReport();
+        AiAdminHealthReport previous = createReport();
+        previous.setOrdersProcessed(5);
+        previous.setOrdersCompleted(3);
+        previous.setXpEarned(30);
+        comparison.previousPeriod = previous;
+        comparison.ordersProcessedChange = 5;
+        comparison.ordersCompletedChange = 2;
+        comparison.xpEarnedChange = 50;
+        comparison.successRateChange = 10.0;
+        comparison.xpEarnedPercentChange = 66.7;
+        when(healthReportService.compareReports(eq(1L), eq(AiAdminHealthReport.ReportType.DAILY)))
+                .thenReturn(comparison);
+
+        ResponseEntity<?> response = controller.compareReports(1L, AiAdminHealthReport.ReportType.DAILY, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals(5, body.get("ordersProcessedChange"));
+        assertEquals(50, body.get("xpEarnedChange"));
+        assertEquals(10.0, body.get("successRateChange"));
+    }
+
+    @Test
+    void compareReports_returns404WhenNoComparison() {
+        mockAdminAuth();
+        when(healthReportService.compareReports(eq(1L), eq(AiAdminHealthReport.ReportType.DAILY)))
+                .thenReturn(null);
+
+        ResponseEntity<?> response = controller.compareReports(1L, AiAdminHealthReport.ReportType.DAILY, authentication);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    // ---------------------------------------------------------------
+    // Report trends tests
+    // ---------------------------------------------------------------
+
+    @Test
+    void getReportTrends_returns403ForNonAdmin() {
+        mockNonAdminAuth();
+
+        ResponseEntity<?> response = controller.getReportTrends(1L, 7, authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    void getReportTrends_returnsTrendPoints() {
+        mockAdminAuth();
+        AiAdminHealthReportService.TrendPoint tp1 = new AiAdminHealthReportService.TrendPoint();
+        tp1.generatedAt = LocalDateTime.now().minusDays(1);
+        tp1.reportType = AiAdminHealthReport.ReportType.DAILY;
+        tp1.ordersProcessed = 10;
+        tp1.ordersCompleted = 8;
+        tp1.xpEarned = 80;
+        tp1.successRate = 80.0;
+
+        AiAdminHealthReportService.TrendPoint tp2 = new AiAdminHealthReportService.TrendPoint();
+        tp2.generatedAt = LocalDateTime.now();
+        tp2.reportType = AiAdminHealthReport.ReportType.DAILY;
+        tp2.ordersProcessed = 15;
+        tp2.ordersCompleted = 12;
+        tp2.xpEarned = 120;
+        tp2.successRate = 80.0;
+
+        when(healthReportService.getReportTrends(eq(1L), eq(7)))
+                .thenReturn(List.of(tp1, tp2));
+
+        ResponseEntity<?> response = controller.getReportTrends(1L, 7, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> body = (List<Map<String, Object>>) response.getBody();
+        assertEquals(2, body.size());
+        assertEquals(10, body.get(0).get("ordersProcessed"));
+        assertEquals(80.0, body.get(0).get("successRate"));
+    }
+
+    @Test
+    void getReportTrends_emptyList() {
+        mockAdminAuth();
+        when(healthReportService.getReportTrends(eq(1L), eq(7)))
+                .thenReturn(List.of());
+
+        ResponseEntity<?> response = controller.getReportTrends(1L, 7, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> body = (List<Map<String, Object>>) response.getBody();
+        assertTrue(body.isEmpty());
+    }
+
+    // ---------------------------------------------------------------
+    // XP milestone tests
+    // ---------------------------------------------------------------
+
+    @Test
+    void getXpMilestones_returns403ForNonAdmin() {
+        mockNonAdminAuth();
+
+        ResponseEntity<?> response = controller.getXpMilestones(1L, authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    void getXpMilestones_returnsMilestones() {
+        mockAdminAuth();
+        AiAdminHealthReportService.XpMilestone m1 = new AiAdminHealthReportService.XpMilestone();
+        m1.threshold = 100;
+        m1.achieved = true;
+        m1.cumulativeXp = 500;
+        m1.percentToNext = 100.0;
+
+        AiAdminHealthReportService.XpMilestone m2 = new AiAdminHealthReportService.XpMilestone();
+        m2.threshold = 500;
+        m2.achieved = true;
+        m2.cumulativeXp = 500;
+        m2.percentToNext = 100.0;
+
+        when(healthReportService.getXpMilestones(1L))
+                .thenReturn(List.of(m1, m2));
+
+        ResponseEntity<?> response = controller.getXpMilestones(1L, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> body = (List<Map<String, Object>>) response.getBody();
+        assertEquals(2, body.size());
+        assertEquals(100, body.get(0).get("threshold"));
+        assertEquals(true, body.get(0).get("achieved"));
+    }
+
+    @Test
+    void getXpMilestones_emptyList() {
+        mockAdminAuth();
+        when(healthReportService.getXpMilestones(1L))
+                .thenReturn(List.of());
+
+        ResponseEntity<?> response = controller.getXpMilestones(1L, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    // ---------------------------------------------------------------
+    // Growth overview tests
+    // ---------------------------------------------------------------
+
+    @Test
+    void getGrowthOverview_returns403ForNonAdmin() {
+        mockNonAdminAuth();
+
+        ResponseEntity<?> response = controller.getGrowthOverview(1L, authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    void getGrowthOverview_returnsOverview() {
+        mockAdminAuth();
+        AiAdminHealthReportService.GrowthOverview overview = new AiAdminHealthReportService.GrowthOverview();
+        overview.adminId = 1L;
+        overview.totalReports = 10;
+        overview.totalOrdersProcessed = 100;
+        overview.totalOrdersCompleted = 80;
+        overview.totalOrdersFailed = 20;
+        overview.totalIncidentsHandled = 15;
+        overview.totalXpEarned = 800;
+        overview.overallSuccessRate = 80.0;
+        overview.minGalaxyHealthScore = 70;
+        overview.maxGalaxyHealthScore = 95;
+        overview.firstReportDate = LocalDateTime.now().minusDays(30);
+        overview.lastReportDate = LocalDateTime.now();
+        overview.avgXpPerReport = 80;
+        when(healthReportService.getGrowthOverview(1L)).thenReturn(overview);
+
+        ResponseEntity<?> response = controller.getGrowthOverview(1L, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals(1L, body.get("adminId"));
+        assertEquals(10, body.get("totalReports"));
+        assertEquals(100, body.get("totalOrdersProcessed"));
+        assertEquals(800, body.get("totalXpEarned"));
+        assertEquals(80.0, body.get("overallSuccessRate"));
+        assertEquals(70, body.get("minGalaxyHealthScore"));
+        assertEquals(95, body.get("maxGalaxyHealthScore"));
+        assertEquals(80, body.get("avgXpPerReport"));
+    }
+
+    @Test
+    void getGrowthOverview_emptyOverview() {
+        mockAdminAuth();
+        AiAdminHealthReportService.GrowthOverview overview = new AiAdminHealthReportService.GrowthOverview();
+        overview.adminId = 1L;
+        overview.totalReports = 0;
+        when(healthReportService.getGrowthOverview(1L)).thenReturn(overview);
+
+        ResponseEntity<?> response = controller.getGrowthOverview(1L, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals(0, body.get("totalReports"));
+        assertEquals(0, body.get("totalOrdersProcessed"));
+    }
+}

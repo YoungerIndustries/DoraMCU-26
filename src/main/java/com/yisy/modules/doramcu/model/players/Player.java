@@ -24,17 +24,6 @@ import jakarta.persistence.UniqueConstraint;
  * attributes (name, government type, ethos) for gameplay.
  * </p>
  */
-@Entity
-@Table(name = "players",
-        indexes = {
-                @Index(name = "idx_player_email", columnList = "email"),
-                @Index(name = "idx_player_login_pin", columnList = "loginPin"),
-                @Index(name = "idx_player_user_id", columnList = "userId")
-        },
-        uniqueConstraints = {
-                @UniqueConstraint(name = "uk_player_email", columnNames = "email"),
-                @UniqueConstraint(name = "uk_player_login_pin", columnNames = "loginPin")
-        })
 public class Player {
 
     @Id

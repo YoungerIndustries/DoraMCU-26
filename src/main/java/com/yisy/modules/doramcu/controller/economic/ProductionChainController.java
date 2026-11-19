@@ -4,7 +4,6 @@ import com.yisy.modules.doramcu.hex.ProductionChainService;
 import com.yisy.modules.doramcu.hex.model.BuildContract;
 import com.yisy.modules.doramcu.hex.model.InfrastructureItem;
 import com.yisy.modules.doramcu.hex.model.ProductionChainTracking;
-import com.yisy.modules.doramcu.hex.model.ProductionChainTracking.ProductionChainStatus;
 import com.yisy.modules.doramcu.hex.repository.ProductionChainTrackingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

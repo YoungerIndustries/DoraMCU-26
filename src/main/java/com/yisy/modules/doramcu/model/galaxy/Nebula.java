@@ -1,16 +1,9 @@
 package com.yisy.modules.doramcu.model.galaxy;
-import com.yisy.modules.doramcu.model.galaxy.SolarSystem;
-
-
 import jakarta.persistence.*;
 
 /**
  * JPA entity representing a nebula in a solar system.
  */
-@Entity
-@Table(name = "nebulas", indexes = {
-    @Index(name = "idx_nebula_solar_system", columnList = "solar_system_id")
-})
 public class Nebula {
 
     @Id

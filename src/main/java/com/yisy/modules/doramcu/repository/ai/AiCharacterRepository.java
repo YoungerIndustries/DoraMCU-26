@@ -1,9 +1,6 @@
 package com.yisy.modules.doramcu.repository.ai;
 import com.yisy.modules.doramcu.hex.Ship;
 import com.yisy.modules.doramcu.model.misc.CharacterType;
-import com.yisy.modules.doramcu.model.players.Player;
-
-
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

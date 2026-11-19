@@ -55,4 +55,7 @@ public interface AiAdminOrderRepository extends JpaRepository<AiAdminOrder, Long
     /** Get average completion duration for completed orders assigned to an admin. */
     @Query("SELECT AVG(UNIX_TIMESTAMP(o.completedAt) - UNIX_TIMESTAMP(o.createdAt)) FROM AiAdminOrder o WHERE o.assignedAiAdminId = :adminId AND o.status = 'COMPLETED'")
     Double avgCompletionDurationMsByAdminId(@Param("adminId") Long adminId);
+
+    /** Find orders assigned to an admin within a date range. */
+    List<AiAdminOrder> findByAssignedAiAdminIdAndCreatedAtBetween(Long aiAdminId, LocalDateTime start, LocalDateTime end);
 }

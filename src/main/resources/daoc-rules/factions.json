@@ -1,0 +1,236 @@
+{
+  "factions": [
+    {
+      "id": "albion",
+      "name": "Albion — Realm of Knights and Honor",
+      "era": "Post-Arthurian",
+      "ideology": "Chivalry, honor, and the legacy of King Arthur",
+      "description": "Albion represents the kingdom of the late King Arthur — a realm of knights, damsels, and high magic. Its warriors fight with sword and shield, its wizards command the elements, and its paladins channel divine power. Albion draws upon Arthurian legend and seeks to restore the glory of Camelot through martial might and arcane mastery.",
+      "military_branches": [
+        {
+          "name": "Knights of the Round Table",
+          "description": "The elite heavy cavalry and melee warriors of Albion, inspired by Arthur's legendary knights",
+          "unit_types": ["Armsman", "Paladin", "Mercenary", "Champion"]
+        },
+        {
+          "name": "Order of Merlin",
+          "description": "The arcane spellcasters of Albion, wielding elemental and spirit magic",
+          "unit_types": ["Wizard", "Sorcerer", "Cabalist", "Theurgist"]
+        },
+        {
+          "name": "Divine Healers",
+          "description": "Clerics and Friars who channel divine power to heal and smite",
+          "unit_types": ["Cleric", "Friar"]
+        },
+        {
+          "name": "Shadow Operatives",
+          "description": "Stealth-based assassins and infiltrators who strike from the shadows",
+          "unit_types": ["Infiltrator", "Necromancer", "Heretic"]
+        },
+        {
+          "name": "Rangers of the Plains",
+          "description": "Longbow-wielding scouts and rangers who patrol the Salisbury Plains",
+          "unit_types": ["Scout", "Reaver"]
+        },
+        {
+          "name": "Musical Support",
+          "description": "Minstrels who buff allies with songs and provide crowd control",
+          "unit_types": ["Minstrel"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "King Arthur", "role": "The legendary king, deceased — his legacy drives Albion"},
+        {"name": "Merlin", "role": "The great wizard; source of Albion's arcane knowledge"},
+        {"name": "Morgana", "role": "Arthur's sister; dark sorceress who raises the undead"},
+        {"name": "Guinevere", "role": "The betrayed queen; symbol of Albion's tragedy"},
+        {"name": "Lancelot", "role": "The greatest knight; his betrayal weakened the Round Table"}
+      ],
+      "strengths": [
+        "Balanced class composition with strong tanks and healers",
+        "Paladin class provides unique holy warrior capability",
+        "Wizard class has the highest single-target damage in the game",
+        "Strong defensive capabilities with Armsman tanks",
+        "Excalibur relic provides powerful realm bonuses",
+        "Diverse magic types: elemental, spirit, divine, and dark"
+      ],
+      "weaknesses": [
+        "Fewer nature-based classes compared to Hibernia",
+        "Reliant on legacy of Arthur — morale suffers when relics are lost",
+        "Less magical diversity than Hibernia",
+        "Fewer summoner classes than Midgard"
+      ],
+      "allies": [],
+      "enemies": ["Hibernia", "Midgard"]
+    },
+    {
+      "id": "hibernia",
+      "name": "Hibernia — Realm of Nature and Magic",
+      "era": "Post-Arthurian",
+      "ideology": "Harmony with nature, primal magic, and the power of the Otherworld",
+      "description": "Hibernia is the land of forest and magic, closest to nature of all the realms. Its people — Celts, Elves, Firbolg, and more — live in harmony with the natural world, drawing power from the earth, the Otherworld, and primal magic. Hibernians are the most magically inclined of all realms, with almost every class supporting some form of spellcasting. They seek to protect the natural world and expand the reach of the Otherworld.",
+      "military_branches": [
+        {
+          "name": "Nature's Guardians",
+          "description": "Druids and Animists who wield the power of the forest",
+          "unit_types": ["Druid", "Animist", "Warden"]
+        },
+        {
+          "name": "Otherworld Casters",
+          "description": "Elven and Sylvan spellcasters who channel primal and arcane magic",
+          "unit_types": ["Enchanter", "Eldritch", "Mentalist"]
+        },
+        {
+          "name": "Warriors of the Glen",
+          "description": "Melee fighters who combine martial prowess with nature magic",
+          "unit_types": ["Champion", "Blademaster", "Hero", "Valewalker"]
+        },
+        {
+          "name": "Shadow Stalkers",
+          "description": "Stealth-based rogues and dark magic users",
+          "unit_types": ["Nightshade", "Vampiir"]
+        },
+        {
+          "name": "Forest Rangers",
+          "description": "Archers who combine ranged combat with magical abilities",
+          "unit_types": ["Ranger"]
+        },
+        {
+          "name": "Musical Support",
+          "description": "Bards who buff allies with Celtic songs and provide crowd control",
+          "unit_types": ["Bard"]
+        },
+        {
+          "name": "Voice of the Otherworld",
+          "description": "Banshees whose sound-based magic devastates enemies",
+          "unit_types": ["Banshee"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Lugh", "role": "Celtic god of skill and light; his spear is Hibernia's Power Relic"},
+        {"name": "Dagda", "role": "Celtic father god; his cauldron is Hibernia's Strength Relic"},
+        {"name": "The Morrigan", "role": "Phantom queen, goddess of war and fate"},
+        {"name": "Cernunnos", "role": "Horned god of the forest and animals"},
+        {"name": "The Unseelie Court", "role": "Dark fey who corrupt the natural world — Hibernia's internal threat"}
+      ],
+      "strengths": [
+        "Most magically diverse realm — almost all classes can cast spells",
+        "Strong nature magic with Druid and Animist classes",
+        "Vampiir class provides unique life-drain capabilities",
+        "Champion class is one of the best pure tanks in the game",
+        "Spear of Lugh relic provides powerful magical bonuses",
+        "Strong crowd control through Bard and Mentalist classes"
+      ],
+      "weaknesses": [
+        "Fewer pure melee classes — most rely on magic",
+        "Vulnerable to anti-magic strategies",
+        "Internal conflict with the Unseelie Court weakens the realm",
+        "Less heavy armor coverage than Albion"
+      ],
+      "allies": [],
+      "enemies": ["Albion", "Midgard"]
+    },
+    {
+      "id": "midgard",
+      "name": "Midgard — Realm of Norse Might",
+      "era": "Post-Arthurian",
+      "ideology": "Strength, honor, and the power of the Norse gods",
+      "description": "Midgard is the land of trolls and giants, a harsh and unforgiving realm where only the strong survive. Its people — Norsemen, Dwarves, Trolls, and more — draw power from the ancient Norse gods: Odin, Thor, and Freyja. They are warriors, shamans, and rune-masters who fight with brutal efficiency. Midgard seeks to prove its dominance through sheer martial might and divine power.",
+      "military_branches": [
+        {
+          "name": "Viking Warriors",
+          "description": "Frenzied melee fighters who channel the rage of battle",
+          "unit_types": ["Berserker", "Savage", "Thane"]
+        },
+        {
+          "name": "Rune Masters",
+          "description": "Spellcasters who inscribe powerful runes to channel divine power",
+          "unit_types": ["Runemaster", "Shaman"]
+        },
+        {
+          "name": "Divine Healers",
+          "description": "Healers who channel the power of the Norse gods",
+          "unit_types": ["Healer"]
+        },
+        {
+          "name": "Spirit Summoners",
+          "description": "Castters who control undead and Norse spirits",
+          "unit_types": ["Spiritmaster", "Bonedancer"]
+        },
+        {
+          "name": "Shadow Operatives",
+          "description": "Stealth-based rogues and dual-wielding assassins",
+          "unit_types": ["Shadowblade"]
+        },
+        {
+          "name": "Forest Hunters",
+          "description": "Ranged specialists who track and hunt their prey",
+          "unit_types": ["Hunter"]
+        },
+        {
+          "name": "Musical Support",
+          "description": "Skalds who buff allies with Norse songs and battle cries",
+          "unit_types": ["Skald"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Odin", "role": "The Allfather; chief of the Norse gods. His spear Gungnir is Midgard's Strength Relic."},
+        {"name": "Thor", "role": "God of thunder; his hammer Mjolnir is Midgard's Power Relic"},
+        {"name": "Freyja", "role": "Goddess of love, beauty, and war; chooser of the slain"},
+        {"name": "Loki", "role": "The trickster god; source of Midgard's shadow magic"},
+        {"name": "The Blodfelag", "role": "Treacherous cult that seeks to unleash Ragnarok — Midgard's internal threat"}
+      ],
+      "strengths": [
+        "Strongest melee-focused realm with Berserker and Thane classes",
+        "Runemaster class provides unique rune-based magic",
+        "Spiritmaster class has the best summoning capabilities",
+        "Mjolnir relic provides powerful divine bonuses",
+        "Thane class combines tanking with lightning magic",
+        "Strong crowd control through Skald and Shaman classes"
+      ],
+      "weaknesses": [
+        "Fewest classes of any realm (12 unique + Mauler)",
+        "Less magical diversity than Albion and Hibernia",
+        "Internal threat from the Blodfelag cult",
+        "Fewer healing options — primarily reliant on Healer class"
+      ],
+      "allies": [],
+      "enemies": ["Albion", "Hibernia"]
+    },
+    {
+      "id": "darkness_falls_legion",
+      "name": "Legion — Forces of Darkness Falls",
+      "era": "Eternal",
+      "ideology": "Chaos, destruction, and the corruption of all three realms",
+      "description": "Legion is the demonic lord of Darkness Falls, the underground dungeon that lies beneath the Frontiers. Its forces — demons, undead, and corrupted creatures — seek to corrupt all three realms and bring about the end of the world. Only the realm dominant in the Frontiers can enter Darkness Falls to challenge Legion.",
+      "military_branches": [
+        {
+          "name": "Demonic Host",
+          "description": "Demons and corrupted creatures that guard the depths of Darkness Falls",
+          "unit_types": ["Demons", "Corrupted Warriors", "Dark Spells"]
+        },
+        {
+          "name": "Legion's Guard",
+          "description": "Elite demonic warriors that serve Legion directly",
+          "unit_types": ["Legion Champions", "Dark Knights"]
+        }
+      ],
+      "key_leaders": [
+        {"name": "Legion", "role": "Demonic lord of Darkness Falls; the main boss of the dungeon"},
+        {"name": "Dark Sub-bosses", "role": "Various demonic commanders that guard the paths to Legion"}
+      ],
+      "strengths": [
+        "Controls the lucrative Darkness Falls dungeon",
+        "Demons are powerful and numerous",
+        "Can corrupt players who linger too long",
+        "RvR combat inside the dungeon adds chaos"
+      ],
+      "weaknesses": [
+        "Only accessible to the realm with the most frontier keeps",
+        "Constantly besieged by the dominant realm",
+        "Legion can be defeated, yielding powerful loot"
+      ],
+      "allies": [],
+      "enemies": ["Albion", "Hibernia", "Midgard"]
+    }
+  ]
+}

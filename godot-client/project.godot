@@ -1,0 +1,47 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious and
+; must be validated on a key-by-key basis.
+;
+; Format:
+;   [section] (starts section "section")
+;   key=value (sets property "key" to "value" in current section)
+;
+; Uncomment the lines to add them to your project.
+
+config_version=5
+
+[application]
+
+config/name="DoraMCU"
+config/description="3D Space Strategy Game - Ported from Unity to Godot"
+config/version="1.0.0"
+config/main_scene="res://Scenes/MainScene.tscn"
+config/icon="res://icon/icon.svg"
+
+[autoload]
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
+[editor]
+
+features_enabled/preset="2D, 3D, Audio, C#, Debug, GDB, GLSL, GridMap, Multi-Mesh, Navigation, Particles, Physics, Physics 2D, Physics 2D Godot Physics, Physics Godot Physics, RID, VisualShader, VisualServer, VisualServer Scene, VisualServer Server"
+
+[editor_layout]
+
+ui/scripts_panel/show_script_filters=true
+
+[rendering]
+
+renderer/rendering_method="forward_plus"
+renderer/rendering_method.mobile="forward_mobile"
+renderer/environment/defaults/defaults_environment/background_mode=1
+renderer/environment/defaults/defaults_environment/ambient_light_source=1
+renderer/environment/defaults/defaults_environment/ambient_light_sky_color=Color(0.117647, 0.184314, 0.313725, 1)
+renderer/environment/defaults/defaults_environment/ambient_light_color=Color(0.35, 0.56, 0.85, 1)
+renderer/environment/defaults/defaults_environment/tonemap/exposure=1.0

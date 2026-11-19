@@ -1,7 +1,4 @@
 package com.yisy.modules.doramcu.service.game;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-
-
 import com.yisy.modules.doramcu.gamecore.AiNpcPopulator;
 import com.yisy.modules.doramcu.gamecore.GameOverlayBuilder;
 import com.yisy.modules.doramcu.gamecore.GameType;

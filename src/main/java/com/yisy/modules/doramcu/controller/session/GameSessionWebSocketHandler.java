@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yisy.modules.doramcu.dto.session.GameEvent;
-import com.yisy.modules.doramcu.dto.session.GameEvent.EventType;
 import com.yisy.modules.doramcu.hex.Game;
 import com.yisy.modules.doramcu.hex.Player;
 import com.yisy.modules.doramcu.hex.chat.ChatMessage;

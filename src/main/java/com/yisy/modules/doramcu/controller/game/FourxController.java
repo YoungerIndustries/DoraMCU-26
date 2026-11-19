@@ -2,10 +2,6 @@ package com.yisy.modules.doramcu.controller.game;
 import com.yisy.modules.doramcu.fourx.FourxFactionEntity;
 import com.yisy.modules.doramcu.hex.Ship;
 import com.yisy.modules.doramcu.service.character.CharacterService;
-import com.yisy.modules.doramcu.model.galaxy.Sector;
-
-
-import com.yisy.modules.doramcu.fourx.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -1,16 +1,9 @@
 package com.yisy.modules.doramcu.model.galaxy;
-import com.yisy.modules.doramcu.model.galaxy.SolarSystem;
-
-
 import jakarta.persistence.*;
 
 /**
  * JPA entity representing a black hole in a solar system.
  */
-@Entity
-@Table(name = "black_holes", indexes = {
-    @Index(name = "idx_black_hole_solar_system", columnList = "solar_system_id")
-})
 public class BlackHole {
 
     @Id

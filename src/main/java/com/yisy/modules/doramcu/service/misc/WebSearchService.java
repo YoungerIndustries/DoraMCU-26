@@ -1,6 +1,4 @@
 package com.yisy.modules.doramcu.service.misc;
-import com.yisy.modules.doramcu.model.galaxy.Star;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.model.misc.Planet;
 
 import org.springframework.stereotype.Service;

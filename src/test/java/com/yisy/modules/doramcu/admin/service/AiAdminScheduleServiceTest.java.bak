@@ -1,0 +1,421 @@
+package com.yisy.modules.doramcu.admin.service;
+
+import com.yisy.modules.doramcu.admin.model.AiAdminSchedule;
+import com.yisy.modules.doramcu.admin.repository.AiAdminScheduleRepository;
+import com.yisy.modules.doramcu.eve.model.AiCharacter;
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+@DisplayName("AiAdminScheduleService Tests")
+class AiAdminScheduleServiceTest {
+
+    @Mock
+    private AiAdminScheduleRepository scheduleRepository;
+
+    @Mock
+    private AiCharacterRepository characterRepository;
+
+    private AiAdminScheduleService scheduleService;
+
+    private AiCharacter testAdmin;
+
+    @BeforeEach
+    void setUp() {
+        scheduleService = new AiAdminScheduleService(scheduleRepository, characterRepository);
+
+        testAdmin = new AiCharacter();
+        testAdmin.setId(1L);
+        testAdmin.setName("Test Admin");
+        testAdmin.setRole("Galaxy Overseer");
+        testAdmin.setEmpireName("Test Empire");
+        testAdmin.setAiAdmin(true);
+        testAdmin.setActive(true);
+    }
+
+    // ---------------------------------------------------------------
+    // Schedule CRUD tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("createSchedule should create a new schedule")
+    void createSchedule_shouldCreateNewSchedule() {
+        when(characterRepository.findById(1L)).thenReturn(Optional.of(testAdmin));
+        when(scheduleRepository.save(any(AiAdminSchedule.class))).thenAnswer(invocation -> {
+            AiAdminSchedule s = invocation.getArgument(0);
+            s.setId(100L);
+            return s;
+        });
+
+        AiAdminSchedule schedule = scheduleService.createSchedule(
+                1L, AiAdminSchedule.ShiftType.RECURRING, "Alpha Centauri",
+                LocalTime.of(9, 0), LocalTime.of(17, 0), DayOfWeek.MONDAY);
+
+        assertNotNull(schedule);
+        assertEquals(100L, schedule.getId());
+        assertEquals(1L, schedule.getAiAdminId());
+        assertEquals(AiAdminSchedule.ShiftType.RECURRING, schedule.getShiftType());
+        assertEquals("Alpha Centauri", schedule.getGalaxyName());
+        assertTrue(schedule.getIsActive());
+        verify(scheduleRepository).save(any(AiAdminSchedule.class));
+    }
+
+    @Test
+    @DisplayName("createSchedule should throw for non-admin character")
+    void createSchedule_shouldThrowForNonAdmin() {
+        AiCharacter nonAdmin = new AiCharacter();
+        nonAdmin.setId(99L);
+        nonAdmin.setAiAdmin(false);
+        when(characterRepository.findById(99L)).thenReturn(Optional.of(nonAdmin));
+
+        assertThrows(IllegalArgumentException.class, () ->
+                scheduleService.createSchedule(99L, AiAdminSchedule.ShiftType.ONCE,
+                        "Galaxy", LocalTime.of(9, 0), LocalTime.of(17, 0), null));
+    }
+
+    @Test
+    @DisplayName("createSchedule should throw for non-existent character")
+    void createSchedule_shouldThrowForNonExistentCharacter() {
+        when(characterRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () ->
+                scheduleService.createSchedule(999L, AiAdminSchedule.ShiftType.ONCE,
+                        "Galaxy", LocalTime.of(9, 0), LocalTime.of(17, 0), null));
+    }
+
+    @Test
+    @DisplayName("updateSchedule should update schedule fields")
+    void updateSchedule_shouldUpdateFields() {
+        AiAdminSchedule existing = new AiAdminSchedule();
+        existing.setId(100L);
+        existing.setAiAdminId(1L);
+        existing.setShiftType(AiAdminSchedule.ShiftType.ONCE);
+        existing.setGalaxyName("Old Galaxy");
+        existing.setIsActive(true);
+
+        when(scheduleRepository.findById(100L)).thenReturn(Optional.of(existing));
+        when(scheduleRepository.save(any(AiAdminSchedule.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        AiAdminSchedule updated = scheduleService.updateSchedule(
+                100L, AiAdminSchedule.ShiftType.RECURRING, "New Galaxy",
+                LocalTime.of(8, 0), LocalTime.of(16, 0), DayOfWeek.TUESDAY, "Updated notes");
+
+        assertEquals(AiAdminSchedule.ShiftType.RECURRING, updated.getShiftType());
+        assertEquals("New Galaxy", updated.getGalaxyName());
+        assertEquals(LocalTime.of(8, 0), updated.getStartTime());
+        assertEquals(DayOfWeek.TUESDAY, updated.getDayOfWeek());
+        verify(scheduleRepository).save(any(AiAdminSchedule.class));
+    }
+
+    @Test
+    @DisplayName("updateSchedule should throw for non-existent schedule")
+    void updateSchedule_shouldThrowForNonExistent() {
+        when(scheduleRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () ->
+                scheduleService.updateSchedule(999L, null, null, null, null, null, null));
+    }
+
+    @Test
+    @DisplayName("deleteSchedule should deactivate a schedule")
+    void deleteSchedule_shouldDeactivateSchedule() {
+        AiAdminSchedule existing = new AiAdminSchedule();
+        existing.setId(100L);
+        existing.setIsActive(true);
+
+        when(scheduleRepository.findById(100L)).thenReturn(Optional.of(existing));
+        when(scheduleRepository.save(any(AiAdminSchedule.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        scheduleService.deleteSchedule(100L);
+
+        assertFalse(existing.getIsActive());
+        verify(scheduleRepository).save(existing);
+    }
+
+    @Test
+    @DisplayName("deleteSchedule should throw for non-existent schedule")
+    void deleteSchedule_shouldThrowForNonExistent() {
+        when(scheduleRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () -> scheduleService.deleteSchedule(999L));
+    }
+
+    // ---------------------------------------------------------------
+    // Query tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("getActiveSchedules should return active schedules for an admin")
+    void getActiveSchedules_shouldReturnActiveSchedules() {
+        List<AiAdminSchedule> schedules = new ArrayList<>();
+        AiAdminSchedule s1 = new AiAdminSchedule();
+        s1.setId(1L);
+        s1.setAiAdminId(1L);
+        s1.setIsActive(true);
+        schedules.add(s1);
+
+        when(scheduleRepository.findByAiAdminIdAndIsActiveTrue(1L)).thenReturn(schedules);
+
+        List<AiAdminSchedule> result = scheduleService.getActiveSchedules(1L);
+
+        assertEquals(1, result.size());
+        assertEquals(1L, result.get(0).getId());
+    }
+
+    @Test
+    @DisplayName("getActiveSchedules should return empty list when no schedules")
+    void getActiveSchedules_shouldReturnEmptyList() {
+        when(scheduleRepository.findByAiAdminIdAndIsActiveTrue(1L)).thenReturn(List.of());
+
+        List<AiAdminSchedule> result = scheduleService.getActiveSchedules(1L);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    @DisplayName("getAllActiveSchedules should return all active schedules")
+    void getAllActiveSchedules_shouldReturnAllActive() {
+        List<AiAdminSchedule> schedules = new ArrayList<>();
+        AiAdminSchedule s1 = new AiAdminSchedule();
+        s1.setId(1L);
+        s1.setIsActive(true);
+        schedules.add(s1);
+
+        when(scheduleRepository.findByIsActiveTrue()).thenReturn(schedules);
+
+        List<AiAdminSchedule> result = scheduleService.getAllActiveSchedules();
+
+        assertEquals(1, result.size());
+    }
+
+    // ---------------------------------------------------------------
+    // Shift detection tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("getAdminsOnShift should return admins on shift for a galaxy")
+    void getAdminsOnShift_shouldReturnAdminsOnShift() {
+        AiAdminSchedule schedule = new AiAdminSchedule();
+        schedule.setId(1L);
+        schedule.setAiAdminId(1L);
+        schedule.setShiftType(AiAdminSchedule.ShiftType.ONCE);
+        schedule.setGalaxyName("Alpha Centauri");
+        schedule.setStartTime(LocalTime.of(0, 0));
+        schedule.setEndTime(LocalTime.of(23, 59));
+        schedule.setIsActive(true);
+
+        when(scheduleRepository.findActiveShiftsForGalaxyAtTime(eq("Alpha Centauri"), any(LocalTime.class)))
+                .thenReturn(List.of(schedule));
+        when(scheduleRepository.findByShiftTypeAndIsActiveTrueAndGalaxyName(
+                eq(AiAdminSchedule.ShiftType.ON_CALL), eq("Alpha Centauri")))
+                .thenReturn(List.of());
+
+        List<Long> result = scheduleService.getAdminsOnShift("Alpha Centauri");
+
+        assertEquals(1, result.size());
+        assertTrue(result.contains(1L));
+    }
+
+    @Test
+    @DisplayName("getAdminsOnShift should include ON_CALL shifts")
+    void getAdminsOnShift_shouldIncludeOnCallShifts() {
+        AiAdminSchedule onCallSchedule = new AiAdminSchedule();
+        onCallSchedule.setId(2L);
+        onCallSchedule.setAiAdminId(2L);
+        onCallSchedule.setShiftType(AiAdminSchedule.ShiftType.ON_CALL);
+        onCallSchedule.setGalaxyName("Alpha Centauri");
+        onCallSchedule.setIsActive(true);
+
+        when(scheduleRepository.findActiveShiftsForGalaxyAtTime(eq("Alpha Centauri"), any(LocalTime.class)))
+                .thenReturn(List.of());
+        when(scheduleRepository.findByShiftTypeAndIsActiveTrueAndGalaxyName(
+                eq(AiAdminSchedule.ShiftType.ON_CALL), eq("Alpha Centauri")))
+                .thenReturn(List.of(onCallSchedule));
+
+        List<Long> result = scheduleService.getAdminsOnShift("Alpha Centauri");
+
+        assertEquals(1, result.size());
+        assertTrue(result.contains(2L));
+    }
+
+    @Test
+    @DisplayName("getAdminsOnShift should return empty when no shifts")
+    void getAdminsOnShift_shouldReturnEmptyWhenNoShifts() {
+        when(scheduleRepository.findActiveShiftsForGalaxyAtTime(eq("Empty Galaxy"), any(LocalTime.class)))
+                .thenReturn(List.of());
+        when(scheduleRepository.findByShiftTypeAndIsActiveTrueAndGalaxyName(
+                eq(AiAdminSchedule.ShiftType.ON_CALL), eq("Empty Galaxy")))
+                .thenReturn(List.of());
+
+        List<Long> result = scheduleService.getAdminsOnShift("Empty Galaxy");
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    @DisplayName("isOnShift should return true when admin is on shift")
+    void isOnShift_shouldReturnTrueWhenOnShift() {
+        AiAdminSchedule schedule = new AiAdminSchedule();
+        schedule.setAiAdminId(1L);
+        schedule.setShiftType(AiAdminSchedule.ShiftType.ONCE);
+        schedule.setStartTime(LocalTime.of(0, 0));
+        schedule.setEndTime(LocalTime.of(23, 59));
+
+        when(scheduleRepository.findActiveShiftsForGalaxyAtTime(eq("Alpha Centauri"), any(LocalTime.class)))
+                .thenReturn(List.of(schedule));
+        when(scheduleRepository.findByShiftTypeAndIsActiveTrueAndGalaxyName(
+                eq(AiAdminSchedule.ShiftType.ON_CALL), eq("Alpha Centauri")))
+                .thenReturn(List.of());
+
+        boolean result = scheduleService.isOnShift(1L, "Alpha Centauri");
+
+        assertTrue(result);
+    }
+
+    @Test
+    @DisplayName("isOnShift should return false when admin is not on shift")
+    void isOnShift_shouldReturnFalseWhenNotOnShift() {
+        when(scheduleRepository.findActiveShiftsForGalaxyAtTime(eq("Alpha Centauri"), any(LocalTime.class)))
+                .thenReturn(List.of());
+        when(scheduleRepository.findByShiftTypeAndIsActiveTrueAndGalaxyName(
+                eq(AiAdminSchedule.ShiftType.ON_CALL), eq("Alpha Centauri")))
+                .thenReturn(List.of());
+
+        boolean result = scheduleService.isOnShift(99L, "Alpha Centauri");
+
+        assertFalse(result);
+    }
+
+    // ---------------------------------------------------------------
+    // Calendar view tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("getScheduleCalendar should return schedules in date range")
+    void getScheduleCalendar_shouldReturnSchedulesInRange() {
+        List<AiAdminSchedule> schedules = new ArrayList<>();
+        AiAdminSchedule s1 = new AiAdminSchedule();
+        s1.setId(1L);
+        s1.setCreatedAt(LocalDateTime.now().minusDays(1));
+        schedules.add(s1);
+
+        when(scheduleRepository.findByAiAdminIdAndCreatedAtBetween(eq(1L), any(), any()))
+                .thenReturn(schedules);
+
+        List<AiAdminSchedule> result = scheduleService.getScheduleCalendar(
+                1L, LocalDateTime.now().minusDays(7), LocalDateTime.now().plusDays(7));
+
+        assertEquals(1, result.size());
+    }
+
+    // ---------------------------------------------------------------
+    // Schedule with admin tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("getScheduleWithAdmin should return schedule with admin details")
+    void getScheduleWithAdmin_shouldReturnScheduleWithAdminDetails() {
+        AiAdminSchedule schedule = new AiAdminSchedule();
+        schedule.setId(1L);
+        schedule.setAiAdminId(1L);
+
+        when(scheduleRepository.findById(1L)).thenReturn(Optional.of(schedule));
+        when(characterRepository.findById(1L)).thenReturn(Optional.of(testAdmin));
+
+        Map<String, Object> result = scheduleService.getScheduleWithAdmin(1L);
+
+        assertEquals(schedule, result.get("schedule"));
+        assertEquals("Test Admin", result.get("adminName"));
+        assertEquals("Galaxy Overseer", result.get("adminRole"));
+        assertEquals("Test Empire", result.get("adminEmpire"));
+    }
+
+    @Test
+    @DisplayName("getScheduleWithAdmin should handle missing admin")
+    void getScheduleWithAdmin_shouldHandleMissingAdmin() {
+        AiAdminSchedule schedule = new AiAdminSchedule();
+        schedule.setId(1L);
+        schedule.setAiAdminId(999L);
+
+        when(scheduleRepository.findById(1L)).thenReturn(Optional.of(schedule));
+        when(characterRepository.findById(999L)).thenReturn(Optional.empty());
+
+        Map<String, Object> result = scheduleService.getScheduleWithAdmin(1L);
+
+        assertEquals("Unknown", result.get("adminName"));
+    }
+
+    // ---------------------------------------------------------------
+    // Cleanup tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("cleanupExpiredSchedules should deactivate old ONCE shifts")
+    void cleanupExpiredSchedules_shouldDeactivateOldOnceShifts() {
+        AiAdminSchedule oldSchedule = new AiAdminSchedule();
+        oldSchedule.setId(1L);
+        oldSchedule.setShiftType(AiAdminSchedule.ShiftType.ONCE);
+        oldSchedule.setCreatedAt(LocalDateTime.now().minusDays(2));
+        oldSchedule.setIsActive(true);
+
+        when(scheduleRepository.findByIsActiveTrue()).thenReturn(List.of(oldSchedule));
+        when(scheduleRepository.save(any(AiAdminSchedule.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        scheduleService.cleanupExpiredSchedules();
+
+        assertFalse(oldSchedule.getIsActive());
+        verify(scheduleRepository).save(oldSchedule);
+    }
+
+    @Test
+    @DisplayName("cleanupExpiredSchedules should not deactivate recent ONCE shifts")
+    void cleanupExpiredSchedules_shouldNotDeactivateRecentOnceShifts() {
+        AiAdminSchedule recentSchedule = new AiAdminSchedule();
+        recentSchedule.setId(1L);
+        recentSchedule.setShiftType(AiAdminSchedule.ShiftType.ONCE);
+        recentSchedule.setCreatedAt(LocalDateTime.now());
+        recentSchedule.setIsActive(true);
+
+        when(scheduleRepository.findByIsActiveTrue()).thenReturn(List.of(recentSchedule));
+
+        scheduleService.cleanupExpiredSchedules();
+
+        assertTrue(recentSchedule.getIsActive());
+        verify(scheduleRepository, never()).save(any(AiAdminSchedule.class));
+    }
+
+    @Test
+    @DisplayName("cleanupExpiredSchedules should not deactivate RECURRING shifts")
+    void cleanupExpiredSchedules_shouldNotDeactivateRecurringShifts() {
+        AiAdminSchedule recurringSchedule = new AiAdminSchedule();
+        recurringSchedule.setId(1L);
+        recurringSchedule.setShiftType(AiAdminSchedule.ShiftType.RECURRING);
+        recurringSchedule.setCreatedAt(LocalDateTime.now().minusDays(10));
+        recurringSchedule.setIsActive(true);
+
+        when(scheduleRepository.findByIsActiveTrue()).thenReturn(List.of(recurringSchedule));
+
+        scheduleService.cleanupExpiredSchedules();
+
+        assertTrue(recurringSchedule.getIsActive());
+        verify(scheduleRepository, never()).save(any(AiAdminSchedule.class));
+    }
+}

@@ -1,7 +1,4 @@
 package com.yisy.modules.doramcu.model.misc;
-import com.yisy.modules.doramcu.model.galaxy.Star;
-
-
 /**
  * Defines the type of character in the registry.
  */

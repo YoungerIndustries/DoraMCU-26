@@ -1,6 +1,4 @@
 package com.yisy.modules.doramcu.service.galaxy;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-
 import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.gamecore.GameModule;

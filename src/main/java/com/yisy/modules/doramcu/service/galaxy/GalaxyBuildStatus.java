@@ -1,7 +1,4 @@
 package com.yisy.modules.doramcu.service.galaxy;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-import com.yisy.modules.doramcu.model.galaxy.Sector;
-
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.atomic.AtomicBoolean;

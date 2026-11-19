@@ -3,8 +3,6 @@ package com.yisy.modules.doramcu.unified;
 import com.yisy.modules.doramcu.hex.SpaceStation;
 import com.yisy.modules.doramcu.hex.SpaceStationType;
 
-import com.yisy.modules.doramcu.traveller.*;
-
 import java.util.*;
 
 /**

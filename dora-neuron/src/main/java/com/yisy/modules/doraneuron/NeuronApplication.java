@@ -2,8 +2,6 @@ package com.yisy.modules.doraneuron;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * DoraMCU Neuron — standalone AI satellite node and player gateway.
@@ -14,8 +12,6 @@ import org.springframework.context.annotation.Configuration;
  * When included as a library, this class is skipped unless neuron.standalone=true.
  */
 @SpringBootApplication
-@Configuration
-@ConditionalOnProperty(name = "neuron.standalone", havingValue = "true", matchIfMissing = false)
 public class NeuronApplication {
 
     /**

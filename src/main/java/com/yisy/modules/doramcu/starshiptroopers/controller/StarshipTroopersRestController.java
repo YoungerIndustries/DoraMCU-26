@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.starshiptroopers.controller;
 
-import com.yisy.modules.doramcu.starshiptroopers.model.*;
 import com.yisy.modules.doramcu.starshiptroopers.service.StarshipTroopersService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

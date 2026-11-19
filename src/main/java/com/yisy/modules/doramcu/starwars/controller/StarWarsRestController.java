@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.starwars.controller;
 
-import com.yisy.modules.doramcu.starwars.model.*;
 import com.yisy.modules.doramcu.starwars.service.StarWarsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

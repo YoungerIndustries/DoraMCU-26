@@ -17,13 +17,8 @@ import java.time.LocalDateTime;
  * database instead of being randomly generated again.
  * </p>
  */
-@Entity
-@Table(name = "planet_settlements", indexes = {
-    @Index(name = "idx_settlement_planet", columnList = "planet_id"),
-    @Index(name = "idx_settlement_empire", columnList = "owner_empire_id"),
-    @Index(name = "idx_settlement_hex", columnList = "center_hex_x,center_hex_y,center_hex_z")
-})
-@Component
+@Component("planetSettlementEntity_1")
+    @Component
 public class PlanetSettlementEntity {
 
     @Id

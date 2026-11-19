@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import jakarta.persistence.EntityManager;
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,6 +30,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class BrainNodeStorageServiceTest {
 
     private BrainNodeStorageService service;
@@ -40,6 +44,18 @@ class BrainNodeStorageServiceTest {
     @Mock
     private ObjectMapper objectMapper;
 
+    @Mock
+    private TypedQuery<GameStateEntity> gameStateQuery;
+
+    @Mock
+    private TypedQuery<ExperienceSampleEntity> experienceQuery;
+
+    @Mock
+    private TypedQuery<AiModelCacheEntity> modelQuery;
+
+    @Mock
+    private TypedQuery<Long> longQuery;
+
     @BeforeEach
     void setUp() {
         service = new BrainNodeStorageService(brainNodeConfig, objectMapper);
@@ -47,6 +63,15 @@ class BrainNodeStorageServiceTest {
         when(brainNodeConfig.getStorageType()).thenReturn("H2");
         when(brainNodeConfig.getStoragePath()).thenReturn("backups/brain-node/");
         when(brainNodeConfig.getExperienceBufferSize()).thenReturn(5000);
+
+        // Setup query mocks with lenient stubbing
+        lenient().when(gameStateQuery.setParameter(anyString(), any())).thenReturn(gameStateQuery);
+        lenient().when(gameStateQuery.setMaxResults(anyInt())).thenReturn(gameStateQuery);
+        lenient().when(experienceQuery.setParameter(anyString(), any())).thenReturn(experienceQuery);
+        lenient().when(experienceQuery.setMaxResults(anyInt())).thenReturn(experienceQuery);
+        lenient().when(modelQuery.setParameter(anyString(), any())).thenReturn(modelQuery);
+        lenient().when(modelQuery.setMaxResults(anyInt())).thenReturn(modelQuery);
+        lenient().when(longQuery.setParameter(anyString(), any())).thenReturn(longQuery);
     }
 
     @Test
@@ -56,7 +81,8 @@ class BrainNodeStorageServiceTest {
         String gameStateJson = "{\"level\": 1}";
 
         when(entityManager.createQuery(anyString(), eq(GameStateEntity.class)))
-                .thenReturn(mockTypedQuery(List.of()));
+                .thenReturn(gameStateQuery);
+        when(gameStateQuery.getResultList()).thenReturn(List.of());
         when(entityManager.merge(any(GameStateEntity.class))).thenAnswer(inv -> inv.getArgument(0));
 
         GameStateEntity result = service.saveGameState(gameId, gameStateJson);
@@ -77,7 +103,8 @@ class BrainNodeStorageServiceTest {
         entity.setGameStateJson("{\"level\": 2}");
 
         when(entityManager.createQuery(anyString(), eq(GameStateEntity.class)))
-                .thenReturn(mockTypedQuery(List.of(entity)));
+                .thenReturn(gameStateQuery);
+        when(gameStateQuery.getResultList()).thenReturn(List.of(entity));
 
         Optional<GameStateEntity> result = service.getGameState(gameId);
 
@@ -89,7 +116,8 @@ class BrainNodeStorageServiceTest {
     @DisplayName("Get game state should return empty when not found")
     void getGameStateNotFound() {
         when(entityManager.createQuery(anyString(), eq(GameStateEntity.class)))
-                .thenReturn(mockTypedQuery(List.of()));
+                .thenReturn(gameStateQuery);
+        when(gameStateQuery.getResultList()).thenReturn(List.of());
 
         Optional<GameStateEntity> result = service.getGameState("nonexistent");
 
@@ -104,7 +132,8 @@ class BrainNodeStorageServiceTest {
         entity.setGameId(gameId);
 
         when(entityManager.createQuery(anyString(), eq(GameStateEntity.class)))
-                .thenReturn(mockTypedQuery(List.of(entity)));
+                .thenReturn(gameStateQuery);
+        when(gameStateQuery.getResultList()).thenReturn(List.of(entity));
 
         boolean result = service.deleteGameState(gameId);
 
@@ -116,7 +145,8 @@ class BrainNodeStorageServiceTest {
     @DisplayName("Delete game state should return false when not found")
     void deleteGameStateNotFound() {
         when(entityManager.createQuery(anyString(), eq(GameStateEntity.class)))
-                .thenReturn(mockTypedQuery(List.of()));
+                .thenReturn(gameStateQuery);
+        when(gameStateQuery.getResultList()).thenReturn(List.of());
 
         boolean result = service.deleteGameState("nonexistent");
 
@@ -131,11 +161,11 @@ class BrainNodeStorageServiceTest {
         String outputJson = "{\"result\": \"success\"}";
         double reward = 0.5;
 
-        when(entityManager.persist(any(ExperienceSampleEntity.class))).thenAnswer(inv -> {
+        doAnswer(inv -> {
             ExperienceSampleEntity e = inv.getArgument(0);
             e.setId("sample-1");
             return null;
-        });
+        }).when(entityManager).persist(any(ExperienceSampleEntity.class));
 
         ExperienceSampleEntity result = service.saveExperienceSample(gameId, inputJson, outputJson, reward);
 
@@ -154,11 +184,11 @@ class BrainNodeStorageServiceTest {
         List<String> outputs = Arrays.asList("{\"b\": 1}", "{\"b\": 2}");
         List<Double> rewards = Arrays.asList(0.5, 0.8);
 
-        when(entityManager.persist(any(ExperienceSampleEntity.class))).thenAnswer(inv -> {
+        doAnswer(inv -> {
             ExperienceSampleEntity e = inv.getArgument(0);
             e.setId(UUID.randomUUID().toString());
             return null;
-        });
+        }).when(entityManager).persist(any(ExperienceSampleEntity.class));
 
         int count = service.saveExperienceSamples("game-1", inputs, outputs, rewards);
 
@@ -178,7 +208,8 @@ class BrainNodeStorageServiceTest {
         sample2.setGameId("game-1");
 
         when(entityManager.createQuery(anyString(), eq(ExperienceSampleEntity.class)))
-                .thenReturn(mockTypedQuery(List.of(sample1, sample2)));
+                .thenReturn(experienceQuery);
+        when(experienceQuery.getResultList()).thenReturn(List.of(sample1, sample2));
 
         List<ExperienceSampleEntity> results = service.getExperienceSamples("game-1", 10);
 
@@ -194,7 +225,8 @@ class BrainNodeStorageServiceTest {
         String metadataJson = "{\"accuracy\": 0.95}";
 
         when(entityManager.createQuery(anyString(), eq(AiModelCacheEntity.class)))
-                .thenReturn(mockTypedQuery(List.of()));
+                .thenReturn(modelQuery);
+        when(modelQuery.getResultList()).thenReturn(List.of());
         when(entityManager.merge(any(AiModelCacheEntity.class))).thenAnswer(inv -> inv.getArgument(0));
 
         AiModelCacheEntity result = service.cacheAiModel(modelId, modelPath, version, metadataJson);
@@ -216,7 +248,8 @@ class BrainNodeStorageServiceTest {
         entity.setVersion(1);
 
         when(entityManager.createQuery(anyString(), eq(AiModelCacheEntity.class)))
-                .thenReturn(mockTypedQuery(List.of(entity)));
+                .thenReturn(modelQuery);
+        when(modelQuery.getResultList()).thenReturn(List.of(entity));
 
         Optional<AiModelCacheEntity> result = service.getCachedAiModel(modelId);
 
@@ -232,7 +265,8 @@ class BrainNodeStorageServiceTest {
         entity.setModelId(modelId);
 
         when(entityManager.createQuery(anyString(), eq(AiModelCacheEntity.class)))
-                .thenReturn(mockTypedQuery(List.of(entity)));
+                .thenReturn(modelQuery);
+        when(modelQuery.getResultList()).thenReturn(List.of(entity));
 
         service.removeCachedAiModel(modelId);
 
@@ -243,11 +277,13 @@ class BrainNodeStorageServiceTest {
     @DisplayName("Get storage stats should return statistics map")
     void getStorageStats() {
         when(entityManager.createQuery(anyString(), eq(Long.class)))
-                .thenReturn(mockTypedQuery(5L))
-                .thenReturn(mockTypedQuery(100L))
-                .thenReturn(mockTypedQuery(3L))
-                .thenReturn(mockTypedQuery(2L))
-                .thenReturn(mockTypedQuery(10L));
+                .thenReturn(longQuery);
+        when(longQuery.getSingleResult())
+                .thenReturn(5L)
+                .thenReturn(100L)
+                .thenReturn(3L)
+                .thenReturn(2L)
+                .thenReturn(10L);
 
         Map<String, Object> stats = service.getStorageStats();
 
@@ -266,7 +302,8 @@ class BrainNodeStorageServiceTest {
         entity.setSyncedWithPi(false);
 
         when(entityManager.createQuery(anyString(), eq(GameStateEntity.class)))
-                .thenReturn(mockTypedQuery(List.of(entity)));
+                .thenReturn(gameStateQuery);
+        when(gameStateQuery.getResultList()).thenReturn(List.of(entity));
         when(entityManager.merge(any(GameStateEntity.class))).thenAnswer(inv -> inv.getArgument(0));
 
         service.markGameStateSynced(gameId);
@@ -283,20 +320,12 @@ class BrainNodeStorageServiceTest {
         entity1.setSyncedWithPi(false);
 
         when(entityManager.createQuery(anyString(), eq(GameStateEntity.class)))
-                .thenReturn(mockTypedQuery(List.of(entity1)));
+                .thenReturn(gameStateQuery);
+        when(gameStateQuery.getResultList()).thenReturn(List.of(entity1));
 
         List<GameStateEntity> unsynced = service.getUnsyncedGameStates();
 
         assertEquals(1, unsynced.size());
         assertFalse(unsynced.get(0).isSyncedWithPi());
-    }
-
-    private <T> TypedQuery<T> mockTypedQuery(List<T> results) {
-        TypedQuery<T> query = mock(TypedQuery.class);
-        when(query.setParameter(anyString(), any())).thenReturn(query);
-        when(query.setMaxResults(anyInt())).thenReturn(query);
-        when(query.getResultList()).thenReturn(results);
-        when(query.getSingleResult()).thenReturn(results.isEmpty() ? null : results.get(0));
-        return query;
     }
 }

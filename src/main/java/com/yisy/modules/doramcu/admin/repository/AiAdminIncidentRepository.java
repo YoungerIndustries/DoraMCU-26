@@ -63,4 +63,10 @@ public interface AiAdminIncidentRepository extends JpaRepository<AiAdminIncident
      * Count incidents by status.
      */
     long countByStatus(AiAdminIncident.Status status);
+
+    /** Find incidents assigned to an admin within a date range. */
+    List<AiAdminIncident> findByAssignedAiAdminIdAndCreatedAtBetween(Long aiAdminId, LocalDateTime start, LocalDateTime end);
+
+    /** Count active incidents assigned to an admin. */
+    long countByAssignedAiAdminIdAndStatusIn(Long aiAdminId, List<AiAdminIncident.Status> statuses);
 }

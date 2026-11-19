@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.dto;
 
+import com.yisy.modules.doramcu.dto.misc.FourxUnlockState;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

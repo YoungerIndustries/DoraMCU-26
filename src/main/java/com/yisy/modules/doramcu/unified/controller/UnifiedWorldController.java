@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.unified.controller;
 
-import com.yisy.modules.doramcu.unified.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,7 @@ import java.util.*;
  * </p>
  */
 @RestController
-@RequestMapping("/api/v1/unified")
+@RequestMapping("/api/v1/unified_1")
 public class UnifiedWorldController {
 
     private static final Logger log = LoggerFactory.getLogger(UnifiedWorldController.class);

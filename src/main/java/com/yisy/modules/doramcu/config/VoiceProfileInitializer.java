@@ -1,6 +1,6 @@
 package com.yisy.modules.doramcu.config;
 
-import com.yisy.modules.doramcu.service.VoiceProfileService;
+import com.yisy.modules.doramcu.service.voice.VoiceProfileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;

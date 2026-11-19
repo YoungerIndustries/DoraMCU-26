@@ -2,7 +2,7 @@ package com.yisy.modules.doramcu.controller.game;
 import com.yisy.modules.doramcu.model.misc.Planet;
 
 
-import com.yisy.modules.doramcu.service.galaxy.Galaxy3DService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

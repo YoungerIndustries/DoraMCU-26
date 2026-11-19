@@ -1,7 +1,7 @@
 package com.yisy.modules.doramcu.star_trek_4x.config;
 
 import com.yisy.modules.doramcu.earth2026.service.PlanetService;
-import com.yisy.modules.doramcu.service.AiCommanderExperienceService;
+import com.yisy.modules.doramcu.service.ai.AiCommanderExperienceService;
 import com.yisy.modules.doramcu.thirdreich.service.ThirdReichGroundBattleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

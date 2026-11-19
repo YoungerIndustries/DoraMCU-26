@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.service.admin;
 import com.yisy.modules.doramcu.model.misc.CharacterType;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.service.galaxy.GalaxyCreationService;
 import com.yisy.modules.doramcu.service.galaxy.GalaxyService;
 
@@ -12,9 +11,7 @@ import com.yisy.modules.doramcu.eve.model.Treasury;
 import com.yisy.modules.doramcu.hex.GalaxyFactory;
 import com.yisy.modules.doramcu.hex.GalaxyGenerationConfig;
 import com.yisy.modules.doramcu.hex.Empire;
-import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.model.misc.PromoCode;
-import com.yisy.modules.doramcu.model.user.User;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 import com.yisy.modules.doramcu.repository.misc.EveCorporationRepository;
 import com.yisy.modules.doramcu.repository.players.PlayerRepository;

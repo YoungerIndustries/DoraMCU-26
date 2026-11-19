@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.dto.fleet;
 import com.yisy.modules.doramcu.dto.ship_design.ShipDto;
-import com.yisy.modules.doramcu.model.galaxy.SolarSystem;
 import com.yisy.modules.doramcu.model.galaxy.SubSector;
 
 

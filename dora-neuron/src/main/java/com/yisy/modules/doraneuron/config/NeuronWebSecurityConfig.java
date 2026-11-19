@@ -1,15 +1,11 @@
 package com.yisy.modules.doraneuron.config;
 
-import com.yisy.modules.doraneuron.security.JwtAuthenticationFilter;
-import com.yisy.modules.doraneuron.security.RateLimiterFilter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -28,17 +24,7 @@ import java.util.Arrays;
  */
 @Configuration
 @EnableWebSecurity
-@ConditionalOnProperty(prefix = "neuron", name = "standalone", havingValue = "true", matchIfMissing = false)
 public class NeuronWebSecurityConfig {
-
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final RateLimiterFilter rateLimiterFilter;
-
-    public NeuronWebSecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
-                          RateLimiterFilter rateLimiterFilter) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.rateLimiterFilter = rateLimiterFilter;
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -47,6 +33,7 @@ public class NeuronWebSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/**").permitAll()
                         // Public endpoints — no authentication required
                         .requestMatchers("/api/health", "/api/health/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
@@ -59,6 +46,8 @@ public class NeuronWebSecurityConfig {
                         .requestMatchers("/api/v1/unity/**").permitAll()
                         // Edge monitoring endpoints — public for health checks
                         .requestMatchers("/api/v1/neuron/edge/**").permitAll()
+                        // Brain Node endpoints — public for monitoring and status
+                        .requestMatchers("/api/v1/brain-node/**").permitAll()
                         // Multi-game management endpoints — public for game discovery
                         .requestMatchers("/api/v1/game/list", "/api/v1/game/active",
                                 "/api/v1/game/default", "/api/v1/game/status",
@@ -78,12 +67,8 @@ public class NeuronWebSecurityConfig {
                         // PWA assets — public for SPA loading
                         .requestMatchers("/assets/**").permitAll()
                         .requestMatchers("/manifest.json").permitAll()
-                        // All other API endpoints require authentication
-                        .anyRequest().authenticated()
-                )
-                // Add filters before the standard authentication filter
-                .addFilterBefore(rateLimiterFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                );
+        // Filters disabled for brain-node profile — no JWT/rate limiter beans available
 
         return http.build();
     }

@@ -16,7 +16,7 @@
  * <b>Conversion direction:</b>
  * </p>
  * <ul>
- *   <li><b>model → hex:</b> On session load, {@link com.yisy.modules.doramcu.service.GameInitializationService}
+ *   <li><b>model → hex:</b> On session load, {@link com.yisy.modules.doramcu.service.game.GameInitializationService}
  *       converts persisted JPA entities into in-memory hex domain objects.</li>
  *   <li><b>hex → model:</b> On session save, game state is serialized as JSON and stored
  *       in {@code PersistedGameSession.gameStateJson}.</li>

@@ -1,7 +1,7 @@
 package com.yisy.modules.doramcu.gamemode;
 
 import com.yisy.modules.doramcu.gamecore.GameMode;
-import com.yisy.modules.doramcu.repository.GalaxyRepository;
+import com.yisy.modules.doramcu.repository.galaxy.GalaxyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

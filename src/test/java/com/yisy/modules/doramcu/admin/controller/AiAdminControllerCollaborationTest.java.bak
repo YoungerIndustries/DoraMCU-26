@@ -1,0 +1,200 @@
+package com.yisy.modules.doramcu.admin.controller;
+
+import com.yisy.modules.doramcu.admin.model.AiAdminCollaborationNote;
+import com.yisy.modules.doramcu.admin.model.AiAdminIncidentCollaborator;
+import com.yisy.modules.doramcu.admin.service.AiAdminCollaborationService;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+
+import java.time.LocalDateTime;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class AiAdminControllerCollaborationTest {
+
+    @Mock
+    private AiAdminCollaborationService collaborationService;
+
+    @InjectMocks
+    private AiAdminController controller;
+
+    private Authentication adminAuth;
+
+    @org.junit.jupiter.api.BeforeEach
+    void setUp() {
+        adminAuth = new UsernamePasswordAuthenticationToken("admin", "admin");
+    }
+
+    @Test
+    void addCollaborator_success() {
+        AiAdminIncidentCollaborator collab = new AiAdminIncidentCollaborator();
+        collab.setId(1L);
+        collab.setAiAdminId(100L);
+        collab.setRole(AiAdminIncidentCollaborator.Role.INVESTIGATOR);
+        collab.setStatus(AiAdminIncidentCollaborator.Status.ACTIVE);
+        when(collaborationService.addCollaborator(1L, 100L, AiAdminIncidentCollaborator.Role.INVESTIGATOR))
+                .thenReturn(collab);
+
+        ResponseEntity<?> response = controller.addCollaborator(1L, Map.of("adminId", 100L, "role", "INVESTIGATOR"), adminAuth);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals(100L, body.get("aiAdminId"));
+    }
+
+    @Test
+    void addCollaborator_defaultRole() {
+        AiAdminIncidentCollaborator collab = new AiAdminIncidentCollaborator();
+        collab.setRole(AiAdminIncidentCollaborator.Role.INVESTIGATOR);
+        when(collaborationService.addCollaborator(1L, 100L, AiAdminIncidentCollaborator.Role.INVESTIGATOR))
+                .thenReturn(collab);
+
+        ResponseEntity<?> response = controller.addCollaborator(1L, Map.of("adminId", 100L), adminAuth);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void addCollaborator_alreadyExists() {
+        when(collaborationService.addCollaborator(anyLong(), anyLong(), any()))
+                .thenThrow(new IllegalStateException("Already a collaborator"));
+
+        ResponseEntity<?> response = controller.addCollaborator(1L, Map.of("adminId", 100L, "role", "INVESTIGATOR"), adminAuth);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void removeCollaborator_success() {
+        doNothing().when(collaborationService).removeCollaborator(1L, 100L);
+
+        ResponseEntity<?> response = controller.removeCollaborator(1L, 100L, adminAuth);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void removeCollaborator_onlyLead() {
+        doThrow(new IllegalStateException("Cannot remove the only lead collaborator"))
+                .when(collaborationService).removeCollaborator(1L, 100L);
+
+        ResponseEntity<?> response = controller.removeCollaborator(1L, 100L, adminAuth);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void listCollaborators_returnsList() {
+        AiAdminIncidentCollaborator collab = new AiAdminIncidentCollaborator();
+        collab.setRole(AiAdminIncidentCollaborator.Role.LEAD);
+        when(collaborationService.getCollaborators(1L)).thenReturn(List.of(collab));
+
+        ResponseEntity<?> response = controller.listCollaborators(1L, adminAuth);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> body = (List<Map<String, Object>>) response.getBody();
+        assertEquals(1, body.size());
+    }
+
+    @Test
+    void addNote_success() {
+        AiAdminCollaborationNote note = new AiAdminCollaborationNote();
+        note.setId(1L);
+        note.setNote("Finding: fleet low");
+        when(collaborationService.addNote(1L, 100L, "Finding: fleet low")).thenReturn(note);
+
+        ResponseEntity<?> response = controller.addNote(1L, Map.of("adminId", 100L, "note", "Finding: fleet low"), adminAuth);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void addNote_emptyNote() {
+        when(collaborationService.addNote(anyLong(), anyLong(), isNull()))
+                .thenThrow(new IllegalArgumentException("Note cannot be empty"));
+
+        ResponseEntity<?> response = controller.addNote(1L, Map.of("adminId", 100L, "note", (String) null), adminAuth);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void getNotes_returnsList() {
+        AiAdminCollaborationNote note = new AiAdminCollaborationNote();
+        note.setNote("Test note");
+        when(collaborationService.getNotes(1L)).thenReturn(List.of(note));
+
+        ResponseEntity<?> response = controller.getNotes(1L, adminAuth);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> body = (List<Map<String, Object>>) response.getBody();
+        assertEquals(1, body.size());
+    }
+
+    @Test
+    void autoInvite_returnsInvited() {
+        AiAdminIncidentCollaborator collab = new AiAdminIncidentCollaborator();
+        collab.setRole(AiAdminIncidentCollaborator.Role.INVESTIGATOR);
+        when(collaborationService.autoInviteCollaborators(1L)).thenReturn(List.of(collab));
+
+        ResponseEntity<?> response = controller.autoInvite(1L, adminAuth);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> body = (List<Map<String, Object>>) response.getBody();
+        assertEquals(1, body.size());
+    }
+
+    @Test
+    void getCollaborationSummary_returnsSummary() {
+        Map<String, Object> summary = new HashMap<>();
+        summary.put("incidentId", 1L);
+        summary.put("totalCollaborators", 3);
+        when(collaborationService.getCollaborationSummary(1L)).thenReturn(summary);
+
+        ResponseEntity<?> response = controller.getCollaborationSummary(1L, adminAuth);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals(3, body.get("totalCollaborators"));
+    }
+
+    @Test
+    void addCollaborator_forbidden() {
+        ResponseEntity<?> response = controller.addCollaborator(1L, Map.of("adminId", 100L), null);
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    void removeCollaborator_forbidden() {
+        ResponseEntity<?> response = controller.removeCollaborator(1L, 100L, null);
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    void listCollaborators_forbidden() {
+        ResponseEntity<?> response = controller.listCollaborators(1L, null);
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    void getCollaborationSummary_forbidden() {
+        ResponseEntity<?> response = controller.getCollaborationSummary(1L, null);
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+}

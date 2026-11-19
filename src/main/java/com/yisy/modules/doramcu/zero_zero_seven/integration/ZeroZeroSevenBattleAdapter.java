@@ -12,7 +12,8 @@ import java.util.stream.Collectors;
 /**
  * 007 Espionage battle adapter — provides 007 units to universal battles.
  */
-@Component
+@Component("zeroZeroSevenBattleAdapter_1")
+    @Component
 public class ZeroZeroSevenBattleAdapter implements ModuleBattleAdapter {
 
     private static final Map<String, String> UNIT_TYPES = new HashMap<>();

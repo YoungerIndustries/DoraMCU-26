@@ -1,0 +1,263 @@
+package com.yisy.modules.doramcu.admin.controller;
+
+import com.yisy.modules.doramcu.admin.service.AiAdminXpTrendService;
+import com.yisy.modules.doramcu.repository.PlayerRepository;
+import com.yisy.modules.doramcu.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+@DisplayName("AiAdminController XP Trend Analytics Tests")
+class AiAdminControllerXpTest {
+
+    @Mock
+    private AiAdminXpTrendService xpTrendService;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private PlayerRepository playerRepository;
+
+    @Mock
+    private Authentication authentication;
+
+    private AiAdminController controller;
+
+    @BeforeEach
+    void setUp() {
+        // Only need xpTrendService; other dependencies are null
+        controller = new AiAdminController(
+                null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, xpTrendService, null,
+                null
+        );
+    }
+
+    // ---------------------------------------------------------------
+    // XP Trend endpoint tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("getXpTrend should return trend data")
+    void getXpTrend_shouldReturnTrendData() {
+        AiAdminXpTrendService.XpTrendPoint point = new AiAdminXpTrendService.XpTrendPoint();
+        point.date = LocalDate.now();
+        point.xpEarned = 100;
+        point.ordersCompleted = 10;
+        point.incidentsHandled = 2;
+
+        when(xpTrendService.getXpTrend(1L, 30)).thenReturn(List.of(point));
+
+        ResponseEntity<?> response = controller.getXpTrend(1L, 30);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> list = (List<Map<String, Object>>) response.getBody();
+        assertEquals(1, list.size());
+        assertEquals(100, list.get(0).get("xpEarned"));
+    }
+
+    @Test
+    @DisplayName("getXpTrend should return empty list when no data")
+    void getXpTrend_shouldReturnEmptyList() {
+        when(xpTrendService.getXpTrend(1L, 30)).thenReturn(List.of());
+
+        ResponseEntity<?> response = controller.getXpTrend(1L, 30);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> list = (List<Map<String, Object>>) response.getBody();
+        assertTrue(list.isEmpty());
+    }
+
+    // ---------------------------------------------------------------
+    // XP Velocity endpoint tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("getXpVelocity should return velocity data")
+    void getXpVelocity_shouldReturnVelocityData() {
+        AiAdminXpTrendService.XpVelocity velocity = new AiAdminXpTrendService.XpVelocity();
+        velocity.adminId = 1L;
+        velocity.totalXp = 500;
+        velocity.totalReports = 5;
+        velocity.xpPerDay = 100.0;
+        velocity.xpPerWeek = 700.0;
+        velocity.xpPerReport = 100.0;
+        velocity.firstReportDate = LocalDateTime.now().minusDays(7);
+        velocity.lastReportDate = LocalDateTime.now();
+
+        when(xpTrendService.getXpVelocity(1L)).thenReturn(velocity);
+
+        ResponseEntity<?> response = controller.getXpVelocity(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> map = (Map<String, Object>) response.getBody();
+        assertEquals(500, map.get("totalXp"));
+        assertEquals(100.0, map.get("xpPerDay"));
+        assertEquals(700.0, map.get("xpPerWeek"));
+    }
+
+    // ---------------------------------------------------------------
+    // XP Projection endpoint tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("getXpProjection should return projection data")
+    void getXpProjection_shouldReturnProjectionData() {
+        AiAdminXpTrendService.XpProjection projection = new AiAdminXpTrendService.XpProjection();
+        projection.adminId = 1L;
+        projection.currentXp = 800;
+        projection.xpPerDay = 100.0;
+        projection.nextMilestone = 1000;
+        projection.xpRemaining = 200;
+        projection.estimatedDaysRemaining = 2;
+        projection.allMilestonesAchieved = false;
+
+        when(xpTrendService.getXpProjection(1L)).thenReturn(projection);
+
+        ResponseEntity<?> response = controller.getXpProjection(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> map = (Map<String, Object>) response.getBody();
+        assertEquals(1000, map.get("nextMilestone"));
+        assertEquals(200, map.get("xpRemaining"));
+        assertEquals(2, map.get("estimatedDaysRemaining"));
+    }
+
+    @Test
+    @DisplayName("getXpProjection should handle all milestones achieved")
+    void getXpProjection_shouldHandleAllMilestonesAchieved() {
+        AiAdminXpTrendService.XpProjection projection = new AiAdminXpTrendService.XpProjection();
+        projection.adminId = 1L;
+        projection.currentXp = 150000;
+        projection.nextMilestone = -1;
+        projection.allMilestonesAchieved = true;
+
+        when(xpTrendService.getXpProjection(1L)).thenReturn(projection);
+
+        ResponseEntity<?> response = controller.getXpProjection(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> map = (Map<String, Object>) response.getBody();
+        assertTrue((Boolean) map.get("allMilestonesAchieved"));
+    }
+
+    // ---------------------------------------------------------------
+    // XP Source Breakdown endpoint tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("getXpSourceBreakdown should return breakdown")
+    void getXpSourceBreakdown_shouldReturnBreakdown() {
+        AiAdminXpTrendService.XpSourceBreakdown breakdown = new AiAdminXpTrendService.XpSourceBreakdown();
+        breakdown.adminId = 1L;
+        breakdown.days = 30;
+        breakdown.totalXp = 350;
+        breakdown.xpFromOrders = 100;
+        breakdown.xpFromIncidents = 250;
+        breakdown.ordersCompleted = 10;
+        breakdown.incidentsResolved = 10;
+        breakdown.ordersPercent = 28.57;
+        breakdown.incidentsPercent = 71.43;
+
+        when(xpTrendService.getXpSourceBreakdown(1L, 30)).thenReturn(breakdown);
+
+        ResponseEntity<?> response = controller.getXpSourceBreakdown(1L, 30);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> map = (Map<String, Object>) response.getBody();
+        assertEquals(350, map.get("totalXp"));
+        assertEquals(100, map.get("xpFromOrders"));
+        assertEquals(250, map.get("xpFromIncidents"));
+    }
+
+    // ---------------------------------------------------------------
+    // Admin XP Comparison endpoint tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("getAdminXpComparison should return comparison")
+    void getAdminXpComparison_shouldReturnComparison() {
+        AiAdminXpTrendService.AdminXpComparison comparison = new AiAdminXpTrendService.AdminXpComparison();
+        comparison.adminId = 1L;
+        comparison.adminName = "Admin 1";
+        comparison.empire = "Empire 1";
+        comparison.role = "Galaxy Overseer";
+        comparison.totalExperience = 5000;
+        comparison.xpEarned = 500;
+        comparison.ordersCompleted = 50;
+        comparison.incidentsHandled = 10;
+        comparison.reportsGenerated = 5;
+
+        when(xpTrendService.getAdminXpComparison(30)).thenReturn(List.of(comparison));
+
+        ResponseEntity<?> response = controller.getAdminXpComparison(30);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> list = (List<Map<String, Object>>) response.getBody();
+        assertEquals(1, list.size());
+        assertEquals("Admin 1", list.get(0).get("adminName"));
+        assertEquals(500, list.get(0).get("xpEarned"));
+    }
+
+    @Test
+    @DisplayName("getAdminXpComparison should return empty list when no admins")
+    void getAdminXpComparison_shouldReturnEmptyList() {
+        when(xpTrendService.getAdminXpComparison(30)).thenReturn(List.of());
+
+        ResponseEntity<?> response = controller.getAdminXpComparison(30);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> list = (List<Map<String, Object>>) response.getBody();
+        assertTrue(list.isEmpty());
+    }
+
+    // ---------------------------------------------------------------
+    // XP Milestone History endpoint tests
+    // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("getXpMilestoneHistory should return milestones")
+    void getXpMilestoneHistory_shouldReturnMilestones() {
+        AiAdminXpTrendService.XpMilestoneAchievement achievement = new AiAdminXpTrendService.XpMilestoneAchievement();
+        achievement.threshold = 100;
+        achievement.achieved = true;
+        achievement.cumulativeXp = 500;
+        achievement.percentToNext = 100.0;
+        achievement.achievedAt = LocalDateTime.now().minusDays(5);
+
+        when(xpTrendService.getXpMilestoneHistory(1L)).thenReturn(List.of(achievement));
+
+        ResponseEntity<?> response = controller.getXpMilestoneHistory(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> list = (List<Map<String, Object>>) response.getBody();
+        assertEquals(1, list.size());
+        assertEquals(100, list.get(0).get("threshold"));
+        assertTrue((Boolean) list.get(0).get("achieved"));
+    }
+}

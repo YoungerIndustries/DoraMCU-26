@@ -1,0 +1,338 @@
+package com.yisy.modules.doramcu.admin.service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yisy.modules.doramcu.admin.model.AiAdminIncident;
+import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
+import com.yisy.modules.doramcu.admin.model.AiAdminShiftHandover;
+import com.yisy.modules.doramcu.admin.repository.AiAdminIncidentRepository;
+import com.yisy.modules.doramcu.admin.repository.AiAdminOrderRepository;
+import com.yisy.modules.doramcu.admin.repository.AiAdminShiftHandoverRepository;
+import com.yisy.modules.doramcu.eve.model.AiCharacter;
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class AiAdminShiftHandoverServiceTest {
+
+    @Mock
+    private AiAdminShiftHandoverRepository handoverRepository;
+
+    @Mock
+    private AiAdminIncidentRepository incidentRepository;
+
+    @Mock
+    private AiAdminOrderRepository orderRepository;
+
+    @Mock
+    private AiCharacterRepository aiCharacterRepository;
+
+    @Mock
+    private AiAdminLlmService llmService;
+
+    @Spy
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    @InjectMocks
+    private AiAdminShiftHandoverService handoverService;
+
+    private AiCharacter outgoingAdmin;
+    private AiCharacter incomingAdmin;
+    private AiAdminShiftHandover handover;
+
+    @BeforeEach
+    void setUp() {
+        outgoingAdmin = new AiCharacter("Outgoing Admin", "Galaxy Overseer", "Alpha Centauri");
+        outgoingAdmin.setId(1L);
+        outgoingAdmin.setAiAdmin(true);
+        outgoingAdmin.setActive(true);
+
+        incomingAdmin = new AiCharacter("Incoming Admin", "Galaxy Overseer", "Alpha Centauri");
+        incomingAdmin.setId(2L);
+        incomingAdmin.setAiAdmin(true);
+        incomingAdmin.setActive(true);
+
+        handover = new AiAdminShiftHandover(1L, 2L, "Alpha Centauri",
+                AiAdminShiftHandover.HandoverType.MANUAL);
+        handover.setId(1L);
+        handover.setSummary("Test summary");
+        handover.setPendingIncidents("[]");
+        handover.setPendingOrders("[]");
+    }
+
+    @Test
+    @DisplayName("Create handover should gather pending work and save")
+    void createHandover_shouldGatherPendingWorkAndSave() {
+        when(aiCharacterRepository.findById(1L)).thenReturn(Optional.of(outgoingAdmin));
+        when(aiCharacterRepository.findById(2L)).thenReturn(Optional.of(incomingAdmin));
+        when(incidentRepository.findByStatusAndGalaxyName(eq(AiAdminIncident.Status.OPEN), eq("Alpha Centauri")))
+                .thenReturn(Collections.emptyList());
+        when(incidentRepository.findByStatusAndGalaxyName(eq(AiAdminIncident.Status.INVESTIGATING), eq("Alpha Centauri")))
+                .thenReturn(Collections.emptyList());
+        when(orderRepository.findByStatus(AiAdminOrder.OrderStatus.RUNNING)).thenReturn(Collections.emptyList());
+        when(orderRepository.findByStatus(AiAdminOrder.OrderStatus.PENDING)).thenReturn(Collections.emptyList());
+        when(handoverRepository.save(any(AiAdminShiftHandover.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        AiAdminShiftHandover result = handoverService.createHandover(
+                1L, 2L, "Alpha Centauri", AiAdminShiftHandover.HandoverType.MANUAL);
+
+        assertNotNull(result.getId());
+        assertEquals(1L, result.getOutgoingAdminId());
+        assertEquals(2L, result.getIncomingAdminId());
+        assertEquals("Alpha Centauri", result.getGalaxyName());
+        assertEquals(AiAdminShiftHandover.HandoverType.MANUAL, result.getHandoverType());
+        assertEquals(AiAdminShiftHandover.Status.PENDING, result.getStatus());
+        verify(handoverRepository).save(any(AiAdminShiftHandover.class));
+    }
+
+    @Test
+    @DisplayName("Create handover should include open incidents")
+    void createHandover_shouldIncludeOpenIncidents() {
+        AiAdminIncident incident = new AiAdminIncident();
+        incident.setId(100L);
+        incident.setTitle("Low fleet count");
+        incident.setSeverity(AiAdminIncident.Severity.CRITICAL);
+        incident.setStatus(AiAdminIncident.Status.OPEN);
+        incident.setGalaxyName("Alpha Centauri");
+
+        when(aiCharacterRepository.findById(1L)).thenReturn(Optional.of(outgoingAdmin));
+        when(aiCharacterRepository.findById(2L)).thenReturn(Optional.of(incomingAdmin));
+        when(incidentRepository.findByStatusAndGalaxyName(eq(AiAdminIncident.Status.OPEN), eq("Alpha Centauri")))
+                .thenReturn(List.of(incident));
+        when(incidentRepository.findByStatusAndGalaxyName(eq(AiAdminIncident.Status.INVESTIGATING), eq("Alpha Centauri")))
+                .thenReturn(Collections.emptyList());
+        when(orderRepository.findByStatus(AiAdminOrder.OrderStatus.RUNNING)).thenReturn(Collections.emptyList());
+        when(orderRepository.findByStatus(AiAdminOrder.OrderStatus.PENDING)).thenReturn(Collections.emptyList());
+        when(handoverRepository.save(any(AiAdminShiftHandover.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        AiAdminShiftHandover result = handoverService.createHandover(
+                1L, 2L, "Alpha Centauri", AiAdminShiftHandover.HandoverType.AUTO);
+
+        assertNotNull(result.getPendingIncidents());
+        assertTrue(result.getPendingIncidents().contains("Low fleet count"));
+    }
+
+    @Test
+    @DisplayName("Create handover should throw when outgoing admin not found")
+    void createHandover_shouldThrowWhenOutgoingNotFound() {
+        when(aiCharacterRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () ->
+                handoverService.createHandover(1L, 2L, "Alpha Centauri",
+                        AiAdminShiftHandover.HandoverType.MANUAL));
+    }
+
+    @Test
+    @DisplayName("Create handover should throw when incoming admin not found")
+    void createHandover_shouldThrowWhenIncomingNotFound() {
+        when(aiCharacterRepository.findById(1L)).thenReturn(Optional.of(outgoingAdmin));
+        when(aiCharacterRepository.findById(2L)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () ->
+                handoverService.createHandover(1L, 2L, "Alpha Centauri",
+                        AiAdminShiftHandover.HandoverType.MANUAL));
+    }
+
+    @Test
+    @DisplayName("Acknowledge handover should update status and timestamp")
+    void acknowledgeHandover_shouldUpdateStatusAndTimestamp() {
+        when(handoverRepository.findById(1L)).thenReturn(Optional.of(handover));
+        when(handoverRepository.save(any(AiAdminShiftHandover.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        AiAdminShiftHandover result = handoverService.acknowledgeHandover(1L, 2L, "Acknowledged");
+
+        assertEquals(AiAdminShiftHandover.Status.ACKNOWLEDGED, result.getStatus());
+        assertNotNull(result.getAcknowledgedAt());
+        assertEquals("Acknowledged", result.getNotes());
+        verify(handoverRepository).save(handover);
+    }
+
+    @Test
+    @DisplayName("Acknowledge handover should throw when wrong admin")
+    void acknowledgeHandover_shouldThrowWhenWrongAdmin() {
+        when(handoverRepository.findById(1L)).thenReturn(Optional.of(handover));
+
+        assertThrows(IllegalArgumentException.class, () ->
+                handoverService.acknowledgeHandover(1L, 99L, "Notes"));
+    }
+
+    @Test
+    @DisplayName("Acknowledge handover should throw when not pending")
+    void acknowledgeHandover_shouldThrowWhenNotPending() {
+        handover.setStatus(AiAdminShiftHandover.Status.ACKNOWLEDGED);
+        when(handoverRepository.findById(1L)).thenReturn(Optional.of(handover));
+
+        assertThrows(IllegalStateException.class, () ->
+                handoverService.acknowledgeHandover(1L, 2L, "Notes"));
+    }
+
+    @Test
+    @DisplayName("Acknowledge handover should handle null notes")
+    void acknowledgeHandover_shouldHandleNullNotes() {
+        when(handoverRepository.findById(1L)).thenReturn(Optional.of(handover));
+        when(handoverRepository.save(any(AiAdminShiftHandover.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        AiAdminShiftHandover result = handoverService.acknowledgeHandover(1L, 2L, null);
+
+        assertEquals(AiAdminShiftHandover.Status.ACKNOWLEDGED, result.getStatus());
+        assertNull(result.getNotes());
+    }
+
+    @Test
+    @DisplayName("Complete handover should update status and timestamp")
+    void completeHandover_shouldUpdateStatusAndTimestamp() {
+        handover.setStatus(AiAdminShiftHandover.Status.ACKNOWLEDGED);
+        when(handoverRepository.findById(1L)).thenReturn(Optional.of(handover));
+        when(handoverRepository.save(any(AiAdminShiftHandover.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        AiAdminShiftHandover result = handoverService.completeHandover(1L);
+
+        assertEquals(AiAdminShiftHandover.Status.COMPLETED, result.getStatus());
+        assertNotNull(result.getCompletedAt());
+        verify(handoverRepository).save(handover);
+    }
+
+    @Test
+    @DisplayName("Complete handover should throw when already completed")
+    void completeHandover_shouldThrowWhenAlreadyCompleted() {
+        handover.setStatus(AiAdminShiftHandover.Status.COMPLETED);
+        when(handoverRepository.findById(1L)).thenReturn(Optional.of(handover));
+
+        assertThrows(IllegalStateException.class, () ->
+                handoverService.completeHandover(1L));
+    }
+
+    @Test
+    @DisplayName("Complete handover from PENDING should work")
+    void completeHandover_fromPending_shouldWork() {
+        handover.setStatus(AiAdminShiftHandover.Status.PENDING);
+        when(handoverRepository.findById(1L)).thenReturn(Optional.of(handover));
+        when(handoverRepository.save(any(AiAdminShiftHandover.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        AiAdminShiftHandover result = handoverService.completeHandover(1L);
+
+        assertEquals(AiAdminShiftHandover.Status.COMPLETED, result.getStatus());
+    }
+
+    @Test
+    @DisplayName("Get handovers for admin should return both outgoing and incoming")
+    void getHandoversForAdmin_shouldReturnBothDirections() {
+        AiAdminShiftHandover outgoing = new AiAdminShiftHandover(1L, 2L, "Alpha",
+                AiAdminShiftHandover.HandoverType.MANUAL);
+        outgoing.setId(1L);
+        AiAdminShiftHandover incoming = new AiAdminShiftHandover(3L, 1L, "Beta",
+                AiAdminShiftHandover.HandoverType.AUTO);
+        incoming.setId(2L);
+
+        when(handoverRepository.findByOutgoingAdminIdOrIncomingAdminIdOrderByCreatedAtDesc(1L, 1L))
+                .thenReturn(Arrays.asList(outgoing, incoming));
+
+        List<AiAdminShiftHandover> result = handoverService.getHandoversForAdmin(1L);
+
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    @DisplayName("Get pending handovers should return only PENDING status")
+    void getPendingHandovers_shouldReturnOnlyPending() {
+        when(handoverRepository.findByStatusOrderByCreatedAtDesc(AiAdminShiftHandover.Status.PENDING))
+                .thenReturn(List.of(handover));
+
+        List<AiAdminShiftHandover> result = handoverService.getPendingHandovers();
+
+        assertEquals(1, result.size());
+        assertEquals(AiAdminShiftHandover.Status.PENDING, result.get(0).getStatus());
+    }
+
+    @Test
+    @DisplayName("Get handovers for galaxy should filter by galaxy name")
+    void getHandoversForGalaxy_shouldFilterByGalaxy() {
+        when(handoverRepository.findByGalaxyNameOrderByCreatedAtDesc("Alpha Centauri"))
+                .thenReturn(List.of(handover));
+
+        List<AiAdminShiftHandover> result = handoverService.getHandoversForGalaxy("Alpha Centauri");
+
+        assertEquals(1, result.size());
+        assertEquals("Alpha Centauri", result.get(0).getGalaxyName());
+    }
+
+    @Test
+    @DisplayName("Get handover by ID should return handover")
+    void getHandover_shouldReturnHandover() {
+        when(handoverRepository.findById(1L)).thenReturn(Optional.of(handover));
+
+        AiAdminShiftHandover result = handoverService.getHandover(1L);
+
+        assertEquals(1L, result.getId());
+    }
+
+    @Test
+    @DisplayName("Get handover by ID should throw when not found")
+    void getHandover_shouldThrowWhenNotFound() {
+        when(handoverRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () ->
+                handoverService.getHandover(99L));
+    }
+
+    @Test
+    @DisplayName("Build handover system prompt should include admin names")
+    void buildHandoverSystemPrompt_shouldIncludeAdminNames() {
+        String prompt = handoverService.buildHandoverSystemPrompt(outgoingAdmin, incomingAdmin);
+
+        assertTrue(prompt.contains("Outgoing Admin"));
+        assertTrue(prompt.contains("Incoming Admin"));
+        assertTrue(prompt.contains("BRIEFING"));
+    }
+
+    @Test
+    @DisplayName("Build handover user message should include incidents and orders")
+    void buildHandoverUserMessage_shouldIncludeIncidentsAndOrders() {
+        java.util.Map<String, Object> incident = new java.util.HashMap<>();
+        incident.put("severity", "CRITICAL");
+        incident.put("title", "Low fleet");
+        incident.put("status", "OPEN");
+
+        java.util.Map<String, Object> order = new java.util.HashMap<>();
+        order.put("status", "RUNNING");
+        order.put("text", "Deploy ships");
+
+        String message = handoverService.buildHandoverUserMessage(
+                "Alpha Centauri", List.of(incident), List.of(order));
+
+        assertTrue(message.contains("Alpha Centauri"));
+        assertTrue(message.contains("Low fleet"));
+        assertTrue(message.contains("Deploy ships"));
+    }
+
+    @Test
+    @DisplayName("Build handover user message with empty lists")
+    void buildHandoverUserMessage_withEmptyLists() {
+        String message = handoverService.buildHandoverUserMessage(
+                "Alpha Centauri", Collections.emptyList(), Collections.emptyList());
+
+        assertTrue(message.contains("No open incidents"));
+        assertTrue(message.contains("No pending or running orders"));
+    }
+
+    @Test
+    @DisplayName("Detect shift transitions should not throw")
+    void detectShiftTransitions_shouldNotThrow() {
+        assertDoesNotThrow(() -> handoverService.detectShiftTransitions());
+    }
+}

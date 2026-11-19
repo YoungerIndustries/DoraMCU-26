@@ -47,7 +47,7 @@ spec:
           effect: "NoSchedule"
       containers:
         - name: neuron-edge
-          image: doramcu/neuron-edge:latest
+          image: ghcr.io/YoungerIndustries/DoraMCU-26-neuron-edge:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

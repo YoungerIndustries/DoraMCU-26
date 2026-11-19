@@ -1,7 +1,6 @@
 package com.yisy.modules.doramcu.data;
 
-import com.yisy.modules.doramcu.model.PlanetBuildingModuleEntity;
-import com.yisy.modules.doramcu.repository.PlanetBuildingModuleRepository;
+import com.yisy.modules.doramcu.repository.galaxy.PlanetBuildingModuleRepository;
 import com.yisy.modules.doramcu.techlevel.ModuleCategory;
 import com.yisy.modules.doramcu.techlevel.TechLevel;
 import org.slf4j.Logger;

@@ -1,6 +1,7 @@
 package com.yisy.modules.doraneuron.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 /**
  * Configuration properties for a DoraMCU Brain Node running on a desktop computer.
@@ -11,6 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * All properties are prefixed with {@code brainnode} in application.properties.
  */
+@Component
 @ConfigurationProperties(prefix = "brainnode")
 public class BrainNodeConfig {
 

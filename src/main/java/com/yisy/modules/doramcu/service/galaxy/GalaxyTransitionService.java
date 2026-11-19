@@ -1,7 +1,4 @@
 package com.yisy.modules.doramcu.service.galaxy;
-import com.yisy.modules.doramcu.model.players.PlayerCharacterRegistry;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-
 import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.earth2026.model.Earth2026Character;
@@ -9,7 +6,6 @@ import com.yisy.modules.doramcu.earth2026.service.Earth2026Service;
 import com.yisy.modules.doramcu.gateway.PluginGateway;
 import com.yisy.modules.doramcu.gateway.PluginDescriptor;
 import com.yisy.modules.doramcu.hex.GalaxyFactory;
-import com.yisy.modules.doramcu.model.user.User;
 import com.yisy.modules.doramcu.model.misc.CharacterType;
 import com.yisy.modules.doramcu.model.misc.CharacterRole;
 import com.yisy.modules.doramcu.repository.players.PlayerCharacterRegistryRepository;

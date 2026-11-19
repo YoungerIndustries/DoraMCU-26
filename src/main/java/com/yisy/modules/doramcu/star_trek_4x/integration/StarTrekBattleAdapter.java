@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.star_trek_4x.integration;
-import com.yisy.modules.doramcu.model.galaxy.Star;
 import com.yisy.modules.doramcu.techlevel.TechLevel;
 
 
@@ -14,7 +13,8 @@ import java.util.stream.Collectors;
 /**
  * Star Trek 4X battle adapter.
  */
-@Component
+@Component("starTrekBattleAdapter_star_trek_4x_integration_StarTrekBattleAdapter")
+    @Component
 public class StarTrekBattleAdapter implements ModuleBattleAdapter {
 
     private static final Map<String, String> UNIT_TYPES = new HashMap<>();

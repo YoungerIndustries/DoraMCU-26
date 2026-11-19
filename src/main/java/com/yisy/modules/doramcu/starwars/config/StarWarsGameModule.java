@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.starwars.config;
 
-import com.yisy.modules.doramcu.gamecore.*;
 import com.yisy.modules.doramcu.shared.model.GameSystem;
 import com.yisy.modules.doramcu.shared.model.RulesEntry;
 import com.yisy.modules.doramcu.techlevel.TechLevelAdapter;

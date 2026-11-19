@@ -27,7 +27,8 @@ import java.util.*;
  * follow the published rules.
  * </p>
  */
-@Service
+@Service("rulesService_captainslog_service_RulesService")
+    @Service
 public class RulesService {
 
     private static final Logger log = LoggerFactory.getLogger(RulesService.class);

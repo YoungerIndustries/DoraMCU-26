@@ -27,13 +27,13 @@ public interface RulesEntryRepository extends JpaRepository<RulesEntry, Long> {
     @Query("SELECT r FROM RulesEntry r WHERE r.active = true AND " +
            "(LOWER(r.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(r.text) LIKE LOWER(CONCAT('%', :keyword, '%')))")
-    List<RulesEntry> searchByKeyword(@Param("keyword") String keyword);
+    List<RulesEntry> searchByKeyword(@Param("keyword_0") String keyword);
 
     /** Search rules by keyword within a specific category. */
     @Query("SELECT r FROM RulesEntry r WHERE r.active = true AND r.category = :category AND " +
            "(LOWER(r.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(r.text) LIKE LOWER(CONCAT('%', :keyword, '%')))")
-    List<RulesEntry> searchByKeywordInCategory(@Param("category") String category, @Param("keyword") String keyword);
+    List<RulesEntry> searchByKeywordInCategory(@Param("keyword_0") String category, @Param("keyword_0") String keyword);
 
     /** Get all distinct categories. */
     @Query("SELECT DISTINCT r.category FROM RulesEntry r WHERE r.active = true")

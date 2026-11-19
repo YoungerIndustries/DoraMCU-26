@@ -1,16 +1,9 @@
 package com.yisy.modules.doramcu.model.galaxy;
-import com.yisy.modules.doramcu.model.galaxy.SolarSystem;
-
-
 import jakarta.persistence.*;
 
 /**
  * JPA entity representing a space station in a solar system.
  */
-@Entity
-@Table(name = "space_stations", indexes = {
-    @Index(name = "idx_space_station_solar_system", columnList = "solar_system_id")
-})
 public class SpaceStation {
 
     @Id

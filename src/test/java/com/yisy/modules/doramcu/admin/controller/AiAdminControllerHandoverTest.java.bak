@@ -1,0 +1,279 @@
+package com.yisy.modules.doramcu.admin.controller;
+
+import com.yisy.modules.doramcu.admin.model.AiAdminShiftHandover;
+import com.yisy.modules.doramcu.admin.service.AiAdminShiftHandoverService;
+import com.yisy.modules.doramcu.model.players.Player;
+import com.yisy.modules.doramcu.model.user.User;
+import com.yisy.modules.doramcu.repository.players.PlayerRepository;
+import com.yisy.modules.doramcu.repository.user.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class AiAdminControllerHandoverTest {
+
+    @Mock
+    private AiAdminShiftHandoverService handoverService;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private PlayerRepository playerRepository;
+
+    @Mock
+    private Authentication authentication;
+
+    @InjectMocks
+    private AiAdminController controller;
+
+    private AiAdminShiftHandover handover;
+    private User adminUser;
+    private Player player;
+
+    @BeforeEach
+    void setUp() {
+        handover = new AiAdminShiftHandover(1L, 2L, "Alpha Centauri",
+                AiAdminShiftHandover.HandoverType.MANUAL);
+        handover.setId(1L);
+        handover.setSummary("Test summary");
+        handover.setPendingIncidents("[]");
+        handover.setPendingOrders("[]");
+
+        adminUser = new User();
+        adminUser.setId(1L);
+        adminUser.setUsername("admin");
+
+        player = new Player();
+        player.setId(1L);
+        player.setUser(adminUser);
+    }
+
+    @Test
+    @DisplayName("Create handover should return 403 for non-admin")
+    void createHandover_shouldReturn403ForNonAdmin() {
+        when(authentication.getName()).thenReturn("user");
+        when(userRepository.findByUsername("user")).thenReturn(Optional.of(new User()));
+
+        ResponseEntity<?> response = controller.createHandover(
+                Map.of("outgoingAdminId", 1L, "incomingAdminId", 2L, "galaxyName", "Alpha"),
+                authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Create handover should return 201 with handover data")
+    void createHandover_shouldReturn201() {
+        when(authentication.getName()).thenReturn("admin");
+        when(userRepository.findByUsername("admin")).thenReturn(Optional.of(adminUser));
+        when(handoverService.createHandover(eq(1L), eq(2L), eq("Alpha Centauri"),
+                eq(AiAdminShiftHandover.HandoverType.MANUAL))).thenReturn(handover);
+
+        ResponseEntity<?> response = controller.createHandover(
+                Map.of("outgoingAdminId", 1L, "incomingAdminId", 2L, "galaxyName", "Alpha Centauri"),
+                authentication);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals("Alpha Centauri", body.get("galaxyName"));
+        assertEquals("MANUAL", body.get("handoverType"));
+    }
+
+    @Test
+    @DisplayName("Get handover should return 403 for non-admin")
+    void getHandover_shouldReturn403ForNonAdmin() {
+        when(authentication.getName()).thenReturn("user");
+        when(userRepository.findByUsername("user")).thenReturn(Optional.of(new User()));
+
+        ResponseEntity<?> response = controller.getHandover(1L, authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Get handover should return 200 with handover details")
+    void getHandover_shouldReturn200() {
+        when(authentication.getName()).thenReturn("admin");
+        when(userRepository.findByUsername("admin")).thenReturn(Optional.of(adminUser));
+        when(handoverService.getHandover(1L)).thenReturn(handover);
+
+        ResponseEntity<?> response = controller.getHandover(1L, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertEquals(1L, body.get("outgoingAdminId"));
+        assertEquals(2L, body.get("incomingAdminId"));
+        assertEquals("Test summary", body.get("summary"));
+    }
+
+    @Test
+    @DisplayName("Acknowledge handover should return 403 for non-admin")
+    void acknowledgeHandover_shouldReturn403ForNonAdmin() {
+        when(authentication.getName()).thenReturn("user");
+        when(userRepository.findByUsername("user")).thenReturn(Optional.of(new User()));
+
+        ResponseEntity<?> response = controller.acknowledgeHandover(
+                1L, Map.of("incomingAdminId", 2L, "notes", "OK"), authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Acknowledge handover should return 200")
+    void acknowledgeHandover_shouldReturn200() {
+        when(authentication.getName()).thenReturn("admin");
+        when(userRepository.findByUsername("admin")).thenReturn(Optional.of(adminUser));
+        when(handoverService.acknowledgeHandover(eq(1L), eq(2L), eq("Acknowledged")))
+                .thenReturn(handover);
+
+        ResponseEntity<?> response = controller.acknowledgeHandover(
+                1L, Map.of("incomingAdminId", 2L, "notes", "Acknowledged"), authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Complete handover should return 403 for non-admin")
+    void completeHandover_shouldReturn403ForNonAdmin() {
+        when(authentication.getName()).thenReturn("user");
+        when(userRepository.findByUsername("user")).thenReturn(Optional.of(new User()));
+
+        ResponseEntity<?> response = controller.completeHandover(1L, authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Complete handover should return 200")
+    void completeHandover_shouldReturn200() {
+        when(authentication.getName()).thenReturn("admin");
+        when(userRepository.findByUsername("admin")).thenReturn(Optional.of(adminUser));
+        when(handoverService.completeHandover(1L)).thenReturn(handover);
+
+        ResponseEntity<?> response = controller.completeHandover(1L, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Get handovers for admin should return 403 for non-admin")
+    void getHandoversForAdmin_shouldReturn403ForNonAdmin() {
+        when(authentication.getName()).thenReturn("user");
+        when(userRepository.findByUsername("user")).thenReturn(Optional.of(new User()));
+
+        ResponseEntity<?> response = controller.getHandoversForAdmin(1L, authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Get handovers for admin should return list")
+    void getHandoversForAdmin_shouldReturnList() {
+        when(authentication.getName()).thenReturn("admin");
+        when(userRepository.findByUsername("admin")).thenReturn(Optional.of(adminUser));
+        when(handoverService.getHandoversForAdmin(1L)).thenReturn(List.of(handover));
+
+        ResponseEntity<?> response = controller.getHandoversForAdmin(1L, authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> body = (List<Map<String, Object>>) response.getBody();
+        assertEquals(1, body.size());
+    }
+
+    @Test
+    @DisplayName("Get pending handovers should return 403 for non-admin")
+    void getPendingHandovers_shouldReturn403ForNonAdmin() {
+        when(authentication.getName()).thenReturn("user");
+        when(userRepository.findByUsername("user")).thenReturn(Optional.of(new User()));
+
+        ResponseEntity<?> response = controller.getPendingHandovers(authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Get pending handovers should return empty list")
+    void getPendingHandovers_shouldReturnEmptyList() {
+        when(authentication.getName()).thenReturn("admin");
+        when(userRepository.findByUsername("admin")).thenReturn(Optional.of(adminUser));
+        when(handoverService.getPendingHandovers()).thenReturn(Collections.emptyList());
+
+        ResponseEntity<?> response = controller.getPendingHandovers(authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> body = (List<Map<String, Object>>) response.getBody();
+        assertTrue(body.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Get handovers for galaxy should return 403 for non-admin")
+    void getHandoversForGalaxy_shouldReturn403ForNonAdmin() {
+        when(authentication.getName()).thenReturn("user");
+        when(userRepository.findByUsername("user")).thenReturn(Optional.of(new User()));
+
+        ResponseEntity<?> response = controller.getHandoversForGalaxy("Alpha", authentication);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Get handovers for galaxy should return list")
+    void getHandoversForGalaxy_shouldReturnList() {
+        when(authentication.getName()).thenReturn("admin");
+        when(userRepository.findByUsername("admin")).thenReturn(Optional.of(adminUser));
+        when(handoverService.getHandoversForGalaxy("Alpha Centauri")).thenReturn(List.of(handover));
+
+        ResponseEntity<?> response = controller.getHandoversForGalaxy("Alpha Centauri", authentication);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> body = (List<Map<String, Object>>) response.getBody();
+        assertEquals(1, body.size());
+        assertEquals("Alpha Centauri", body.get(0).get("galaxyName"));
+    }
+
+    @Test
+    @DisplayName("Handover map should contain all fields")
+    void handoverMap_shouldContainAllFields() {
+        when(authentication.getName()).thenReturn("admin");
+        when(userRepository.findByUsername("admin")).thenReturn(Optional.of(adminUser));
+        when(handoverService.getHandover(1L)).thenReturn(handover);
+
+        ResponseEntity<?> response = controller.getHandover(1L, authentication);
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
+        assertNotNull(body.get("id"));
+        assertNotNull(body.get("outgoingAdminId"));
+        assertNotNull(body.get("incomingAdminId"));
+        assertNotNull(body.get("galaxyName"));
+        assertNotNull(body.get("handoverType"));
+        assertNotNull(body.get("status"));
+        assertNotNull(body.get("summary"));
+        assertNotNull(body.get("pendingIncidents"));
+        assertNotNull(body.get("pendingOrders"));
+        assertNotNull(body.get("createdAt"));
+    }
+}

@@ -1,15 +1,13 @@
 package com.yisy.modules.doramcu.traveller.config;
 
-import com.yisy.modules.doramcu.gamecore.*;
 import com.yisy.modules.doramcu.shared.model.RulesEntry;
 import com.yisy.modules.doramcu.shared.service.RulesAwareCombatAdapter;
 import com.yisy.modules.doramcu.shared.service.UnifiedRulesQueryService;
 import com.yisy.modules.doramcu.techlevel.TechLevelAdapter;
 import com.yisy.modules.doramcu.gamecore.RulesEngine;
-import com.yisy.modules.doramcu.service.EncumbranceService;
-import com.yisy.modules.doramcu.service.FirearmsCombatService;
-import com.yisy.modules.doramcu.service.MeleeCombatService;
-import com.yisy.modules.doramcu.traveller.*;
+import com.yisy.modules.doramcu.service.character.EncumbranceService;
+import com.yisy.modules.doramcu.service.battle.FirearmsCombatService;
+import com.yisy.modules.doramcu.service.battle.MeleeCombatService;
 import com.yisy.modules.doramcu.traveller.service.TravellerRulesEngine;
 import com.yisy.modules.doramcu.traveller.service.TravellerRealEstateService;
 import com.yisy.modules.doramcu.traveller.service.TravellerBuildingInstanceService;
@@ -45,7 +43,7 @@ import java.util.stream.Collectors;
 @Component
 public class TravellerGameModule extends AbstractGameModule {
 
-    private final com.yisy.modules.doramcu.service.CharacterService characterService;
+    private final com.yisy.modules.doramcu.service.character.CharacterService characterService;
     private final FirearmsCombatService firearmsCombatService;
     private final MeleeCombatService meleeCombatService;
     private final EncumbranceService encumbranceService;
@@ -61,7 +59,7 @@ public class TravellerGameModule extends AbstractGameModule {
     private final Map<Long, PsionicsService.PsionicPower> psionicPowers = new HashMap<>();
 
     public TravellerGameModule(
-            com.yisy.modules.doramcu.service.CharacterService characterService,
+            com.yisy.modules.doramcu.service.character.CharacterService characterService,
             FirearmsCombatService firearmsCombatService,
             MeleeCombatService meleeCombatService,
             EncumbranceService encumbranceService,
@@ -384,9 +382,9 @@ public class TravellerGameModule extends AbstractGameModule {
      */
     private static class TravellerInventoryAdapter implements InventoryService {
         private final EncumbranceService encumbranceService;
-        private final com.yisy.modules.doramcu.service.CharacterService characterService;
+        private final com.yisy.modules.doramcu.service.character.CharacterService characterService;
 
-        TravellerInventoryAdapter(EncumbranceService encumbranceService, com.yisy.modules.doramcu.service.CharacterService characterService) {
+        TravellerInventoryAdapter(EncumbranceService encumbranceService, com.yisy.modules.doramcu.service.character.CharacterService characterService) {
             this.encumbranceService = encumbranceService;
             this.characterService = characterService;
         }
@@ -783,9 +781,9 @@ public class TravellerGameModule extends AbstractGameModule {
      * Adapts Traveller CharacterService to gamecore.CharacterService interface.
      */
     private static class TravellerCharacterAdapter implements com.yisy.modules.doramcu.gamecore.CharacterService {
-        private final com.yisy.modules.doramcu.service.CharacterService delegate;
+        private final com.yisy.modules.doramcu.service.character.CharacterService delegate;
 
-        TravellerCharacterAdapter(com.yisy.modules.doramcu.service.CharacterService delegate) {
+        TravellerCharacterAdapter(com.yisy.modules.doramcu.service.character.CharacterService delegate) {
             this.delegate = delegate;
         }
 

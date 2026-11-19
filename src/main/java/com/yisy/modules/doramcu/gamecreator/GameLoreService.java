@@ -2,7 +2,7 @@ package com.yisy.modules.doramcu.gamecreator;
 import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doraai.service.AiProvider;
-import com.yisy.modules.doramcu.service.WebSearchService;
+import com.yisy.modules.doramcu.service.misc.WebSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;

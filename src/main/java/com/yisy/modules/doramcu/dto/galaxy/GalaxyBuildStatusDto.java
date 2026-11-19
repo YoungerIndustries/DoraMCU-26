@@ -1,8 +1,5 @@
 package com.yisy.modules.doramcu.dto.galaxy;
 import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-import com.yisy.modules.doramcu.model.galaxy.Sector;
-
-
 /**
  * Response DTO for galaxy background build status.
  * <p>

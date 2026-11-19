@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import com.yisy.modules.doramcu.dto.GameEvent;
 import com.yisy.modules.doramcu.corporation.model.CorporateContract;
 import com.yisy.modules.doramcu.corporation.model.CorporateHiring;
-import com.yisy.modules.doramcu.service.GameSessionService;
+import com.yisy.modules.doramcu.service.session.GameSessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.model.galaxy;
-import com.yisy.modules.doramcu.model.galaxy.SolarSystem;
 import com.yisy.modules.doramcu.model.galaxy.StrategicResource;
 
 
@@ -12,11 +11,6 @@ import jakarta.persistence.*;
  * and may contain strategic resource deposits.
  * </p>
  */
-@Entity
-@Table(name = "asteroids", indexes = {
-    @Index(name = "idx_asteroid_solar_system", columnList = "solar_system_id"),
-    @Index(name = "idx_asteroid_size", columnList = "asteroidSize")
-})
 public class Asteroid {
 
     @Id

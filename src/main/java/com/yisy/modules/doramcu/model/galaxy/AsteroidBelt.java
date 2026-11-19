@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.model.galaxy;
 import com.yisy.modules.doramcu.model.galaxy.Asteroid;
-import com.yisy.modules.doramcu.model.galaxy.SolarSystem;
 import com.yisy.modules.doramcu.model.galaxy.StrategicResource;
 
 
@@ -9,10 +8,6 @@ import jakarta.persistence.*;
 /**
  * JPA entity representing an asteroid belt in a solar system.
  */
-@Entity
-@Table(name = "asteroid_belts", indexes = {
-    @Index(name = "idx_asteroid_belt_solar_system", columnList = "solar_system_id")
-})
 public class AsteroidBelt {
 
     @Id

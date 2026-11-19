@@ -1,10 +1,5 @@
 package com.yisy.modules.doramcu.repository.galaxy;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.model.misc.Planet;
-import com.yisy.modules.doramcu.model.galaxy.Sector;
-
-
-import com.yisy.modules.doramcu.model.galaxy.GalaxyObjectState;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

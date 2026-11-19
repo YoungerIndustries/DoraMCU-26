@@ -1,4 +1,4 @@
-package com.yisy.modules.doramcu.constitution;
+package com.yisy.modules.doramcu;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

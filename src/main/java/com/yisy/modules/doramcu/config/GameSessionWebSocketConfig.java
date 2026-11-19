@@ -1,8 +1,8 @@
 package com.yisy.modules.doramcu.config;
 
-import com.yisy.modules.doramcu.controller.GameSessionWebSocketHandler;
-import com.yisy.modules.doramcu.service.ChatService;
-import com.yisy.modules.doramcu.service.GameSessionService;
+import com.yisy.modules.doramcu.controller.session.GameSessionWebSocketHandler;
+import com.yisy.modules.doramcu.service.chat.ChatService;
+import com.yisy.modules.doramcu.service.session.GameSessionService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;

@@ -2,7 +2,6 @@ package com.yisy.modules.doramcu.repository.galaxy;
 import com.yisy.modules.doramcu.model.misc.Planet;
 
 
-import com.yisy.modules.doramcu.model.galaxy.PlanetStationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

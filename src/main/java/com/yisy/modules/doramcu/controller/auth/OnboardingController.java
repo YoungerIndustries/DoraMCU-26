@@ -1,9 +1,5 @@
 package com.yisy.modules.doramcu.controller.auth;
 import com.yisy.modules.doramcu.model.misc.CharacterType;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-import com.yisy.modules.doramcu.model.players.Player;
-
-
 import com.yisy.modules.doramcu.dto.auth.RegisterRequest;
 import com.yisy.modules.doramcu.event.GalaxyEvent;
 import com.yisy.modules.doramcu.event.GalaxyEventService;
@@ -13,7 +9,6 @@ import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.eve.model.EveCorporation;
 import com.yisy.modules.doramcu.hex.GalaxyFactory;
 import com.yisy.modules.doramcu.model.misc.PromoCode;
-import com.yisy.modules.doramcu.model.user.User;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 import com.yisy.modules.doramcu.repository.misc.EveCorporationRepository;
 import com.yisy.modules.doramcu.repository.galaxy.GalaxyRepository;
@@ -170,7 +165,7 @@ public class OnboardingController {
         if (username != null && !username.trim().isEmpty() && playerRepository != null) {
             Optional<User> userOpt = userRepository.findByUsername(username.trim());
             if (userOpt.isPresent()) {
-                Optional<com.yisy.modules.doramcu.model.players.Player> playerOpt = playerRepository.findByUser(userOpt.get());
+                Optional<com.yisy.modules.doramcu.model.players.Players.Player> playerOpt = playerRepository.findByUser(userOpt.get());
                 if (playerOpt.isPresent()) {
                     Long playerId = playerOpt.get().getId();
                     config.put("playerId", playerId);
@@ -410,7 +405,7 @@ public class OnboardingController {
         if (playerService != null && playerRepository != null) {
             try {
                 pin = playerService.generateUniquePin();
-                com.yisy.modules.doramcu.model.players.Player player = new com.yisy.modules.doramcu.model.players.Player();
+                com.yisy.modules.doramcu.model.players.Players.Player player = new com.yisy.modules.doramcu.model.players.Players.Player();
                 String email = (String) request.get("email");
                 player.setEmail(email != null ? email : username + "@doramcu.local");
                 player.setLoginPin(pin);
@@ -419,23 +414,23 @@ public class OnboardingController {
                 String govTypeStr = (String) request.get("governmentType");
                 if (govTypeStr != null && !govTypeStr.trim().isEmpty()) {
                     try {
-                        player.setGovernmentType(com.yisy.modules.doramcu.model.players.Player.GovernmentType.valueOf(govTypeStr.toUpperCase()));
+                        player.setGovernmentType(com.yisy.modules.doramcu.model.players.Players.Player.GovernmentType.valueOf(govTypeStr.toUpperCase()));
                     } catch (IllegalArgumentException e) {
-                        player.setGovernmentType(com.yisy.modules.doramcu.model.players.Player.GovernmentType.DEMOCRACY);
+                        player.setGovernmentType(com.yisy.modules.doramcu.model.players.Players.Player.GovernmentType.DEMOCRACY);
                     }
                 } else {
-                    player.setGovernmentType(com.yisy.modules.doramcu.model.players.Player.GovernmentType.DEMOCRACY);
+                    player.setGovernmentType(com.yisy.modules.doramcu.model.players.Players.Player.GovernmentType.DEMOCRACY);
                 }
 
                 String ethosStr = (String) request.get("ethos");
                 if (ethosStr != null && !ethosStr.trim().isEmpty()) {
                     try {
-                        player.setEthos(com.yisy.modules.doramcu.model.players.Player.Ethos.valueOf(ethosStr.toUpperCase()));
+                        player.setEthos(com.yisy.modules.doramcu.model.players.Players.Player.Ethos.valueOf(ethosStr.toUpperCase()));
                     } catch (IllegalArgumentException e) {
-                        player.setEthos(com.yisy.modules.doramcu.model.players.Player.Ethos.MATERIALIST);
+                        player.setEthos(com.yisy.modules.doramcu.model.players.Players.Player.Ethos.MATERIALIST);
                     }
                 } else {
-                    player.setEthos(com.yisy.modules.doramcu.model.players.Player.Ethos.MATERIALIST);
+                    player.setEthos(com.yisy.modules.doramcu.model.players.Players.Player.Ethos.MATERIALIST);
                 }
 
                 player.setUser(user);
@@ -454,7 +449,7 @@ public class OnboardingController {
         if (playerRepository != null) {
             Optional<User> userOpt = userRepository.findByUsername(username.trim());
             if (userOpt.isPresent()) {
-                Optional<com.yisy.modules.doramcu.model.players.Player> playerOpt = playerRepository.findByUser(userOpt.get());
+                Optional<com.yisy.modules.doramcu.model.players.Players.Player> playerOpt = playerRepository.findByUser(userOpt.get());
                 if (playerOpt.isPresent()) {
                     playerId = playerOpt.get().getId();
                 }
@@ -580,9 +575,9 @@ public class OnboardingController {
             if (playerId != null) {
                 Optional<User> userOpt = userRepository.findByUsername(username.trim());
                 if (userOpt.isPresent()) {
-                    Optional<com.yisy.modules.doramcu.model.players.Player> playerOpt = playerRepository.findByUser(userOpt.get());
+                    Optional<com.yisy.modules.doramcu.model.players.Players.Player> playerOpt = playerRepository.findByUser(userOpt.get());
                     if (playerOpt.isPresent()) {
-                        com.yisy.modules.doramcu.model.players.Player player = playerOpt.get();
+                        com.yisy.modules.doramcu.model.players.Players.Player player = playerOpt.get();
                         player.setPromoCodeId(newPromo.getId());
                         playerRepository.save(player);
                         log.info("Onboarding: linked promo code {} to player {}", newPromo.getId(), playerId);
@@ -660,7 +655,7 @@ public class OnboardingController {
         if (playerRepository != null) {
             Optional<User> userOpt = userRepository.findByUsername(username.trim());
             if (userOpt.isPresent()) {
-                Optional<com.yisy.modules.doramcu.model.players.Player> playerOpt = playerRepository.findByUser(userOpt.get());
+                Optional<com.yisy.modules.doramcu.model.players.Players.Player> playerOpt = playerRepository.findByUser(userOpt.get());
                 if (playerOpt.isPresent()) {
                     playerId = playerOpt.get().getId();
                 }
@@ -784,7 +779,7 @@ public class OnboardingController {
         // 1. Delete non-seed Earth 2026 characters (those linked to non-seed players)
         if (earth2026CharacterRepository != null && playerRepository != null) {
             List<Long> seedPlayerIds = new ArrayList<>();
-            for (com.yisy.modules.doramcu.model.players.Player p : playerRepository.findAll()) {
+            for (com.yisy.modules.doramcu.model.players.Players.Player p : playerRepository.findAll()) {
                 if (SEED_PLAYER_EMAILS.contains(p.getEmail())) {
                     seedPlayerIds.add(p.getId());
                 }
@@ -825,8 +820,8 @@ public class OnboardingController {
 
         // 4. Delete non-seed players
         if (playerRepository != null) {
-            List<com.yisy.modules.doramcu.model.players.Player> allPlayers = playerRepository.findAll();
-            for (com.yisy.modules.doramcu.model.players.Player player : allPlayers) {
+            List<com.yisy.modules.doramcu.model.players.Players.Player> allPlayers = playerRepository.findAll();
+            for (com.yisy.modules.doramcu.model.players.Players.Player player : allPlayers) {
                 if (!SEED_PLAYER_EMAILS.contains(player.getEmail())) {
                     playerRepository.delete(player);
                     playersDeleted++;

@@ -274,8 +274,8 @@ Wants=network-online.target
 Type=oneshot
 RemainAfterExit=yes
 WorkingDirectory=/home/pi/doramcu
-ExecStart=/usr/local/bin/docker compose up -d
-ExecStop=/usr/local/bin/docker compose down
+ExecStart=/usr/local/bin/docker compose --profile pi up -d
+ExecStop=/usr/local/bin/docker compose --profile pi down
 Restart=on-failure
 RestartSec=5
 StandardOutput=journal
@@ -318,22 +318,22 @@ start_services() {
     
     cd "$DORAMCU_DIR"
     
-    # Check if docker-compose files exist
-    if [ ! -f "docker-compose.yml" ] || [ ! -f "docker-compose.pi.yml" ]; then
-        log_error "Docker Compose files not found in: $DORAMCU_DIR"
-        log_error "Please ensure docker-compose.yml and docker-compose.pi.yml are present"
+    # Check if docker-compose file exists
+    if [ ! -f "docker-compose.yml" ]; then
+        log_error "Docker Compose file not found in: $DORAMCU_DIR"
+        log_error "Please ensure docker-compose.yml is present"
         return 1
     fi
     
-    # Start services
-    docker compose -f docker-compose.yml -f docker-compose.pi.yml up -d
+    # Start services with Pi profile
+    docker compose --profile pi up -d
     
     if [ $? -eq 0 ]; then
         log_ok "All services started successfully!"
         
         # Show service status
         log_info "Service status:"
-        docker compose -f docker-compose.yml -f docker-compose.pi.yml ps | while read line; do
+        docker compose --profile pi ps | while read line; do
             log_ok "  $line"
         done
     else

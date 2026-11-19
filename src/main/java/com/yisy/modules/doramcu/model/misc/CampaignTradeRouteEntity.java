@@ -12,11 +12,6 @@ import java.time.LocalDateTime;
  * to transport cargo. Routes are owned by corporations and generate income.
  * </p>
  */
-@Entity
-@Table(name = "planet_trade_routes", indexes = {
-    @Index(name = "idx_route_planet", columnList = "planet_id"),
-    @Index(name = "idx_route_corp", columnList = "owner_corporation_id")
-})
 public class CampaignTradeRouteEntity {
 
     @Id

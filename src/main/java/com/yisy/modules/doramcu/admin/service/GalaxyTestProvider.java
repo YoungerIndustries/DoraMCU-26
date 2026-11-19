@@ -2,12 +2,12 @@ package com.yisy.modules.doramcu.admin.service;
 
 import com.yisy.modules.doramcu.admin.model.TestDefinition;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
-import com.yisy.modules.doramcu.model.Galaxy;
-import com.yisy.modules.doramcu.repository.AiCharacterRepository;
-import com.yisy.modules.doramcu.repository.GalaxyRepository;
+import com.yisy.modules.doramcu.model.galaxy.Galaxy;
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
+import com.yisy.modules.doramcu.repository.galaxy.GalaxyRepository;
 import com.yisy.modules.doramcu.service.ai.AiNetworkService;
-import com.yisy.modules.doramcu.service.GalaxyOverseerService;
-import com.yisy.modules.doramcu.service.GalaxyService;
+import com.yisy.modules.doramcu.service.galaxy.GalaxyOverseerService;
+import com.yisy.modules.doramcu.service.galaxy.GalaxyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

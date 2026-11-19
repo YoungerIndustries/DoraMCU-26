@@ -1,9 +1,9 @@
 package com.yisy.modules.doramcu.service;
 
 import com.yisy.modules.doramcu.dto.GameEvent;
-import com.yisy.modules.doramcu.dto.GameStateResponse;
-import com.yisy.modules.doramcu.dto.PlayerSummary;
-import com.yisy.modules.doramcu.dto.FleetDto;
+import com.yisy.modules.doramcu.dto.session.GameStateResponse;
+import com.yisy.modules.doramcu.dto.players.PlayerSummary;
+import com.yisy.modules.doramcu.dto.fleet.FleetDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

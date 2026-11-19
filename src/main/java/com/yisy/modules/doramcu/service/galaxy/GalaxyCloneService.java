@@ -7,7 +7,6 @@ import com.yisy.modules.doramcu.gamecore.MechanicRegistry;
 import com.yisy.modules.doramcu.gamecore.MechanicType;
 import com.yisy.modules.doramcu.hex.GalaxyGenerationConfig;
 import com.yisy.modules.doramcu.hex.GalaxyTemplate;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.repository.galaxy.GalaxyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

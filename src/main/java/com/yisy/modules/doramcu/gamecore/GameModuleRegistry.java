@@ -44,11 +44,11 @@ public class GameModuleRegistry {
     private final Map<GameType, GameModule> modules = new ConcurrentHashMap<>();
 
     @Resource
-    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
+    @SuppressWarnings("SpringAutowiredFieldsWarningInspection_2")
     private MechanicRegistry mechanicRegistry;
 
     @Autowired(required = false)
-    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
+    @SuppressWarnings("SpringAutowiredFieldsWarningInspection_2")
     private ThirdReichRulesEngine thirdReichRulesEngine;
 
     /**

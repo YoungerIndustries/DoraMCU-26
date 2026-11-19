@@ -1,8 +1,8 @@
 package com.yisy.modules.doramcu.controller;
 
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
-import com.yisy.modules.doramcu.service.AiNetworkService;
-import com.yisy.modules.doramcu.service.AiNetworkService.AiNetworkStatus;
+import com.yisy.modules.doramcu.service.ai.AiNetworkService;
+import com.yisy.modules.doramcu.service.ai.AiNetworkService.AiNetworkStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

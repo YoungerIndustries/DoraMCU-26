@@ -24,12 +24,12 @@ public interface TravellerRulesEntryRepository extends JpaRepository<TravellerRu
     @Query("SELECT r FROM TravellerRulesEntry r WHERE r.active = true AND " +
            "(LOWER(r.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(r.text) LIKE LOWER(CONCAT('%', :keyword, '%')))")
-    List<TravellerRulesEntry> searchByKeyword(@Param("keyword") String keyword);
+    List<TravellerRulesEntry> searchByKeyword(@Param("keyword_3") String keyword);
 
     @Query("SELECT r FROM TravellerRulesEntry r WHERE r.active = true AND r.category = :category AND " +
            "(LOWER(r.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(r.text) LIKE LOWER(CONCAT('%', :keyword, '%')))")
-    List<TravellerRulesEntry> searchByKeywordInCategory(@Param("category") String category, @Param("keyword") String keyword);
+    List<TravellerRulesEntry> searchByKeywordInCategory(@Param("keyword_3") String category, @Param("keyword_3") String keyword);
 
     @Query("SELECT DISTINCT r.category FROM TravellerRulesEntry r WHERE r.active = true")
     List<String> findDistinctCategories();

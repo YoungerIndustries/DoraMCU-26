@@ -103,6 +103,10 @@ public class AiAdminOrder {
     @Column(name = "build_contract_id")
     private Long buildContractId;
 
+    private Long productionChainId;
+
+    private boolean chainOrder = false;
+
     /**
      * Current status of the order.
      */
@@ -323,5 +327,21 @@ public class AiAdminOrder {
      */
     public boolean isProductionOrder() {
         return buildContractId != null;
+    }
+
+    public Long getProductionChainId() {
+        return productionChainId;
+    }
+
+    public void setProductionChainId(Long productionChainId) {
+        this.productionChainId = productionChainId;
+    }
+
+    public boolean isChainOrder() {
+        return chainOrder;
+    }
+
+    public void setChainOrder(boolean chainOrder) {
+        this.chainOrder = chainOrder;
     }
 }

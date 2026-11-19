@@ -1,8 +1,5 @@
 package com.yisy.modules.doramcu.dto.wormhole;
 import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-import com.yisy.modules.doramcu.model.galaxy.Wormhole;
-
-
 /**
  * Request body for creating a wormhole pair between two galaxies.
  * <p>

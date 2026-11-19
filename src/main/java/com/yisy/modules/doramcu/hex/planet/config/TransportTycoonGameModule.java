@@ -1,20 +1,9 @@
 package com.yisy.modules.doramcu.hex.planet.config;
 
-import com.yisy.modules.doramcu.gamecore.*;
-import com.yisy.modules.doramcu.gamecore.CampaignService.Campaign;
-import com.yisy.modules.doramcu.gamecore.CraftingService.CraftingRecipe;
-import com.yisy.modules.doramcu.gamecore.CraftingService.CraftingProject;
-import com.yisy.modules.doramcu.gamecore.DungeonRoomService.DungeonRoom;
-import com.yisy.modules.doramcu.gamecore.DungeonRoomService.TrapCheckResult;
-import com.yisy.modules.doramcu.gamecore.DungeonRoomService.TreasureResult;
-import com.yisy.modules.doramcu.gamecore.EncounterService.Encounter;
-import com.yisy.modules.doramcu.gamecore.EncounterService.EncounterResult;
-import com.yisy.modules.doramcu.gamecore.InventoryService.InventoryItem;
 import com.yisy.modules.doramcu.shared.model.RulesEntry;
 import com.yisy.modules.doramcu.shared.service.RulesAwareCombatAdapter;
 import com.yisy.modules.doramcu.shared.service.UnifiedRulesQueryService;
 import com.yisy.modules.doramcu.gamecore.RulesEngine;
-import com.yisy.modules.doramcu.hex.planet.*;
 import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.hex.planet.service.TransportTycoonRulesEngine;
 import com.yisy.modules.doramcu.util.DiceUtil;

@@ -6,7 +6,7 @@ import com.yisy.modules.doramcu.corporation.model.CorporateContract;
 import com.yisy.modules.doramcu.corporation.model.CorporateFinanceTransaction;
 import com.yisy.modules.doramcu.corporation.model.CorporateHiring;
 import com.yisy.modules.doramcu.corporation.model.CorporatePosition;
-import com.yisy.modules.doramcu.model.TravellerContractAssignment;
+import com.yisy.modules.doramcu.model.misc.TravellerContractAssignment;
 import com.yisy.modules.doramcu.corporation.service.AiAssistantService;
 import com.yisy.modules.doramcu.corporation.service.CareerProgressionService;
 import com.yisy.modules.doramcu.corporation.service.CharacterTrainingService;

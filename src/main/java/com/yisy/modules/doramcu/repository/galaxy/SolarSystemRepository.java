@@ -1,12 +1,6 @@
 package com.yisy.modules.doramcu.repository.galaxy;
 import com.yisy.modules.doramcu.hex.PlanetSize;
-import com.yisy.modules.doramcu.model.galaxy.Star;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.model.misc.Planet;
-import com.yisy.modules.doramcu.model.galaxy.SubSector;
-
-
-import com.yisy.modules.doramcu.model.galaxy.SolarSystem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

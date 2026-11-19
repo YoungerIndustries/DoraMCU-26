@@ -1,17 +1,11 @@
 package com.yisy.modules.doramcu.model.galaxy;
 import com.yisy.modules.doramcu.hex.Hex;
-import com.yisy.modules.doramcu.model.galaxy.Star;
 import com.yisy.modules.doramcu.model.galaxy.Asteroid;
 import com.yisy.modules.doramcu.model.galaxy.AsteroidBelt;
-import com.yisy.modules.doramcu.model.galaxy.BlackHole;
 import com.yisy.modules.doramcu.model.galaxy.Comet;
 import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.model.galaxy.GasGiant;
-import com.yisy.modules.doramcu.model.galaxy.Moon;
-import com.yisy.modules.doramcu.model.galaxy.Nebula;
 import com.yisy.modules.doramcu.model.misc.Planet;
-import com.yisy.modules.doramcu.model.galaxy.Sector;
-import com.yisy.modules.doramcu.model.galaxy.SpaceStation;
 import com.yisy.modules.doramcu.model.galaxy.SubSector;
 
 
@@ -28,12 +22,6 @@ import java.util.List;
  * within a sector using 3D coordinates (x, y, z) in a 100x100x100 cube.
  * </p>
  */
-@Entity
-@Table(name = "solar_systems", indexes = {
-    @Index(name = "idx_solar_system_galaxy", columnList = "galaxy_id"),
-    @Index(name = "idx_solar_system_sector", columnList = "sectorRow,sectorCol"),
-    @Index(name = "idx_solar_system_position", columnList = "posX,posY,posZ")
-})
 public class SolarSystem {
 
     @Id

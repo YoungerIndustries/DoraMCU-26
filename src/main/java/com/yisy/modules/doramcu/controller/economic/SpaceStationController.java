@@ -2,7 +2,6 @@ package com.yisy.modules.doramcu.controller.economic;
 
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.hex.SpaceStationContractService;
-import com.yisy.modules.doramcu.hex.SpaceStationContractService.StationModuleContract;
 import com.yisy.modules.doramcu.hex.SpaceStationType;
 import com.yisy.modules.doramcu.hex.model.BuildContract;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;

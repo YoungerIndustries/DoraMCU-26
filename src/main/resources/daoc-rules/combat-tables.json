@@ -1,0 +1,227 @@
+{
+  "combat_tables": {
+    "rvr_scoring": {
+      "description": "Realm Point (RP) scoring table for RvR activities.",
+      "player_kill": {
+        "base_rp": 100,
+        "champion_bonus": 50,
+        "description": "RP awarded for killing an enemy player in the Frontiers."
+      },
+      "keep_capture": {
+        "base_rp": 500,
+        "participant_bonus": 100,
+        "description": "RP awarded for capturing a keep. All participants receive a bonus."
+      },
+      "tower_capture": {
+        "base_rp": 150,
+        "description": "RP awarded for capturing a tower."
+      },
+      "relic_capture": {
+        "base_rp": 1000,
+        "description": "RP awarded for capturing an enemy relic."
+      },
+      "buggane_obelisk": {
+        "base_rp": 200,
+        "solo_only": true,
+        "description": "RP awarded for capturing Buggane's Obelisk. Solo players only."
+      },
+      "front_line_participation": {
+        "base_rp": 50,
+        "per_round": true,
+        "description": "RP awarded for participating in front-line combat each round."
+      }
+    },
+    "champion_points": {
+      "description": "Champion Point table — points earned per RvR kill and abilities unlocked per level.",
+      "points_per_kill": 1,
+      "levels": [
+        {
+          "level": 1,
+          "total_points": 100,
+          "abilities": ["Damage Resistance +5%", "Spell Resistance +5%"]
+        },
+        {
+          "level": 2,
+          "total_points": 300,
+          "abilities": ["Damage Resistance +10%", "Spell Resistance +10%", "Bonus Damage +5%"]
+        },
+        {
+          "level": 3,
+          "total_points": 600,
+          "abilities": ["Damage Resistance +15%", "Spell Resistance +15%", "Bonus Damage +10%", "Champion Aura (minor)"]
+        },
+        {
+          "level": 4,
+          "total_points": 1000,
+          "abilities": ["Damage Resistance +20%", "Spell Resistance +20%", "Bonus Damage +15%", "Champion Aura (moderate)"]
+        },
+        {
+          "level": 5,
+          "total_points": 1500,
+          "abilities": ["Damage Resistance +25%", "Spell Resistance +25%", "Bonus Damage +20%", "Champion Aura (strong)"]
+        },
+        {
+          "level": 6,
+          "total_points": 2100,
+          "abilities": ["Damage Resistance +30%", "Spell Resistance +30%", "Bonus Damage +25%", "Champion Aura (very strong)", "Special Ability I"]
+        },
+        {
+          "level": 7,
+          "total_points": 2800,
+          "abilities": ["Damage Resistance +35%", "Spell Resistance +35%", "Bonus Damage +30%", "Special Ability II"]
+        },
+        {
+          "level": 8,
+          "total_points": 3600,
+          "abilities": ["Damage Resistance +40%", "Spell Resistance +40%", "Bonus Damage +35%", "Special Ability III"]
+        },
+        {
+          "level": 9,
+          "total_points": 4500,
+          "abilities": ["Damage Resistance +45%", "Spell Resistance +45%", "Bonus Damage +40%", "Special Ability IV"]
+        },
+        {
+          "level": 10,
+          "total_points": 5500,
+          "abilities": ["Damage Resistance +50%", "Spell Resistance +50%", "Bonus Damage +50%", "Ultimate Champion Ability"]
+        }
+      ]
+    },
+    "realm_bonuses": {
+      "description": "Bonuses granted by controlling relics and keeps.",
+      "own_relic_bonuses": {
+        "power_relic": {
+          "description": "Bonuses from controlling your own Power Relic.",
+          "effects": [
+            "Damage bonus: +5%",
+            "Spell damage bonus: +5%",
+            "Attack bonus: +3"
+          ]
+        },
+        "strength_relic": {
+          "description": "Bonuses from controlling your own Strength Relic.",
+          "effects": [
+            "Defense bonus: +5%",
+            "Damage resistance: +5%",
+            "Health bonus: +3%"
+          ]
+        }
+      },
+      "enemy_relic_bonuses": {
+        "captured_power_relic": {
+          "description": "Bonuses from capturing an enemy's Power Relic.",
+          "effects": [
+            "Damage bonus: +10%",
+            "Spell damage bonus: +10%",
+            "Attack bonus: +6",
+            "Enemy damage penalty: -5%"
+          ]
+        },
+        "captured_strength_relic": {
+          "description": "Bonuses from capturing an enemy's Strength Relic.",
+          "effects": [
+            "Defense bonus: +10%",
+            "Damage resistance: +10%",
+            "Health bonus: +6%",
+            "Enemy defense penalty: -5%"
+          ]
+        }
+      },
+      "keep_control_bonuses": {
+        "description": "Bonuses scale with the number of keeps controlled.",
+        "keeps": {
+          "1_keep": {"rp_bonus": "+5%", "port_speed": "Normal"},
+          "3_keeps": {"rp_bonus": "+10%", "port_speed": "+10%"},
+          "5_keeps": {"rp_bonus": "+15%", "port_speed": "+20%"},
+          "7_keeps": {"rp_bonus": "+20%", "port_speed": "+30%", "darkness_falls_access": true}
+        }
+      }
+    },
+    "class_role_table": {
+      "description": "Class roles and their effectiveness in RvR combat.",
+      "tanks": {
+        "description": "Classes that hold capture points and absorb damage.",
+        "classes": ["Armsman (Albion)", "Champion (Hibernia)", "Thane (Midgard)", "Paladin (Albion)", "Warden (Hibernia)"],
+        "rvr_effectiveness": "Critical — tanks are essential for keep captures"
+      },
+      "healers": {
+        "description": "Classes that sustain the group through healing.",
+        "classes": ["Cleric (Albion)", "Friar (Albion)", "Healer (Midgard)", "Paladin (Albion)", "Warden (Hibernia)"],
+        "rvr_effectiveness": "Critical — healers keep tanks alive at capture points"
+      },
+      "casters": {
+        "description": "Classes that deal magical damage and provide crowd control.",
+        "classes": ["Wizard (Albion)", "Sorcerer (Albion)", "Runemaster (Midgard)", "Druid (Hibernia)", "Necromancer (Albion)", "Heretic (Albion)", "Cabalist (Albion)", "Spiritmaster (Midgard)", "Bonedancer (Midgard)", "Shaman (Midgard)", "Eldritch (Hibernia)", "Enchanter (Hibernia)", "Mentalist (Hibernia)", "Animist (Hibernia)", "Theurgist (Albion)"],
+        "rvr_effectiveness": "High — casters provide area damage and crowd control"
+      },
+      "melee_dps": {
+        "description": "Classes that deal physical melee damage.",
+        "classes": ["Berserker (Midgard)", "Blademaster (Hibernia)", "Valewalker (Hibernia)", "Mercenary (Albion)", "Hero (Hibernia)", "Savage (Midgard)"],
+        "rvr_effectiveness": "Medium — melee DPS support tanks and pressure enemies"
+      },
+      "ranged_dps": {
+        "description": "Classes that deal physical ranged damage.",
+        "classes": ["Scout (Albion)", "Ranger (Hibernia)", "Hunter (Midgard)", "Reaver (Albion)"],
+        "rvr_effectiveness": "Medium — ranged DPS provide pressure from a distance"
+      },
+      "rogues": {
+        "description": "Classes that use stealth and assassination.",
+        "classes": ["Infiltrator (Albion)", "Nightshade (Hibernia)", "Shadowblade (Midgard)"],
+        "rvr_effectiveness": "Medium — rogues assassinate healers and casters"
+      },
+      "buffers": {
+        "description": "Classes that buff allies with songs and abilities.",
+        "classes": ["Minstrel (Albion)", "Bard (Hibernia)", "Skald (Midgard)"],
+        "rvr_effectiveness": "High — buffers enhance the entire group's performance"
+      },
+      "hybrids": {
+        "description": "Classes that combine multiple roles.",
+        "classes": ["Vampiir (Hibernia)", "Mauler (All Realms)", "Paladin (Albion)"],
+        "rvr_effectiveness": "Variable — hybrids adapt to different situations"
+      }
+    },
+    "weapon_types": {
+      "description": "Weapon types and their damage characteristics.",
+      "weapons": {
+        "slash": {"damage_type": "Slash", "effective_vs": ["Unarmored", "Light armor"], "classes": ["Armsman", "Paladin", "Mercenary", "Champion", "Berserker"]},
+        "thrust": {"damage_type": "Thrust", "effective_vs": ["Medium armor", "Plate armor"], "classes": ["Armsman", "Champion", "Thane"]},
+        "blunt": {"damage_type": "Blunt", "effective_vs": ["Heavy armor", "Plate armor"], "classes": ["Armsman", "Champion", "Savage"]},
+        "polearm": {"damage_type": "Polearm", "effective_vs": ["All armor types", "Ranged units"], "classes": ["Armsman"]},
+        "two_handed": {"damage_type": "Two-Handed", "effective_vs": ["All armor types", "High damage"], "classes": ["Armsman", "Champion", "Berserker"]},
+        "crossbow": {"damage_type": "Crossbow", "effective_vs": ["All armor types", "Ranged"], "classes": ["Armsman", "Reaver"]},
+        "longbow": {"damage_type": "Longbow", "effective_vs": ["All armor types", "Long range"], "classes": ["Scout", "Ranger", "Hunter"]},
+        "staff": {"damage_type": "Staff", "effective_vs": ["Self-defense", "Caster melee"], "classes": ["All casters", "Cleric", "Friar", "Healer"]},
+        "dagger": {"damage_type": "Dagger", "effective_vs": ["Unarmored", "Backstab bonus"], "classes": ["Infiltrator", "Nightshade", "Shadowblade"]},
+        "scythe": {"damage_type": "Scythe", "effective_vs": ["All armor types", "High melee damage"], "classes": ["Valewalker", "Druid"]},
+        "celtic_dual": {"damage_type": "Celtic Dual", "effective_vs": ["All armor types", "Fast attacks"], "classes": ["Blademaster", "Ranger"]},
+        "piercing": {"damage_type": "Piercing", "effective_vs": ["All armor types", "Vampiir magic"], "classes": ["Vampiir", "Nightshade"]},
+        "gloves": {"damage_type": "Gloves", "effective_vs": ["All armor types", "Unarmed"], "classes": ["Savage", "Mauler"]}
+      }
+    },
+    "terrain_bonuses": {
+      "description": "Terrain-based combat bonuses in the Frontiers.",
+      "terrains": {
+        "keep_interior": {"defense_bonus": "+10%", "description": "Inside a keep — defenders have the advantage."},
+        "tower_top": {"ranged_bonus": "+15%", "description": "On top of a tower — ranged attackers have elevated position."},
+        "walls": {"defense_bonus": "+15%", "description": "On the walls — defenders have cover and elevation."},
+        "open_field": {"melee_bonus": "+5%", "description": "Open field — melee combatants have room to maneuver."},
+        "forest": {"stealth_bonus": "+20%", "description": "In forest — stealth classes have better cover."},
+        "swamp": {"slow_penalty": "-10%", "description": "In swamp — all units move slower."},
+        "darkness_falls": {"magic_bonus": "+10%", "description": "In Darkness Falls — magic is more potent."},
+        "ellan_vannin": {"no_bonus": "0%", "description": "On Ellan Vannin — neutral terrain with no bonuses."}
+      }
+    },
+    "mythrian_bonuses": {
+      "description": "Mythrian stat bonuses — special items that increase stat caps.",
+      "stat_types": {
+        "strength_mythrian": {"stat_increase": "+1 to +5", "description": "Increases Strength stat cap."},
+        "dexterity_mythrian": {"stat_increase": "+1 to +5", "description": "Increases Dexterity stat cap."},
+        "constitution_mythrian": {"stat_increase": "+1 to +5", "description": "Increases Constitution stat cap."},
+        "magic_mythrian": {"stat_increase": "+1 to +5", "description": "Increases Magic stat cap."},
+        "willpower_mythrian": {"stat_increase": "+1 to +5", "description": "Increases Willpower stat cap."},
+        "speed_mythrian": {"stat_increase": "+1 to +5", "description": "Increases Speed stat cap."},
+        "luck_mythrian": {"stat_increase": "+1 to +5", "description": "Increases Luck stat cap."}
+      }
+    }
+  }
+}

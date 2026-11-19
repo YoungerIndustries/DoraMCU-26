@@ -12,7 +12,8 @@ import java.util.List;
  * Handles minerals, energy, food, and intelligence budget allocation.
  * </p>
  */
-@Service
+@Service("resourceService_zero_zero_seven_economy_ResourceService")
+    @Service
 public class ResourceService {
 
     private final BondTerritoryRepository territoryRepository;

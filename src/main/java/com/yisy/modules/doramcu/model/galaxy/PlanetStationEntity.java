@@ -16,12 +16,6 @@ import java.time.LocalDateTime;
  * airport, etc.) so it can be recreated from the database.
  * </p>
  */
-@Entity
-@Table(name = "planet_stations", indexes = {
-    @Index(name = "idx_station_planet", columnList = "planet_id"),
-    @Index(name = "idx_station_empire", columnList = "owner_empire_id"),
-    @Index(name = "idx_station_hex", columnList = "hex_x,hex_y,hex_z")
-})
 public class PlanetStationEntity {
 
     @Id

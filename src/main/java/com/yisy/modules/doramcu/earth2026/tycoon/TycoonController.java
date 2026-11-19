@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.earth2026.tycoon;
 
-import com.yisy.modules.doramcu.earth2026.tycoon.CorporationTycoonService.TycoonGameState;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

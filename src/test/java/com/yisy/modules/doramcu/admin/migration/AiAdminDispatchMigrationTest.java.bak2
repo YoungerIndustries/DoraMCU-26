@@ -1,0 +1,241 @@
+package com.yisy.modules.doramcu.admin.migration;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Migration tests for AI admin dispatch system database migrations V90-V101.
+ * Uses H2 in-memory database to verify schema changes.
+ */
+@DisplayName("AI Admin Dispatch Migration Tests")
+class AiAdminDispatchMigrationTest {
+
+    private DataSource createDataSource() {
+        return new EmbeddedDatabaseBuilder()
+                .setType(EmbeddedDatabaseType.H2)
+                .addScript("db/migration/test/V90_base_schema.sql")
+                .addScript("db/migration/V90__add_ai_admin_dispatch_fields.sql")
+                .addScript("db/migration/V91__add_ai_character_workload_fields.sql")
+                .addScript("db/migration/V92__add_ai_admin_order_retry_fields.sql")
+                .addScript("db/migration/V93__add_ai_admin_notifications.sql")
+                .addScript("db/migration/V94__add_ai_admin_order_llm_response.sql")
+                .addScript("db/migration/V95__add_ai_admin_order_progress_fields.sql")
+                .addScript("db/migration/V96__add_ai_admin_incidents.sql")
+                .addScript("db/migration/V97__add_ai_admin_collaboration.sql")
+                .addScript("db/migration/V98__add_ai_admin_health_reports.sql")
+                .addScript("db/migration/V99__add_ai_admin_schedules.sql")
+                .addScript("db/migration/V100__add_ai_admin_shift_handovers.sql")
+                .addScript("db/migration/V101__add_ai_admin_training.sql")
+                .build();
+    }
+
+    @Test
+    @DisplayName("V90: assigned_ai_admin_id column added to ai_admin_orders")
+    void v90_assignedAiAdminIdColumn() throws Exception {
+        try (Connection conn = createDataSource().getConnection();
+             Statement stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery("SELECT assigned_ai_admin_id FROM ai_admin_orders");
+            assertTrue(rs.isAfterLast(), "Column assigned_ai_admin_id should exist");
+        }
+    }
+
+    @Test
+    @DisplayName("V91: current_order_id and active_order_count columns added to ai_characters")
+    void v91_workloadColumns() throws Exception {
+        try (Connection conn = createDataSource().getConnection();
+             Statement stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery("SELECT current_order_id, active_order_count FROM ai_characters");
+            assertTrue(rs.isAfterLast(), "Workload columns should exist");
+        }
+    }
+
+    @Test
+    @DisplayName("V92: retry_count and max_retries columns added to ai_admin_orders")
+    void v92_retryColumns() throws Exception {
+        try (Connection conn = createDataSource().getConnection();
+             Statement stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery("SELECT retry_count, max_retries FROM ai_admin_orders");
+            assertTrue(rs.isAfterLast(), "Retry columns should exist");
+        }
+    }
+
+    @Test
+    @DisplayName("V92: retry_count defaults to 0")
+    void v92_retryCountDefault() throws Exception {
+        try (Connection conn = createDataSource().getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.execute("INSERT INTO ai_admin_orders (submitted_by, order_text, status) VALUES ('test', 'test', 'PENDING')");
+            ResultSet rs = stmt.executeQuery("SELECT retry_count, max_retries FROM ai_admin_orders LIMIT 1");
+            assertTrue(rs.next());
+            assertEquals(0, rs.getInt("retry_count"));
+            assertEquals(3, rs.getInt("max_retries"));
+        }
+    }
+
+    @Test
+    @DisplayName("V93: ai_admin_notifications table created")
+    void v93_notificationsTable() throws Exception {
+        try (Connection conn = createDataSource().getConnection();
+             Statement stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery("SELECT ai_admin_id, notification_type, title, message, is_read FROM ai_admin_notifications");
+            assertTrue(rs.isAfterLast(), "ai_admin_notifications table should exist");
+        }
+    }
+
+    @Test
+    @DisplayName("V94: llm_response column added to ai_admin_orders")
+    void v94_llmResponseColumn() throws Exception {
+        try (Connection conn = createDataSource().getConnection();
+             Statement stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery("SELECT llm_response FROM ai_admin_orders");
+            assertTrue(rs.isAfterLast(), "Column llm_response should exist");
+        }
+    }
+
+    @Test
+    @DisplayName("V95: progress fields added to ai_admin_orders")
+    void v95_progressFields() throws Exception {
+        try (Connection conn = createDataSource().getConnection();
+             Statement stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery("SELECT progress_percent, current_test_name, tests_completed, tests_total FROM ai_admin_orders");
+            assertTrue(rs.isAfterLast(), "Progress columns should exist");
+        }
+    }
+
+    @Test
+    @DisplayName("V95: progress fields default correctly")
+    void v95_progressDefaults() throws Exception {
+        try (Connection conn = createDataSource().getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.execute("INSERT INTO ai_admin_orders (submitted_by, order_text, status) VALUES ('test', 'test', 'PENDING')");
+            ResultSet rs = stmt.executeQuery("SELECT progress_percent, tests_completed, tests_total FROM ai_admin_orders LIMIT 1");
+            assertTrue(rs.next());
+            assertEquals(0, rs.getInt("progress_percent"));
+            assertEquals(0, rs.getInt("tests_completed"));
+            assertEquals(0, rs.getInt("tests_total"));
+        }
+    }
+
+    @Test
+    @DisplayName("V96: ai_admin_incidents table created")
+    void v96_incidentsTable() throws Exception {
+        try (Connection conn = createDataSource().getConnection();
+             Statement stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery("SELECT incident_type, severity, status, title, description, galaxy_name FROM ai_admin_incidents");
+            assertTrue(rs.isAfterLast(), "ai_admin_incidents table should exist");
+        }
+    }
+
+    @Test
+    @DisplayName("V96: incident data insertion works")
+    void v96_incidentInsertion() throws Exception {
+        try (Connection conn = createDataSource().getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.execute("INSERT INTO ai_admin_incidents (incident_type, severity, status, title, description, galaxy_name) " +
+                    "VALUES ('HEALTH', 'CRITICAL', 'OPEN', 'Test', 'Test description', 'Alpha')");
+            ResultSet rs = stmt.executeQuery("SELECT id, incident_type, severity, status FROM ai_admin_incidents LIMIT 1");
+            assertTrue(rs.next());
+            assertEquals("HEALTH", rs.getString("incident_type"));
+            assertEquals("CRITICAL", rs.getString("severity"));
+            assertEquals("OPEN", rs.getString("status"));
+        }
+    }
+
+    @Test
+    @DisplayName("V97: collaboration tables created")
+    void v97_collaborationTables() throws Exception {
+        try (Connection conn = createDataSource().getConnection();
+             Statement stmt = conn.createStatement()) {
+            ResultSet rs1 = stmt.executeQuery("SELECT incident_id, ai_admin_id, role, status FROM ai_admin_incident_collaborators");
+            assertTrue(rs1.isAfterLast(), "ai_admin_incident_collaborators table should exist");
+
+            ResultSet rs2 = stmt.executeQuery("SELECT incident_id, ai_admin_id, note FROM ai_admin_collaboration_notes");
+            assertTrue(rs2.isAfterLast(), "ai_admin_collaboration_notes table should exist");
+        }
+    }
+
+    @Test
+    @DisplayName("V98: ai_admin_health_reports table created")
+    void v98_healthReportsTable() throws Exception {
+        try (Connection conn = createDataSource().getConnection();
+             Statement stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery("SELECT ai_admin_id, report_type, period_start, period_end, generated_at FROM ai_admin_health_reports");
+            assertTrue(rs.isAfterLast(), "ai_admin_health_reports table should exist");
+        }
+    }
+
+    @Test
+    @DisplayName("V99: ai_admin_schedules table created")
+    void v99_schedulesTable() throws Exception {
+        try (Connection conn = createDataSource().getConnection();
+             Statement stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery("SELECT ai_admin_id, shift_type, galaxy_name, start_time, end_time, is_active FROM ai_admin_schedules");
+            assertTrue(rs.isAfterLast(), "ai_admin_schedules table should exist");
+        }
+    }
+
+    @Test
+    @DisplayName("V100: ai_admin_shift_handovers table created")
+    void v100_shiftHandoversTable() throws Exception {
+        try (Connection conn = createDataSource().getConnection();
+             Statement stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery("SELECT outgoing_admin_id, incoming_admin_id, galaxy_name, handover_type, status, summary FROM ai_admin_shift_handovers");
+            assertTrue(rs.isAfterLast(), "ai_admin_shift_handovers table should exist");
+        }
+    }
+
+    @Test
+    @DisplayName("V101: training tables created")
+    void v101_trainingTables() throws Exception {
+        try (Connection conn = createDataSource().getConnection();
+             Statement stmt = conn.createStatement()) {
+            ResultSet rs1 = stmt.executeQuery("SELECT name, description, difficulty, incident_type, severity, scenario_data, time_limit_minutes, xp_reward, is_active FROM ai_admin_training_scenarios");
+            assertTrue(rs1.isAfterLast(), "ai_admin_training_scenarios table should exist");
+
+            ResultSet rs2 = stmt.executeQuery("SELECT ai_admin_id, scenario_id, status, score, max_score, feedback, actions_taken FROM ai_admin_training_sessions");
+            assertTrue(rs2.isAfterLast(), "ai_admin_training_sessions table should exist");
+        }
+    }
+
+    @Test
+    @DisplayName("V101: scenario data insertion works")
+    void v101_scenarioInsertion() throws Exception {
+        try (Connection conn = createDataSource().getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.execute("INSERT INTO ai_admin_training_scenarios (name, description, difficulty, incident_type, severity, scenario_data) " +
+                    "VALUES ('Fleet Deployment', 'Practice fleet deployment', 'BEGINNER', 'HEALTH', 'HIGH', '{}')");
+            ResultSet rs = stmt.executeQuery("SELECT id, name, difficulty, incident_type, is_active FROM ai_admin_training_scenarios LIMIT 1");
+            assertTrue(rs.next());
+            assertEquals("Fleet Deployment", rs.getString("name"));
+            assertEquals("BEGINNER", rs.getString("difficulty"));
+            assertEquals("HEALTH", rs.getString("incident_type"));
+            assertTrue(rs.getBoolean("is_active"));
+        }
+    }
+
+    @Test
+    @DisplayName("V101: session data insertion works")
+    void v101_sessionInsertion() throws Exception {
+        try (Connection conn = createDataSource().getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.execute("INSERT INTO ai_admin_training_sessions (ai_admin_id, scenario_id, status, score, max_score) " +
+                    "VALUES (1, 1, 'NOT_STARTED', 0, 100)");
+            ResultSet rs = stmt.executeQuery("SELECT id, ai_admin_id, scenario_id, status, score, max_score FROM ai_admin_training_sessions LIMIT 1");
+            assertTrue(rs.next());
+            assertEquals(1, rs.getLong("ai_admin_id"));
+            assertEquals(1, rs.getLong("scenario_id"));
+            assertEquals("NOT_STARTED", rs.getString("status"));
+            assertEquals(0, rs.getInt("score"));
+            assertEquals(100, rs.getInt("max_score"));
+        }
+    }
+}

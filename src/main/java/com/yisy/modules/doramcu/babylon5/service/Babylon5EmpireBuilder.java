@@ -3,8 +3,7 @@ import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.babylon5.model.B5Location;
 import com.yisy.modules.doramcu.babylon5.model.B5Race;
-import com.yisy.modules.doramcu.hex.*;
-import com.yisy.modules.doramcu.service.AiEntityRegistrationService;
+import com.yisy.modules.doramcu.service.ai.AiEntityRegistrationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

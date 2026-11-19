@@ -1,9 +1,6 @@
 package com.yisy.modules.doramcu.sfb.service;
 import org.springframework.stereotype.Service;
 
-import com.yisy.modules.doramcu.sfb.service.SfbDiplomacyService.*;
-import com.yisy.modules.doramcu.sfb.service.SfbEconomyService.*;
-
 import java.util.*;
 import java.util.stream.Collectors;
 

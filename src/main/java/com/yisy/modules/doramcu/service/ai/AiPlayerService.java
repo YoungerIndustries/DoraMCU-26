@@ -7,14 +7,11 @@ import com.yisy.modules.doramcu.ai.DynamicAiPersonality;
 import com.yisy.modules.doramcu.hex.Hex3D;
 import com.yisy.modules.doramcu.dto.ship_design.BuildShipRequest;
 import com.yisy.modules.doramcu.dto.battle.EngageCombatRequest;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.service.session.GameSessionService;
 import com.yisy.modules.doramcu.dto.session.GameStateResponse;
 import com.yisy.modules.doramcu.dto.session.JoinSessionResponse;
 import com.yisy.modules.doramcu.dto.fleet.MoveFleetRequest;
 import com.yisy.modules.doramcu.dto.players.PlayerSummary;
-import com.yisy.modules.doramcu.model.galaxy.SpaceStation;
-import com.yisy.modules.doramcu.model.galaxy.SubSector;
 import com.yisy.modules.doramcu.dto.galaxy.SubSectorInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;

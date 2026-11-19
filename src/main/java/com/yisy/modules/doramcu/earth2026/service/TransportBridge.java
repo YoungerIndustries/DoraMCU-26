@@ -5,7 +5,6 @@ import com.yisy.modules.doramcu.earth2026.repository.Earth2026TransportRouteRepo
 import com.yisy.modules.doramcu.earth2026.repository.YoungerOfficeRepository;
 import com.yisy.modules.doramcu.event.GalaxyEventService;
 import com.yisy.modules.doramcu.event.GalaxyEventType;
-import com.yisy.modules.doramcu.hex.planet.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

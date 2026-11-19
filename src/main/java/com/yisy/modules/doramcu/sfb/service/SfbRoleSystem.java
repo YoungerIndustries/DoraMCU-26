@@ -2,8 +2,6 @@ package com.yisy.modules.doramcu.sfb.service;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
 import com.yisy.modules.doramcu.sfb.dto.SfbCharacterModifiers;
-import com.yisy.modules.doramcu.sfb.model.*;
-
 import java.util.*;
 
 /**

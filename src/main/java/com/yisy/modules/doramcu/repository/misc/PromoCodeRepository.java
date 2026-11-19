@@ -1,7 +1,4 @@
 package com.yisy.modules.doramcu.repository.misc;
-import com.yisy.modules.doramcu.model.players.Player;
-
-
 import com.yisy.modules.doramcu.model.misc.PromoCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

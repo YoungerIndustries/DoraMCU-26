@@ -1,8 +1,4 @@
 package com.yisy.modules.doramcu.controller.wormhole;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-import com.yisy.modules.doramcu.model.galaxy.Wormhole;
-
-
 import com.yisy.modules.doramcu.dto.wormhole.WormholeConnectionDto;
 import com.yisy.modules.doramcu.dto.wormhole.WormholeInfoDto;
 import com.yisy.modules.doramcu.dto.wormhole.WormholePairRequest;

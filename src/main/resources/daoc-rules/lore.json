@@ -1,0 +1,418 @@
+{
+  "lore": {
+    "overview": {
+      "description": "Dark Age of Camelot is set in a fantasy world inspired by the legend of King Arthur, immediately following his death. His once-united kingdom has fractured into three warring realms — Albion, Hibernia, and Midgard — each drawing upon distinct mythological traditions. The eternal three-way war (RvRvR) for control of the Frontiers, their keeps, towers, and relics is the central conflict. Beneath it all lies Darkness Falls, a demonic dungeon that rewards the realm dominant in the Frontiers.",
+      "mythology_sources": [
+        "Arthurian Legend (Albion)",
+        "Celtic and Irish Mythology (Hibernia)",
+        "Norse Mythology (Midgard)"
+      ],
+      "core_mechanic": "Realm vs Realm vs Realm (RvRvR) — the only MMORPG with persistent three-way faction warfare"
+    },
+    "the_three_realms": {
+      "description": "After the death of King Arthur, his kingdom shattered into three realms, each claiming legitimacy and seeking to dominate the others. The war is fought across the Frontiers — contested borderlands where keeps, towers, and relics determine the fate of each realm.",
+      "realms": [
+        {
+          "id": "albion",
+          "name": "Albion — The Realm of Knights and Honor",
+          "mythology": "Arthurian Legend",
+          "capital": "Camelot",
+          "description": "Albion represents the kingdom of the late King Arthur — a realm of chivalry, honor, and high magic. Its warriors fight with sword and shield, its wizards command the elements, and its paladins channel divine power. Albion is the most human-like realm, with a strong martial tradition and a deep connection to the legacy of Arthur.",
+          "motto": "Honor, Glory, and the Legacy of Arthur",
+          "colors": "Gold and Blue",
+          "races": [
+            {
+              "name": "Briton",
+              "description": "The standard human race of Albion. Well-rounded and versatile, they represent the common folk of Arthur's kingdom.",
+              "stat_bonus": "Balanced stats"
+            },
+            {
+              "name": "Saracen",
+              "description": "Exotic warriors from the southern lands who joined Albion. They bring unique fighting styles and cultural diversity.",
+              "stat_bonus": "Slight dexterity and charisma bonus"
+            },
+            {
+              "name": "Avalonian",
+              "description": "Descended from the mystical Isle of Avalon, where Arthur was taken after his final battle. They possess an innate affinity for magic.",
+              "stat_bonus": "Magic and intelligence bonus"
+            },
+            {
+              "name": "Highlander",
+              "description": "Fierce warriors from the northern highlands. Hardy and resilient, they excel in combat and endurance.",
+              "stat_bonus": "Strength and stamina bonus"
+            },
+            {
+              "name": "Inconnu",
+              "description": "Mysterious beings from the Otherworld who chose to serve Albion. They possess supernatural abilities and an eerie presence.",
+              "stat_bonus": "Magic and stealth bonus"
+            },
+            {
+              "name": "Half-Ogre",
+              "description": "Half-human, half-ogre hybrids. Massive and powerful, they serve as the heavy infantry of Albion.",
+              "stat_bonus": "Strength and constitution bonus"
+            },
+            {
+              "name": "Minotaur",
+              "description": "Bull-headed humanoids introduced in the Labyrinth of the Minotaur expansion. The Albion Minotaur carries the banner of chivalry.",
+              "stat_bonus": "Strength and melee bonus"
+            }
+          ],
+          "classes": [
+            {"name": "Armsman", "role": "Tank", "description": "Heavy melee warrior who can use almost any weapon type, including polearms. One of the few Albion classes without magic."},
+            {"name": "Cabalist", "role": "Caster", "description": "Spirit magic users who manipulate matter, body destruction, essence manipulation, spirit animation, and vivification."},
+            {"name": "Cleric", "role": "Healer", "description": "Divine healers who wield rejuvenation, enhancements, and smiting spells. Can use staff weapons."},
+            {"name": "Friar", "role": "Healer", "description": "Staff-wielding healers similar to Clerics but with different spell specializations in rejuvenation and enhancements."},
+            {"name": "Heretic", "role": "Caster", "description": "Dark magic users who twist and dominate the minds and bodies of their enemies."},
+            {"name": "Infiltrator", "role": "Rogue", "description": "Stealth-based assassins who specialize in backstabbing and subterfuge."},
+            {"name": "Mauler", "role": "Hybrid", "description": "Brawling melee fighters with elemental abilities like gravity and magnetism. Shared across all three realms."},
+            {"name": "Mercenary", "role": "Melee", "description": "Versatile warriors who fight with blades and shields, combining offense and defense."},
+            {"name": "Minstrel", "role": "Buffer", "description": "Musical support casters who buff allies with songs and provide crowd control."},
+            {"name": "Necromancer", "role": "Caster", "description": "Dark spellcasters who raise the dead and wield necromantic powers."},
+            {"name": "Paladin", "role": "Holy Warrior", "description": "Divine warriors who combine heavy melee combat with healing and smiting spells. Iconic Albion class."},
+            {"name": "Reaver", "role": "Ranged Melee", "description": "Ranged physical damage dealers who use crossbows and throwing weapons."},
+            {"name": "Scout", "role": "Ranger", "description": "Longbow-proficient rangers who excel at ranged combat and tracking."},
+            {"name": "Sorcerer", "role": "Caster", "description": "Elemental spellcasters who specialize in air, ice, and earth magic, summoning elemental pets."},
+            {"name": "Theurgist", "role": "Caster", "description": "Divine magic users who channel the power of the gods through prayer and ritual."},
+            {"name": "Wizard", "role": "Caster", "description": "High-damage elemental spellcasters specializing in fire and ice. Iconic Albion class with devastating nukes."}
+          ],
+          "key_locations": [
+            {"name": "Camelot", "type": "Capital", "description": "The legendary capital of King Arthur, seat of Albion's power."},
+            {"name": "Avalon Marsh", "type": "Zone", "description": "Mystical marshlands connected to the Isle of Avalon."},
+            {"name": "Stonehenge", "type": "Landmark", "description": "Ancient magical site in the Salisbury Plains, a source of arcane power."},
+            {"name": "Salisbury Plains", "type": "Zone", "description": "Open plains that serve as Albion's heartland."},
+            {"name": "Camelot Hills", "type": "Zone", "description": "Hilly region near Camelot with portal access to Darkness Falls."},
+            {"name": "Hadrian's Wall", "type": "Frontier", "description": "Albion's front line in the Frontiers, named after the ancient Roman fortification."}
+          ],
+          "relics": [
+            {"name": "Excalibur", "type": "Power Relic", "description": "The legendary sword of King Arthur, source of Albion's magical power."},
+            {"name": "The Round Table", "type": "Strength Relic", "description": "The great table of Arthur's knights, symbol of unity and martial strength."}
+          ]
+        },
+        {
+          "id": "hibernia",
+          "name": "Hibernia — The Realm of Nature and Magic",
+          "mythology": "Celtic and Irish Mythology",
+          "capital": "Tir Na Nog",
+          "description": "Hibernia is the land of forest and magic, closest to nature of all the realms. Its people live in harmony with the natural world, drawing power from the earth, the Otherworld, and primal magic. Hibernians are the most magically inclined of all realms — almost all their classes support some form of spellcasting.",
+          "motto": "Nature, Magic, and the Otherworld",
+          "colors": "Green and Gold",
+          "races": [
+            {
+              "name": "Celt",
+              "description": "Human Celts who demonstrate a profound affinity with nature. The backbone of Hibernian society.",
+              "stat_bonus": "Nature magic affinity"
+            },
+            {
+              "name": "Lurikeen",
+              "description": "Small, quick folk — Hibernia's answer to halflings. They show aptitude for spellcasting and dexterous fighting.",
+              "stat_bonus": "Dexterity and magic bonus"
+            },
+            {
+              "name": "Firbolg",
+              "description": "Almost-giant nature worshippers who combine nature worship with practical magic and arms skills.",
+              "stat_bonus": "Strength and nature magic bonus"
+            },
+            {
+              "name": "Elf",
+              "description": "Beautiful, tall, thin humanoids who specialize in all forms of magical spellcasting and have the ability to bear arms.",
+              "stat_bonus": "Magic and archery bonus"
+            },
+            {
+              "name": "Sylvan",
+              "description": "Sleek, magical wood-like beings who harness the power of primal magic and the forest.",
+              "stat_bonus": "Primal magic and stealth bonus"
+            },
+            {
+              "name": "Shar",
+              "description": "Dark, shadowy beings from the Otherworld. Mysterious and powerful, they wield forbidden magic.",
+              "stat_bonus": "Dark magic and charisma bonus"
+            },
+            {
+              "name": "Minotaur",
+              "description": "The Hibernian Minotaur carries the banner of nature and the wild, a fierce warrior of the forest.",
+              "stat_bonus": "Strength and nature bonus"
+            }
+          ],
+          "classes": [
+            {"name": "Animist", "role": "Caster", "description": "Plant-affinity spellcasters who can animate plant life to devastate enemies."},
+            {"name": "Banshee", "role": "Caster", "description": "Sound-based magic users whose power comes from their voice. Female-only class."},
+            {"name": "Bard", "role": "Buffer", "description": "Musical support casters who buff allies with songs and provide crowd control."},
+            {"name": "Blademaster", "role": "Melee", "description": "Dual-wielding melee fighters who use Celtic dual weapons with devastating speed."},
+            {"name": "Champion", "role": "Tank", "description": "Heavy melee tanks with no magic. Can use all weapons and heavy armor. Iconic Hibernian class."},
+            {"name": "Druid", "role": "Caster", "description": "Nature spellcasters who wield the power of the forest, healing and destruction alike."},
+            {"name": "Eldritch", "role": "Caster", "description": "Otherworldly magic users who draw power from beyond the veil."},
+            {"name": "Enchanter", "role": "Caster", "description": "Spellcasters who specialize in enchantment and illusion magic."},
+            {"name": "Hero", "role": "Melee", "description": "Versatile melee warriors who combine strength with tactical prowess."},
+            {"name": "Mauler", "role": "Hybrid", "description": "Brawling melee fighters with elemental abilities. Shared across all three realms."},
+            {"name": "Mentalist", "role": "Caster", "description": "Mind magic spellcasters who can also heal. They manipulate thoughts and emotions."},
+            {"name": "Nightshade", "role": "Rogue", "description": "Stealth-based rogues who backstab and wield dark magic."},
+            {"name": "Ranger", "role": "Ranger", "description": "Archers of Hibernia with magical spells and dual-wielding capability in close combat."},
+            {"name": "Valewalker", "role": "Melee", "description": "Scythe-wielding melee DPS. Glass cannon — high damage but fragile."},
+            {"name": "Vampiir", "role": "Hybrid", "description": "Vampire fighters who cast vampiric magic with one hand while wielding a piercing weapon with the other."},
+            {"name": "Warden", "role": "Tank", "description": "Nature-attuned defenders who protect allies with regrowth and nurture spells."}
+          ],
+          "key_locations": [
+            {"name": "Tir Na Nog", "type": "Capital", "description": "The mythical Land of Eternal Youth, capital of Hibernia."},
+            {"name": "Valley of Bri Leith", "type": "Zone", "description": "Enchanted valley from Irish mythology, a place of beauty and danger."},
+            {"name": "Lough Gur", "type": "Landmark", "description": "Ancient lake with deep magical significance."},
+            {"name": "Connacht", "type": "Zone", "description": "One of the ancient provinces of Ireland, rich in history and magic."},
+            {"name": "Emain Macha", "type": "Frontier", "description": "Hibernia's front line in the Frontiers, named after the ancient capital of the Ulster kings."}
+          ],
+          "relics": [
+            {"name": "The Spear of Lugh", "type": "Power Relic", "description": "The legendary weapon of the Celtic god Lugh, source of Hibernia's magical power."},
+            {"name": "The Cauldron of Dagda", "type": "Strength Relic", "description": "The magical cauldron of the Celtic god Dagda, from which none shall depart unsatisfied."}
+          ]
+        },
+        {
+          "id": "midgard",
+          "name": "Midgard — The Realm of Norse Might",
+          "mythology": "Norse Mythology",
+          "capital": "Jordheim",
+          "description": "Midgard is the land of trolls and giants, a harsh and unforgiving realm where only the strong survive. Its people draw power from the ancient Norse gods — Odin, Thor, and Freyja. They are warriors, shamans, and rune-masters who fight with brutal efficiency.",
+          "motto": "Strength, Honor, and the Norse Gods",
+          "colors": "Red and Black",
+          "races": [
+            {
+              "name": "Kobold",
+              "description": "Small, cunning creatures who serve as scouts and tricksters. Despite their size, they are fierce fighters.",
+              "stat_bonus": "Stealth and dexterity bonus"
+            },
+            {
+              "name": "Dwarf",
+              "description": "Stout and resilient master craftsmen. They excel at close combat and are renowned for their weapons and armor.",
+              "stat_bonus": "Constitution and crafting bonus"
+            },
+            {
+              "name": "Norseman",
+              "description": "The human race of Midgard. Fierce Viking warriors who call upon the ancient gods for strength.",
+              "stat_bonus": "Strength and melee bonus"
+            },
+            {
+              "name": "Troll",
+              "description": "Massive, powerful beings of the mountains. Slow but devastating in combat, with natural regeneration.",
+              "stat_bonus": "Strength and regeneration bonus"
+            },
+            {
+              "name": "Valkyn",
+              "description": "Female warrior spirits, descendants of the Valkyries. They choose the slain and fight with sword and spell.",
+              "stat_bonus": "Magic and melee bonus"
+            },
+            {
+              "name": "Frostalf",
+              "description": "Ice-dwelling elves adapted to the frozen wastes of Midgard. Masters of cold magic.",
+              "stat_bonus": "Ice magic and cold resistance bonus"
+            },
+            {
+              "name": "Minotaur",
+              "description": "The Midgard Minotaur carries the banner of Norse fury, a brutal warrior of the frozen wastes.",
+              "stat_bonus": "Strength and melee bonus"
+            }
+          ],
+          "classes": [
+            {"name": "Berserker", "role": "Melee", "description": "Frenzied melee warriors who fight with rage and fury. Iconic Midgard class."},
+            {"name": "Bonedancer", "role": "Caster", "description": "Bone and death magic users who dance with the spirits of the dead."},
+            {"name": "Healer", "role": "Healer", "description": "Divine healers who channel the power of the Norse gods to restore the wounded."},
+            {"name": "Hunter", "role": "Ranger", "description": "Ranged specialists who track and hunt their prey with bow and arrow."},
+            {"name": "Mauler", "role": "Hybrid", "description": "Brawling melee fighters with elemental abilities. Shared across all three realms."},
+            {"name": "Runemaster", "role": "Caster", "description": "Rune magic users who inscribe powerful runes to channel the power of the Norse gods. Iconic Midgard class."},
+            {"name": "Savage", "role": "Melee", "description": "Monk-like fighters who use sharp and blunt gloves to beat down enemies. Can wear studded leather."},
+            {"name": "Shadowblade", "role": "Rogue", "description": "Dual-wielding rogues with tricks and stealth abilities."},
+            {"name": "Shaman", "role": "Caster", "description": "Tribal spellcasters with healing and DPS magic. Troll and Kobold tribal casters."},
+            {"name": "Skald", "role": "Buffer", "description": "Musical support casters similar to Bards, who buff allies with Norse songs."},
+            {"name": "Spiritmaster", "role": "Caster", "description": "Summoners who control undead and Norse spirits to aid them in battle."},
+            {"name": "Thane", "role": "Tank", "description": "Heavy melee tanks with offensive lightning-based magic. Iconic Midgard class."}
+          ],
+          "key_locations": [
+            {"name": "Jordheim", "type": "Capital", "description": "The home of the Norse gods, capital of Midgard."},
+            {"name": "Myrkwood Forest", "type": "Zone", "description": "Dark and dangerous forest, home to trolls and other creatures."},
+            {"name": "Vanern Swamp", "type": "Zone", "description": "Treacherous swamplands filled with hazards and enemies."},
+            {"name": "Muspelheim", "type": "Zone", "description": "The land of fire, inspired by the Norse realm of fire giants."},
+            {"name": "Odin's Gate", "type": "Frontier", "description": "Midgard's front line in the Frontiers, named after the Allfather himself."}
+          ],
+          "relics": [
+            {"name": "Mjolnir", "type": "Power Relic", "description": "The legendary hammer of Thor, source of Midgard's divine power."},
+            {"name": "Gungnir", "type": "Strength Relic", "description": "The spear of Odin, which never misses its mark. Symbol of Midgard's martial might."}
+          ]
+        }
+      ]
+    },
+    "the_frontiers": {
+      "description": "The Frontiers are the contested borderlands between the three realms, where the eternal war is fought. They consist of keeps, towers, relics, and ruined keeps spread across three frontier zones — one for each realm. Control of the Frontiers determines access to Darkness Falls and provides realm-wide bonuses.",
+      "frontier_zones": [
+        {
+          "name": "Hadrian's Wall",
+          "realm": "Albion",
+          "keeps": [
+            {"name": "Caer Renaris", "towers": 2, "description": "Key Albion keep with reduced towers."},
+            {"name": "Caer Hurbury", "towers": 2, "description": "Key Albion keep with reduced towers."},
+            {"name": "Caer Boldiam", "towers": 3, "description": "Albion keep with three towers."},
+            {"name": "Caer Sursbrooke", "towers": 3, "description": "Albion keep with three towers."},
+            {"name": "Caer Erasleigh", "towers": 3, "description": "Marshy Albion keep near Caer Benowyc."},
+            {"name": "Caer Benowyc", "towers": 2, "description": "Island keep on the westerly sea's borders."},
+            {"name": "Caer Berkstead", "towers": 3, "description": "Albion keep near Folley Lake."}
+          ],
+          "ruined_keeps": ["Caer Benowyc", "Caer Berkstead", "Caer Erasleigh"]
+        },
+        {
+          "name": "Emain Macha",
+          "realm": "Hibernia",
+          "keeps": [
+            {"name": "Dun Ailinne", "towers": 2, "description": "Key Hibernia keep with reduced towers."},
+            {"name": "Dun Scathaig", "towers": 2, "description": "Key Hibernia keep with reduced towers."},
+            {"name": "Dun Bolg", "towers": 3, "description": "Hibernia keep near Moydruim Castle."},
+            {"name": "Dun Crauchon", "towers": 2, "description": "Hibernia keep with reduced towers."},
+            {"name": "Dun Crimthainn", "towers": 3, "description": "Hibernia keep with three towers."},
+            {"name": "Dun da Behnn", "towers": 3, "description": "Hibernia keep with three towers."},
+            {"name": "Dun nGed", "towers": 3, "description": "Hibernia keep with three towers."}
+          ],
+          "ruined_keeps": ["Dun Crauchon", "Dun Crimthainn", "Dun Bolg"]
+        },
+        {
+          "name": "Odin's Gate",
+          "realm": "Midgard",
+          "keeps": [
+            {"name": "Fensalir Faste", "towers": 2, "description": "Key Midgard keep with reduced towers."},
+            {"name": "Arvakr Faste", "towers": 2, "description": "Key Midgard keep with reduced towers."},
+            {"name": "Glenlock Faste", "towers": 3, "description": "Midgard keep with three towers."},
+            {"name": "Blendrake Faste", "towers": 3, "description": "Midgard keep with three towers."},
+            {"name": "Hlidskialf Faste", "towers": 3, "description": "Midgard keep with three towers."},
+            {"name": "Bledmeer Faste", "towers": 2, "description": "Coastal Midgard keep protecting river access."},
+            {"name": "Nottmoor Faste", "towers": 3, "description": "Midgard keep with three towers."}
+          ],
+          "ruined_keeps": ["Bledmeer Faste", "Nottmoor Faste", "Blendrake Faste"]
+        }
+      ],
+      "ellan_vannin": {
+        "name": "Ellan Vannin (formerly Agramon Island)",
+        "description": "A central island that connects the frontiers of the three realms. Unlike the rest of the Frontiers, there are no keeps. Any player from any realm can open the gates that border the island. It features large open areas, one milegate per realm, two large captureable docks, and Buggane's Obelisk (a captureable RP bonus that rotates through the frontiers during the day).",
+        "features": [
+          "Central keep",
+          "Captureable docks",
+          "Buggane's Obelisk (RP bonus)",
+          "Milegates per realm",
+          "No keeps — open combat zone"
+        ]
+      },
+      "darkness_falls": {
+        "name": "Darkness Falls",
+        "description": "The dungeon of Darkness Falls is open to whichever realm owns the most outposts in the Frontiers. Realms fight for control to venture into the demonic depths for lucrative rewards. The main boss is Legion. RvR combat is fully supported in the underworld.",
+        "mechanics": [
+          "Only the realm with the most frontier keeps can enter",
+          "When portal control changes, the original realm can still stay until they release on death",
+          "RvR combat is active inside the dungeon",
+          "Each realm has its own entrance wing",
+          "Exit portals near each boss send players back to their home zone or to their portal keep in the opposing frontier"
+        ],
+        "boss": "Legion",
+        "rewards": "Lucrative loot and realm points"
+      }
+    },
+    "rvr_mechanics": {
+      "description": "Realm vs Realm vs Realm (RvRvR) is the core gameplay mechanic. The three realms constantly fight for control of keeps, towers, and relics in the Frontiers.",
+      "keep_capture": {
+        "description": "Keeps are captured by standing inside the keep and holding the capture point. The number of enemy towers controlled affects capture speed.",
+        "tower_mechanic": "Towers surrounding keeps can be captured by enemies. More enemy towers = faster enemy capture of the keep."
+      },
+      "relics": {
+        "description": "Each realm has two relics — one Power and one Strength. Owning your own relics provides realm pride. Capturing enemy relics gives increased rewards and bonuses.",
+        "bonuses": "Bonuses can be viewed in-game by clicking the Bonuses tab on the realm war map."
+      },
+      "realm_points": {
+        "description": "Realm Points (RP) are earned through RvR activities — killing enemies, capturing keeps and towers, and participating in front-line combat. RP can be spent on realm-wide upgrades.",
+        "sources": [
+          "Player kills in RvR",
+          "Keep captures",
+          "Tower captures",
+          "Front-line participation",
+          "Buggane's Obelisk (solo bonus)"
+        ]
+      },
+      "porting": {
+        "description": "Porting to keeps and towers requires them to be under your realm's control. The portal pad timer slows down based on the number of keeps a realm owns.",
+        "restricted_porting": "Porting from relic towns is disabled if certain key keeps are under enemy control: Dun Ailinne, Dun Scathaig, Caer Renaris, Caer Hurbury, Fensalir Faste, and Arvakr Faste."
+      },
+      "champion_system": {
+        "description": "Players can become Champions by spending Champion Points (earned from RvR kills). Champions gain significant stat boosts and special abilities.",
+        "levels": "Champion levels 1-10, with Labyrinth of the Minotaur expansion adding levels 6-10."
+      },
+      "mythrians": {
+        "description": "Mythrians are special items introduced in the Labyrinth expansion. When equipped, they give small bonuses and allow players to increase stat caps.",
+        "slot": "Dedicated Mythrian item slot"
+      },
+      "siegecraft": {
+        "description": "Siegecraft allows players to build siege towers, tents, and other siege equipment to assist in keep captures and defenses.",
+        "items": [
+          "Siege Towers — allow players to bypass walls",
+          "Tents — provide healing and buffing",
+          "Tinderboxes — destroy enemy siege equipment",
+          "Supply Crates — resources for building"
+        ]
+      }
+    },
+    "expansions": [
+      {
+        "name": "New Frontiers",
+        "release": "2003",
+        "description": "Introduced the Frontiers — the contested RvR zones with keeps, towers, and relics. Revolutionized the game with persistent three-way warfare.",
+        "features": ["Frontiers zones", "Keeps and towers", "Relics", "Realm Points"]
+      },
+      {
+        "name": "Treachery of the Gods",
+        "release": "2004",
+        "description": "Added the Champion system, new dungeons, and the gods as playable entities.",
+        "features": ["Champion system", "New dungeons", "God mechanics"]
+      },
+      {
+        "name": "Stormrock Valley",
+        "release": "2005",
+        "description": "Added new zones, dungeons, and the first major content update to the home realms.",
+        "features": ["Stormrock Valley zone", "New dungeons", "Home realm content"]
+      },
+      {
+        "name": "Labyrinth of the Minotaur",
+        "release": "2006",
+        "description": "Introduced the Minotaur race (one variant per realm), the Mauler class, the Labyrinth RvR dungeon, Mythrians, and Champion levels 6-10.",
+        "features": ["Minotaur race", "Mauler class", "Labyrinth dungeon", "Mythrians", "Champion levels 6-10"]
+      },
+      {
+        "name": "New New Frontiers (NNF)",
+        "release": "2007",
+        "description": "Major patch that revamped the layout of keeps and towers, added siege towers and tents to Siegecraft, and rebalanced RvR.",
+        "features": ["Keep and tower layout changes", "Siege towers", "Siege tents", "RvR rebalance"]
+      },
+      {
+        "name": "Pendragon",
+        "release": "2010",
+        "description": "The final retail expansion, adding new content and preparing the game for its eventual transition to free-to-play.",
+        "features": ["New dungeons", "Quality of life improvements", "Free-to-play preparation"]
+      }
+    ],
+    "gods_and_deities": {
+      "description": "Each realm draws power from its pantheon of gods and mythological figures.",
+      "albion_gods": [
+        {"name": "King Arthur", "domain": "Chivalry and Leadership", "description": "The legendary king whose death sparked the war. His legacy inspires Albion's warriors."},
+        {"name": "Merlin", "domain": "Arcane Magic", "description": "The great wizard who served Arthur. Source of Albion's arcane knowledge."},
+        {"name": "Morgana", "domain": "Dark Magic and Undeath", "description": "Arthur's sister, turned enemy. She raises the undead that menace Albion."},
+        {"name": "Guinevere", "domain": "Love and Betrayal", "description": "The betrayed queen, a symbol of the tragedy that led to Arthur's fall."}
+      ],
+      "hibernia_gods": [
+        {"name": "Lugh", "domain": "War and Magic", "description": "The Celtic god of skill and light. His spear is Hibernia's Power Relic."},
+        {"name": "Dagda", "domain": "Abundance and Protection", "description": "The Celtic father god. His cauldron is Hibernia's Strength Relic."},
+        {"name": "The Morrigan", "domain": "War and Fate", "description": "The phantom queen, goddess of war and destiny."},
+        {"name": "Cernunnos", "domain": "Nature and the Wild", "description": "The horned god of the forest and animals."}
+      ],
+      "midgard_gods": [
+        {"name": "Odin", "domain": "Wisdom and War", "description": "The Allfather, chief of the Norse gods. His spear Gungnir is Midgard's Strength Relic."},
+        {"name": "Thor", "domain": "Thunder and Strength", "description": "The god of thunder. His hammer Mjolnir is Midgard's Power Relic."},
+        {"name": "Freyja", "domain": "Love and Battle", "description": "The goddess of love, beauty, and war. Chooser of the slain alongside Odin."},
+        {"name": "Loki", "domain": "Trickery and Chaos", "description": "The trickster god, source of Midgard's shadow magic."}
+      ]
+    },
+    "storyline": {
+      "description": "Each realm has a unique but parallel storyline expanded with retail expansions.",
+      "albion_conflict": "Albion is menaced by undead raised by Morgana, who seeks to destroy the legacy of Arthur from within.",
+      "hibernia_conflict": "Hibernia is torn apart by the Unseelie Court and Siabra, dark fey who corrupt the natural world.",
+      "midgard_conflict": "Midgard is threatened by the treacherous Blodfelag, a cult that seeks to unleash the forces of Ragnarok."
+    }
+  }
+}

@@ -1,7 +1,5 @@
 package com.yisy.modules.doramcu.service.game;
 import com.yisy.modules.doramcu.gamecore.GameType;
-import com.yisy.modules.doramcu.model.galaxy.Star;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.service.misc.WebSearchService;
 
 import org.springframework.stereotype.Service;

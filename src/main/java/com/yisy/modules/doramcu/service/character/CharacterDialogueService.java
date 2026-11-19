@@ -1,11 +1,9 @@
 package com.yisy.modules.doramcu.service.character;
-import com.yisy.modules.doramcu.model.user.User;
 import com.yisy.modules.doramcu.service.voice.VoiceProfileService;
 
 import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.ai.client.AiRestClient;
-import com.yisy.modules.doramcu.ai.client.AiRestClient.SynthesizeResponse;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.eve.model.VoiceProfile;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;

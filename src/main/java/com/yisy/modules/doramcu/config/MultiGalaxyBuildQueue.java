@@ -1,13 +1,12 @@
 package com.yisy.modules.doramcu.config;
 
-import com.yisy.modules.doramcu.gamecore.*;
 import com.yisy.modules.doramcu.hex.Empire;
 import com.yisy.modules.doramcu.hex.GalaxyGenerationConfig;
 import com.yisy.modules.doramcu.hex.GalaxyTemplate;
-import com.yisy.modules.doramcu.model.Galaxy;
-import com.yisy.modules.doramcu.service.GalaxyCloneService;
-import com.yisy.modules.doramcu.service.GalaxyService;
-import com.yisy.modules.doramcu.service.OverlayBuilderRegistry;
+import com.yisy.modules.doramcu.model.galaxy.Galaxy;
+import com.yisy.modules.doramcu.service.galaxy.GalaxyCloneService;
+import com.yisy.modules.doramcu.service.galaxy.GalaxyService;
+import com.yisy.modules.doramcu.service.game.OverlayBuilderRegistry;
 import com.yisy.modules.doramcu.gamemode.GameModeRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

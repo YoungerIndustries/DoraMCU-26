@@ -1,15 +1,5 @@
 package com.yisy.modules.doramcu.service.galaxy;
-import com.yisy.modules.doramcu.model.galaxy.Star;
-import com.yisy.modules.doramcu.model.galaxy.Asteroid;
-import com.yisy.modules.doramcu.model.galaxy.AsteroidBelt;
-import com.yisy.modules.doramcu.model.galaxy.BlackHole;
-import com.yisy.modules.doramcu.model.galaxy.Comet;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-import com.yisy.modules.doramcu.model.galaxy.GasGiant;
-import com.yisy.modules.doramcu.model.galaxy.Moon;
-import com.yisy.modules.doramcu.model.galaxy.Nebula;
 import com.yisy.modules.doramcu.model.misc.Planet;
-import com.yisy.modules.doramcu.model.galaxy.Sector;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 

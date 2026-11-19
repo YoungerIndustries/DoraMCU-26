@@ -3,7 +3,6 @@ package com.yisy.modules.doramcu.earth2026.controller;
 import com.yisy.modules.doramcu.earth2026.model.HqPortal;
 import com.yisy.modules.doramcu.earth2026.service.HqPortalService;
 import com.yisy.modules.doramcu.earth2026.service.PortalTravelService;
-import com.yisy.modules.doramcu.earth2026.service.PortalTravelService.PortalTravelResult;
 import com.yisy.modules.doramcu.gamecore.GameType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

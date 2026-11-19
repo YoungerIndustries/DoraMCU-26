@@ -1,11 +1,10 @@
 package com.yisy.modules.doramcu.traveller;
 import org.springframework.stereotype.Service;
 
-import com.yisy.modules.doramcu.hex.*;
 import com.yisy.modules.doramcu.hex.manager.CharacterLogManager;
 import com.yisy.modules.doramcu.hex.manager.GalaxyManager;
-import com.yisy.modules.doramcu.service.CharacterService;
-import com.yisy.modules.doramcu.service.GameSessionService;
+import com.yisy.modules.doramcu.service.character.CharacterService;
+import com.yisy.modules.doramcu.service.session.GameSessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

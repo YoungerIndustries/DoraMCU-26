@@ -1,12 +1,5 @@
 package com.yisy.modules.doramcu.service.galaxy;
 import com.yisy.modules.doramcu.gamecore.GameType;
-import com.yisy.modules.doramcu.model.galaxy.Star;
-import com.yisy.modules.doramcu.model.galaxy.Asteroid;
-import com.yisy.modules.doramcu.model.galaxy.Comet;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-import com.yisy.modules.doramcu.model.galaxy.Hyperlane;
-import com.yisy.modules.doramcu.model.galaxy.Moon;
-import com.yisy.modules.doramcu.model.galaxy.Nebula;
 import com.yisy.modules.doramcu.model.misc.Planet;
 
 

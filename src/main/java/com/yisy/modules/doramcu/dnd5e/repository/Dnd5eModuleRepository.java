@@ -25,24 +25,24 @@ public interface Dnd5eModuleRepository extends JpaRepository<Dnd5eModule, Long> 
 
     @Query("SELECT m FROM Dnd5eModule m WHERE m.active = true AND " +
            "m.minLevel >= :minLevel AND m.maxLevel <= :maxLevel")
-    List<Dnd5eModule> findByLevelRange(@Param("minLevel") int minLevel, @Param("maxLevel") int maxLevel);
+    List<Dnd5eModule> findByLevelRange(@Param("minLevel_1") int minLevel, @Param("minLevel_1") int maxLevel);
 
     @Query("SELECT m FROM Dnd5eModule m WHERE m.active = true AND " +
            "m.minLevel <= :partyLevel AND m.maxLevel >= :partyLevel")
-    List<Dnd5eModule> findByPartyLevel(@Param("partyLevel") int partyLevel);
+    List<Dnd5eModule> findByPartyLevel(@Param("minLevel_1") int partyLevel);
 
     @Query("SELECT m FROM Dnd5eModule m WHERE m.active = true AND " +
            "m.estimatedSessions >= :minSessions AND m.estimatedSessions <= :maxSessions")
-    List<Dnd5eModule> findBySessionRange(@Param("minSessions") int minSessions, @Param("maxSessions") int maxSessions);
+    List<Dnd5eModule> findBySessionRange(@Param("minLevel_1") int minSessions, @Param("minLevel_1") int maxSessions);
 
     @Query("SELECT m FROM Dnd5eModule m WHERE LOWER(m.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(m.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(m.theme) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-    List<Dnd5eModule> searchByKeyword(@Param("keyword") String keyword);
+    List<Dnd5eModule> searchByKeyword(@Param("minLevel_1") String keyword);
 
     @Query("SELECT m FROM Dnd5eModule m WHERE m.active = true AND " +
            "m.rating >= :minRating")
-    List<Dnd5eModule> findByRating(@Param("minRating") double minRating);
+    List<Dnd5eModule> findByRating(@Param("minLevel_1") double minRating);
 
     @Query("SELECT m FROM Dnd5eModule m WHERE m.active = true AND " +
            "m.playCount > 0 ORDER BY m.playCount DESC")

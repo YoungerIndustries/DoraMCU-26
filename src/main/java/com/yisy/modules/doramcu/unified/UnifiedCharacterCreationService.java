@@ -2,19 +2,17 @@ package com.yisy.modules.doramcu.unified;
 import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.gamecore.GameType;
-import com.yisy.modules.doramcu.hex.*;
-
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
 import com.yisy.modules.doramcu.captainslog.service.CaptainLogService;
 import com.yisy.modules.doramcu.earth2026.model.Earth2026Character;
 import com.yisy.modules.doramcu.earth2026.service.Earth2026Service;
 import com.yisy.modules.doramcu.traveller.TravellerCharacter;
 import com.yisy.modules.doramcu.model.misc.CorporateRole;
-import com.yisy.modules.doramcu.model.Player;
-import com.yisy.modules.doramcu.model.User;
-import com.yisy.modules.doramcu.repository.PlayerRepository;
-import com.yisy.modules.doramcu.repository.UserRepository;
-import com.yisy.modules.doramcu.service.CharacterService;
+import com.yisy.modules.doramcu.model.players.Player;
+import com.yisy.modules.doramcu.model.user.User;
+import com.yisy.modules.doramcu.repository.players.PlayerRepository;
+import com.yisy.modules.doramcu.repository.user.UserRepository;
+import com.yisy.modules.doramcu.service.character.CharacterService;
 import com.yisy.modules.doramcu.unified.TravellerTo4XIntegrationService;
 import com.yisy.modules.doramcu.unified.dto.UnifiedCharacterSummary;
 import org.slf4j.Logger;

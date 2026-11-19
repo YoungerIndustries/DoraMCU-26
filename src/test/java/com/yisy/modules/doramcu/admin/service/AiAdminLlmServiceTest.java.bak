@@ -1,0 +1,333 @@
+package com.yisy.modules.doramcu.admin.service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yisy.modules.doramcu.admin.model.AiAdminIncident;
+import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
+import com.yisy.modules.doramcu.admin.service.AiAdminLlmService.LlmAnalysisResult;
+import com.yisy.modules.doramcu.ai.client.AiRestClient;
+import com.yisy.modules.doramcu.eve.model.AiCharacter;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class AiAdminLlmServiceTest {
+
+    @Mock
+    private AiRestClient aiRestClient;
+
+    private AiAdminLlmService llmService;
+    private AiCharacter admin;
+    private AiAdminIncident incident;
+
+    @BeforeEach
+    void setUp() {
+        llmService = new AiAdminLlmService(aiRestClient, new ObjectMapper());
+
+        admin = new AiCharacter();
+        admin.setId(100L);
+        admin.setName("TestAdmin");
+        admin.setRole("Galaxy Overseer");
+        admin.setEmpireName("Alpha Centauri");
+        admin.setActive(true);
+        admin.setAiAdmin(true);
+        admin.setTotalExperience(500);
+        admin.setLeadershipRating(8);
+
+        incident = new AiAdminIncident();
+        incident.setId(1L);
+        incident.setTitle("Test Incident");
+        incident.setDescription("Test description");
+        incident.setGalaxyName("Alpha Centauri");
+        incident.setSeverity(AiAdminIncident.Severity.HIGH);
+        incident.setIncidentType(AiAdminIncident.IncidentType.HEALTH);
+        incident.setStatus(AiAdminIncident.Status.OPEN);
+        incident.setPriority(7);
+        incident.setCreatedAt(LocalDateTime.now().minusHours(2));
+        incident.setUpdatedAt(LocalDateTime.now().minusHours(2));
+    }
+
+    // ---------------------------------------------------------------
+    // Order Analysis (existing functionality)
+    // ---------------------------------------------------------------
+
+    @Test
+    void analyzeOrder_success() {
+        AiAdminOrder order = new AiAdminOrder();
+        order.setId(1L);
+        order.setOrderText("API test");
+        order.setSubmittedBy("System");
+        order.setStatus(AiAdminOrder.OrderStatus.RUNNING);
+
+        String jsonResponse = "{\"action\":\"INVESTIGATE\",\"reasoning\":\"Need more info\",\"parameters\":{}}";
+        when(aiRestClient.chat(anyString(), anyString(), isNull())).thenReturn(jsonResponse);
+
+        LlmAnalysisResult result = llmService.analyzeOrder(admin, order);
+
+        assertTrue(result.isSuccess());
+        assertEquals("INVESTIGATE", result.getAction());
+        assertEquals("Need more info", result.getReasoning());
+    }
+
+    @Test
+    void analyzeOrder_emptyResponse() {
+        AiAdminOrder order = new AiAdminOrder();
+        order.setId(1L);
+        order.setOrderText("API test");
+        order.setSubmittedBy("System");
+        order.setStatus(AiAdminOrder.OrderStatus.RUNNING);
+
+        when(aiRestClient.chat(anyString(), anyString(), isNull())).thenReturn("");
+
+        LlmAnalysisResult result = llmService.analyzeOrder(admin, order);
+
+        assertFalse(result.isSuccess());
+        assertEquals("UNKNOWN", result.getAction());
+    }
+
+    @Test
+    void analyzeOrder_llmException() {
+        AiAdminOrder order = new AiAdminOrder();
+        order.setId(1L);
+        order.setOrderText("API test");
+        order.setSubmittedBy("System");
+        order.setStatus(AiAdminOrder.OrderStatus.RUNNING);
+
+        when(aiRestClient.chat(anyString(), anyString(), isNull())).thenThrow(new RuntimeException("LLM error"));
+
+        LlmAnalysisResult result = llmService.analyzeOrder(admin, order);
+
+        assertFalse(result.isSuccess());
+        assertEquals("FAILED", result.getAction());
+    }
+
+    @Test
+    void buildSystemPrompt_containsAdminInfo() {
+        String prompt = llmService.buildSystemPrompt(admin);
+
+        assertTrue(prompt.contains("TestAdmin"));
+        assertTrue(prompt.contains("Galaxy Overseer"));
+        assertTrue(prompt.contains("Alpha Centauri"));
+        assertTrue(prompt.contains("500 XP"));
+        assertTrue(prompt.contains("8/10"));
+    }
+
+    @Test
+    void buildUserMessage_containsOrderInfo() {
+        AiAdminOrder order = new AiAdminOrder();
+        order.setId(1L);
+        order.setOrderText("API test");
+        order.setSubmittedBy("System");
+        order.setStatus(AiAdminOrder.OrderStatus.RUNNING);
+
+        String message = llmService.buildUserMessage(order);
+
+        assertTrue(message.contains("API test"));
+        assertTrue(message.contains("System"));
+        assertTrue(message.contains("RUNNING"));
+    }
+
+    // ---------------------------------------------------------------
+    // Response Parsing
+    // ---------------------------------------------------------------
+
+    @Test
+    void parseResponse_validJson() {
+        String response = "{\"action\":\"RESOLVE\",\"reasoning\":\"Fixed\",\"parameters\":{\"key\":\"value\"}}";
+
+        LlmAnalysisResult result = llmService.parseResponse(response);
+
+        assertTrue(result.isSuccess());
+        assertEquals("RESOLVE", result.getAction());
+        assertEquals("Fixed", result.getReasoning());
+        assertEquals("value", result.getParameters().get("key"));
+    }
+
+    @Test
+    void parseResponse_plainText() {
+        String response = "This is plain text response";
+
+        LlmAnalysisResult result = llmService.parseResponse(response);
+
+        assertTrue(result.isSuccess());
+        assertEquals("UNKNOWN", result.getAction());
+        assertEquals("This is plain text response", result.getReasoning());
+    }
+
+    @Test
+    void parseResponse_invalidJson() {
+        String response = "{invalid json}";
+
+        LlmAnalysisResult result = llmService.parseResponse(response);
+
+        assertTrue(result.isSuccess());
+        assertEquals("UNKNOWN", result.getAction());
+    }
+
+    @Test
+    void parseResponse_missingFields() {
+        String response = "{}";
+
+        LlmAnalysisResult result = llmService.parseResponse(response);
+
+        assertTrue(result.isSuccess());
+        assertEquals("UNKNOWN", result.getAction());
+    }
+
+    // ---------------------------------------------------------------
+    // Fallback
+    // ---------------------------------------------------------------
+
+    @Test
+    void fallbackResult() {
+        LlmAnalysisResult result = llmService.fallbackResult("Circuit breaker open");
+
+        assertFalse(result.isSuccess());
+        assertEquals("INVESTIGATE", result.getAction());
+        assertTrue(result.getReasoning().contains("Circuit breaker open"));
+    }
+
+    // ---------------------------------------------------------------
+    // Incident Analysis (new functionality)
+    // ---------------------------------------------------------------
+
+    @Test
+    void analyzeIncident_success() {
+        String jsonResponse = "{\"action\":\"INVESTIGATE\",\"reasoning\":\"Need more info\",\"parameters\":{}}";
+        when(aiRestClient.chat(anyString(), anyString(), isNull())).thenReturn(jsonResponse);
+
+        LlmAnalysisResult result = llmService.analyzeIncident(admin, incident);
+
+        assertTrue(result.isSuccess());
+        assertEquals("INVESTIGATE", result.getAction());
+        assertEquals("Need more info", result.getReasoning());
+    }
+
+    @Test
+    void analyzeIncident_emptyResponse() {
+        when(aiRestClient.chat(anyString(), anyString(), isNull())).thenReturn("");
+
+        LlmAnalysisResult result = llmService.analyzeIncident(admin, incident);
+
+        assertFalse(result.isSuccess());
+        assertEquals("UNKNOWN", result.getAction());
+    }
+
+    @Test
+    void analyzeIncident_llmException() {
+        when(aiRestClient.chat(anyString(), anyString(), isNull())).thenThrow(new RuntimeException("LLM error"));
+
+        LlmAnalysisResult result = llmService.analyzeIncident(admin, incident);
+
+        assertFalse(result.isSuccess());
+        assertEquals("FAILED", result.getAction());
+    }
+
+    @Test
+    void buildIncidentSystemPrompt_containsIncidentInfo() {
+        String prompt = llmService.buildIncidentSystemPrompt(admin, incident);
+
+        assertTrue(prompt.contains("TestAdmin"));
+        assertTrue(prompt.contains("Galaxy Overseer"));
+        assertTrue(prompt.contains("Alpha Centauri"));
+        assertTrue(prompt.contains("HIGH"));
+        assertTrue(prompt.contains("HEALTH"));
+        assertTrue(prompt.contains("7/10"));
+        assertTrue(prompt.contains("INVESTIGATE"));
+        assertTrue(prompt.contains("RESOLVE"));
+        assertTrue(prompt.contains("ESCALATE"));
+        assertTrue(prompt.contains("MONITOR"));
+        assertTrue(prompt.contains("DEPLOY"));
+        assertTrue(prompt.contains("REPAIR"));
+    }
+
+    @Test
+    void buildIncidentUserMessage_containsIncidentInfo() {
+        String message = llmService.buildIncidentUserMessage(incident);
+
+        assertTrue(message.contains("Test Incident"));
+        assertTrue(message.contains("Test description"));
+        assertTrue(message.contains("OPEN"));
+        assertTrue(message.contains("Alpha Centauri"));
+    }
+
+    @Test
+    void buildIncidentUserMessage_withInvestigatorNotes() {
+        incident.setInvestigatorNotes("Previous notes here");
+
+        String message = llmService.buildIncidentUserMessage(incident);
+
+        assertTrue(message.contains("Previous notes here"));
+        assertTrue(message.contains("Previous Investigation Notes"));
+    }
+
+    @Test
+    void buildIncidentUserMessage_withAssignedAdmin() {
+        incident.setAssignedAiAdminId(100L);
+
+        String message = llmService.buildIncidentUserMessage(incident);
+
+        assertTrue(message.contains("Assigned to AI admin ID: 100"));
+    }
+
+    @Test
+    void buildIncidentUserMessage_nullDescription() {
+        incident.setDescription(null);
+
+        String message = llmService.buildIncidentUserMessage(incident);
+
+        assertTrue(message.contains("No description"));
+    }
+
+    // ---------------------------------------------------------------
+    // Edge Cases
+    // ---------------------------------------------------------------
+
+    @Test
+    void buildSystemPrompt_nullRole() {
+        admin.setRole(null);
+
+        String prompt = llmService.buildSystemPrompt(admin);
+
+        assertTrue(prompt.contains("Galaxy Overseer"));
+    }
+
+    @Test
+    void buildSystemPrompt_nullEmpire() {
+        admin.setEmpireName(null);
+
+        String prompt = llmService.buildSystemPrompt(admin);
+
+        assertTrue(prompt.contains("Unknown"));
+    }
+
+    @Test
+    void buildIncidentSystemPrompt_nullRole() {
+        admin.setRole(null);
+
+        String prompt = llmService.buildIncidentSystemPrompt(admin, incident);
+
+        assertTrue(prompt.contains("Galaxy Overseer"));
+    }
+
+    @Test
+    void parseResponse_withParameters() {
+        String response = "{\"action\":\"RESOLVE\",\"reasoning\":\"Fixed\",\"parameters\":{\"resolutionAction\":\"Restart\",\"rootCause\":\"Bug\"}}";
+
+        LlmAnalysisResult result = llmService.parseResponse(response);
+
+        assertTrue(result.isSuccess());
+        assertEquals("RESOLVE", result.getAction());
+        assertEquals("Restart", result.getParameters().get("resolutionAction"));
+        assertEquals("Bug", result.getParameters().get("rootCause"));
+    }
+}

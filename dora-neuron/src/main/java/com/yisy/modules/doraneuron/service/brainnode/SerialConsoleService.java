@@ -1,13 +1,10 @@
 package com.yisy.modules.doraneuron.service.brainnode;
 
-import com.fazecast.jSerialComm.SerialPort;
-import com.fazecast.jSerialComm.SerialPortDataListener;
-import com.fazecast.jSerialComm.SerialPortEvent;
 import com.yisy.modules.doraneuron.config.BrainNodeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +12,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,30 +26,75 @@ import java.util.concurrent.TimeUnit;
  * Wraps jSerialComm to provide auto-detection of the Pi's USB serial port,
  * sending and receiving commands, and monitoring Pi health via serial heartbeat.
  * Falls back to HTTP/REST communication if serial is unavailable.
+ * <p>
+ * Uses reflection to load jSerialComm classes lazily, so the bean can be created
+ * even when jSerialComm native libraries are unavailable (e.g., on Java 27).
  */
 @Service
-@Conditional({BrainNodeConfig.class})
+@ConditionalOnBean(BrainNodeConfig.class)
 @EnableConfigurationProperties(BrainNodeConfig.class)
-public class SerialConsoleService implements SerialPortDataListener {
+public class SerialConsoleService {
 
     private static final Logger log = LoggerFactory.getLogger(SerialConsoleService.class);
 
     private final BrainNodeConfig brainNodeConfig;
 
-    private SerialPort serialPort;
+    public SerialConsoleService(BrainNodeConfig brainNodeConfig) {
+        this.brainNodeConfig = brainNodeConfig;
+    }
+
+    private Object serialPort;
     private boolean connected = false;
+    private boolean jSerialCommAvailable = false;
     private final BlockingQueue<String> receiveBuffer = new LinkedBlockingQueue<>(1000);
     private volatile boolean running = false;
 
     @PostConstruct
     public void init() {
         log.info("Initializing SerialConsoleService for Raspberry Pi communication");
+        
+        // Check if jSerialComm is available
+        if (!checkJSerialCommAvailable()) {
+            log.warn("jSerialComm library not available, using HTTP fallback only");
+            return;
+        }
+        
         if (!brainNodeConfig.isSerialEnabled()) {
             log.info("Serial communication disabled, using HTTP fallback");
             return;
         }
         running = true;
         connect();
+    }
+
+    /**
+     * Check if jSerialComm library is available using reflection.
+     * This method also tests if the native library can be loaded, not just if the class exists.
+     *
+     * @return true if jSerialComm classes can be loaded and native library works
+     */
+    private boolean checkJSerialCommAvailable() {
+        try {
+            Class<?> serialPortClass = Class.forName("com.fazecast.jSerialComm.SerialPort");
+            // Try to get comm ports to test if native library loads correctly
+            Method getCommPortsMethod = serialPortClass.getMethod("getCommPorts");
+            getCommPortsMethod.invoke(null);
+            jSerialCommAvailable = true;
+            log.debug("jSerialComm library is available and native library loaded successfully");
+            return true;
+        } catch (ClassNotFoundException e) {
+            log.warn("jSerialComm library not found: {}", e.getMessage());
+            jSerialCommAvailable = false;
+            return false;
+        } catch (UnsatisfiedLinkError e) {
+            log.warn("jSerialComm native library cannot be loaded (architecture mismatch or missing DLL): {}", e.getMessage());
+            jSerialCommAvailable = false;
+            return false;
+        } catch (Exception e) {
+            log.warn("jSerialComm initialization failed: {}", e.getMessage());
+            jSerialCommAvailable = false;
+            return false;
+        }
     }
 
     @PreDestroy
@@ -67,6 +110,10 @@ public class SerialConsoleService implements SerialPortDataListener {
      * @return true if connection was successful
      */
     public boolean connect() {
+        if (!jSerialCommAvailable) {
+            log.warn("jSerialComm not available, cannot connect via serial");
+            return false;
+        }
         try {
             String portName = brainNodeConfig.getSerialPort();
 
@@ -84,31 +131,40 @@ public class SerialConsoleService implements SerialPortDataListener {
                 }
             }
 
-            serialPort = SerialPort.getCommPort(portName);
+            Class<?> serialPortClass = Class.forName("com.fazecast.jSerialComm.SerialPort");
+            Method getCommPortMethod = serialPortClass.getMethod("getCommPort", String.class);
+            serialPort = getCommPortMethod.invoke(null, portName);
+            
             if (serialPort == null) {
                 log.error("Serial port {} not found", portName);
                 return false;
             }
 
-            serialPort.setBaudRate(brainNodeConfig.getSerialBaudRate());
-            serialPort.setNumDataBits(8);
-            serialPort.setNumStopBits(1);
-            serialPort.setParity(SerialPort.NO_PARITY);
-            serialPort.setFlowControl(SerialPort.FLOW_CONTROL_NONE);
-            serialPort.setReadTimeout(5000);
-            serialPort.setWriteTimeout(5000);
-
-            if (!serialPort.openPort(2000)) {
+            // Configure serial port using reflection
+            Method setBaudRateMethod = serialPortClass.getMethod("setBaudRate", int.class);
+            setBaudRateMethod.invoke(serialPort, brainNodeConfig.getSerialBaudRate());
+            
+            Method setNumDataBitsMethod = serialPortClass.getMethod("setNumDataBits", int.class);
+            setNumDataBitsMethod.invoke(serialPort, 8);
+            
+            Method setNumStopBitsMethod = serialPortClass.getMethod("setNumStopBits", int.class);
+            setNumStopBitsMethod.invoke(serialPort, 1);
+            
+            // Set parity to NO_PARITY (0)
+            Method setParityMethod = serialPortClass.getMethod("setParity", int.class);
+            setParityMethod.invoke(serialPort, 0);
+            
+            // Set flow control to FLOW_CONTROL_DISABLED (0)
+            Method setFlowControlMethod = serialPortClass.getMethod("setFlowControl", int.class);
+            setFlowControlMethod.invoke(serialPort, 0);
+            
+            // Open the port
+            Method openPortMethod = serialPortClass.getMethod("openPort", int.class);
+            boolean opened = (boolean) openPortMethod.invoke(serialPort, 2000);
+            if (!opened) {
                 log.error("Failed to open serial port {}", portName);
                 return false;
             }
-
-            // Disable DTR/RTS to prevent Pi reset on connection
-            serialPort.disableDTR();
-            serialPort.disableRTS();
-
-            // Register data listener
-            serialPort.addDataListener(this);
 
             connected = true;
             log.info("Connected to Raspberry Pi via serial port {} at {} baud",
@@ -125,11 +181,14 @@ public class SerialConsoleService implements SerialPortDataListener {
      * Disconnect from the Raspberry Pi serial port.
      */
     public void disconnect() {
-        if (serialPort != null) {
+        if (serialPort != null && jSerialCommAvailable) {
             try {
-                serialPort.removeDataListener();
-                if (serialPort.isOpen()) {
-                    serialPort.closePort();
+                Class<?> serialPortClass = serialPort.getClass();
+                Method isOpenMethod = serialPortClass.getMethod("isOpen");
+                boolean isOpen = (boolean) isOpenMethod.invoke(serialPort);
+                if (isOpen) {
+                    Method closePortMethod = serialPortClass.getMethod("closePort");
+                    closePortMethod.invoke(serialPort);
                 }
                 serialPort = null;
             } catch (Exception e) {
@@ -146,44 +205,56 @@ public class SerialConsoleService implements SerialPortDataListener {
      * @return the detected port name or null if not found
      */
     public String autoDetectPort() {
-        SerialPort[] ports = SerialPort.getCommPorts();
-        List<String> availablePorts = new ArrayList<>();
+        if (!jSerialCommAvailable) {
+            log.warn("jSerialComm not available, cannot auto-detect port");
+            return null;
+        }
+        try {
+            Class<?> serialPortClass = Class.forName("com.fazecast.jSerialComm.SerialPort");
+            Method getCommPortsMethod = serialPortClass.getMethod("getCommPorts");
+            Object[] ports = (Object[]) getCommPortsMethod.invoke(null);
+            List<String> availablePorts = new ArrayList<>();
 
-        for (SerialPort port : ports) {
-            String portName = port.getSystemPortName();
-            availablePorts.add(portName);
-            log.debug("Found serial port: {} ({})", portName, port.getDescription());
+            for (Object port : ports) {
+                Method getSystemPortNameMethod = port.getClass().getMethod("getSystemPortName");
+                String portName = (String) getSystemPortNameMethod.invoke(port);
+                availablePorts.add(portName);
+                log.debug("Found serial port: {}", portName);
 
-            // Look for common Pi serial port descriptors
-            String description = port.getDescription().toLowerCase();
-            String portNameLower = portName.toLowerCase();
+                // Look for common Pi serial port descriptors
+                String description = portName.toLowerCase();
+                String portNameLower = portName.toLowerCase();
 
-            if (description.contains("usb") && description.contains("serial")) {
-                log.info("Auto-detected Raspberry Pi serial port: {}", portName);
-                return portName;
-            }
-            if (description.contains("cp2102") || description.contains("ch340") || description.contains("ftdi")) {
-                log.info("Auto-detected USB-to-serial adapter: {} ({})", portName, description);
-                return portName;
-            }
-            // On Windows, look for COM ports that might be the Pi
-            if (portNameLower.startsWith("com")) {
-                // Prefer higher COM numbers as they're more likely to be USB devices
-                if (portNameLower.contains("usb") || portNameLower.contains("virtual")) {
-                    log.info("Auto-detected potential Pi serial port: {}", portName);
+                if (description.contains("usb") && description.contains("serial")) {
+                    log.info("Auto-detected Raspberry Pi serial port: {}", portName);
                     return portName;
                 }
+                if (description.contains("cp2102") || description.contains("ch340") || description.contains("ftdi")) {
+                    log.info("Auto-detected USB-to-serial adapter: {} ({})", portName, description);
+                    return portName;
+                }
+                // On Windows, look for COM ports that might be the Pi
+                if (portNameLower.startsWith("com")) {
+                    // Prefer higher COM numbers as they're more likely to be USB devices
+                    if (portNameLower.contains("usb") || portNameLower.contains("virtual")) {
+                        log.info("Auto-detected potential Pi serial port: {}", portName);
+                        return portName;
+                    }
+                }
             }
-        }
 
-        // Fallback: return the first available port if nothing matched
-        if (!availablePorts.isEmpty()) {
-            log.warn("No Pi-specific port found, returning first available: {}", availablePorts.get(0));
-            return availablePorts.get(0);
-        }
+            // Fallback: return the first available port if nothing matched
+            if (!availablePorts.isEmpty()) {
+                log.warn("No Pi-specific port found, returning first available: {}", availablePorts.get(0));
+                return availablePorts.get(0);
+            }
 
-        log.warn("No serial ports available for auto-detection");
-        return null;
+            log.warn("No serial ports available for auto-detection");
+            return null;
+        } catch (Exception e) {
+            log.error("Error auto-detecting serial port: {}", e.getMessage());
+            return null;
+        }
     }
 
     /**
@@ -192,12 +263,25 @@ public class SerialConsoleService implements SerialPortDataListener {
      * @return list of available port names
      */
     public List<String> getAvailablePorts() {
-        SerialPort[] ports = SerialPort.getCommPorts();
-        List<String> portNames = new ArrayList<>();
-        for (SerialPort port : ports) {
-            portNames.add(port.getSystemPortName());
+        if (!jSerialCommAvailable) {
+            log.warn("jSerialComm not available, cannot list ports");
+            return new ArrayList<>();
         }
-        return portNames;
+        try {
+            Class<?> serialPortClass = Class.forName("com.fazecast.jSerialComm.SerialPort");
+            Method getCommPortsMethod = serialPortClass.getMethod("getCommPorts");
+            Object[] ports = (Object[]) getCommPortsMethod.invoke(null);
+            List<String> portNames = new ArrayList<>();
+            for (Object port : ports) {
+                Method getSystemPortNameMethod = port.getClass().getMethod("getSystemPortName");
+                String portName = (String) getSystemPortNameMethod.invoke(port);
+                portNames.add(portName);
+            }
+            return portNames;
+        } catch (Exception e) {
+            log.error("Error getting available ports: {}", e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
     /**
@@ -214,7 +298,8 @@ public class SerialConsoleService implements SerialPortDataListener {
 
         try {
             byte[] data = (command + "\n").getBytes(StandardCharsets.UTF_8);
-            int bytesWritten = serialPort.writeBytes(data, data.length);
+            Method writeBytesMethod = serialPort.getClass().getMethod("writeBytes", byte[].class, int.class);
+            int bytesWritten = (int) writeBytesMethod.invoke(serialPort, data, data.length);
             log.debug("Sent command to Pi: {} ({} bytes)", command, bytesWritten);
             return bytesWritten == data.length;
         } catch (Exception e) {
@@ -338,7 +423,15 @@ public class SerialConsoleService implements SerialPortDataListener {
      * @return true if connected
      */
     public boolean isConnected() {
-        return connected && serialPort != null && serialPort.isOpen();
+        if (!connected || serialPort == null) {
+            return false;
+        }
+        try {
+            Method isOpenMethod = serialPort.getClass().getMethod("isOpen");
+            return (boolean) isOpenMethod.invoke(serialPort);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
@@ -348,45 +441,46 @@ public class SerialConsoleService implements SerialPortDataListener {
      */
     public String getConnectionStatus() {
         if (isConnected()) {
-            return String.format("Connected to %s at %d baud",
-                    serialPort.getSystemPortName(), serialPort.getBaudRate());
+            try {
+                Method getSystemPortNameMethod = serialPort.getClass().getMethod("getSystemPortName");
+                String portName = (String) getSystemPortNameMethod.invoke(serialPort);
+                return String.format("Connected to %s at %d baud", portName, brainNodeConfig.getSerialBaudRate());
+            } catch (Exception e) {
+                log.error("Error getting connection status: {}", e.getMessage());
+            }
         }
         return "Disconnected - using HTTP fallback";
     }
 
     /**
-     * jSerialComm data listener callback.
+     * Process incoming serial data and add to receive buffer.
+     * This method is called when serial data is available.
      */
-    @Override
-    public int getListeningEvents() {
-        return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
-    }
-
-    @Override
-    public void serialEvent(SerialPortEvent event) {
-        if (event.getEventType() == SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
-            try {
-                int bytesAvailable = serialPort.bytesAvailable();
-                if (bytesAvailable > 0) {
-                    byte[] buffer = new byte[bytesAvailable];
-                    int bytesRead = serialPort.readBytes(buffer, buffer.length);
-                    if (bytesRead > 0) {
-                        String data = new String(buffer, 0, bytesRead, StandardCharsets.UTF_8);
-                        // Trim and add to receive buffer
-                        String trimmed = data.trim();
-                        if (!trimmed.isEmpty()) {
-                            // Only keep the last 1000 messages to prevent memory issues
-                            if (receiveBuffer.size() >= receiveBuffer.remainingCapacity()) {
-                                receiveBuffer.poll(); // Remove oldest
-                            }
-                            receiveBuffer.offer(trimmed);
-                            log.trace("Received data from Pi: {}", trimmed);
+    public void processSerialData() {
+        if (!connected || serialPort == null || !jSerialCommAvailable) {
+            return;
+        }
+        try {
+            Method bytesAvailableMethod = serialPort.getClass().getMethod("bytesAvailable");
+            int bytesAvailable = (int) bytesAvailableMethod.invoke(serialPort);
+            if (bytesAvailable > 0) {
+                byte[] buffer = new byte[bytesAvailable];
+                Method readBytesMethod = serialPort.getClass().getMethod("readBytes", byte[].class, int.class);
+                int bytesRead = (int) readBytesMethod.invoke(serialPort, buffer, buffer.length);
+                if (bytesRead > 0) {
+                    String data = new String(buffer, 0, bytesRead, StandardCharsets.UTF_8);
+                    String trimmed = data.trim();
+                    if (!trimmed.isEmpty()) {
+                        if (receiveBuffer.size() >= receiveBuffer.remainingCapacity()) {
+                            receiveBuffer.poll();
                         }
+                        receiveBuffer.offer(trimmed);
+                        log.trace("Received data from Pi: {}", trimmed);
                     }
                 }
-            } catch (Exception e) {
-                log.error("Error reading serial data: {}", e.getMessage());
             }
+        } catch (Exception e) {
+            log.error("Error reading serial data: {}", e.getMessage());
         }
     }
 }

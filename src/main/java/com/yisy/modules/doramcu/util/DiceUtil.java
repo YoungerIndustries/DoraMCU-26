@@ -150,4 +150,30 @@ public final class DiceUtil {
         }
         return ThreadLocalRandom.current().nextInt(size);
     }
+
+    /**
+     * Roll a dice notation string like "2d6", "1d8", "3d10".
+     *
+     * @param notation dice notation string (e.g., "2d6")
+     * @return total roll result
+     */
+    public static int rollDice(String notation) {
+        if (notation == null || notation.isEmpty()) return 0;
+        notation = notation.toLowerCase().trim();
+        int idx = notation.indexOf('d');
+        if (idx < 0) return 0;
+        int count = 1;
+        try {
+            count = Integer.parseInt(notation.substring(0, idx));
+        } catch (NumberFormatException e) {
+            // "d6" means 1d6
+        }
+        int sides;
+        try {
+            sides = Integer.parseInt(notation.substring(idx + 1));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+        return rollNdX(count, sides);
+    }
 }

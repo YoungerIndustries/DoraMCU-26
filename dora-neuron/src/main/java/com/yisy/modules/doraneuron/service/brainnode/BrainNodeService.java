@@ -3,15 +3,18 @@ package com.yisy.modules.doraneuron.service.brainnode;
 import com.yisy.modules.doraneuron.config.BrainNodeConfig;
 import com.yisy.modules.doraneuron.config.NeuronConfig;
 import com.yisy.modules.doraneuron.model.brainnode.BrainNodeStatus;
+import com.yisy.modules.doraneuron.service.DataSyncService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -22,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * and data sync between the Brain Node and the Raspberry Pi.
  */
 @Service
-@Conditional({BrainNodeConfig.class})
+@ConditionalOnBean(BrainNodeConfig.class)
 @EnableConfigurationProperties({BrainNodeConfig.class, NeuronConfig.class})
 public class BrainNodeService {
 
@@ -33,20 +36,24 @@ public class BrainNodeService {
     private final SerialConsoleService serialConsoleService;
     private final BrainNodeStorageService storageService;
     private final BrainNodeAiService aiService;
+    private final DataSyncService dataSyncService;
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
     private volatile boolean piReachable = false;
 
+    @Autowired
     public BrainNodeService(BrainNodeConfig brainNodeConfig,
                             NeuronConfig neuronConfig,
                             SerialConsoleService serialConsoleService,
                             BrainNodeStorageService storageService,
-                            BrainNodeAiService aiService) {
+                            BrainNodeAiService aiService,
+                            @Autowired(required = false) DataSyncService dataSyncService) {
         this.brainNodeConfig = brainNodeConfig;
         this.neuronConfig = neuronConfig;
         this.serialConsoleService = serialConsoleService;
         this.storageService = storageService;
         this.aiService = aiService;
+        this.dataSyncService = dataSyncService;
     }
 
     @PostConstruct
@@ -80,6 +87,14 @@ public class BrainNodeService {
             log.info("Initializing persistent storage...");
             Map<String, Object> storageStats = storageService.getStorageStats();
             log.info("Storage stats: {}", storageStats);
+
+            // Check data sync service status
+            if (dataSyncService != null) {
+                Map<String, Object> syncStats = dataSyncService.getSyncStats();
+                log.info("Data sync stats: {}", syncStats);
+            } else {
+                log.info("DataSyncService not available, sync will use local storage only");
+            }
 
             initialized.set(true);
             log.info("========================================");
@@ -179,7 +194,7 @@ public class BrainNodeService {
      */
     private void handlePiReachable() {
         log.info("Syncing data with Raspberry Pi after reconnection");
-        // Trigger data sync to catch up on any changes
+        triggerSync();
     }
 
     /**
@@ -227,36 +242,90 @@ public class BrainNodeService {
 
     /**
      * Trigger a manual sync with the Pi.
+     * Uses DataSyncService if available, otherwise falls back to local storage sync.
      *
      * @return true if sync was successful
      */
     public boolean triggerSync() {
-        if (!piReachable) {
-            log.warn("Cannot sync: Pi is unreachable");
-            return false;
+        boolean syncSuccess = true;
+
+        // Use DataSyncService if available
+        if (dataSyncService != null) {
+            try {
+                int queueSize = dataSyncService.getQueueSize();
+                log.info("DataSyncService queue size: {}", queueSize);
+                if (queueSize > 0) {
+                    log.info("Triggering DataSyncService sync with server...");
+                    dataSyncService.syncWithServer();
+                    log.info("DataSyncService sync completed");
+                } else {
+                    log.info("DataSyncService queue is empty, nothing to sync");
+                }
+            } catch (Exception e) {
+                log.error("DataSyncService sync failed: {}", e.getMessage(), e);
+                syncSuccess = false;
+            }
+        } else {
+            log.info("DataSyncService not available, skipping server sync");
         }
 
+        // Also sync local storage
         try {
-            // Sync unsynced game states
             var unsyncedGameStates = storageService.getUnsyncedGameStates();
             log.info("Syncing {} unsynced game states", unsyncedGameStates.size());
 
-            // Sync unsynced experience samples
             var unsyncedSamples = storageService.getUnsyncedExperienceSamples();
             log.info("Syncing {} unsynced experience samples", unsyncedSamples.size());
 
-            // Mark as synced (actual sync would be done via DataSyncService)
             unsyncedGameStates.forEach(gs -> storageService.markGameStateSynced(gs.getGameId()));
-            unsyncedSamples.forEach(s -> {
-                // Mark individual samples as synced
-            });
 
-            log.info("Sync completed successfully");
-            return true;
+            log.info("Local storage sync completed");
         } catch (Exception e) {
-            log.error("Sync failed: {}", e.getMessage(), e);
-            return false;
+            log.error("Local storage sync failed: {}", e.getMessage(), e);
+            syncSuccess = false;
         }
+
+        return syncSuccess;
+    }
+
+    /**
+     * Get the current sync status.
+     * Returns DataSyncService stats if available, otherwise returns local storage sync status.
+     *
+     * @return sync status information
+     */
+    public Map<String, Object> getSyncStatus() {
+        Map<String, Object> status = new HashMap<>();
+        
+        if (dataSyncService != null) {
+            Map<String, Object> syncStats = dataSyncService.getSyncStats();
+            status.putAll(syncStats);
+            status.put("dataSyncServiceAvailable", true);
+            status.put("piReachable", piReachable);
+            status.put("serialConnected", serialConsoleService.isConnected());
+        } else {
+            status.put("dataSyncServiceAvailable", false);
+            status.put("piReachable", piReachable);
+            status.put("serialConnected", serialConsoleService.isConnected());
+            status.put("queueSize", 0);
+            status.put("syncInProgress", false);
+            status.put("serverReachable", piReachable);
+            status.put("message", "DataSyncService not available — sync uses local storage only");
+        }
+
+        // Add local storage sync info
+        try {
+            int unsyncedGameStates = storageService.getUnsyncedGameStates().size();
+            int unsyncedSamples = storageService.getUnsyncedExperienceSamples().size();
+            status.put("unsyncedGameStates", unsyncedGameStates);
+            status.put("unsyncedExperienceSamples", unsyncedSamples);
+        } catch (Exception e) {
+            log.warn("Failed to get local storage sync status: {}", e.getMessage());
+            status.put("unsyncedGameStates", -1);
+            status.put("unsyncedExperienceSamples", -1);
+        }
+
+        return status;
     }
 
     /**

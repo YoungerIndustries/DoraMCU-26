@@ -1,8 +1,10 @@
 package com.yisy.modules.doramcu.service;
 
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
-import com.yisy.modules.doramcu.repository.AiCharacterRepository;
-import com.yisy.modules.doramcu.service.AiNetworkService.AiNetworkStatus;
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
+import com.yisy.modules.doramcu.service.ai.AiEntityRegistrationService;
+import com.yisy.modules.doramcu.service.ai.AiNetworkService;
+import com.yisy.modules.doramcu.service.ai.AiNetworkService.AiNetworkStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

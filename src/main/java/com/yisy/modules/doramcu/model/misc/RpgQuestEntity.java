@@ -11,12 +11,6 @@ import java.time.LocalDateTime;
  * Completing quests awards credits, XP, reputation, and sometimes unique items.
  * </p>
  */
-@Entity
-@Table(name = "planet_quests", indexes = {
-    @Index(name = "idx_quest_planet", columnList = "planet_id"),
-    @Index(name = "idx_quest_corp", columnList = "assigned_corporation_id"),
-    @Index(name = "idx_quest_status", columnList = "status")
-})
 public class RpgQuestEntity {
 
     @Id

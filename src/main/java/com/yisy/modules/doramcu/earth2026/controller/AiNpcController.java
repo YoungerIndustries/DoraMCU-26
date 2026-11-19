@@ -3,8 +3,6 @@ package com.yisy.modules.doramcu.earth2026.controller;
 import com.yisy.modules.doramcu.earth2026.model.E26Npc;
 import com.yisy.modules.doramcu.earth2026.repository.E26NpcRepository;
 import com.yisy.modules.doramcu.earth2026.service.AiNpcService;
-import com.yisy.modules.doramcu.earth2026.service.AiNpcService.AiAction;
-import com.yisy.modules.doramcu.earth2026.service.AiNpcService.SituationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

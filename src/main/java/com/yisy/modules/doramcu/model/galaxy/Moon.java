@@ -1,6 +1,5 @@
 package com.yisy.modules.doramcu.model.galaxy;
 import com.yisy.modules.doramcu.model.misc.Planet;
-import com.yisy.modules.doramcu.model.galaxy.SolarSystem;
 import com.yisy.modules.doramcu.model.galaxy.StrategicResource;
 
 
@@ -9,11 +8,6 @@ import jakarta.persistence.*;
 /**
  * JPA entity representing a moon orbiting a planet.
  */
-@Entity
-@Table(name = "moons", indexes = {
-    @Index(name = "idx_moon_solar_system", columnList = "solar_system_id"),
-    @Index(name = "idx_moon_parent_planet", columnList = "parent_planet_id")
-})
 public class Moon {
 
     @Id

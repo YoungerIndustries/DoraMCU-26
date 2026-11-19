@@ -1,5 +1,8 @@
 package com.yisy.modules.doramcu.dto;
 
+import com.yisy.modules.doramcu.dto.players.PlayerSummary;
+import com.yisy.modules.doramcu.dto.galaxy.SubSectorInfo;
+import com.yisy.modules.doramcu.dto.session.GameStateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

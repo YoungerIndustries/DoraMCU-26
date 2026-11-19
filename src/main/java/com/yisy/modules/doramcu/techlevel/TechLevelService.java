@@ -1,8 +1,7 @@
 package com.yisy.modules.doramcu.techlevel;
 import org.springframework.stereotype.Service;
 
-import com.yisy.modules.doramcu.model.PlanetBuildingModuleEntity;
-import com.yisy.modules.doramcu.repository.PlanetBuildingModuleRepository;
+import com.yisy.modules.doramcu.repository.galaxy.PlanetBuildingModuleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

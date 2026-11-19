@@ -3,9 +3,6 @@ import com.yisy.modules.doramcu.hex.Ship;
 import com.yisy.modules.doramcu.hex.PlanetFacility;
 import com.yisy.modules.doramcu.model.misc.CharacterType;
 import com.yisy.modules.doramcu.model.players.Player;
-import com.yisy.modules.doramcu.model.galaxy.SpaceStation;
-
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -140,6 +137,10 @@ public class AiCharacter {
      */
     @Column(name = "active_order_count", nullable = false)
     private int activeOrderCount = 0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "specialization", length = 20)
+    private com.yisy.modules.doramcu.admin.model.AiAdminIncident.IncidentType specialization;
 
     // --- Polymorphic fields for non-human AI entities ---
 
@@ -514,6 +515,14 @@ public class AiCharacter {
 
     public void setActiveOrderCount(int activeOrderCount) {
         this.activeOrderCount = activeOrderCount;
+    }
+
+    public com.yisy.modules.doramcu.admin.model.AiAdminIncident.IncidentType getSpecialization() {
+        return specialization;
+    }
+
+    public void setSpecialization(com.yisy.modules.doramcu.admin.model.AiAdminIncident.IncidentType specialization) {
+        this.specialization = specialization;
     }
 
     // --- Getters and setters for polymorphic fields ---

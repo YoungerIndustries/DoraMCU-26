@@ -3,7 +3,6 @@ import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.dto.CreateCharacterRequest;
 import com.yisy.modules.doramcu.captainslog.dto.CreateStarshipRequest;
-import com.yisy.modules.doramcu.captainslog.model.*;
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogCharacterRepository;
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogStarshipRepository;
 import org.slf4j.Logger;

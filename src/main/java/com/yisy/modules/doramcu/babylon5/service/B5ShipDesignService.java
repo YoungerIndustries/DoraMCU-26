@@ -1,7 +1,6 @@
 package com.yisy.modules.doramcu.babylon5.service;
 
 import com.yisy.modules.doramcu.babylon5.model.B5ShipDesign;
-import com.yisy.modules.doramcu.babylon5.model.B5ShipDesign.B5ShipWeapon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

@@ -1,8 +1,6 @@
 package com.yisy.modules.doramcu.sfb.service;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
-import com.yisy.modules.doramcu.sfb.model.*;
-
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;

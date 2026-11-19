@@ -5,8 +5,8 @@ import com.yisy.modules.doramcu.dto.session.GameStateResponse;
 import com.yisy.modules.doramcu.hex.Game;
 import com.yisy.modules.doramcu.hex.Player;
 import com.yisy.modules.doramcu.model.session.GameSession;
-import com.yisy.modules.doramcu.service.AiPlayerService;
-import com.yisy.modules.doramcu.service.GameSessionService;
+import com.yisy.modules.doramcu.service.ai.AiPlayerService;
+import com.yisy.modules.doramcu.service.session.GameSessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

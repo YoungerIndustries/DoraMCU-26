@@ -1,5 +1,6 @@
 package com.yisy.modules.doramcu.dto;
 
+import com.yisy.modules.doramcu.dto.misc.ResourcePipelineSummary;
 import java.util.List;
 import java.util.Map;
 

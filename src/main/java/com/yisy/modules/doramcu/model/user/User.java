@@ -1,4 +1,4 @@
-package com.yisy.modules.doramcu.model.user;
+package com.yisy.modules.doramcu.model;
 import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.model.players.Player;
 
@@ -10,8 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-@Entity
-@Table(name = "users")
 public class User {
 
     @Id

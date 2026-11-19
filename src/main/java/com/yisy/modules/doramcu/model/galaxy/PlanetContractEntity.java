@@ -13,12 +13,6 @@ import java.time.LocalDateTime;
  * the assigned corporation earns credits, XP, and reputation.
  * </p>
  */
-@Entity
-@Table(name = "planet_contracts", indexes = {
-    @Index(name = "idx_contract_planet", columnList = "planet_id"),
-    @Index(name = "idx_contract_corp", columnList = "assigned_corporation_id"),
-    @Index(name = "idx_contract_status", columnList = "status")
-})
 public class PlanetContractEntity {
 
     @Id

@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.ai;
 
+import com.yisy.modules.doramcu.dto.session.GameStateResponse;
+import com.yisy.modules.doramcu.model.GameSession;
 import com.yisy.modules.doramcu.service.AiPlayerService;
 import com.yisy.modules.doramcu.service.GameSessionService;
 import org.junit.jupiter.api.BeforeEach;
@@ -384,7 +386,7 @@ class AiDelegationServiceTest {
     @Test
     @DisplayName("executeAiTurn should return null when delegation is off")
     void executeAiTurnNoDelegation() {
-        com.yisy.modules.doramcu.dto.GameStateResponse result = service.executeAiTurn("session1", 1L);
+        com.yisy.modules.doramcu.dto.session.GameStateResponse result = service.executeAiTurn("session1", 1L);
         assertNull(result);
     }
 
@@ -396,7 +398,7 @@ class AiDelegationServiceTest {
         for (AiDelegationArea area : AiDelegationArea.values()) {
             service.toggleArea("session1", 1L, area, false);
         }
-        com.yisy.modules.doramcu.dto.GameStateResponse result = service.executeAiTurn("session1", 1L);
+        com.yisy.modules.doramcu.dto.session.GameStateResponse result = service.executeAiTurn("session1", 1L);
         assertNull(result);
     }
 
@@ -409,11 +411,11 @@ class AiDelegationServiceTest {
         when(gameSessionService.getGameSession("session1")).thenReturn(mockSession);
         when(mockSession.isAiPlayer(1L)).thenReturn(false);
 
-        com.yisy.modules.doramcu.dto.GameStateResponse expectedResponse = new com.yisy.modules.doramcu.dto.GameStateResponse();
+        com.yisy.modules.doramcu.dto.session.GameStateResponse expectedResponse = new com.yisy.modules.doramcu.dto.session.GameStateResponse();
         when(aiPlayerService.executeAiTurn("session1", Map.of(1L, AiPlayerService.Difficulty.MEDIUM)))
                 .thenReturn(expectedResponse);
 
-        com.yisy.modules.doramcu.dto.GameStateResponse result = service.executeAiTurn("session1", 1L);
+        com.yisy.modules.doramcu.dto.session.GameStateResponse result = service.executeAiTurn("session1", 1L);
 
         assertNotNull(result);
         assertEquals(expectedResponse, result);
@@ -430,7 +432,7 @@ class AiDelegationServiceTest {
         when(gameSessionService.getGameSession("session1")).thenReturn(mockSession);
         when(mockSession.isAiPlayer(1L)).thenReturn(true);
 
-        com.yisy.modules.doramcu.dto.GameStateResponse expectedResponse = new com.yisy.modules.doramcu.dto.GameStateResponse();
+        com.yisy.modules.doramcu.dto.session.GameStateResponse expectedResponse = new com.yisy.modules.doramcu.dto.session.GameStateResponse();
         when(aiPlayerService.executeAiTurn("session1", Map.of(1L, AiPlayerService.Difficulty.MEDIUM)))
                 .thenReturn(expectedResponse);
 
@@ -446,11 +448,11 @@ class AiDelegationServiceTest {
 
         when(gameSessionService.getGameSession("session1")).thenReturn(null);
 
-        com.yisy.modules.doramcu.dto.GameStateResponse expectedResponse = new com.yisy.modules.doramcu.dto.GameStateResponse();
+        com.yisy.modules.doramcu.dto.session.GameStateResponse expectedResponse = new com.yisy.modules.doramcu.dto.session.GameStateResponse();
         when(aiPlayerService.executeAiTurn("session1", Map.of(1L, AiPlayerService.Difficulty.MEDIUM)))
                 .thenReturn(expectedResponse);
 
-        com.yisy.modules.doramcu.dto.GameStateResponse result = service.executeAiTurn("session1", 1L);
+        com.yisy.modules.doramcu.dto.session.GameStateResponse result = service.executeAiTurn("session1", 1L);
 
         assertNotNull(result);
         // Should still execute AI turn even if session is null
@@ -464,7 +466,7 @@ class AiDelegationServiceTest {
 
         when(gameSessionService.getGameSession("session1")).thenThrow(new RuntimeException("Session error"));
 
-        com.yisy.modules.doramcu.dto.GameStateResponse result = service.executeAiTurn("session1", 1L);
+        com.yisy.modules.doramcu.dto.session.GameStateResponse result = service.executeAiTurn("session1", 1L);
         assertNull(result);
     }
 
@@ -480,14 +482,14 @@ class AiDelegationServiceTest {
         // First call triggers a RuntimeException — service should catch it and return null
         when(aiPlayerService.executeAiTurn(eq("session1"), anyMap()))
                 .thenThrow(new RuntimeException("Simulated error"))
-                .thenReturn(new com.yisy.modules.doramcu.dto.GameStateResponse());
+                .thenReturn(new com.yisy.modules.doramcu.dto.session.GameStateResponse());
 
         // First call should return null due to exception
-        com.yisy.modules.doramcu.dto.GameStateResponse result1 = service.executeAiTurn("session1", 1L);
+        com.yisy.modules.doramcu.dto.session.GameStateResponse result1 = service.executeAiTurn("session1", 1L);
         assertNull(result1);
 
         // After exception, recursion guard is cleared — second call should work
-        com.yisy.modules.doramcu.dto.GameStateResponse result2 = service.executeAiTurn("session1", 1L);
+        com.yisy.modules.doramcu.dto.session.GameStateResponse result2 = service.executeAiTurn("session1", 1L);
         assertNotNull(result2);
     }
 
@@ -504,9 +506,9 @@ class AiDelegationServiceTest {
         when(gameSessionService.getGameSession("session1")).thenReturn(mockSession);
         when(mockSession.isAiPlayer(anyLong())).thenReturn(false);
 
-        com.yisy.modules.doramcu.dto.GameStateResponse response1 = new com.yisy.modules.doramcu.dto.GameStateResponse();
-        com.yisy.modules.doramcu.dto.GameStateResponse response2 = new com.yisy.modules.doramcu.dto.GameStateResponse();
-        com.yisy.modules.doramcu.dto.GameStateResponse response3 = new com.yisy.modules.doramcu.dto.GameStateResponse();
+        com.yisy.modules.doramcu.dto.session.GameStateResponse response1 = new com.yisy.modules.doramcu.dto.session.GameStateResponse();
+        com.yisy.modules.doramcu.dto.session.GameStateResponse response2 = new com.yisy.modules.doramcu.dto.session.GameStateResponse();
+        com.yisy.modules.doramcu.dto.session.GameStateResponse response3 = new com.yisy.modules.doramcu.dto.session.GameStateResponse();
 
         when(aiPlayerService.executeAiTurn("session1", Map.of(1L, AiPlayerService.Difficulty.MEDIUM)))
                 .thenReturn(response1);
@@ -515,7 +517,7 @@ class AiDelegationServiceTest {
         when(aiPlayerService.executeAiTurn("session1", Map.of(3L, AiPlayerService.Difficulty.MEDIUM)))
                 .thenReturn(response3);
 
-        com.yisy.modules.doramcu.dto.GameStateResponse result = service.executeAllDelegatedTurns("session1");
+        com.yisy.modules.doramcu.dto.session.GameStateResponse result = service.executeAllDelegatedTurns("session1");
 
         // Last state should be from the last player processed
         assertNotNull(result);
@@ -532,7 +534,7 @@ class AiDelegationServiceTest {
         when(gameSessionService.getGameSession("session1")).thenReturn(mockSession);
         when(mockSession.isAiPlayer(1L)).thenReturn(false);
 
-        com.yisy.modules.doramcu.dto.GameStateResponse response = new com.yisy.modules.doramcu.dto.GameStateResponse();
+        com.yisy.modules.doramcu.dto.session.GameStateResponse response = new com.yisy.modules.doramcu.dto.session.GameStateResponse();
         when(aiPlayerService.executeAiTurn("session1", Map.of(1L, AiPlayerService.Difficulty.MEDIUM)))
                 .thenReturn(response);
 
@@ -545,7 +547,7 @@ class AiDelegationServiceTest {
     @Test
     @DisplayName("executeAllDelegatedTurns should return null when no delegated players")
     void executeAllDelegatedTurnsEmpty() {
-        com.yisy.modules.doramcu.dto.GameStateResponse result = service.executeAllDelegatedTurns("session1");
+        com.yisy.modules.doramcu.dto.session.GameStateResponse result = service.executeAllDelegatedTurns("session1");
         assertNull(result);
     }
 
@@ -559,7 +561,7 @@ class AiDelegationServiceTest {
         when(gameSessionService.getGameSession("session1")).thenReturn(mockSession);
         when(mockSession.isAiPlayer(1L)).thenReturn(false);
 
-        com.yisy.modules.doramcu.dto.GameStateResponse response = new com.yisy.modules.doramcu.dto.GameStateResponse();
+        com.yisy.modules.doramcu.dto.session.GameStateResponse response = new com.yisy.modules.doramcu.dto.session.GameStateResponse();
         when(aiPlayerService.executeAiTurn(eq("session1"), anyMap()))
                 .thenReturn(response);
 

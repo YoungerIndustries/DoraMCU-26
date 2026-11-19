@@ -1,7 +1,5 @@
 package com.yisy.modules.doramcu.dnd5e.config;
 
-import com.yisy.modules.doramcu.dnd5e.service.*;
-import com.yisy.modules.doramcu.gamecore.*;
 import com.yisy.modules.doramcu.shared.model.RulesEntry;
 import com.yisy.modules.doramcu.shared.service.RulesAwareCombatAdapter;
 import com.yisy.modules.doramcu.shared.service.UnifiedRulesQueryService;
