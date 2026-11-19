@@ -1,14 +1,15 @@
 # DoraMCU Project Roadmap
 
-> **Last updated:** 2026-11-15
-> **Status:** 🟢 All milestones complete, 50 completed features, all backlog, icebox, and long-term vision items done (authoritative document; original plans archived)
-> **Next milestone:** v0.4.0 — Streamlined CI/CD, consolidated launchers, centralized build configuration
+> **Last updated:** 2026-11-19
+> **Status:** 🟢 All milestones complete, 51 completed features, all backlog, icebox, and long-term vision items done (authoritative document; original plans archived)
+> **Current version:** v0.5.2 — Admin Character & Client Completion Release (2026-11-19)
+> **Next milestone:** v0.6.0 — Post feature-complete enhancements (see [Post-v0.5.2 Vision](#post-v052-vision))
 
 ---
 
 ## Executive Summary
 
-DoraMCU is a **healthy, feature-complete** multi-game platform with **12,462+ passing Java tests** and **145 Electron desktop tests**, totaling **50 completed features** across 14 categories. All 6 milestones, all backlog items, all Icebox items, and all long-term vision items are complete. The project roadmap is fully implemented, including OpenAPI 3.0 documentation.
+DoraMCU is a **healthy, feature-complete** multi-game platform with **12,462+ passing Java tests** and **145 Electron desktop tests**, totaling **51 completed features** across 15 categories. All 6 milestones, all backlog items, all Icebox items, and all long-term vision items are complete. The project roadmap is fully implemented, including OpenAPI 3.0 documentation.
 
 ---
 
@@ -26,6 +27,7 @@ DoraMCU is a **healthy, feature-complete** multi-game platform with **12,462+ pa
 - [Milestones](#milestones)
 - [Archived Plans Index](#archived-plans-index)
 - [Long-Term Vision](#long-term-vision)
+- [Post-v0.5.2 Vision](#post-v052-vision)
 - [Document Maintenance](#document-maintenance)
 
 ---
@@ -107,6 +109,7 @@ DoraMCU is a multi-game Spring Boot platform (Java 27, Spring Boot 4.1.2) suppor
 | DoraAI Platform | ✓ Complete | `dora-ai-development-platform.md` | AI-powered game mastering and content generation |
 | AI Admin Testing | ✓ Complete | `ai-admin-test-character.md` | TestProvider interface, 5 providers, TestRegistry — all steps complete |
 | AI-Driven Game Mastering | ✓ Complete | (Long-term vision implementation) | Narrative generation, story arcs, NPCs, quests — 78 tests |
+| Brain Node Desktop Server | ✓ Complete | `brain-node-desktop-server.md` | Desktop-based AI inference, persistent storage, USB serial Pi control, auto-failover — 6 services |
 
 ### Desktop Client
 
@@ -249,7 +252,7 @@ com.yisy.modules.doramcu/
 - **Test classes:** 216+
 - **Tests:** 12,462+ (Java core), 145 (Electron), 12,607+ total
 - **Excluded tests:** 0 (all tests compile and pass)
-- **Completed features:** 50
+- **Completed features:** 51
 - **JVM memory:** -Xmx4G (Gradle), -Xmx4G (bootRun), -Xmx12G (heavyTests)
 - **Security:** `/api/v1/*` paths secured
 - **Database:** Flyway migrations, MySQL/H2 support
@@ -314,7 +317,51 @@ com.yisy.modules.doramcu/
 
 ---
 
+## Post-v0.5.2 Vision
+
+With all 51 features complete and all 6 milestones done, DoraMCU enters a new phase of enhancement and expansion. The following directions are proposed for v0.6.0 and beyond:
+
+### New Universe Integrations
+- **Starfield** — Bethesda's space exploration universe
+- **Halo** — Military sci-fi with Covenant and Forger mechanics
+- **Mass Effect** — Normandy crew management and galaxy-spanning diplomacy
+- **Warhammer 40K** — Gothic sci-fi with factions, crusades, and heresy
+- **Stellaris** — Grand strategy with emergent narratives and empire customization
+
+### Enhanced AI
+- **Multi-modal AI** — Image generation for galaxy maps, ship designs, and character portraits
+- **AI-driven procedural content** — Dynamic quest generation, NPC personalities, and world events
+- **Neuron Federation v2** — Cross-device AI model sharing and distributed training
+- **AI modding tools** — Community-created AI behaviors and game master personalities
+
+### Mobile Support
+- **Unity mobile build** — iOS and Android clients with touch-optimized UI
+- **Cloud gaming** — Server-side rendering with streaming to mobile devices
+- **Progressive Web App** — Browser-based lightweight client for casual play
+
+### Performance Optimizations
+- **Galaxy generation speed** — Parallel processing and caching for large-scale galaxies
+- **WebSocket scaling** — Clustered WebSocket servers for 1000+ concurrent players
+- **Database optimization** — Query tuning, connection pooling, and read replicas
+- **Memory profiling** — DL4j memory optimization and garbage collection tuning
+
+### Developer Experience
+- **CI/CD pipeline** — Automated builds, tests, and deployment to Pi BrainStem
+- **Plugin SDK** — Official tooling for community universe developers
+- **API versioning** — Backward-compatible API evolution strategy
+- **Documentation portal** — Developer guides, API reference, and tutorials
+
+### Quality of Life
+- **Unity build hygiene** — Fix Unity Connect 401 errors and asset import worker crashes
+- **Code coverage tracking** — SonarQube integration and coverage reports
+- **Performance benchmarks** — Automated benchmark suite for regression detection
+- **User analytics** — Anonymous usage data for feature prioritization
+
+---
+
 ## Document Maintenance
+
+- **Last vision update:** 2026-11-19 — Added Post-v0.5.2 Vision section
 
 - **Update frequency:** Review and update after each major milestone completion
 - **Active Work section:** Move completed items to "Completed Features" immediately
