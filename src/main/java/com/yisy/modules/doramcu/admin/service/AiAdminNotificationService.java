@@ -225,8 +225,8 @@ public class AiAdminNotificationService {
     @Scheduled(fixedRate = 86400000) // 24 hours
     @Transactional
     public void cleanupOldNotifications() {
-        int expired = notificationRepository.deleteExpired(LocalDateTime.now());
-        int oldRead = notificationRepository.deleteOldReadNotifications(
+        int expired = notificationRepository.deleteByExpiresAtBefore(LocalDateTime.now());
+        int oldRead = notificationRepository.deleteByIsReadTrueAndCreatedAtBefore(
                 LocalDateTime.now().minusDays(READ_NOTIFICATION_RETENTION_DAYS));
         if (expired > 0 || oldRead > 0) {
             log.info("Notification cleanup: deleted {} expired and {} old read notifications",

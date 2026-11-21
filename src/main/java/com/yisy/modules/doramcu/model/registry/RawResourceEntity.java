@@ -30,7 +30,7 @@ public class RawResourceEntity {
     @Column(name = "color_hex", length = 7)
     private String colorHex;
 
-    @Column(name = "celestial_sources", columnDefinition = "JSON")
+    @Column(name = "celestial_sources", columnDefinition = "TEXT")
     private String celestialSources;
 
     public RawResourceEntity() {

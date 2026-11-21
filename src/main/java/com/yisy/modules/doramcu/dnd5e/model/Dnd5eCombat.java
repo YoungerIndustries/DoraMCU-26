@@ -29,7 +29,7 @@ public class Dnd5eCombat {
     @Column(name = "current_round", nullable = false)
     private int currentRound = 1;
 
-    @Column(name = "initiative_order", columnDefinition = "JSON")
+    @Column(name = "initiative_order", columnDefinition = "TEXT")
     private String initiativeOrder;
 
     @Column(nullable = false, length = 20)

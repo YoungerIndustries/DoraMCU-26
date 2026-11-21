@@ -60,7 +60,7 @@ public class Dnd5eSpell {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(columnDefinition = "JSON")
+    @Column(length = 500)
     private String classes;
 
     @Column(nullable = false)

@@ -48,7 +48,7 @@ public class ShipTypeEntity {
     @Column(name = "hull_module_count", nullable = false)
     private int hullModuleCount;
 
-    @Column(name = "module_grid_dimensions", columnDefinition = "JSON")
+    @Column(name = "module_grid_dimensions", columnDefinition = "TEXT")
     private String moduleGridDimensions;
 
     public ShipTypeEntity() {

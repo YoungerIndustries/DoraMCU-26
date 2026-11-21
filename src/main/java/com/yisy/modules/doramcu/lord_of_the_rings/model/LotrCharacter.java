@@ -148,7 +148,7 @@ public class LotrCharacter {
     @Column(columnDefinition = "TEXT")
     private String equipment;
 
-    @Column(columnDefinition = "JSON")
+    @Column(columnDefinition = "TEXT")
     private String conditions;
 
     @Column(name = "experience_points", nullable = false)

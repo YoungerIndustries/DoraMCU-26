@@ -16,11 +16,13 @@ public interface StockOrderRepository extends JpaRepository<StockOrder, Long> {
 
     List<StockOrder> findByStockListingIdAndOrderTypeAndStatus(Long stockListingId, String orderType, String status);
 
-    @Query("SELECT so FROM StockOrder so WHERE so.status = 'PENDING' AND so.expiresAt < :now")
-    List<StockOrder> findExpiredOrders(LocalDateTime now);
+    List<StockOrder> findByStatusAndExpiresAtBefore(String status, LocalDateTime now);
+    
+    default List<StockOrder> findExpiredOrders(LocalDateTime now) {
+        return findByStatusAndExpiresAtBefore("PENDING", now);
+    }
 
     @Query("SELECT so FROM StockOrder so WHERE so.stockListingId = :listingId AND so.orderType = :orderType AND so.status = 'PENDING' ORDER BY so.createdAt ASC")
     List<StockOrder> findActiveOrdersByType(Long listingId, String orderType);
 
-    List<StockOrder> findByStatusAndExpiresAtBefore(String status, LocalDateTime expiresAt);
 }

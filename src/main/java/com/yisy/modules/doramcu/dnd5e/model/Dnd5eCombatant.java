@@ -41,7 +41,7 @@ public class Dnd5eCombatant {
     @Column
     private Integer initiative;
 
-    @Column(columnDefinition = "JSON")
+    @Column(columnDefinition = "TEXT")
     private String conditions;
 
     @Column(name = "is_character", nullable = false)

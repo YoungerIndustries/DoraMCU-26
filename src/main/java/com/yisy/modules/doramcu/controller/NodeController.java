@@ -196,7 +196,7 @@ public class NodeController {
         LocalDateTime threshold = LocalDateTime.now()
                 .minus(HEARTBEAT_TIMEOUT_MINUTES, ChronoUnit.MINUTES);
 
-        List<Node> staleNodes = nodeRepository.findStaleNodes(threshold);
+        List<Node> staleNodes = nodeRepository.findByLastHeartbeatBefore(threshold);
         for (Node node : staleNodes) {
             node.setStatus("disconnected");
             node.setUpdatedAt(LocalDateTime.now());

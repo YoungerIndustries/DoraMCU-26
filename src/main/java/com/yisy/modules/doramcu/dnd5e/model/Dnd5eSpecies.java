@@ -95,13 +95,13 @@ public class Dnd5eSpecies {
     /**
      * Ability score increases as JSON (e.g., {"STR": 2, "CON": 1}).
      */
-    @Column(name = "ability_increases", columnDefinition = "JSON")
+    @Column(name = "ability_increases", columnDefinition = "TEXT")
     private String abilityIncreases = "{}";
 
     /**
      * Racial traits as JSON array (e.g., ["Darkvision", "Fey Ancestry", "Trance"]).
      */
-    @Column(name = "racial_traits", columnDefinition = "JSON")
+    @Column(name = "racial_traits", columnDefinition = "TEXT")
     private String racialTraits = "[]";
 
     /**
@@ -115,49 +115,49 @@ public class Dnd5eSpecies {
     /**
      * Male first names as JSON array.
      */
-    @Column(name = "male_first_names", columnDefinition = "JSON")
+    @Column(name = "male_first_names", columnDefinition = "TEXT")
     private String maleFirstNames = "[]";
 
     /**
      * Female first names as JSON array.
      */
-    @Column(name = "female_first_names", columnDefinition = "JSON")
+    @Column(name = "female_first_names", columnDefinition = "TEXT")
     private String femaleFirstNames = "[]";
 
     /**
      * Last names as JSON array.
      */
-    @Column(name = "last_names", columnDefinition = "JSON")
+    @Column(name = "last_names", columnDefinition = "TEXT")
     private String lastNames = "[]";
 
     /**
      * Title prefixes as JSON array (e.g., ["Lord", "Lady", "Sir"]).
      */
-    @Column(name = "title_prefixes", columnDefinition = "JSON")
+    @Column(name = "title_prefixes", columnDefinition = "TEXT")
     private String titlePrefixes = "[]";
 
     /**
      * Title suffixes as JSON array (e.g., ["the Brave", "the Wise"]).
      */
-    @Column(name = "title_suffixes", columnDefinition = "JSON")
+    @Column(name = "title_suffixes", columnDefinition = "TEXT")
     private String titleSuffixes = "[]";
 
     /**
      * AI leader titles as JSON array.
      */
-    @Column(name = "ai_leader_titles", columnDefinition = "JSON")
+    @Column(name = "ai_leader_titles", columnDefinition = "TEXT")
     private String aiLeaderTitles = "[]";
 
     /**
      * AI governor titles as JSON array.
      */
-    @Column(name = "ai_governor_titles", columnDefinition = "JSON")
+    @Column(name = "ai_governor_titles", columnDefinition = "TEXT")
     private String aiGovernorTitles = "[]";
 
     /**
      * AI captain titles as JSON array.
      */
-    @Column(name = "ai_captain_titles", columnDefinition = "JSON")
+    @Column(name = "ai_captain_titles", columnDefinition = "TEXT")
     private String aiCaptainTitles = "[]";
 
     @Column(name = "created_at", nullable = false, updatable = false)

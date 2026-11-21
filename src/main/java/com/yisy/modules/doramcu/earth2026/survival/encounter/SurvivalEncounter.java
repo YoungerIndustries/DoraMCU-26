@@ -61,7 +61,7 @@ public class SurvivalEncounter {
     /**
      * Loot drops as JSON (resource names and quantities).
      */
-    @Column(name = "loot_json", columnDefinition = "JSON")
+    @Column(name = "loot_json", columnDefinition = "TEXT")
     private String lootJson;
 
     /**

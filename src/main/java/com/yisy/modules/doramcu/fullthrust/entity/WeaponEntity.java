@@ -21,6 +21,7 @@ public class WeaponEntity {
 
     private int damage;
 
+    @Column(name = "`range`")
     private int range;
 
     private int reloadTime;

@@ -98,7 +98,7 @@ public class Dnd5eMonsterAbility {
     /**
      * Range in feet (e.g., 5 for melee, 60 for ranged).
      */
-    @Column(nullable = false)
+    @Column(name = "`range`", nullable = false)
     private int range = 5;
 
     /**

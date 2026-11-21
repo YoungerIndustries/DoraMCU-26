@@ -93,8 +93,9 @@ public class PlanetApproach {
         this.takeoffFuelPoints = 1; // Always 1 point to take off
         this.departureFuelPoints = calculateDepartureFuelPoints(gravityWellDepth);
 
-        // Landing is possible if the world has a surface (not a gas giant)
-        this.landingPossible = uwp.getPlanetSize() <= 6; // 0-6 = solid surface
+        // Landing is possible if the world has a solid surface (size 2-6)
+        // Size 0 = Nil, Size 1 = Gas Giant - no solid surface for landing
+        this.landingPossible = uwp.getPlanetSize() >= 2 && uwp.getPlanetSize() <= 6;
 
         // Starport information
         this.hasStarport = uwp.hasStarport();

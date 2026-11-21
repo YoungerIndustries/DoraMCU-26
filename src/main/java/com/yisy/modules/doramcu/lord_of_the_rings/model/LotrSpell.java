@@ -34,7 +34,7 @@ public class LotrSpell {
     @Column(name = "casting_time", length = 50)
     private String castingTime;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "`range`", nullable = false, length = 50)
     private String range;
 
     @Column(name = "duration", nullable = false, length = 50)

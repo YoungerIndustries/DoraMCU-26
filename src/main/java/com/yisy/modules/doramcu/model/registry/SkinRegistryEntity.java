@@ -31,10 +31,10 @@ public class SkinRegistryEntity {
     @Column(name = "texture_path", length = 500)
     private String texturePath;
 
-    @Column(name = "color_palette", columnDefinition = "JSON")
+    @Column(name = "color_palette", columnDefinition = "TEXT")
     private String colorPalette;
 
-    @Column(name = "applicable_object_types", columnDefinition = "JSON")
+    @Column(name = "applicable_object_types", columnDefinition = "TEXT")
     private String applicableObjectTypes;
 
     public SkinRegistryEntity() {

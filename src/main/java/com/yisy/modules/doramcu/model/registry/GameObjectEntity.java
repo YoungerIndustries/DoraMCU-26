@@ -54,7 +54,7 @@ public class GameObjectEntity {
     @Column(name = "skin_id")
     private Long skinId;
 
-    @Column(name = "decal_ids", columnDefinition = "JSON")
+    @Column(name = "decal_ids", columnDefinition = "TEXT")
     private String decalIds;
 
     @Column(name = "scale_factor")
@@ -65,16 +65,16 @@ public class GameObjectEntity {
 
     // --- Resource costs for production ---
 
-    @Column(name = "resource_costs", columnDefinition = "JSON")
+    @Column(name = "resource_costs", columnDefinition = "TEXT")
     private String resourceCosts;
 
-    @Column(name = "refined_resource_costs", columnDefinition = "JSON")
+    @Column(name = "refined_resource_costs", columnDefinition = "TEXT")
     private String refinedResourceCosts;
 
-    @Column(name = "strategic_resource_requirements", columnDefinition = "JSON")
+    @Column(name = "strategic_resource_requirements", columnDefinition = "TEXT")
     private String strategicResourceRequirements;
 
-    @Column(name = "cargo_costs", columnDefinition = "JSON")
+    @Column(name = "cargo_costs", columnDefinition = "TEXT")
     private String cargoCosts;
 
     @Column(name = "construction_cost")
@@ -99,7 +99,7 @@ public class GameObjectEntity {
 
     // --- Cross-system references ---
 
-    @Column(name = "equivalent_objects", columnDefinition = "JSON")
+    @Column(name = "equivalent_objects", columnDefinition = "TEXT")
     private String equivalentObjects;
 
     @Column(name = "created_at", nullable = false)

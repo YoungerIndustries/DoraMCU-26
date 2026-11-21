@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
@@ -36,7 +37,7 @@ public class PersistedGameSession {
     @Column(name = "session_name", nullable = false, length = 255)
     private String sessionName;
 
-    @Column(name = "game_state", columnDefinition = "LONGTEXT")
+    @Column(name = "game_state", columnDefinition = "TEXT")
     private String gameState;
 
     @Column(name = "player_ids", length = 1000)

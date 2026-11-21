@@ -29,7 +29,7 @@ public class ObjectRelationshipEntity {
     @Column(name = "relationship_type", nullable = false, length = 50)
     private String relationshipType;
 
-    @Column(name = "metadata", columnDefinition = "JSON")
+    @Column(name = "metadata", columnDefinition = "TEXT")
     private String metadata;
 
     public ObjectRelationshipEntity() {

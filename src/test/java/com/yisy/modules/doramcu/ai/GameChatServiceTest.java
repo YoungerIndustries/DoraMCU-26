@@ -248,14 +248,14 @@ class GameChatServiceTest {
     /**
      * Minimal AiChatService implementation for testing GameChatService without Spring context.
      */
-    private static class NoOpAiChatService extends com.yisy.modules.doraai.service.AiChatService {
-        NoOpAiChatService(com.yisy.modules.doraai.service.AiProviderFactory factory) {
+    private static class NoOpAiChatService extends com.yisy.modules.doramcu.ai.server.service.AiChatService {
+        NoOpAiChatService(com.yisy.modules.doramcu.ai.server.service.AiProviderFactory factory) {
             super(factory);
         }
 
         @Override
         public org.springframework.web.servlet.mvc.method.annotation.SseEmitter chat(
-                String sessionId, String message, String mode) {
+                String sessionId, String message, String mode, String projectId, String sourceLanguage, String fileContext, String providerId) {
             return null;
         }
 

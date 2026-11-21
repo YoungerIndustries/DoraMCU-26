@@ -53,7 +53,7 @@ public class TravellerMonsterAbility {
     @Column(name = "saveAbility", length = 10)
     private String saveAbility;
 
-    @Column(nullable = false)
+    @Column(name = "`range`", nullable = false)
     private int range = 5;
 
     @Column(name = "usesPerLongRest")

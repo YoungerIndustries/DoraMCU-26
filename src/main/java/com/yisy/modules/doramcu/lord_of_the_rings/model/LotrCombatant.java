@@ -47,7 +47,7 @@ public class LotrCombatant {
     @Column(length = 50)
     private String side;
 
-    @Column(columnDefinition = "JSON")
+    @Column(columnDefinition = "TEXT")
     private String conditions;
 
     @Column(name = "created_at", nullable = false, updatable = false)

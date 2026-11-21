@@ -25,11 +25,17 @@ public interface HqEventRepository extends JpaRepository<HqEvent, Long> {
     @Query("SELECT e FROM HqEvent e WHERE e.hqId = :hqId AND e.status = 'ACTIVE' AND e.endTime > :now")
     List<HqEvent> findActiveEvents(@Param("hqId") Long hqId, @Param("now") LocalDateTime now);
 
-    @Query("SELECT e FROM HqEvent e WHERE e.hqId = :hqId AND e.status = 'SCHEDULED' AND e.startTime <= :now")
-    List<HqEvent> findEventsToActivate(@Param("hqId") Long hqId, @Param("now") LocalDateTime now);
+    List<HqEvent> findByHqIdAndStatusAndStartTimeBefore(Long hqId, String status, LocalDateTime now);
+    
+    default List<HqEvent> findEventsToActivate(Long hqId, LocalDateTime now) {
+        return findByHqIdAndStatusAndStartTimeBefore(hqId, "SCHEDULED", now);
+    }
 
-    @Query("SELECT e FROM HqEvent e WHERE e.hqId = :hqId AND e.status = 'ACTIVE' AND e.endTime <= :now")
-    List<HqEvent> findExpiredEvents(@Param("hqId") Long hqId, @Param("now") LocalDateTime now);
+    List<HqEvent> findByHqIdAndStatusAndEndTimeBefore(Long hqId, String status, LocalDateTime now);
+    
+    default List<HqEvent> findExpiredEvents(Long hqId, LocalDateTime now) {
+        return findByHqIdAndStatusAndEndTimeBefore(hqId, "ACTIVE", now);
+    }
 
     @Query("SELECT e FROM HqEvent e WHERE e.hqId = :hqId AND e.status = 'COMPLETED' ORDER BY e.endTime DESC")
     List<HqEvent> findCompletedEventsDesc(@Param("hqId") Long hqId);
@@ -37,6 +43,9 @@ public interface HqEventRepository extends JpaRepository<HqEvent, Long> {
     @Query("SELECT e FROM HqEvent e WHERE e.hqId = :hqId AND e.eventType = :type AND e.status IN ('ACTIVE', 'SCHEDULED')")
     List<HqEvent> findActiveOrScheduledByType(@Param("hqId") Long hqId, @Param("type") HqEventType type);
 
-    @Query("SELECT e FROM HqEvent e WHERE e.hqId = :hqId AND e.status = 'COMPLETED' AND e.createdAt < :before")
-    List<HqEvent> findOldCompletedEvents(@Param("hqId") Long hqId, @Param("before") LocalDateTime before);
+    List<HqEvent> findByHqIdAndStatusAndCreatedAtBefore(Long hqId, String status, LocalDateTime before);
+    
+    default List<HqEvent> findOldCompletedEvents(Long hqId, LocalDateTime before) {
+        return findByHqIdAndStatusAndCreatedAtBefore(hqId, "COMPLETED", before);
+    }
 }

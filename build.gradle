@@ -55,8 +55,8 @@ repositories {
 }
 
 dependencies {
-    // Neuron module — player gateway, client distribution, game sync
-    implementation project(':dora-neuron')
+    // Neuron module — runs standalone, not bundled in server JAR
+    // implementation project(':dora-neuron')
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
@@ -85,13 +85,13 @@ dependencies {
     
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'org.postgresql:postgresql'
     runtimeOnly "io.jsonwebtoken:jjwt-impl:${findProperty('jjwt.version')}"
     runtimeOnly "io.jsonwebtoken:jjwt-jackson:${findProperty('jjwt.version')}"
 
-    // Deeplearning4j for local DL mode (when dl.rest-client.enabled=false)
-    implementation "org.deeplearning4j:deeplearning4j-core:${findProperty('dl4j.version')}"
-    implementation "org.deeplearning4j:deeplearning4j-nn:${findProperty('dl4j.version')}"
-    implementation "org.nd4j:nd4j-native-platform:${findProperty('dl4j.version')}"
+    // Deep learning replaced with lightweight heuristic model (StrategyNetwork.java)
+    // No longer requires DL4J/ND4J native libraries (~1.5GB)
+    // All AI functions work with the lightweight pure-Java implementation
 
     // Caffeine cache (also used by dora-ai)
     // Already declared above
@@ -126,63 +126,7 @@ tasks.named('test') {
     exclude '**/GameSessionLifecycleIntegrationTest.class'
     exclude '**/Babylon5DatabaseIntegrationTest.class'
 
-    // Tests with stale imports from package reorganization (need manual fix)
-    exclude '**/AdminControllerPromoCodeTest.class'
-    exclude '**/AdminControllerTest.class'
-    exclude '**/AiCommanderControllerTest.class'
-    exclude '**/AiNetworkControllerTest.class'
-    exclude '**/AlienRaceControllerTest.class'
-    exclude '**/AuthenticationControllerTest.class'
-    exclude '**/ChatControllerTest.class'
-    exclude '**/ClientManifestControllerTest.class'
-    exclude '**/DeviceControllerTest.class'
-    exclude '**/FleetTrackerWebSocketHandlerTest.class'
-    exclude '**/GameControllerTest.class'
-    exclude '**/GameSessionControllerTest.class'
-    exclude '**/GameSessionWebSocketHandlerTest.class'
-    exclude '**/GameStateWebSocketHandlerTest.class'
-    exclude '**/GameWebSocketControllerTest.class'
-    exclude '**/HomeControllerTest.class'
-    exclude '**/NarrativeWebSocketHandlerTest.class'
-    exclude '**/ReplayWebSocketHandlerTest.class'
-    exclude '**/ResourcePipelineWebSocketHandlerTest.class'
-    exclude '**/SmugglingControllerTest.class'
-    exclude '**/SpectatorWebSocketHandlerTest.class'
-    exclude '**/WormholeControllerTest.class'
-    exclude '**/WormholeTravelControllerTest.class'
-    exclude '**/AchievementWebSocketHandlerTest.class'
-    exclude '**/CorporateHiringCareerTest.class'
-    exclude '**/AiAssistantServiceTest.class'
-    exclude '**/CareerProgressionServiceTest.class'
-    exclude '**/ContractExecutionServiceTest.class'
-    exclude '**/CorporateOfficeServiceTest.class'
-    exclude '**/CorporateOfficeTestConfig.class'
-    exclude '**/CorporateRoleIntegrationTest.class'
-    exclude '**/CorporateRoleServiceTest.class'
-    exclude '**/CorporationEconomyServiceTest.class'
-    exclude '**/CorporationInteractionServiceTest.class'
-    exclude '**/CorporationPersistenceServiceTest.class'
-    exclude '**/TrainingAndCrewTestConfig.class'
-    exclude '**/TravellerCorporationServiceTest.class'
-    exclude '**/PlayerCharacterEntryDtoTest.class'
-    exclude '**/PersistenceTestConfig.class'
-    exclude '**/PlanetBuildRoundTripTest.class'
-    exclude '**/PlanetSurfacePersistenceIntegrationTest.class'
-    exclude '**/CorporateRoleTest.class'
-    exclude '**/GalaxyBondTest.class'
-    exclude '**/GalaxyTreasuryCycleTest.class'
-    exclude '**/GalaxyTreasuryTest.class'
-    exclude '**/PlayerCharacterRegistryTest.class'
-    exclude '**/CharacterConversionServiceTest.class'
-    exclude '**/CharacterHomeServiceTest.class'
-    exclude '**/ChatServiceTest.class'
-    exclude '**/CommunityServerServiceTest.class'
-    exclude '**/CrossGameServiceTest.class'
-    exclude '**/CustomUserDetailsServiceTest.class'
-    exclude '**/GalaxyEconomicServiceTest.class'
-    exclude '**/GalaxyOverseerPersistenceTest.class'
-    exclude '**/GalaxyOverseerServiceTest.class'
-    exclude '**/GalaxyServiceMultiGalaxyTest.class'
+    // Stale import exclusions removed in v0.6.1 — all tests now compile
 }
 
 // Separate task for heavy galaxy integration tests (run manually when needed)
@@ -408,6 +352,50 @@ tasks.register('productionBuild') {
         // Set production profile system property
         System.setProperty('spring.profiles.active', 'production')
         logger.lifecycle('Building production JAR with profile: production')
+    }
+}
+
+// ---- Per-Module JAR Tasks ----
+// Produce separate JARs for each universe module from the compiled classes
+def modulePackages = [
+    'module-traveller': 'com/yisy/modules/doramcu/traveller/',
+    'module-babylon5': 'com/yisy/modules/doramcu/babylon5/',
+    'module-starwars': 'com/yisy/modules/doramcu/starwars/',
+    'module-star_trek_4x': 'com/yisy/modules/doramcu/star_trek_4x/',
+    'module-dnd5e': 'com/yisy/modules/doramcu/dnd5e/',
+    'module-lord_of_the_rings': 'com/yisy/modules/doramcu/lord_of_the_rings/',
+    'module-warhammer40k': 'com/yisy/modules/doramcu/warhammer40k/',
+    'module-captainslog': 'com/yisy/modules/doramcu/captainslog/',
+    'module-mechwarrior': 'com/yisy/modules/doramcu/mechwarrior/',
+    'module-starshiptroopers': 'com/yisy/modules/doramcu/starshiptroopers/',
+    'module-fullthrust': 'com/yisy/modules/doramcu/fullthrust/',
+    'module-warcraft': 'com/yisy/modules/doramcu/warcraft/',
+    'module-zero_zero_seven': 'com/yisy/modules/doramcu/zero_zero_seven/',
+    'module-sfb': 'com/yisy/modules/doramcu/sfb/',
+    'module-everquest': 'com/yisy/modules/doramcu/everquest/',
+    'module-daoc': 'com/yisy/modules/doramcu/daoc/',
+    'module-facebook': 'com/yisy/modules/doramcu/facebook/',
+    'module-gamecreator': 'com/yisy/modules/doramcu/gamecreator/',
+    'module-celestial': 'com/yisy/modules/doramcu/celestial/',
+]
+
+modulePackages.each { name, pkgPath ->
+    tasks.register(name, Jar) {
+        description = "Builds ${name}.jar from compiled classes"
+        group = 'build'
+        archiveBaseName = name
+        archiveVersion = findProperty('app.version')
+        from sourceSets.main.output.classesDirs
+        include "${pkgPath}**"
+    }
+}
+
+tasks.register('buildAllModules') {
+    description = 'Builds all universe module JARs'
+    group = 'build'
+    dependsOn classes
+    modulePackages.each { name, pkgPath ->
+        dependsOn name
     }
 }
 

@@ -2,8 +2,6 @@ package com.yisy.modules.doramcu.repository;
 
 import com.yisy.modules.doramcu.model.Node;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -21,8 +19,7 @@ public interface NodeRepository extends JpaRepository<Node, Long> {
 
     List<Node> findByStatus(String status);
 
-    @Query("SELECT n FROM Node n WHERE n.lastHeartbeat < :threshold")
-    List<Node> findStaleNodes(@Param("threshold") LocalDateTime threshold);
+    List<Node> findByLastHeartbeatBefore(LocalDateTime threshold);
 
     void deleteByNodeId(String nodeId);
 }

@@ -32,8 +32,11 @@ public interface PortalTravelRepository extends JpaRepository<PortalTravel, Long
     @Query("SELECT pt FROM PortalTravel pt WHERE pt.status = :status ORDER BY pt.traveledAt DESC")
     List<PortalTravel> findByStatus(@Param("status") TravelStatus status);
 
-    @Query("SELECT pt FROM PortalTravel pt WHERE pt.cooldownExpiresAt IS NOT NULL AND pt.cooldownExpiresAt < :now")
-    List<PortalTravel> findExpiredCooldowns(@Param("now") LocalDateTime now);
+    List<PortalTravel> findByCooldownExpiresAtBefore(LocalDateTime now);
+    
+    default List<PortalTravel> findExpiredCooldowns(LocalDateTime now) {
+        return findByCooldownExpiresAtBefore(now);
+    }
 
     @Query("SELECT COUNT(pt) FROM PortalTravel pt WHERE pt.characterId = :characterId")
     long countByCharacterId(@Param("characterId") Long characterId);

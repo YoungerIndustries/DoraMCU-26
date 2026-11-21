@@ -211,7 +211,7 @@ public class Earth2026Character {
     /**
      * Conditions JSON string.
      */
-    @Column(columnDefinition = "JSON")
+    @Column(columnDefinition = "TEXT")
     private String conditions;
 
     /**

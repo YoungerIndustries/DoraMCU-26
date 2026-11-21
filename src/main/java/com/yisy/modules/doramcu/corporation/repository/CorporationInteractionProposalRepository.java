@@ -41,21 +41,28 @@ public interface CorporationInteractionProposalRepository extends JpaRepository<
     List<CorporationInteractionProposal> findByCorporationId(@Param("corpId") Long corporationId);
 
     /**
-     * Find pending proposals for a specific corporation.
+     * Find pending proposals for a specific corporation that haven't expired yet.
      *
      * @param targetCorpId the target corporation ID
+     * @param now the current time threshold
      * @return list of pending proposals
      */
-    @Query("SELECT p FROM CorporationInteractionProposal p WHERE p.targetCorpId = :corpId AND p.status = 'PENDING' AND p.expiresAt > NOW() ORDER BY p.proposedAt DESC")
-    List<CorporationInteractionProposal> findPendingProposals(@Param("corpId") Long targetCorpId);
+    List<CorporationInteractionProposal> findByTargetCorpIdAndStatusAndExpiresAtAfterOrderByProposedAtDesc(Long targetCorpId, String status, LocalDateTime now);
+
+    default List<CorporationInteractionProposal> findPendingProposals(Long targetCorpId) {
+        return findByTargetCorpIdAndStatusAndExpiresAtAfterOrderByProposedAtDesc(targetCorpId, "PENDING", LocalDateTime.now());
+    }
 
     /**
      * Find expired proposals that need to be updated.
      *
      * @return list of expired proposals
      */
-    @Query("SELECT p FROM CorporationInteractionProposal p WHERE p.status = 'PENDING' AND p.expiresAt < NOW()")
-    List<CorporationInteractionProposal> findExpiredProposals();
+    List<CorporationInteractionProposal> findByStatusAndExpiresAtBefore(String status, LocalDateTime expiresAt);
+    
+    default List<CorporationInteractionProposal> findExpiredProposals() {
+        return findByStatusAndExpiresAtBefore("PENDING", LocalDateTime.now());
+    }
 
     /**
      * Check if a proposal already exists between two corporations of a specific type.

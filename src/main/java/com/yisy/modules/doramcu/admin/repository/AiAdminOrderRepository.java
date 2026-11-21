@@ -49,7 +49,7 @@ public interface AiAdminOrderRepository extends JpaRepository<AiAdminOrder, Long
     List<AiAdminOrder> findByStatusInAndCreatedAtAfter(List<AiAdminOrder.OrderStatus> statuses, LocalDateTime date, Pageable pageable);
 
     /** Get orders grouped by status for a date range (used for trend aggregation). */
-    @Query("SELECT o.status, COUNT(o) FROM AiAdminOrder o WHERE o.createdAt >= :startDate AND o.createdAt < :endDate GROUP BY o.status")
+    @Query("SELECT o.status, COUNT(o) FROM AiAdminOrder o WHERE o.createdAt >= :startDate AND o.createdAt <= :endDate GROUP BY o.status")
     List<Object[]> countOrdersByStatusAndDateRange(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
     /** Get average completion duration for completed orders assigned to an admin (in seconds). */

@@ -27,7 +27,7 @@ public class SpeciesEntity {
     @Column(name = "game_module", length = 50)
     private String gameModule;
 
-    @Column(name = "stat_modifiers", columnDefinition = "JSON")
+    @Column(name = "stat_modifiers", columnDefinition = "TEXT")
     private String statModifiers;
 
     public SpeciesEntity() {

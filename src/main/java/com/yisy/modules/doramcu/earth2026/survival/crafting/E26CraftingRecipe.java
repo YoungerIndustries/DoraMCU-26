@@ -56,7 +56,7 @@ public class E26CraftingRecipe {
     /**
      * Required materials as JSON (resource name -> quantity).
      */
-    @Column(name = "materials_json", columnDefinition = "JSON")
+    @Column(name = "materials_json", columnDefinition = "TEXT")
     private String materialsJson;
 
     /**

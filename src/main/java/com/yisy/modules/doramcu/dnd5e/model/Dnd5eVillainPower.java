@@ -94,7 +94,7 @@ public class Dnd5eVillainPower {
     /**
      * Range of the power (e.g., "30-foot radius", "60-foot line").
      */
-    @Column(name = "range", length = 100)
+    @Column(name = "`range`", length = 100)
     private String range;
 
     /**

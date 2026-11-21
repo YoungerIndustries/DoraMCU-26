@@ -27,7 +27,7 @@ public class SkillEntity {
     @Column(name = "game_module", length = 50)
     private String gameModule;
 
-    @Column(name = "related_stats", columnDefinition = "JSON")
+    @Column(name = "related_stats", columnDefinition = "TEXT")
     private String relatedStats;
 
     public SkillEntity() {

@@ -7,7 +7,7 @@ import com.google.maps.PendingResult;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.ElevationResult;
 import com.google.maps.model.LatLng;
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

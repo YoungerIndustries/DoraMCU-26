@@ -97,7 +97,7 @@ public class Dnd5eCampaignTemplate {
     /**
      * Recommended subsystems as JSON array (e.g., ["horror", "tension_pools", "dark_gifts"]).
      */
-    @Column(name = "recommended_subsystems", columnDefinition = "JSON")
+    @Column(name = "recommended_subsystems", columnDefinition = "TEXT")
     private String recommendedSubsystems = "[]";
 
     /**
@@ -127,13 +127,13 @@ public class Dnd5eCampaignTemplate {
     /**
      * Example NPC descriptions as JSON array.
      */
-    @Column(name = "example_npcs", columnDefinition = "JSON")
+    @Column(name = "example_npcs", columnDefinition = "TEXT")
     private String exampleNpcs = "[]";
 
     /**
      * Example encounter descriptions as JSON array.
      */
-    @Column(name = "example_encounters", columnDefinition = "JSON")
+    @Column(name = "example_encounters", columnDefinition = "TEXT")
     private String exampleEncounters = "[]";
 
     /**

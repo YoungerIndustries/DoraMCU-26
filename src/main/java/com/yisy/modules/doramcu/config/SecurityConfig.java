@@ -55,6 +55,7 @@ public class SecurityConfig {
                         .requestMatchers("/ws/game-sync").permitAll()
                         .requestMatchers("/api/v1/game/**").permitAll()
                         .requestMatchers("/api/v1/ai-network/**").permitAll()
+                        .requestMatchers("/api/v1/nodes/**").permitAll()
                         .requestMatchers("/api/v1/neuron/**", "/api/v1/co-server/**").permitAll()
                         .requestMatchers("/ws/neuron/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()

@@ -146,13 +146,15 @@ public class Galaxy3DController {
                                               @RequestParam double z,
                                               @RequestParam(defaultValue = "50") double radius,
                                               @RequestParam(required = false) Boolean availableOnly) {
+        // Default radius to 50 when not provided or <= 0
+        double effectiveRadius = radius <= 0 ? 50.0 : radius;
         List<AiAdminVisibilityDTO> admins;
         if (Boolean.TRUE.equals(availableOnly)) {
             admins = aiAdminVisibilityService
-                    .getAiAdminsNearPlayerByAvailability(galaxyName, x, y, z, radius, true);
+                    .getAiAdminsNearPlayerByAvailability(galaxyName, x, y, z, effectiveRadius, true);
         } else {
             admins = aiAdminVisibilityService
-                    .getAiAdminsNearPlayer(galaxyName, x, y, z, radius);
+                    .getAiAdminsNearPlayer(galaxyName, x, y, z, effectiveRadius);
         }
         return ResponseEntity.ok(admins);
     }

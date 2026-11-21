@@ -63,7 +63,7 @@ public class Dnd5ePsionicPower {
     /**
      * Range of the power (e.g., "Self", "60 feet", "Touch").
      */
-    @Column(nullable = false, length = 50)
+    @Column(name = "`range`", nullable = false, length = 50)
     private String range;
 
     /**

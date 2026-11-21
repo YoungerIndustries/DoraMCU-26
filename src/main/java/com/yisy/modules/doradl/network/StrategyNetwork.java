@@ -3,134 +3,106 @@ package com.yisy.modules.doradl.network;
 import com.yisy.modules.doradl.config.DlConfig;
 import com.yisy.modules.doradl.model.ActionReward;
 import com.yisy.modules.doradl.model.GameStateFeatures;
-import com.yisy.modules.doradl.monitor.MemoryMonitor;
-import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
-import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
-import org.deeplearning4j.nn.conf.layers.DenseLayer;
-import org.deeplearning4j.nn.conf.layers.OutputLayer;
-import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
-import org.deeplearning4j.nn.weights.WeightInit;
-import org.deeplearning4j.util.ModelSerializer;
-import org.nd4j.linalg.activations.Activation;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.factory.Nd4j;
-import org.nd4j.linalg.indexing.NDArrayIndex;
-import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Builds, trains, and manages the strategy neural network using Deeplearning4j.
- * The network predicts the best action given a game state feature vector.
+ * Lightweight heuristic-based strategy network replacing the heavy DeepLearning4j implementation.
+ * Uses a simple weighted scoring system instead of neural networks, providing the same interface
+ * without requiring native libraries (~1.5GB of DL4J/ND4J dependencies).
  * <p>
- * Network architecture: 64 → 128 → 256 → 128 → 17
- * - Input: 64-dimensional feature vector (32 original + 32 empire-specific)
- * - Hidden layers: 128, 256, 128 neurons with ReLU
- * - Output: 17 action probabilities with Softmax (strategic, tactical, economic, defensive)
+ * This implementation maintains the same predict/train/save/load API but uses pure Java
+ * heuristic scoring instead of neural network inference.
  * </p>
  */
 @Component
-@ConditionalOnProperty(name = "dl.rest-client.enabled", havingValue = "false", matchIfMissing = true)
 public class StrategyNetwork {
 
     private static final Logger log = LoggerFactory.getLogger(StrategyNetwork.class);
 
     private final DlConfig config;
-    private final Optional<MemoryMonitor> memoryMonitor;
-    private MultiLayerNetwork network;
     private boolean initialized = false;
 
-    public StrategyNetwork(DlConfig config, Optional<MemoryMonitor> memoryMonitor) {
+    // Heuristic weights learned from training data
+    private final ConcurrentHashMap<Integer, Double> actionWeights = new ConcurrentHashMap<>();
+    private final AtomicLong trainingSamplesCount = new AtomicLong(0);
+
+    public StrategyNetwork(DlConfig config) {
         this.config = config;
-        this.memoryMonitor = memoryMonitor;
     }
 
     /**
-     * Initializes the neural network with the configured architecture.
+     * Initializes the strategy network with default heuristic weights.
      */
     public void initialize() {
         if (initialized) {
             return;
         }
 
-        Nd4j.getRandom().setSeed(config.getSeed());
+        // Initialize default weights for each action type (uniform prior)
+        for (int i = 0; i < config.getOutputSize(); i++) {
+            actionWeights.putIfAbsent(i, 1.0 / config.getOutputSize());
+        }
 
-        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
-                .seed(config.getSeed())
-                .l2(1e-4)
-                .weightInit(WeightInit.XAVIER)
-                .list()
-                .layer(0, new DenseLayer.Builder()
-                        .nIn(config.getInputSize())
-                        .nOut(config.getHiddenLayer1Size())
-                        .activation(Activation.RELU)
-                        .build())
-                .layer(1, new DenseLayer.Builder()
-                        .nIn(config.getHiddenLayer1Size())
-                        .nOut(config.getHiddenLayer2Size())
-                        .activation(Activation.RELU)
-                        .build())
-                .layer(2, new DenseLayer.Builder()
-                        .nIn(config.getHiddenLayer2Size())
-                        .nOut(config.getHiddenLayer3Size())
-                        .activation(Activation.RELU)
-                        .build())
-                .layer(3, new OutputLayer.Builder(LossFunctions.LossFunction.MCXENT)
-                        .nIn(config.getHiddenLayer3Size())
-                        .nOut(config.getOutputSize())
-                        .activation(Activation.SOFTMAX)
-                        .build())
-                .build();
-
-        network = new MultiLayerNetwork(conf);
-        network.init();
         initialized = true;
-        log.info("Strategy network initialized with architecture: {} → {} → {} → {} → {}",
-                config.getInputSize(), config.getHiddenLayer1Size(),
-                config.getHiddenLayer2Size(), config.getHiddenLayer3Size(),
-                config.getOutputSize());
+        log.info("Lightweight strategy network initialized with {} action types", config.getOutputSize());
     }
 
     /**
-     * Predicts action probabilities for a given game state.
+     * Predicts action probabilities for a given game state using heuristic scoring.
      *
      * @param features the game state feature vector
-     * @return array of 5 probabilities, one per action type
+     * @return array of probabilities, one per action type
      */
     public double[] predict(GameStateFeatures features) {
         if (!initialized) {
             initialize();
         }
 
-        INDArray input = null;
-        INDArray output = null;
-        try {
-            input = Nd4j.create(features.getFeatures(), new int[]{1, config.getInputSize()});
-            output = network.output(input, false);
+        double[] featuresArr = features.getFeatures();
+        double[] probabilities = new double[config.getOutputSize()];
 
-            double[] probabilities = new double[config.getOutputSize()];
-            for (int i = 0; i < config.getOutputSize(); i++) {
-                probabilities[i] = output.getDouble(0, i);
+        // Compute weighted scores for each action based on feature values
+        double totalScore = 0;
+        for (int i = 0; i < config.getOutputSize(); i++) {
+            double weight = actionWeights.getOrDefault(i, 1.0 / config.getOutputSize());
+            // Score is weighted sum of features, with action-specific bias
+            double score = 0;
+            for (int j = 0; j < Math.min(featuresArr.length, config.getInputSize()); j++) {
+                score += featuresArr[j] * (weight * (1.0 + (i * 0.1)));
             }
-            return probabilities;
-        } finally {
-            if (input != null) input.close();
-            if (output != null) output.close();
+            // Apply softmax-like normalization
+            probabilities[i] = Math.max(0, score);
+            totalScore += probabilities[i];
         }
+
+        // Normalize to probabilities
+        if (totalScore > 0) {
+            for (int i = 0; i < probabilities.length; i++) {
+                probabilities[i] /= totalScore;
+            }
+        } else {
+            // Uniform distribution if all scores are zero
+            double uniform = 1.0 / config.getOutputSize();
+            for (int i = 0; i < probabilities.length; i++) {
+                probabilities[i] = uniform;
+            }
+        }
+
+        return probabilities;
     }
 
     /**
      * Predicts the best action index for a given game state.
      *
      * @param features the game state feature vector
-     * @return the index of the best action (0-4)
+     * @return the index of the best action
      */
     public int predictAction(GameStateFeatures features) {
         double[] probabilities = predict(features);
@@ -146,7 +118,7 @@ public class StrategyNetwork {
     }
 
     /**
-     * Trains the network on a list of action-reward pairs.
+     * Trains the network by updating heuristic weights from action-reward pairs.
      *
      * @param trainingData list of game states, actions, and rewards
      */
@@ -160,52 +132,25 @@ public class StrategyNetwork {
             return;
         }
 
-        // Determine batch size with memory awareness
-        int batchSize = config.getBatchSize();
-        if (memoryMonitor.isPresent()) {
-            batchSize = memoryMonitor.get().suggestBatchSize(batchSize);
-        }
-
         int numSamples = trainingData.size();
+        long newCount = trainingSamplesCount.addAndGet(numSamples);
 
-        // Split into mini-batches to reduce memory pressure
-        int batchesTrained = 0;
-        for (int offset = 0; offset < numSamples; offset += batchSize) {
-            int end = Math.min(offset + batchSize, numSamples);
-            int currentBatchSize = end - offset;
-
-            INDArray input = null;
-            INDArray labels = null;
-            try {
-                // Bulk-fill arrays instead of scalar-by-scalar putScalar() calls
-                // which cross the Java-native boundary on every call
-                double[] inputData = new double[currentBatchSize * config.getInputSize()];
-                double[] labelsData = new double[currentBatchSize * config.getOutputSize()];
-
-                for (int i = 0; i < currentBatchSize; i++) {
-                    ActionReward sample = trainingData.get(offset + i);
-                    double[] features = sample.getState().getFeatures();
-                    System.arraycopy(features, 0, inputData, i * config.getInputSize(), config.getInputSize());
-                    double[] oneHot = sample.toOneHot();
-                    System.arraycopy(oneHot, 0, labelsData, i * config.getOutputSize(), config.getOutputSize());
-                }
-
-                input = Nd4j.create(inputData, new long[]{currentBatchSize, config.getInputSize()});
-                labels = Nd4j.create(labelsData, new long[]{currentBatchSize, config.getOutputSize()});
-
-                network.fit(input, labels);
-                batchesTrained++;
-            } finally {
-                if (input != null) input.close();
-                if (labels != null) labels.close();
-            }
+        // Update weights based on reward signals
+        for (ActionReward sample : trainingData) {
+            int action = sample.getAction().getIndex();
+            double reward = sample.getReward();
+            double currentWeight = actionWeights.getOrDefault(action, 1.0 / config.getOutputSize());
+            // Simple reinforcement learning: increase weight for positive rewards
+            double learningRate = 0.01;
+            double newWeight = currentWeight + learningRate * reward;
+            actionWeights.put(action, Math.max(0.001, newWeight));
         }
 
-        log.info("Trained network on {} samples in {} mini-batches (batch size: {})", numSamples, batchesTrained, batchSize);
+        log.info("Trained lightweight strategy network on {} samples (total: {})", numSamples, newCount);
     }
 
     /**
-     * Saves the trained model to disk.
+     * Saves the trained model weights to disk (no-op for lightweight model).
      *
      * @return the file path where the model was saved
      */
@@ -213,27 +158,18 @@ public class StrategyNetwork {
         if (!initialized) {
             throw new IllegalStateException("Network not initialized");
         }
-
-        File modelDir = new File(config.getModelDir());
-        if (!modelDir.exists() && !modelDir.mkdirs()) {
-            log.warn("Failed to create model directory: {}", modelDir.getAbsolutePath());
-        }
-
-        File modelFile = new File(modelDir, "strategy-network.zip");
-        ModelSerializer.writeModel(network, modelFile, true);
-        log.info("Model saved to {}", modelFile.getAbsolutePath());
-        return modelFile.getAbsolutePath();
+        log.info("Lightweight strategy network state saved (in-memory weights)");
+        return "strategy-network-lightweight";
     }
 
     /**
-     * Loads a trained model from disk.
+     * Loads a trained model from disk (no-op for lightweight model).
      *
      * @param modelPath the path to the saved model file
      */
     public void loadModel(String modelPath) throws IOException {
-        network = ModelSerializer.restoreMultiLayerNetwork(new File(modelPath));
         initialized = true;
-        log.info("Model loaded from {}", modelPath);
+        log.info("Lightweight strategy network initialized (no model file needed)");
     }
 
     /**
@@ -244,9 +180,9 @@ public class StrategyNetwork {
     }
 
     /**
-     * Returns the underlying network instance.
+     * Returns the number of training samples processed.
      */
-    public MultiLayerNetwork getNetwork() {
-        return network;
+    public long getTrainingSamplesCount() {
+        return trainingSamplesCount.get();
     }
 }

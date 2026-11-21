@@ -64,14 +64,12 @@ public interface AiAdminNotificationRepository extends JpaRepository<AiAdminNoti
      * Delete expired notifications (expires_at is in the past).
      */
     @Modifying
-    @Query("DELETE FROM AiAdminNotification n WHERE n.expiresAt < :now")
-    int deleteExpired(@Param("now") LocalDateTime now);
+    int deleteByExpiresAtBefore(LocalDateTime now);
 
     /**
      * Delete old read notifications to prevent unbounded growth.
      * Keeps only the last 30 days of read notifications.
      */
     @Modifying
-    @Query("DELETE FROM AiAdminNotification n WHERE n.isRead = true AND n.createdAt < :cutoff")
-    int deleteOldReadNotifications(@Param("cutoff") LocalDateTime cutoff);
+    int deleteByIsReadTrueAndCreatedAtBefore(LocalDateTime cutoff);
 }

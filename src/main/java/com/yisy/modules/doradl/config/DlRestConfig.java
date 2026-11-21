@@ -5,7 +5,6 @@ import com.yisy.modules.doradl.dl.service.DlGameAiServiceRest;
 import com.yisy.modules.doradl.dto.GameStateResponse;
 import com.yisy.modules.doradl.rest.DlRestClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,7 +21,6 @@ import java.util.Map;
  */
 @Configuration
 @ConditionalOnProperty(prefix = "dl.rest-client", name = "enabled", havingValue = "true", matchIfMissing = false)
-@EnableConfigurationProperties(DlConfig.class)
 public class DlRestConfig {
 
     @Bean

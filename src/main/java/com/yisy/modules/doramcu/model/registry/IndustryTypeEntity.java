@@ -33,7 +33,7 @@ public class IndustryTypeEntity {
     @Column(name = "maintenance_cost", nullable = false)
     private int maintenanceCost;
 
-    @Column(name = "required_terrain", columnDefinition = "JSON")
+    @Column(name = "required_terrain", columnDefinition = "TEXT")
     private String requiredTerrain;
 
     public IndustryTypeEntity() {

@@ -27,7 +27,8 @@ public class DaocEconomyBridge implements FourxEconomyService {
         summary.put("currency", "Gold");
         summary.put("expenses", 3500);
 
-        String realm = (factionId != null) ? factionId.toLowerCase() : null;
+        String realm = factionId != null ? factionId.toLowerCase().trim() : null;
+        if (realm != null && realm.isEmpty()) realm = null;
         String resource = getRealmResource(realm);
         double multiplier = getRealmMultiplier(realm);
         summary.put("primaryResource", resource);

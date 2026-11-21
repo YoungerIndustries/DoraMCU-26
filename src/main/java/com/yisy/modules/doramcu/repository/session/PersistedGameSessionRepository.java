@@ -3,8 +3,6 @@ package com.yisy.modules.doramcu.repository.session;
 import com.yisy.modules.doramcu.model.session.PersistedGameSession;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -19,6 +17,5 @@ public interface PersistedGameSessionRepository extends JpaRepository<PersistedG
     List<PersistedGameSession> findByLastActivityAtBefore(LocalDateTime threshold);
 
     @Modifying
-    @Query("DELETE FROM PersistedGameSession p WHERE p.lastActivityAt < :threshold")
-    int deleteByLastActivityAtBefore(@Param("threshold") LocalDateTime threshold);
+    int deleteByLastActivityAtBefore(LocalDateTime threshold);
 }

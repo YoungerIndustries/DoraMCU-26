@@ -11,6 +11,7 @@ import com.yisy.modules.doradl.monitor.MemoryMonitor.MemoryLevel;
 import com.yisy.modules.doradl.network.StrategyNetwork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +40,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * </p>
  */
 @Service
+@ConditionalOnProperty(name = "dl.rest-client.enabled", havingValue = "false", matchIfMissing = true)
 public class DoraAiLearningService {
 
     private static final Logger log = LoggerFactory.getLogger(DoraAiLearningService.class);

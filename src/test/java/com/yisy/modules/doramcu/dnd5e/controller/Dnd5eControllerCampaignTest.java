@@ -113,27 +113,24 @@ class Dnd5eControllerCampaignTest {
         adventureHookService = mock(Dnd5eAdventureHookService.class);
         dungeonRoomService = mock(Dnd5eDungeonRoomService.class);
         tensionPoolService = mock(Dnd5eTensionPoolService.class);
-        npcService = mock(Dnd5eNpcService.class);
-        encounterService = mock(Dnd5eEncounterService.class);
         moduleService = mock(Dnd5eModuleService.class);
         speciesService = mock(Dnd5eSpeciesService.class);
         campaignTemplateService = mock(Dnd5eCampaignTemplateService.class);
         magicItemService = mock(Dnd5eMagicItemService.class);
         backgroundService = mock(Dnd5eBackgroundService.class);
         classService = mock(Dnd5eClassService.class);
-        monsterService = mock(Dnd5eMonsterService.class);
 
         Dnd5eController controller = new Dnd5eController(
-                characterService, combatService, spellService, rulesService,
-                diceService, gameplayService, campaignService, inventoryService, craftingService,
-                heroicInspirationService, exhaustionService, featService, toolProficiencyService,
-                psionService, horrorService, growingItemService, villainService, bastionService, adventureHookService,
-                dungeonRoomService, tensionPoolService, npcService, encounterService, moduleService,
-                speciesService, campaignTemplateService, magicItemService, backgroundService, classService,
-                monsterService
+                characterService, rulesService,
+                diceService, gameplayService, inventoryService, craftingService,
+                heroicInspirationService, exhaustionService,
+                horrorService, growingItemService, villainService, bastionService, adventureHookService,
+                dungeonRoomService, tensionPoolService, moduleService,
+                magicItemService
         );
 
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        Dnd5eCampaignController campaignController = new Dnd5eCampaignController(campaignService, campaignTemplateService);
+        mockMvc = MockMvcBuilders.standaloneSetup(controller, campaignController).build();
     }
 
     // ---- Campaign CRUD ----

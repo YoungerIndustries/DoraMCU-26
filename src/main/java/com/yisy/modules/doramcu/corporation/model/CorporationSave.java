@@ -36,20 +36,16 @@ public class CorporationSave {
     @Column(name = "credit_balance", nullable = false)
     private Long creditBalance = 0L;
 
-    @Lob
-    @Column(name = "active_contracts", columnDefinition = "CLOB")
+    @Column(name = "active_contracts", columnDefinition = "TEXT")
     private String activeContracts; // JSON array of contract IDs and state
 
-    @Lob
-    @Column(name = "crew_state", columnDefinition = "CLOB")
+    @Column(name = "crew_state", columnDefinition = "TEXT")
     private String crewState; // JSON array of crew IDs and state
 
-    @Lob
-    @Column(name = "ai_assistant_state", columnDefinition = "CLOB")
+    @Column(name = "ai_assistant_state", columnDefinition = "TEXT")
     private String aiAssistantState; // JSON object with AI assistant state
 
-    @Lob
-    @Column(name = "office_state", columnDefinition = "CLOB")
+    @Column(name = "office_state", columnDefinition = "TEXT")
     private String officeState; // JSON object with office building level
 
     @Version
