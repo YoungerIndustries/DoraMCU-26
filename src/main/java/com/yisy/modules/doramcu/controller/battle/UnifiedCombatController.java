@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.controller.battle;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.hex.Ship;
 import com.yisy.modules.doramcu.gamecore.CombatService;
 import com.yisy.modules.doramcu.gamecore.DelegatingCombatService;

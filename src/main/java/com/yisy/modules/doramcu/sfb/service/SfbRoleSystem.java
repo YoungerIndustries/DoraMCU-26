@@ -2,6 +2,11 @@ package com.yisy.modules.doramcu.sfb.service;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
 import com.yisy.modules.doramcu.sfb.dto.SfbCharacterModifiers;
+import com.yisy.modules.doramcu.sfb.model.SfbCharacterAssignment;
+import com.yisy.modules.doramcu.sfb.model.SfbCrewStationType;
+import com.yisy.modules.doramcu.sfb.model.SfbRole;
+import com.yisy.modules.doramcu.sfb.model.SfbShip;
+import com.yisy.modules.doramcu.sfb.model.SfbShield;
 import java.util.*;
 
 /**

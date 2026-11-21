@@ -11,6 +11,8 @@ import jakarta.persistence.*;
  * and may contain strategic resource deposits.
  * </p>
  */
+@Entity
+@Table(name = "asteroids")
 public class Asteroid {
 
     @Id

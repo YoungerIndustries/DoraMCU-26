@@ -1,6 +1,6 @@
 package com.yisy.modules.doramcu.model.galaxy;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-import com.yisy.modules.doramcu.model.misc.Planet;
+
+
 
 
 import jakarta.persistence.*;
@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
  * stations, vehicles, and trade routes on one or more planets.
  * </p>
  */
+@Entity
+@Table(name = "planet_corporations")
 public class PlanetCorporationEntity {
 
     @Id

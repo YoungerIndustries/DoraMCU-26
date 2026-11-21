@@ -1,5 +1,11 @@
 package com.yisy.modules.doramcu.service.character;
+import com.yisy.modules.doramcu.traveller.AlienRace;
+
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
+import com.yisy.modules.doramcu.traveller.AbilityScore;
+import com.yisy.modules.doramcu.traveller.Career;
+import com.yisy.modules.doramcu.traveller.Skill;
+import com.yisy.modules.doramcu.traveller.TravellerCharacter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

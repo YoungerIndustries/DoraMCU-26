@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.ai;
-
 import com.yisy.modules.doramcu.hex.Fleet;
 import com.yisy.modules.doramcu.hex.Player;
 import com.yisy.modules.doramcu.hex.SpaceStation;

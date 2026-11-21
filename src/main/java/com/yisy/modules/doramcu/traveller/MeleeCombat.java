@@ -1,5 +1,9 @@
 package com.yisy.modules.doramcu.traveller;
 
+import com.yisy.modules.doramcu.traveller.MeleeWeapon;
+
+import com.yisy.modules.doramcu.traveller.Armor;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

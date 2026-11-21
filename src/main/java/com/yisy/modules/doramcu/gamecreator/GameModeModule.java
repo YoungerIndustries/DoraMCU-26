@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.gamecreator;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.gamecore.GameMode;
 

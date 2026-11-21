@@ -1,4 +1,5 @@
 package com.yisy.modules.doradl.rest;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doradl.dto.GameStateResponse;
 import com.yisy.modules.doradl.dl.network.FeatureExtractor;

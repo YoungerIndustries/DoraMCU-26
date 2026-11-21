@@ -26,8 +26,7 @@ import java.util.Optional;
  * through contract work, with matching contract types giving 2x XP to that skill.
  * </p>
  */
-@Service("careerProgressionService_corporation_service_CareerProgressionService")
-    @Service
+@Service
 public class CareerProgressionService {
 
     private static final Logger log = LoggerFactory.getLogger(CareerProgressionService.class);

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.exception;
+import com.yisy.modules.doramcu.model.players.Player;
 import org.springframework.stereotype.Component;
 
 import com.yisy.modules.doramcu.service.misc.ErrorTracker;
@@ -15,9 +16,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import java.util.NoSuchElementException;
 
-@RestControllerAdvice("globalExceptionHandler_0")
-    @RestControllerAdvice
-@Component
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);

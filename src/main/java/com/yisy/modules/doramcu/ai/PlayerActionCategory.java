@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.ai;
+import com.yisy.modules.doramcu.model.players.Player;
 
 /**
  * Categories of player actions tracked for behavioral personality analysis.

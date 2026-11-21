@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.starwars.model;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import java.util.List;
 import java.util.Map;

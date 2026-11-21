@@ -64,7 +64,7 @@ public interface DiceService {
     /**
      * Result of a dice roll.
      */
-    class DiceRollResult {
+    static class DiceRollResult {
         private final String formula;
         private final List<Integer> individualRolls;
         private final int total;

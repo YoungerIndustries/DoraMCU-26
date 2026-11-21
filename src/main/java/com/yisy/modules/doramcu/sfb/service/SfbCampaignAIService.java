@@ -1,4 +1,16 @@
 package com.yisy.modules.doramcu.sfb.service;
+import com.yisy.modules.doramcu.sfb.model.SfbShield;
+import com.yisy.modules.doramcu.sfb.model.SfbSSD;
+import com.yisy.modules.doramcu.sfb.model.SfbCrewStationType;
+import com.yisy.modules.doramcu.sfb.model.SfbCharacterAssignment;
+import com.yisy.modules.doramcu.sfb.model.SfbEnergyAllocation;
+import com.yisy.modules.doramcu.sfb.service.SfbDiplomacyService.FactionProfile;
+import com.yisy.modules.doramcu.sfb.service.SfbDiplomacyService.RelationType;
+import com.yisy.modules.doramcu.sfb.service.SfbDiplomacyService.TreatyType;
+import com.yisy.modules.doramcu.sfb.service.SfbDiplomacyService.DiplomaticAction;
+import com.yisy.modules.doramcu.sfb.service.SfbEconomyService.FactionEconomy;
+import com.yisy.modules.doramcu.sfb.service.SfbEconomyService.ResourceType;
+import com.yisy.modules.doramcu.sfb.service.SfbEconomyService.ShipClassCategory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

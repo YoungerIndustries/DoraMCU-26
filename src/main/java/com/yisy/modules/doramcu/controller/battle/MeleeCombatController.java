@@ -1,6 +1,9 @@
 package com.yisy.modules.doramcu.controller.battle;
 
 import com.yisy.modules.doramcu.service.battle.MeleeCombatService;
+import com.yisy.modules.doramcu.traveller.Armor;
+import com.yisy.modules.doramcu.traveller.MeleeCombat;
+import com.yisy.modules.doramcu.traveller.MeleeWeapon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

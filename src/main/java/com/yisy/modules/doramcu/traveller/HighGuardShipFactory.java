@@ -5,6 +5,7 @@ import com.yisy.modules.doramcu.hex.Ship;
 import com.yisy.modules.doramcu.hex.ShipComponent;
 import com.yisy.modules.doramcu.hex.ShipType;
 import com.yisy.modules.doramcu.hex.WeaponType;
+import com.yisy.modules.doramcu.traveller.HighGuardShipDesign;
 
 import java.util.List;
 import java.util.Objects;

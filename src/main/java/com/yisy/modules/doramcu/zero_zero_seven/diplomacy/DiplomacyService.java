@@ -17,7 +17,6 @@ import java.util.Optional;
  * </p>
  */
 @Service("diplomacyService_zero_zero_seven_diplomacy_DiplomacyService")
-    @Service
 public class DiplomacyService {
 
     private final BondDiplomaticRelationRepository relationRepository;

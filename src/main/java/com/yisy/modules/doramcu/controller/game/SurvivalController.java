@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.controller.game;
+import com.yisy.modules.doramcu.traveller.Survival;
 
 import com.yisy.modules.doramcu.service.game.SurvivalService;
 import org.slf4j.Logger;

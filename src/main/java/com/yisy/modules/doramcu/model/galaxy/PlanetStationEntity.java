@@ -1,8 +1,8 @@
 package com.yisy.modules.doramcu.model.galaxy;
-import com.yisy.modules.doramcu.hex.Hex;
-import com.yisy.modules.doramcu.hex.dungeon.Dungeon;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-import com.yisy.modules.doramcu.model.misc.Planet;
+
+
+
+
 
 
 import jakarta.persistence.*;
@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
  * airport, etc.) so it can be recreated from the database.
  * </p>
  */
+@Entity
+@Table(name = "planet_stations")
 public class PlanetStationEntity {
 
     @Id

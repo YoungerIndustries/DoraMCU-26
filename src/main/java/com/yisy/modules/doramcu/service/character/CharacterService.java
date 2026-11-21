@@ -1,5 +1,9 @@
 package com.yisy.modules.doramcu.service.character;
-
+import com.yisy.modules.doramcu.hex.Player;
+import com.yisy.modules.doramcu.traveller.AbilityScore;
+import com.yisy.modules.doramcu.traveller.Career;
+import com.yisy.modules.doramcu.traveller.Skill;
+import com.yisy.modules.doramcu.traveller.TravellerCharacter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -169,8 +173,9 @@ public class CharacterService {
      * Selects a random skill from a career's skill table.
      */
     private Skill randomSkillFromCareer(Career career) {
-        List<Skill> table = career.getSkillTable();
-        return table.get(random.nextInt(table.size()));
+        List<String> table = career.getSkillTable();
+        String skillName = table.get(random.nextInt(table.size()));
+        return new Skill(Skill.SkillType.NONE, 1);
     }
 
     /**

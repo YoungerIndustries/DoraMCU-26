@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.hex.planet.hullmodule;
-
 import com.yisy.modules.doramcu.hex.planet.CargoType;
 import com.yisy.modules.doramcu.hex.planet.TerrainType;
 

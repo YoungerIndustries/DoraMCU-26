@@ -1,4 +1,6 @@
 package com.yisy.modules.doramcu.dnd5e.integration;
+import com.yisy.modules.doramcu.service.game.LoreGroupEmpireService.LoreGroup;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.dnd5e.service.Dnd5eMonsterService;
 import com.yisy.modules.doramcu.dnd5e.service.Dnd5eSpeciesService;

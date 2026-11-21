@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.traveller;
-
 /**
  * Lifecycle status of a Traveller character during creation and career service.
  * <p>

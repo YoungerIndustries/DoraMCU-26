@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.traveller.shipcustomization;
+import com.yisy.modules.doramcu.traveller.HighGuardShipDesign;
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;

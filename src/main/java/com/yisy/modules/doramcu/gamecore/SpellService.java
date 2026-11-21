@@ -47,7 +47,7 @@ public interface SpellService {
     /**
      * A spell.
      */
-    class Spell {
+    static class Spell {
         private Long id;
         private String name;
         private int level;
@@ -87,7 +87,7 @@ public interface SpellService {
     /**
      * Result of casting a spell.
      */
-    class SpellCastResult {
+    static class SpellCastResult {
         private final Long spellId;
         private final String spellName;
         private final boolean success;

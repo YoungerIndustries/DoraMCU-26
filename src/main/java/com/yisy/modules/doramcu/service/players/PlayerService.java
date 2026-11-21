@@ -2,6 +2,7 @@ package com.yisy.modules.doramcu.service.players;
 import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.facebook.dto.FacebookProfileData;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.repository.players.PlayerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

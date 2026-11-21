@@ -2,6 +2,11 @@ package com.yisy.modules.doramcu.starshiptroopers.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yisy.modules.doramcu.starshiptroopers.model.Scenario;
+import com.yisy.modules.doramcu.starshiptroopers.model.SpecialEquipment;
+import com.yisy.modules.doramcu.starshiptroopers.model.Unit;
+import com.yisy.modules.doramcu.starshiptroopers.model.UnitVariant;
+import com.yisy.modules.doramcu.starshiptroopers.model.VictoryConditions;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;

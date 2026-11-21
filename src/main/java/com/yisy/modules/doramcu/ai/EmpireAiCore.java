@@ -1,5 +1,8 @@
 package com.yisy.modules.doramcu.ai;
-
+import com.yisy.modules.doramcu.hex.Fleet;
+import com.yisy.modules.doramcu.hex.Hex3D;
+import com.yisy.modules.doramcu.hex.Player;
+import com.yisy.modules.doramcu.hex.ShipType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

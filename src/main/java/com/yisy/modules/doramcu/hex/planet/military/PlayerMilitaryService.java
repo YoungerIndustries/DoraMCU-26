@@ -1,10 +1,10 @@
 package com.yisy.modules.doramcu.hex.planet.military;
-
 import com.yisy.modules.doramcu.earth2026.model.Earth2026Country;
 import com.yisy.modules.doramcu.earth2026.service.PlanetService;
 import com.yisy.modules.doramcu.thirdreich.domain.ThirdReichGroundUnit;
 import com.yisy.modules.doramcu.thirdreich.domain.ThirdReichUnitType;
 import com.yisy.modules.doramcu.thirdreich.service.CountryCampaignService;
+import com.yisy.modules.doramcu.thirdreich.service.CountryCampaignService.CountryCampaign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

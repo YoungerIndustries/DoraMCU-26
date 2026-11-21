@@ -4,6 +4,8 @@ import com.yisy.modules.doramcu.mechwarrior.engine.MechWarriorSession;
 import com.yisy.modules.doramcu.mechwarrior.model.Mission;
 import com.yisy.modules.doramcu.mechwarrior.model.MissionObjective;
 import com.yisy.modules.doramcu.mechwarrior.service.MissionService;
+import com.yisy.modules.doramcu.mechwarrior.service.MissionService.MissionResult;
+import com.yisy.modules.doramcu.mechwarrior.service.MissionService.PilotMissionStats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

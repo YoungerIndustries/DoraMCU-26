@@ -1,5 +1,8 @@
 package com.yisy.modules.doramcu.earth2026.service;
 
+import com.yisy.modules.doramcu.earth2026.model.BiosphereContext;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026BattleEnvironment;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

@@ -2,6 +2,12 @@ package com.yisy.modules.doramcu.warhammer40k.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yisy.modules.doramcu.warhammer40k.model.Faction;
+import com.yisy.modules.doramcu.warhammer40k.model.Lore;
+import com.yisy.modules.doramcu.warhammer40k.model.Scenario;
+import com.yisy.modules.doramcu.warhammer40k.model.SpecialAbility;
+import com.yisy.modules.doramcu.warhammer40k.model.Unit;
+import com.yisy.modules.doramcu.warhammer40k.model.UnitStats;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;

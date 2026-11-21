@@ -1,10 +1,15 @@
 package com.yisy.modules.doramcu.controller.session;
+import com.yisy.modules.doramcu.model.players.Player;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yisy.modules.doramcu.dto.session.GameEvent;
+import com.yisy.modules.doramcu.service.misc.SpectatorService;
+import com.yisy.modules.doramcu.service.misc.SpectatorService.SpectatorGameState;
+import com.yisy.modules.doramcu.service.misc.SpectatorService.SpectatorPlayerSummary;
+import com.yisy.modules.doramcu.service.misc.SpectatorService.SpectatorFleetSummary;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

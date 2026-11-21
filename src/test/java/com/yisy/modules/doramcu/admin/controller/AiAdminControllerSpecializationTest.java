@@ -3,7 +3,7 @@ package com.yisy.modules.doramcu.admin.controller;
 import com.yisy.modules.doramcu.admin.model.AiAdminIncident;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
-import com.yisy.modules.doramcu.model.Player;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.repository.players.PlayerRepository;
 import com.yisy.modules.doramcu.repository.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;

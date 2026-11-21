@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.mechwarrior.model;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import java.util.UUID;
 

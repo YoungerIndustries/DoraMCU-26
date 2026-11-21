@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.controller.session;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.dto.session.CreateSessionRequest;
 import com.yisy.modules.doramcu.dto.session.CreateSessionResponse;
 import com.yisy.modules.doramcu.dto.session.JoinSessionResponse;

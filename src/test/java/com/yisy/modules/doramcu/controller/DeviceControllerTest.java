@@ -1,8 +1,9 @@
 package com.yisy.modules.doramcu.controller;
+import com.yisy.modules.doramcu.controller.misc.DeviceController;
 
 import com.yisy.modules.doramcu.config.MetricsConfig;
-import com.yisy.modules.doramcu.model.Device;
-import com.yisy.modules.doramcu.repository.DeviceRepository;
+import com.yisy.modules.doramcu.model.misc.Device;
+import com.yisy.modules.doramcu.repository.misc.DeviceRepository;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Timer;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.gamemode;
+import com.yisy.modules.doramcu.model.players.Player;
 import org.springframework.stereotype.Component;
 
 import com.yisy.modules.doramcu.gamecore.GameMode;

@@ -1,9 +1,28 @@
 package com.yisy.modules.doramcu.sfb.controller;
 
+import com.yisy.modules.doramcu.sfb.dto.SfbActionRequest;
+import com.yisy.modules.doramcu.sfb.dto.SfbBattleLocationRequest;
+import com.yisy.modules.doramcu.sfb.dto.SfbBuildShipRequest;
+import com.yisy.modules.doramcu.sfb.dto.SfbCampaignStatusResponse;
+import com.yisy.modules.doramcu.sfb.dto.SfbCharacterAssignmentRequest;
+import com.yisy.modules.doramcu.sfb.dto.SfbCharacterModifiers;
+import com.yisy.modules.doramcu.sfb.dto.SfbFleetRequest;
+import com.yisy.modules.doramcu.sfb.dto.SfbRepairRequest;
+import com.yisy.modules.doramcu.sfb.dto.SfbShipSnapshot;
 import com.yisy.modules.doramcu.sfb.model.SfbBattleOutcome;
 import com.yisy.modules.doramcu.sfb.model.SfbCharacterAssignment;
+import com.yisy.modules.doramcu.sfb.model.SfbCrewStationType;
 import com.yisy.modules.doramcu.sfb.model.SfbRole;
 import com.yisy.modules.doramcu.sfb.model.SfbShip;
+import com.yisy.modules.doramcu.sfb.service.SfbCampaignAIService;
+import com.yisy.modules.doramcu.sfb.service.SfbCampaignEngine;
+import com.yisy.modules.doramcu.sfb.service.SfbCharacterBridge;
+import com.yisy.modules.doramcu.sfb.service.SfbCombatEngine;
+import com.yisy.modules.doramcu.sfb.service.SfbDiplomacyService;
+import com.yisy.modules.doramcu.sfb.service.SfbEconomyService;
+import com.yisy.modules.doramcu.sfb.service.SfbGalaxyIntegration;
+import com.yisy.modules.doramcu.sfb.service.SfbRoleSystem;
+import com.yisy.modules.doramcu.sfb.service.SfbTerrainMonsterService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,9 +1,6 @@
 package com.yisy.modules.doramcu.repository.galaxy;
-import com.yisy.modules.doramcu.gamecore.GameType;
-import com.yisy.modules.doramcu.hex.dungeon.Dungeon;
-import com.yisy.modules.doramcu.model.misc.Planet;
 
-
+import com.yisy.modules.doramcu.model.galaxy.PlanetBuildingModuleEntity;
 import com.yisy.modules.doramcu.techlevel.ModuleCategory;
 import com.yisy.modules.doramcu.techlevel.TechLevel;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.config;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalCause;

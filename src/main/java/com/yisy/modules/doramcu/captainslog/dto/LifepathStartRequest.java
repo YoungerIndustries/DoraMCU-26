@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.dto;
+import com.yisy.modules.doramcu.model.players.Player;
 
 /**
  * Request to start a new lifepath character creation session.

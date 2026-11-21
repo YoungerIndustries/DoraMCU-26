@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.ai.framework;
-
 import com.yisy.modules.doramcu.ai.AiPersonality;
 import com.yisy.modules.doramcu.ai.DynamicAiPersonality;
 import com.yisy.modules.doramcu.ai.PlayerActionAnalyzer;

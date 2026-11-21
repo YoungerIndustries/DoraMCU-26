@@ -1,6 +1,13 @@
 package com.yisy.modules.doramcu.ai;
-
 import com.yisy.modules.doradl.model.GameStateFeatures;
+import com.yisy.modules.doramcu.hex.Fleet;
+import com.yisy.modules.doramcu.hex.Galaxy;
+import com.yisy.modules.doramcu.hex.Player;
+import com.yisy.modules.doramcu.hex.Ship;
+import com.yisy.modules.doramcu.hex.ShipType;
+import com.yisy.modules.doramcu.hex.SpaceStation;
+import com.yisy.modules.doramcu.hex.SpaceStationType;
+import com.yisy.modules.doramcu.hex.SubSector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

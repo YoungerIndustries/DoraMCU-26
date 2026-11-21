@@ -8,6 +8,7 @@ import com.yisy.modules.doramcu.earth2026.repository.Earth2026LocationRepository
 import com.yisy.modules.doramcu.earth2026.repository.PlanetTemplateRepository;
 import com.yisy.modules.doramcu.earth2026.service.PlanetStructureService;
 import com.yisy.modules.doramcu.earth2026.service.PlanetTerrainService;
+import com.yisy.modules.doramcu.earth2026.service.PlanetTerrainService.MineSuggestion;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

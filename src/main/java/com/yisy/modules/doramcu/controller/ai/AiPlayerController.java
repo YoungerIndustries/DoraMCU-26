@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.controller.ai;
-
 import com.yisy.modules.doramcu.ai.AiDelegationArea;
 import com.yisy.modules.doramcu.ai.AiDelegationSettings;
 import com.yisy.modules.doramcu.ai.AiDelegationService;
@@ -9,6 +8,7 @@ import com.yisy.modules.doramcu.ai.framework.PersonalityProfile;
 import com.yisy.modules.doramcu.babylon5.model.B5Personality;
 import com.yisy.modules.doramcu.dto.session.JoinSessionResponse;
 import com.yisy.modules.doramcu.dto.session.GameStateResponse;
+import com.yisy.modules.doramcu.hex.Difficulty;
 import com.yisy.modules.doramcu.hex.Game;
 import com.yisy.modules.doramcu.hex.Player;
 import com.yisy.modules.doramcu.model.session.GameSession;
@@ -75,7 +75,8 @@ public class AiPlayerController {
         log.debug("Creating AI player: {} with difficulty: {} in session: {}", name, difficulty, sessionId);
 
         try {
-            JoinSessionResponse response = aiPlayerService.createAiPlayer(sessionId, name, difficulty);
+            JoinSessionResponse response = aiPlayerService.createAiPlayer(sessionId, name,
+                    AiPlayerService.Difficulty.valueOf(difficulty.name()));
             return ResponseEntity.ok(response);
         } catch (NoSuchElementException e) {
             log.warn("Session not found: {}", sessionId);
@@ -108,7 +109,7 @@ public class AiPlayerController {
 
         try {
             GameStateResponse response = aiPlayerService.executeAiTurn(
-                    sessionId, java.util.Map.of(aiPlayerId, difficulty));
+                    sessionId, java.util.Map.of(aiPlayerId, AiPlayerService.Difficulty.valueOf(difficulty.name())));
             return ResponseEntity.ok(response);
         } catch (NoSuchElementException e) {
             log.warn("Session not found: {}", sessionId);

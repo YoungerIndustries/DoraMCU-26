@@ -6,6 +6,7 @@ import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
 import com.yisy.modules.doramcu.admin.repository.AiAdminHealthReportRepository;
 import com.yisy.modules.doramcu.admin.repository.AiAdminIncidentRepository;
 import com.yisy.modules.doramcu.admin.repository.AiAdminOrderRepository;
+import com.yisy.modules.doramcu.admin.service.AiAdminLlmService.LlmAnalysisResult;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 import org.slf4j.Logger;

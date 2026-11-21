@@ -1,7 +1,17 @@
 package com.yisy.modules.doramcu.starwars.service;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yisy.modules.doramcu.starwars.model.Faction;
+import com.yisy.modules.doramcu.starwars.model.FactionLeader;
+import com.yisy.modules.doramcu.starwars.model.Lore;
+import com.yisy.modules.doramcu.starwars.model.MilitaryBranch;
+import com.yisy.modules.doramcu.starwars.model.Scenario;
+import com.yisy.modules.doramcu.starwars.model.SpecialAbility;
+import com.yisy.modules.doramcu.starwars.model.Unit;
+import com.yisy.modules.doramcu.starwars.model.UnitStats;
+import com.yisy.modules.doramcu.starwars.model.UnitVariant;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;

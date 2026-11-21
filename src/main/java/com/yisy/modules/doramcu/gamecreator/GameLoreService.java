@@ -1,7 +1,9 @@
 package com.yisy.modules.doramcu.gamecreator;
+import com.yisy.modules.doramcu.model.players.Player;
+import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import org.springframework.stereotype.Service;
 
-import com.yisy.modules.doraai.service.AiProvider;
+import com.yisy.modules.doramcu.ai.server.service.AiProvider;
 import com.yisy.modules.doramcu.service.misc.WebSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,7 +158,7 @@ public class GameLoreService {
 
         // Step 1: Search the internet
         String searchQuery = loreName + " universe lore factions species setting";
-        com.yisy.modules.doramcu.dto.ThemeResearchResult research = webSearchService.searchTheme(loreName);
+        com.yisy.modules.doramcu.dto.misc.ThemeResearchResult research = webSearchService.searchTheme(loreName);
         log.info("Research result for '{}': {}", loreName, research);
 
         // Step 2: Use AI to extract structured lore data
@@ -180,7 +182,7 @@ public class GameLoreService {
     /**
      * Uses AI to extract structured lore data from research results.
      */
-    protected GameLore extractLoreDataWithAi(String loreName, com.yisy.modules.doramcu.dto.ThemeResearchResult research) {
+    protected GameLore extractLoreDataWithAi(String loreName, com.yisy.modules.doramcu.dto.misc.ThemeResearchResult research) {
         GameLore lore = new GameLore(loreName, toSlug(loreName), "SCI_FI");
 
         // Set basic data from research
@@ -222,7 +224,7 @@ public class GameLoreService {
     /**
      * Uses AI to enhance lore data with additional details.
      */
-    protected void enhanceLoreWithAi(GameLore lore, com.yisy.modules.doramcu.dto.ThemeResearchResult research) {
+    protected void enhanceLoreWithAi(GameLore lore, com.yisy.modules.doramcu.dto.misc.ThemeResearchResult research) {
         String prompt = buildLoreExtractionPrompt(lore, research);
         String response = aiProvider.chat(null, List.of(new AiProvider.Message("user", prompt)));
 
@@ -235,7 +237,7 @@ public class GameLoreService {
     /**
      * Builds a prompt for AI to extract structured lore data.
      */
-    protected String buildLoreExtractionPrompt(GameLore lore, com.yisy.modules.doramcu.dto.ThemeResearchResult research) {
+    protected String buildLoreExtractionPrompt(GameLore lore, com.yisy.modules.doramcu.dto.misc.ThemeResearchResult research) {
         return String.format(
                 "Extract structured game lore data for the universe '%s'.%n" +
                 "Setting: %s%n" +

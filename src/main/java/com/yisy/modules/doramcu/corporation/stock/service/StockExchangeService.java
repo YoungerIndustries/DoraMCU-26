@@ -3,6 +3,16 @@ import com.yisy.modules.doramcu.model.players.Player;
 
 
 import com.yisy.modules.doramcu.corporation.service.CorporationEconomyService;
+import com.yisy.modules.doramcu.corporation.stock.model.DividendPayment;
+import com.yisy.modules.doramcu.corporation.stock.model.StockHolding;
+import com.yisy.modules.doramcu.corporation.stock.model.StockListing;
+import com.yisy.modules.doramcu.corporation.stock.model.StockOrder;
+import com.yisy.modules.doramcu.corporation.stock.model.StockTrade;
+import com.yisy.modules.doramcu.corporation.stock.repository.DividendPaymentRepository;
+import com.yisy.modules.doramcu.corporation.stock.repository.StockHoldingRepository;
+import com.yisy.modules.doramcu.corporation.stock.repository.StockListingRepository;
+import com.yisy.modules.doramcu.corporation.stock.repository.StockOrderRepository;
+import com.yisy.modules.doramcu.corporation.stock.repository.StockTradeRepository;
 import com.yisy.modules.doramcu.eve.model.EveCorporation;
 import com.yisy.modules.doramcu.repository.misc.EveCorporationRepository;
 import org.slf4j.Logger;

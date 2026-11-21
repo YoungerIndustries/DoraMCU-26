@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.gamecore;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import java.util.List;
 import java.util.Map;
@@ -80,7 +81,7 @@ public interface CombatService {
     /**
      * Request to make an attack.
      */
-    class AttackRequest {
+    static class AttackRequest {
         private String attackerName;
         private String targetName;
         private int attackBonus;
@@ -108,7 +109,7 @@ public interface CombatService {
     /**
      * Result of an attack.
      */
-    class AttackResult {
+    static class AttackResult {
         private String attackerName;
         private String targetName;
         private int attackRoll;
@@ -148,7 +149,7 @@ public interface CombatService {
     /**
      * Information about a combat session.
      */
-    class CombatInfo {
+    static class CombatInfo {
         private Long id;
         private String encounterName;
         private String status;
@@ -170,7 +171,7 @@ public interface CombatService {
     /**
      * Information about a combatant.
      */
-    class CombatantInfo {
+    static class CombatantInfo {
         private String name;
         private int armorClass;
         private int currentHp;

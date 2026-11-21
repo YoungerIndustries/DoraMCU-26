@@ -1,10 +1,17 @@
 package com.yisy.modules.doramcu.traveller;
-import org.springframework.stereotype.Service;
-
+import com.yisy.modules.doramcu.hex.AiCoreComponent;
+import com.yisy.modules.doramcu.hex.ArmyUnit;
+import com.yisy.modules.doramcu.hex.ArmyUnitType;
+import com.yisy.modules.doramcu.hex.Empire;
+import com.yisy.modules.doramcu.hex.EmpireArmy;
+import com.yisy.modules.doramcu.hex.Fleet;
+import com.yisy.modules.doramcu.hex.Game;
+import com.yisy.modules.doramcu.hex.Player;
 import com.yisy.modules.doramcu.hex.manager.CharacterLogManager;
 import com.yisy.modules.doramcu.service.character.CharacterService;
 import com.yisy.modules.doramcu.service.session.GameSessionService;
 import com.yisy.modules.doramcu.unified.dto.UnifiedCharacterSummary;
+import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

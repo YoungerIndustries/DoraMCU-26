@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.util;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;

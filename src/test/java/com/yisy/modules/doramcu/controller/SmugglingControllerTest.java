@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.controller;
+import com.yisy.modules.doramcu.controller.game.SmugglingController;
 
 import com.yisy.modules.doramcu.traveller.ContrabandCommodity;
 import com.yisy.modules.doramcu.traveller.CustomsCheck;

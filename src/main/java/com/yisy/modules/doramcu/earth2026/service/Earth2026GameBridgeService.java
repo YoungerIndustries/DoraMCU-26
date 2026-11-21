@@ -1,7 +1,19 @@
 package com.yisy.modules.doramcu.earth2026.service;
 import org.springframework.stereotype.Service;
 
+import com.yisy.modules.doramcu.gamecore.CampaignService;
+import com.yisy.modules.doramcu.gamecore.CombatService;
+import com.yisy.modules.doramcu.gamecore.CraftingService;
+import com.yisy.modules.doramcu.gamecore.DiceService;
+import com.yisy.modules.doramcu.gamecore.DungeonRoomService;
+import com.yisy.modules.doramcu.gamecore.EncounterService;
+import com.yisy.modules.doramcu.gamecore.GameModule;
+import com.yisy.modules.doramcu.gamecore.GameModuleRegistry;
 import com.yisy.modules.doramcu.gamecore.GameType;
+import com.yisy.modules.doramcu.gamecore.InventoryService;
+import com.yisy.modules.doramcu.gamecore.PsionicsService;
+import com.yisy.modules.doramcu.gamecore.RulesService;
+import com.yisy.modules.doramcu.gamecore.SpellService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

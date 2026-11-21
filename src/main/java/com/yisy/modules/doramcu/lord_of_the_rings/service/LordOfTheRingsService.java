@@ -1,7 +1,21 @@
 package com.yisy.modules.doramcu.lord_of_the_rings.service;
+import com.yisy.modules.doramcu.sfb.service.SfbDiplomacyService.FactionProfile;
+import com.yisy.modules.doramcu.sfb.service.SfbDiplomacyService.RelationType;
+import com.yisy.modules.doramcu.sfb.service.SfbEconomyService.FactionEconomy;
+import com.yisy.modules.doramcu.sfb.service.SfbEconomyService.ResourceType;
+import com.yisy.modules.doramcu.lord_of_the_rings.model.FactionLeader;
+import com.yisy.modules.doramcu.lord_of_the_rings.model.MilitaryBranch;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yisy.modules.doramcu.lord_of_the_rings.model.Faction;
+import com.yisy.modules.doramcu.lord_of_the_rings.model.Lore;
+import com.yisy.modules.doramcu.lord_of_the_rings.model.Scenario;
+import com.yisy.modules.doramcu.lord_of_the_rings.model.SpecialAbility;
+import com.yisy.modules.doramcu.lord_of_the_rings.model.Unit;
+import com.yisy.modules.doramcu.lord_of_the_rings.model.UnitStats;
+import com.yisy.modules.doramcu.lord_of_the_rings.model.UnitVariant;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;

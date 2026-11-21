@@ -172,7 +172,7 @@ public class TestExecutor {
         AiAdminTestCase testCase = new AiAdminTestCase(null, test.getName(), test.getCategory());
         long start = System.currentTimeMillis();
         boolean passed = testRegistry.executeTest(test.getId());
-        testCase.setStatus(passed ? TestStatus.PASSED : TestStatus.FAILED);
+        testCase.setStatus(passed ? AiAdminTestCase.TestStatus.PASSED : AiAdminTestCase.TestStatus.FAILED);
         if (!passed) {
             testCase.setErrorMessage("Test assertion failed");
         }

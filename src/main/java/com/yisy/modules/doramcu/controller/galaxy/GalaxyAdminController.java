@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.controller.galaxy;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.hex.Ship;
 import com.yisy.modules.doramcu.model.misc.CharacterType;
@@ -38,6 +39,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import com.yisy.modules.doramcu.dto.galaxy.GalaxyAssessmentDto;
+import com.yisy.modules.doramcu.dto.galaxy.GalaxyAssessmentDto.FindingDto;
+import com.yisy.modules.doramcu.model.galaxy.Galaxy;
+import com.yisy.modules.doramcu.model.galaxy.Sector;
+import com.yisy.modules.doramcu.service.galaxy.GalaxyOverseerService;
+import com.yisy.modules.doramcu.service.galaxy.GalaxyOverseerService.GalaxyAssessment;
+import com.yisy.modules.doramcu.service.galaxy.GalaxyOverseerService.WorkforceReport;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -115,7 +123,7 @@ public class GalaxyAdminController {
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public ResponseEntity<GalaxyInfoDto> getGalaxy(@PathVariable String name) {
         log.info("Admin requested galaxy: {}", name);
-        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> galaxy = galaxyService.getGalaxyByName(name);
+        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy> galaxy = galaxyService.getGalaxyByName(name);
         if (galaxy.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new GalaxyInfoDto());
@@ -209,7 +217,7 @@ public class GalaxyAdminController {
                     seed
             );
 
-            com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy dbGalaxy = result.getDatabaseGalaxy();
+            com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy = result.getDatabaseGalaxy();
             dbGalaxy.setSeed(seed);
             if (request.getDescription() != null) {
                 dbGalaxy.setDescription(request.getDescription());
@@ -253,7 +261,7 @@ public class GalaxyAdminController {
     public ResponseEntity<?> deleteGalaxy(@PathVariable String name) {
         log.info("Admin requested deletion of galaxy: {}", name);
 
-        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> galaxy = galaxyService.getGalaxyByName(name);
+        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy> galaxy = galaxyService.getGalaxyByName(name);
         if (galaxy.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "Galaxy '" + name + "' not found"));
@@ -283,13 +291,13 @@ public class GalaxyAdminController {
     public ResponseEntity<?> regenerateGalaxy(@PathVariable String name) {
         log.info("Admin requested regeneration of galaxy: {}", name);
 
-        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> existing = galaxyService.getGalaxyByName(name);
+        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy> existing = galaxyService.getGalaxyByName(name);
         if (existing.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "Galaxy '" + name + "' not found"));
         }
 
-        com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy gal = existing.get();
+        com.yisy.modules.doramcu.model.galaxy.Galaxy gal = existing.get();
         if (gal.getSeed() == null || gal.getSystemCount() == null) {
             return ResponseEntity.badRequest()
                     .body(Map.of("error", "Galaxy '" + name + "' has no stored generation parameters"));
@@ -326,7 +334,7 @@ public class GalaxyAdminController {
                     gal.getSeed()
             );
 
-            com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy dbGalaxy = result.getDatabaseGalaxy();
+            com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy = result.getDatabaseGalaxy();
             dbGalaxy.setSeed(gal.getSeed());
             if (gal.getDescription() != null) {
                 dbGalaxy.setDescription(gal.getDescription());
@@ -423,7 +431,7 @@ public class GalaxyAdminController {
                     request.getSpaceStationChance(), request.getHyperlaneDensity()
             );
 
-            com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy dbGalaxy = result.getDatabaseGalaxy();
+            com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy = result.getDatabaseGalaxy();
             dbGalaxy.setSeed(seed);
             if (request.getDescription() != null) {
                 dbGalaxy.setDescription(request.getDescription());
@@ -484,7 +492,7 @@ public class GalaxyAdminController {
         return ResponseEntity.ok(template);
     }
 
-    private GalaxyInfoDto toDto(com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy galaxy) {
+    private GalaxyInfoDto toDto(com.yisy.modules.doramcu.model.galaxy.Galaxy galaxy) {
         GalaxyInfoDto dto = new GalaxyInfoDto(
                 galaxy.getId(),
                 galaxy.getName(),
@@ -757,13 +765,13 @@ public class GalaxyAdminController {
                     .body(Map.of("error", "Galaxy '" + name + "' not found"));
         }
 
-        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> galaxyOpt = galaxyService.getGalaxyByName(name);
+        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy> galaxyOpt = galaxyService.getGalaxyByName(name);
         if (galaxyOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "Galaxy '" + name + "' not found"));
         }
 
-        com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy galaxy = galaxyOpt.get();
+        com.yisy.modules.doramcu.model.galaxy.Galaxy galaxy = galaxyOpt.get();
         GalaxyAssessment assessment = galaxyOverseerService.assessGalaxyNeeds(galaxy);
         WorkforceReport workforce = galaxyOverseerService.monitorWorkforce(galaxy.getId());
 
@@ -820,7 +828,7 @@ public class GalaxyAdminController {
                     .body(Map.of("error", "Galaxy '" + name + "' not found"));
         }
 
-        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> galaxyOpt = galaxyService.getGalaxyByName(name);
+        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy> galaxyOpt = galaxyService.getGalaxyByName(name);
         if (galaxyOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "Galaxy '" + name + "' not found"));
@@ -844,7 +852,7 @@ public class GalaxyAdminController {
     public ResponseEntity<?> getWorkforce(@PathVariable String name) {
         log.info("Admin requested workforce report for galaxy: {}", name);
 
-        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> galaxyOpt = galaxyService.getGalaxyByName(name);
+        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy> galaxyOpt = galaxyService.getGalaxyByName(name);
         if (galaxyOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "Galaxy '" + name + "' not found"));
@@ -869,7 +877,7 @@ public class GalaxyAdminController {
         log.info("Admin requested health summary for all galaxies");
         List<GalaxyHealthDto> summaries = new ArrayList<>();
 
-        for (com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy galaxy : galaxyService.getAllGalaxies()) {
+        for (com.yisy.modules.doramcu.model.galaxy.Galaxy galaxy : galaxyService.getAllGalaxies()) {
             GalaxyAssessment assessment = galaxyOverseerService.assessGalaxyNeeds(galaxy);
             WorkforceReport workforce = galaxyOverseerService.monitorWorkforce(galaxy.getId());
 
@@ -926,7 +934,7 @@ public class GalaxyAdminController {
                     .body(Map.of("error", "Galaxy '" + name + "' not found"));
         }
 
-        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> galaxyOpt = galaxyService.getGalaxyByName(name);
+        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy> galaxyOpt = galaxyService.getGalaxyByName(name);
         if (galaxyOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "Galaxy '" + name + "' not found"));
@@ -1041,13 +1049,13 @@ public class GalaxyAdminController {
                     .body(Map.of("error", "Galaxy '" + name + "' not found"));
         }
 
-        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> galaxyOpt = galaxyService.getGalaxyByName(name);
+        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy> galaxyOpt = galaxyService.getGalaxyByName(name);
         if (galaxyOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "Galaxy '" + name + "' not found"));
         }
 
-        com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy galaxy = galaxyOpt.get();
+        com.yisy.modules.doramcu.model.galaxy.Galaxy galaxy = galaxyOpt.get();
         GalaxyDashboardDto dto = new GalaxyDashboardDto();
 
         // ---- Galaxy Identity ----
@@ -1224,7 +1232,7 @@ public class GalaxyAdminController {
                 ));
         int totalPlayers = allPlayers.size() + playerAiCharacters.size();
 
-        for (com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy galaxy : galaxyService.getAllGalaxies()) {
+        for (com.yisy.modules.doramcu.model.galaxy.Galaxy galaxy : galaxyService.getAllGalaxies()) {
             String name = galaxy.getName();
             GalaxyAssessment assessment = galaxyOverseerService.assessGalaxyNeeds(galaxy);
             WorkforceReport workforce = galaxyOverseerService.monitorWorkforce(galaxy.getId());

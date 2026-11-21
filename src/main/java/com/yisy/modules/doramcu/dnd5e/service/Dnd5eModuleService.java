@@ -1,6 +1,11 @@
 package com.yisy.modules.doramcu.dnd5e.service;
+import com.yisy.modules.doramcu.dnd5e.model.Dnd5eAdventureHook;
+import com.yisy.modules.doramcu.service.game.LoreGroupEmpireService.LoreGroup;
+import com.yisy.modules.doramcu.model.players.Player;
 import org.springframework.stereotype.Service;
 
+import com.yisy.modules.doramcu.dnd5e.model.Dnd5eModule;
+import com.yisy.modules.doramcu.dnd5e.repository.Dnd5eModuleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -42,7 +42,7 @@ public interface CampaignService {
     /**
      * A campaign.
      */
-    class Campaign {
+    static class Campaign {
         private Long id;
         private String name;
         private String description;

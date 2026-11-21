@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.dto.galaxy;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 

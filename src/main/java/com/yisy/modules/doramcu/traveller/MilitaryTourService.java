@@ -1,5 +1,10 @@
 package com.yisy.modules.doramcu.traveller;
-
+import com.yisy.modules.doramcu.hex.ArmyUnit;
+import com.yisy.modules.doramcu.hex.Battle;
+import com.yisy.modules.doramcu.hex.Fleet;
+import com.yisy.modules.doramcu.hex.Game;
+import com.yisy.modules.doramcu.hex.Player;
+import com.yisy.modules.doramcu.hex.Ship;
 import com.yisy.modules.doramcu.hex.manager.CharacterLogManager;
 
 import org.springframework.beans.factory.annotation.Autowired;

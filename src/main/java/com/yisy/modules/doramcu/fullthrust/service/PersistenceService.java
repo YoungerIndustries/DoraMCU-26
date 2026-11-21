@@ -1,5 +1,32 @@
 package com.yisy.modules.doramcu.fullthrust.service;
-
+import com.yisy.modules.doramcu.model.user.User;
+import com.yisy.modules.doramcu.fullthrust.entity.BoardObstacleEntity;
+import com.yisy.modules.doramcu.fullthrust.entity.EventLogEntity;
+import com.yisy.modules.doramcu.fullthrust.entity.GameSessionEntity;
+import com.yisy.modules.doramcu.fullthrust.entity.MissileEntity;
+import com.yisy.modules.doramcu.fullthrust.entity.PlayerEntity;
+import com.yisy.modules.doramcu.fullthrust.entity.ShipClassEntity;
+import com.yisy.modules.doramcu.fullthrust.entity.ShipEntity;
+import com.yisy.modules.doramcu.fullthrust.entity.WeaponEntity;
+import com.yisy.modules.doramcu.fullthrust.entity.WeaponSlotEntity;
+import com.yisy.modules.doramcu.fullthrust.model.BoardObstacle;
+import com.yisy.modules.doramcu.fullthrust.model.EventLog;
+import com.yisy.modules.doramcu.fullthrust.model.GameBoard;
+import com.yisy.modules.doramcu.fullthrust.model.GameSession;
+import com.yisy.modules.doramcu.fullthrust.model.HexPosition;
+import com.yisy.modules.doramcu.fullthrust.model.Missile;
+import com.yisy.modules.doramcu.fullthrust.model.Player;
+import com.yisy.modules.doramcu.fullthrust.model.Ship;
+import com.yisy.modules.doramcu.fullthrust.model.ShipClass;
+import com.yisy.modules.doramcu.fullthrust.model.Weapon;
+import com.yisy.modules.doramcu.fullthrust.repository.BoardObstacleRepository;
+import com.yisy.modules.doramcu.fullthrust.repository.EventLogRepository;
+import com.yisy.modules.doramcu.fullthrust.repository.GameSessionRepository;
+import com.yisy.modules.doramcu.fullthrust.repository.MissileRepository;
+import com.yisy.modules.doramcu.fullthrust.repository.PlayerRepository;
+import com.yisy.modules.doramcu.fullthrust.repository.ShipClassRepository;
+import com.yisy.modules.doramcu.fullthrust.repository.ShipRepository;
+import com.yisy.modules.doramcu.fullthrust.repository.WeaponRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

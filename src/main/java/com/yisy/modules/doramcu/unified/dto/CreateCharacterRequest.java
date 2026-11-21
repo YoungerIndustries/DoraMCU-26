@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.unified.dto;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.unified.TravellerCharacterType;

@@ -1,6 +1,11 @@
 package com.yisy.modules.doramcu.hex.planet.depot;
+import com.yisy.modules.doramcu.hex.planet.TerrainData;
 
 import com.yisy.modules.doramcu.hex.Hex3D;
+import com.yisy.modules.doramcu.hex.planet.Station;
+import com.yisy.modules.doramcu.hex.planet.SurfaceVehicle;
+import com.yisy.modules.doramcu.hex.planet.TransportCorporation;
+import com.yisy.modules.doramcu.hex.planet.VehicleType;
 import com.yisy.modules.doramcu.hex.planet.depot.dto.DepotVehicleDto;
 import com.yisy.modules.doramcu.hex.planet.pathfinding.InfrastructurePathfinder;
 import com.yisy.modules.doramcu.hex.planet.pathfinding.dto.PathResultDto;

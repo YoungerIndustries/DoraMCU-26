@@ -1,4 +1,9 @@
 package com.yisy.modules.doramcu.hex.manager;
+import com.yisy.modules.doramcu.hex.Empire;
+import com.yisy.modules.doramcu.hex.MineralQuality;
+import com.yisy.modules.doramcu.hex.Planet;
+import com.yisy.modules.doramcu.hex.PlanetSize;
+import com.yisy.modules.doramcu.hex.Player;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

@@ -4,6 +4,12 @@ import com.yisy.modules.doramcu.techlevel.TechLevel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.yisy.modules.doramcu.traveller.HighGuardArmor;
+import com.yisy.modules.doramcu.traveller.HighGuardRangeBand;
+import com.yisy.modules.doramcu.traveller.HighGuardShipCombat;
+import com.yisy.modules.doramcu.traveller.HighGuardShipDesign;
+import com.yisy.modules.doramcu.traveller.HighGuardWeapon;
+import com.yisy.modules.doramcu.traveller.ShipTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

@@ -1,6 +1,10 @@
 package com.yisy.modules.doramcu.service.battle;
 import com.yisy.modules.doramcu.service.character.CharacterService;
 
+import com.yisy.modules.doramcu.traveller.FirearmWeapon;
+import com.yisy.modules.doramcu.traveller.FirearmsCombat;
+import com.yisy.modules.doramcu.traveller.FirearmsCombatant;
+import com.yisy.modules.doramcu.traveller.TravellerCharacter;
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;

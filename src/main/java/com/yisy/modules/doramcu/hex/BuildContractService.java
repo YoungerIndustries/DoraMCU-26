@@ -2,6 +2,7 @@ package com.yisy.modules.doramcu.hex;
 
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.hex.model.BuildContract;
+import com.yisy.modules.doramcu.hex.model.BuildContract.BuildContractStatus;
 import com.yisy.modules.doramcu.hex.model.InfrastructureItem;
 import com.yisy.modules.doramcu.hex.repository.BuildContractRepository;
 import com.yisy.modules.doramcu.hex.repository.InfrastructureItemRepository;
@@ -68,6 +69,7 @@ public class BuildContractService {
     @Transactional
     public BuildContract createContract(InfrastructureItem infrastructureItem, Long galaxyId) {
         BuildContract contract = new BuildContract();
+        contract.setContractType(BuildContract.ContractType.CONSTRUCT);
         contract.setTargetItemType(infrastructureItem.getItemType().name());
         contract.setTargetItemName(infrastructureItem.getItemName());
         contract.setDescription("Build " + infrastructureItem.getItemName() + " (" + infrastructureItem.getItemType().getDisplayName() + ")");
@@ -303,7 +305,8 @@ public class BuildContractService {
         }
 
         // Award XP to crew members
-        for (Long memberId : List.of(contract.getCrewMember1Id(), contract.getCrewMember2Id(), contract.getCrewMember3Id())) {
+        Long[] memberIds = {contract.getCrewMember1Id(), contract.getCrewMember2Id(), contract.getCrewMember3Id()};
+        for (Long memberId : memberIds) {
             if (memberId != null) {
                 aiCharacterRepository.findById(memberId).ifPresent(member -> {
                     member.setTotalExperience(member.getTotalExperience() + XP_PER_CONTRACT_COMPLETED);

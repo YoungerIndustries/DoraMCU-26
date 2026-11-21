@@ -1,18 +1,34 @@
 package com.yisy.modules.doramcu.thirdreich.service;
+import com.yisy.modules.doramcu.sfb.service.SfbDiplomacyService.FactionProfile;
+import com.yisy.modules.doramcu.sfb.service.SfbDiplomacyService.RelationType;
+import com.yisy.modules.doramcu.sfb.service.SfbEconomyService.FactionEconomy;
+import com.yisy.modules.doramcu.sfb.service.SfbEconomyService.ResourceType;
 
 import com.yisy.modules.doramcu.earth2026.model.BiosphereContext;
+import com.yisy.modules.doramcu.thirdreich.adapter.DoraMCUTo3R4Adapter;
+import com.yisy.modules.doramcu.thirdreich.adapter.TravellerTo3R4Adapter;
+import com.yisy.modules.doramcu.thirdreich.adapter.StarTrekTo3R4Adapter;
+import com.yisy.modules.doramcu.thirdreich.adapter.MechWarriorTo3R4Adapter;
+import com.yisy.modules.doramcu.thirdreich.adapter.Dnd5eTo3R4Adapter;
+import com.yisy.modules.doramcu.thirdreich.adapter.StarshipTroopersTo3R4Adapter;
 import com.yisy.modules.doramcu.earth2026.model.Earth2026BattleEnvironment;
 import com.yisy.modules.doramcu.earth2026.model.Earth2026Location;
 import com.yisy.modules.doramcu.earth2026.service.BiosphereService;
 import com.yisy.modules.doramcu.earth2026.service.PlanetService;
 import com.yisy.modules.doramcu.eve.model.AiCommanderExperience;
-import com.yisy.modules.doramcu.service.ai.AiCommanderExperienceService;
 import com.yisy.modules.doramcu.gamecore.GameModuleRegistry;
+import com.yisy.modules.doramcu.gamecore.GameType;
+import com.yisy.modules.doramcu.service.ai.AiCommanderExperienceService;
+import com.yisy.modules.doramcu.thirdreich.adapter.GroundCombatAdapter;
 import com.yisy.modules.doramcu.thirdreich.commander.AICommander;
 import com.yisy.modules.doramcu.thirdreich.commander.AICommanderProfile;
 import com.yisy.modules.doramcu.thirdreich.commander.AICommanderService;
 import com.yisy.modules.doramcu.thirdreich.combat.ThirdReichCombatEngine;
-import com.yisy.modules.doramcu.gamecore.GameType;
+import com.yisy.modules.doramcu.thirdreich.domain.ThirdReichBattle;
+import com.yisy.modules.doramcu.thirdreich.domain.ThirdReichBattleResult;
+import com.yisy.modules.doramcu.thirdreich.domain.ThirdReichGroundUnit;
+import com.yisy.modules.doramcu.thirdreich.domain.TerrainContext;
+import com.yisy.modules.doramcu.thirdreich.domain.TerrainType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

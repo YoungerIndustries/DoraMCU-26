@@ -1,7 +1,15 @@
 package com.yisy.modules.doramcu.sfb.service;
+import com.yisy.modules.doramcu.sfb.model.SfbShield;
+import com.yisy.modules.doramcu.sfb.model.SfbSSD;
+import com.yisy.modules.doramcu.sfb.model.SfbCrewStationType;
+import com.yisy.modules.doramcu.sfb.model.SfbCharacterAssignment;
+import com.yisy.modules.doramcu.sfb.model.SfbEnergyAllocation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yisy.modules.doramcu.sfb.model.SfbEmpire;
+import com.yisy.modules.doramcu.sfb.model.SfbShip;
+import com.yisy.modules.doramcu.sfb.model.SfbWeaponBank;
 import java.io.InputStream;
 import java.util.*;
 

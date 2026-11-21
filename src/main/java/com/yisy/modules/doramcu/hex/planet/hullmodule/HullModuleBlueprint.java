@@ -1,5 +1,5 @@
 package com.yisy.modules.doramcu.hex.planet.hullmodule;
-
+import com.yisy.modules.doramcu.hex.planet.hullmodule.HullModuleType;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

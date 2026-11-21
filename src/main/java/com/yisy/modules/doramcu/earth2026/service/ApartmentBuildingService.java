@@ -1,4 +1,6 @@
 package com.yisy.modules.doramcu.earth2026.service;
+import com.yisy.modules.doramcu.corporation.model.CorporateFinanceTransaction.TransactionType;
+import com.yisy.modules.doramcu.hex.planet.RoomInfo;
 import com.yisy.modules.doramcu.model.players.Player;
 
 

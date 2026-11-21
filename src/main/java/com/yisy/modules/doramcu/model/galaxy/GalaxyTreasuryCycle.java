@@ -23,6 +23,8 @@ import java.util.Map;
  *   <li>Deficit issued as bonds</li>
  * </ul>
  */
+@Entity
+@Table(name = "galaxy_treasury_cycles")
 public class GalaxyTreasuryCycle {
 
     @Id

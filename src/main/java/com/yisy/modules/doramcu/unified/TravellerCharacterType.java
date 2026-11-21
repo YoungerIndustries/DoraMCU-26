@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.unified;
+import com.yisy.modules.doramcu.model.players.Player;
 
 /**
  * Defines the type of Traveller character a player wishes to create.

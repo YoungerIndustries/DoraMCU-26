@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.captainslog.repository;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogMission;
+import com.yisy.modules.doramcu.captainslog.model.CaptainLogMission.MissionStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.corporation.model;
+import com.yisy.modules.doramcu.model.players.Player;
 
 /**
  * Global Game System Credit constants based on a silver reserve treasury.

@@ -1,15 +1,16 @@
 package com.yisy.modules.doramcu.service.character;
-import com.yisy.modules.doramcu.service.voice.VoiceProfileService;
-
-import org.springframework.stereotype.Service;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.ai.client.AiRestClient;
+import com.yisy.modules.doramcu.ai.client.AiRestClient.SynthesizeResponse;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.eve.model.VoiceProfile;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
+import com.yisy.modules.doramcu.service.voice.VoiceProfileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import com.yisy.modules.doramcu.model.players.Player;
 import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.dto.CareerProgressionResponse;
@@ -33,7 +34,7 @@ import java.util.Map;
  * </ul>
  * </p>
  */
-@Component("careerProgressionService_captainslog_service_CareerProgressionService")
+@Component("captainsLogCareerProgressionService")
 public class CareerProgressionService {
 
     private static final Logger log = LoggerFactory.getLogger(CareerProgressionService.class);

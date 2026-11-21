@@ -54,7 +54,7 @@ public interface CraftingService {
     /**
      * A crafting recipe.
      */
-    class CraftingRecipe {
+    static class CraftingRecipe {
         private Long id;
         private String name;
         private String description;
@@ -85,7 +85,7 @@ public interface CraftingService {
     /**
      * A crafting project in progress.
      */
-    class CraftingProject {
+    static class CraftingProject {
         private Long id;
         private Long characterId;
         private Long recipeId;

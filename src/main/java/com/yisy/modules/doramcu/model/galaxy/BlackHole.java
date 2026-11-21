@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 /**
  * JPA entity representing a black hole in a solar system.
  */
+@Entity
+@Table(name = "black_holes")
 public class BlackHole {
 
     @Id

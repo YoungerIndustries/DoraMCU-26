@@ -1,8 +1,9 @@
 package com.yisy.modules.doramcu.controller;
+import com.yisy.modules.doramcu.controller.admin.AdminController;
 
-import com.yisy.modules.doramcu.model.User;
-import com.yisy.modules.doramcu.repository.UserRepository;
-import com.yisy.modules.doramcu.service.JwtService;
+import com.yisy.modules.doramcu.model.user.User;
+import com.yisy.modules.doramcu.repository.user.UserRepository;
+import com.yisy.modules.doramcu.service.auth.JwtService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

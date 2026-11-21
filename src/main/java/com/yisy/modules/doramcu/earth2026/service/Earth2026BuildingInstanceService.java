@@ -1,7 +1,22 @@
 package com.yisy.modules.doramcu.earth2026.service;
 import org.springframework.stereotype.Service;
 
+import com.yisy.modules.doramcu.earth2026.model.ApartmentBuilding;
+import com.yisy.modules.doramcu.earth2026.model.ApartmentUnit;
+import com.yisy.modules.doramcu.earth2026.model.DungeonInstance;
+import com.yisy.modules.doramcu.earth2026.model.DungeonInstanceTemplate;
+import com.yisy.modules.doramcu.earth2026.model.OfficeUnit;
+import com.yisy.modules.doramcu.earth2026.model.PropertyListing;
+import com.yisy.modules.doramcu.earth2026.model.YoungerIndustriesHQ;
+import com.yisy.modules.doramcu.earth2026.repository.ApartmentBuildingRepository;
+import com.yisy.modules.doramcu.earth2026.repository.ApartmentUnitRepository;
+import com.yisy.modules.doramcu.earth2026.repository.DungeonInstanceRepository;
+import com.yisy.modules.doramcu.earth2026.repository.DungeonInstanceTemplateRepository;
+import com.yisy.modules.doramcu.earth2026.repository.OfficeUnitRepository;
+import com.yisy.modules.doramcu.earth2026.repository.PropertyListingRepository;
+import com.yisy.modules.doramcu.earth2026.repository.YoungerIndustriesHQRepository;
 import com.yisy.modules.doramcu.gamecore.BuildingInstanceService;
+import com.yisy.modules.doramcu.gamecore.BuildingInstanceService.BuildingInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

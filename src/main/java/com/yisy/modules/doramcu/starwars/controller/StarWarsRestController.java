@@ -1,5 +1,11 @@
 package com.yisy.modules.doramcu.starwars.controller;
+import com.yisy.modules.doramcu.model.players.Player;
 
+import com.yisy.modules.doramcu.starwars.model.Faction;
+import com.yisy.modules.doramcu.starwars.model.Lore;
+import com.yisy.modules.doramcu.starwars.model.Scenario;
+import com.yisy.modules.doramcu.starwars.model.SpecialAbility;
+import com.yisy.modules.doramcu.starwars.model.Unit;
 import com.yisy.modules.doramcu.starwars.service.StarWarsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

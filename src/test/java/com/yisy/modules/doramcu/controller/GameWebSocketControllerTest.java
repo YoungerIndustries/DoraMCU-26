@@ -1,8 +1,9 @@
 package com.yisy.modules.doramcu.controller;
+import com.yisy.modules.doramcu.controller.session.GameWebSocketController;
 
-import com.yisy.modules.doramcu.dto.GameEvent;
-import com.yisy.modules.doramcu.model.GameSession;
-import com.yisy.modules.doramcu.service.GameSessionService;
+import com.yisy.modules.doramcu.dto.session.GameEvent;
+import com.yisy.modules.doramcu.model.session.GameSession;
+import com.yisy.modules.doramcu.service.session.GameSessionService;
 import com.yisy.modules.doramcu.util.PlayerIdExtractor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

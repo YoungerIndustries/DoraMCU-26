@@ -3,9 +3,9 @@ import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.ai.PlayerCloneService;
 import com.yisy.modules.doramcu.ai.framework.AiPlayerServiceAdapter;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.service.ai.AiPlayerService;
 import com.yisy.modules.doramcu.model.misc.CorporateRole;
-import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.repository.players.PlayerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

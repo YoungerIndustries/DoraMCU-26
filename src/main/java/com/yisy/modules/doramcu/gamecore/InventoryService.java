@@ -44,7 +44,7 @@ public interface InventoryService {
     /**
      * An inventory item.
      */
-    class InventoryItem {
+    static class InventoryItem {
         private Long id;
         private String name;
         private String description;

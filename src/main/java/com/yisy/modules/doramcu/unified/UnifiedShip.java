@@ -1,10 +1,22 @@
 package com.yisy.modules.doramcu.unified;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.hex.HullShape;
 import com.yisy.modules.doramcu.hex.Material;
 import com.yisy.modules.doramcu.hex.Ship;
 import com.yisy.modules.doramcu.hex.ShipComponent;
 import com.yisy.modules.doramcu.hex.ShipType;
+import com.yisy.modules.doramcu.traveller.FuelTank;
+import com.yisy.modules.doramcu.traveller.FusionDrive;
+import com.yisy.modules.doramcu.traveller.HighGuardArmor;
+import com.yisy.modules.doramcu.traveller.HighGuardShipDesign;
+import com.yisy.modules.doramcu.traveller.JumpDrive;
+import com.yisy.modules.doramcu.traveller.JumpPlan;
+import com.yisy.modules.doramcu.traveller.JumpTravelStatus;
+import com.yisy.modules.doramcu.traveller.ManeuverPlan;
+import com.yisy.modules.doramcu.traveller.ManeuverStatus;
+import com.yisy.modules.doramcu.traveller.TravellerWorld;
+import com.yisy.modules.doramcu.traveller.UniversalWorldProfile;
 import java.util.Objects;
 
 /**

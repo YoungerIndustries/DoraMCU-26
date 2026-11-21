@@ -5,7 +5,7 @@ import com.yisy.modules.doramcu.admin.model.AiAdminTrainingSession;
 import com.yisy.modules.doramcu.admin.repository.AiAdminTrainingScenarioRepository;
 import com.yisy.modules.doramcu.admin.repository.AiAdminTrainingSessionRepository;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
-import com.yisy.modules.doramcu.repository.AiCharacterRepository;
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 import com.yisy.modules.doramcu.ai.client.AiRestClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

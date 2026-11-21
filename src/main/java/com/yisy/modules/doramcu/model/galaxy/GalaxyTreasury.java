@@ -29,6 +29,8 @@ import java.time.LocalDateTime;
  *   <li>Shortfalls are converted to {@link GalaxyBond} instruments at 10% interest</li>
  * </ol>
  */
+@Entity
+@Table(name = "galaxy_treasuries")
 public class GalaxyTreasury {
 
     @Id

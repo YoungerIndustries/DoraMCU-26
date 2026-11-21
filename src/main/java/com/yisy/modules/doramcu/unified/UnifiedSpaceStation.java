@@ -2,6 +2,12 @@ package com.yisy.modules.doramcu.unified;
 
 import com.yisy.modules.doramcu.hex.SpaceStation;
 import com.yisy.modules.doramcu.hex.SpaceStationType;
+import com.yisy.modules.doramcu.traveller.Commodity;
+import com.yisy.modules.doramcu.traveller.FuelTank;
+import com.yisy.modules.doramcu.traveller.StationFacility;
+import com.yisy.modules.doramcu.traveller.TradeCode;
+import com.yisy.modules.doramcu.traveller.TravellerWorld;
+import com.yisy.modules.doramcu.traveller.UniversalWorldProfile;
 
 import java.util.*;
 

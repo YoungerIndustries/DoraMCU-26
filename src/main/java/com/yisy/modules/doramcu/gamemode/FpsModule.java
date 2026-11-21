@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.gamemode;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.fps.FpsGameServerWrapper;
 import com.yisy.modules.doramcu.gamecore.GameMode;

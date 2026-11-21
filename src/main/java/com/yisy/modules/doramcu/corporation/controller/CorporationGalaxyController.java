@@ -1,8 +1,10 @@
 package com.yisy.modules.doramcu.corporation.controller;
+import com.yisy.modules.doramcu.model.user.User;
+import com.yisy.modules.doramcu.model.players.Player;
 
-import com.yisy.modules.doramcu.dto.CreateGalaxyRequest;
-import com.yisy.modules.doramcu.dto.GalaxyCreationCostDto;
-import com.yisy.modules.doramcu.dto.GalaxyInfoDto;
+import com.yisy.modules.doramcu.dto.galaxy.CreateGalaxyRequest;
+import com.yisy.modules.doramcu.dto.galaxy.GalaxyCreationCostDto;
+import com.yisy.modules.doramcu.dto.galaxy.GalaxyInfoDto;
 import com.yisy.modules.doramcu.eve.model.EveCorporation;
 import com.yisy.modules.doramcu.repository.misc.EveCorporationRepository;
 import com.yisy.modules.doramcu.service.galaxy.GalaxyCreationService;

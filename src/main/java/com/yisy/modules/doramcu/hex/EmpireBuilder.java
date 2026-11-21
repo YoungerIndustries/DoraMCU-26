@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.hex;
-
 import java.util.List;
 
 /**

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoraMCU — Begin Your Journey</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/onboarding.css">
+</head>
+<body>
+    <!-- Animated starfield background -->
+    <div class="starfield" id="starfield"></div>
+
+    <!-- ============================================
+         NEWS FEED SIDEBAR (always visible)
+         ============================================ -->
+    <aside class="news-sidebar" id="newsSidebar">
+        <div class="news-header">
+            <h3>📡 DoraMCU News</h3>
+            <div class="news-status">
+                <span class="news-dot" id="newsDot"></span>
+                <span id="newsStatusText">Connecting...</span>
+            </div>
+        </div>
+        <div class="news-feed" id="newsFeed">
+            <div class="news-loading">Loading news feed...</div>
+        </div>
+        <div class="news-footer">
+            <button class="btn-news-refresh" id="btnNewsRefresh">🔄 Refresh</button>
+        </div>
+    </aside>
+
+    <!-- ============================================
+         MAIN ONBOARDING CONTAINER
+         ============================================ -->
+    <main class="onboarding-main">
+        <div class="onboarding-container">
+
+            <!-- Progress Bar -->
+            <div class="onboarding-progress">
+                <div class="progress-steps">
+                    <div class="progress-step active" data-step="1">
+                        <div class="step-circle">1</div>
+                        <span class="step-label">Door</span>
+                    </div>
+                    <div class="progress-connector"></div>
+                    <div class="progress-step" data-step="2">
+                        <div class="step-circle">2</div>
+                        <span class="step-label">Promo</span>
+                    </div>
+                    <div class="progress-connector"></div>
+                    <div class="progress-step" data-step="3">
+                        <div class="step-circle">3</div>
+                        <span class="step-label">Account</span>
+                    </div>
+                    <div class="progress-connector"></div>
+                    <div class="progress-step" data-step="4">
+                        <div class="step-circle">4</div>
+                        <span class="step-label">Empire</span>
+                    </div>
+                    <div class="progress-connector"></div>
+                    <div class="progress-step" data-step="5">
+                        <div class="step-circle">5</div>
+                        <span class="step-label">Character</span>
+                    </div>
+                    <div class="progress-connector"></div>
+                    <div class="progress-step" data-step="6">
+                        <div class="step-circle">6</div>
+                        <span class="step-label">Earth</span>
+                    </div>
+                </div>
+                <div class="progress-bar-track">
+                    <div class="progress-bar-fill" id="progressBarFill"></div>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 STEP 1: DOOR PANEL
+                 ============================================ -->
+            <section class="onboarding-step active" id="stepDoor">
+                <div class="door-panel glass-panel">
+                    <div class="door-animation">
+                        <div class="door-frame">
+                            <div class="door-left" id="doorLeft"></div>
+                            <div class="door-right" id="doorRight"></div>
+                            <div class="door-glow"></div>
+                        </div>
+                    </div>
+                    <div class="door-content">
+                        <h1 class="door-title">Do You Want to Live Forever?</h1>
+                        <p class="door-subtitle">Step through the door and begin your journey across the DoraMCU Universe.</p>
+                        <p class="door-description">
+                            Create your account, define your corporation, and land on Earth 2026 to start your adventure.
+                            Explore galaxies, build empires, and shape the fate of civilizations.
+                        </p>
+                        <div class="door-actions">
+                            <button class="btn-door-primary" id="btnStepThrough">
+                                <span class="btn-icon">🚪</span> Step Through the Door
+                            </button>
+                            <button class="btn-door-secondary" id="btnSkipToLogin">
+                                Already have an account? <span class="link-text">Sign In</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================
+                 STEP 2: PROMO CODE
+                 ============================================ -->
+            <section class="onboarding-step" id="stepPromo">
+                <div class="promo-panel glass-panel">
+                    <h2 class="panel-title">🎟️ Promo Code</h2>
+                    <p class="panel-description">
+                        Enter a landing key (promo code) if you have one. This is optional — you can skip this step.
+                    </p>
+
+                    <div class="promo-input-group">
+                        <div class="form-group">
+                            <label for="promoCodeInput">Promo Code</label>
+                            <input type="text" id="promoCodeInput" placeholder="Enter your promo code..." autocomplete="off">
+                        </div>
+                        <div class="promo-actions">
+                            <button class="btn-primary" id="btnValidatePromo">
+                                <span class="btn-icon">✅</span> Validate
+                            </button>
+                            <button class="btn-secondary" id="btnSkipPromo">
+                                Skip
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="promoResult" class="promo-result hidden">
+                        <div class="promo-result-icon" id="promoResultIcon"></div>
+                        <h3 id="promoResultTitle"></h3>
+                        <p id="promoResultDesc"></p>
+                        <div id="promoBonuses" class="promo-bonuses hidden"></div>
+                        <button class="btn-primary" id="btnPromoContinue">Continue</button>
+                    </div>
+
+                    <div id="promoError" class="error-message hidden"></div>
+                </div>
+            </section>
+
+            <!-- ============================================
+                 STEP 3: ACCOUNT REGISTRATION
+                 ============================================ -->
+            <section class="onboarding-step" id="stepRegister">
+                <div class="register-panel glass-panel">
+                    <h2 class="panel-title">👤 Create Account</h2>
+                    <p class="panel-description">Set up your credentials to access the DoraMCU Universe.</p>
+
+                    <form id="registerForm" class="onboarding-form" autocomplete="off">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="regUsername">Username *</label>
+                                <input type="text" id="regUsername" placeholder="Choose a unique username" minlength="3" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="regEmail">Email</label>
+                                <input type="email" id="regEmail" placeholder="your@email.com">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="regPassword">Password *</label>
+                                <input type="password" id="regPassword" placeholder="At least 4 characters" minlength="4" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="regPasswordConfirm">Confirm Password *</label>
+                                <input type="password" id="regPasswordConfirm" placeholder="Repeat your password" required>
+                            </div>
+                        </div>
+                        <div id="registerError" class="error-message hidden"></div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="btnRegBack">Back</button>
+                            <button type="submit" class="btn-primary" id="btnRegNext">
+                                Continue to Empire Setup
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ============================================
+                 STEP 4: EMPIRE / CORPORATION SETUP
+                 ============================================ -->
+            <section class="onboarding-step" id="stepEmpire">
+                <div class="empire-panel glass-panel">
+                    <h2 class="panel-title">🏛️ Define Your Empire</h2>
+                    <p class="panel-description">
+                        Your empire is your identity in the DoraMCU Universe. Choose wisely — this shapes your corporation and AI VP.
+                    </p>
+
+                    <form id="empireForm" class="onboarding-form" autocomplete="off">
+                        <div class="form-group">
+                            <label for="empireName">Empire Name *</label>
+                            <input type="text" id="empireName" placeholder="Name your empire" required>
+                            <small class="form-hint">This will also be your corporation name</small>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="governmentType">Government Type</label>
+                                <select id="governmentType">
+                                    <option value="DEMOCRACY">🏛️ Democracy</option>
+                                    <option value="AUTHORITARIAN">⚡ Authoritarian</option>
+                                    <option value="MONARCHY">👑 Monarchy</option>
+                                    <option value="OLIGARCHY">🏴 Oligarchy</option>
+                                    <option value="THEOCRACY">⛪ Theocracy</option>
+                                    <option value="DICTATORSHIP">🔨 Dictatorship</option>
+                                    <option value="CONFEDERATION">🤝 Confederation</option>
+                                    <option value="CORPORATE">🏢 Corporate</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ethos">Ethos</label>
+                                <select id="ethos">
+                                    <option value="MATERIALIST">🔬 Materialist</option>
+                                    <option value="SPIRITUALIST">✨ Spiritualist</option>
+                                    <option value="LIBERTARIAN">🕊️ Libertarian</option>
+                                    <option value="EQUALIST">⚖️ Equalist</option>
+                                    <option value="MILITARIST">⚔️ Militarist</option>
+                                    <option value="PACIFIST">🕊️ Pacifist</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="empire-preview">
+                            <h4>Empire Preview</h4>
+                            <div class="preview-grid">
+                                <div class="preview-item">
+                                    <span class="preview-label">Corporation</span>
+                                    <span class="preview-value" id="previewCorp">—</span>
+                                </div>
+                                <div class="preview-item">
+                                    <span class="preview-label">Ticker</span>
+                                    <span class="preview-value" id="previewTicker">—</span>
+                                </div>
+                                <div class="preview-item">
+                                    <span class="preview-label">AI VP</span>
+                                    <span class="preview-value" id="previewAI">—</span>
+                                </div>
+                                <div class="preview-item">
+                                    <span class="preview-label">Starting Capital</span>
+                                    <span class="preview-value" id="previewCapital">100,000 credits</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="empireError" class="error-message hidden"></div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="btnEmpireBack">Back</button>
+                            <button type="submit" class="btn-primary" id="btnEmpireNext">
+                                Create Account & Empire
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ============================================
+                 STEP 5: CHARACTER CREATION
+                 ============================================ -->
+            <section class="onboarding-step" id="stepCharacter">
+                <div class="character-panel glass-panel">
+                    <h2 class="panel-title">🧑 Create Your Character</h2>
+                    <p class="panel-description">
+                        Your character is your avatar on Earth 2026. They will be the CEO of your corporation.
+                    </p>
+
+                    <form id="characterForm" class="onboarding-form" autocomplete="off">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="charName">Character Name *</label>
+                                <input type="text" id="charName" placeholder="Your character's name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="charAge">Age</label>
+                                <input type="number" id="charAge" value="25" min="16" max="120">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="charOccupation">Occupation</label>
+                            <input type="text" id="charOccupation" placeholder="e.g. Engineer, Pilot, Scientist..." value="CEO">
+                        </div>
+                        <div id="characterError" class="error-message hidden"></div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="btnCharBack">Back</button>
+                            <button type="submit" class="btn-primary" id="btnCharNext">
+                                Create Character
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ============================================
+                 STEP 6: EARTH 2026 LANDING
+                 ============================================ -->
+            <section class="onboarding-step" id="stepEarth">
+                <div class="earth-panel glass-panel">
+                    <div class="earth-landing-animation">
+                        <div class="earth-globe" id="earthGlobe"></div>
+                        <div class="landing-marker" id="landingMarker">
+                            <span class="marker-pin">📍</span>
+                            <span class="marker-label">San Diego, CA</span>
+                        </div>
+                    </div>
+                    <div class="earth-content">
+                        <h2 class="panel-title">🌍 Welcome to Earth 2026</h2>
+                        <p class="panel-description">
+                            You have arrived in San Diego, California. Your apartment is ready and your corporation awaits.
+                        </p>
+
+                        <div class="earth-info-grid">
+                            <div class="earth-info-card">
+                                <div class="info-icon">🏠</div>
+                                <h4>Home Location</h4>
+                                <p id="earthHomeLocation">San Diego, CA, USA</p>
+                                <p class="info-detail">Apartment — Your personal residence</p>
+                            </div>
+                            <div class="earth-info-card">
+                                <div class="info-icon">🏢</div>
+                                <h4>Corporation HQ</h4>
+                                <p id="earthCorpName">—</p>
+                                <p class="info-detail">Your corporate headquarters</p>
+                            </div>
+                            <div class="earth-info-card">
+                                <div class="info-icon">🧑</div>
+                                <h4>Your Character</h4>
+                                <p id="earthCharName">—</p>
+                                <p class="info-detail">CEO of your corporation</p>
+                            </div>
+                        </div>
+
+                        <div id="earthScenarios" class="earth-scenarios hidden">
+                            <h4>Available Scenarios</h4>
+                            <div class="scenarios-grid" id="scenariosGrid"></div>
+                        </div>
+
+                        <div class="earth-actions">
+                            <button class="btn-earth-primary" id="btnBeginJourney">
+                                <span class="btn-icon">🚀</span> Begin Your Journey
+                            </button>
+                            <button class="btn-earth-secondary" id="btnEarthDashboard">
+                                Go to Dashboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Loading Overlay -->
+            <div class="loading-overlay hidden" id="loadingOverlay">
+                <div class="loading-content">
+                    <div class="loading-spinner"></div>
+                    <p id="loadingText">Processing...</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Toast container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Load scripts -->
+    <script src="js/game-api.js"></script>
+    <script src="js/onboarding.js"></script>
+</body>
+</html>

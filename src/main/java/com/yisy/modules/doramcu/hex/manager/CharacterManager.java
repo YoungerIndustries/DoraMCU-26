@@ -334,10 +334,11 @@ public class CharacterManager {
      */
     private List<Skill> generateSkills(Career career, int count) {
         List<Skill> skills = new ArrayList<>();
-        List<Skill> skillTable = career.getSkillTable();
+        List<String> skillTable = career.getSkillTable();
 
         for (int i = 0; i < count; i++) {
-            Skill skill = skillTable.get(random.nextInt(skillTable.size()));
+            String skillName = skillTable.get(random.nextInt(skillTable.size()));
+            Skill skill = new Skill(Skill.SkillType.NONE, 1);
             if (!skills.contains(skill)) {
                 skills.add(skill);
             }

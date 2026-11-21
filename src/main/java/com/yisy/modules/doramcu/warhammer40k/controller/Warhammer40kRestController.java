@@ -1,5 +1,10 @@
 package com.yisy.modules.doramcu.warhammer40k.controller;
 
+import com.yisy.modules.doramcu.warhammer40k.model.Faction;
+import com.yisy.modules.doramcu.warhammer40k.model.Lore;
+import com.yisy.modules.doramcu.warhammer40k.model.Scenario;
+import com.yisy.modules.doramcu.warhammer40k.model.SpecialAbility;
+import com.yisy.modules.doramcu.warhammer40k.model.Unit;
 import com.yisy.modules.doramcu.warhammer40k.service.Warhammer40kService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,6 +1,8 @@
 package com.yisy.modules.doramcu.warhammer40k;
 
 import com.yisy.modules.doramcu.corporation.model.CorporateContract;
+import com.yisy.modules.doramcu.corporation.model.CorporateContract.ContractType;
+import com.yisy.modules.doramcu.corporation.model.CorporateContract.Status;
 import com.yisy.modules.doramcu.gamecore.CorporationAdapter;
 import com.yisy.modules.doramcu.gamecore.GameType;
 import org.springframework.stereotype.Component;

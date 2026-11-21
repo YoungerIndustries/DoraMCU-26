@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.service.ai;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.admin.dto.AiAdminVisibilityDTO;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;

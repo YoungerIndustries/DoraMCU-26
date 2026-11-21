@@ -1,4 +1,14 @@
 package com.yisy.modules.doramcu.unified;
+
+import com.yisy.modules.doramcu.hex.AiCoreComponent;
+import com.yisy.modules.doramcu.hex.Ship;
+import com.yisy.modules.doramcu.hex.ShipComponent;
+import com.yisy.modules.doramcu.hex.ShipType;
+import com.yisy.modules.doramcu.hex.WeaponType;
+import com.yisy.modules.doramcu.traveller.FusionDrive;
+import com.yisy.modules.doramcu.traveller.HighGuardArmor;
+import com.yisy.modules.doramcu.traveller.HighGuardShipDesign;
+import com.yisy.modules.doramcu.traveller.JumpDrive;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

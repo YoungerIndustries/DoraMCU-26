@@ -12,6 +12,8 @@ import com.yisy.modules.doramcu.hex.GalaxyFactory;
 import com.yisy.modules.doramcu.hex.GalaxyGenerationConfig;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 import com.yisy.modules.doramcu.repository.galaxy.GalaxyRepository;
+import com.yisy.modules.doramcu.model.players.Player;
+import com.yisy.modules.doramcu.model.user.User;
 import com.yisy.modules.doramcu.repository.players.PlayerRepository;
 import com.yisy.modules.doramcu.repository.galaxy.SectorRepository;
 import com.yisy.modules.doramcu.repository.galaxy.SubSectorRepository;
@@ -589,10 +591,10 @@ public class AdminController {
             return ResponseEntity.badRequest().body(Map.of("error", "name is required"));
         }
 
-        com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy dbGalaxy = galaxyRepository.findById(galaxyId)
+        com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy = galaxyRepository.findById(galaxyId)
                 .orElseThrow(() -> new IllegalArgumentException("Galaxy not found: " + galaxyId));
 
-        com.yisy.modules.doramcu.model.galaxy.Galaxy.Sector dbSector = galaxyService.findSectorByGalaxyAndPosition(galaxyId, row, col);
+        com.yisy.modules.doramcu.model.galaxy.Sector dbSector = galaxyService.findSectorByGalaxyAndPosition(galaxyId, row, col);
         if (dbSector == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "Sector not found at (" + row + ", " + col + ")"));
@@ -625,16 +627,16 @@ public class AdminController {
             return ResponseEntity.badRequest().body(Map.of("error", "name is required"));
         }
 
-        com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy dbGalaxy = galaxyRepository.findById(galaxyId)
+        com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy = galaxyRepository.findById(galaxyId)
                 .orElseThrow(() -> new IllegalArgumentException("Galaxy not found: " + galaxyId));
 
-        com.yisy.modules.doramcu.model.galaxy.Galaxy.Sector dbSector = galaxyService.findSectorByGalaxyAndPosition(galaxyId, row, col);
+        com.yisy.modules.doramcu.model.galaxy.Sector dbSector = galaxyService.findSectorByGalaxyAndPosition(galaxyId, row, col);
         if (dbSector == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "Sector not found at (" + row + ", " + col + ")"));
         }
 
-        com.yisy.modules.doramcu.model.galaxy.Galaxy.SubSector dbSubSector = galaxyService.findSubSectorBySectorAndPosition(dbSector.getId(), subRow, subCol);
+        com.yisy.modules.doramcu.model.galaxy.SubSector dbSubSector = galaxyService.findSubSectorBySectorAndPosition(dbSector.getId(), subRow, subCol);
         if (dbSubSector == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "SubSector not found at (" + subRow + ", " + subCol + ")"));
@@ -950,15 +952,15 @@ public class AdminController {
 
         // --- Galaxy Data ---
         Map<String, Object> galaxyData = new HashMap<>();
-        List<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> galaxies = galaxyRepository.findAll();
+        List<com.yisy.modules.doramcu.model.galaxy.Galaxy> galaxies = galaxyRepository.findAll();
         galaxyData.put("galaxies", galaxies.size());
 
         long totalSectors = 0;
         long totalSubSectors = 0;
-        for (com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy galaxy : galaxies) {
-            List<com.yisy.modules.doramcu.model.galaxy.Galaxy.Sector> sectors = sectorRepository.findByGalaxyId(galaxy.getId());
+        for (com.yisy.modules.doramcu.model.galaxy.Galaxy galaxy : galaxies) {
+            List<com.yisy.modules.doramcu.model.galaxy.Sector> sectors = sectorRepository.findByGalaxyId(galaxy.getId());
             totalSectors += sectors.size();
-            for (com.yisy.modules.doramcu.model.galaxy.Galaxy.Sector sector : sectors) {
+            for (com.yisy.modules.doramcu.model.galaxy.Sector sector : sectors) {
                 totalSubSectors += subSectorRepository.findBySectorId(sector.getId()).size();
             }
         }

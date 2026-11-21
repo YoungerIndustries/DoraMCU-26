@@ -1,19 +1,17 @@
 package com.yisy.modules.doramcu.service.game;
-import com.yisy.modules.doramcu.hex.SolarSystemEntity;
-import com.yisy.modules.doramcu.hex.MineralQuality;
-import com.yisy.modules.doramcu.hex.PlanetSize;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.hex.Empire;
-import com.yisy.modules.doramcu.hex.Galaxy;
 import com.yisy.modules.doramcu.hex.Game;
 import com.yisy.modules.doramcu.hex.Hex;
 import com.yisy.modules.doramcu.hex.Hex3D;
+import com.yisy.modules.doramcu.hex.MineralQuality;
 import com.yisy.modules.doramcu.hex.Planet;
-import com.yisy.modules.doramcu.hex.Player;
-import com.yisy.modules.doramcu.hex.Sector;
-import com.yisy.modules.doramcu.hex.SolarSystem;
-import com.yisy.modules.doramcu.hex.Star;
+import com.yisy.modules.doramcu.hex.PlanetSize;
+import com.yisy.modules.doramcu.hex.Galaxy;
 import com.yisy.modules.doramcu.hex.SubSector;
+import com.yisy.modules.doramcu.hex.SolarSystemEntity;
+import com.yisy.modules.doramcu.hex.Star;
 import com.yisy.modules.doramcu.repository.galaxy.GalaxyRepository;
 import com.yisy.modules.doramcu.repository.galaxy.PlanetRepository;
 import com.yisy.modules.doramcu.repository.galaxy.SectorRepository;
@@ -90,10 +88,10 @@ public class GameInitializationService {
         Game game = new Game(gameName);
 
         // Load and add players from database
-        List<com.yisy.modules.doramcu.model.players.Players.Player> dbPlayers = playerRepository.findAll();
+        List<com.yisy.modules.doramcu.model.players.Player> dbPlayers = playerRepository.findAll();
         int gamePlayerId = 1;
-        for (com.yisy.modules.doramcu.model.players.Players.Player dbPlayer : dbPlayers) {
-            Player gamePlayer = new Player(gamePlayerId, dbPlayer.getEmpireName());
+        for (com.yisy.modules.doramcu.model.players.Player dbPlayer : dbPlayers) {
+            com.yisy.modules.doramcu.hex.Player gamePlayer = new com.yisy.modules.doramcu.hex.Player(gamePlayerId, dbPlayer.getEmpireName());
             gamePlayer.setEmpireId(gamePlayerId);
             game.addPlayer(gamePlayer);
 
@@ -105,9 +103,9 @@ public class GameInitializationService {
         }
 
         // Load and add galaxies from database
-        List<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> dbGalaxies = galaxyRepository.findAll();
-        for (com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy dbGalaxy : dbGalaxies) {
-            Galaxy inMemoryGalaxy = convertToInMemoryGalaxy(dbGalaxy);
+        List<com.yisy.modules.doramcu.model.galaxy.Galaxy> dbGalaxies = galaxyRepository.findAll();
+        for (com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy : dbGalaxies) {
+            com.yisy.modules.doramcu.hex.Galaxy inMemoryGalaxy = convertToInMemoryGalaxy(dbGalaxy);
             game.addGalaxy(inMemoryGalaxy);
         }
 
@@ -138,9 +136,9 @@ public class GameInitializationService {
         // Load only the specified players
         int gamePlayerId = 1;
         for (String email : playerEmails) {
-            com.yisy.modules.doramcu.model.players.Players.Player dbPlayer = playerRepository.findByEmail(email)
+            Player dbPlayer = playerRepository.findByEmail(email)
                     .orElseThrow(() -> new IllegalArgumentException("Player not found: " + email));
-            Player gamePlayer = new Player(gamePlayerId, dbPlayer.getEmpireName());
+            com.yisy.modules.doramcu.hex.Player gamePlayer = new com.yisy.modules.doramcu.hex.Player(gamePlayerId, dbPlayer.getEmpireName());
             gamePlayer.setEmpireId(gamePlayerId);
             game.addPlayer(gamePlayer);
 
@@ -152,9 +150,9 @@ public class GameInitializationService {
         }
 
         // Load all galaxies
-        List<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> dbGalaxies = galaxyRepository.findAll();
-        for (com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy dbGalaxy : dbGalaxies) {
-            Galaxy inMemoryGalaxy = convertToInMemoryGalaxy(dbGalaxy);
+        List<com.yisy.modules.doramcu.model.galaxy.Galaxy> dbGalaxies = galaxyRepository.findAll();
+        for (com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy : dbGalaxies) {
+            com.yisy.modules.doramcu.hex.Galaxy inMemoryGalaxy = convertToInMemoryGalaxy(dbGalaxy);
             game.addGalaxy(inMemoryGalaxy);
         }
 
@@ -166,7 +164,7 @@ public class GameInitializationService {
      *
      * @return list of all database players
      */
-    public List<com.yisy.modules.doramcu.model.players.Players.Player> getAllRegisteredPlayers() {
+    public List<com.yisy.modules.doramcu.model.players.Player> getAllRegisteredPlayers() {
         return playerRepository.findAll();
     }
 
@@ -176,7 +174,7 @@ public class GameInitializationService {
      * @param email the player's email
      * @return the player, or null if not found
      */
-    public com.yisy.modules.doramcu.model.players.Players.Player getPlayerByEmail(String email) {
+    public com.yisy.modules.doramcu.model.players.Player getPlayerByEmail(String email) {
         return playerRepository.findByEmail(email).orElse(null);
     }
 
@@ -185,7 +183,7 @@ public class GameInitializationService {
      *
      * @return list of all database galaxies
      */
-    public List<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> getAllGalaxies() {
+    public List<com.yisy.modules.doramcu.model.galaxy.Galaxy> getAllGalaxies() {
         return galaxyRepository.findAll();
     }
 
@@ -217,12 +215,12 @@ public class GameInitializationService {
      * @param dbGalaxy the database galaxy entity
      * @return the in-memory galaxy
      */
-    public Galaxy convertToInMemoryGalaxy(com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy dbGalaxy) {
+    public com.yisy.modules.doramcu.hex.Galaxy convertToInMemoryGalaxy(com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy) {
         Galaxy galaxy = new Galaxy(dbGalaxy.getId().intValue(), dbGalaxy.getName());
 
         // Load all sectors for this galaxy and apply stored names
-        List<com.yisy.modules.doramcu.model.galaxy.Galaxy.Sector> dbSectors = sectorRepository.findByGalaxyId(dbGalaxy.getId());
-        for (com.yisy.modules.doramcu.model.galaxy.Galaxy.Sector dbSector : dbSectors) {
+        List<com.yisy.modules.doramcu.model.galaxy.Sector> dbSectors = sectorRepository.findByGalaxyId(dbGalaxy.getId());
+        for (com.yisy.modules.doramcu.model.galaxy.Sector dbSector : dbSectors) {
             Galaxy.Sector hexSector = galaxy.getSector(dbSector.getSectorRow(), dbSector.getSectorCol());
             if (hexSector != null) {
                 hexSector.setName(dbSector.getName());
@@ -231,10 +229,10 @@ public class GameInitializationService {
                 }
 
                 // Load all subsectors for this sector and apply stored names
-                List<com.yisy.modules.doramcu.model.galaxy.Galaxy.SubSector> dbSubSectors =
+                List<com.yisy.modules.doramcu.model.galaxy.SubSector> dbSubSectors =
                         subSectorRepository.findBySectorId(dbSector.getId());
-                for (com.yisy.modules.doramcu.model.galaxy.Galaxy.SubSector dbSubSector : dbSubSectors) {
-                    com.yisy.modules.doramcu.hex.SubSector hexSubSector =
+                for (com.yisy.modules.doramcu.model.galaxy.SubSector dbSubSector : dbSubSectors) {
+                    SubSector hexSubSector =
                             hexSector.getSubSector(dbSubSector.getSubSectorRow(), dbSubSector.getSubSectorCol());
                     if (hexSubSector != null) {
                         hexSubSector.setName(dbSubSector.getName());
@@ -244,27 +242,27 @@ public class GameInitializationService {
         }
 
         // Load all solar systems for this galaxy
-        List<com.yisy.modules.doramcu.model.galaxy.Galaxy.SolarSystem> dbSystems =
+        List<com.yisy.modules.doramcu.model.galaxy.SolarSystem> dbSystems =
                 solarSystemRepository.findByGalaxyId(dbGalaxy.getId());
 
         // Group solar systems by sector
-        Map<String, List<com.yisy.modules.doramcu.model.galaxy.Galaxy.SolarSystem>> systemsBySector =
+        Map<String, List<com.yisy.modules.doramcu.model.galaxy.SolarSystem>> systemsBySector =
                 dbSystems.stream()
                         .collect(Collectors.groupingBy(
                                 ss -> ss.getSectorRow() + "-" + ss.getSectorCol()
                         ));
 
         // Add systems to the galaxy
-        for (Map.Entry<String, List<com.yisy.modules.doramcu.model.galaxy.Galaxy.SolarSystem>> entry :
+        for (Map.Entry<String, List<com.yisy.modules.doramcu.model.galaxy.SolarSystem>> entry :
                 systemsBySector.entrySet()) {
             String[] parts = entry.getKey().split("-");
             int sectorRow = Integer.parseInt(parts[0]);
             int sectorCol = Integer.parseInt(parts[1]);
 
-            for (com.yisy.modules.doramcu.model.galaxy.Galaxy.SolarSystem dbSystem : entry.getValue()) {
+            for (com.yisy.modules.doramcu.model.galaxy.SolarSystem dbSystem : entry.getValue()) {
                 int systemId = dbSystem.getId().intValue();
                 // Create in-memory solar system
-                SolarSystem inMemorySystem = new SolarSystem(systemId);
+                com.yisy.modules.doramcu.hex.SolarSystem inMemorySystem = new com.yisy.modules.doramcu.hex.SolarSystem(systemId);
 
                 // Note: Celestial bodies are NOT loaded here to keep memory usage low.
                 // The buildSubSectorInfo() fallback path queries the database directly
@@ -288,11 +286,11 @@ public class GameInitializationService {
      * Loads essential celestial bodies for a solar system from the database.
      * Only loads stars and planets to keep memory usage manageable across 20k+ systems.
      */
-    private void loadCelestialBodies(int systemId, SolarSystem inMemorySystem) {
+    private void loadCelestialBodies(int systemId, com.yisy.modules.doramcu.hex.SolarSystem inMemorySystem) {
         Random random = new Random(systemId); // Deterministic positions per system
 
         // Load stars
-        com.yisy.modules.doramcu.model.galaxy.Galaxy.Star dbStar = starRepository.findBySolarSystemId((long) systemId);
+        com.yisy.modules.doramcu.model.galaxy.Star dbStar = starRepository.findBySolarSystemId((long) systemId);
         if (dbStar != null) {
             Star star = new Star(dbStar.getId().intValue());
             star.setName(dbStar.getName());

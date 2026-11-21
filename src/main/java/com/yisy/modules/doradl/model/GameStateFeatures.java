@@ -1,4 +1,5 @@
 package com.yisy.modules.doradl.model;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import java.util.Arrays;
 

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.service.auth;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.repository.players.PlayerRepository;
 import com.yisy.modules.doramcu.repository.user.UserRepository;
 import org.slf4j.Logger;

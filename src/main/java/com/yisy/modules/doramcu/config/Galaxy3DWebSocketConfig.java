@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.config;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.controller.misc.AchievementWebSocketHandler;
 import com.yisy.modules.doramcu.controller.misc.FleetTrackerWebSocketHandler;
 import com.yisy.modules.doramcu.controller.session.GameStateWebSocketHandler;
@@ -14,7 +15,8 @@ import com.yisy.modules.doramcu.service.game.GameReplayService;
 import com.yisy.modules.doramcu.service.session.GameSessionService;
 import com.yisy.modules.doramcu.service.game.GameStateBridge;
 import com.yisy.modules.doramcu.service.ai.AiAdminVisibilityService;
-
+import com.yisy.modules.doramcu.service.galaxy.Galaxy3DService;
+import com.yisy.modules.doramcu.service.misc.SpectatorService;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

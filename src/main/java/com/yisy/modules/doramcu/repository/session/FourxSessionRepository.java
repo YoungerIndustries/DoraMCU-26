@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.repository.session;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.fourx.FourxSessionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

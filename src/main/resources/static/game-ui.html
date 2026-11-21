@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoraMCU 4X Space Strategy</title>
+    <link rel="stylesheet" href="css/game.css">
+    <link rel="stylesheet" href="css/shared-components.css">
+</head>
+<body>
+    <!-- ============================================
+         LOGIN OVERLAY
+         ============================================ -->
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-container glass-panel">
+            <div class="login-header">
+                <h1 class="login-title">🌌 DoraMCU 4X</h1>
+                <p class="login-subtitle">Explore, Expand, Exploit, Exterminate</p>
+            </div>
+
+            <!-- Server Selection -->
+            <div class="login-server-select">
+                <label for="gameServerSelect">Server</label>
+                <select id="gameServerSelect">
+                    <option value="http://localhost:8080">Localhost</option>
+                    <option value="custom">Custom...</option>
+                </select>
+                <div id="gameCustomServerContainer" style="display:none;">
+                    <input type="text" id="gameCustomServerUrl" placeholder="https://your-server.com">
+                </div>
+            </div>
+
+            <!-- Login Tabs -->
+            <div class="login-tabs">
+                <button class="login-tab primary" id="tabCommanderLogin">Commander Login</button>
+                <button class="login-tab" id="tabPinLogin">PIN Login</button>
+            </div>
+
+            <!-- Commander Login Form -->
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required autocomplete="current-password">
+                </div>
+                <div id="loginError" class="login-error hidden"></div>
+                <button type="submit" class="btn-primary" id="loginBtn">Login</button>
+            </form>
+
+            <!-- PIN Login Form -->
+            <form id="pinLoginForm" class="login-form" style="display:none;">
+                <div class="form-group">
+                    <label for="loginPinInput">Session PIN</label>
+                    <input type="text" id="loginPinInput" required placeholder="Enter session PIN">
+                </div>
+                <div id="loginPinError" class="login-error hidden"></div>
+                <button type="submit" class="btn-primary" id="loginPinBtn">Join Session</button>
+            </form>
+
+            <!-- Register Section -->
+            <div class="login-register">
+                <p>Don't have an account?</p>
+                <div class="form-group">
+                    <input type="text" id="registerUsername" placeholder="Username">
+                    <input type="password" id="registerPassword" placeholder="Password">
+                </div>
+                <div id="registerError" class="login-error hidden"></div>
+                <button class="btn-secondary" id="registerPlayerBtn">Register</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         SESSION SELECTION OVERLAY
+         ============================================ -->
+    <div id="sessionOverlay" class="session-overlay hidden">
+        <div class="session-container glass-panel">
+            <div class="session-header">
+                <h2>Session Selection</h2>
+                <div class="session-header-actions">
+                    <span id="sessionServerIndicator" class="server-indicator"></span>
+                    <button class="btn-secondary" id="backToLoginBtn">Back to Login</button>
+                    <button class="btn-secondary" id="logoutBtn">Logout</button>
+                </div>
+            </div>
+
+            <!-- Join by PIN -->
+            <div class="join-by-pin">
+                <input type="text" id="joinByPinInput" placeholder="Enter session PIN to join">
+                <button class="btn-primary" id="joinByPinBtn">Join</button>
+                <div id="joinByPinError" class="login-error hidden"></div>
+            </div>
+
+            <!-- Create Session -->
+            <div class="create-session">
+                <input type="text" id="sessionNameInput" placeholder="Session name...">
+                <button class="btn-primary" id="createSessionBtn">Create New Session</button>
+            </div>
+
+            <!-- Session List -->
+            <div id="sessionList" class="session-list">
+                <!-- Sessions will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         GALAXY CREATION MODAL
+         ============================================ -->
+    <div id="galaxyCreationModal" class="modal-overlay hidden">
+        <div class="modal-content glass-panel">
+            <h3>🌌 Generating Galaxy</h3>
+            <div id="galaxyCreationStatus" class="galaxy-status">Initializing...</div>
+            <div class="galaxy-progress-bar">
+                <div class="galaxy-progress-fill" id="galaxyProgressFill"></div>
+            </div>
+            <div id="galaxyCreationLog" class="galaxy-log"></div>
+            <button class="btn-primary hidden" id="galaxyCloseBtn" onclick="GameUI.hideGalaxyCreationModal()">Done</button>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MAIN GAME CONTAINER
+         ============================================ -->
+    <div id="gameContainer" class="game-container hidden">
+
+        <!-- Header -->
+        <header class="game-header">
+            <div class="header-left">
+                <div class="empire-info">
+                    <span id="empireName" class="empire-name">—</span>
+                    <span id="empireGovernment" class="empire-government"></span>
+                    <span id="empireEthos" class="empire-ethos"></span>
+                </div>
+                <div class="turn-info">
+                    <span id="turnIndicatorText">Turn</span>
+                    <span id="turnNumber">0</span>
+                    <span id="turnIndicator" class="turn-indicator"></span>
+                </div>
+                <div class="turn-timer">
+                    <span id="turnTimer">⏱️</span>
+                    <span id="turnTimerValue">--:--</span>
+                </div>
+                <div class="turn-interval">
+                    <span id="turnInterval">Interval</span>
+                    <span id="turnIntervalValue">--</span>
+                </div>
+                <div class="turn-progress">
+                    <div class="turn-progress-bar" id="turnProgressBar">
+                        <div class="turn-progress-fill" id="turnProgressFill"></div>
+                    </div>
+                </div>
+                <div id="schedulerStatus" class="scheduler-status">
+                    <span id="schedulerDot" class="scheduler-dot"></span>
+                    <span id="schedulerLabel">Scheduler</span>
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="current-player">
+                    <span id="currentPlayerLabel">Current:</span>
+                    <span id="currentPlayerName">—</span>
+                </div>
+                <div class="current-turn-display">
+                    <span id="currentTurn">Turn 0</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="resource-bar">
+                    <div class="resource-item">
+                        <span class="resource-icon">⛏️</span>
+                        <span id="resourceMinerals" class="resource-value">0</span>
+                        <span id="resourceMineralsChange" class="resource-change"></span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="resource-icon">⚡</span>
+                        <span id="resourceEnergy" class="resource-value">0</span>
+                        <span id="resourceEnergyChange" class="resource-change"></span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="resource-icon">📊</span>
+                        <span id="resourceInfluence" class="resource-value">0</span>
+                        <span id="resourceInfluenceChange" class="resource-change"></span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="resource-icon">🔬</span>
+                        <span id="resourceScience" class="resource-value">0</span>
+                        <span id="resourceScienceChange" class="resource-change"></span>
+                    </div>
+                    <div class="resource-item">
+                        <span class="resource-icon">🌾</span>
+                        <span id="resourceFood" class="resource-value">0</span>
+                        <span id="resourceFoodChange" class="resource-change"></span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Left Panel - Empire Info -->
+        <aside class="left-panel glass-panel">
+            <div class="panel-header">
+                <h3>🏛️ Empire</h3>
+            </div>
+            <div class="empire-details">
+                <div class="empire-stat">
+                    <span class="stat-label">Player</span>
+                    <span id="playerName" class="stat-value">—</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Planets</span>
+                    <span id="empirePlanets" class="stat-value">0</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Fleets</span>
+                    <span id="empireFleets" class="stat-value">0</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Capital</span>
+                    <span id="empireCapital" class="stat-value">—</span>
+                </div>
+            </div>
+
+            <!-- Army Component -->
+            <div class="empire-section">
+                <h4>⚔️ Army</h4>
+                <div class="empire-stat">
+                    <span class="stat-label">Units</span>
+                    <span id="armyUnitCount" class="stat-value">0</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Offense</span>
+                    <span id="armyOffense" class="stat-value">0</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Defense</span>
+                    <span id="armyDefense" class="stat-value">0</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Supply Cost</span>
+                    <span id="armySupplyCost" class="stat-value">0</span>
+                </div>
+            </div>
+
+            <!-- Navy Component -->
+            <div class="empire-section">
+                <h4>🚀 Navy</h4>
+                <div class="empire-stat">
+                    <span class="stat-label">Fleets</span>
+                    <span id="navyFleetCount" class="stat-value">0</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Ships</span>
+                    <span id="navyShipCount" class="stat-value">0</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Damage</span>
+                    <span id="navyDamage" class="stat-value">0</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Shields</span>
+                    <span id="navyShields" class="stat-value">0</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Hull</span>
+                    <span id="navyHull" class="stat-value">0</span>
+                </div>
+            </div>
+
+            <!-- Facilities Component -->
+            <div class="empire-section">
+                <h4>🏗️ Facilities</h4>
+                <div class="empire-stat">
+                    <span class="stat-label">Count</span>
+                    <span id="facilityCount" class="stat-value">0</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Stations</span>
+                    <span id="spaceStationCount" class="stat-value">0</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Minerals</span>
+                    <span id="mineralProduction" class="stat-value">0</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Energy</span>
+                    <span id="energyProduction" class="stat-value">0</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Food</span>
+                    <span id="foodProduction" class="stat-value">0</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Research</span>
+                    <span id="researchOutput" class="stat-value">0</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Defense Bonus</span>
+                    <span id="facilityDefenseBonus" class="stat-value">0</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Credit Income</span>
+                    <span id="creditIncome" class="stat-value">0</span>
+                </div>
+            </div>
+
+            <!-- Player List -->
+            <div class="empire-section">
+                <h4>👥 Players</h4>
+                <div id="playerList" class="player-list"></div>
+            </div>
+
+            <!-- Fleet List -->
+            <div class="empire-section">
+                <h4>🚀 Fleets</h4>
+                <div id="fleetList" class="fleet-list"></div>
+            </div>
+        </aside>
+
+        <!-- Subsector Panel -->
+        <aside class="subsector-panel glass-panel">
+            <div class="panel-header">
+                <h3>🗺️ Sectors</h3>
+            </div>
+            <div class="subsector-search">
+                <input type="text" id="sectorSearchInput" placeholder="Search sectors...">
+                <div id="sectorSearchResults" class="search-results"></div>
+            </div>
+            <div class="subsector-filters">
+                <label>
+                    <input type="checkbox" id="showOnlyOwnedSubsectors"> Show only owned
+                </label>
+            </div>
+            <div id="subsectorViewStats" class="subsector-stats"></div>
+            <div id="subsectorList" class="subsector-list">
+                <!-- Subsectors will be rendered here -->
+            </div>
+            <div class="subsector-counters">
+                <span id="subsectorGeneratedCount">0</span> / <span id="subsectorSystemCount">0</span>
+            </div>
+        </aside>
+
+        <!-- Galaxy Map Panel -->
+        <main class="galaxy-panel">
+            <!-- Galaxy view stats -->
+            <div id="galaxyViewStats" class="galaxy-view-stats"></div>
+
+            <!-- Sector Cards View -->
+            <div id="sectorCardsView" class="sector-cards-view">
+                <div id="sectorCardsGrid" class="sector-cards-grid">
+                    <!-- Sector cards will be rendered here -->
+                </div>
+            </div>
+
+            <!-- Subsector Cards View -->
+            <div id="subsectorCardsView" class="subsector-cards-view hidden">
+                <div class="view-header">
+                    <button class="btn-secondary" id="backToSectorsBtn">← Back to Sectors</button>
+                    <h3 id="subsectorViewTitle">Subsectors</h3>
+                </div>
+                <div id="subsectorCardsGrid" class="subsector-cards-grid">
+                    <!-- Subsector cards will be rendered here -->
+                </div>
+            </div>
+
+            <!-- Subsector Hex Grid View -->
+            <div id="subsectorHexGridView" class="subsector-hex-grid-view hidden">
+                <div class="view-header">
+                    <button class="btn-secondary" id="backToSubsectorCardsBtn">← Back to Subsectors</button>
+                    <h3 id="subsectorHexGridTitle">Subsector Map</h3>
+                </div>
+                <div id="subsectorHexGridStats" class="hex-grid-stats"></div>
+                <div id="hexGridContainer" class="hex-grid-container">
+                    <canvas id="subsectorHexGridCanvas"></canvas>
+                </div>
+                <div id="hexGridLegend" class="hex-grid-legend"></div>
+            </div>
+
+            <!-- System Detail View -->
+            <div id="systemDetailView" class="system-detail-view hidden">
+                <div class="view-header">
+                    <button class="btn-secondary" id="backToSubsectorsBtn2">← Back to Map</button>
+                    <h3 id="systemDetailTitle">System Detail</h3>
+                </div>
+                <div id="systemDetailStats" class="system-detail-stats"></div>
+                <canvas id="systemMapCanvas" class="system-map-canvas"></canvas>
+                <div id="systemMapLegend" class="system-map-legend"></div>
+                <div id="systemInfoPanel" class="system-info-panel">
+                    <div class="system-section">
+                        <h4>🪐 Planets</h4>
+                        <div id="planetList" class="planet-list"></div>
+                    </div>
+                    <div class="system-section">
+                        <h4>🚀 Fleets</h4>
+                        <div id="fleetListSystem" class="fleet-list-system"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legacy sector views (backward compat) -->
+            <div id="sectorMapView" class="sector-map-view hidden">
+                <div class="view-header">
+                    <button class="btn-secondary" id="backToSectorMapBtn">← Back</button>
+                    <h3 id="sectorDetailTitle">Sector</h3>
+                </div>
+                <div id="sectorSubsectors" class="sector-subsectors"></div>
+                <div id="sectorSystems" class="sector-systems"></div>
+            </div>
+            <div id="sectorDetailView" class="sector-detail-view hidden">
+                <div class="view-header">
+                    <button class="btn-secondary" id="backToSubsectorsBtn">← Back</button>
+                    <h3 id="systemSubsectorTitle">System</h3>
+                </div>
+                <div id="systemsList" class="systems-list"></div>
+            </div>
+
+            <!-- Galaxy Canvas (for galaxy map rendering) -->
+            <canvas id="galaxyCanvas" class="galaxy-canvas"></canvas>
+
+            <!-- Zoom controls -->
+            <div class="zoom-controls">
+                <button class="btn-icon" id="zoomInBtn">+</button>
+                <button class="btn-icon" id="zoomOutBtn">−</button>
+                <button class="btn-icon" id="resetViewBtn">⟲</button>
+            </div>
+
+            <!-- System selector -->
+            <select id="systemSelector" class="system-selector">
+                <option value="">Select a system...</option>
+            </select>
+        </main>
+
+        <!-- Right Panel - Actions -->
+        <aside class="right-panel glass-panel">
+            <div class="panel-header">
+                <h3>⚡ Actions</h3>
+            </div>
+            <div class="action-buttons">
+                <button class="btn-action" id="advanceTurnBtn">
+                    <span class="action-icon">⏭️</span>
+                    <span class="action-label">Advance Turn</span>
+                </button>
+                <button class="btn-action" id="buildShipBtn">
+                    <span class="action-icon">🔨</span>
+                    <span class="action-label">Build Ship</span>
+                </button>
+                <button class="btn-action" id="moveFleetBtn">
+                    <span class="action-icon">🎯</span>
+                    <span class="action-label">Move Fleet</span>
+                </button>
+                <button class="btn-action" id="engageCombatBtn">
+                    <span class="action-icon">⚔️</span>
+                    <span class="action-label">Engage Combat</span>
+                </button>
+                <button class="btn-action" id="leaveSessionBtn">
+                    <span class="action-icon">🚪</span>
+                    <span class="action-label">Leave Session</span>
+                </button>
+            </div>
+
+            <!-- Target coordinates -->
+            <div class="target-coords">
+                <label for="targetCoords">Target Coordinates</label>
+                <input type="text" id="targetCoords" placeholder="Sector,Subsector,X,Y">
+            </div>
+
+            <!-- Mercenary section (for trade-ui.js) -->
+            <div id="mercenarySection" class="mercenary-section" style="display:none;">
+                <h4>🎖️ Mercenary</h4>
+                <div class="empire-stat">
+                    <span class="stat-label">Units</span>
+                    <span id="mercenaryUnitCount" class="stat-value">0</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Ground Strength</span>
+                    <span id="mercenaryGroundStrength" class="stat-value">0</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Ticket Status</span>
+                    <span id="mercenaryTicketStatus" class="stat-value">—</span>
+                </div>
+                <div class="empire-stat">
+                    <span class="stat-label">Ticket Income</span>
+                    <span id="mercenaryTicketIncome" class="stat-value">0</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Event Log Panel -->
+        <div class="event-log-panel glass-panel">
+            <div class="event-log-header">
+                <h3>📜 Event Log</h3>
+                <div class="event-log-controls">
+                    <input type="text" id="eventLogFilter" placeholder="Filter events...">
+                    <button class="btn-icon" id="clearEventLogBtn">🗑️</button>
+                </div>
+            </div>
+            <div id="eventLog" class="event-log-content">
+                <!-- Events will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         BUILD SHIP MODAL
+         ============================================ -->
+    <div id="buildShipModal" class="modal-overlay hidden">
+        <div class="modal-content glass-panel">
+            <h3>🔨 Build Ship</h3>
+            <div class="form-group">
+                <label for="shipTypeSelect">Ship Type</label>
+                <select id="shipTypeSelect">
+                    <option value="">Select a ship type...</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" id="buildShipConfirm">Build</button>
+                <button class="btn-secondary" id="buildShipCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         TURN PHASE MODAL
+         ============================================ -->
+    <div id="turnPhaseModal" class="modal-overlay hidden">
+        <div class="modal-content glass-panel">
+            <h3 id="turnPhaseTitle">Turn Phase</h3>
+            <div class="phase-step">
+                <span id="turnPhaseStep">Step 1 of 4</span>
+            </div>
+            <div class="phase-progress">
+                <div class="phase-progress-bar">
+                    <div class="phase-progress-fill" id="phaseProgressFill"></div>
+                </div>
+            </div>
+            <div id="turnPhaseBody" class="phase-body">
+                <!-- Phase content will be rendered here -->
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="turnPhaseSkip">Skip</button>
+                <button class="btn-primary" id="turnPhaseNext">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phase-specific modals -->
+    <div id="resourcePhaseModal" class="modal-overlay hidden">
+        <div class="modal-content glass-panel">
+            <h3>⚡ Resource Collection</h3>
+            <div id="phaseResourceSummary" class="phase-data"></div>
+            <div id="phasePipelineDetails" class="phase-data hidden"></div>
+            <button class="btn-secondary" id="viewPipelineDetailsBtn">View Pipeline Details</button>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="resourcePhaseSkip">Skip</button>
+                <button class="btn-primary" id="resourcePhaseNext">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="shipBuildPhaseModal" class="modal-overlay hidden">
+        <div class="modal-content glass-panel">
+            <h3>🔨 Ship Building</h3>
+            <div id="phaseShipQueue" class="phase-data"></div>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="shipBuildPhaseSkip">Skip</button>
+                <button class="btn-primary" id="shipBuildPhaseNext">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="fleetMovePhaseModal" class="modal-overlay hidden">
+        <div class="modal-content glass-panel">
+            <h3>🎯 Fleet Movement</h3>
+            <div id="phaseFleetList" class="phase-data"></div>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="fleetMovePhaseSkip">Skip</button>
+                <button class="btn-primary" id="fleetMovePhaseNext">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="combatPhaseModal" class="modal-overlay hidden">
+        <div class="modal-content glass-panel">
+            <h3>⚔️ Combat Phase</h3>
+            <div id="phaseEnemyList" class="phase-data"></div>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="combatPhaseSkip">Skip</button>
+                <button class="btn-primary" id="combatPhaseNext">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         TRADE MODAL (for trade-ui.js)
+         ============================================ -->
+    <div id="tradeModal" class="modal-overlay hidden">
+        <div class="modal-content glass-panel trade-modal-content">
+            <div class="trade-modal-header">
+                <h3>💰 Trade System</h3>
+                <button class="modal-close" id="tradeModalClose">✕</button>
+            </div>
+
+            <!-- Trade tabs -->
+            <div class="trade-tabs">
+                <button class="trade-tab active" data-tab="commodities">📦 Commodities</button>
+                <button class="trade-tab" data-tab="routes">🗺️ Routes</button>
+                <button class="trade-tab" data-tab="career">🎖️ Career</button>
+                <button class="trade-tab" data-tab="exchange">💱 Exchange</button>
+                <button class="trade-tab" data-tab="events">⚡ Events</button>
+                <button class="trade-tab" data-tab="mission">🚀 Mission</button>
+            </div>
+
+            <!-- Market info -->
+            <div id="tradeMarketInfo" class="trade-market-info"></div>
+
+            <!-- Trade panels -->
+            <div id="commoditiesPanel" class="trade-panel">
+                <div id="tradeCommodityList" class="trade-commodity-list"></div>
+            </div>
+
+            <div id="routesPanel" class="trade-panel hidden">
+                <div id="tradeRoutesList" class="trade-routes-list"></div>
+            </div>
+
+            <div id="careerPanel" class="trade-panel hidden">
+                <div id="careerBonuses" class="career-bonuses"></div>
+            </div>
+
+            <div id="exchangePanel" class="trade-panel hidden">
+                <div id="exchangeInfo" class="exchange-info"></div>
+            </div>
+
+            <div id="eventsPanel" class="trade-panel hidden">
+                <div id="economicEvents" class="economic-events"></div>
+            </div>
+
+            <div id="missionPanel" class="trade-panel hidden">
+                <div class="mission-form">
+                    <div class="form-group">
+                        <label for="tradeMissionDest">Destination System ID</label>
+                        <input type="number" id="tradeMissionDest" placeholder="Target system ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="tradeMissionCommodity">Commodity</label>
+                        <select id="tradeMissionCommodity">
+                            <option value="">Select commodity...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="tradeMissionQty">Quantity</label>
+                        <input type="number" id="tradeMissionQty" min="1" value="1" placeholder="Quantity">
+                    </div>
+                    <button class="btn-primary" id="tradeMissionBtn">Execute Trade Mission</button>
+                    <div id="tradeMissionResult" class="trade-mission-result" style="display:none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         COMMAND BAR
+         ============================================ -->
+    <div id="commandBar" class="command-bar hidden">
+        <div class="command-bar-input-container">
+            <span class="command-bar-prompt">></span>
+            <input type="text" id="commandBarInput" placeholder="Type a command...">
+        </div>
+        <div class="command-bar-list">
+            <!-- Commands will be rendered here -->
+        </div>
+    </div>
+
+    <!-- ============================================
+         TOAST CONTAINER
+         ============================================ -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ============================================
+         SCRIPTS (load order matters!)
+         ============================================ -->
+    <!-- 1. Core shared state -->
+    <script src="js/game-ui-core.js"></script>
+    <!-- 2. API layer -->
+    <script src="js/game-api.js"></script>
+    <!-- 3. SSE handlers -->
+    <script src="js/game-sse.js"></script>
+    <!-- 4. Main game UI logic -->
+    <script src="js/game-ui-main.js"></script>
+    <!-- 5. Sub-modules -->
+    <script src="js/game-ui-auth.js"></script>
+    <script src="js/game-ui-actions.js"></script>
+    <script src="js/game-ui-battle.js"></script>
+    <script src="js/game-ui-build.js"></script>
+    <script src="js/game-ui-cards.js"></script>
+    <script src="js/game-ui-galaxy-map.js"></script>
+    <script src="js/game-ui-galaxy-progress.js"></script>
+    <script src="js/game-ui-gamemodes.js"></script>
+    <script src="js/game-ui-gamestate.js"></script>
+    <script src="js/game-ui-mobile.js"></script>
+    <script src="js/game-ui-sector-detail.js"></script>
+    <script src="js/game-ui-sse-handlers.js"></script>
+    <script src="js/game-ui-subsector-graphic.js"></script>
+    <script src="js/game-ui-subsector.js"></script>
+    <script src="js/game-ui-turns.js"></script>
+    <script src="js/game-ui-utilities.js"></script>
+    <!-- 6. Trade UI module -->
+    <script src="js/trade-ui.js"></script>
+</body>
+</html>

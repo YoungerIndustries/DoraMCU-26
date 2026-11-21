@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.dnd5e.model;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import jakarta.persistence.*;
 

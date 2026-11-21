@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import com.yisy.modules.doramcu.model.players.Player;
 import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.model.RulesTable;
@@ -27,8 +28,7 @@ import java.util.*;
  * follow the published rules.
  * </p>
  */
-@Service("rulesService_captainslog_service_RulesService")
-    @Service
+@Service
 public class RulesService {
 
     private static final Logger log = LoggerFactory.getLogger(RulesService.class);

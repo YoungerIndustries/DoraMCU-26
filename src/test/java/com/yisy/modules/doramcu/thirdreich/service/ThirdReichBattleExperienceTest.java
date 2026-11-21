@@ -2,7 +2,7 @@ package com.yisy.modules.doramcu.thirdreich.service;
 
 import com.yisy.modules.doramcu.eve.model.AiCommanderExperience;
 import com.yisy.modules.doramcu.earth2026.service.PlanetService;
-import com.yisy.modules.doramcu.service.AiCommanderExperienceService;
+import com.yisy.modules.doramcu.service.ai.AiCommanderExperienceService;
 import com.yisy.modules.doramcu.thirdreich.commander.AICommander;
 import com.yisy.modules.doramcu.thirdreich.domain.TerrainContext;
 import com.yisy.modules.doramcu.thirdreich.domain.TerrainType;

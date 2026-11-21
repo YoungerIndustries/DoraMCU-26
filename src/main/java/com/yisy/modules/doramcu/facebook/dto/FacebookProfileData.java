@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.facebook.dto;
+import com.yisy.modules.doramcu.model.players.Player;
 
 /**
  * Data transfer object for Facebook profile data fetched from the Graph API.

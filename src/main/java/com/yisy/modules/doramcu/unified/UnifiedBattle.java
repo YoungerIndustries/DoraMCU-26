@@ -1,5 +1,12 @@
 package com.yisy.modules.doramcu.unified;
 
+import com.yisy.modules.doramcu.hex.Fleet;
+import com.yisy.modules.doramcu.hex.Hex3D;
+import com.yisy.modules.doramcu.hex.Planet;
+import com.yisy.modules.doramcu.hex.Ship;
+import com.yisy.modules.doramcu.traveller.BoardingAction;
+import com.yisy.modules.doramcu.traveller.FleetAction;
+import com.yisy.modules.doramcu.traveller.TravellerWorld;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

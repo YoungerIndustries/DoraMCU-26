@@ -1,7 +1,11 @@
 package com.yisy.modules.doramcu.sfb.service;
-import org.springframework.stereotype.Service;
+import com.yisy.modules.doramcu.sfb.model.SfbShield;
+import com.yisy.modules.doramcu.sfb.model.SfbEvent;
 
+import com.yisy.modules.doramcu.sfb.model.SfbShip;
+import com.yisy.modules.doramcu.sfb.model.SfbSSD;
 import com.yisy.modules.doramcu.util.DiceUtil;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 

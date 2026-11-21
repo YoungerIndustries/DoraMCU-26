@@ -1,5 +1,12 @@
 package com.yisy.modules.doramcu.service.galaxy;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.techlevel.TechLevel;
+import com.yisy.modules.doramcu.hex.BuildRequest;
+import com.yisy.modules.doramcu.hex.Empire;
+import com.yisy.modules.doramcu.hex.GalaxyBuildPriority;
+import com.yisy.modules.doramcu.hex.GalaxyBuildService;
+import com.yisy.modules.doramcu.hex.GalaxyFactory;
+import com.yisy.modules.doramcu.hex.GalaxyGenerationConfig;
 import com.yisy.modules.doramcu.service.ai.AiPlayerService;
 import com.yisy.modules.doramcu.service.session.GameSessionService;
 
@@ -109,7 +116,7 @@ public class GalaxyCreationService {
         GalaxyCreationResult result = createGalaxyWithAiPlayers(request.getName());
 
         // Create JPA galaxy entity
-        com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy galaxyEntity = new com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy();
+        com.yisy.modules.doramcu.model.galaxy.Galaxy galaxyEntity = new com.yisy.modules.doramcu.model.galaxy.Galaxy();
         galaxyEntity.setName(request.getName());
         galaxyEntity.setDescription(request.getDescription());
         galaxyEntity.setGameType(request.getGameType());
@@ -349,9 +356,9 @@ public class GalaxyCreationService {
         private final double creditsSpent;
         private final Long corporationId;
         private final String corporationName;
-        private final com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy galaxy;
+        private final com.yisy.modules.doramcu.model.galaxy.Galaxy galaxy;
 
-        public PaidGalaxyCreationResult(String sessionId, String sessionName, double creditsSpent, Long corporationId, String corporationName, com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy galaxy) {
+        public PaidGalaxyCreationResult(String sessionId, String sessionName, double creditsSpent, Long corporationId, String corporationName, com.yisy.modules.doramcu.model.galaxy.Galaxy galaxy) {
             this.sessionId = sessionId;
             this.sessionName = sessionName;
             this.creditsSpent = creditsSpent;
@@ -365,7 +372,7 @@ public class GalaxyCreationService {
         public double getCreditsSpent() { return creditsSpent; }
         public Long getCorporationId() { return corporationId; }
         public String getCorporationName() { return corporationName; }
-        public com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy getGalaxy() { return galaxy; }
+        public com.yisy.modules.doramcu.model.galaxy.Galaxy getGalaxy() { return galaxy; }
     }
 
     /**

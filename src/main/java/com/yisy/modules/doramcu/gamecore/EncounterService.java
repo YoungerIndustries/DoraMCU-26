@@ -46,7 +46,7 @@ public interface EncounterService {
     /**
      * An encounter.
      */
-    class Encounter {
+    static class Encounter {
         private Long id;
         private String name;
         private String description;
@@ -80,7 +80,7 @@ public interface EncounterService {
     /**
      * Result of resolving an encounter.
      */
-    class EncounterResult {
+    static class EncounterResult {
         private final Long encounterId;
         private final String encounterName;
         private final boolean success;

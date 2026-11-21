@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
  * Star Trek 4X battle adapter.
  */
 @Component("starTrekBattleAdapter_star_trek_4x_integration_StarTrekBattleAdapter")
-    @Component
 public class StarTrekBattleAdapter implements ModuleBattleAdapter {
 
     private static final Map<String, String> UNIT_TYPES = new HashMap<>();

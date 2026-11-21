@@ -1,6 +1,8 @@
 package com.yisy.modules.doramcu.controller.character;
 
 import com.yisy.modules.doramcu.service.character.EncumbranceService;
+import com.yisy.modules.doramcu.traveller.Career;
+import com.yisy.modules.doramcu.traveller.Encumbrance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

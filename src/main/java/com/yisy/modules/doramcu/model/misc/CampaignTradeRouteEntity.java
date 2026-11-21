@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
  * to transport cargo. Routes are owned by corporations and generate income.
  * </p>
  */
+@Entity
+@Table(name = "campaign_trade_routes")
 public class CampaignTradeRouteEntity {
 
     @Id

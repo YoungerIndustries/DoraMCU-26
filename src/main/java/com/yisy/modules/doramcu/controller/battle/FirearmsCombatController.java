@@ -1,6 +1,9 @@
 package com.yisy.modules.doramcu.controller.battle;
 
 import com.yisy.modules.doramcu.service.battle.FirearmsCombatService;
+import com.yisy.modules.doramcu.traveller.FirearmsCombatant;
+import com.yisy.modules.doramcu.traveller.FirearmsCombat;
+import com.yisy.modules.doramcu.traveller.FirearmWeapon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

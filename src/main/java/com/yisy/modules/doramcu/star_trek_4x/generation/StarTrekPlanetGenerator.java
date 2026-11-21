@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.star_trek_4x.generation;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.yisy.modules.doramcu.earth2026.dto.PlanetPopulationRequest;

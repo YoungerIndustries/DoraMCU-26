@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 /**
  * JPA entity representing a gas giant in a solar system.
  */
+@Entity
+@Table(name = "gas_giants")
 public class GasGiant {
 
     @Id

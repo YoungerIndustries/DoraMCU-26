@@ -1,5 +1,12 @@
 package com.yisy.modules.doramcu.controller.session;
+import com.yisy.modules.doramcu.service.misc.SpectatorService.SpectatorPlayerSummary;
+import com.yisy.modules.doramcu.service.misc.SpectatorService.SpectatorFleetSummary;
+import com.yisy.modules.doramcu.model.galaxy.Galaxy;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.dto.session.GameEvent;
+import com.yisy.modules.doramcu.service.misc.SpectatorService;
+import com.yisy.modules.doramcu.service.misc.SpectatorService.SpectatorGameState;
+import com.yisy.modules.doramcu.service.misc.SpectatorService.SpectatorInfo;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

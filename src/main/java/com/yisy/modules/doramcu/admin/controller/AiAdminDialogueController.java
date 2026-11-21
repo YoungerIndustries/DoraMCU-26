@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.admin.controller;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.service.character.CharacterDialogueService;
 import org.slf4j.Logger;

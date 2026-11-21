@@ -1,5 +1,11 @@
 package com.yisy.modules.doramcu.traveller;
 
+import com.yisy.modules.doramcu.traveller.MeleeCombat.AttackType;
+import com.yisy.modules.doramcu.traveller.AbilityScore;
+import com.yisy.modules.doramcu.traveller.Armor;
+import com.yisy.modules.doramcu.traveller.MeleeWeapon;
+import com.yisy.modules.doramcu.traveller.Skill;
+
 import java.util.Objects;
 
 /**

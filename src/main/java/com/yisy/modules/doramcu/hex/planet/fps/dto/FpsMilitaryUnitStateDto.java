@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.hex.planet.fps.dto;
-
 /**
  * Military unit state for the FPS 3D renderer.
  * <p>

@@ -1,7 +1,13 @@
 package com.yisy.modules.doramcu.traveller.shipcombat;
 
-import org.springframework.stereotype.Service;import org.slf4j.Logger;
+import com.yisy.modules.doramcu.traveller.HighGuardRangeBand;
+import com.yisy.modules.doramcu.traveller.HighGuardShipCombat;
+import com.yisy.modules.doramcu.traveller.HighGuardShipDesign;
+import com.yisy.modules.doramcu.traveller.ShipTemplate;
+import com.yisy.modules.doramcu.traveller.ShipToShipBattle;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

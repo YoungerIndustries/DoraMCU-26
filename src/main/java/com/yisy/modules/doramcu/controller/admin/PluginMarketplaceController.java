@@ -1,5 +1,10 @@
 package com.yisy.modules.doramcu.controller.admin;
 
+import com.yisy.modules.doramcu.service.admin.PluginMarketplaceService;
+import com.yisy.modules.doramcu.service.admin.PluginMarketplaceService.PaginatedPlugins;
+import com.yisy.modules.doramcu.service.admin.PluginMarketplaceService.PluginListing;
+import com.yisy.modules.doramcu.service.admin.PluginMarketplaceService.PluginRating;
+import com.yisy.modules.doramcu.service.admin.PluginMarketplaceService.MarketplaceStats;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

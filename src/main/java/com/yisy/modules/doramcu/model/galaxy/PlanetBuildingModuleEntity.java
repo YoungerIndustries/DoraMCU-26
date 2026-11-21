@@ -1,10 +1,4 @@
 package com.yisy.modules.doramcu.model.galaxy;
-import com.yisy.modules.doramcu.gamecore.GameType;
-import com.yisy.modules.doramcu.hex.dungeon.Dungeon;
-
-import com.yisy.modules.doramcu.hex.planet.hullmodule.HullModule;
-import com.yisy.modules.doramcu.model.misc.Planet;
-
 
 import com.yisy.modules.doramcu.techlevel.ModuleCategory;
 import com.yisy.modules.doramcu.techlevel.TechLevel;
@@ -20,6 +14,8 @@ import java.time.LocalDateTime;
  * {@link com.yisy.modules.doramcu.techlevel.TechLevelAdapter} implementations.
  * </p>
  */
+@Entity
+@Table(name = "planet_building_modules")
 public class PlanetBuildingModuleEntity {
 
     @Id

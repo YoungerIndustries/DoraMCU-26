@@ -47,7 +47,7 @@ public interface CharacterService {
     /**
      * Information about a character.
      */
-    class CharacterInfo {
+    static class CharacterInfo {
         private Long id;
         private String name;
         private int level;

@@ -225,7 +225,7 @@ public class AiAdminService {
         taskExecutor.execute(() -> {
             try {
                 // Update status to RUNNING
-                order.setStatus(OrderStatus.RUNNING);
+                order.setStatus(AiAdminOrder.OrderStatus.RUNNING);
                 orderRepository.save(order);
                 runningOrders.add(order.getId());
                 log.info("Executing order {}", order.getId());
@@ -250,7 +250,7 @@ public class AiAdminService {
                 AiAdminTestReport report = testReportGenerator.generateReport(order.getId(), testCases);
 
                 // Mark order as completed
-                order.setStatus(OrderStatus.COMPLETED);
+                order.setStatus(AiAdminOrder.OrderStatus.COMPLETED);
                 order.setCompletedAt(LocalDateTime.now());
                 orderRepository.save(order);
                 runningOrders.remove(order.getId());
@@ -260,7 +260,7 @@ public class AiAdminService {
 
             } catch (Exception e) {
                 log.error("Order {} failed: {}", order.getId(), e.getMessage(), e);
-                order.setStatus(OrderStatus.FAILED);
+                order.setStatus(AiAdminOrder.OrderStatus.FAILED);
                 order.setCompletedAt(LocalDateTime.now());
                 orderRepository.save(order);
                 runningOrders.remove(order.getId());

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.model.session;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.hex.Hex;
 import com.yisy.modules.doramcu.model.galaxy.Galaxy;
@@ -21,6 +22,8 @@ import java.time.LocalDateTime;
  * in-memory {@code hex.Game} object.
  * </p>
  */
+@Entity
+@Table(name = "persisted_game_sessions")
 public class PersistedGameSession {
 
     @Id

@@ -1,4 +1,9 @@
 package com.yisy.modules.doramcu.sfb.model;
+import com.yisy.modules.doramcu.sfb.model.SfbShield;
+import com.yisy.modules.doramcu.sfb.model.SfbSSD;
+import com.yisy.modules.doramcu.sfb.model.SfbCrewStationType;
+import com.yisy.modules.doramcu.sfb.model.SfbCharacterAssignment;
+import com.yisy.modules.doramcu.sfb.model.SfbEnergyAllocation;
 
 import java.util.ArrayList;
 import java.util.HashSet;

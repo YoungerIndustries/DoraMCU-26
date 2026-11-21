@@ -15,7 +15,6 @@ import java.util.*;
  * </p>
  */
 @Component("starTrekEconomyBridge_star_trek_4x_integration_StarTrekEconomyBridge")
-    @Component
 public class StarTrekEconomyBridge implements FourxEconomyService {
 
     private final Map<String, FourxColony> colonies = new HashMap<>();

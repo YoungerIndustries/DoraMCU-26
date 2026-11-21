@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.fullthrust.repository;
-
 import com.yisy.modules.doramcu.fullthrust.entity.BattleRecordEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

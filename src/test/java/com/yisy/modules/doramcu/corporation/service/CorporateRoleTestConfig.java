@@ -2,9 +2,9 @@ package com.yisy.modules.doramcu.corporation.service;
 
 import com.yisy.modules.doramcu.ai.PlayerCloneService;
 import com.yisy.modules.doramcu.ai.framework.AiPlayerServiceAdapter;
-import com.yisy.modules.doramcu.model.Player;
-import com.yisy.modules.doramcu.service.AiPlayerService;
-import com.yisy.modules.doramcu.repository.PlayerRepository;
+import com.yisy.modules.doramcu.model.players.Player;
+import com.yisy.modules.doramcu.service.ai.AiPlayerService;
+import com.yisy.modules.doramcu.repository.players.PlayerRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

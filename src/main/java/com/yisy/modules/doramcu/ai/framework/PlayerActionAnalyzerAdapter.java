@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.ai.framework;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.ai.PlayerActionAnalyzer;
 import org.slf4j.Logger;

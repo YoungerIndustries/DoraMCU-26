@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.traveller;
-
 /**
  * Player's choice for how to resolve a tour of duty.
  * <p>

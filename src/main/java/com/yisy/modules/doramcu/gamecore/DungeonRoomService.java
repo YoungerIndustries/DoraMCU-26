@@ -97,7 +97,7 @@ public interface DungeonRoomService {
     /**
      * A dungeon/interior room.
      */
-    class DungeonRoom {
+    static class DungeonRoom {
         private Long id;
         private String name;
         private String description;
@@ -170,7 +170,7 @@ public interface DungeonRoomService {
     /**
      * Result of a trap check.
      */
-    class TrapCheckResult {
+    static class TrapCheckResult {
         private final Long roomId;
         private final String roomName;
         private final Integer dc;
@@ -206,7 +206,7 @@ public interface DungeonRoomService {
     /**
      * Result of treasure discovery.
      */
-    class TreasureResult {
+    static class TreasureResult {
         private final Long roomId;
         private final String roomName;
         private final String treasure;

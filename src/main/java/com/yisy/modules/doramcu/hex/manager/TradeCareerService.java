@@ -1,9 +1,12 @@
 package com.yisy.modules.doramcu.hex.manager;
-import org.springframework.stereotype.Service;
-
-import org.springframework.stereotype.Service;
 import com.yisy.modules.doramcu.hex.Player;
 import com.yisy.modules.doramcu.hex.ResourcePipelineManager;
+import com.yisy.modules.doramcu.traveller.Career;
+import com.yisy.modules.doramcu.traveller.Skill;
+import com.yisy.modules.doramcu.traveller.TradeMission;
+import com.yisy.modules.doramcu.traveller.TravellerCharacter;
+import org.springframework.stereotype.Service;
+
 import java.util.*;
 
 /**

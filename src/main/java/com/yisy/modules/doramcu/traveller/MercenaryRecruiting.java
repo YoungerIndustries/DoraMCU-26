@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.traveller;
-
 import java.util.*;
 
 import com.yisy.modules.doramcu.util.DiceUtil;

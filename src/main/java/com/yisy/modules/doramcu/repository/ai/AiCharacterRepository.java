@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.repository.ai;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.hex.Ship;
 import com.yisy.modules.doramcu.model.misc.CharacterType;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
@@ -43,6 +44,11 @@ public interface AiCharacterRepository extends JpaRepository<AiCharacter, Long> 
      * Find AI admin tester characters.
      */
     java.util.List<AiCharacter> findByAiAdminTrue();
+
+    /**
+     * Find AI admin characters that are active.
+     */
+    java.util.List<AiCharacter> findByAiAdminTrueAndActiveTrue();
 
     /**
      * Find AI admin characters that are active, filtered by empire name.

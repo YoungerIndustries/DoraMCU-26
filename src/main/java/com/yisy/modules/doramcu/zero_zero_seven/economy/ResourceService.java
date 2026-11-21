@@ -13,7 +13,6 @@ import java.util.List;
  * </p>
  */
 @Service("resourceService_zero_zero_seven_economy_ResourceService")
-    @Service
 public class ResourceService {
 
     private final BondTerritoryRepository territoryRepository;

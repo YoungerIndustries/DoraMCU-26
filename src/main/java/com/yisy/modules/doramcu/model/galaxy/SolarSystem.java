@@ -22,6 +22,8 @@ import java.util.List;
  * within a sector using 3D coordinates (x, y, z) in a 100x100x100 cube.
  * </p>
  */
+@Entity
+@Table(name = "solar_systems")
 public class SolarSystem {
 
     @Id

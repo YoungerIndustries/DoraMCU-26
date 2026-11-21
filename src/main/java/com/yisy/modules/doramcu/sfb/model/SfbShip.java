@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.sfb.model;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import java.util.ArrayList;
 import java.util.List;

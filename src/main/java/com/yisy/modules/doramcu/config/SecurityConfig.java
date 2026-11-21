@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.config;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

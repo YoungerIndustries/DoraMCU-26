@@ -1,17 +1,26 @@
 package com.yisy.modules.doramcu.starwars.config;
 
+import com.yisy.modules.doramcu.gamecore.AbstractGameModule;
+import com.yisy.modules.doramcu.gamecore.CombatService;
+import com.yisy.modules.doramcu.gamecore.DiceService;
+import com.yisy.modules.doramcu.gamecore.DiceService.DiceRollResult;
+import com.yisy.modules.doramcu.gamecore.EncounterService;
+import com.yisy.modules.doramcu.gamecore.EncounterService.Encounter;
+import com.yisy.modules.doramcu.gamecore.GameModuleRegistry;
+import com.yisy.modules.doramcu.gamecore.GameType;
+import com.yisy.modules.doramcu.gamecore.MechanicType;
+import com.yisy.modules.doramcu.gamecore.RulesEngine;
+import com.yisy.modules.doramcu.gamecore.RulesService;
 import com.yisy.modules.doramcu.shared.model.GameSystem;
 import com.yisy.modules.doramcu.shared.model.RulesEntry;
-import com.yisy.modules.doramcu.techlevel.TechLevelAdapter;
-import com.yisy.modules.doramcu.thirdreich.adapter.GroundCombatAdapter;
-import com.yisy.modules.doramcu.thirdreich.adapter.StarWarsTo3R4Adapter;
-import com.yisy.modules.doramcu.gamecore.GameType;
-import com.yisy.modules.doramcu.gamecore.RulesEngine;
 import com.yisy.modules.doramcu.shared.service.RulesAwareCombatAdapter;
 import com.yisy.modules.doramcu.shared.service.UnifiedRulesQueryService;
 import com.yisy.modules.doramcu.starwars.model.Unit;
 import com.yisy.modules.doramcu.starwars.service.StarWarsService;
 import com.yisy.modules.doramcu.starwars.service.StarWarsRulesEngine;
+import com.yisy.modules.doramcu.techlevel.TechLevelAdapter;
+import com.yisy.modules.doramcu.thirdreich.adapter.GroundCombatAdapter;
+import com.yisy.modules.doramcu.thirdreich.adapter.StarWarsTo3R4Adapter;
 import com.yisy.modules.doramcu.util.DiceUtil;
 import org.springframework.stereotype.Component;
 

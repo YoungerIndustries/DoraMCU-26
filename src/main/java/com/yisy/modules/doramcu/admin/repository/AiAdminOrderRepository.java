@@ -52,8 +52,8 @@ public interface AiAdminOrderRepository extends JpaRepository<AiAdminOrder, Long
     @Query("SELECT o.status, COUNT(o) FROM AiAdminOrder o WHERE o.createdAt >= :startDate AND o.createdAt < :endDate GROUP BY o.status")
     List<Object[]> countOrdersByStatusAndDateRange(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
-    /** Get average completion duration for completed orders assigned to an admin. */
-    @Query("SELECT AVG(UNIX_TIMESTAMP(o.completedAt) - UNIX_TIMESTAMP(o.createdAt)) FROM AiAdminOrder o WHERE o.assignedAiAdminId = :adminId AND o.status = 'COMPLETED'")
+    /** Get average completion duration for completed orders assigned to an admin (in seconds). */
+    @Query("SELECT AVG(EXTRACT(EPOCH FROM o.completedAt) - EXTRACT(EPOCH FROM o.createdAt)) FROM AiAdminOrder o WHERE o.assignedAiAdminId = :adminId AND o.status = 'COMPLETED'")
     Double avgCompletionDurationMsByAdminId(@Param("adminId") Long adminId);
 
     /** Find orders assigned to an admin within a date range. */

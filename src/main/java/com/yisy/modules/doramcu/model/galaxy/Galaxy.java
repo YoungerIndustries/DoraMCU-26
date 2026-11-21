@@ -1,4 +1,4 @@
-package com.yisy.modules.doramcu.model;
+package com.yisy.modules.doramcu.model.galaxy;
 import com.yisy.modules.doramcu.gamecore.GameType;
 
 import jakarta.persistence.*;
@@ -13,6 +13,8 @@ import java.util.List;
  * Each sector is a 3D cube of 100x100x100 dimensions containing solar systems.
  * </p>
  */
+@Entity
+@Table(name = "galaxies")
 public class Galaxy {
 
     @Id

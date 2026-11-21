@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.dto;
+import com.yisy.modules.doramcu.model.players.Player;
 
 public class CreateSessionResponse {
 

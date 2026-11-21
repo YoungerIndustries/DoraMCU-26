@@ -1,16 +1,18 @@
 package com.yisy.modules.doramcu.corporation.service;
-import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.corporation.model.CorporateContract;
-import com.yisy.modules.doramcu.model.misc.TravellerContractAssignment;
 import com.yisy.modules.doramcu.corporation.repository.CorporateContractRepository;
+import com.yisy.modules.doramcu.model.misc.TravellerContractAssignment;
 import com.yisy.modules.doramcu.repository.misc.TravellerContractAssignmentRepository;
 import com.yisy.modules.doramcu.service.character.CharacterService;
 import com.yisy.modules.doramcu.traveller.AbilityScore;
+import com.yisy.modules.doramcu.traveller.Career;
 import com.yisy.modules.doramcu.traveller.Skill;
+import com.yisy.modules.doramcu.traveller.Skill.SkillCategory;
 import com.yisy.modules.doramcu.traveller.TravellerCharacter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;

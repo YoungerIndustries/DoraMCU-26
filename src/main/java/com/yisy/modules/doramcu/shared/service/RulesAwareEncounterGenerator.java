@@ -2,6 +2,7 @@ package com.yisy.modules.doramcu.shared.service;
 
 import org.springframework.stereotype.Service;
 import com.yisy.modules.doramcu.gamecore.EncounterService;
+import com.yisy.modules.doramcu.gamecore.EncounterService.Encounter;
 import com.yisy.modules.doramcu.shared.model.GameSystem;
 import com.yisy.modules.doramcu.shared.model.RulesCategory;
 import com.yisy.modules.doramcu.shared.model.RulesEntry;

@@ -1,5 +1,10 @@
 package com.yisy.modules.doramcu.unified;
 
+import com.yisy.modules.doramcu.hex.ArmyUnit;
+import com.yisy.modules.doramcu.hex.ArmyUnitType;
+import com.yisy.modules.doramcu.hex.Planet;
+import com.yisy.modules.doramcu.hex.Ship;
+import com.yisy.modules.doramcu.traveller.MarineUnit;
 import com.yisy.modules.doramcu.util.DiceUtil;
 
 /**

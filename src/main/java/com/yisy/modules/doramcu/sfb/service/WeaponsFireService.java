@@ -1,7 +1,12 @@
 package com.yisy.modules.doramcu.sfb.service;
-import org.springframework.stereotype.Service;
+import com.yisy.modules.doramcu.sfb.model.SfbCharacterAssignment;
+import com.yisy.modules.doramcu.sfb.model.SfbEnergyAllocation;
 
+import com.yisy.modules.doramcu.sfb.model.SfbSeekingWeapon;
+import com.yisy.modules.doramcu.sfb.model.SfbShip;
+import com.yisy.modules.doramcu.sfb.model.SfbWeaponBank;
 import com.yisy.modules.doramcu.util.DiceUtil;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 

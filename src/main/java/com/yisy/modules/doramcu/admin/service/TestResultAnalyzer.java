@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.admin.service;
 
 import com.yisy.modules.doramcu.admin.model.AiAdminTestCase;
+import com.yisy.modules.doramcu.admin.model.AiAdminTestCase.TestStatus;
 import com.yisy.modules.doramcu.admin.model.AiAdminTestReport;
 import com.yisy.modules.doramcu.admin.repository.AiAdminTestCaseRepository;
 import com.yisy.modules.doramcu.admin.repository.AiAdminTestReportRepository;
@@ -51,7 +52,7 @@ public class TestResultAnalyzer {
 
         // Analyze failures by category
         Map<String, List<AiAdminTestCase>> failuresByCategory = testCases.stream()
-                .filter(tc -> tc.getStatus() == TestStatus.FAILED)
+                .filter(tc -> tc.getStatus() == AiAdminTestCase.TestStatus.FAILED)
                 .collect(Collectors.groupingBy(AiAdminTestCase::getCategory));
 
         analysis.setFailuresByCategory(new ArrayList<>(failuresByCategory.keySet()));
@@ -144,7 +145,7 @@ public class TestResultAnalyzer {
         for (AiAdminTestReport report : reports) {
             List<AiAdminTestCase> testCases = testCaseRepository.findByReportId(report.getId());
             for (AiAdminTestCase tc : testCases) {
-                if (tc.getStatus() == TestStatus.FAILED) {
+                if (tc.getStatus() == AiAdminTestCase.TestStatus.FAILED) {
                     failureCounts.merge(tc.getTestName(), 1, Integer::sum);
                 }
             }
@@ -169,8 +170,8 @@ public class TestResultAnalyzer {
         List<String> flakyTests = testHistory.entrySet().stream()
                 .filter(entry -> {
                     List<TestStatus> statuses = entry.getValue();
-                    boolean hasPassed = statuses.contains(TestStatus.PASSED);
-                    boolean hasFailed = statuses.contains(TestStatus.FAILED);
+                    boolean hasPassed = statuses.contains(AiAdminTestCase.TestStatus.PASSED);
+                    boolean hasFailed = statuses.contains(AiAdminTestCase.TestStatus.FAILED);
                     return hasPassed && hasFailed;
                 })
                 .map(Map.Entry::getKey)

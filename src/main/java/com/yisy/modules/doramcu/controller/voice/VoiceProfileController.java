@@ -1,4 +1,6 @@
 package com.yisy.modules.doramcu.controller.voice;
+import com.yisy.modules.doramcu.ai.client.AiRestClient.SynthesizeResponse;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.ai.client.AiRestClient;
 import com.yisy.modules.doramcu.eve.model.VoiceProfile;

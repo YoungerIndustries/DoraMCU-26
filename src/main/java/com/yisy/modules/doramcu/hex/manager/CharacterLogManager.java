@@ -2,6 +2,13 @@ package com.yisy.modules.doramcu.hex.manager;
 import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.Player;
+import com.yisy.modules.doramcu.traveller.AbilityScore;
+import com.yisy.modules.doramcu.traveller.Career;
+import com.yisy.modules.doramcu.traveller.CharacterExperience;
+import com.yisy.modules.doramcu.traveller.CharacterLog;
+import com.yisy.modules.doramcu.traveller.ExperienceType;
+import com.yisy.modules.doramcu.traveller.Skill;
+import com.yisy.modules.doramcu.traveller.TravellerCharacter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -413,10 +420,11 @@ public class CharacterLogManager {
      */
     private List<Skill> generateSkills(Career career, int count) {
         List<Skill> skills = new ArrayList<>();
-        List<Skill> skillTable = career.getSkillTable();
+        List<String> skillTable = career.getSkillTable();
 
         for (int i = 0; i < count; i++) {
-            Skill skill = skillTable.get(random.nextInt(skillTable.size()));
+            String skillName = skillTable.get(random.nextInt(skillTable.size()));
+            Skill skill = new Skill(Skill.SkillType.NONE, 1);
             if (!skills.contains(skill)) {
                 skills.add(skill);
             }

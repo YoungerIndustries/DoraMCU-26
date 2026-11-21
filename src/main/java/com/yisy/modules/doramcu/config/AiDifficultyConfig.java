@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.config;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

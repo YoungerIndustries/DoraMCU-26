@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.earth2026.repository;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.earth2026.model.Earth2026Character;
 import org.springframework.data.jpa.repository.JpaRepository;

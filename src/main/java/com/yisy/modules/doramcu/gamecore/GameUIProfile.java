@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.gamecore;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 

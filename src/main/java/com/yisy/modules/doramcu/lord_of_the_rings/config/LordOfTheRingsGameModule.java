@@ -1,13 +1,21 @@
 package com.yisy.modules.doramcu.lord_of_the_rings.config;
 
-import com.yisy.modules.doramcu.shared.model.RulesEntry;
-import com.yisy.modules.doramcu.techlevel.TechLevelAdapter;
-import com.yisy.modules.doramcu.techlevel.TechLevel;
-import com.yisy.modules.doramcu.techlevel.ModuleCategory;
-import com.yisy.modules.doramcu.thirdreich.adapter.GroundCombatAdapter;
+import com.yisy.modules.doramcu.gamecore.AbstractGameModule;
+import com.yisy.modules.doramcu.gamecore.CombatService;
+import com.yisy.modules.doramcu.gamecore.DiceService;
+import com.yisy.modules.doramcu.gamecore.DiceService.DiceRollResult;
+import com.yisy.modules.doramcu.gamecore.EncounterService;
+import com.yisy.modules.doramcu.gamecore.GameModuleRegistry;
 import com.yisy.modules.doramcu.gamecore.GameType;
+import com.yisy.modules.doramcu.gamecore.MechanicType;
+import com.yisy.modules.doramcu.gamecore.RulesService;
+import com.yisy.modules.doramcu.shared.model.RulesEntry;
 import com.yisy.modules.doramcu.shared.service.RulesAwareCombatAdapter;
 import com.yisy.modules.doramcu.shared.service.UnifiedRulesQueryService;
+import com.yisy.modules.doramcu.techlevel.ModuleCategory;
+import com.yisy.modules.doramcu.techlevel.TechLevel;
+import com.yisy.modules.doramcu.techlevel.TechLevelAdapter;
+import com.yisy.modules.doramcu.thirdreich.adapter.GroundCombatAdapter;
 import com.yisy.modules.doramcu.lord_of_the_rings.model.Unit;
 import com.yisy.modules.doramcu.lord_of_the_rings.service.LordOfTheRingsService;
 import com.yisy.modules.doramcu.util.DiceUtil;

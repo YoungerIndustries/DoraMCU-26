@@ -1,6 +1,10 @@
 package com.yisy.modules.doramcu.captainslog.service;
-import org.springframework.stereotype.Service;
 
+import com.yisy.modules.doramcu.captainslog.dto.TaskAttemptRequest;
+import com.yisy.modules.doramcu.captainslog.dto.TaskAttemptResponse;
+import com.yisy.modules.doramcu.captainslog.model.CaptainLogCombat.CombatStatus;
+import com.yisy.modules.doramcu.captainslog.dto.CombatRoundResponse;
+import com.yisy.modules.doramcu.captainslog.dto.StartCombatRequest;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCombat;
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogMission;

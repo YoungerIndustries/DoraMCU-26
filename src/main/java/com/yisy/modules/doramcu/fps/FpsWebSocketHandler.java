@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.fps;
+import com.yisy.modules.doramcu.model.players.Player;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -6,8 +7,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.yisy.modules.doraai.dto.VoiceCommandResponse;
-import com.yisy.modules.doraai.service.VoiceCommandService;
+import com.yisy.modules.doramcu.ai.server.dto.VoiceCommandResponse;
+import com.yisy.modules.doramcu.ai.server.service.VoiceCommandService;
 import com.yisy.modules.doramcu.fps.core.FpsSession;
 import com.yisy.modules.doramcu.fps.core.FpsPlayerState;
 import com.yisy.modules.doramcu.fps.core.model.FpsMatch;

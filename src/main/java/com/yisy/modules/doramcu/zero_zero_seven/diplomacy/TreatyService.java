@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
  * </p>
  */
 @Service("treatyService_zero_zero_seven_diplomacy_TreatyService")
-    @Service
 public class TreatyService {
 
     private final BondDiplomaticRelationRepository relationRepository;

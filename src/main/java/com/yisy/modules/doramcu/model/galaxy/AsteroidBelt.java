@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 /**
  * JPA entity representing an asteroid belt in a solar system.
  */
+@Entity
+@Table(name = "asteroid_belts")
 public class AsteroidBelt {
 
     @Id

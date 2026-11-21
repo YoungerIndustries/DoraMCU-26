@@ -1,4 +1,6 @@
 package com.yisy.modules.doramcu.shared.service;
+import com.yisy.modules.doramcu.model.galaxy.Galaxy;
+import com.yisy.modules.doramcu.model.players.Player;
 import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.dto.CreateCharacterRequest;
@@ -183,7 +185,7 @@ public class SharedCharacterService {
 
         // Import Traveller skills
         for (com.yisy.modules.doramcu.traveller.Skill skill : tChar.getSkills()) {
-            SharedCharacterSkill sharedSkill = new SharedCharacterSkill(skill.name(), 1);
+            SharedCharacterSkill sharedSkill = new SharedCharacterSkill(skill.getName(), 1);
             sharedSkill.setSystemSource("TRAVELLER");
             shared.addSkill(sharedSkill);
         }

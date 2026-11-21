@@ -6,6 +6,7 @@ import com.yisy.modules.doramcu.corporation.model.CorporateFinanceTransaction;
 import com.yisy.modules.doramcu.corporation.repository.TreasuryLoanRepository;
 import com.yisy.modules.doramcu.corporation.repository.CorporateFinanceTransactionRepository;
 import com.yisy.modules.doramcu.eve.model.EveCorporation;
+import com.yisy.modules.doramcu.corporation.model.CorporateFinanceTransaction.TransactionType;
 import com.yisy.modules.doramcu.repository.misc.EveCorporationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

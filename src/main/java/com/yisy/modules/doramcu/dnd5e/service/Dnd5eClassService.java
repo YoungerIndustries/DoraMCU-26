@@ -1,6 +1,16 @@
 package com.yisy.modules.doramcu.dnd5e.service;
 import org.springframework.stereotype.Service;
 
+import com.yisy.modules.doramcu.dnd5e.model.Dnd5eClass;
+import com.yisy.modules.doramcu.dnd5e.model.Dnd5eClassFeature;
+import com.yisy.modules.doramcu.dnd5e.model.Dnd5eCharacter;
+import com.yisy.modules.doramcu.dnd5e.model.Dnd5eCharacterClass;
+import com.yisy.modules.doramcu.dnd5e.model.Dnd5eSubclass;
+import com.yisy.modules.doramcu.dnd5e.repository.Dnd5eCharacterClassRepository;
+import com.yisy.modules.doramcu.dnd5e.repository.Dnd5eCharacterRepository;
+import com.yisy.modules.doramcu.dnd5e.repository.Dnd5eClassFeatureRepository;
+import com.yisy.modules.doramcu.dnd5e.repository.Dnd5eClassRepository;
+import com.yisy.modules.doramcu.dnd5e.repository.Dnd5eSubclassRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

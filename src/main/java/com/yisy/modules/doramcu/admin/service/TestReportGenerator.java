@@ -117,7 +117,7 @@ public class TestReportGenerator {
             sb.append("Failed tests: ");
             int count = 0;
             for (AiAdminTestCase tc : testCases) {
-                if (tc.getStatus() == TestStatus.FAILED && count < 5) {
+                if (tc.getStatus() == AiAdminTestCase.TestStatus.FAILED && count < 5) {
                     sb.append(tc.getTestName());
                     if (tc.getErrorMessage() != null) {
                         sb.append(" (").append(tc.getErrorMessage()).append(")");

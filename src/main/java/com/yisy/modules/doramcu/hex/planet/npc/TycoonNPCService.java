@@ -1,6 +1,12 @@
 package com.yisy.modules.doramcu.hex.planet.npc;
 
 import com.yisy.modules.doramcu.hex.Hex3D;
+import com.yisy.modules.doramcu.hex.planet.Industry;
+import com.yisy.modules.doramcu.hex.planet.IndustryType;
+import com.yisy.modules.doramcu.hex.planet.Station;
+import com.yisy.modules.doramcu.hex.planet.SurfaceVehicle;
+import com.yisy.modules.doramcu.hex.planet.VehicleType;
+import com.yisy.modules.doramcu.hex.planet.npc.TycoonNPC.NpcType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

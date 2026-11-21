@@ -1,69 +1,67 @@
 package com.yisy.modules.doramcu.service.session;
-import com.yisy.modules.doramcu.hex.Ship;
-import com.yisy.modules.doramcu.hex.SubSector;
-import com.yisy.modules.doramcu.hex.ShipType;
-import com.yisy.modules.doramcu.hex.Hex;
-import com.yisy.modules.doramcu.hex.ResourcePipelineManager;
-import com.yisy.modules.doramcu.dto.battle.BattleSummaryDto;
-import com.yisy.modules.doramcu.dto.station.BuildFacilityRequest;
-import com.yisy.modules.doramcu.dto.ship_design.BuildShipRequest;
-import com.yisy.modules.doramcu.dto.station.BuildStationRequest;
-import com.yisy.modules.doramcu.service.character.CharacterService;
-import com.yisy.modules.doramcu.dto.game.ColonizeRequest;
-import com.yisy.modules.doramcu.dto.fleet.CreateFleetRequest;
-import com.yisy.modules.doramcu.dto.session.CreateSessionResponse;
-import com.yisy.modules.doramcu.dto.battle.EngageCombatRequest;
-import com.yisy.modules.doramcu.service.galaxy.GalaxyCreationService;
-import com.yisy.modules.doramcu.dto.session.GameEvent;
-import com.yisy.modules.doramcu.service.game.GameInitializationService;
-import com.yisy.modules.doramcu.service.game.GameReplayService;
-import com.yisy.modules.doramcu.service.game.GameStateBuilder;
-import com.yisy.modules.doramcu.dto.session.GameStateResponse;
-import com.yisy.modules.doramcu.dto.misc.IncomeProjectionDto;
-import com.yisy.modules.doramcu.dto.session.JoinSessionResponse;
-import com.yisy.modules.doramcu.dto.fleet.MoveFleetRequest;
-import com.yisy.modules.doramcu.dto.misc.PipelineDetailsDto;
-import com.yisy.modules.doramcu.dto.battle.ReinforceBattleRequest;
-import com.yisy.modules.doramcu.dto.misc.ResourcePipelineSummary;
-import com.yisy.modules.doramcu.dto.ship_design.ShipDesignRequest;
-import com.yisy.modules.doramcu.dto.trade.TradeOpportunityDto;
-import com.yisy.modules.doramcu.dto.trade.TradeRequest;
-import com.yisy.modules.doramcu.dto.trade.TradeSummaryDto;
-
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yisy.modules.doramcu.ai.AiDelegationService;
+import com.yisy.modules.doramcu.dto.battle.BattleSummaryDto;
+import com.yisy.modules.doramcu.dto.battle.EngageCombatRequest;
+import com.yisy.modules.doramcu.dto.battle.ReinforceBattleRequest;
+import com.yisy.modules.doramcu.dto.fleet.CreateFleetRequest;
 import com.yisy.modules.doramcu.dto.fleet.FleetDto;
+import com.yisy.modules.doramcu.dto.fleet.MoveFleetRequest;
+import com.yisy.modules.doramcu.dto.game.ColonizeRequest;
+import com.yisy.modules.doramcu.dto.misc.FourxUnlockState;
 import com.yisy.modules.doramcu.dto.misc.IncomeProjectionDto;
 import com.yisy.modules.doramcu.dto.misc.PipelineDetailsDto;
 import com.yisy.modules.doramcu.dto.misc.ResourcePipelineSummary;
 import com.yisy.modules.doramcu.dto.players.PlayerSummary;
+import com.yisy.modules.doramcu.dto.session.CreateSessionResponse;
+import com.yisy.modules.doramcu.dto.session.GameEvent;
+import com.yisy.modules.doramcu.dto.session.GameStateResponse;
+import com.yisy.modules.doramcu.dto.session.JoinSessionResponse;
+import com.yisy.modules.doramcu.dto.ship_design.BuildShipRequest;
+import com.yisy.modules.doramcu.dto.ship_design.ShipDesignRequest;
+import com.yisy.modules.doramcu.dto.station.BuildFacilityRequest;
+import com.yisy.modules.doramcu.dto.station.BuildStationRequest;
+import com.yisy.modules.doramcu.dto.trade.TradeOpportunityDto;
+import com.yisy.modules.doramcu.dto.trade.TradeRequest;
+import com.yisy.modules.doramcu.dto.trade.TradeSummaryDto;
 import com.yisy.modules.doramcu.exception.NotYourTurnException;
+import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.hex.Empire;
 import com.yisy.modules.doramcu.hex.Fleet;
 import com.yisy.modules.doramcu.hex.Galaxy;
 import com.yisy.modules.doramcu.hex.Game;
+import com.yisy.modules.doramcu.hex.Hex;
 import com.yisy.modules.doramcu.hex.Hex3D;
 import com.yisy.modules.doramcu.hex.Player;
+import com.yisy.modules.doramcu.hex.ResourcePipelineManager;
+import com.yisy.modules.doramcu.hex.Ship;
+import com.yisy.modules.doramcu.hex.ShipType;
+import com.yisy.modules.doramcu.hex.SubSector;
 import com.yisy.modules.doramcu.model.session.GameActionLog;
 import com.yisy.modules.doramcu.model.session.GameSession;
 import com.yisy.modules.doramcu.model.session.PersistedGameSession;
 import com.yisy.modules.doramcu.repository.galaxy.GalaxyRepository;
 import com.yisy.modules.doramcu.repository.session.PersistedGameSessionRepository;
+import com.yisy.modules.doramcu.service.character.CharacterService;
+import com.yisy.modules.doramcu.service.galaxy.GalaxyCreationService;
+import com.yisy.modules.doramcu.service.game.GameInitializationService;
+import com.yisy.modules.doramcu.service.game.GameReplayService;
+import com.yisy.modules.doramcu.service.game.GameStateBuilder;
+import com.yisy.modules.doramcu.service.ship_design.ShipDesignService;
 import com.yisy.modules.doramcu.unified.GameCalendarFormatter;
-import com.yisy.modules.doramcu.gamecore.GameType;
+import com.yisy.modules.doramcu.unified.GameEngine;
 import com.yisy.modules.doramcu.unified.GlobalClock;
 import com.yisy.modules.doramcu.unified.GlobalClockService;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -470,7 +468,7 @@ public class GameSessionService {
      */
     @Transactional
     public void createSessionForGalaxy(String sessionId, String sessionName,
-                                        com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy dbGalaxy,
+                                        com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy,
                                         com.yisy.modules.doramcu.gamecore.GameType gameType) {
         log.info("Creating session {} for galaxy '{}' (gameType: {})", sessionId, dbGalaxy.getName(), gameType);
 
@@ -1436,9 +1434,9 @@ public class GameSessionService {
      * Shared by createDefaultSession() and createSession() to avoid duplication.
      */
     private GameType loadGalaxyToGame(Game game, String sessionName) {
-        List<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> dbGalaxies = galaxyRepository.findAll();
+        List<com.yisy.modules.doramcu.model.galaxy.Galaxy> dbGalaxies = galaxyRepository.findAll();
         if (!dbGalaxies.isEmpty()) {
-            com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy dbGalaxy = dbGalaxies.get(0);
+            com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy = dbGalaxies.get(0);
             com.yisy.modules.doramcu.hex.Galaxy inMemoryGalaxy =
                     gameInitializationService.convertToInMemoryGalaxy(dbGalaxy);
             if (inMemoryGalaxy != null) {

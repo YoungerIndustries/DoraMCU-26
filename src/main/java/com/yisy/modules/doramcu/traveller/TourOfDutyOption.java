@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.traveller;
-
 /**
  * Represents a single career term that can be resolved by the player.
  * <p>

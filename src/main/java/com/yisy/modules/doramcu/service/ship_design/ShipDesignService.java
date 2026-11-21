@@ -1,8 +1,18 @@
 package com.yisy.modules.doramcu.service.ship_design;
-import com.yisy.modules.doramcu.hex.Ship;
 
 import com.yisy.modules.doramcu.dto.ship_design.ShipDesignRequest;
 import com.yisy.modules.doramcu.dto.ship_design.ShipDesignResponse;
+import com.yisy.modules.doramcu.hex.Ship;
+import com.yisy.modules.doramcu.traveller.FusionDrive;
+import com.yisy.modules.doramcu.traveller.JumpDrive;
+import com.yisy.modules.doramcu.traveller.LifeSupport;
+import com.yisy.modules.doramcu.traveller.PassengerClass;
+import com.yisy.modules.doramcu.traveller.PowerPlant;
+import com.yisy.modules.doramcu.traveller.ShipComputer;
+import com.yisy.modules.doramcu.traveller.ShipDesign;
+import com.yisy.modules.doramcu.traveller.ShipDesignStats;
+import com.yisy.modules.doramcu.traveller.ShipHullType;
+import com.yisy.modules.doramcu.traveller.ShipWeaponSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.mechwarrior.ai;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.mechwarrior.engine.MechWarriorGameEngine;
 import com.yisy.modules.doramcu.mechwarrior.engine.MechWarriorMech;

@@ -18,6 +18,8 @@ import java.time.LocalDateTime;
  * without re-running procedural generation.
  * </p>
  */
+@Entity
+@Table(name = "planet_terrain_cells")
 public class PlanetTerrainCell {
 
     @Id

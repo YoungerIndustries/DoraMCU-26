@@ -1,11 +1,34 @@
 package com.yisy.modules.doramcu.babylon5.config;
 
+import com.yisy.modules.doramcu.babylon5.service.B5CharacterService;
+import com.yisy.modules.doramcu.babylon5.service.B5CombatService;
+import com.yisy.modules.doramcu.babylon5.service.B5DiplomacyService;
+import com.yisy.modules.doramcu.babylon5.service.B5EconomyService;
+import com.yisy.modules.doramcu.babylon5.service.B5ExplorationService;
+import com.yisy.modules.doramcu.babylon5.service.B5RulesDatabase;
+import com.yisy.modules.doramcu.babylon5.service.B5RulesEngine;
+import com.yisy.modules.doramcu.babylon5.service.B5ShipDesignService;
+import com.yisy.modules.doramcu.babylon5.service.Babylon5DatabaseService;
+import com.yisy.modules.doramcu.gamecore.AbstractGameModule;
+import com.yisy.modules.doramcu.gamecore.CampaignService;
+import com.yisy.modules.doramcu.gamecore.CharacterService;
+import com.yisy.modules.doramcu.gamecore.CombatService;
+import com.yisy.modules.doramcu.gamecore.CraftingService;
+import com.yisy.modules.doramcu.gamecore.DiceService;
+import com.yisy.modules.doramcu.gamecore.DungeonRoomService;
+import com.yisy.modules.doramcu.gamecore.EncounterService;
+import com.yisy.modules.doramcu.gamecore.GameModuleRegistry;
+import com.yisy.modules.doramcu.gamecore.GameType;
+import com.yisy.modules.doramcu.gamecore.InventoryService;
+import com.yisy.modules.doramcu.gamecore.MechanicType;
+import com.yisy.modules.doramcu.gamecore.PsionicsService;
+import com.yisy.modules.doramcu.gamecore.RulesEngine;
+import com.yisy.modules.doramcu.gamecore.RulesService;
+import com.yisy.modules.doramcu.gamecore.SpellService;
 import com.yisy.modules.doramcu.shared.model.RulesEntry;
 import com.yisy.modules.doramcu.shared.service.RulesAwareCombatAdapter;
 import com.yisy.modules.doramcu.shared.service.UnifiedRulesQueryService;
 import com.yisy.modules.doramcu.techlevel.TechLevelAdapter;
-import com.yisy.modules.doramcu.gamecore.GameType;
-import com.yisy.modules.doramcu.gamecore.RulesEngine;
 import com.yisy.modules.doramcu.util.DiceUtil;
 import org.springframework.stereotype.Component;
 

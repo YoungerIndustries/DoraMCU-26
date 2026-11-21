@@ -19,7 +19,6 @@ import java.util.Objects;
  * </p>
  */
 @Service("expansionService_zero_zero_seven_territory_ExpansionService")
-    @Service
 public class ExpansionService {
 
     private final TerritoryService territoryService;

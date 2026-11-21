@@ -1,7 +1,10 @@
 package com.yisy.modules.doramcu.ai;
+import com.yisy.modules.doramcu.model.players.Player;
+
+import com.yisy.modules.doramcu.hex.Fleet;
 import org.springframework.stereotype.Service;
 
-import com.yisy.modules.doraai.service.AiChatService;
+import com.yisy.modules.doramcu.ai.server.service.AiChatService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

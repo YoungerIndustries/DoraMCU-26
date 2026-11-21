@@ -1,6 +1,8 @@
 package com.yisy.modules.doramcu.service.game;
 import com.yisy.modules.doramcu.service.character.CharacterService;
 
+import com.yisy.modules.doramcu.traveller.Survival;
+import com.yisy.modules.doramcu.traveller.TravellerCharacter;
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;

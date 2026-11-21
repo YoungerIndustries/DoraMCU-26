@@ -19,101 +19,69 @@ public enum Career {
 
     /**
      * Soldier — military ground forces.
-     * <p>
-     * Soldiers learn combat skills, leadership, and military tactics.
-     * They serve in planetary armies and Imperial combat units.
-     * </p>
      */
     SOLDIER("Soldier", "Ground combat and military operations",
-            Arrays.asList(Skill.MELEE, Skill.FIREARMS, Skill.SKIRMISH, Skill.GUERRILLA,
-                    Skill.LEADERSHIP, Skill.TACTICS, Skill.SURVIVAL, Skill.NAVIGATION,
-                    Skill.MEDICAL, Skill.PSYCHOLOGY)),
+            Arrays.asList("Melee", "Firearms", "Skirmish", "Guerrilla",
+                    "Leadership", "Tactics", "Survival", "Navigation",
+                    "Medic", "Psychology")),
 
     /**
      * Explorer — planetary exploration and survey.
-     * <p>
-     * Explorers survey new worlds, map systems, and discover resources.
-     * They work for the Survey organization and gain technical skills.
-     * </p>
      */
     EXPLORER("Explorer", "Planetary survey and exploration",
-            Arrays.asList(Skill.ASTRONOMY, Skill.GEOLOGY, Skill.BIOLOGY, Skill.CHEMISTRY,
-                    Skill.PHYSICS, Skill.NAVIGATION, Skill.SURVIVAL, Skill.MEDICAL,
-                    Skill.ELECTRONICS, Skill.COMPUTERS)),
+            Arrays.asList("Astronomy", "Geology", "Biology", "Chemistry",
+                    "Physics", "Navigation", "Survival", "Medic",
+                    "Electronics", "Computers")),
 
     /**
      * Gunner — naval weapons specialist.
-     * <p>
-     * Gunners operate ship weapons systems in naval combat.
-     * They serve aboard Imperial Navy vessels and learn missile and laser tactics.
-     * </p>
      */
     GUNNER("Gunner", "Naval weapons operations",
-            Arrays.asList(Skill.MISSILE, Skill.LASER, Skill.ELECTRONICS, Skill.COMPUTERS,
-                    Skill.NAVIGATION, Skill.TACTICS, Skill.PSYCHOLOGY, Skill.MEDICAL)),
+            Arrays.asList("Missile", "Laser", "Electronics", "Computers",
+                    "Navigation", "Tactics", "Psychology", "Medic")),
 
     /**
      * Pilot — starship and atmospheric pilot.
-     * <p>
-     * Pilots operate starships and atmospheric craft.
-     * They learn navigation, ship systems, and combat piloting.
-     * </p>
      */
     PILOT("Pilot", "Starship and atmospheric flight",
-            Arrays.asList(Skill.STARSHIPS, Skill.GRAVITIC, Skill.NAVIGATION, Skill.ELECTRONICS,
-                    Skill.COMPUTERS, Skill.ASTRONOMY, Skill.PSYCHOLOGY, Skill.MEDICAL)),
+            Arrays.asList("Pilot Starship", "Grav", "Navigation", "Electronics",
+                    "Computers", "Astronomy", "Psychology", "Medic")),
 
     /**
      * Merchant — interstellar trade and commerce.
-     * <p>
-     * Merchants trade goods between star systems for profit.
-     * They learn navigation, languages, and business skills.
-     * </p>
      */
     MERCHANT("Merchant", "Interstellar trade and commerce",
-            Arrays.asList(Skill.NAVIGATION, Skill.STARSHIPS, Skill.GRAVITIC, Skill.LANGUAGE,
-                    Skill.PSYCHOLOGY, Skill.COMPUTERS, Skill.ELECTRONICS, Skill.MEDICAL)),
+            Arrays.asList("Navigation", "Pilot Starship", "Grav", "Language",
+                    "Psychology", "Computers", "Electronics", "Medic")),
 
     /**
      * Scout — deep space exploration and patrol.
-     * <p>
-     * Scouts explore the frontiers of known space and patrol borders.
-     * They gain broad technical and survival skills.
-     * </p>
      */
     SCOUT("Scout", "Deep space exploration and patrol",
-            Arrays.asList(Skill.STARSHIPS, Skill.GRAVITIC, Skill.NAVIGATION, Skill.ASTRONOMY,
-                    Skill.ELECTRONICS, Skill.COMPUTERS, Skill.SURVIVAL, Skill.MEDICAL,
-                    Skill.PSYCHOLOGY, Skill.TACTICS)),
+            Arrays.asList("Pilot Starship", "Grav", "Navigation", "Astronomy",
+                    "Electronics", "Computers", "Survival", "Medic",
+                    "Psychology", "Tactics")),
 
     /**
      * Spy — intelligence and covert operations.
-     * <p>
-     * Spies gather intelligence and conduct covert operations.
-     * They learn stealth, deception, and infiltration skills.
-     * </p>
      */
     SPY("Spy", "Intelligence and covert operations",
-            Arrays.asList(Skill.STEALTH, Skill.PSYCHOLOGY, Skill.LANGUAGE, Skill.FORGERY,
-                    Skill.COMPUTERS, Skill.ELECTRONICS, Skill.MELEE, Skill.FIREARMS,
-                    Skill.SKIRMISH, Skill.GUERRILLA)),
+            Arrays.asList("Stealth", "Psychology", "Language", "Forgery",
+                    "Computers", "Electronics", "Melee", "Firearms",
+                    "Skirmish", "Guerrilla")),
 
     /**
      * Noble — aristocratic service and politics.
-     * <p>
-     * Nobles serve in government, diplomacy, and administration.
-     * They gain social and political skills.
-     * </p>
      */
     NOBLE("Noble", "Government, diplomacy, and administration",
-            Arrays.asList(Skill.LANGUAGE, Skill.PSYCHOLOGY, Skill.LEADERSHIP, Skill.TACTICS,
-                    Skill.MELEE, Skill.FIREARMS, Skill.SKIRMISH, Skill.GUERRILLA));
+            Arrays.asList("Language", "Psychology", "Leadership", "Tactics",
+                    "Melee", "Firearms", "Skirmish", "Guerrilla"));
 
     private final String name;
     private final String description;
-    private final List<Skill> skillTable;
+    private final List<String> skillTable;
 
-    Career(String name, String description, List<Skill> skillTable) {
+    Career(String name, String description, List<String> skillTable) {
         this.name = name;
         this.description = description;
         this.skillTable = skillTable;
@@ -138,15 +106,11 @@ public enum Career {
     }
 
     /**
-     * Returns the skill table for this career.
-     * <p>
-     * When a character gains a skill during a career tour, one skill
-     * is randomly selected from this table.
-     * </p>
+     * Returns the skill table for this career as skill names.
      *
-     * @return the list of possible skills
+     * @return the list of skill names
      */
-    public List<Skill> getSkillTable() {
+    public List<String> getSkillTable() {
         return skillTable;
     }
 

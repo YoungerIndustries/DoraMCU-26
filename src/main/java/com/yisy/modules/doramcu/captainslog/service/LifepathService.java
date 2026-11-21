@@ -1,6 +1,12 @@
 package com.yisy.modules.doramcu.captainslog.service;
-import org.springframework.stereotype.Service;
+import com.yisy.modules.doramcu.model.players.Player;
 
+import com.yisy.modules.doramcu.captainslog.dto.LifepathChoice;
+import com.yisy.modules.doramcu.captainslog.dto.LifepathChoiceRequest;
+import com.yisy.modules.doramcu.captainslog.dto.LifepathStartRequest;
+import com.yisy.modules.doramcu.captainslog.dto.LifepathStepResponse;
+import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
+import com.yisy.modules.doramcu.captainslog.model.CaptainLogValue;
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogCharacterRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

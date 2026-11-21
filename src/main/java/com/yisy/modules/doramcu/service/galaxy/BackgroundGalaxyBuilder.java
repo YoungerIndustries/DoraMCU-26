@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.service.galaxy;
+import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.hex.Hex;
 import org.springframework.stereotype.Service;
 
@@ -119,11 +120,11 @@ public class BackgroundGalaxyBuilder {
         log.info("Starting background galaxy generation for: {}", galaxyName);
 
         // Publish BUILD_STARTED event
-        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> seedGalaxyOpt = galaxyRepository.findByName(galaxyName);
+        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy> seedGalaxyOpt = galaxyRepository.findByName(galaxyName);
         long seed = seedGalaxyOpt.map(g -> g.getSeed() != null ? g.getSeed() : GalaxyFactory.GAME_GALAXY_SEED).orElse(GalaxyFactory.GAME_GALAXY_SEED);
         int totalSectors = com.yisy.modules.doramcu.hex.Galaxy.GRID_SIZE * com.yisy.modules.doramcu.hex.Galaxy.GRID_SIZE;
         galaxyEventService.publish(GalaxyEventType.BUILD_STARTED, galaxyName,
-                seedGalaxyOpt.map(com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy::getId).orElse(null),
+                seedGalaxyOpt.map(com.yisy.modules.doramcu.model.galaxy.Galaxy::getId).orElse(null),
                 "totalSectors", String.valueOf(totalSectors), "seed", String.valueOf(seed));
 
         currentBuildTask = taskExecutor.submit(() -> {
@@ -137,7 +138,7 @@ public class BackgroundGalaxyBuilder {
                 galaxyService.setProgressListener(galaxyProgressService);
 
                 // Load the existing partial galaxy from DB
-                Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> dbGalaxyOpt =
+                Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy> dbGalaxyOpt =
                         galaxyRepository.findByName(galaxyName);
                 if (dbGalaxyOpt.isEmpty()) {
                     log.warn("Background generation: galaxy '{}' not found, skipping.", galaxyName);
@@ -147,7 +148,7 @@ public class BackgroundGalaxyBuilder {
                             "systemsGeneratedBeforeFailure", "0");
                     return;
                 }
-                com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy dbGalaxy = dbGalaxyOpt.get();
+                com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy = dbGalaxyOpt.get();
 
                 // Get current completion percentage
                 int initialPercent = galaxyService.getGalaxyCompletionPercent(galaxyName);
@@ -287,7 +288,7 @@ public class BackgroundGalaxyBuilder {
         }
 
         // Check if galaxy exists and is not complete
-        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> galaxyOpt = galaxyRepository.findByName(galaxyName);
+        Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy> galaxyOpt = galaxyRepository.findByName(galaxyName);
         if (galaxyOpt.isPresent()) {
             int completionPercent = galaxyService.getGalaxyCompletionPercent(galaxyName);
             if (completionPercent < 100) {

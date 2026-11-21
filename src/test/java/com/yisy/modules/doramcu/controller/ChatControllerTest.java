@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.controller;
+import com.yisy.modules.doramcu.controller.chat.ChatController;
 
-import com.yisy.modules.doramcu.service.ChatService;
+import com.yisy.modules.doramcu.service.chat.ChatService;
 import com.yisy.modules.doramcu.hex.chat.ChatMessage.Channel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;

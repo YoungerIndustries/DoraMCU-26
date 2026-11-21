@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.hex.planet.trade;
-
 import com.yisy.modules.doramcu.hex.planet.CargoType;
 import com.yisy.modules.doramcu.hex.planet.Station;
 import org.slf4j.Logger;

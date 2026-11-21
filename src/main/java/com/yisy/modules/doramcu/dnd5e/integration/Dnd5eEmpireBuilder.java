@@ -1,5 +1,12 @@
 package com.yisy.modules.doramcu.dnd5e.integration;
-
+import com.yisy.modules.doramcu.hex.Empire;
+import com.yisy.modules.doramcu.hex.EmpireBuilder;
+import com.yisy.modules.doramcu.hex.EmpireBuilder.EmpireConfig;
+import com.yisy.modules.doramcu.hex.Game;
+import com.yisy.modules.doramcu.hex.Galaxy;
+import com.yisy.modules.doramcu.hex.MineralQuality;
+import com.yisy.modules.doramcu.hex.Player;
+import com.yisy.modules.doramcu.hex.PlanetSize;
 import org.springframework.stereotype.Component;
 
 import java.util.*;

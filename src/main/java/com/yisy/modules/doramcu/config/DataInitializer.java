@@ -13,6 +13,22 @@ import com.yisy.modules.doramcu.eve.model.EveCorporation;
 import com.yisy.modules.doramcu.hex.Empire;
 import com.yisy.modules.doramcu.hex.GalaxyFactory;
 import com.yisy.modules.doramcu.hex.GalaxyGenerationProgress;
+import com.yisy.modules.doramcu.service.galaxy.GalaxyCreationService;
+import com.yisy.modules.doramcu.service.galaxy.GalaxyProgressService;
+import com.yisy.modules.doramcu.service.galaxy.GalaxyService;
+import com.yisy.modules.doramcu.service.session.GameSessionService;
+import com.yisy.modules.doramcu.model.players.Player;
+import com.yisy.modules.doramcu.model.user.User;
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
+import com.yisy.modules.doramcu.model.misc.Device;
+import com.yisy.modules.doramcu.model.misc.CareerLevel;
+import com.yisy.modules.doramcu.repository.misc.DeviceRepository;
+import com.yisy.modules.doramcu.repository.misc.EveCorporationRepository;
+import com.yisy.modules.doramcu.model.misc.PromoCode;
+import com.yisy.modules.doramcu.repository.misc.PromoCodeRepository;
+import com.yisy.modules.doramcu.repository.players.PlayerRepository;
+import com.yisy.modules.doramcu.repository.user.UserRepository;
+import com.yisy.modules.doramcu.gamecore.CharacterService;
 import com.yisy.modules.doramcu.traveller.AbilityScore;
 import com.yisy.modules.doramcu.traveller.TravellerCharacter;
 import org.slf4j.Logger;
@@ -237,18 +253,15 @@ public class DataInitializer {
                 log.info("Younger Industries corporation setup complete with CEO Butch Younger and AI VP Sif Younger");
             }
             // Seed Traveller character for Butch Younger (in-memory, for unified login)
-            TravellerCharacter existing = travellerCharacterService.getCharacter(1);
-            if (existing == null) {
-                TravellerCharacter butchTraveller = travellerCharacterService.createCharacter("Butch Younger");
-                butchTraveller.setAbility(AbilityScore.DEX, 10);
-                butchTraveller.setAbility(AbilityScore.ST, 12);
-                butchTraveller.setAbility(AbilityScore.END, 11);
-                butchTraveller.setAbility(AbilityScore.INT, 10);
-                butchTraveller.setAbility(AbilityScore.EDU, 9);
-                butchTraveller.setAbility(AbilityScore.SOC, 12);
-                butchTraveller.setAbility(AbilityScore.APP, 8);
-                log.info("Traveller character 'Butch Younger' created (id=1, DEX:10, ST:12, END:11, INT:10, EDU:9, SOC:12, APP:8)");
-            }
+            TravellerCharacter butchTraveller = new TravellerCharacter(1, "Butch Younger");
+            butchTraveller.setAbility(AbilityScore.DEX, 10);
+            butchTraveller.setAbility(AbilityScore.ST, 12);
+            butchTraveller.setAbility(AbilityScore.END, 11);
+            butchTraveller.setAbility(AbilityScore.INT, 10);
+            butchTraveller.setAbility(AbilityScore.EDU, 9);
+            butchTraveller.setAbility(AbilityScore.SOC, 12);
+            butchTraveller.setAbility(AbilityScore.APP, 8);
+            log.info("Traveller character 'Butch Younger' created (id=1, DEX:10, ST:12, END:11, INT:10, EDU:9, SOC:12, APP:8)");
             log.info("Basic database initialization completed");
         };
     }

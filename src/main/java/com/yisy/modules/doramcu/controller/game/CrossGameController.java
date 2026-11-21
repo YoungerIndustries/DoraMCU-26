@@ -1,6 +1,12 @@
 package com.yisy.modules.doramcu.controller.game;
+import com.yisy.modules.doramcu.service.game.CrossGameService.CrossGameCharacter;
 
+import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.service.game.CrossGameService;
+import com.yisy.modules.doramcu.service.game.CrossGameService.Ability;
+import com.yisy.modules.doramcu.service.game.CrossGameService.CharacterSummary;
+import com.yisy.modules.doramcu.service.game.CrossGameService.PortRecord;
+import com.yisy.modules.doramcu.service.game.CrossGameService.Universe;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.eve.model;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import jakarta.persistence.*;
 import com.yisy.modules.doramcu.neuron.service.CdcEntityListener;

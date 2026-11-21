@@ -96,6 +96,7 @@ const CorporationDashboard = (function() {
             btnLogout: document.getElementById('btnLogout'),
             btnEarth2026: document.getElementById('btnEarth2026'),
             btnYoungerHQ: document.getElementById('btnYoungerHQ'),
+            btnGameUI: document.getElementById('btnGameUI'),
             btnHireEmployee: document.getElementById('btnHireEmployee'),
             btnCompleteMission: document.getElementById('btnCompleteMission'),
             
@@ -159,6 +160,7 @@ const CorporationDashboard = (function() {
         elements.btnLogout.addEventListener('click', logout);
         elements.btnEarth2026.addEventListener('click', goToEarth2026);
         elements.btnYoungerHQ.addEventListener('click', goToYoungerHQ);
+        elements.btnGameUI.addEventListener('click', () => window.location.href = 'game-ui.html');
         elements.btnHireEmployee.addEventListener('click', openHireModal);
         elements.btnCompleteMission.addEventListener('click', completeMission);
     }

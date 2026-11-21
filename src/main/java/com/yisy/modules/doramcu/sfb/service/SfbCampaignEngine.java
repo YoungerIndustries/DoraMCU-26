@@ -1,5 +1,14 @@
 package com.yisy.modules.doramcu.sfb.service;
+import com.yisy.modules.doramcu.sfb.model.SfbShield;
+import com.yisy.modules.doramcu.sfb.model.SfbSSD;
+import com.yisy.modules.doramcu.sfb.model.SfbCrewStationType;
+import com.yisy.modules.doramcu.sfb.model.SfbCharacterAssignment;
+import com.yisy.modules.doramcu.sfb.model.SfbEnergyAllocation;
 
+import com.yisy.modules.doramcu.sfb.model.SfbBattleOutcome;
+import com.yisy.modules.doramcu.sfb.model.SfbHexPosition;
+import com.yisy.modules.doramcu.sfb.model.SfbScenario;
+import com.yisy.modules.doramcu.sfb.model.SfbShip;
 import java.util.*;
 import java.util.Objects;
 import java.util.stream.Collectors;

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.admin.service;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.admin.model.AiAdminQuest;
 import com.yisy.modules.doramcu.admin.model.AiAdminQuestReward;

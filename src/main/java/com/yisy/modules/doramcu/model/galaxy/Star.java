@@ -8,6 +8,8 @@ import jakarta.persistence.*;
  * Each star provides energy, radiation hazards, and gravity well effects.
  * </p>
  */
+@Entity
+@Table(name = "stars")
 public class Star {
 
     @Id

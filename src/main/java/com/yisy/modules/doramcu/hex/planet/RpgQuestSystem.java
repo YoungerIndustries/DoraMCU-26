@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.hex.planet;
-
 import com.yisy.modules.doramcu.ai.GalaxyOverlordAI;
 
 import java.util.*;

@@ -1,5 +1,16 @@
 package com.yisy.modules.doramcu.hex.manager;
-
+import com.yisy.modules.doramcu.hex.Empire;
+import com.yisy.modules.doramcu.hex.EmpireBuilder;
+import com.yisy.modules.doramcu.hex.EmpireBuilder.EmpireConfig;
+import com.yisy.modules.doramcu.hex.Game;
+import com.yisy.modules.doramcu.hex.Galaxy;
+import com.yisy.modules.doramcu.hex.Player;
+import com.yisy.modules.doramcu.hex.Ship;
+import com.yisy.modules.doramcu.hex.PlanetSize;
+import com.yisy.modules.doramcu.hex.MineralQuality;
+import com.yisy.modules.doramcu.hex.StartingFacility;
+import com.yisy.modules.doramcu.hex.Planet;
+import com.yisy.modules.doramcu.hex.Fleet;
 import com.yisy.modules.doramcu.hex.spi.AiEntityRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

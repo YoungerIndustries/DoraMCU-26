@@ -1,5 +1,10 @@
 package com.yisy.modules.doramcu.hex.planet.cargo;
 
+import com.yisy.modules.doramcu.hex.planet.CargoType;
+import com.yisy.modules.doramcu.hex.planet.Industry;
+import com.yisy.modules.doramcu.hex.planet.IndustryType;
+import com.yisy.modules.doramcu.hex.planet.Settlement;
+import com.yisy.modules.doramcu.hex.planet.Station;
 import com.yisy.modules.doramcu.hex.planet.hullmodule.HullModule;
 import com.yisy.modules.doramcu.hex.planet.hullmodule.HullModuleType;
 import org.slf4j.Logger;

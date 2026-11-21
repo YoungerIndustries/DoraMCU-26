@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.shared.controller;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.shared.dto.CreateSharedCharacterRequest;
 import com.yisy.modules.doramcu.shared.dto.TravelCharacterRequest;

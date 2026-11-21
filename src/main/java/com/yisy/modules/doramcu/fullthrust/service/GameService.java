@@ -1,5 +1,12 @@
 package com.yisy.modules.doramcu.fullthrust.service;
-
+import com.yisy.modules.doramcu.model.user.User;
+import com.yisy.modules.doramcu.fullthrust.model.GameSession;
+import com.yisy.modules.doramcu.fullthrust.model.Player;
+import com.yisy.modules.doramcu.fullthrust.model.Ship;
+import com.yisy.modules.doramcu.fullthrust.model.ShipClass;
+import com.yisy.modules.doramcu.fullthrust.model.Weapon;
+import com.yisy.modules.doramcu.fullthrust.model.HexPosition;
+import com.yisy.modules.doramcu.fullthrust.model.Missile;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

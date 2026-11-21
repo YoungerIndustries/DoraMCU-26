@@ -1,5 +1,11 @@
 package com.yisy.modules.doramcu.unified;
 
+import com.yisy.modules.doramcu.hex.AiCoreComponent;
+import com.yisy.modules.doramcu.hex.ShipCombatStats;
+import com.yisy.modules.doramcu.traveller.HighGuardRangeBand;
+import com.yisy.modules.doramcu.traveller.HighGuardShipCombat;
+import com.yisy.modules.doramcu.traveller.HighGuardShipDesign;
+import com.yisy.modules.doramcu.traveller.HighGuardWeapon;
 import java.util.*;
 
 /**

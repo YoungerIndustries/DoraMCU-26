@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.controller;
+import com.yisy.modules.doramcu.controller.game.AlienRaceController;
 
 import com.yisy.modules.doramcu.traveller.AlienRace;
 import org.junit.jupiter.api.BeforeEach;

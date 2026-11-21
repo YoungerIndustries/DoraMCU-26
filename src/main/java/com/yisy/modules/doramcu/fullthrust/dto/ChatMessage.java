@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.fullthrust.dto;
-
 import java.time.LocalDateTime;
 
 /**

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.corporation.stock.repository;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.corporation.stock.model.StockOrder;
 import org.springframework.data.jpa.repository.JpaRepository;

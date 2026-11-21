@@ -4,6 +4,7 @@ import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.hex.BuildContractService;
 import com.yisy.modules.doramcu.hex.model.BuildContract;
+import com.yisy.modules.doramcu.hex.model.BuildContractStatus;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +81,7 @@ public class AiAdminProductionService {
         }
 
         BuildContract contract = contractOpt.get();
-        if (contract.getStatus() != BuildContractStatus.PENDING) {
+        if (contract.getStatus() != BuildContract.BuildContractStatus.PENDING) {
             throw new IllegalStateException(
                     "Build contract " + buildContractId + " is not PENDING: " + contract.getStatus());
         }

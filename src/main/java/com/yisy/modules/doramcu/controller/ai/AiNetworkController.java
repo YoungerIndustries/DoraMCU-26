@@ -5,6 +5,7 @@ import com.yisy.modules.doramcu.model.misc.CharacterType;
 
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.service.ai.AiNetworkService;
+import com.yisy.modules.doramcu.service.ai.AiNetworkService.AiNetworkStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

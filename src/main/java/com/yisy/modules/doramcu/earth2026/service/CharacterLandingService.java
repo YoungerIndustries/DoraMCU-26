@@ -1,6 +1,18 @@
 package com.yisy.modules.doramcu.earth2026.service;
+import com.yisy.modules.doramcu.model.players.Player;
 import org.springframework.stereotype.Service;
 
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Character;
+import com.yisy.modules.doramcu.earth2026.model.OfficeUnit;
+import com.yisy.modules.doramcu.earth2026.model.PropertyListing;
+import com.yisy.modules.doramcu.earth2026.model.PropertyTransaction;
+import com.yisy.modules.doramcu.earth2026.model.YoungerIndustriesHQ;
+import com.yisy.modules.doramcu.earth2026.repository.ApartmentUnitRepository;
+import com.yisy.modules.doramcu.earth2026.repository.Earth2026CharacterRepository;
+import com.yisy.modules.doramcu.earth2026.repository.OfficeUnitRepository;
+import com.yisy.modules.doramcu.earth2026.repository.PropertyListingRepository;
+import com.yisy.modules.doramcu.earth2026.repository.PropertyTransactionRepository;
+import com.yisy.modules.doramcu.earth2026.repository.YoungerIndustriesHQRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;

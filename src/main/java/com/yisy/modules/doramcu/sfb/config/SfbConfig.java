@@ -1,5 +1,18 @@
 package com.yisy.modules.doramcu.sfb.config;
 
+import com.yisy.modules.doramcu.sfb.service.DamageAllocationService;
+import com.yisy.modules.doramcu.sfb.service.EnergyAllocationService;
+import com.yisy.modules.doramcu.sfb.service.ImpulseManager;
+import com.yisy.modules.doramcu.sfb.service.MovementService;
+import com.yisy.modules.doramcu.sfb.service.SpecialSystemsService;
+import com.yisy.modules.doramcu.sfb.service.WeaponsFireService;
+import com.yisy.modules.doramcu.sfb.service.SfbAIService;
+import com.yisy.modules.doramcu.sfb.service.SfbCharacterBridge;
+import com.yisy.modules.doramcu.sfb.service.SfbCampaignEngine;
+import com.yisy.modules.doramcu.sfb.service.SfbCombatEngine;
+import com.yisy.modules.doramcu.sfb.service.SfbGalaxyIntegration;
+import com.yisy.modules.doramcu.sfb.service.SfbRoleSystem;
+import com.yisy.modules.doramcu.sfb.service.SfbWebSocketHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;

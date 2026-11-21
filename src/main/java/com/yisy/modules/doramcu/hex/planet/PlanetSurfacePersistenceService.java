@@ -1,10 +1,27 @@
 package com.yisy.modules.doramcu.hex.planet;
-import org.springframework.stereotype.Service;
-
 import com.yisy.modules.doramcu.hex.Hex3D;
 import com.yisy.modules.doramcu.hex.Planet;
+import com.yisy.modules.doramcu.repository.galaxy.CampaignTradeRouteRepository;
+import com.yisy.modules.doramcu.repository.galaxy.PlanetContractRepository;
+import com.yisy.modules.doramcu.repository.galaxy.PlanetCorporationRepository;
+import com.yisy.modules.doramcu.repository.galaxy.PlanetIndustryRepository;
+import com.yisy.modules.doramcu.repository.galaxy.PlanetSettlementRepository;
+import com.yisy.modules.doramcu.repository.galaxy.PlanetStationRepository;
+import com.yisy.modules.doramcu.model.galaxy.PlanetTerrainCell;
+import com.yisy.modules.doramcu.model.galaxy.PlanetSettlementEntity;
+import com.yisy.modules.doramcu.model.galaxy.PlanetIndustryEntity;
+import com.yisy.modules.doramcu.model.galaxy.PlanetStationEntity;
+import com.yisy.modules.doramcu.model.galaxy.PlanetVehicleEntity;
+import com.yisy.modules.doramcu.model.galaxy.PlanetCorporationEntity;
+import com.yisy.modules.doramcu.model.galaxy.PlanetContractEntity;
+import com.yisy.modules.doramcu.model.misc.RpgQuestEntity;
+import com.yisy.modules.doramcu.model.misc.CampaignTradeRouteEntity;
+import com.yisy.modules.doramcu.repository.galaxy.PlanetTerrainCellRepository;
+import com.yisy.modules.doramcu.repository.galaxy.PlanetVehicleRepository;
+import com.yisy.modules.doramcu.repository.galaxy.RpgQuestRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;

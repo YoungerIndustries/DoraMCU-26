@@ -1,4 +1,6 @@
 package com.yisy.modules.doramcu.earth2026.service;
+import com.yisy.modules.doramcu.corporation.model.CorporateFinanceTransaction.TransactionType;
+import com.yisy.modules.doramcu.ai.client.AiRestClient.SynthesizeResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yisy.modules.doramcu.corporation.service.CorporationEconomyService;

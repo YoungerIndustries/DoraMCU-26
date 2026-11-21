@@ -1,4 +1,8 @@
 package com.yisy.modules.doramcu.lord_of_the_rings.integration;
+import com.yisy.modules.doramcu.sfb.service.SfbDiplomacyService.FactionProfile;
+import com.yisy.modules.doramcu.sfb.service.SfbDiplomacyService.RelationType;
+import com.yisy.modules.doramcu.sfb.service.SfbEconomyService.FactionEconomy;
+import com.yisy.modules.doramcu.sfb.service.SfbEconomyService.ResourceType;
 
 import com.yisy.modules.doramcu.gamecore.AiNpcPopulator;
 import com.yisy.modules.doramcu.gamecore.GameType;

@@ -126,7 +126,7 @@ public class AiAdminDispatchService {
     public void dispatchPendingOrders() {
         try {
             List<AiAdminOrder> unassignedPending = orderRepository
-                    .findByStatusAndAssignedAiAdminIdIsNull(OrderStatus.PENDING);
+                    .findByStatusAndAssignedAiAdminIdIsNull(AiAdminOrder.OrderStatus.PENDING);
 
             if (!unassignedPending.isEmpty()) {
                 log.info("Dispatch scan: found {} unassigned pending orders", unassignedPending.size());
@@ -152,7 +152,7 @@ public class AiAdminDispatchService {
      */
     @Transactional
     public void retryFailedOrders() {
-        List<AiAdminOrder> failedOrders = orderRepository.findByStatus(OrderStatus.FAILED);
+        List<AiAdminOrder> failedOrders = orderRepository.findByStatus(AiAdminOrder.OrderStatus.FAILED);
 
         for (AiAdminOrder order : failedOrders) {
             if (order.getRetryCount() >= order.getMaxRetries()) {
@@ -162,7 +162,7 @@ public class AiAdminDispatchService {
             }
 
             order.setRetryCount(order.getRetryCount() + 1);
-            order.setStatus(OrderStatus.PENDING);
+            order.setStatus(AiAdminOrder.OrderStatus.PENDING);
             order.setAssignedAiAdminId(null);
             order.setCompletedAt(null);
             orderRepository.save(order);
@@ -190,7 +190,7 @@ public class AiAdminDispatchService {
      */
     @Transactional
     public void reclaimStaleOrders() {
-        List<AiAdminOrder> runningOrders = orderRepository.findByStatus(OrderStatus.RUNNING);
+        List<AiAdminOrder> runningOrders = orderRepository.findByStatus(AiAdminOrder.OrderStatus.RUNNING);
         LocalDateTime staleThreshold = LocalDateTime.now().minusMinutes(STALE_ORDER_MINUTES);
 
         for (AiAdminOrder order : runningOrders) {
@@ -214,7 +214,7 @@ public class AiAdminDispatchService {
                     });
                 }
 
-                order.setStatus(OrderStatus.PENDING);
+                order.setStatus(AiAdminOrder.OrderStatus.PENDING);
                 order.setAssignedAiAdminId(null);
                 order.setCompletedAt(null);
                 orderRepository.save(order);
@@ -247,7 +247,7 @@ public class AiAdminDispatchService {
 
         // Assign the order to this AI admin
         order.setAssignedAiAdminId(admin.getId());
-        order.setStatus(OrderStatus.RUNNING);
+        order.setStatus(AiAdminOrder.OrderStatus.RUNNING);
         orderRepository.save(order);
 
         // Save home position before moving to order location
@@ -417,7 +417,7 @@ public class AiAdminDispatchService {
                     productionService.completeContract(admin, order);
 
                     // Mark order as completed
-                    order.setStatus(OrderStatus.COMPLETED);
+                    order.setStatus(AiAdminOrder.OrderStatus.COMPLETED);
                     order.setCompletedAt(LocalDateTime.now());
                     orderRepository.save(order);
 
@@ -501,7 +501,7 @@ public class AiAdminDispatchService {
                 }
 
                 // Mark order as completed
-                order.setStatus(OrderStatus.COMPLETED);
+                order.setStatus(AiAdminOrder.OrderStatus.COMPLETED);
                 order.setCompletedAt(LocalDateTime.now());
                 orderRepository.save(order);
 
@@ -534,14 +534,14 @@ public class AiAdminDispatchService {
                 // Check if we should retry this order
                 if (order.getRetryCount() >= order.getMaxRetries()) {
                     // Permanently failed - no more retries
-                    order.setStatus(OrderStatus.FAILED);
+                    order.setStatus(AiAdminOrder.OrderStatus.FAILED);
                     order.setCompletedAt(LocalDateTime.now());
                     orderRepository.save(order);
                     log.warn("Order {} permanently failed after {} retries",
                             order.getId(), order.getRetryCount());
                 } else {
                     // Mark as failed - the scheduled retry mechanism will pick it up
-                    order.setStatus(OrderStatus.FAILED);
+                    order.setStatus(AiAdminOrder.OrderStatus.FAILED);
                     order.setCompletedAt(LocalDateTime.now());
                     orderRepository.save(order);
                     log.info("Order {} failed - will be retried by dispatch scheduler (attempt {}/{})",
@@ -694,8 +694,8 @@ public class AiAdminDispatchService {
     @Transactional(readOnly = true)
     public DispatchSummary getDispatchSummary() {
         List<AiCharacter> allAiAdmins = aiCharacterRepository.findByAiAdminTrue();
-        List<AiAdminOrder> pendingOrders = orderRepository.findByStatus(OrderStatus.PENDING);
-        List<AiAdminOrder> runningOrders = orderRepository.findByStatus(OrderStatus.RUNNING);
+        List<AiAdminOrder> pendingOrders = orderRepository.findByStatus(AiAdminOrder.OrderStatus.PENDING);
+        List<AiAdminOrder> runningOrders = orderRepository.findByStatus(AiAdminOrder.OrderStatus.RUNNING);
 
         int totalAdmins = allAiAdmins.size();
         int availableAdmins = 0;

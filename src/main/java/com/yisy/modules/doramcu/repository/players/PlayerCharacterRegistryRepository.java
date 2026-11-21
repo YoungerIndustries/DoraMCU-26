@@ -1,7 +1,10 @@
 package com.yisy.modules.doramcu.repository.players;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.model.misc.CharacterRole;
 import com.yisy.modules.doramcu.model.misc.CharacterType;
+import com.yisy.modules.doramcu.model.PlayerCharacterRegistry;
+import com.yisy.modules.doramcu.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

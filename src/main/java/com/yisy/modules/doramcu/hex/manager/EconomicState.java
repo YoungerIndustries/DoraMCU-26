@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.hex.manager;
-
 import com.yisy.modules.doramcu.hex.ConstructionModuleType;
 import com.yisy.modules.doramcu.hex.RefinedResourceType;
 import com.yisy.modules.doramcu.hex.ResourcePipelineManager;

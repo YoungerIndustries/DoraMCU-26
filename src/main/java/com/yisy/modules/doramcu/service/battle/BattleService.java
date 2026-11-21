@@ -1,8 +1,4 @@
 package com.yisy.modules.doramcu.service.battle;
-import com.yisy.modules.doramcu.hex.Hex;
-import com.yisy.modules.doramcu.service.ship_design.ShipDesignService;
-
-import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.dto.battle.BattleRequest;
 import com.yisy.modules.doramcu.dto.battle.BattleResponse;
@@ -10,10 +6,13 @@ import com.yisy.modules.doramcu.event.GalaxyEventService;
 import com.yisy.modules.doramcu.event.GalaxyEventType;
 import com.yisy.modules.doramcu.hex.Battle;
 import com.yisy.modules.doramcu.hex.Fleet;
+import com.yisy.modules.doramcu.hex.Hex;
 import com.yisy.modules.doramcu.hex.Hex3D;
 import com.yisy.modules.doramcu.hex.Ship;
+import com.yisy.modules.doramcu.service.ship_design.ShipDesignService;
 import com.yisy.modules.doramcu.traveller.ShipDesign;
 import com.yisy.modules.doramcu.traveller.TravellerFleetBuilder;
+import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

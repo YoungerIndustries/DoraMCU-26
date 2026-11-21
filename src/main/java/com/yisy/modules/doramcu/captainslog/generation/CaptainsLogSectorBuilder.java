@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.generation;
+import com.yisy.modules.doramcu.model.players.Player;
 import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.hex.Galaxy;

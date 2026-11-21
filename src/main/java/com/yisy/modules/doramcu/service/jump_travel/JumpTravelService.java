@@ -1,7 +1,17 @@
 package com.yisy.modules.doramcu.service.jump_travel;
-import com.yisy.modules.doramcu.hex.Ship;
+
 import com.yisy.modules.doramcu.dto.jump_travel.JumpTravelRequest;
 import com.yisy.modules.doramcu.dto.jump_travel.JumpTravelResponse;
+import com.yisy.modules.doramcu.hex.Ship;
+import com.yisy.modules.doramcu.traveller.FuelTank;
+import com.yisy.modules.doramcu.traveller.FusionDrive;
+import com.yisy.modules.doramcu.traveller.JumpPlan;
+import com.yisy.modules.doramcu.traveller.JumpRoute;
+import com.yisy.modules.doramcu.traveller.JumpTravelStatus;
+import com.yisy.modules.doramcu.traveller.RoutePlanner;
+import com.yisy.modules.doramcu.traveller.TravelState;
+import com.yisy.modules.doramcu.traveller.TravellerSector;
+import com.yisy.modules.doramcu.traveller.TravellerWorld;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

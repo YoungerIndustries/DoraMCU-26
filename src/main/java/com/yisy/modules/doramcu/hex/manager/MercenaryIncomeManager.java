@@ -1,9 +1,15 @@
 package com.yisy.modules.doramcu.hex.manager;
-import org.springframework.stereotype.Service;
-
 import com.yisy.modules.doramcu.hex.Empire;
 import com.yisy.modules.doramcu.hex.EmpireArmy;
 import com.yisy.modules.doramcu.hex.Player;
+import com.yisy.modules.doramcu.traveller.AbstractBattle;
+import com.yisy.modules.doramcu.traveller.MercenaryTicket;
+import com.yisy.modules.doramcu.traveller.MercenaryUnit;
+import com.yisy.modules.doramcu.traveller.MissionType;
+import com.yisy.modules.doramcu.traveller.TravellerCharacter;
+import com.yisy.modules.doramcu.traveller.UnitType;
+import org.springframework.stereotype.Service;
+
 import java.util.*;
 import java.util.stream.Collectors;
 

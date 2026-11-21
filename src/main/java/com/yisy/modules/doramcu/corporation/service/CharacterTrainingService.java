@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.corporation.service;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.corporation.model.CharacterTrainingTour;
 import com.yisy.modules.doramcu.corporation.model.CorporateContract;
@@ -218,9 +219,11 @@ public class CharacterTrainingService {
         // Record as a CareerTour in the character's book
         List<Skill> skillsGained = new ArrayList<>();
         try {
-            skillsGained.add(Skill.valueOf(tour.getSkill().toUpperCase()));
+            Skill.SkillType skillType = Skill.SkillType.valueOf(tour.getSkill().toUpperCase());
+            skillsGained.add(new Skill(skillType, 1));
         } catch (IllegalArgumentException e) {
-            log.warn("Unknown skill '{}', no skills recorded", tour.getSkill());
+            log.warn("Unknown skill '{}', using NONE", tour.getSkill());
+            skillsGained.add(new Skill(Skill.SkillType.NONE, 1));
         }
 
         TravellerCharacter.CareerTour careerTour = new TravellerCharacter.CareerTour(

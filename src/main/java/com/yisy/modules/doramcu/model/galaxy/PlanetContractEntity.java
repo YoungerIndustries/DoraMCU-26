@@ -1,5 +1,5 @@
 package com.yisy.modules.doramcu.model.galaxy;
-import com.yisy.modules.doramcu.model.misc.Planet;
+
 
 
 import jakarta.persistence.*;
@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
  * the assigned corporation earns credits, XP, and reputation.
  * </p>
  */
+@Entity
+@Table(name = "planet_contracts")
 public class PlanetContractEntity {
 
     @Id

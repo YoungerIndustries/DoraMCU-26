@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.traveller.shipcustomization;
-
 import jakarta.persistence.*;
 
 import java.util.*;

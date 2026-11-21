@@ -1,9 +1,20 @@
 package com.yisy.modules.doramcu.babylon5.service;
-import org.springframework.stereotype.Service;
-
+import com.yisy.modules.doramcu.babylon5.model.B5Character;
 import com.yisy.modules.doramcu.babylon5.model.B5Location;
 import com.yisy.modules.doramcu.babylon5.model.B5Race;
+import com.yisy.modules.doramcu.hex.Empire;
+import com.yisy.modules.doramcu.hex.Galaxy;
+import com.yisy.modules.doramcu.hex.Game;
+import com.yisy.modules.doramcu.hex.Planet;
+import com.yisy.modules.doramcu.hex.Player;
+import com.yisy.modules.doramcu.hex.Fleet;
+import com.yisy.modules.doramcu.hex.Ship;
+import com.yisy.modules.doramcu.hex.StartingFacility;
+import com.yisy.modules.doramcu.hex.PlanetSize;
+import com.yisy.modules.doramcu.hex.MineralQuality;
+import com.yisy.modules.doramcu.hex.SolarSystem;
 import com.yisy.modules.doramcu.service.ai.AiEntityRegistrationService;
+import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -31,6 +31,7 @@
  * </p>
  */
 package com.yisy.modules.doramcu.model.misc;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.hex.Hex;
 import com.yisy.modules.doramcu.service.game.GameInitializationService;
 import com.yisy.modules.doramcu.model.session.PersistedGameSession;

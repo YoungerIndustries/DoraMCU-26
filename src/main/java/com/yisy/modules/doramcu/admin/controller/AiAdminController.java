@@ -2,6 +2,7 @@ package com.yisy.modules.doramcu.admin.controller;
 
 import com.yisy.modules.doramcu.admin.dto.AiAdminOrderRequest;
 import com.yisy.modules.doramcu.admin.dto.AiAdminReportDto;
+import com.yisy.modules.doramcu.admin.dto.AiAdminTestCaseDto;
 import com.yisy.modules.doramcu.admin.model.AiAdminNotification;
 import com.yisy.modules.doramcu.admin.model.AiAdminOrder;
 import com.yisy.modules.doramcu.admin.model.AiAdminQuest;
@@ -334,8 +335,8 @@ public class AiAdminController {
         dto.setCreatedAt(report.getCreatedAt());
 
         List<AiAdminTestCase> cases = testCaseRepository.findByReportId(report.getId());
-        List<AiAdminTestCaseDto> caseDtos = cases.stream().map(tc -> {
-            AiAdminTestCaseDto cd = new AiAdminTestCaseDto();
+        List<AiAdminReportDto.AiAdminTestCaseDto> caseDtos = cases.stream().map(tc -> {
+            AiAdminReportDto.AiAdminTestCaseDto cd = new AiAdminReportDto.AiAdminTestCaseDto();
             cd.setId(tc.getId());
             cd.setTestName(tc.getTestName());
             cd.setCategory(tc.getCategory());

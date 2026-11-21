@@ -1,6 +1,10 @@
 package com.yisy.modules.doramcu.thirdreich.combat;
 
 import com.yisy.modules.doramcu.thirdreich.commander.AICommander;
+import com.yisy.modules.doramcu.thirdreich.domain.ThirdReichBattle;
+import com.yisy.modules.doramcu.thirdreich.domain.ThirdReichBattleResult;
+import com.yisy.modules.doramcu.thirdreich.domain.ThirdReichGroundUnit;
+import com.yisy.modules.doramcu.thirdreich.domain.TerrainContext;
 import com.yisy.modules.doramcu.util.DiceUtil;
 
 import java.util.ArrayList;

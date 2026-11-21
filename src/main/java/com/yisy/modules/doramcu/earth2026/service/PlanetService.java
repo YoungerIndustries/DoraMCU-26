@@ -1,6 +1,30 @@
 package com.yisy.modules.doramcu.earth2026.service;
+import com.yisy.modules.doramcu.model.players.Player;
 
+import com.yisy.modules.doramcu.earth2026.model.E26GalaxyRules;
+import com.yisy.modules.doramcu.earth2026.model.E26PlanetRules;
+import com.yisy.modules.doramcu.earth2026.model.E26Species;
+import com.yisy.modules.doramcu.earth2026.model.E26SystemRules;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026BattleEnvironment;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Character;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Companion;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Connection;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Contract;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Country;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Economy;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Family;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026FamilyMember;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Job;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Location;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026OrgMember;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Organization;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Planet;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Region;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Scenario;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026Structure;
+import com.yisy.modules.doramcu.earth2026.model.TimePeriodTemplate;
 import com.yisy.modules.doramcu.gamecore.GameType;
+import com.yisy.modules.doramcu.earth2026.model.TechLevel;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

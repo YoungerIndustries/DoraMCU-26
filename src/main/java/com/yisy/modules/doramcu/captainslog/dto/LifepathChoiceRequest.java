@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.dto;
+import com.yisy.modules.doramcu.model.players.Player;
 
 /**
  * Request to make a choice in a lifepath step.

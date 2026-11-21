@@ -1,6 +1,6 @@
 package com.yisy.modules.doramcu.hex.planet;
-
 import com.yisy.modules.doramcu.gamecore.DungeonRoomService;
+import com.yisy.modules.doramcu.model.galaxy.PlanetBuildingModuleEntity;
 import com.yisy.modules.doramcu.techlevel.ModuleCategory;
 import com.yisy.modules.doramcu.techlevel.TechLevel;
 import com.yisy.modules.doramcu.techlevel.TechLevelService;
@@ -885,7 +885,8 @@ public class BuildingInteriorGenerator {
         connect(ids[0], ids[1]);   // Lobby → Reception
         connect(ids[0], ids[2]);   // Lobby → Mail Room
         connect(ids[0], ids[3]);   // Lobby → Package Lockers
-        connect(ids[0], ids[4]);   // Lobby → Security Office
+        connect(ids[0], ids[4]);
+connect(ids[0], ids[4]);   // Lobby → Security Office
         connect(ids[0], ids[30]);  // Lobby → Elevator
 
         // === Floor 1: Studio & 1-Bedroom Units ===

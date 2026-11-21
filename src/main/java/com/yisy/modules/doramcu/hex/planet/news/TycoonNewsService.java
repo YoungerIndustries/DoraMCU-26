@@ -1,5 +1,8 @@
 package com.yisy.modules.doramcu.hex.planet.news;
 
+import com.yisy.modules.doramcu.hex.planet.Industry;
+import com.yisy.modules.doramcu.hex.planet.Station;
+import com.yisy.modules.doramcu.hex.planet.SurfaceVehicle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

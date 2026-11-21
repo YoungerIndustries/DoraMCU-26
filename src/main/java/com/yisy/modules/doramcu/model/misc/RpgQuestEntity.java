@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
  * Completing quests awards credits, XP, reputation, and sometimes unique items.
  * </p>
  */
+@Entity
+@Table(name = "rpg_quests")
 public class RpgQuestEntity {
 
     @Id

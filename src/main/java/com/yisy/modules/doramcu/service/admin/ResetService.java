@@ -1,4 +1,6 @@
 package com.yisy.modules.doramcu.service.admin;
+import com.yisy.modules.doramcu.model.user.User;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.model.misc.CharacterType;
 import com.yisy.modules.doramcu.service.galaxy.GalaxyCreationService;
 import com.yisy.modules.doramcu.service.galaxy.GalaxyService;

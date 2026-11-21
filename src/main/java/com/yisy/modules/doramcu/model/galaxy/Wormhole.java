@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.model.galaxy;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.model.galaxy.SubSector;
 
@@ -20,6 +21,8 @@ import java.time.LocalDateTime;
  * using the same coordinate system as solar systems (sector, subsector, x/y/z).
  * </p>
  */
+@Entity
+@Table(name = "wormholes")
 public class Wormhole {
 
     @Id

@@ -1,5 +1,9 @@
 package com.yisy.modules.doramcu.unified;
 
+import com.yisy.modules.doramcu.hex.Ship;
+import com.yisy.modules.doramcu.traveller.CargoHold;
+import com.yisy.modules.doramcu.traveller.Commodity;
+import com.yisy.modules.doramcu.traveller.WorldEconomy;
 import java.util.*;
 
 /**

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.data;
+import com.yisy.modules.doramcu.model.galaxy.PlanetBuildingModuleEntity;
 
 import com.yisy.modules.doramcu.repository.galaxy.PlanetBuildingModuleRepository;
 import com.yisy.modules.doramcu.techlevel.ModuleCategory;

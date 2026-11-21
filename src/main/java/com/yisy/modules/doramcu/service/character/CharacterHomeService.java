@@ -1,4 +1,6 @@
 package com.yisy.modules.doramcu.service.character;
+import com.yisy.modules.doramcu.model.user.User;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.hex.HomeLocation;
 import org.springframework.stereotype.Service;
 

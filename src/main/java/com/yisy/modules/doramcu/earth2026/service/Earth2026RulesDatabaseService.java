@@ -2,6 +2,11 @@ package com.yisy.modules.doramcu.earth2026.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yisy.modules.doramcu.earth2026.model.E26GalaxyRules;
+import com.yisy.modules.doramcu.earth2026.model.E26PlanetRules;
+import com.yisy.modules.doramcu.earth2026.model.E26NameDatabase;
+import com.yisy.modules.doramcu.earth2026.model.E26Species;
+import com.yisy.modules.doramcu.earth2026.model.E26SystemRules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,6 +14,7 @@ import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -60,17 +66,33 @@ public class Earth2026RulesDatabaseService {
     @PostConstruct
     public void loadDatabase() {
         try {
-            File file = new File(databasePath);
-            if (!file.exists()) {
-                log.warn("Earth 2026 rules database file not found: {}", databasePath);
-                species = new ArrayList<>();
-                galaxyRules = new E26GalaxyRules();
-                systemRules = new E26SystemRules();
-                planetRules = new E26PlanetRules();
+            // Try classpath resource first, then fall back to file path
+            InputStream is = getClass().getClassLoader().getResourceAsStream(databasePath);
+            if (is == null) {
+                // Try as absolute classpath resource
+                is = getClass().getClassLoader().getResourceAsStream("/" + databasePath);
+            }
+            if (is == null) {
+                // Try as relative file path
+                File file = new File(databasePath);
+                if (!file.exists()) {
+                    log.warn("Earth 2026 rules database not found: {}", databasePath);
+                    species = new ArrayList<>();
+                    galaxyRules = new E26GalaxyRules();
+                    systemRules = new E26SystemRules();
+                    planetRules = new E26PlanetRules();
+                    return;
+                }
+                JsonNode root = objectMapper.readTree(file);
+                loadSpecies(root);
+                loadGalaxyRules(root);
+                loadSystemRules(root);
+                loadPlanetRules(root);
+                log.info("Loaded Earth 2026 rules database from file: {} species", species.size());
                 return;
             }
-
-            JsonNode root = objectMapper.readTree(file);
+            JsonNode root = objectMapper.readTree(is);
+            is.close();
             loadSpecies(root);
             loadGalaxyRules(root);
             loadSystemRules(root);

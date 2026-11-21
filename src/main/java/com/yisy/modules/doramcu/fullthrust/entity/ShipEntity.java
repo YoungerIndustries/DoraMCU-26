@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.fullthrust.entity;
-
 import jakarta.persistence.*;
 
 import java.util.ArrayList;

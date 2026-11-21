@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.controller.character;
 
 import com.yisy.modules.doramcu.service.character.CharacterDialogueService;
+import com.yisy.modules.doramcu.ai.client.AiRestClient.SynthesizeResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

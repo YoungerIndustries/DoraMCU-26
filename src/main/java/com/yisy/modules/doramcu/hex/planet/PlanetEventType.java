@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.hex.planet;
-
 /**
  * Event types for planet-level game events.
  * <p>

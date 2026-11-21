@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.fourx;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import jakarta.persistence.*;
 

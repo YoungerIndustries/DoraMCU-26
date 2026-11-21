@@ -1,5 +1,14 @@
 package com.yisy.modules.doramcu.sfb.service;
+import com.yisy.modules.doramcu.sfb.model.SfbCharacterAssignment;
+import com.yisy.modules.doramcu.sfb.model.SfbEnergyAllocation;
+import com.yisy.modules.doramcu.model.players.Player;
 
+import com.yisy.modules.doramcu.sfb.model.SfbEnergyAllocation;
+import com.yisy.modules.doramcu.sfb.model.SfbScenario;
+import com.yisy.modules.doramcu.sfb.model.SfbShip;
+import com.yisy.modules.doramcu.sfb.model.SfbShield;
+import com.yisy.modules.doramcu.sfb.model.SfbSSD;
+import com.yisy.modules.doramcu.sfb.model.SfbWeaponBank;
 import org.springframework.stereotype.Service;
 import com.yisy.modules.doramcu.util.DiceUtil;
 

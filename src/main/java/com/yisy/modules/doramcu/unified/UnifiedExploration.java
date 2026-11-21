@@ -1,5 +1,11 @@
 package com.yisy.modules.doramcu.unified;
 
+import com.yisy.modules.doramcu.hex.CelestialBody;
+import com.yisy.modules.doramcu.hex.MiningOperation;
+import com.yisy.modules.doramcu.hex.Planet;
+import com.yisy.modules.doramcu.traveller.ExplorationActivity;
+import com.yisy.modules.doramcu.traveller.TravellerWorld;
+import com.yisy.modules.doramcu.traveller.UniversalWorldProfile;
 import java.util.*;
 
 /**

@@ -1,7 +1,12 @@
 package com.yisy.modules.doramcu.model;
-import org.springframework.stereotype.Component;
+import com.yisy.modules.doramcu.model.players.Player;
 
+import com.yisy.modules.doramcu.model.misc.CharacterRole;
+import com.yisy.modules.doramcu.model.misc.CharacterType;
+import com.yisy.modules.doramcu.model.user.User;
+import com.yisy.modules.doramcu.neuron.service.CdcEntityListener;
 import jakarta.persistence.Column;
+import org.springframework.stereotype.Component;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
@@ -15,7 +20,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.PrePersist;
-import com.yisy.modules.doramcu.neuron.service.CdcEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -35,7 +39,6 @@ import java.time.LocalDateTime;
         @UniqueConstraint(name = "uq_pcr_player_character", columnNames = {"player_id", "character_type", "character_id"})
 })
 @EntityListeners(CdcEntityListener.class)
-@Component
 public class PlayerCharacterRegistry {
 
     @Id

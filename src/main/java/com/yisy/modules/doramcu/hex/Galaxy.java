@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.hex;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -607,6 +606,13 @@ public class Galaxy {
      */
     public Map<Integer, SolarSystem> getAllSystems() {
         return Collections.unmodifiableMap(allSystems);
+    }
+
+    /**
+     * @return all solar systems as a list
+     */
+    public List<SolarSystem> getSolarSystems() {
+        return new ArrayList<>(allSystems.values());
     }
 
     /**

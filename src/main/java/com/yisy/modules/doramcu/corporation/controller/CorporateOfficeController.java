@@ -1,4 +1,6 @@
 package com.yisy.modules.doramcu.corporation.controller;
+import com.yisy.modules.doramcu.model.user.User;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.corporation.model.AiAssistantAction;
 import com.yisy.modules.doramcu.corporation.model.CharacterTrainingTour;

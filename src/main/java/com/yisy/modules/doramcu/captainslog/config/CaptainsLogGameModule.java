@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.captainslog.config;
 
+import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
+import com.yisy.modules.doramcu.captainslog.model.CaptainLogCampaign;
 import com.yisy.modules.doramcu.captainslog.service.CaptainLogCharacterService;
 import com.yisy.modules.doramcu.captainslog.service.CaptainLogCombatService;
 import com.yisy.modules.doramcu.captainslog.service.CaptainLogCrewService;
@@ -7,21 +9,33 @@ import com.yisy.modules.doramcu.captainslog.service.CaptainLogMissionService;
 import com.yisy.modules.doramcu.captainslog.service.CaptainLogShipTalentService;
 import com.yisy.modules.doramcu.captainslog.service.CaptainLogTalentService;
 import com.yisy.modules.doramcu.captainslog.service.CareerProgressionService;
-import com.yisy.modules.doramcu.captainslog.service.DiceService;
 import com.yisy.modules.doramcu.captainslog.service.DowntimeService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import com.yisy.modules.doramcu.captainslog.service.EquipmentService;
 import com.yisy.modules.doramcu.captainslog.service.InjuryService;
 import com.yisy.modules.doramcu.captainslog.service.LifepathService;
-import com.yisy.modules.doramcu.captainslog.service.RulesService;
 import com.yisy.modules.doramcu.captainslog.service.StarshipCombatService;
 import com.yisy.modules.doramcu.captainslog.service.StarshipCreationService;
 import com.yisy.modules.doramcu.captainslog.service.CaptainsLogRulesEngine;
 import com.yisy.modules.doramcu.shared.model.RulesEntry;
 import com.yisy.modules.doramcu.shared.service.RulesAwareCombatAdapter;
 import com.yisy.modules.doramcu.shared.service.UnifiedRulesQueryService;
+import com.yisy.modules.doramcu.captainslog.service.DiceService;
+import com.yisy.modules.doramcu.captainslog.service.RulesService;
+import com.yisy.modules.doramcu.gamecore.AbstractGameModule;
+import com.yisy.modules.doramcu.gamecore.CampaignService;
+import com.yisy.modules.doramcu.gamecore.CharacterService;
+import com.yisy.modules.doramcu.gamecore.CombatService;
+import com.yisy.modules.doramcu.gamecore.CraftingService;
+import com.yisy.modules.doramcu.gamecore.DungeonRoomService;
+import com.yisy.modules.doramcu.gamecore.EncounterService;
+import com.yisy.modules.doramcu.gamecore.GameModuleRegistry;
 import com.yisy.modules.doramcu.gamecore.GameType;
+import com.yisy.modules.doramcu.gamecore.InventoryService;
+import com.yisy.modules.doramcu.gamecore.MechanicType;
+import com.yisy.modules.doramcu.gamecore.PsionicsService;
 import com.yisy.modules.doramcu.gamecore.RulesEngine;
+import com.yisy.modules.doramcu.gamecore.SpellService;
 import com.yisy.modules.doramcu.util.DiceUtil;
 import org.springframework.stereotype.Component;
 
@@ -88,7 +102,7 @@ public class CaptainsLogGameModule extends AbstractGameModule {
             StarshipCreationService starshipCreationService,
             InjuryService injuryService,
             DowntimeService downtimeService,
-            @Qualifier("captainsLogCareerProgressionService_0") CareerProgressionService careerProgressionService,
+            @Qualifier("captainsLogCareerProgressionService") CareerProgressionService careerProgressionService,
             LifepathService lifepathService,
             RulesService captainsLogRulesService,
             DiceService captainsLogDiceService,

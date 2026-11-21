@@ -775,7 +775,7 @@ public class GameStateBuilder {
         Map<String, String[]> subSectorNameMap = new HashMap<>(); // key: "sectorRow-sectorCol-subRow-subCol" -> [name, tradeType]
         Map<String, Integer> subSectorSystemCountMap = new HashMap<>(); // key: "sectorRow-sectorCol-subRow-subCol" -> systemCount
         try {
-            List<com.yisy.modules.doramcu.model.galaxy.Galaxy.Galaxy> dbGalaxies = galaxyRepository.findAll();
+            List<com.yisy.modules.doramcu.model.galaxy.Galaxy> dbGalaxies = galaxyRepository.findAll();
             if (!dbGalaxies.isEmpty()) {
                 List<Object[]> subSectorRows = subSectorRepository.findNamesByGalaxyId(dbGalaxies.get(0).getId());
                 for (Object[] ssRow : subSectorRows) {

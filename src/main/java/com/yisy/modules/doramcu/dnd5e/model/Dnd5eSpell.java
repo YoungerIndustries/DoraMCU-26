@@ -33,7 +33,7 @@ public class Dnd5eSpell {
     @Column(name = "casting_time", nullable = false, length = 50)
     private String castingTime;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "spell_range", nullable = false, length = 50)
     private String range;
 
     @Column(nullable = false, length = 100)

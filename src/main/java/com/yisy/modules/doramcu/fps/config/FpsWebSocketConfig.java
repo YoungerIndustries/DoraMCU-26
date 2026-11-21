@@ -1,8 +1,9 @@
 package com.yisy.modules.doramcu.fps.config;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.fps.FpsGameServerWrapper;
 import com.yisy.modules.doramcu.fps.FpsWebSocketHandler;
-import com.yisy.modules.doraai.service.VoiceCommandService;
+import com.yisy.modules.doramcu.ai.server.service.VoiceCommandService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;

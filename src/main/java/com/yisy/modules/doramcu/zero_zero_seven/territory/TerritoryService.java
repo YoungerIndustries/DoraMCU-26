@@ -14,7 +14,6 @@ import java.util.Optional;
  * </p>
  */
 @Service("territoryService_zero_zero_seven_territory_TerritoryService")
-    @Service
 public class TerritoryService {
 
     private final BondTerritoryRepository territoryRepository;

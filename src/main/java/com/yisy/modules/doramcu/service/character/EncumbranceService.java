@@ -1,4 +1,7 @@
 package com.yisy.modules.doramcu.service.character;
+import com.yisy.modules.doramcu.traveller.Career;
+import com.yisy.modules.doramcu.traveller.Encumbrance;
+import com.yisy.modules.doramcu.traveller.TravellerCharacter;
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;

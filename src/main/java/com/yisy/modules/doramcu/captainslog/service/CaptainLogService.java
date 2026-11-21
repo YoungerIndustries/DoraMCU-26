@@ -1,10 +1,29 @@
 package com.yisy.modules.doramcu.captainslog.service;
-import org.springframework.stereotype.Service;
 
+import com.yisy.modules.doramcu.captainslog.model.CaptainLogEntry;
+import com.yisy.modules.doramcu.captainslog.dto.CombatRoundResponse;
+import com.yisy.modules.doramcu.captainslog.dto.CreateCharacterRequest;
+import com.yisy.modules.doramcu.captainslog.dto.CreateCrewMemberRequest;
+import com.yisy.modules.doramcu.captainslog.dto.CreateMissionRequest;
+import com.yisy.modules.doramcu.captainslog.dto.CreateStarshipRequest;
+import com.yisy.modules.doramcu.captainslog.dto.DiceRollResponse;
+import com.yisy.modules.doramcu.captainslog.dto.GenerateMissionRequest;
+import com.yisy.modules.doramcu.captainslog.dto.GeneratedMissionResponse;
+import com.yisy.modules.doramcu.captainslog.dto.LifepathChoiceRequest;
+import com.yisy.modules.doramcu.captainslog.dto.LifepathStartRequest;
+import com.yisy.modules.doramcu.captainslog.dto.LifepathStepResponse;
+import com.yisy.modules.doramcu.captainslog.dto.OracleQueryRequest;
+import com.yisy.modules.doramcu.captainslog.dto.StartCombatRequest;
+import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
+import com.yisy.modules.doramcu.captainslog.model.CaptainLogCombat;
+import com.yisy.modules.doramcu.captainslog.model.CaptainLogCrewMember;
+import com.yisy.modules.doramcu.captainslog.model.CaptainLogMission;
+import com.yisy.modules.doramcu.captainslog.model.CaptainLogStarship;
 import com.yisy.modules.doramcu.captainslog.repository.CaptainLogMissionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -37,7 +56,7 @@ public class CaptainLogService {
     private final ProbabilityMatrixService probabilityMatrixService;
     private final LifepathService lifepathService;
     private final CaptainLogCrewService crewService;
-    @Qualifier("captainsLogCareerProgressionService_1")
+    @Qualifier("captainsLogCareerProgressionService")
     private final CareerProgressionService careerProgressionService;
     private final DifficultyScalingService difficultyScalingService;
     private final InjuryService injuryService;
@@ -63,7 +82,7 @@ public class CaptainLogService {
                              ProbabilityMatrixService probabilityMatrixService,
                              LifepathService lifepathService,
                              CaptainLogCrewService crewService,
-                             @Qualifier("captainsLogCareerProgressionService_1") CareerProgressionService careerProgressionService,
+                             @Qualifier("captainsLogCareerProgressionService") CareerProgressionService careerProgressionService,
                              DifficultyScalingService difficultyScalingService,
                              InjuryService injuryService,
                              EquipmentService equipmentService,

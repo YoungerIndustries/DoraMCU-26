@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.hex;
-
 /**
  * Types of starting facilities that can be built on a home planet.
  * <p>

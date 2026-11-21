@@ -1,7 +1,8 @@
 package com.yisy.modules.doramcu.corporation.service;
+import com.yisy.modules.doramcu.model.players.Player;
 import org.springframework.stereotype.Service;
 
-import com.yisy.modules.doramcu.dto.GameEvent;
+import com.yisy.modules.doramcu.dto.session.GameEvent;
 import com.yisy.modules.doramcu.corporation.model.CorporateContract;
 import com.yisy.modules.doramcu.corporation.model.CorporateHiring;
 import com.yisy.modules.doramcu.service.session.GameSessionService;

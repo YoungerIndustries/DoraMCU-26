@@ -5,6 +5,7 @@ import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.hex.Galaxy;
 import com.yisy.modules.doramcu.hex.GalaxyGenerationConfig;
 import com.yisy.modules.doramcu.service.game.LoreGroupEmpireService;
+import com.yisy.modules.doramcu.service.game.LoreGroupEmpireService.LoreGroup;
 import com.yisy.modules.doramcu.traveller.service.TravellerMonsterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.event;
+import com.yisy.modules.doramcu.model.players.Player;
 
 /**
  * Enumerates all galaxy lifecycle event types.

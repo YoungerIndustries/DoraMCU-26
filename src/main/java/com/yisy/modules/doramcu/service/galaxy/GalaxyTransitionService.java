@@ -1,17 +1,19 @@
 package com.yisy.modules.doramcu.service.galaxy;
-import org.springframework.stereotype.Service;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.earth2026.model.Earth2026Character;
 import com.yisy.modules.doramcu.earth2026.service.Earth2026Service;
-import com.yisy.modules.doramcu.gateway.PluginGateway;
+import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.gateway.PluginDescriptor;
+import com.yisy.modules.doramcu.gateway.PluginGateway;
 import com.yisy.modules.doramcu.hex.GalaxyFactory;
-import com.yisy.modules.doramcu.model.misc.CharacterType;
 import com.yisy.modules.doramcu.model.misc.CharacterRole;
+import com.yisy.modules.doramcu.model.misc.CharacterType;
+import com.yisy.modules.doramcu.model.PlayerCharacterRegistry;
 import com.yisy.modules.doramcu.repository.players.PlayerCharacterRegistryRepository;
 import com.yisy.modules.doramcu.repository.players.PlayerRepository;
 import com.yisy.modules.doramcu.repository.user.UserRepository;
-import com.yisy.modules.doramcu.gamecore.GameType;
+import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;

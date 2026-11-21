@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.hex;
-
 /**
  * Predefined galaxy templates that provide starting configurations for galaxy generation.
  * <p>

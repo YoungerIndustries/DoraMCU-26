@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.hex;
-
 /**
  * Priority levels for incremental galaxy sector generation.
  * <p>

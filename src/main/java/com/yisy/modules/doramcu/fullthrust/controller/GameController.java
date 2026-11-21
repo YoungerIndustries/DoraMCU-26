@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.fullthrust.controller;
-
 import com.yisy.modules.doramcu.fullthrust.entity.BattleRecordEntity;
 import com.yisy.modules.doramcu.fullthrust.entity.PlayerAccountEntity;
 import com.yisy.modules.doramcu.fullthrust.handler.GameWebSocketHandler;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 @RestController("gameController_fullthrust_controller_GameController")
-    @RestController
 @RequestMapping("/api/game")
 public class GameController {
 

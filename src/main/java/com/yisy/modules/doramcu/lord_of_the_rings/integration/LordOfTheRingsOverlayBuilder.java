@@ -5,6 +5,7 @@ import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.hex.Galaxy;
 import com.yisy.modules.doramcu.hex.GalaxyGenerationConfig;
 import com.yisy.modules.doramcu.service.game.LoreGroupEmpireService;
+import com.yisy.modules.doramcu.service.game.LoreGroupEmpireService.LoreGroup;
 import com.yisy.modules.doramcu.lord_of_the_rings.model.Faction;
 import com.yisy.modules.doramcu.lord_of_the_rings.model.Lore;
 import com.yisy.modules.doramcu.lord_of_the_rings.service.LordOfTheRingsService;

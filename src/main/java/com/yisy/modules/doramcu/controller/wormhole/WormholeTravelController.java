@@ -1,4 +1,6 @@
 package com.yisy.modules.doramcu.controller.wormhole;
+import com.yisy.modules.doramcu.model.players.Player;
+import com.yisy.modules.doramcu.model.user.User;
 import com.yisy.modules.doramcu.dto.wormhole.WormholeTravelRequest;
 import com.yisy.modules.doramcu.dto.wormhole.WormholeTravelResponse;
 import com.yisy.modules.doramcu.repository.user.UserRepository;

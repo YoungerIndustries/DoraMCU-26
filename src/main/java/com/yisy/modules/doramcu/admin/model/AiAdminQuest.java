@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.admin.model;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,5 +1,16 @@
 package com.yisy.modules.doramcu.sfb.service;
+import com.yisy.modules.doramcu.sfb.model.SfbCharacterAssignment;
+import com.yisy.modules.doramcu.sfb.model.SfbCrewStationType;
+import com.yisy.modules.doramcu.sfb.model.SfbEnergyAllocation;
+import com.yisy.modules.doramcu.sfb.model.SfbShield;
+import com.yisy.modules.doramcu.sfb.model.SfbEvent;
+import com.yisy.modules.doramcu.sfb.model.SfbSSD;
+import com.yisy.modules.doramcu.model.players.Player;
 
+import com.yisy.modules.doramcu.sfb.model.SfbBattleOutcome;
+import com.yisy.modules.doramcu.sfb.model.SfbScenario;
+import com.yisy.modules.doramcu.sfb.model.SfbShip;
+import com.yisy.modules.doramcu.sfb.model.SfbWeaponBank;
 import com.yisy.modules.doramcu.util.DiceUtil;
 
 import java.util.*;
@@ -142,8 +153,9 @@ public class SfbCombatEngine {
             SfbCharacterAssignment admiral = scenario.getAdmiralAssignment(side);
             if (admiral != null && admiral.getAiCharacterId() != null) {
                 try {
+                    Long aiCharId = Long.parseLong(admiral.getAiCharacterId());
                     experienceService.recordBattleExperience(
-                            admiral.getAiCharacterId(),
+                            aiCharId,
                             "SFB",
                             "Space Battle",
                             outcomes[side],

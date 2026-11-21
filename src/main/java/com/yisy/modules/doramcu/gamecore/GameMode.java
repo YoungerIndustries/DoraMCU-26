@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.gamecore;
+import com.yisy.modules.doramcu.model.players.Player;
 
 /**
  * Represents the different game modes that can be combined when creating a new game/galaxy.

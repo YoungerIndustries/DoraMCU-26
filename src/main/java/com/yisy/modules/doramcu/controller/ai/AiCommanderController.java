@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.controller.ai;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.eve.model.AiCommanderExperience;
 import com.yisy.modules.doramcu.eve.model.AiCommanderHiring;

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 /**
  * JPA entity representing a nebula in a solar system.
  */
+@Entity
+@Table(name = "nebulae")
 public class Nebula {
 
     @Id

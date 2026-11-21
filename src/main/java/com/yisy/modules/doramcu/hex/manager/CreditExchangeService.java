@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.hex.manager;
-import org.springframework.stereotype.Service;
-
+import com.yisy.modules.doramcu.hex.RefinedResourceType;
+import com.yisy.modules.doramcu.hex.ResourcePipelineManager;
+import com.yisy.modules.doramcu.hex.ResourceStorage;
 import com.yisy.modules.doramcu.traveller.Commodity;
 import org.springframework.stereotype.Service;
 

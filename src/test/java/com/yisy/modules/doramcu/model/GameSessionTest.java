@@ -1,7 +1,7 @@
 package com.yisy.modules.doramcu.model;
 
 import com.yisy.modules.doramcu.hex.Game;
-import com.yisy.modules.doramcu.model.GameSession;
+import com.yisy.modules.doramcu.model.session.GameSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

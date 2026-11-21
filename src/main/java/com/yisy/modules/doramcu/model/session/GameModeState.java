@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
  * state after a server restart instead of reinitializing from scratch.
  * </p>
  */
+@Entity
+@Table(name = "game_mode_states")
 public class GameModeState {
 
     @Id

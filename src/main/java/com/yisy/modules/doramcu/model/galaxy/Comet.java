@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 /**
  * JPA entity representing a comet in a solar system.
  */
+@Entity
+@Table(name = "comets")
 public class Comet {
 
     @Id

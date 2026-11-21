@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 /**
  * JPA entity representing a moon orbiting a planet.
  */
+@Entity
+@Table(name = "moons")
 public class Moon {
 
     @Id

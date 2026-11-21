@@ -1,4 +1,6 @@
 package com.yisy.modules.doramcu.sfb.service;
+import com.yisy.modules.doramcu.sfb.model.SfbCharacterAssignment;
+import com.yisy.modules.doramcu.sfb.model.SfbEnergyAllocation;
 
 import org.springframework.stereotype.Service;
 import com.yisy.modules.doramcu.sfb.model.SfbEnergyAllocation;

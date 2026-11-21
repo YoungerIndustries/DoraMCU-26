@@ -1,7 +1,23 @@
 package com.yisy.modules.doramcu.ai;
-
+import com.yisy.modules.doramcu.hex.Galaxy;
+import com.yisy.modules.doramcu.hex.GalaxyBuildService;
+import com.yisy.modules.doramcu.hex.Hex3D;
 import com.yisy.modules.doramcu.hex.Planet;
 import com.yisy.modules.doramcu.hex.Player;
+import com.yisy.modules.doramcu.hex.ShipType;
+import com.yisy.modules.doramcu.hex.SubSector;
+import com.yisy.modules.doramcu.hex.BuildObjectType;
+import com.yisy.modules.doramcu.hex.BuildRequest;
+import com.yisy.modules.doramcu.hex.BuildResult;
+import com.yisy.modules.doramcu.hex.GalaxyBuildPriority;
+import com.yisy.modules.doramcu.hex.planet.PlanetContractType;
+import com.yisy.modules.doramcu.hex.GalaxyGenerationConfig;
+import com.yisy.modules.doramcu.hex.planet.DefaultPlanetSurfaceBuilder;
+import com.yisy.modules.doramcu.hex.planet.EmpireReputationTracker;
+import com.yisy.modules.doramcu.hex.planet.EmpireTradePolicy;
+import com.yisy.modules.doramcu.hex.planet.PlanetContract;
+import com.yisy.modules.doramcu.hex.planet.PlanetSurfacePersistenceService;
+import com.yisy.modules.doramcu.hex.planet.TransportCorporation;
 import java.util.*;
 import java.util.stream.Collectors;
 

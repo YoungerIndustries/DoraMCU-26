@@ -1,10 +1,4 @@
 package com.yisy.modules.doramcu.model.galaxy;
-import com.yisy.modules.doramcu.hex.Hex;
-import com.yisy.modules.doramcu.hex.dungeon.Dungeon;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-import com.yisy.modules.doramcu.model.misc.Planet;
-
-import org.springframework.stereotype.Component;
 
 import jakarta.persistence.*;
 
@@ -12,13 +6,9 @@ import java.time.LocalDateTime;
 
 /**
  * JPA entity that persists a settlement on a planet surface.
- * <p>
- * The Galaxy Overlord saves every settlement so it can be recreated from the
- * database instead of being randomly generated again.
- * </p>
  */
-@Component("planetSettlementEntity_1")
-    @Component
+@Entity
+@Table(name = "planet_settlements")
 public class PlanetSettlementEntity {
 
     @Id

@@ -1,6 +1,9 @@
 package com.yisy.modules.doramcu.service.naval;
+import com.yisy.modules.doramcu.hex.planet.PlanetContract;
+import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.hex.Ship;
 import com.yisy.modules.doramcu.service.ship_design.ShipDesignService;
+import com.yisy.modules.doramcu.traveller.ShipDesign;
 
 
 import com.yisy.modules.doramcu.dto.naval.NavalRequest;

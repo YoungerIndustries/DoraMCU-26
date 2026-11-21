@@ -39,7 +39,7 @@ public interface PsionicsService {
     /**
      * A psionic power.
      */
-    class PsionicPower {
+    static class PsionicPower {
         private Long id;
         private String name;
         private String discipline;
@@ -70,7 +70,7 @@ public interface PsionicsService {
     /**
      * Result of using a psionic power.
      */
-    class PsionicPowerResult {
+    static class PsionicPowerResult {
         private final Long powerId;
         private final String powerName;
         private final boolean success;

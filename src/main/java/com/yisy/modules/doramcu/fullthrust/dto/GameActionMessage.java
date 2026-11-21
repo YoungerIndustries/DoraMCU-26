@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.fullthrust.dto;
-
 /**
  * DTO for WebSocket messages sent from client to server.
  */

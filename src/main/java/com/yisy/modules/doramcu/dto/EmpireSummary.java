@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.dto;
+import com.yisy.modules.doramcu.model.players.Player;
 
 /**
  * Carries empire-specific details for the logged-in player's empire.

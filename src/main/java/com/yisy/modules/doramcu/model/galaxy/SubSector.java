@@ -8,6 +8,8 @@ import jakarta.persistence.*;
  * and stores a persistent name.
  * </p>
  */
+@Entity
+@Table(name = "subsectors")
 public class SubSector {
 
     @Id

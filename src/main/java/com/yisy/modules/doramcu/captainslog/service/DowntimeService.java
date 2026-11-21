@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.service;
+import com.yisy.modules.doramcu.model.players.Player;
 import org.springframework.stereotype.Service;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
@@ -42,7 +43,7 @@ public class DowntimeService {
     private final CaptainLogValueRepository valueRepository;
     private final ProbabilityMatrixService probabilityMatrixService;
     private final InjuryService injuryService;
-    @Qualifier("captainsLogCareerProgressionService_2")
+    @Qualifier("captainsLogCareerProgressionService")
     private final CareerProgressionService careerProgressionService;
 
     public DowntimeService(CaptainLogCharacterRepository characterRepository,
@@ -50,7 +51,7 @@ public class DowntimeService {
                            CaptainLogValueRepository valueRepository,
                            ProbabilityMatrixService probabilityMatrixService,
                            InjuryService injuryService,
-                           @Qualifier("captainsLogCareerProgressionService_2") CareerProgressionService careerProgressionService) {
+                           @Qualifier("captainsLogCareerProgressionService") CareerProgressionService careerProgressionService) {
         this.characterRepository = characterRepository;
         this.starshipRepository = starshipRepository;
         this.valueRepository = valueRepository;

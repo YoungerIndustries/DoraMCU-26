@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.traveller;
-
 import com.yisy.modules.doramcu.hex.Player;
 
 import java.util.*;

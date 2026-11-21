@@ -2,6 +2,19 @@ package com.yisy.modules.doramcu.service.galaxy;
 import com.yisy.modules.doramcu.gamecore.GameType;
 import com.yisy.modules.doramcu.hex.MineralQuality;
 import com.yisy.modules.doramcu.hex.PlanetSize;
+import com.yisy.modules.doramcu.model.galaxy.Asteroid;
+import com.yisy.modules.doramcu.model.galaxy.AsteroidBelt;
+import com.yisy.modules.doramcu.model.galaxy.BlackHole;
+import com.yisy.modules.doramcu.model.galaxy.Comet;
+import com.yisy.modules.doramcu.model.galaxy.Galaxy;
+import com.yisy.modules.doramcu.model.galaxy.GasGiant;
+import com.yisy.modules.doramcu.model.galaxy.Hyperlane;
+import com.yisy.modules.doramcu.model.galaxy.Moon;
+import com.yisy.modules.doramcu.model.galaxy.Nebula;
+import com.yisy.modules.doramcu.model.galaxy.Sector;
+import com.yisy.modules.doramcu.model.galaxy.SolarSystem;
+import com.yisy.modules.doramcu.model.galaxy.SpaceStation;
+import com.yisy.modules.doramcu.model.galaxy.Star;
 import com.yisy.modules.doramcu.repository.galaxy.AsteroidBeltRepository;
 import com.yisy.modules.doramcu.repository.galaxy.AsteroidRepository;
 import com.yisy.modules.doramcu.repository.galaxy.BlackHoleRepository;
@@ -830,7 +843,7 @@ public class GalaxyBackupService {
                 Object os = md.get("outpostSlots");
                 if (os instanceof Number) moon.setOutpostSlots(((Number) os).intValue());
                 String sd = (String) md.get("strategicDeposit");
-                if (sd != null) moon.setStrategicDeposit(com.yisy.modules.doramcu.model.galaxy.Galaxy.StrategicResource.valueOf(sd));
+                if (sd != null) moon.setStrategicDeposit(com.yisy.modules.doramcu.model.galaxy.StrategicResource.valueOf(sd));
                 moon.setSolarSystem(system);
                 system.getMoons().add(moon);
             }

@@ -3,6 +3,12 @@ import com.yisy.modules.doramcu.hex.Ship;
 import com.yisy.modules.doramcu.techlevel.TechLevel;
 
 import com.yisy.modules.doramcu.service.battle.HighGuardService;
+import com.yisy.modules.doramcu.traveller.HighGuardWeapon;
+import com.yisy.modules.doramcu.traveller.HighGuardArmor;
+import com.yisy.modules.doramcu.traveller.HighGuardRangeBand;
+import com.yisy.modules.doramcu.traveller.HighGuardShipCombat;
+import com.yisy.modules.doramcu.traveller.HighGuardShipDesign;
+import com.yisy.modules.doramcu.traveller.ShipTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

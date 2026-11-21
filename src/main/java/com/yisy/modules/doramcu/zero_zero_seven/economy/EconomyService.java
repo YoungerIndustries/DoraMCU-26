@@ -17,7 +17,6 @@ import java.util.List;
  * </p>
  */
 @Service("economyService_zero_zero_seven_economy_EconomyService")
-    @Service
 public class EconomyService {
 
     private final BondEmpireRepository empireRepository;

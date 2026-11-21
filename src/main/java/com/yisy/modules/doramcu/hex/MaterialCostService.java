@@ -60,7 +60,7 @@ public class MaterialCostService {
      * @return list of raw resource materials
      */
     public List<MaterialCost> getAllRawResources() {
-        return materialCostRepository.findByMaterialType(MaterialCostType.RAW_RESOURCE);
+        return materialCostRepository.findByMaterialType(MaterialCost.MaterialCostType.RAW_RESOURCE);
     }
 
     /**
@@ -69,7 +69,7 @@ public class MaterialCostService {
      * @return list of refined resource materials
      */
     public List<MaterialCost> getAllRefinedResources() {
-        return materialCostRepository.findByMaterialType(MaterialCostType.REFINED_RESOURCE);
+        return materialCostRepository.findByMaterialType(MaterialCost.MaterialCostType.REFINED_RESOURCE);
     }
 
     /**
@@ -78,7 +78,7 @@ public class MaterialCostService {
      * @return list of construction module materials
      */
     public List<MaterialCost> getAllConstructionModules() {
-        return materialCostRepository.findByMaterialType(MaterialCostType.CONSTRUCTION_MODULE);
+        return materialCostRepository.findByMaterialType(MaterialCost.MaterialCostType.CONSTRUCTION_MODULE);
     }
 
     /**
@@ -87,7 +87,7 @@ public class MaterialCostService {
      * @param materialType the material type
      * @return list of materials sorted by value
      */
-    public List<MaterialCost> getAllByTypeSortedByValue(MaterialCostType materialType) {
+    public List<MaterialCost> getAllByTypeSortedByValue(MaterialCost.MaterialCostType materialType) {
         return materialCostRepository.findByMaterialTypeOrderByBaseValueCreditsDesc(materialType);
     }
 
@@ -152,7 +152,7 @@ public class MaterialCostService {
         MaterialCost material = opt.get();
 
         // Raw resources have no upstream dependencies
-        if (material.getMaterialType() == MaterialCostType.RAW_RESOURCE) {
+        if (material.getMaterialType() == MaterialCost.MaterialCostType.RAW_RESOURCE) {
             return material.getBaseValueCredits();
         }
 
@@ -169,10 +169,10 @@ public class MaterialCostService {
         }
 
         // Apply markup based on material type
-        if (material.getMaterialType() == MaterialCostType.REFINED_RESOURCE) {
+        if (material.getMaterialType() == MaterialCost.MaterialCostType.REFINED_RESOURCE) {
             // 1.3x processing markup for refined resources
             totalCost = totalCost.multiply(new BigDecimal("1.3"));
-        } else if (material.getMaterialType() == MaterialCostType.CONSTRUCTION_MODULE) {
+        } else if (material.getMaterialType() == MaterialCost.MaterialCostType.CONSTRUCTION_MODULE) {
             // 1.5x assembly markup for construction modules
             totalCost = totalCost.multiply(new BigDecimal("1.5"));
         }

@@ -49,7 +49,7 @@ public class TravellerCharacterMapper implements CharacterMapper<TravellerCharac
         abilities.put("CHA", traveller.getAbility(AbilityScore.APP));
 
         List<UnifiedCharacter.SkillEntry> skills = traveller.getSkills().stream()
-                .map(skill -> new SimpleSkillEntry(skill.name(), 1))
+                .map(skill -> new SimpleSkillEntry(skill.getName(), 1))
                 .collect(Collectors.toList());
 
         Map<String, Object> metadata = new HashMap<>();

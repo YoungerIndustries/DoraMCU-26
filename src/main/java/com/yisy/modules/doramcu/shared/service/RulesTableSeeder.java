@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.shared.service;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.shared.model.GameSystem;
 import com.yisy.modules.doramcu.shared.model.RulesTable;

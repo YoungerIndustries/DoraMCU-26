@@ -1,9 +1,10 @@
 package com.yisy.modules.doramcu.controller;
 
+import com.yisy.modules.doramcu.controller.ai.AiCommanderController;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.eve.model.AiCommanderExperience;
 import com.yisy.modules.doramcu.eve.model.AiCommanderHiring;
-import com.yisy.modules.doramcu.service.AiCommanderExperienceService;
+import com.yisy.modules.doramcu.service.ai.AiCommanderExperienceService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

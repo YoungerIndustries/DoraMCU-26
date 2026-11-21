@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.fps.core;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.fps.core.model.FpsMap;
 import com.yisy.modules.doramcu.fps.core.model.FpsMatch;

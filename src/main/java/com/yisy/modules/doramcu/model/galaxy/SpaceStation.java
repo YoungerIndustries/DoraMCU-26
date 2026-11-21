@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 /**
  * JPA entity representing a space station in a solar system.
  */
+@Entity
+@Table(name = "space_stations")
 public class SpaceStation {
 
     @Id

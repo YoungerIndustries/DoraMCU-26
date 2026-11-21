@@ -1,129 +1,89 @@
 package com.yisy.modules.doramcu.traveller;
 
 /**
- * Skills available to Traveller characters.
+ * Represents a character skill in the Traveller system.
  */
-public enum Skill {
-    // Combat skills
-    MELEE(SkillCategory.COMBAT),
-    FIREARMS(SkillCategory.COMBAT),
-    GUNNERY(SkillCategory.COMBAT),
-    SKIRMISH(SkillCategory.COMBAT),
-    GUERRILLA(SkillCategory.COMBAT),
-    MISSILE(SkillCategory.COMBAT),
-    LASER(SkillCategory.COMBAT),
+public class Skill {
 
-    // Leadership skills
-    LEADERSHIP(SkillCategory.LEADERSHIP),
-    TACTICS(SkillCategory.LEADERSHIP),
-
-    // Technical skills
-    COMPUTERS(SkillCategory.TECHNICAL),
-    ELECTRONICS(SkillCategory.TECHNICAL),
-    CARMECH(SkillCategory.TECHNICAL),
-    ELEMECH(SkillCategory.TECHNICAL),
-    FORGERY(SkillCategory.TECHNICAL),
-
-    // Navigation skills
-    NAVIGATION(SkillCategory.NAVIGATION),
-    ASTRONOMY(SkillCategory.NAVIGATION),
-    STARSHIPS(SkillCategory.NAVIGATION),
-    GRAVITIC(SkillCategory.NAVIGATION),
-    PILOT_ASTRO(SkillCategory.NAVIGATION),
-    PILOT_FIGHTER(SkillCategory.NAVIGATION),
-    PILOT_HEAVY(SkillCategory.NAVIGATION),
-    PILOT_LIGHT(SkillCategory.NAVIGATION),
-
-    // Scientific skills
-    BIOLOGY(SkillCategory.SCIENTIFIC),
-    CHEMISTRY(SkillCategory.SCIENTIFIC),
-    GEOLOGY(SkillCategory.SCIENTIFIC),
-    MATHEMATICS(SkillCategory.SCIENTIFIC),
-    PHYSICS(SkillCategory.SCIENTIFIC),
-    MEDICAL(SkillCategory.SCIENTIFIC),
-    MEDIC(SkillCategory.SCIENTIFIC),
-
-    // Survival skills
-    SURVIVAL(SkillCategory.SURVIVAL),
-    JOCKEY(SkillCategory.SURVIVAL),
-    STOWAGE(SkillCategory.SURVIVAL),
-    ZERO_G(SkillCategory.SURVIVAL),
-    ACROBATICS(SkillCategory.SURVIVAL),
-    ATHLETICS(SkillCategory.SURVIVAL),
-
-    // Stealth skills
-    STEALTH(SkillCategory.STEALTH),
-    PERCEPTION(SkillCategory.STEALTH),
-
-    // Social skills
-    LANGUAGE(SkillCategory.SOCIAL),
-    PSYCHOLOGY(SkillCategory.SOCIAL),
-    GAMBLE(SkillCategory.SOCIAL),
-    STREETWISE(SkillCategory.SOCIAL),
-    ADMINISTRATION(SkillCategory.SOCIAL),
-    APPRAISAL(SkillCategory.SOCIAL),
-    CRIMINAL(SkillCategory.SOCIAL),
-    DIPLOMACY(SkillCategory.SOCIAL),
-    ENTREPRENEUR(SkillCategory.SOCIAL),
-    INTIMIDATION(SkillCategory.SOCIAL),
-    PERFORMANCE(SkillCategory.SOCIAL),
-    SCAM(SkillCategory.SOCIAL),
-    ANIMAL_HANDLING(SkillCategory.SOCIAL),
-    ARTISAN(SkillCategory.SOCIAL),
-    SOCIOLOGY(SkillCategory.SOCIAL);
-
-    private final SkillCategory category;
-
-    Skill(SkillCategory category) {
-        this.category = category;
-    }
-
-    /**
-     * Returns the category of this skill.
-     *
-     * @return the skill category
-     */
-    public SkillCategory getCategory() {
-        return category;
-    }
-
-    /**
-     * Returns the display name of this skill (lowercase enum name converted to readable form).
-     *
-     * @return the display name
-     */
-    public String getName() {
-        return name().replace('_', ' ').toLowerCase();
-    }
-
-    /**
-     * Returns a short description of this skill.
-     *
-     * @return the description
-     */
-    public String getDescription() {
-        return getName() + " (" + category.name().toLowerCase() + ")";
-    }
-
-    /**
-     * Categories for grouping skills.
-     */
     public enum SkillCategory {
-        /** Combat and weapons skills */
-        COMBAT,
-        /** Leadership and tactics skills */
-        LEADERSHIP,
-        /** Technical and engineering skills */
-        TECHNICAL,
-        /** Navigation and piloting skills */
-        NAVIGATION,
-        /** Scientific and medical skills */
-        SCIENTIFIC,
-        /** Survival and physical skills */
-        SURVIVAL,
-        /** Stealth and perception skills */
-        STEALTH,
-        /** Social and interpersonal skills */
-        SOCIAL
+        COMBAT, LEADERSHIP, TECHNICAL, SCIENTIFIC, SURVIVAL, SOCIAL, OTHER,
+        NAVIGATION, STEALTH
+    }
+
+    public enum SkillType {
+        CAR, COMPUTERS, ELECTRONICS, GRAV, GUN_LIGHT, GUN_HEAVY,
+        ADMINISTRATION, EDUCATION, LAW, PSYCHOLOGY, SCIENCE, STREETWISE,
+        ANIMAL, BIOLOGY, MEDIC, SURVIVAL, ZERO_G,
+        ARMOR, BOAT, JUMP, PILOT_AIRSCREW, PILOT_FIGHTER, PILOT_HELIX, PILOT_JET, PILOT_ROTORCRAFT, PILOT_STARSHIP,
+        ACROBATICS, ATHLETICS, CLOSE_COMBAT, DANCING, DRIVING, GAMBLE, HANDBALL,
+        BARGAIN, BRIBE, CHARM, DECEPTION, INTIMIDATION, SINGING,
+        CODE_BREAKING, CRYPTOGRAPHY, DETECTIVE, FORENSICS, HACKER, INVESTIGATION,
+        ARTIST, MUSICIAN, PERFORMANCE,
+        BIG_GUN, BIG_LASER, MISSILE, ROCKET,
+        ADMIN, EDUCATION_SKILL, LAW_SKILL, PSYCHOLOGY_SKILL,
+        NONE
+    }
+
+    private SkillType type;
+    private int level;
+
+    public Skill() {
+        this.type = SkillType.NONE;
+        this.level = 0;
+    }
+
+    public Skill(SkillType type, int level) {
+        this.type = type;
+        this.level = level;
+    }
+
+    public SkillType getType() {
+        return type;
+    }
+
+    public void setType(SkillType type) {
+        this.type = type;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public String getName() {
+        return type.name().replace('_', ' ');
+    }
+
+    public String getDescription() {
+        return getName() + " skill (level " + level + ")";
+    }
+
+    public SkillCategory getCategory() {
+        return SkillCategory.OTHER;
+    }
+
+    // Static constants for special contract skills
+    public static final Skill ENTREPRENEUR = new Skill(SkillType.STREETWISE, 1);
+    public static final Skill DIPLOMACY = new Skill(SkillType.PSYCHOLOGY, 1);
+    public static final Skill ADMINISTRATION = new Skill(SkillType.ADMINISTRATION, 1);
+    public static final Skill FIREARMS = new Skill(SkillType.GUN_LIGHT, 1);
+    public static final Skill MELEE = new Skill(SkillType.CLOSE_COMBAT, 1);
+    public static final Skill NAVIGATION = new Skill(SkillType.PILOT_STARSHIP, 1);
+    public static final Skill STEALTH = new Skill(SkillType.STREETWISE, 1);
+    public static final Skill SURVIVAL = new Skill(SkillType.SURVIVAL, 1);
+    public static final Skill LEADERSHIP = new Skill(SkillType.ADMINISTRATION, 1);
+    public static final Skill TACTICS = new Skill(SkillType.GUN_HEAVY, 1);
+    public static final Skill COMPUTERS = new Skill(SkillType.COMPUTERS, 1);
+    public static final Skill ELECTRONICS = new Skill(SkillType.ELECTRONICS, 1);
+    public static final Skill ASTRONOMY = new Skill(SkillType.SCIENCE, 1);
+    public static final Skill LANGUAGE = new Skill(SkillType.EDUCATION, 1);
+    public static final Skill PSYCHOLOGY = new Skill(SkillType.PSYCHOLOGY, 1);
+
+    @Override
+    public String toString() {
+        return type + " " + level;
     }
 }

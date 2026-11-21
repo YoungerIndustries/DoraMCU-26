@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.config;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.controller.session.GameSessionWebSocketHandler;
 import com.yisy.modules.doramcu.service.chat.ChatService;

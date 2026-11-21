@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.corporation.repository;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.corporation.model.CorporateHiring;
 import com.yisy.modules.doramcu.corporation.model.CorporatePosition;

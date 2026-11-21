@@ -15,6 +15,8 @@ import java.util.List;
  * and stores a persistent name and trade type classification.
  * </p>
  */
+@Entity
+@Table(name = "sectors")
 public class Sector {
 
     @Id

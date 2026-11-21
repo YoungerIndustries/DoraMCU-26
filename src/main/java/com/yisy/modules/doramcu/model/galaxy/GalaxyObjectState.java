@@ -30,6 +30,7 @@ import java.util.Map;
  * </ul>
  * </p>
  */
+@Entity
 @Table(name = "galaxy_object_states", indexes = {
     @Index(name = "idx_galaxy_obj_galaxy", columnList = "galaxy_name"),
     @Index(name = "idx_galaxy_obj_type", columnList = "object_type"),

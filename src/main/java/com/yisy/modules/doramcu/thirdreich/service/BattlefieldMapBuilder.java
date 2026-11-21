@@ -1,8 +1,15 @@
 package com.yisy.modules.doramcu.thirdreich.service;
-import org.springframework.stereotype.Service;
 
+import com.yisy.modules.doramcu.earth2026.model.BiosphereContext;
+import com.yisy.modules.doramcu.earth2026.model.Earth2026BattleEnvironment;
+import com.yisy.modules.doramcu.earth2026.model.TerrainElevationMap;
 import com.yisy.modules.doramcu.earth2026.service.BiosphereService;
 import com.yisy.modules.doramcu.earth2026.service.PlanetService;
+import com.yisy.modules.doramcu.thirdreich.domain.BattlefieldMap;
+import com.yisy.modules.doramcu.thirdreich.domain.ThirdReichGroundUnit;
+import com.yisy.modules.doramcu.thirdreich.domain.ThirdReichUnitType;
+import com.yisy.modules.doramcu.thirdreich.domain.TerrainType;
+import com.yisy.modules.doramcu.thirdreich.domain.UnitPlacement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.model.players;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.model.misc.CorporateRole;
 import com.yisy.modules.doramcu.model.misc.PromoCode;
 import com.yisy.modules.doramcu.model.user.User;
@@ -24,6 +25,8 @@ import jakarta.persistence.UniqueConstraint;
  * attributes (name, government type, ethos) for gameplay.
  * </p>
  */
+@Entity
+@Table(name = "players", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class Player {
 
     @Id

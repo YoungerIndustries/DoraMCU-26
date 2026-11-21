@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.fps.core.model;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import java.time.Instant;
 import java.util.ArrayList;

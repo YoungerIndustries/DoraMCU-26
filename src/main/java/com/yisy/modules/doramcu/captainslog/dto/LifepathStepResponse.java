@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.captainslog.dto;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.captainslog.model.CaptainLogCharacter;
 

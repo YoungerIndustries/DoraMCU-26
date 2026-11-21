@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.repository.ai;
+import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.corporation.model.AiAssistantAction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;

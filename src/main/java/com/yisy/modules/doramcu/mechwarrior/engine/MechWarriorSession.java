@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.mechwarrior.engine;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

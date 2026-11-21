@@ -1,7 +1,7 @@
 package com.yisy.modules.doramcu.model.galaxy;
-import com.yisy.modules.doramcu.hex.Hex;
-import com.yisy.modules.doramcu.model.galaxy.Galaxy;
-import com.yisy.modules.doramcu.model.misc.Planet;
+
+
+
 
 
 import jakarta.persistence.*;
@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
  * database instead of being randomly deployed again.
  * </p>
  */
+@Entity
+@Table(name = "planet_vehicles")
 public class PlanetVehicleEntity {
 
     @Id

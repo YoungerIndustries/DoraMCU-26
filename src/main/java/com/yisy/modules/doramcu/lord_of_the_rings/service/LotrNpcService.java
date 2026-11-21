@@ -1,4 +1,5 @@
 package com.yisy.modules.doramcu.lord_of_the_rings.service;
+import com.yisy.modules.doramcu.model.players.Player;
 
 import com.yisy.modules.doramcu.lord_of_the_rings.model.LotrNpc;
 import com.yisy.modules.doramcu.lord_of_the_rings.repository.LotrNpcRepository;

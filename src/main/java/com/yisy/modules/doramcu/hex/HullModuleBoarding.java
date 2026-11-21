@@ -1,5 +1,7 @@
 package com.yisy.modules.doramcu.hex;
 
+import com.yisy.modules.doramcu.traveller.BoardingAction;
+import com.yisy.modules.doramcu.traveller.MarineUnit;
 import com.yisy.modules.doramcu.unified.UnifiedShip;
 import com.yisy.modules.doramcu.util.DiceUtil;
 
