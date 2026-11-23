@@ -84,7 +84,12 @@ backups/
 unity-client/Library/
 unity-client/Temp/
 unity-client/obj/
+unity-client/DISABLED/
 *.unitypackage
+
+### Godot ###
+godot-client/.godot/
+*.uid
 
 ### DL models (large files) ###
 dl-models/*.zip
