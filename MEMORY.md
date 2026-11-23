@@ -10,7 +10,7 @@
 
 ## Current State
 
-- **Last Updated:** 2026-11-23 14:12
+- **Last Updated:** 2026-11-23 14:14
 - **Current Version:** v0.9.0 (Beta — 3D Galaxy Viewer & Browser-First Landing) **✅ DEPLOYED**
   - **Server Status:**
     - Pi Brain Stem: ✅ v0.9.0 at 192.168.1.111:8080 — server running. Priority dispatch system active.
@@ -33,7 +33,7 @@
 - **Database:** ✅ H2 file-based on all platforms. `snapshot_count` column added to `/opt/doramcu/data/doramcu.mv.db`.
 - **Flyway:** ✅ Enabled with baseline approach (baseline-version=999) — manages future migrations only
 - **Security:** ✅ Secrets moved to environment variables (JWT_SECRET, DB_PASSWORD)
-- **Git Status:** ✅ All changes pushed to GitHub (commit fc73ed0). Repository cleaned: 5 commits — .gitignore update, 65 legacy file deletions, 109 modified files, 135 new files, MEMORY.md update.
+- **Git Status:** ✅ All changes pushed to GitHub (commit 3ca4fe6). 76 files — frontend updates, priority dispatch system, database migrations, new resource files (admin dashboard, PWA, test files), and cleanup.
 - **Active Blockers:** ✅ None — all blockers resolved. Server shutdown issue fixed by blocking main thread in server mode.
 - **Architecture:** ✅ Circular dependencies resolved — `spring.main.allow-circular-references=true` removed from all profiles.
 - **Hot-Swap System:** ✅ Fully implemented — 8 infrastructure classes, 7 admin REST endpoints, file watching, health monitoring, 72 unit tests.
@@ -99,6 +99,21 @@
 ---
 
 ## Session Log
+
+### 2026-11-23 — Commit and Push All Remaining Changes
+
+**Issue:** User requested all remaining local changes be committed and pushed to GitHub.
+
+**Changes committed (commit 3ca4fe6, 76 files, 25,295 insertions, 117 deletions):**
+- **Frontend (dora-web/):** Updated game-app.js, index.html, main-view.js, config.js; added galaxy-3d-view.js.
+- **Backend (Java):** Work order priority system implementation across AiAdminOrder, AiAdminOrderRepository, AiAdminService, AiAdminDispatchService, GalaxyStartupRegistry, and GalaxyOverseerService.
+- **Database migrations:** V998 (renamed from V110, production_chain_id), V1000 (priority column).
+- **New resource files:** Admin dashboard (HTML + JS), PWA manifest and service worker, client configuration templates, CSS files, static game assets (10 view components), test files (Jest setup).
+- **Cleanup:** Removed obsolete V110 migration file, added deploy helper scripts.
+
+**Verification:** Push succeeded to origin/master (187c060..3ca4fe6).
+
+---
 
 ### 2026-11-23 — Qodana CI Fix: Switch to Community Edition
 
