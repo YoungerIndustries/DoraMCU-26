@@ -49,4 +49,5 @@ projectJDK: "27" #(Applied in CI/CD pipeline)
 #    failOnUnknown: false
 
 #Specify Qodana linter for analysis (Applied in CI/CD pipeline)
-linter: jetbrains/qodana-jvm:2026.3
+# Using the free community edition (no QODANA_TOKEN required)
+linter: jetbrains/qodana-jvm-community:2026.3
