@@ -6,7 +6,7 @@
   "author": "DoraMCU Team",
   "license": "MIT",
   "dependencies": {
-    "electron": "^45.3.2",
+    "electron": "^45.4.1",
     "onnxruntime-node": "^1.17.0"
   },
   "devDependencies": {
