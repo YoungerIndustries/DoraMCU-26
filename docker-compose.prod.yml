@@ -1,0 +1,136 @@
+# =============================================================================
+# DoraMCU Docker Compose — Production Overrides
+# =============================================================================
+# Merge with base: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Changes from base:
+#   - Pre-built images instead of build
+#   - restart: always
+#   - JSON file logging with rotation
+#   - Stricter environment variables (no defaults, JWT enabled)
+#   - App healthcheck
+#   - MySQL backup volume and tuned settings
+#   - Redis increased memory with LRU eviction
+#   - DL named volume instead of bind mount
+# =============================================================================
+
+services:
+  nginx:
+    image: doramcu/web:0.4.0
+    restart: always
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  neuron:
+    image: doramcu/neuron:0.4.0
+    environment:
+      - NEURON_COORDINATOR_URL=http://app:8080
+      - NEURON_GAME_SERVER_URL=http://app:8080
+      - NEURON_SECURITY_JWT_SECRET=${NEURON_SECURITY_JWT_SECRET}
+      - NEURON_SECURITY_JWT_ENABLED=true
+      - NEURON_SECURITY_MODEL_SIGNATURE_ENABLED=true
+      - JVM_XMX=-Xmx512m
+    restart: always
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  app:
+    image: doramcu/app:0.4.0
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,production
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - DL_MODE=rest
+      - JVM_XMX=-Xmx1G
+      - SERVER_FORWARD_HEADERS_STRATEGY=framework
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,metrics,prometheus
+      - LOGGING_LEVEL_ROOT=WARN
+      - LOGGING_LEVEL_COM_YISY_MODULES_DORAMCU=INFO
+    restart: always
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 120s
+      retries: 5
+
+  mysql:
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=doramcu
+      - MYSQL_INNODB_BUFFER_POOL_SIZE=1G
+      - MYSQL_MAX_CONNECTIONS=200
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./backups:/backups
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  dl:
+    volumes:
+      - dl-models:/app/dl-models
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis:
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"

@@ -1,0 +1,33 @@
+[Unit]
+Description=Dora News Network (Proxy + Frontend for News API)
+After=doramcu-server.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/java -Xmx256m -Xms128m -jar /opt/doramcu/news-network/dora-news-network.jar --spring.profiles.active=pi
+WorkingDirectory=/opt/doramcu/news-network
+User=doramcu
+Group=doramcu
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Environment
+Environment=DORA_MCU_SERVER_URL=http://localhost:8080
+
+# Security hardening
+ProtectSystem=full
+ReadWritePaths=/opt/doramcu/news-network
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+# Resource limits for Pi
+MemoryMax=384M
+CPUQuota=25%
+
+[Install]
+WantedBy=multi-user.target

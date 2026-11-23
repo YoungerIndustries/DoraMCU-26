@@ -1,0 +1,112 @@
+# =============================================================================
+# DoraMCU Docker Compose — Raspberry Pi Overrides
+# =============================================================================
+# Merge with base: docker compose -f docker-compose.yml -f docker-compose.pi.yml up -d
+#
+# Changes from base:
+#   - Reduced memory/CPU limits for Pi 5
+#   - ARM64-specific Dockerfile for DL service (CPU-only PyTorch)
+#   - Neuron edge-optimized with Alpine base and reduced JVM memory
+#   - MySQL tuned for low memory (256M buffer pool, 50 connections)
+#   - Redis limited to 128MB with LRU eviction
+#   - Nginx reduced to 128M memory, port 443 removed
+# =============================================================================
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+      args:
+        WEB_ENV: prod
+        WEB_API_URL: http://app:8080
+    ports:
+      - "80:80"
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+
+  neuron:
+    build:
+      context: .
+      dockerfile: Dockerfile.neuron
+      args:
+        BASE_IMAGE: eclipse-temurin:27-jre-alpine
+    environment:
+      - NEURON_COORDINATOR_URL=http://app:8080
+      - NEURON_GAME_SERVER_URL=http://app:8080
+      - NEURON_SECURITY_JWT_SECRET=${NEURON_SECURITY_JWT_SECRET:-}
+      - NEURON_EDGE_FORCED_PROFILE=EDGE
+      - JAVA_OPTS=-Xms128m -Xmx256m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Xss256k -Djava.security.egd=file:/dev/./urandom -Dneuron.edge.auto-optimize=true
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+
+  app:
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.5'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+
+  mysql:
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --innodb-buffer-pool-size=256M
+      --innodb-log-file-size=64M
+      --max-connections=50
+      --thread-cache-size=8
+      --key-buffer-size=16M
+      --sort-buffer-size=256K
+      --read-buffer-size=256K
+      --read-rnd-buffer-size=512K
+      --tmp-table-size=16M
+      --max-heap-table-size=16M
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+
+  dl:
+    build:
+      context: .
+      dockerfile: Dockerfile.dl.arm64
+    environment:
+      - DORA_DL_PORT=8083
+      - DL_MODEL_DIR=/app/dl-models
+      - DL_BLEND_FACTOR=0.5
+      - DL_CPU_ONLY=true
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+
+  redis:
+    command: redis-server --appendonly yes --maxmemory 128mb --maxmemory-policy allkeys-lru
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+        reservations:
+          memory: 128M
+          cpus: '0.1'

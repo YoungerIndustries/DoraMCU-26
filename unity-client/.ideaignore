@@ -1,0 +1,23 @@
+# IntelliJ IDEA ignore file for Unity project
+# This tells IDEA to skip indexing Unity-generated temporary directories
+# that cause thousands of NoSuchFileException errors per session.
+
+# Unity Library - contains PackageCache temp dirs, Bee cache, etc.
+Library/
+
+# Unity Temp - temporary build files
+Temp/
+
+# Unity Obj - compiled object files
+Obj/
+
+# Unity Builds - build output
+Builds/
+Build/
+
+# Unity Logs
+Logs/
+
+# Memory captures
+MemoryCaptures/
+*.memoryprofiler

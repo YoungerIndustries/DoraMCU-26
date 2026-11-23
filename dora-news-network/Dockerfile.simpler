@@ -1,0 +1,13 @@
+# Dora News Network — Simple Docker image
+# Build the JAR locally with Gradle first, then use this Dockerfile.
+#   docker build -f Dockerfile.simpler -t doramcu/news-network:latest .
+# Or from the parent project:
+#   docker build -f dora-news-network/Dockerfile.simpler -t doramcu/news-network:latest dora-news-network/
+
+FROM eclipse-temurin:27-jre
+WORKDIR /app
+COPY build/libs/*.jar app.jar
+EXPOSE 8084
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD wget -qO- http://localhost:8084/actuator/health || exit 1
+ENTRYPOINT ["java", "-jar", "app.jar"]

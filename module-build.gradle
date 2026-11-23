@@ -1,0 +1,94 @@
+// ---- Per-Module JAR Tasks ----
+// Produce separate JARs for each universe module from the compiled classes
+// Each entry: [package_path, version_property, game_type, module_name, main_class]
+def modulePackages = [
+    'module-traveller':        ['com/yisy/modules/doramcu/traveller/', 'module.traveller.version', 'TRAVELLER', 'Traveller', 'com.yisy.modules.doramcu.traveller.config.TravellerGameModule'],
+    'module-babylon5':         ['com/yisy/modules/doramcu/babylon5/', 'module.babylon5.version', 'BABYLON_5', 'Babylon 5 RPG', 'com.yisy.modules.doramcu.babylon5.config.Babylon5GameModule'],
+    'module-starwars':         ['com/yisy/modules/doramcu/starwars/', 'module.starwars.version', 'STAR_WARS', 'Star Wars', 'com.yisy.modules.doramcu.starwars.config.StarWarsGameModule'],
+    'module-star_trek_4x':     ['com/yisy/modules/doramcu/star_trek_4x/', 'module.star_trek_4x.version', 'STAR_TREK_4X', 'Star Trek 4X', 'com.yisy.modules.doramcu.star_trek_4x.config.StarTrek4XGameModule'],
+    'module-dnd5e':            ['com/yisy/modules/doramcu/dnd5e/', 'module.dnd5e.version', 'DND_5E', 'D&D 5th Edition', 'com.yisy.modules.doramcu.dnd5e.config.Dnd5eGameModule'],
+    'module-lord_of_the_rings': ['com/yisy/modules/doramcu/lord_of_the_rings/', 'module.lord_of_the_rings.version', 'LORD_OF_THE_RINGS', 'Lord of the Rings', 'com.yisy.modules.doramcu.lord_of_the_rings.config.LordOfTheRingsGameModule'],
+    'module-warhammer40k':     ['com/yisy/modules/doramcu/warhammer40k/', 'module.warhammer40k.version', 'WARHAMMER_40K', 'Warhammer 40K', 'com.yisy.modules.doramcu.warhammer40k.config.Warhammer40kGameModule'],
+    'module-captainslog':      ['com/yisy/modules/doramcu/captainslog/', 'module.captainslog.version', 'CAPTAINS_LOG', "Captain's Log", 'com.yisy.modules.doramcu.captainslog.config.CaptainsLogGameModule'],
+    'module-mechwarrior':      ['com/yisy/modules/doramcu/mechwarrior/', 'module.mechwarrior.version', 'MECHWARRIOR', 'MechWarrior', 'com.yisy.modules.doramcu.mechwarrior.config.MechWarriorGameModule'],
+    'module-starshiptroopers': ['com/yisy/modules/doramcu/starshiptroopers/', 'module.starshiptroopers.version', 'STARSHIP_TROOPERS', 'Starship Troopers', 'com.yisy.modules.doramcu.starshiptroopers.config.StarshipTroopersGameModule'],
+    'module-fullthrust':       ['com/yisy/modules/doramcu/fullthrust/', 'module.fullthrust.version', 'DORAMCU_4X', 'Full Thrust', 'com.yisy.modules.doramcu.fullthrust.config.FullThrustGameModule'],
+    'module-warcraft':         ['com/yisy/modules/doramcu/warcraft/', 'module.warcraft.version', 'DORAMCU_4X', 'Warcraft', 'com.yisy.modules.doramcu.warcraft.config.WarcraftGameModule'],
+    'module-zero_zero_seven':  ['com/yisy/modules/doramcu/zero_zero_seven/', 'module.zero_zero_seven.version', 'ZERO_ZERO_SEVEN', '007', 'com.yisy.modules.doramcu.zero_zero_seven.config.ZeroZeroSevenGameModule'],
+    'module-sfb':              ['com/yisy/modules/doramcu/sfb/', 'module.sfb.version', 'SFB', 'Star Frontiers Battle', 'com.yisy.modules.doramcu.sfb.config.SfbGameModule'],
+    'module-everquest':        ['com/yisy/modules/doramcu/everquest/', 'module.everquest.version', 'DORAMCU_4X', 'EverQuest', 'com.yisy.modules.doramcu.everquest.config.EverQuestGameModule'],
+    'module-daoc':             ['com/yisy/modules/doramcu/daoc/', 'module.daoc.version', 'DORAMCU_4X', 'DAoC', 'com.yisy.modules.doramcu.daoc.config.DaocGameModule'],
+    'module-facebook':         ['com/yisy/modules/doramcu/facebook/', 'module.facebook.version', 'DORAMCU_4X', 'Facebook', 'com.yisy.modules.doramcu.facebook.config.FacebookGameModule'],
+    'module-gamecreator':      ['com/yisy/modules/doramcu/gamecreator/', 'module.gamecreator.version', 'DORAMCU_4X', 'Game Creator', 'com.yisy.modules.doramcu.gamecreator.config.GameCreatorGameModule'],
+    'module-celestial':        ['com/yisy/modules/doramcu/celestial/', 'module.celestial.version', 'DORAMCU_4X', 'Celestial', 'com.yisy.modules.doramcu.celestial.config.CelestialGameModule'],
+]
+
+modulePackages.each { name, config ->
+    def pkgPath = config[0]
+    def versionProp = config[1]
+    def gameType = config[2]
+    def moduleName = config[3]
+    def mainClass = config[4]
+
+    tasks.register(name, Jar) {
+        description = "Builds ${name}.jar from compiled classes"
+        group = 'build'
+        dependsOn 'generateModuleManifests'
+        archiveBaseName = name
+        archiveVersion = findProperty(versionProp)
+        from sourceSets.main.output.classesDirs
+        include "${pkgPath}**"
+
+        // Include META-INF/module.json manifest for hot-swap loading
+        def manifestDir = layout.buildDirectory.dir("modules/${name}").get().asFile
+        from(manifestDir) {
+            include 'module.json'
+            into 'META-INF'
+        }
+    }
+}
+
+// Generate module.json manifests for all modules before JAR packaging
+// Capture all values at configuration time for configuration cache compatibility
+def manifestData = []
+modulePackages.each { name, config ->
+    def versionProp = config[1]
+    def gameType = config[2]
+    def moduleName = config[3]
+    def mainClass = config[4]
+    def version = findProperty(versionProp) as String
+    def manifestFile = layout.buildDirectory.file("modules/${name}/module.json").get().asFile
+    manifestData << [name: name, gameType: gameType, version: version, moduleName: moduleName, mainClass: mainClass, file: manifestFile]
+}
+
+tasks.register('generateModuleManifests') {
+    description = 'Generates META-INF/module.json manifests for all module JARs'
+    group = 'build'
+    manifestData.each { data ->
+        outputs.file(data.file)
+    }
+    doLast {
+        manifestData.each { data ->
+            data.file.parentFile.mkdirs()
+            def content = """{
+  "gameType": "${data.gameType}",
+  "version": "${data.version}",
+  "name": "${data.moduleName}",
+  "mechanics": [],
+  "dependencies": [],
+  "mainClass": "${data.mainClass}"
+}"""
+            data.file.text = content
+        }
+    }
+}
+
+tasks.register('buildAllModules') {
+    description = 'Builds all universe module JARs'
+    group = 'build'
+    dependsOn classes
+    dependsOn 'generateModuleManifests'
+    modulePackages.each { name, pkgPath ->
+        dependsOn name
+    }
+}
