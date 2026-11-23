@@ -33,7 +33,7 @@
 - **Database:** ✅ H2 file-based on all platforms. `snapshot_count` column added to `/opt/doramcu/data/doramcu.mv.db`.
 - **Flyway:** ✅ Enabled with baseline approach (baseline-version=999) — manages future migrations only
 - **Security:** ✅ Secrets moved to environment variables (JWT_SECRET, DB_PASSWORD)
-- **Git Status:** ✅ All changes pushed to GitHub (commit d4c1cb5). Repository cleaned up (3.46 GB → 282 MB).
+- **Git Status:** ✅ All changes pushed to GitHub (commit ef9b770). Repository cleaned: 4 commits — .gitignore update, 65 legacy file deletions, 109 modified files, 135 new files.
 - **Active Blockers:** ✅ None — all blockers resolved. Server shutdown issue fixed by blocking main thread in server mode.
 - **Architecture:** ✅ Circular dependencies resolved — `spring.main.allow-circular-references=true` removed from all profiles.
 - **Hot-Swap System:** ✅ Fully implemented — 8 infrastructure classes, 7 admin REST endpoints, file watching, health monitoring, 72 unit tests.
@@ -99,6 +99,21 @@
 ---
 
 ## Session Log
+
+### 2026-11-23 — Git Repository Cleanup
+
+**Issue:** The DoraMCU repository had 280 unstaged changes (109 modified, 65 deleted, 106 untracked) since the last commit. The repository needed to be organized into clean, logical commits and pushed to GitHub.
+
+**Resolution:** Organized all 280 changes into 4 logical commits:
+
+1. **fbd3382** — Update .gitignore: Added patterns for `godot-client/.godot/` (Godot editor cache), `unity-client/DISABLED/` (disabled legacy code), and `*.uid` (Godot UID files). Reduced untracked files from 106 to ~98 meaningful files.
+2. **809d09d** — Clean up legacy files: Deleted 65 files including old root docs (RASPBERRY_PI_CONSOLE.md, LOTR guides), legacy scripts (PowerShell deploy/start/stop scripts), legacy Java adapters (StarTrek, ZeroZeroSeven integration), and 62 superseded Unity client scripts (AI, Backup, Battlefield, FPS, Procedural, UI modules).
+3. **67a9475** — Update tracked files: Committed 109 modified files including Java services (AI admin services, overlay builders, API versioning, hex/game core), DNN (WebConfig, NewsProxyController), web client (config, manifest, service worker, JS files), Godot client (project files, scenes, scripts), Unity client (NetworkManager, MainHUD, MenuManager, ProjectSettings), configs (build.gradle, docker-compose, application properties), and docs (MEMORY.md, README.md, STARTING_POINT.md).
+4. **ef9b770** — Add new files: Committed 135 new files including Java overlay builders (Babylon5, StarFrontiers, Warhammer40K), AI admin services (Combat, Culture, Diplomacy, Exploration, Intelligence, Logistics, Science), deployment scripts (19 files in scripts/), documentation (9 files in docs/), Godot client scripts (Network, Procedural, UI), and Unity client scripts (Auth, Combat, Exploration, Galaxy, Onboarding, SaveLoad, ShipBuild, UI components).
+
+**Result:** All 4 commits pushed to `origin/master` at `https://github.com/YoungerIndustries/DoraMCU-26.git`. Repository is clean with no unstaged changes.
+
+---
 
 ### 2026-11-23 — IDE Plugin Conflict Resolved & STARTING_POINT.md Updated
 
