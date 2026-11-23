@@ -712,7 +712,7 @@ The Traveller galaxy creation template (15-35 systems/subsector, UWP data, hex c
 
 **Lazy loading is mandatory only for Traveller and Warhammer 40K** (the two that need 15-35 systems/subsector). The other 14 game types work fine with the current 1-3 systems/subsector approach.
 
-**Overlay builders** are the key differentiator: 5 exist (Traveller, Star Wars, D&D 5E, LOTR, Babylon 5), 11 game types still need overlay builders.
+**Overlay builders** are the key differentiator: all 13 overlay builders are implemented — every registered galaxy has themed empires and NPCs.
 
 See `docs/galaxy-creation-multi-universe-analysis.md` for full analysis (545 lines).
 

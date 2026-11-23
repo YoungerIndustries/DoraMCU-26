@@ -10,7 +10,7 @@
 
 ## Current State
 
-- **Last Updated:** 2026-11-23 13:05
+- **Last Updated:** 2026-11-23 13:13
 - **Current Version:** v0.8.20 (DNN Workforce & Players Fix)
   - **Server Status:**
     - Pi Brain Stem: ✅ v0.8.20 at 192.168.1.111:8080 — server running. Galaxy detail now shows all 12 AI agent roles individually and player population with AI/Human labels.
@@ -33,7 +33,7 @@
 - **Database:** ✅ H2 file-based on all platforms. `snapshot_count` column added to `/opt/doramcu/data/doramcu.mv.db`.
 - **Flyway:** ✅ Enabled with baseline approach (baseline-version=999) — manages future migrations only
 - **Security:** ✅ Secrets moved to environment variables (JWT_SECRET, DB_PASSWORD)
-- **Git Status:** ✅ All changes pushed to GitHub (commit ef9b770). Repository cleaned: 4 commits — .gitignore update, 65 legacy file deletions, 109 modified files, 135 new files.
+- **Git Status:** ✅ All changes pushed to GitHub (commit fc73ed0). Repository cleaned: 5 commits — .gitignore update, 65 legacy file deletions, 109 modified files, 135 new files, MEMORY.md update.
 - **Active Blockers:** ✅ None — all blockers resolved. Server shutdown issue fixed by blocking main thread in server mode.
 - **Architecture:** ✅ Circular dependencies resolved — `spring.main.allow-circular-references=true` removed from all profiles.
 - **Hot-Swap System:** ✅ Fully implemented — 8 infrastructure classes, 7 admin REST endpoints, file watching, health monitoring, 72 unit tests.
@@ -99,6 +99,16 @@
 ---
 
 ## Session Log
+
+### 2026-11-23 — STARTING_POINT.md Update & Git Repository Cleanup
+
+**Issue:** User requested STARTING_POINT.md be updated before closing the session. The document had outdated information: overlay builder count said "5 exist" when all 13 were implemented, and git status references were stale.
+
+**Changes made:**
+- **STARTING_POINT.md** — Fixed overlay builder count from "5 exist (Traveller, Star Wars, D&D 5E, LOTR, Babylon 5), 11 game types still need overlay builders" to "all 13 overlay builders are implemented — every registered galaxy has themed empires and NPCs."
+- **MEMORY.md** — Updated git status commit hash from ef9b770 to fc73ed0 (final MEMORY.md commit), updated timestamp to 13:13.
+
+---
 
 ### 2026-11-23 — Git Repository Cleanup
 
@@ -2354,4 +2364,4 @@ DoraMCU (Dora Multi-Universe Game Master) is a **multi-universe 4X strategy game
 
 ---
 
-*Last session log entry: 2026-11-21 21:02*
+*Last session log entry: 2026-11-23 13:13*
