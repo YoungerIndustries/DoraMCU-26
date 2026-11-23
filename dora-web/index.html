@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -297,7 +297,7 @@
                             showLandingPage(platform, config, serverVersion, installStatus);
                             return;
                         }
-                        // App opened — no need to show landing
+                        // App opened - no need to show landing
                         return;
                     }
 
@@ -319,6 +319,8 @@
                 // Mobile/Tablet: go straight to web client
                 else if (platform.tier === 'mobile' || platform.tier === 'tablet') {
                     statusEl.textContent = 'Redirecting to web client...';
+                    // Clear any stored game auth so the game page shows login fresh
+                    localStorage.removeItem('doramcu_game_state');
                     const webClientUrl = ConfigManager.getWebClientUrl(platform.tier);
                     setTimeout(() => {
                         window.location.href = webClientUrl;
@@ -424,7 +426,7 @@
                 <div class="install-status-banner installed">
                     <span class="status-icon">✅</span>
                     <span class="status-text">
-                        ${downloadInfo.filename} downloaded — install to get started
+                        ${downloadInfo.filename} downloaded - install to get started
                     </span>
                 </div>
             `;
@@ -450,7 +452,7 @@
             html += `</div>`;
 
             html += `
-                <a href="${webClientUrl}" class="web-client-link">
+                <a href="${webClientUrl}" class="web-client-link" onclick="clearGameAuth()">
                     Or play in browser while you install →
                 </a>
             `;
@@ -587,7 +589,7 @@
                     <div class="install-status-banner not-installed">
                         <span class="status-icon">📦</span>
                         <span class="status-text">
-                            Desktop client not detected — download below
+                            Desktop client not detected - download below
                         </span>
                     </div>
                 `;
@@ -647,7 +649,7 @@
             // Web client link - fallback option
             const webClientUrl = ConfigManager.getWebClientUrl(tier);
             html += `
-                <a href="${webClientUrl}" class="web-client-link">
+                <a href="${webClientUrl}" class="web-client-link" onclick="clearGameAuth()">
                     Or play in browser →
                 </a>
             `;
@@ -764,8 +766,10 @@
         async function handleOpenApp() {
             const opened = await VersionChecker.tryOpenDesktopClient();
             if (!opened) {
-                // App didn't open — offer to reinstall or use web client
+                // App didn't open - offer to reinstall or use web client
                 if (confirm('Desktop app could not be launched. Would you like to open the web client instead?')) {
+                    // Clear any stored game auth so the game page shows login fresh
+                    localStorage.removeItem('doramcu_game_state');
                     const tier = PlatformDetector.detect().tier;
                     const webClientUrl = ConfigManager.getWebClientUrl(tier);
                     window.location.href = webClientUrl;
@@ -785,6 +789,14 @@
             } else {
                 alert('Installation was cancelled. You can still use the browser client or download the native client.');
             }
+        }
+
+        /**
+         * Clears stored game auth state so the game page shows the login screen fresh.
+         * Called before navigating to the web game client from the landing page.
+         */
+        function clearGameAuth() {
+            localStorage.removeItem('doramcu_game_state');
         }
     </script>
 </body>

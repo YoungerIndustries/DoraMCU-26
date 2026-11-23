@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -174,7 +174,7 @@
 
         window.addEventListener('offline', () => {
             document.getElementById('offlineBanner').classList.add('visible');
-            addLog('Connection lost — experiences will be queued');
+            addLog('Connection lost - experiences will be queued');
         });
 
         // Service Worker Registration
@@ -190,7 +190,7 @@
                         const newWorker = registration.installing;
                         newWorker.addEventListener('statechange', () => {
                             if (newWorker.state === 'activated') {
-                                addLog('New service worker available — refresh to update');
+                                addLog('New service worker available - refresh to update');
                                 showToast('Update Available', 'Refresh to get the latest version.');
                             }
                         });
@@ -435,7 +435,7 @@
                 showSyncStatus(true);
                 addLog('Experience queued for offline sync');
             } else {
-                addLog('Not connected — experience dropped');
+                addLog('Not connected - experience dropped');
             }
         }
 
@@ -465,7 +465,7 @@
         // Check initial online status
         if (!navigator.onLine) {
             document.getElementById('offlineBanner').classList.add('visible');
-            addLog('Starting offline — experiences will be queued');
+            addLog('Starting offline - experiences will be queued');
         }
     </script>
 </body>

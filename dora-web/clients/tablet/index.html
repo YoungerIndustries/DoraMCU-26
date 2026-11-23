@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -766,7 +766,7 @@
             <h2 style="margin-bottom: 20px;">Settings</h2>
             <div class="card">
                 <label style="display: block; margin-bottom: 8px;">Server URL</label>
-                <input type="url" class="settings-input" id="serverUrl" placeholder="http://localhost:8080">
+                <input type="url" class="settings-input" id="serverUrl" placeholder="Auto-detect (current server)">
                 <button class="btn btn-primary" onclick="saveSettings()">Save</button>
             </div>
         </section>
@@ -775,7 +775,7 @@
     <script src="../../js/api-client.js"></script>
     <script src="../../js/corporation-client.js"></script>
     <script>
-        let apiUrl = 'http://localhost:8080';
+        let apiUrl = window.location.origin;
         let api = new ApiClient(apiUrl);
         let authToken = localStorage.getItem('doramcu_auth_token');
         let currentUser = localStorage.getItem('doramcu_username');
@@ -1001,7 +1001,7 @@
                 } catch (devError) {
                     // Dev login not available
                 }
-                // Show login screen — status dot already reflects server reachability
+                // Show login screen - status dot already reflects server reachability
                 showLoginScreen();
             }
         }
@@ -1076,7 +1076,7 @@
                 const isFirstTime = currentLocation === 'San Diego, CA' && !localStorage.getItem('earth2026_started_' + characterId);
                 container.innerHTML = `
                     <div style="margin-bottom:16px;"><button class="btn btn-secondary" onclick="navigateTo('characters')" style="margin-bottom:12px;">← Back</button>
-                    <h2>🌍 Earth 2026 — ${charName}</h2><p style="color:var(--text-secondary);">${currentLocation} | Lvl ${level} | XP: ${xp}</p></div>
+                    <h2>🌍 Earth 2026 - ${charName}</h2><p style="color:var(--text-secondary);">${currentLocation} | Lvl ${level} | XP: ${xp}</p></div>
                     ${isFirstTime ? `<div style="background:linear-gradient(135deg,#1a1f4e,#252b6e);border:2px solid #64ffda;border-radius:12px;padding:20px;margin-bottom:16px;text-align:center;"><h3 style="color:#64ffda;margin-bottom:8px;">🚀 Welcome to Earth 2026!</h3><p style="color:var(--text-secondary);margin-bottom:12px;font-size:0.9rem;">Your adventure begins at the San Diego Convention Center.</p><button class="btn" style="background:linear-gradient(135deg,#64ffda,#7c4dff);color:#0a0e27;font-weight:700;font-size:1.1rem;padding:14px 40px;border:none;border-radius:8px;cursor:pointer;" onclick="startGameAction(${characterId})">🎮 Start Game</button></div>` : `<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;padding:12px;margin-bottom:16px;"><p style="color:var(--text-secondary);font-size:0.9rem;">${currentLocation === 'San Diego Convention Center' ? '📍 You are at the starting location. Choose a scenario below.' : '📍 You are at ' + currentLocation + '.'}</p></div>`}
                     <div class="card"><h3 class="card-title">📍 Locations</h3>
                     ${locations.map(loc => `<div class="session-item" style="cursor:pointer;" onclick="moveToLocation(${characterId},'${(loc.name||'').replace(/'/g,"\\'")}')"><div><div class="session-name">${loc.name||'?'}</div><div class="session-status">${loc.region||''}</div></div></div>`).join('') || '<div class="corp-empty">None</div>'}</div>

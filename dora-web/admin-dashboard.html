@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Admin Dashboard — DoraMCU</title>
+    <title>AI Admin Dashboard - DoraMCU</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -282,27 +282,27 @@
     <!-- Summary Cards -->
     <div class="summary-cards" id="summaryCards">
         <div class="summary-card">
-            <div class="value" id="totalAdmins">—</div>
+            <div class="value" id="totalAdmins">-</div>
             <div class="label">Total Admins</div>
         </div>
         <div class="summary-card">
-            <div class="value" id="availableAdmins">—</div>
+            <div class="value" id="availableAdmins">-</div>
             <div class="label">Available</div>
         </div>
         <div class="summary-card warning">
-            <div class="value" id="busyAdmins">—</div>
+            <div class="value" id="busyAdmins">-</div>
             <div class="label">Busy</div>
         </div>
         <div class="summary-card">
-            <div class="value" id="activeOrders">—</div>
+            <div class="value" id="activeOrders">-</div>
             <div class="label">Active Orders</div>
         </div>
         <div class="summary-card warning">
-            <div class="value" id="pendingOrders">—</div>
+            <div class="value" id="pendingOrders">-</div>
             <div class="label">Pending Orders</div>
         </div>
         <div class="summary-card danger">
-            <div class="value" id="unreadNotifs">—</div>
+            <div class="value" id="unreadNotifs">-</div>
             <div class="label">Unread Alerts</div>
         </div>
     </div>
@@ -444,14 +444,14 @@
 
                 return `<tr>
                     <td><strong>${escapeHtml(admin.name)}</strong></td>
-                    <td>${escapeHtml(admin.role || '—')}</td>
-                    <td><span class="galaxy-tag">${escapeHtml(admin.galaxyName || '—')}</span></td>
+                    <td>${escapeHtml(admin.role || '-')}</td>
+                    <td><span class="galaxy-tag">${escapeHtml(admin.galaxyName || '-')}</span></td>
                     <td><span class="status-badge ${statusClass}">${admin.status}</span></td>
                     <td>
                         <div class="workload-bar"><div class="fill ${workloadClass}" style="width:${workloadPercent}%"></div></div>
                         ${admin.activeOrderCount}/3
                     </td>
-                    <td>${admin.currentOrderId ? 'Order #' + admin.currentOrderId : '—'}</td>
+                    <td>${admin.currentOrderId ? 'Order #' + admin.currentOrderId : '-'}</td>
                     <td class="position-cell">${pos}</td>
                 </tr>`;
             }).join('');

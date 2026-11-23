@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DoraMCU — Create Your Character</title>
+    <title>DoraMCU - Create Your Character</title>
     <style>
         * {
             margin: 0;
@@ -483,7 +483,7 @@
             const occupation = document.getElementById('occupation').value || null;
 
             if (!username) {
-                showResult('Session expired — please start over', 'error');
+                showResult('Session expired - please start over', 'error');
                 setTimeout(() => {
                     window.location.href = 'index.html';
                 }, 2000);
@@ -533,7 +533,7 @@
                     btn.innerHTML = 'Enter Earth 2026';
                 }
             } catch (err) {
-                showResult('✗ Network error — try again', 'error');
+                showResult('✗ Network error - try again', 'error');
                 btn.disabled = false;
                 btn.innerHTML = 'Enter Earth 2026';
             }

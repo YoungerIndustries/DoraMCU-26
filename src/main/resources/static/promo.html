@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DoraMCU — Access Code or Payment</title>
+    <title>DoraMCU - Access Code or Payment</title>
     <style>
         * {
             margin: 0;
@@ -530,7 +530,7 @@
 
                 if (response.ok && data.valid) {
                     promoValid = true;
-                    showResult('✓ ' + (data.message || 'Promo code is valid!') + (data.description ? ' — ' + data.description : ''), 'success');
+                    showResult('✓ ' + (data.message || 'Promo code is valid!') + (data.description ? ' - ' + data.description : ''), 'success');
                     updateContinueButton();
                 } else {
                     promoValid = false;
@@ -538,7 +538,7 @@
                     updateContinueButton();
                 }
             } catch (err) {
-                showResult('✗ Network error — try again', 'error');
+                showResult('✗ Network error - try again', 'error');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = 'Validate Code';

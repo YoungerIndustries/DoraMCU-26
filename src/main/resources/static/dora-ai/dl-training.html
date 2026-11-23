@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -283,7 +283,7 @@
         <!-- Header -->
         <div class="dashboard-header">
             <div>
-                <h1>DoraAI — Deep Learning Monitor</h1>
+                <h1>DoraAI - Deep Learning Monitor</h1>
                 <p style="color: #888; font-size: 13px; margin-top: 5px;">Neural Network Training & Strategy Learning</p>
             </div>
             <div style="display: flex; gap: 10px; align-items: center;">
@@ -306,11 +306,11 @@
                     </div>
                     <div class="stat-item">
                         <div class="stat-label">Network</div>
-                        <div id="networkStatus" class="stat-value">—</div>
+                        <div id="networkStatus" class="stat-value">-</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-label">Current Loss</div>
-                        <div id="currentLoss" class="stat-value">—</div>
+                        <div id="currentLoss" class="stat-value">-</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-label">Data Points</div>
@@ -505,7 +505,7 @@
                 networkStatus.className = 'stat-value ' + (data.networkInitialized ? 'active' : 'warning');
 
                 // Update loss
-                currentLoss.textContent = data.currentLoss ? data.currentLoss.toFixed(4) : '—';
+                currentLoss.textContent = data.currentLoss ? data.currentLoss.toFixed(4) : '-';
 
                 // Update data size
                 dataSize.textContent = (data.dataSize || 0).toLocaleString();

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DoraMCU — Desktop Client</title>
+    <title>DoraMCU - Desktop Client</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../css/desktop.css">
     <link rel="stylesheet" href="../../css/corporation.css">
@@ -1022,7 +1022,7 @@
                 } catch (devError) {
                     // Dev login not available, show login screen
                 }
-                // Show login screen — status indicator already reflects server reachability
+                // Show login screen - status indicator already reflects server reachability
                 showLoginScreen();
             }
         }
@@ -1182,7 +1182,7 @@
                 container.innerHTML = `
                     <div style="margin-bottom:24px;">
                         <button class="btn btn-secondary" onclick="navigateTo('characters')" style="margin-bottom:16px;">← Back to Characters</button>
-                        <h2 style="margin-bottom:8px;">🌍 Earth 2026 — ${charName}</h2>
+                        <h2 style="margin-bottom:8px;">🌍 Earth 2026 - ${charName}</h2>
                         <p style="color:var(--text-secondary);">Location: <strong>${currentLocation}</strong> | Level: ${level} | XP: ${xp}</p>
                     </div>
 
@@ -2174,12 +2174,12 @@
                 `;
                 for (const c of aiChars.characters) {
                     const activeBadge = c.active ? 'badge-active' : 'badge-inactive';
-                    const adminBadge = c.aiAdmin ? '<span class="badge badge-admin">✓</span>' : '—';
+                    const adminBadge = c.aiAdmin ? '<span class="badge badge-admin">✓</span>' : '-';
                     html += `
                         <tr>
-                            <td>${c.name || '—'}</td>
-                            <td>${c.role || '—'}</td>
-                            <td>${c.empire || '—'}</td>
+                            <td>${c.name || '-'}</td>
+                            <td>${c.role || '-'}</td>
+                            <td>${c.empire || '-'}</td>
                             <td><span class="badge badge-type">${c.characterType}</span></td>
                             <td><span class="badge ${activeBadge}">${c.active ? 'Active' : 'Inactive'}</span></td>
                             <td>${c.experience || 0}</td>

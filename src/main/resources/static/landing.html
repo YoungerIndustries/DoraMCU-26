@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DoraMCU — Player Login</title>
+    <title>DoraMCU - Player Login</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -217,7 +217,7 @@
 <body>
     <div class="container">
         <h1>🚀 DoraMCU</h1>
-        <p class="subtitle">Player Login — Access Your Corporation Dashboard</p>
+        <p class="subtitle">Player Login - Access Your Corporation Dashboard</p>
 
         <div class="server-status" id="serverStatus">
             <span class="dot" id="statusDot"></span>
@@ -318,7 +318,7 @@
                 if (res.ok) {
                     dot.className = 'dot online';
                     const data = await res.json();
-                    text.textContent = 'Server online — ' + (data.version || 'DoraMCU');
+                    text.textContent = 'Server online - ' + (data.version || 'DoraMCU');
                 } else {
                     throw new Error('Server error');
                 }
@@ -427,7 +427,7 @@
             }
         }
 
-        // Check if already logged in — auto-redirect to dashboard
+        // Check if already logged in - auto-redirect to dashboard
         (function() {
             const token = localStorage.getItem('doramcu_token');
             if (token) {

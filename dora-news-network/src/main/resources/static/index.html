@@ -6,12 +6,12 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Dora News Network — Galactic News Network</title>
+    <title>Dora News Network - Galactic News Network</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* Dora News Network — Galactic News Network (Warm Nebula Glassmorphism Theme) */
+        /* Dora News Network - Galactic News Network (Warm Nebula Glassmorphism Theme) */
         :root {
             /* Background colors - warm nebula */
             --bg-primary: #0c0a1a;
@@ -311,7 +311,7 @@
             gap: 16px;
         }
 
-        /* Stats bar — Glassmorphism */
+        /* Stats bar - Glassmorphism */
         .stats-bar {
             display: flex;
             gap: 24px;
@@ -383,7 +383,7 @@
             min-height: calc(100vh - 120px);
         }
 
-        /* Sidebar — Glassmorphism */
+        /* Sidebar - Glassmorphism */
         .sidebar {
             width: 220px;
             background: var(--glass-bg);
@@ -871,7 +871,7 @@
             box-shadow: var(--glow-blue);
         }
 
-        /* Galaxy Health Card — Glassmorphism */
+        /* Galaxy Health Card - Glassmorphism */
         .galaxy-card {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
@@ -1004,6 +1004,40 @@
             font-weight: 600;
         }
 
+        /* Galaxy card action buttons */
+        .btn-play, .btn-detail {
+            flex: 1;
+            padding: 7px 12px;
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-family: var(--font-display);
+            letter-spacing: 0.3px;
+        }
+        .btn-play {
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.2), rgba(52, 211, 153, 0.1));
+            color: var(--success);
+            border-color: rgba(52, 211, 153, 0.3);
+        }
+        .btn-play:hover {
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.35), rgba(52, 211, 153, 0.2));
+            box-shadow: 0 0 15px rgba(52, 211, 153, 0.3);
+            transform: translateY(-1px);
+        }
+        .btn-detail {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(99, 102, 241, 0.1));
+            color: var(--accent-primary);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+        .btn-detail:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.35), rgba(99, 102, 241, 0.2));
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+            transform: translateY(-1px);
+        }
+
         /* Progress Bar with gradient and glow */
         .progress-bar {
             width: 100%;
@@ -1041,7 +1075,7 @@
             100% { transform: translateX(100%); }
         }
 
-        /* Dashboard summary cards — Glassmorphism */
+        /* Dashboard summary cards - Glassmorphism */
         .summary-card {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
@@ -1121,7 +1155,7 @@
             <div>
                 <div class="logo">Dora News Network</div>
                 <div class="header-subtitle">
-                    <span>Galactic News Network — Broadcasting via Tachyon Relay</span>
+                    <span>Galactic News Network - Broadcasting via Tachyon Relay</span>
                     <div class="tachyon-relay" id="tachyonRelay">
                         <div class="signal-wave"></div>
                         <div class="pulse-ring"></div>
@@ -1198,7 +1232,7 @@
 
         <!-- Main Content -->
         <div class="main-content" id="mainContent">
-            <div class="section-title">📡 Galactic News Network — Dashboard</div>
+            <div class="section-title">📡 Galactic News Network - Dashboard</div>
             <div class="card" style="margin-bottom:20px;">
                 <h3>🌌 Universe Overview</h3>
                 <p style="color:var(--text-secondary);line-height:1.6;">
@@ -1214,25 +1248,25 @@
                     <div class="summary-label">Total Galaxies</div>
                 </div>
                 <div class="summary-card">
-                    <div class="summary-value" style="color:var(--accent-success);">—</div>
+                    <div class="summary-value" style="color:var(--accent-success);">-</div>
                     <div class="summary-label">Healthy</div>
                 </div>
                 <div class="summary-card">
-                    <div class="summary-value" style="color:var(--accent-warning);">—</div>
+                    <div class="summary-value" style="color:var(--accent-warning);">-</div>
                     <div class="summary-label">Warning</div>
                 </div>
             </div>
             <div class="grid grid-3" style="margin-top:16px;">
                 <div class="summary-card">
-                    <div class="summary-value" style="color:var(--accent-danger);">—</div>
+                    <div class="summary-value" style="color:var(--accent-danger);">-</div>
                     <div class="summary-label">Critical</div>
                 </div>
                 <div class="summary-card">
-                    <div class="summary-value" style="color:var(--accent-info);">—</div>
+                    <div class="summary-value" style="color:var(--accent-info);">-</div>
                     <div class="summary-label">Building</div>
                 </div>
                 <div class="summary-card">
-                    <div class="summary-value" style="color:var(--accent-glow);">—</div>
+                    <div class="summary-value" style="color:var(--accent-glow);">-</div>
                     <div class="summary-label">Playable</div>
                 </div>
             </div>
@@ -1241,7 +1275,7 @@
 
     <!-- Footer -->
     <div class="footer">
-        Dora News Network — Galactic News Network • Broadcasting to All Known Galaxies via Tachyon Relay
+        Dora News Network - Galactic News Network • Broadcasting to All Known Galaxies via Tachyon Relay
     </div>
 
     <script>
@@ -1334,6 +1368,11 @@
         // ==========================================
 
         window.switchView = function(view, element) {
+            // Stop galaxy detail auto-refresh when leaving that view
+            if (view !== 'galaxy-detail' && galaxyDetailRefreshInterval) {
+                clearInterval(galaxyDetailRefreshInterval);
+                galaxyDetailRefreshInterval = null;
+            }
             if (view !== 'galaxy-detail') {
                 previousView = currentView;
             }
@@ -1368,20 +1407,21 @@
                     case 'b5-dialogues': renderDialogues(container); break;
                     case 'b5-locations': renderLocations(container); break;
                 }
-                console.log('DNN: rendered view', currentView, '— galaxies:', galaxyHealthData.length);
+                console.log('DNN: rendered view', currentView, '- galaxies:', galaxyHealthData.length);
             } catch (e) {
                 console.error('DNN: renderCurrentView failed for', currentView, e);
             }
         }
 
         // ==========================================
-        // Dashboard View — Universal Galaxy Overview
+        // Dashboard View - Universal Galaxy Overview
         // ==========================================
 
         function renderDashboard(container) {
             const healthyCount = galaxyHealthData.filter(g => g.healthStatus === 'HEALTHY').length;
             const warningCount = galaxyHealthData.filter(g => g.healthStatus === 'WARNING').length;
             const criticalCount = galaxyHealthData.filter(g => g.healthStatus === 'CRITICAL').length;
+            const deadCount = galaxyHealthData.filter(g => g.healthStatus === 'DEAD').length;
             const buildingCount = galaxyHealthData.filter(g => g.buildRunning).length;
             const playableCount = galaxyHealthData.filter(g => g.isPlayable).length;
 
@@ -1391,7 +1431,7 @@
                 statGalaxiesMain.textContent = galaxyHealthData.length;
             }
 
-            container.innerHTML = getDashboardHTML(healthyCount, warningCount, criticalCount, buildingCount, playableCount);
+            container.innerHTML = getDashboardHTML(healthyCount, warningCount, criticalCount, deadCount, buildingCount, playableCount);
 
             // Attach click handlers for quick action buttons
             container.querySelectorAll('.gnn-btn[data-action]').forEach(btn => {
@@ -1403,9 +1443,9 @@
             });
         }
 
-        function getDashboardHTML(healthyCount, warningCount, criticalCount, buildingCount, playableCount) {
+        function getDashboardHTML(healthyCount, warningCount, criticalCount, deadCount, buildingCount, playableCount) {
             return `
-                <div class="section-title">📡 Galactic News Network — Dashboard</div>
+                <div class="section-title">📡 Galactic News Network - Dashboard</div>
                 <div class="card" style="margin-bottom:20px;">
                     <h3>🌌 Universe Overview</h3>
                     <p style="color:var(--text-secondary);line-height:1.6;">
@@ -1435,9 +1475,15 @@
                         <div class="summary-label">Critical</div>
                     </div>
                     <div class="summary-card">
+                        <div class="summary-value" style="color:#666;">${deadCount}</div>
+                        <div class="summary-label">Dead</div>
+                    </div>
+                    <div class="summary-card">
                         <div class="summary-value" style="color:var(--accent-info);">${buildingCount}</div>
                         <div class="summary-label">Building</div>
                     </div>
+                </div>
+                <div class="grid grid-3" style="margin-top:16px;">
                     <div class="summary-card">
                         <div class="summary-value" style="color:var(--accent-glow);">${playableCount}</div>
                         <div class="summary-label">Playable</div>
@@ -1473,6 +1519,14 @@
                 detailSidebar.classList.add('active');
             }
             loadGalaxyDetail();
+        };
+
+        // Open the web game client for a galaxy
+        window.playGalaxy = function(name) {
+            // The web client is served at /game/ on the main game server (port 8080).
+            // The DNN runs on port 8084, so we open the game server directly.
+            const gameServerUrl = window.location.origin.replace(/:\d+$/, ':8080') + '/game/';
+            window.open(gameServerUrl, '_blank');
         };
 
         window.backFromDetail = function() {
@@ -1520,7 +1574,7 @@
         function renderGalaxies(container) {
             const galaxies = galaxyHealthData;
             container.innerHTML = `
-                <div class="section-title">🌌 All Galaxies — Health Status</div>
+                <div class="section-title">🌌 All Galaxies - Health Status</div>
                 <div class="grid grid-2">
                     ${galaxies.map(g => {
                         const healthClass = (g.healthStatus || '').toLowerCase() || 'warning';
@@ -1534,10 +1588,11 @@
                         const playable = g.isPlayable ? '🎮 Playable' : '❌ Not Ready';
                         const findings = (g.criticalFindings || 0) + (g.highFindings || 0) + (g.mediumFindings || 0);
                         const gameType = g.gameType || g.type || 'UNKNOWN';
+                        const galaxyNameStr = g.galaxyName || g.name || '';
                         return `
-                        <div class="galaxy-card ${healthClass}" onclick="viewGalaxyDetail('${escapeHtml(g.galaxyName || g.name || '')}")" style="cursor:pointer;">
+                        <div class="galaxy-card ${healthClass}" style="cursor:pointer;">
                             <div class="galaxy-header">
-                                <div class="galaxy-name">${escapeHtml(g.galaxyName || g.name || 'Unknown')}</div>
+                                <div class="galaxy-name" onclick="viewGalaxyDetail('${escapeHtml(galaxyNameStr)}')">${escapeHtml(galaxyNameStr || 'Unknown')}</div>
                                 <span class="galaxy-type">${escapeHtml(gameType)}</span>
                             </div>
                             <span class="galaxy-health-badge ${healthClass}">● ${healthLabel} (${healthScore})</span>
@@ -1557,6 +1612,10 @@
                                     ⚠️ ${escapeHtml(g.topRecommendations[0])}
                                 </div>
                             ` : ''}
+                            <div style="margin-top:10px;display:flex;gap:6px;">
+                                <button class="btn-play" onclick="event.stopPropagation();playGalaxy('${escapeHtml(galaxyNameStr)}')" title="Play in web client">🎮 Play</button>
+                                <button class="btn-detail" onclick="event.stopPropagation();viewGalaxyDetail('${escapeHtml(galaxyNameStr)}')" title="View health details">🔭 Detail</button>
+                            </div>
                         </div>
                     `}).join('') || '<div class="empty-state"><div class="empty-state-icon">🌌</div><div>No galaxy data available</div></div>'}
                 </div>
@@ -1584,14 +1643,14 @@
             const d = galaxyDetailData;
             const healthClass = (d.healthStatus || '').toLowerCase() || 'warning';
             const healthLabel = d.healthStatus || 'UNKNOWN';
-            const healthScore = d.healthScore != null ? d.healthScore : '—';
+            const healthScore = d.healthScore != null ? d.healthScore : '-';
             const completion = d.completionPercent != null ? d.completionPercent : 0;
             const systems = d.solarSystemCount != null ? d.solarSystemCount : 0;
             const maxSystems = d.expectedMaxSystems != null ? d.expectedMaxSystems : '?';
             const buildRunning = d.buildRunning ? '🔨 Building' : '✅ Idle';
             const buildPhase = d.buildPhase || 'N/A';
             const buildError = d.buildErrorMessage || '';
-            const buildElapsed = d.buildElapsedMs != null ? formatDuration(d.buildElapsedMs) : '—';
+            const buildElapsed = d.buildElapsedMs != null ? formatDuration(d.buildElapsedMs) : '-';
             const playable = d.isPlayable ? '🎮 Playable' : '❌ Not Ready';
             const aiCount = d.aiAgentCount != null ? d.aiAgentCount : 0;
             const overstaffed = d.isOverstaffed ? '⚠️ Overstaffed' : '✅ Not overstaffed';
@@ -1644,7 +1703,7 @@
                     const statusColor = status === 'RUNNING' ? 'var(--accent-cyan)' : status === 'COMPLETED' ? 'var(--success)' : status === 'FAILED' ? 'var(--danger)' : 'var(--text-muted)';
                     const id = wo.id || '?';
                     const text = wo.orderText || '';
-                    const created = wo.createdAt ? new Date(wo.createdAt).toLocaleTimeString('en-US', {hour12: false}) : '—';
+                    const created = wo.createdAt ? new Date(wo.createdAt).toLocaleTimeString('en-US', {hour12: false}) : '-';
                     return '<tr>' +
                         '<td style="color:var(--text-muted);font-size:12px;">#' + id + '</td>' +
                         '<td style="font-size:12px;">' + escapeHtml(text) + '</td>' +
@@ -1669,36 +1728,40 @@
                         const type = ev.type || ev.eventType || 'EVENT';
                         const icon = getEventIcon(type);
                         const message = ev.message || ev.description || escapeHtml(String(type));
-                        const time = ev.timestamp || ev.createdAt ? new Date(ev.timestamp || ev.createdAt).toLocaleTimeString('en-US', {hour12: false}) : '—';
+                        const time = ev.timestamp || ev.createdAt ? new Date(ev.timestamp || ev.createdAt).toLocaleTimeString('en-US', {hour12: false}) : '-';
                         return '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--glass-border);">' +
                             '<span style="font-size:14px;">' + icon + '</span>' +
                             '<div style="flex:1;">' +
                             '<div style="font-size:12px;color:var(--text-primary);">' + message + '</div>' +
-                            '<div style="font-size:10px;color:var(--text-muted);margin-top:2px;">' + escapeHtml(String(type)) + ' — ' + time + '</div>' +
+                            '<div style="font-size:10px;color:var(--text-muted);margin-top:2px;">' + escapeHtml(String(type)) + ' - ' + time + '</div>' +
                             '</div></div>';
                     }).join('') +
                 '</div>';
             }
 
-            // Build player population
+            // Build player population from playerNames (backend sends List<String>)
             let playersHtml = '';
-            if (d.playerPopulation && d.playerPopulation.length > 0) {
+            const playerNames = d.playerNames || [];
+            if (playerNames.length > 0) {
                 playersHtml = '<div style="margin-top:10px;">' +
-                    d.playerPopulation.slice(0, 10).map(p => {
-                        const name = p.name || p.username || 'Unknown';
-                        const status = p.status || p.state || 'UNKNOWN';
+                    playerNames.slice(0, 10).map(name => {
+                        const aiLabel = (name.includes('Manager') || name.includes('Overseer') || name.includes('Emperor') || name.includes('Alpha')) ? '🤖 AI' : '👤 Human';
                         return '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--glass-border);font-size:12px;">' +
-                            '<span>' + escapeHtml(name) + '</span>' +
-                            '<span style="color:var(--text-muted);">' + escapeHtml(status) + '</span>' +
+                            '<span>' + escapeHtml(String(name)) + '</span>' +
+                            '<span style="color:var(--text-muted);">' + aiLabel + '</span>' +
                             '</div>';
                     }).join('') +
                 '</div>';
             }
 
+            const galaxyNameForPlay = d.galaxyName || d.galaxyId || '';
             container.innerHTML = `
-                <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
                     <button class="gnn-btn" onclick="backFromDetail()">← Back</button>
                     <div class="section-title" style="margin-bottom:0;">🔭 Galaxy: ${escapeHtml(d.galaxyName || d.galaxyId || 'Unknown')}</div>
+                    <div style="margin-left:auto;">
+                        <button class="btn-play" onclick="playGalaxy('${escapeHtml(galaxyNameForPlay)}')" style="padding:10px 20px;font-size:14px;" title="Launch the web game client">🎮 Play in Game Client</button>
+                    </div>
                 </div>
                 <div class="card" style="margin-bottom:20px;">
                     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
@@ -1815,7 +1878,7 @@
         }
 
         function formatDuration(ms) {
-            if (!ms || ms <= 0) return '—';
+            if (!ms || ms <= 0) return '-';
             const seconds = Math.floor(ms / 1000);
             const hours = Math.floor(seconds / 3600);
             const minutes = Math.floor((seconds % 3600) / 60);
@@ -1835,7 +1898,7 @@
         function renderRaces(container) {
             const races = b5Data.races;
             container.innerHTML = `
-                <div class="section-title">👽 Babylon 5 — Alien Races</div>
+                <div class="section-title">👽 Babylon 5 - Alien Races</div>
                 <div class="grid grid-2">
                     ${races.map(r => `
                         <div class="race-card">
@@ -1865,7 +1928,7 @@
         function renderCharacters(container) {
             const characters = b5Data.characters;
             container.innerHTML = `
-                <div class="section-title">👤 Babylon 5 — Characters</div>
+                <div class="section-title">👤 Babylon 5 - Characters</div>
                 <div class="grid grid-2">
                     ${characters.map(c => {
                         const quote = c.famousQuotes && c.famousQuotes.length ? c.famousQuotes[0] : null;
@@ -1889,7 +1952,7 @@
         function renderStorylines(container) {
             const storylines = b5Data.storylines;
             container.innerHTML = `
-                <div class="section-title">📖 Babylon 5 — Story Arcs</div>
+                <div class="section-title">📖 Babylon 5 - Story Arcs</div>
                 <div class="grid">
                     ${storylines.map(sl => `
                         <div class="storyline-card">
@@ -1914,7 +1977,7 @@
         function renderDialogues(container) {
             const dialogues = b5Data.dialogues;
             container.innerHTML = `
-                <div class="section-title">💬 Babylon 5 — Iconic Dialogues</div>
+                <div class="section-title">💬 Babylon 5 - Iconic Dialogues</div>
                 ${dialogues.map(dl => `
                     <div class="dialogue-card">
                         <div class="dl-title">${escapeHtml(dl.title || 'Unknown')}</div>
@@ -1937,7 +2000,7 @@
         function renderLocations(container) {
             const locations = b5Data.locations;
             container.innerHTML = `
-                <div class="section-title">🌍 Babylon 5 — Key Locations</div>
+                <div class="section-title">🌍 Babylon 5 - Key Locations</div>
                 <div class="grid grid-2">
                     ${locations.map(loc => `
                         <div class="location-card">
@@ -2056,7 +2119,7 @@
                     '<div class="event-title">' + escapeHtml(title) + '</div>' +
                     (galaxy ? '<div class="event-galaxy">📍 ' + escapeHtml(galaxy) + '</div>' : '') +
                     (details ? '<div class="event-details">' + escapeHtml(JSON.stringify(details)) + '</div>' : '') +
-                    '<div class="event-time">' + time + ' — ' + relativeTime + '</div>' +
+                    '<div class="event-time">' + time + ' - ' + relativeTime + '</div>' +
                 '</div>';
 
             feed.insertBefore(item, feed.firstChild);
@@ -2078,9 +2141,12 @@
 
         function escapeHtml(text) {
             if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
         }
 
         async function fetchFeedHistory() {
@@ -2209,7 +2275,7 @@
                 eventSource.onerror = function() {
                     clearTimeout(connectTimeout);
                     if (statusEl) {
-                        statusEl.textContent = 'Disconnected — reconnecting...';
+                        statusEl.textContent = 'Disconnected - reconnecting...';
                         statusEl.className = 'news-status disconnected';
                     }
                     setTachyonRelayConnected(false);
@@ -2252,7 +2318,7 @@
         function init() {
             console.log('DNN: init() starting...');
 
-            // Start the clock immediately — always works, no dependencies
+            // Start the clock immediately - always works, no dependencies
             updateNewsClock();
             setInterval(updateNewsClock, 1000);
 
@@ -2282,7 +2348,7 @@
                 console.error('DNN B5 data load failed:', e);
             }
 
-            console.log('DNN: init() complete — static dashboard is visible, data loading in background');
+            console.log('DNN: init() complete - static dashboard is visible, data loading in background');
         }
 
         if (document.readyState === 'loading') {

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DoraMCU — Desktop Client</title>
+    <title>DoraMCU - Desktop Client</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../css/desktop.css">
     <link rel="stylesheet" href="../../css/corporation.css">
@@ -696,7 +696,7 @@
                 <span style="font-size:2rem;color:#00ffcc;animation:traveller-pulse-badge 2s ease-in-out infinite;">⬡</span>
                 <div>
                     <h2 style="margin:0;color:#00ffcc;font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:0.15em;text-shadow:0 0 10px rgba(0,255,204,0.5);">STELLAR CORPORATION COMMAND</h2>
-                    <p style="margin:4px 0 0 0;font-size:0.75rem;color:#88aacc;letter-spacing:0.1em;font-family:'Courier New',monospace;">Imperial Standard Date Cycle — Sector Operations Active</p>
+                    <p style="margin:4px 0 0 0;font-size:0.75rem;color:#88aacc;letter-spacing:0.1em;font-family:'Courier New',monospace;">Imperial Standard Date Cycle - Sector Operations Active</p>
                 </div>
             </div>
 
@@ -845,7 +845,7 @@
             <div class="card">
                 <div style="margin-bottom: 16px;">
                     <label style="display: block; margin-bottom: 8px;">API Server URL</label>
-                    <input type="text" id="apiUrlInput" style="width: 100%; padding: 8px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-primary);" placeholder="http://localhost:8080">
+                    <input type="text" id="apiUrlInput" style="width: 100%; padding: 8px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-primary);" placeholder="Auto-detect (current server)">
                 </div>
                 <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
             </div>
@@ -861,7 +861,7 @@
     <script src="../../js/corporation-client.js"></script>
     <script>
         // API configuration
-        let apiUrl = 'http://localhost:8080';
+        let apiUrl = window.location.origin;
         let authToken = localStorage.getItem('doramcu_auth_token');
         let currentUser = localStorage.getItem('doramcu_username');
 
@@ -1083,7 +1083,7 @@
                 } catch (devError) {
                     // Dev login not available, show login screen
                 }
-                // Show login screen — status indicator already reflects server reachability
+                // Show login screen - status indicator already reflects server reachability
                 showLoginScreen();
             }
         }
@@ -1243,7 +1243,7 @@
                 container.innerHTML = `
                     <div style="margin-bottom:24px;">
                         <button class="btn btn-secondary" onclick="navigateTo('characters')" style="margin-bottom:16px;">← Back to Characters</button>
-                        <h2 style="margin-bottom:8px;">🌍 Earth 2026 — ${charName}</h2>
+                        <h2 style="margin-bottom:8px;">🌍 Earth 2026 - ${charName}</h2>
                         <p style="color:var(--text-secondary);">Location: <strong>${currentLocation}</strong> | Level: ${level} | XP: ${xp}</p>
                     </div>
 

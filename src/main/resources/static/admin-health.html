@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/health.css">
     <link rel="stylesheet" href="css/startup-modal.css">
     <style>
-        /* Admin Health Panels — full-screen overlay shown at startup */
+        /* Admin Health Panels - full-screen overlay shown at startup */
         .admin-health-overlay {
             position: fixed;
             top: 0;
@@ -232,7 +232,7 @@
         <!-- Header -->
         <div class="admin-health-header">
             <div style="display:flex;align-items:center;gap:12px;">
-                <h1>⚙ DORAMCU — Admin Health Panels</h1>
+                <h1>⚙ DORAMCU - Admin Health Panels</h1>
                 <div class="startup-mini-bar">
                     <div class="startup-mini-bar-fill" id="startupMiniBarFill"></div>
                 </div>
@@ -257,7 +257,7 @@
 
         <!-- Footer -->
         <div class="admin-health-footer">
-            <span id="footerInfo">DoraMCU v0.1.7 — Startup Health Check</span>
+            <span id="footerInfo">DoraMCU v0.1.7 - Startup Health Check</span>
             <div class="footer-actions">
                 <a href="health.html" class="btn-nav">Full Dashboard</a>
                 <a href="index.html" class="btn-nav btn-primary" id="btnProceed">Proceed to Login →</a>
@@ -598,7 +598,7 @@
             // Update footer
             const footerInfo = document.getElementById('footerInfo');
             if (footerInfo) {
-                footerInfo.textContent = `DoraMCU v${data.appVersion || '0.1.7'} — Uptime: ${formatUptime(data.uptime || 0)}`;
+                footerInfo.textContent = `DoraMCU v${data.appVersion || '0.1.7'} - Uptime: ${formatUptime(data.uptime || 0)}`;
             }
         }
 

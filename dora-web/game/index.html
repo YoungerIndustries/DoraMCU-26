@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoraMCU - Web Game Client</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <link rel="manifest" href="../manifest.json">
+    <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Loading Screen -->
+        <div id="loading-screen">
+            <h1>DoraMCU</h1>
+            <div class="spinner"></div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay">
+            <div class="spinner"></div>
+            <div class="loading-message">Loading...</div>
+        </div>
+
+        <!-- Error Toast -->
+        <div id="error-toast"></div>
+
+        <!-- View Container -->
+        <div id="view-container"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Global error handler - show errors on screen instead of silent hang
+        window.onerror = function(message, source, line, col, error) {
+            console.error('[Global Error]', message, 'at', source + ':' + line);
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen && loadingScreen.style.display !== 'none') {
+                loadingScreen.innerHTML = `
+                    <h1>DoraMCU</h1>
+                    <div style="color: #ef4444; text-align: center; max-width: 400px; padding: 20px;">
+                        <p style="margin-bottom: 12px;">JavaScript error during loading.</p>
+                        <p style="font-size: 0.875rem; color: #a0aec0; word-break: break-all;">${message}</p>
+                        <p style="font-size: 0.75rem; color: #718096; margin-top: 8px;">${source}:${line}</p>
+                        <button onclick="location.reload()" style="margin-top: 16px; padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer;">Retry</button>
+                    </div>
+                `;
+            }
+            return false;
+        };
+    </script>
+    <script src="../js/dtos.js"></script>
+    <script src="../js/api-client.js"></script>
+    <script src="game-state.js"></script>
+
+    <!-- Views -->
+    <script src="js/views/login-view.js"></script>
+    <script src="js/views/character-view.js"></script>
+    <script src="js/views/earth-view.js"></script>
+    <script src="js/views/galaxy-view.js"></script>
+    <script src="js/views/main-view.js"></script>
+    <script src="js/views/hud-view.js"></script>
+    <script src="js/views/map-view.js"></script>
+    <script src="js/views/ship-build-view.js"></script>
+    <script src="js/views/inventory-view.js"></script>
+    <script src="js/views/menu-view.js"></script>
+    <script src="js/views/help-view.js"></script>
+
+    <!-- App -->
+    <script src="game-app.js"></script>
+    <script>
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const app = new GameApp();
+                window.gameApp = app;
+                await app.init();
+
+                // Register service worker for PWA
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('../sw.js')
+                        .then(() => console.log('[PWA] Service worker registered'))
+                        .catch(err => console.warn('[PWA] Service worker registration failed:', err));
+                }
+            } catch (error) {
+                console.error('[GameApp] Fatal init error:', error);
+                // Show error on screen so user isn't stuck on loading spinner
+                const loadingScreen = document.getElementById('loading-screen');
+                if (loadingScreen) {
+                    loadingScreen.innerHTML = `
+                        <h1>DoraMCU</h1>
+                        <div style="color: #ef4444; text-align: center; max-width: 400px; padding: 20px;">
+                            <p style="margin-bottom: 12px;">Failed to initialize game client.</p>
+                            <p style="font-size: 0.875rem; color: #a0aec0;">${error.message}</p>
+                            <button onclick="location.reload()" style="margin-top: 16px; padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer;">Retry</button>
+                        </div>
+                    `;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
