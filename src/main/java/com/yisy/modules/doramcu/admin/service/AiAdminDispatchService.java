@@ -126,9 +126,9 @@ public class AiAdminDispatchService {
     public void dispatchPendingOrders() {
         try {
             List<AiAdminOrder> unassignedPending = orderRepository
-                    .findByStatusAndAssignedAiAdminIdIsNull(AiAdminOrder.OrderStatus.PENDING);
+                    .findByStatusAndAssignedAiAdminIdIsNullOrderByPriorityAscCreatedAtAsc(AiAdminOrder.OrderStatus.PENDING);
 
-            log.info("Dispatch scan: found {} unassigned pending orders", unassignedPending.size());
+            log.info("Dispatch scan: found {} unassigned pending orders (sorted by priority)", unassignedPending.size());
             if (!unassignedPending.isEmpty()) {
                 for (AiAdminOrder order : unassignedPending) {
                     dispatchSingleOrder(order);
@@ -238,8 +238,8 @@ public class AiAdminDispatchService {
         Optional<AiCharacter> assignedAdmin = selectAiAdminForOrder(order);
 
         if (assignedAdmin.isEmpty()) {
-            log.debug("No available AI admin for order {} (submittedBy: {})",
-                    order.getId(), order.getSubmittedBy());
+            log.debug("No available AI admin for order {} (submittedBy: {}, priority: {})",
+                    order.getId(), order.getSubmittedBy(), order.getPriority());
             return;
         }
 
@@ -249,6 +249,9 @@ public class AiAdminDispatchService {
         order.setAssignedAiAdminId(admin.getId());
         order.setStatus(AiAdminOrder.OrderStatus.RUNNING);
         orderRepository.save(order);
+
+        log.info("Dispatched order {} (priority: {}, galaxy: {}) to AI admin {} ({})",
+                order.getId(), order.getPriority(), order.getTargetGalaxy(), admin.getName(), admin.getRole());
 
         // Save home position before moving to order location
         if (admin.hasPosition() && !admin.hasHomePosition()) {

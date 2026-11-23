@@ -28,6 +28,7 @@ class GameApp {
         this.views.main = new MainView(this);
         this.views.hud = new HudView(this);
         this.views.map = new MapView(this);
+        this.views.galaxy3d = new Galaxy3DView(this);
         this.views.shipBuild = new ShipBuildView(this);
         this.views.inventory = new InventoryView(this);
         this.views.menu = new MenuView(this);

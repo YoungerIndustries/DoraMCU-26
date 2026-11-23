@@ -127,6 +127,14 @@ public class AiAdminOrder {
     private LocalDateTime completedAt;
 
     /**
+     * Dispatch priority derived from the target galaxy's startup priority.
+     * Lower number = higher priority (Earth 2026 = 1, Traveller = 2, etc.).
+     * Default 999 means lowest priority (unknown galaxy).
+     */
+    @Column(name = "priority", nullable = false, columnDefinition = "INT DEFAULT 999")
+    private Integer priority = 999;
+
+    /**
      * Progress percentage (0-100) for tracking order execution progress.
      */
     @Column(name = "progress_percent")
@@ -153,6 +161,7 @@ public class AiAdminOrder {
     @PrePersist
     void onCreate() {
         createdAt = LocalDateTime.now();
+        if (priority == null) priority = 999;
     }
 
     public AiAdminOrder() {
@@ -343,5 +352,13 @@ public class AiAdminOrder {
 
     public void setChainOrder(boolean chainOrder) {
         this.chainOrder = chainOrder;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 }

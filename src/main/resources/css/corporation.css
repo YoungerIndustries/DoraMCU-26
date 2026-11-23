@@ -1,0 +1,663 @@
+/* Corporation Module Styles - Traveller Space Opera Theme */
+
+/* Starfield Background for Corporation Sections */
+.corp-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.corp-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(2px 2px at 160px 30px, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1px 1px at 200px 60px, rgba(255,255,255,0.5), transparent),
+    radial-gradient(2px 2px at 300px 50px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 380px 30px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(2px 2px at 460px 40px, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1px 1px at 540px 20px, rgba(255,255,255,0.5), transparent);
+  background-size: 600px 100px;
+  animation: traveller-twinkle 5s ease-in-out infinite alternate;
+  opacity: 0.3;
+}
+
+@keyframes traveller-twinkle {
+  0% { opacity: 0.2; }
+  50% { opacity: 0.5; }
+  100% { opacity: 0.3; }
+}
+
+.corp-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Corporation sub-navigation - Traveller styled */
+.corp-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  border-bottom: 2px solid #00ffcc;
+  padding-bottom: 10px;
+}
+
+.corp-nav-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, rgba(10,14,39,0.9) 0%, rgba(26,26,62,0.9) 100%);
+  border: 1px solid rgba(0,255,204,0.3);
+  border-radius: 4px;
+  color: #88aacc;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 13px;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.corp-nav-btn:hover {
+  background: linear-gradient(135deg, rgba(0,102,102,0.5) 0%, rgba(0,170,136,0.5) 100%);
+  border-color: #00ffcc;
+  color: #00ffcc;
+  box-shadow: 0 0 10px rgba(0,255,204,0.3);
+}
+
+.corp-nav-btn.active {
+  background: linear-gradient(135deg, #006666 0%, #00aa88 100%);
+  border-color: #00ffcc;
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(0,255,204,0.5);
+}
+
+/* Corporation sections */
+.corp-section {
+  display: none;
+}
+
+.corp-section.active {
+  display: block;
+}
+
+/* Stats grid - Traveller styled */
+.corp-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.corp-stat-card {
+  background: linear-gradient(135deg, rgba(10,14,39,0.95) 0%, rgba(26,26,62,0.95) 100%);
+  border: 1px solid rgba(0,255,204,0.3);
+  border-radius: 4px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,255,204,0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.corp-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00ffcc, transparent);
+}
+
+.corp-stat-card .stat-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: #00ffcc;
+  margin-bottom: 4px;
+  text-shadow: 0 0 5px rgba(0,255,204,0.3);
+  font-family: 'Courier New', monospace;
+}
+
+.corp-stat-card .stat-label {
+  font-size: 11px;
+  color: #6688aa;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: 'Courier New', monospace;
+}
+
+.corp-stat-card.credits .stat-value { color: #00ff88; text-shadow: 0 0 5px rgba(0,255,136,0.5); }
+.corp-stat-card.salary .stat-value { color: #ff6666; text-shadow: 0 0 5px rgba(255,102,102,0.5); }
+.corp-stat-card.contracts .stat-value { color: #00ffcc; text-shadow: 0 0 5px rgba(0,255,204,0.5); }
+.corp-stat-card.crew .stat-value { color: #7c4dff; text-shadow: 0 0 5px rgba(124,77,255,0.5); }
+.corp-stat-card.insolvent .stat-value { color: #ff0000; text-shadow: 0 0 10px rgba(255,0,0,0.8); animation: traveller-warning-flash 1.5s ease-in-out infinite; }
+
+@keyframes traveller-warning-flash {
+  0%, 100% { text-shadow: 0 0 10px rgba(255,0,0,0.5); }
+  50% { text-shadow: 0 0 20px rgba(255,0,0,0.8), 0 0 30px rgba(255,0,0,0.4); }
+}
+
+/* Contract cards - Traveller styled */
+.contract-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contract-card {
+  background: linear-gradient(135deg, rgba(10,14,39,0.95) 0%, rgba(26,26,62,0.95) 100%);
+  border: 1px solid rgba(0,255,204,0.3);
+  border-radius: 4px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,255,204,0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.contract-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00ffcc, transparent);
+}
+
+.contract-card .contract-info h4 {
+  margin: 0 0 4px 0;
+  color: #00ffcc;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.contract-card .contract-info .contract-meta {
+  font-size: 12px;
+  color: #6688aa;
+  font-family: 'Courier New', monospace;
+}
+
+.contract-card .contract-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.contract-difficulty {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-family: 'Courier New', monospace;
+}
+
+.contract-difficulty.easy { background: rgba(0,255,136,0.3); color: #00ff88; border: 1px solid #00ff88; }
+.contract-difficulty.medium { background: rgba(255,183,77,0.3); color: #ffb74d; border: 1px solid #ffb74d; }
+.contract-difficulty.hard { background: rgba(255,0,0,0.3); color: #ff6666; border: 1px solid #ff6666; }
+
+/* Crew cards - Traveller styled */
+.crew-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.crew-card {
+  background: linear-gradient(135deg, rgba(10,14,39,0.95) 0%, rgba(26,26,62,0.95) 100%);
+  border: 1px solid rgba(0,255,204,0.3);
+  border-radius: 4px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,255,204,0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.crew-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00ffcc, transparent);
+}
+
+.crew-card .crew-info h4 {
+  margin: 0 0 4px 0;
+  color: #00ffcc;
+  font-family: 'Courier New', monospace;
+}
+
+.crew-card .crew-info .crew-meta {
+  font-size: 12px;
+  color: #6688aa;
+  font-family: 'Courier New', monospace;
+}
+
+.crew-card .crew-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.crew-position {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+  background: rgba(0,255,204,0.2);
+  color: #00ffcc;
+  border: 1px solid #00ffcc;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+}
+
+/* Hire form - Traveller styled */
+.hire-form {
+  background: linear-gradient(135deg, rgba(10,14,39,0.95) 0%, rgba(26,26,62,0.95) 100%);
+  border: 1px solid rgba(0,255,204,0.3);
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,255,204,0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.hire-form::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00ffcc, transparent);
+}
+
+.hire-form h4 {
+  margin: 0 0 12px 0;
+  color: #00ffcc;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.hire-form .form-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.hire-form select,
+.hire-form input {
+  padding: 8px;
+  background: linear-gradient(180deg, #2a1a0a 0%, #1a0f05 100%);
+  border: 1px solid rgba(0,255,204,0.3);
+  border-radius: 4px;
+  color: #d2b48c;
+  font-family: 'Courier New', monospace;
+  flex: 1;
+  min-width: 150px;
+}
+
+.hire-form select:focus,
+.hire-form input:focus {
+  outline: none;
+  border-color: #00ffcc;
+  box-shadow: 0 0 10px rgba(0,255,204,0.3);
+}
+
+/* Finance section - Traveller styled */
+.finance-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.finance-card {
+  background: linear-gradient(135deg, rgba(10,14,39,0.95) 0%, rgba(26,26,62,0.95) 100%);
+  border: 1px solid rgba(0,255,204,0.3);
+  border-radius: 4px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,255,204,0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.finance-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00ffcc, transparent);
+}
+
+.finance-card .finance-value {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  font-family: 'Courier New', monospace;
+  text-shadow: 0 0 5px rgba(0,255,204,0.3);
+}
+
+.finance-card .finance-label {
+  font-size: 11px;
+  color: #6688aa;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: 'Courier New', monospace;
+}
+
+.finance-card.revenue .finance-value { color: #00ff88; text-shadow: 0 0 5px rgba(0,255,136,0.5); }
+.finance-card.expenses .finance-value { color: #ff6666; text-shadow: 0 0 5px rgba(255,102,102,0.5); }
+.finance-card.profit .finance-value { color: #00ffcc; text-shadow: 0 0 5px rgba(0,255,204,0.5); }
+
+/* Transaction table - Traveller styled */
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  font-family: 'Courier New', monospace;
+}
+
+.transaction-table th,
+.transaction-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(0,255,204,0.1);
+}
+
+.transaction-table th {
+  background: linear-gradient(135deg, rgba(10,14,39,0.95) 0%, rgba(26,26,62,0.95) 100%);
+  color: #00ffcc;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid rgba(0,255,204,0.3);
+}
+
+.transaction-table td {
+  color: #c0c0c0;
+  font-size: 13px;
+}
+
+.transaction-table tbody tr:hover {
+  background: rgba(0,255,204,0.05);
+}
+
+.transaction-table .credit { color: #00ff88; text-shadow: 0 0 5px rgba(0,255,136,0.3); }
+.transaction-table .debit { color: #ff6666; text-shadow: 0 0 5px rgba(255,102,102,0.3); }
+
+/* AI Actions - Traveller styled */
+.ai-action-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ai-action-item {
+  background: linear-gradient(135deg, rgba(10,14,39,0.95) 0%, rgba(26,26,62,0.95) 100%);
+  border: 1px solid rgba(0,255,204,0.3);
+  border-radius: 4px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,255,204,0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-action-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00ffcc, transparent);
+}
+
+.ai-action-item .action-info {
+  flex: 1;
+}
+
+.ai-action-item .action-info h4 {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  color: #00ffcc;
+  font-family: 'Courier New', monospace;
+}
+
+.ai-action-item .action-info .action-desc {
+  font-size: 12px;
+  color: #6688aa;
+  font-family: 'Courier New', monospace;
+}
+
+.ai-action-item .action-time {
+  font-size: 11px;
+  color: #6688aa;
+  font-family: 'Courier New', monospace;
+}
+
+.ai-result {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-family: 'Courier New', monospace;
+}
+
+.ai-result.success { background: rgba(0,255,136,0.3); color: #00ff88; border: 1px solid #00ff88; }
+.ai-result.failed { background: rgba(255,0,0,0.3); color: #ff6666; border: 1px solid #ff6666; }
+.ai-result.skipped { background: rgba(128,128,128,0.3); color: #888; border: 1px solid #888; }
+.ai-result.pending { background: rgba(255,183,77,0.3); color: #ffb74d; border: 1px solid #ffb74d; }
+
+/* Character stats - Traveller styled */
+.character-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.char-stat-card {
+  background: linear-gradient(135deg, rgba(10,14,39,0.95) 0%, rgba(26,26,62,0.95) 100%);
+  border: 1px solid rgba(0,255,204,0.3);
+  border-radius: 4px;
+  padding: 12px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,255,204,0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.char-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00ffcc, transparent);
+}
+
+.char-stat-card .char-stat-value {
+  font-size: 22px;
+  font-weight: bold;
+  color: #00ffcc;
+  text-shadow: 0 0 5px rgba(0,255,204,0.3);
+  font-family: 'Courier New', monospace;
+}
+
+.char-stat-card .char-stat-label {
+  font-size: 11px;
+  color: #6688aa;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: 'Courier New', monospace;
+}
+
+/* Role switch - Traveller styled */
+.role-switch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.role-card {
+  background: linear-gradient(135deg, rgba(10,14,39,0.95) 0%, rgba(26,26,62,0.95) 100%);
+  border: 1px solid rgba(0,255,204,0.3);
+  border-radius: 4px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,255,204,0.05);
+}
+
+.role-card:hover {
+  border-color: #00ffcc;
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(0,255,204,0.5);
+}
+
+.role-card.active {
+  border-color: #00ffcc;
+  background: linear-gradient(135deg, rgba(0,102,102,0.5) 0%, rgba(0,170,136,0.5) 100%);
+  box-shadow: 0 0 15px rgba(0,255,204,0.5);
+}
+
+.role-card .role-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.role-card .role-name {
+  font-size: 13px;
+  font-weight: bold;
+  color: #00ffcc;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Buttons - Traveller styled */
+.btn-sm {
+  padding: 4px 12px;
+  font-size: 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(0,255,204,0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn-accept { background: rgba(0,255,136,0.3); color: #00ff88; border-color: #00ff88; }
+.btn-accept:hover { background: rgba(0,255,136,0.5); box-shadow: 0 0 10px rgba(0,255,136,0.3); }
+.btn-fire { background: rgba(255,0,0,0.3); color: #ff6666; border-color: #ff6666; }
+.btn-fire:hover { background: rgba(255,0,0,0.5); box-shadow: 0 0 10px rgba(255,0,0,0.3); }
+.btn-promote { background: rgba(0,255,204,0.3); color: #00ffcc; border-color: #00ffcc; }
+.btn-promote:hover { background: rgba(0,255,204,0.5); box-shadow: 0 0 10px rgba(0,255,204,0.3); }
+.btn-demote { background: rgba(255,183,77,0.3); color: #ffb74d; border-color: #ffb74d; }
+.btn-demote:hover { background: rgba(255,183,77,0.5); box-shadow: 0 0 10px rgba(255,183,77,0.3); }
+.btn-hire { background: rgba(124,77,255,0.3); color: #b388ff; border-color: #b388ff; }
+.btn-hire:hover { background: rgba(124,77,255,0.5); box-shadow: 0 0 10px rgba(124,77,255,0.3); }
+
+/* Loading state - Traveller styled */
+.corp-loading {
+  text-align: center;
+  padding: 40px;
+  color: #6688aa;
+  font-family: 'Courier New', monospace;
+  font-style: italic;
+}
+
+/* Empty state - Traveller styled */
+.corp-empty {
+  text-align: center;
+  padding: 40px;
+  color: #6688aa;
+  font-family: 'Courier New', monospace;
+  font-style: italic;
+}
+
+/* Notification toast - Traveller styled */
+.corp-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 13px;
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+  max-width: 300px;
+  font-family: 'Courier New', monospace;
+  border: 1px solid rgba(0,255,204,0.3);
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+.corp-toast.success { background: rgba(0,255,136,0.9); color: #003300; border-color: #00ff88; }
+.corp-toast.error { background: rgba(255,0,0,0.9); color: #330000; border-color: #ff6666; }
+.corp-toast.info { background: rgba(0,255,204,0.9); color: #003333; border-color: #00ffcc; }
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .corp-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .contract-card,
+  .crew-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .contract-card .contract-actions,
+  .crew-card .crew-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .finance-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .hire-form .form-row {
+    flex-direction: column;
+  }
+}

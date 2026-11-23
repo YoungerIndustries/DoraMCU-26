@@ -1,0 +1,2003 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoraMCU - Desktop Client</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/desktop.css">
+    <link rel="stylesheet" href="../../css/corporation.css">
+    <style>
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #131842;
+            --bg-card: #1a1f4e;
+            --bg-card-hover: #252b6e;
+            --text-primary: #e0e6ff;
+            --text-secondary: #8892b0;
+            --accent-primary: #64ffda;
+            --accent-secondary: #7c4dff;
+            --accent-danger: #ff5252;
+            --border-color: #2a3070;
+            --sidebar-width: 260px;
+            --header-height: 64px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-status {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 16px 0;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: var(--text-secondary);
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            border-left: 3px solid var(--accent-primary);
+        }
+
+        .nav-icon {
+            margin-right: 12px;
+            font-size: 1.2rem;
+        }
+
+        /* Main content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 24px;
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        /* Dashboard */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            color: var(--accent-primary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Game sessions */
+        .session-list {
+            list-style: none;
+        }
+
+        .session-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .session-item:last-child {
+            border-bottom: none;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            background: #4de8c0;
+        }
+
+        .btn-secondary {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        /* Event feed */
+        .event-feed {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .event-item {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .event-time {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            color: var(--text-secondary);
+        }
+
+        /* Hidden sections */
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* D&D Themed Login Portal */
+        .dnd-login-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            background: #0a0a0a;
+            background-image:
+                radial-gradient(ellipse at 20% 50%, rgba(120, 0, 0, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 50%, rgba(120, 0, 0, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 100%, rgba(80, 0, 120, 0.2) 0%, transparent 50%);
+        }
+
+        .dnd-login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Georgia', 'Times New Roman', serif;
+        }
+
+        .dnd-portal-frame {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .dnd-portal-arch {
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            border: 3px solid #8b0000;
+            border-radius: 50% 50% 10% 10%;
+            box-shadow:
+                0 0 30px rgba(139, 0, 0, 0.5),
+                inset 0 0 30px rgba(139, 0, 0, 0.3),
+                0 0 60px rgba(128, 0, 128, 0.3);
+            animation: dndPortalPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes dndPortalPulse {
+            0%, 100% { box-shadow: 0 0 30px rgba(139, 0, 0, 0.5), inset 0 0 30px rgba(139, 0, 0, 0.3); }
+            50% { box-shadow: 0 0 50px rgba(139, 0, 0, 0.8), inset 0 0 50px rgba(139, 0, 0, 0.5); }
+        }
+
+        .dnd-login-card {
+            position: relative;
+            background: linear-gradient(135deg, #1a0a0a 0%, #2a1515 50%, #1a0a2a 100%);
+            padding: 40px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            border: 2px solid #8b4513;
+            box-shadow:
+                0 0 20px rgba(139, 69, 19, 0.5),
+                inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .dnd-warning-sign {
+            background: linear-gradient(180deg, #d2b48c 0%, #c4a882 50%, #b8956a 100%);
+            padding: 20px 25px;
+            margin: -20px -20px 25px -20px;
+            border-radius: 5px 5px 0 0;
+            border: 3px solid #8b4513;
+            border-bottom: none;
+            position: relative;
+            box-shadow:
+                inset 0 0 20px rgba(139, 69, 19, 0.3),
+                0 -5px 15px rgba(0, 0, 0, 0.3);
+            transform: rotate(-1deg);
+        }
+
+        .dnd-sign-nails {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .dnd-nail {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #666 30%, #333 70%);
+            border-radius: 50%;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .dnd-nail.dnd-top-left { top: 5px; left: 5px; }
+        .dnd-nail.dnd-top-right { top: 5px; right: 5px; }
+        .dnd-nail.dnd-bottom-left { bottom: 5px; left: 5px; }
+        .dnd-nail.dnd-bottom-right { bottom: 5px; right: 5px; }
+
+        .dnd-sign-header {
+            color: #8b0000;
+            font-size: 1.4em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+
+        .dnd-sign-text {
+            color: #3a1a00;
+            font-size: 0.85em;
+            line-height: 1.4;
+            margin: 0;
+            font-weight: bold;
+            text-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
+        }
+
+        .dnd-login-title {
+            color: #ff4500;
+            font-size: 2.5em;
+            margin: 0 0 10px;
+            text-shadow:
+                0 0 10px rgba(255, 69, 0, 0.8),
+                0 0 20px rgba(255, 69, 0, 0.5),
+                2px 2px 4px rgba(0, 0, 0, 0.8);
+            letter-spacing: 3px;
+        }
+
+        .dnd-login-subtitle {
+            color: #cd853f;
+            margin: 0 0 25px;
+            font-style: italic;
+            font-size: 1.1em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .dnd-login-form {
+            text-align: left;
+        }
+
+        .dnd-form-group {
+            margin-bottom: 20px;
+        }
+
+        .dnd-login-form label {
+            display: block;
+            color: #cd853f;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .dnd-parchment-input {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(180deg, #2a1a0a 0%, #1a0f05 100%);
+            border: 2px solid #8b4513;
+            border-radius: 4px;
+            color: #d2b48c;
+            font-size: 1em;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            box-sizing: border-box;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .dnd-parchment-input:focus {
+            outline: none;
+            border-color: #ff4500;
+            box-shadow:
+                inset 0 0 10px rgba(0, 0, 0, 0.5),
+                0 0 10px rgba(255, 69, 0, 0.5);
+        }
+
+        .dnd-parchment-input::placeholder {
+            color: #8b7355;
+            font-style: italic;
+        }
+
+        .dnd-btn-portal {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(180deg, #8b0000 0%, #5a0000 100%);
+            color: #ffd700;
+            border: 2px solid #ffd700;
+            border-radius: 4px;
+            font-size: 1.1em;
+            font-weight: bold;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            cursor: pointer;
+            margin-top: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            box-shadow:
+                0 0 15px rgba(139, 0, 0, 0.5),
+                inset 0 0 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .dnd-btn-portal:hover:not(:disabled) {
+            background: linear-gradient(180deg, #a00000 0%, #700000 100%);
+            box-shadow:
+                0 0 25px rgba(139, 0, 0, 0.8),
+                0 0 15px rgba(255, 69, 0, 0.5),
+                inset 0 0 10px rgba(0, 0, 0, 0.3);
+            transform: scale(1.02);
+        }
+
+        .dnd-btn-portal:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .dnd-login-status {
+            color: #ff4444;
+            margin-top: 10px;
+            font-size: 0.9em;
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .dnd-register-link {
+            color: #8b7355;
+            margin-top: 20px;
+            font-style: italic;
+        }
+
+        .dnd-register-link a {
+            color: #ffd700;
+            text-decoration: none;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+        }
+
+        .dnd-register-link a:hover {
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1 class="header-title">DoraMCU</h1>
+        <div class="header-status">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <span id="connectionStatus">Connecting...</span>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="nav-item active" data-section="dashboard">
+            <span class="nav-icon">🏠</span> Dashboard
+        </div>
+        <div class="nav-item" data-section="sessions">
+            <span class="nav-icon">🎮</span> Game Sessions
+        </div>
+        <div class="nav-item" data-section="characters">
+            <span class="nav-icon">👤</span> Characters
+        </div>
+        <div class="nav-item" data-section="corporation">
+            <span class="nav-icon">🏢</span> Corporation
+        </div>
+        <div class="nav-item" data-section="ai-dashboard">
+            <span class="nav-icon">🤖</span> AI Admin Dashboard
+        </div>
+        <div class="nav-item" data-section="settings">
+            <span class="nav-icon">⚙️</span> Settings
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Login Section - D&D Themed Portal -->
+        <section id="login" class="section dnd-login-section">
+            <div class="dnd-login-container">
+              <div class="dnd-portal-frame">
+                <div class="dnd-portal-arch"></div>
+                <div class="dnd-login-card">
+                  <div class="dnd-warning-sign">
+                    <div class="dnd-sign-nails">
+                      <span class="dnd-nail dnd-top-left"></span>
+                      <span class="dnd-nail dnd-top-right"></span>
+                      <span class="dnd-nail dnd-bottom-left"></span>
+                      <span class="dnd-nail dnd-bottom-right"></span>
+                    </div>
+                    <div class="dnd-sign-header">⚠ WARNING ⚠</div>
+                    <p class="dnd-sign-text">
+                      YOU STAND AT THE ENTRANCE<br>
+                      TO ANOTHER UNIVERSE.<br><br>
+                      ONCE YOU WALK THRU THIS DOOR<br>
+                      YOU WILL BECOME IMMORTAL.<br><br>
+                      STEP THRU THIS DOOR AND THERE<br>
+                      BE NOT JUST DRAGONS BUT<br>
+                      FAR FAR WORSE.<br><br>
+                      <strong>You have been warned</strong>
+                    </p>
+                  </div>
+
+                  <h1 class="dnd-login-title">⚔ DoraMCU ⚔</h1>
+                  <p class="dnd-login-subtitle">Enter the Realm, Adventurer</p>
+
+                  <!-- Login Form -->
+                  <form id="loginForm" onsubmit="handleLogin(event)" class="dnd-login-form">
+                    <div class="dnd-form-group">
+                      <label for="loginUsername">📜 Adventurer's Name</label>
+                      <input type="text" id="loginUsername" class="dnd-parchment-input" placeholder="Enter your username" required>
+                    </div>
+                    <div class="dnd-form-group">
+                      <label for="loginPassword">🔮 Secret Incantation</label>
+                      <input type="password" id="loginPassword" class="dnd-parchment-input" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="dnd-btn-portal">
+                      🚪 Step Through the Portal
+                    </button>
+                    <p id="loginStatus" class="dnd-login-status"></p>
+                  </form>
+                    
+                    <!-- Register Form -->
+                    <form id="registerForm" onsubmit="handleRegister(event)" class="dnd-login-form" style="display: none;">
+                      <div class="dnd-form-group">
+                        <label for="registerUsername">📜 Choose Your Name</label>
+                        <input type="text" id="registerUsername" class="dnd-parchment-input" placeholder="Choose username" required>
+                      </div>
+                      <div class="dnd-form-group">
+                        <label for="registerPassword">🔮 Secret Incantation</label>
+                        <input type="password" id="registerPassword" class="dnd-parchment-input" placeholder="Choose password" required>
+                      </div>
+                      <div class="dnd-form-group">
+                        <label for="registerConfirmPassword">🔮 Confirm Incantation</label>
+                        <input type="password" id="registerConfirmPassword" class="dnd-parchment-input" placeholder="Confirm password" required>
+                      </div>
+                      <button type="submit" class="dnd-btn-portal">Begin Your Quest</button>
+                      <p id="registerStatus" class="dnd-login-status"></p>
+                    </form>
+
+                    <p class="dnd-register-link">
+                      Already have an account? <a href="#" onclick="toggleRegisterForm(); return false;">Step Through the Portal</a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section">
+            <h2 style="margin-bottom: 24px;">Dashboard</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="statPlayers">0</div>
+                    <div class="stat-label">Active Players</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statSessions">0</div>
+                    <div class="stat-label">Game Sessions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statCharacters">0</div>
+                    <div class="stat-label">Characters</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statCorporations">0</div>
+                    <div class="stat-label">Corporations</div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3 class="card-title">Recent Activity</h3>
+                    <div class="event-feed" id="eventFeed">
+                        <div class="loading">Loading events...</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title">Quick Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <button class="btn btn-primary" onclick="createNewSession()">New Game Session</button>
+                        <button class="btn btn-secondary" onclick="navigateTo('characters')">Create Character</button>
+                        <button class="btn btn-secondary" onclick="navigateTo('corporation')">View Corporation</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Game Sessions Section -->
+        <section id="sessions" class="section">
+            <h2 style="margin-bottom: 24px;">Game Sessions</h2>
+            <div class="card">
+                <button class="btn btn-primary" style="margin-bottom: 16px;" onclick="createNewSession()">Create New Session</button>
+                <ul class="session-list" id="sessionList">
+                    <li class="loading">Loading sessions...</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Characters Section -->
+        <section id="characters" class="section">
+            <h2 style="margin-bottom: 24px;">Characters</h2>
+
+            <!-- Character Creation Form -->
+            <div id="characterCreateForm" class="card" style="display:none; margin-bottom: 20px;">
+                <h3 class="card-title">Create New Character</h3>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                    <div>
+                        <label style="display:block; margin-bottom:4px; font-weight:500;">Name *</label>
+                        <input type="text" id="charName" class="form-control" placeholder="Enter character name" />
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:4px; font-weight:500;">Age</label>
+                        <input type="number" id="charAge" class="form-control" value="25" min="16" max="100" />
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:4px; font-weight:500;">Occupation</label>
+                        <input type="text" id="charOccupation" class="form-control" placeholder="e.g. Engineer, Pilot, Doctor" />
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:4px; font-weight:500;">Background</label>
+                        <input type="text" id="charBackground" class="form-control" placeholder="Brief backstory" />
+                    </div>
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <button class="btn btn-primary" onclick="submitCreateCharacter()">Create Character</button>
+                    <button class="btn btn-secondary" onclick="cancelCreateCharacter()">Cancel</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <button class="btn btn-primary" style="margin-bottom: 16px;" onclick="showCreateCharacterForm()">Create New Character</button>
+                <div id="characterList">
+                    <div class="loading">Loading characters...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Earth 2026 Landing Section -->
+        <section id="earth2026" class="section">
+            <div id="earth2026Content">
+                <div class="loading">Loading Earth 2026...</div>
+            </div>
+        </section>
+
+        <!-- Corporation Section - Traveller Theme -->
+        <section id="corporation" class="section">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;border-bottom:2px solid #00ffcc;padding-bottom:12px;">
+                <span style="font-size:2rem;color:#00ffcc;animation:traveller-pulse-badge 2s ease-in-out infinite;">⬡</span>
+                <div>
+                    <h2 style="margin:0;color:#00ffcc;font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:0.15em;text-shadow:0 0 10px rgba(0,255,204,0.5);">STELLAR CORPORATION COMMAND</h2>
+                    <p style="margin:4px 0 0 0;font-size:0.75rem;color:#88aacc;letter-spacing:0.1em;font-family:'Courier New',monospace;">Imperial Standard Date Cycle - Sector Operations Active</p>
+                </div>
+            </div>
+
+            <!-- Corporation Sub-Navigation -->
+            <div class="corp-nav">
+                <button class="corp-nav-btn active" onclick="showCorpSection('corp-dashboard')">◈ Dashboard</button>
+                <button class="corp-nav-btn" onclick="showCorpSection('corp-contracts')">◈ Contracts</button>
+                <button class="corp-nav-btn" onclick="showCorpSection('corp-crew')">◈ Crew</button>
+                <button class="corp-nav-btn" onclick="showCorpSection('corp-finance')">◈ Finance</button>
+                <button class="corp-nav-btn" onclick="showCorpSection('corp-ai')">◈ AI Actions</button>
+                <button class="corp-nav-btn" onclick="showCorpSection('corp-character')">◈ Character</button>
+            </div>
+
+            <!-- Corporation Dashboard -->
+            <div id="corp-dashboard" class="corp-section active">
+                <div class="corp-stats-grid" id="corpStatsGrid">
+                    <div class="corp-stat-card credits">
+                        <div class="stat-value" id="corpCredits">--</div>
+                        <div class="stat-label">⬡ Credit Balance</div>
+                    </div>
+                    <div class="corp-stat-card salary">
+                        <div class="stat-value" id="corpSalary">--</div>
+                        <div class="stat-label">⬡ Daily Salary</div>
+                    </div>
+                    <div class="corp-stat-card contracts">
+                        <div class="stat-value" id="corpContractCount">--</div>
+                        <div class="stat-label">⬡ Active Contracts</div>
+                    </div>
+                    <div class="corp-stat-card crew">
+                        <div class="stat-value" id="corpCrewCount">--</div>
+                        <div class="stat-label">⬡ Active Crew</div>
+                    </div>
+                </div>
+                <div class="card" style="background:linear-gradient(135deg,rgba(10,14,39,0.95) 0%,rgba(26,26,62,0.95) 100%);border:1px solid rgba(0,255,204,0.3);border-radius:4px;box-shadow:0 4px 15px rgba(0,0,0,0.5);">
+                    <h3 class="card-title" style="color:#00ffcc;font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:0.1em;">◈ Quick Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <button class="btn btn-primary" onclick="triggerAiTurnAction()" style="font-family:'Courier New',monospace;text-transform:uppercase;">Trigger AI Turn</button>
+                        <button class="btn btn-secondary" onclick="showCorpSection('corp-contracts')" style="font-family:'Courier New',monospace;text-transform:uppercase;">Manage Contracts</button>
+                        <button class="btn btn-secondary" onclick="showCorpSection('corp-crew')" style="font-family:'Courier New',monospace;text-transform:uppercase;">Manage Crew</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Corporation Contracts -->
+            <div id="corp-contracts" class="corp-section">
+                <h3 style="color:#00ffcc;font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;">◈ CONTRACT DATABASE</h3>
+                <div style="margin-bottom: 16px;">
+                    <button class="btn btn-primary" onclick="generateNewContracts()" style="font-family:'Courier New',monospace;text-transform:uppercase;">Generate New Contracts</button>
+                </div>
+                <h3 style="color:#00ffcc;font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:0.05em;margin-bottom: 12px;font-size:0.9rem;">Available & Active Missions</h3>
+                <div class="contract-list" id="availableContractList">
+                    <div class="corp-loading">Loading contracts...</div>
+                </div>
+                <h3 style="color:#00ffcc;font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:0.05em;margin: 24px 0 12px;font-size:0.9rem;">Active Contracts</h3>
+                <div class="contract-list" id="activeContractList">
+                    <div class="corp-loading">Loading active contracts...</div>
+                </div>
+            </div>
+
+            <!-- Corporation Crew -->
+            <div id="corp-crew" class="corp-section">
+                <h3 style="color:#00ffcc;font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;">◈ CREW MANIFEST</h3>
+                <div class="hire-form">
+                    <h4>◈ Recruit Crew</h4>
+                    <div class="form-row">
+                        <select id="hireCharacterSelect">
+                            <option value="">Select character...</option>
+                        </select>
+                        <select id="hirePositionSelect">
+                            <option value="">Select position...</option>
+                            <option value="CEO">CEO</option>
+                            <option value="CFO">CFO</option>
+                            <option value="PILOT">Pilot</option>
+                            <option value="ENGINEER">Engineer</option>
+                            <option value="MEDIC">Medic</option>
+                            <option value="SCIENTIST">Scientist</option>
+                            <option value="SECURITY">Security</option>
+                            <option value="DIPLOMAT">Diplomat</option>
+                        </select>
+                        <input type="number" id="hireSalaryInput" placeholder="Daily salary" value="100">
+                        <button class="btn btn-primary" onclick="hireCrewMember()">Hire</button>
+                    </div>
+                </div>
+                <h3 style="color:#00ffcc;font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:0.05em;margin-bottom: 12px;font-size:0.9rem;">Active Crew On Board</h3>
+                <div class="crew-list" id="activeCrewList">
+                    <div class="corp-loading">Loading crew...</div>
+                </div>
+            </div>
+
+            <!-- Corporation Finance -->
+            <div id="corp-finance" class="corp-section">
+                <h3 style="color:#00ffcc;font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;">◈ TREASURY REPORT</h3>
+                <div class="finance-summary" id="financeSummary">
+                    <div class="finance-card revenue">
+                        <div class="finance-value" id="finRevenue">--</div>
+                        <div class="finance-label">⬡ Total Revenue</div>
+                    </div>
+                    <div class="finance-card expenses">
+                        <div class="finance-value" id="finExpenses">--</div>
+                        <div class="finance-label">⬡ Total Expenses</div>
+                    </div>
+                    <div class="finance-card profit">
+                        <div class="finance-value" id="finProfit">--</div>
+                        <div class="finance-label">⬡ Net Profit</div>
+                    </div>
+                </div>
+                <h3 style="color:#00ffcc;font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:0.05em;margin-bottom: 12px;font-size:0.9rem;">◈ TRANSACTION LOG</h3>
+                <div id="transactionTableContainer">
+                    <div class="corp-loading">Loading transactions...</div>
+                </div>
+            </div>
+
+            <!-- Corporation AI Actions -->
+            <div id="corp-ai" class="corp-section">
+                <h3 style="color:#00ffcc;font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;">◈ AI COMMAND CENTER</h3>
+                <div style="margin-bottom: 16px;">
+                    <button class="btn btn-primary" onclick="triggerAiTurnAction()" style="font-family:'Courier New',monospace;text-transform:uppercase;">Trigger AI Turn</button>
+                </div>
+                <h3 style="color:#00ffcc;font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:0.05em;margin-bottom: 12px;font-size:0.9rem;">Recent AI Actions</h3>
+                <div class="ai-action-list" id="aiActionList">
+                    <div class="corp-loading">Loading AI actions...</div>
+                </div>
+            </div>
+
+            <!-- Corporation Character -->
+            <div id="corp-character" class="corp-section">
+                <h3 style="color:#00ffcc;font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;">◈ TRAVELLER CHARACTER PROFILE</h3>
+                <h3 style="color:#00ffcc;font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:0.05em;margin-bottom: 12px;font-size:0.9rem;">UWP Stats & Abilities</h3>
+                <div class="character-stats-grid" id="characterStatsGrid">
+                    <div class="corp-loading">Loading character stats...</div>
+                </div>
+                <h3 style="color:#00ffcc;font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:0.05em;margin: 24px 0 12px;font-size:0.9rem;">Career History</h3>
+                <div id="characterCareerList">
+                    <div class="corp-loading">Loading career history...</div>
+                </div>
+                <h3 style="color:#00ffcc;font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:0.05em;margin: 24px 0 12px;font-size:0.9rem;">Current Assignments</h3>
+                <div id="characterAssignmentList">
+                    <div class="corp-loading">Loading assignments...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="section">
+            <h2 style="margin-bottom: 24px;">Settings</h2>
+            <div class="card">
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 8px;">API Server URL</label>
+                    <input type="text" id="apiUrlInput" style="width: 100%; padding: 8px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-primary);" placeholder="Auto-detect (current server)">
+                </div>
+                <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+            </div>
+        </section>
+
+        <!-- AI Admin Dashboard Section -->
+        <section id="ai-dashboard" class="section">
+            <iframe src="../../admin-dashboard.html" style="width:100%;height:calc(100vh - 120px);border:none;border-radius:8px;background:var(--bg-primary);"></iframe>
+        </section>
+    </main>
+
+    <script src="../../js/api-client.js"></script>
+    <script src="../../js/corporation-client.js"></script>
+    <script>
+        // API configuration
+        let apiUrl = window.location.origin;
+        let authToken = localStorage.getItem('doramcu_auth_token');
+        let currentUser = localStorage.getItem('doramcu_username');
+
+        // Listen for config from parent
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'CONFIG') {
+                apiUrl = event.data.apiUrl || apiUrl;
+                console.log('Received config from parent:', event.data);
+                initializeClient();
+            }
+        });
+
+        // Show login screen
+        function showLoginScreen() {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('login').classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        }
+
+        // Show dashboard (after login)
+        function showDashboard() {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('dashboard').classList.add('active');
+            document.querySelector('[data-section="dashboard"]').classList.add('active');
+        }
+
+        // Login handler
+        async function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const statusEl = document.getElementById('loginStatus');
+            
+            if (!username || !password) {
+                statusEl.textContent = 'Please enter username and password.';
+                statusEl.style.color = '#ff6b6b';
+                return;
+            }
+            
+            statusEl.textContent = 'Signing in...';
+            statusEl.style.color = '#8892b0';
+            
+            try {
+                const response = await fetch(`${apiUrl}/api/v1/4x/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    authToken = data.token;
+                    currentUser = data.username;
+                    localStorage.setItem('doramcu_auth_token', authToken);
+                    localStorage.setItem('doramcu_username', currentUser);
+                    statusEl.textContent = 'Login successful!';
+                    statusEl.style.color = '#64ffda';
+                    
+                    // Update header with user info
+                    document.getElementById('connectionStatus').textContent = `Connected as ${currentUser}`;
+                    document.getElementById('statusIndicator').style.background = '#64ffda';
+                    
+                    // Show dashboard
+                    setTimeout(() => {
+                        showDashboard();
+                        loadStats();
+                        connectEventFeed();
+                        document.getElementById('corporationIframe').src = `${apiUrl}/corporation/`;
+                    }, 500);
+                } else if (response.status === 401) {
+                    statusEl.textContent = 'Invalid username or password.';
+                    statusEl.style.color = '#ff6b6b';
+                } else {
+                    const errorData = await response.json().catch(() => null);
+                    statusEl.textContent = errorData?.error || 'Login failed. Please try again.';
+                    statusEl.style.color = '#ff6b6b';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                statusEl.textContent = 'Connection error. Is the server running?';
+                statusEl.style.color = '#ff6b6b';
+            }
+        }
+
+        // Register handler
+        async function handleRegister(e) {
+            e.preventDefault();
+            const username = document.getElementById('registerUsername').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const statusEl = document.getElementById('registerStatus');
+            
+            if (!username || !password) {
+                statusEl.textContent = 'Please fill in all fields.';
+                statusEl.style.color = '#ff6b6b';
+                return;
+            }
+            if (password !== confirmPassword) {
+                statusEl.textContent = 'Passwords do not match.';
+                statusEl.style.color = '#ff6b6b';
+                return;
+            }
+            
+            statusEl.textContent = 'Creating account...';
+            statusEl.style.color = '#8892b0';
+            
+            try {
+                const response = await fetch(`${apiUrl}/api/v1/4x/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                if (response.ok || response.status === 201) {
+                    const data = await response.json();
+                    authToken = data.token;
+                    currentUser = data.username;
+                    localStorage.setItem('doramcu_auth_token', authToken);
+                    localStorage.setItem('doramcu_username', currentUser);
+                    statusEl.textContent = 'Account created! Signing in...';
+                    statusEl.style.color = '#64ffda';
+                    
+                    document.getElementById('connectionStatus').textContent = `Connected as ${currentUser}`;
+                    document.getElementById('statusIndicator').style.background = '#64ffda';
+                    
+                    setTimeout(() => {
+                        showDashboard();
+                        loadStats();
+                        connectEventFeed();
+                        document.getElementById('corporationIframe').src = `${apiUrl}/corporation/`;
+                    }, 500);
+                } else {
+                    const errorData = await response.json().catch(() => null);
+                    statusEl.textContent = errorData?.error || 'Registration failed.';
+                    statusEl.style.color = '#ff6b6b';
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                statusEl.textContent = 'Connection error. Is the server running?';
+                statusEl.style.color = '#ff6b6b';
+            }
+        }
+
+        // Toggle between login and register forms
+        function toggleRegisterForm() {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            loginForm.style.display = loginForm.style.display === 'none' ? 'block' : 'none';
+            registerForm.style.display = registerForm.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Logout handler
+        function handleLogout() {
+            authToken = null;
+            currentUser = null;
+            localStorage.removeItem('doramcu_auth_token');
+            localStorage.removeItem('doramcu_username');
+            document.getElementById('connectionStatus').textContent = 'Disconnected';
+            document.getElementById('statusIndicator').style.background = '#ff5252';
+            showLoginScreen();
+        }
+
+        // Initialize the client
+        async function initializeClient() {
+            const statusIndicator = document.getElementById('statusIndicator');
+            const connectionStatus = document.getElementById('connectionStatus');
+            let serverReachable = false;
+            
+            // Check if server is reachable
+            try {
+                const response = await fetch(`${apiUrl}/actuator/health`);
+                if (response.ok) {
+                    serverReachable = true;
+                } else {
+                    console.warn('Health check failed:', response.status);
+                }
+            } catch (healthError) {
+                console.warn('Health check unreachable, proceeding anyway:', healthError.message);
+                serverReachable = false;
+            }
+            
+            // Set status indicator based on server reachability, not authentication status
+            if (serverReachable) {
+                statusIndicator.style.background = '#64ffda';
+                connectionStatus.textContent = 'Connected';
+            } else {
+                statusIndicator.style.background = '#ff5252';
+                connectionStatus.textContent = 'Server unreachable';
+            }
+            
+            // Check if already logged in
+            if (authToken && currentUser) {
+                connectionStatus.textContent = `Connected as ${currentUser}`;
+                showDashboard();
+                loadStats();
+                loadSessions();
+                loadCharacters();
+                connectEventFeed();
+                loadAllCorporationData();
+            } else {
+                // Try dev auto-login for quick access
+                try {
+                    const devResponse = await fetch(`${apiUrl}/api/v1/4x/auth/dev-login`);
+                    if (devResponse.ok) {
+                        const data = await devResponse.json();
+                        authToken = data.token;
+                        currentUser = data.username;
+                        localStorage.setItem('doramcu_auth_token', authToken);
+                        localStorage.setItem('doramcu_username', currentUser);
+                        connectionStatus.textContent = `Connected as ${currentUser} (dev)`;
+                        showDashboard();
+                        loadStats();
+                        loadSessions();
+                        loadCharacters();
+                        connectEventFeed();
+                        loadAllCorporationData();
+                        return;
+                    }
+                } catch (devError) {
+                    // Dev login not available, show login screen
+                }
+                // Show login screen - status indicator already reflects server reachability
+                showLoginScreen();
+            }
+        }
+
+        // Navigation
+        function navigateTo(section) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(section).classList.add('active');
+            document.querySelector(`[data-section="${section}"]`).classList.add('active');
+        }
+
+        // Nav item click handlers
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                navigateTo(item.dataset.section);
+            });
+        });
+
+        // Load stats
+        async function loadStats() {
+            try {
+                // Load sessions count and player count
+                const sessionsResponse = await fetch(`${apiUrl}/api/v1/4x/sessions`, {
+                    headers: authToken ? { 'Authorization': `Bearer ${authToken}` } : {}
+                });
+                if (sessionsResponse.ok) {
+                    const sessions = await sessionsResponse.json();
+                    document.getElementById('statSessions').textContent = sessions.length || 0;
+                    let playerCount = 0;
+                    sessions.forEach(s => { playerCount += (s.playerCount || s.players?.length || 0); });
+                    document.getElementById('statPlayers').textContent = playerCount || 0;
+                }
+
+                // Load characters count from Earth2026
+                const charsResponse = await fetch(`${apiUrl}/api/v1/earth2026/characters`, {
+                    headers: authToken ? { 'Authorization': `Bearer ${authToken}` } : {}
+                });
+                if (charsResponse.ok) {
+                    const characters = await charsResponse.json();
+                    const charArray = Array.isArray(characters) ? characters : [characters];
+                    document.getElementById('statCharacters').textContent = charArray.length || 0;
+                }
+
+                // Load corporations count
+                const corpResponse = await fetch(`${apiUrl}/api/v1/corporate/office/1`, {
+                    headers: authToken ? { 'Authorization': `Bearer ${authToken}` } : {}
+                });
+                if (corpResponse.ok) {
+                    document.getElementById('statCorporations').textContent = 1;
+                } else {
+                    document.getElementById('statCorporations').textContent = 0;
+                }
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+
+        // Load session list
+        async function loadSessions() {
+            try {
+                const response = await fetch(`${apiUrl}/api/v1/4x/sessions`, {
+                    headers: authToken ? { 'Authorization': `Bearer ${authToken}` } : {}
+                });
+                if (response.ok) {
+                    const sessions = await response.json();
+                    const list = document.getElementById('sessionList');
+                    if (sessions.length === 0) {
+                        list.innerHTML = '<li class="session-item" style="justify-content:center;color:var(--text-secondary);">No sessions found. Create one to get started.</li>';
+                    } else {
+                        list.innerHTML = sessions.map(s => `
+                            <li class="session-item">
+                                <div>
+                                    <strong>${s.name || 'Unnamed Session'}</strong>
+                                    <div style="font-size:0.85rem;color:var(--text-secondary);">${s.playerCount || s.players?.length || 0} players</div>
+                                </div>
+                                <button class="btn btn-secondary" onclick="joinSession('${s.sessionId}')">Join</button>
+                            </li>
+                        `).join('');
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load sessions:', error);
+            }
+        }
+
+        // Join session
+        async function joinSession(id) {
+            try {
+                const response = await fetch(`${apiUrl}/api/v1/4x/sessions/${id}/join`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                if (response.ok) {
+                    alert('Joined session!');
+                    loadStats();
+                    loadSessions();
+                } else {
+                    const err = await response.json().catch(() => ({}));
+                    alert(err.error || 'Failed to join session');
+                }
+            } catch (error) {
+                console.error('Failed to join session:', error);
+                alert('Failed to join session');
+            }
+        }
+
+        // Navigate to Earth 2026 landing with a specific character
+        function navigateToEarth2026(characterId, characterName) {
+            localStorage.setItem('selected_char_id', characterId.toString());
+            localStorage.setItem('selected_char_name', characterName || '');
+            // Hide all sections and show earth2026
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            const earthSection = document.getElementById('earth2026');
+            if (earthSection) {
+                earthSection.classList.add('active');
+                loadEarth2026(characterId);
+            }
+            // Update sidebar active state
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        }
+
+        // Load Earth 2026 landing page
+        async function loadEarth2026(characterId) {
+            const container = document.getElementById('earth2026Content');
+            if (!container) return;
+            
+            try {
+                // Load character info
+                const charResponse = await fetch(`${apiUrl}/api/v1/earth2026/characters/${characterId}`);
+                let charInfo = null;
+                if (charResponse.ok) {
+                    charInfo = await charResponse.json();
+                }
+
+                // Load locations
+                const locResponse = await fetch(`${apiUrl}/api/v1/earth2026/locations`);
+                const locations = locResponse.ok ? await locResponse.json() : [];
+
+                // Load scenarios
+                const scenResponse = await fetch(`${apiUrl}/api/v1/earth2026/scenarios?level=1`);
+                const scenarios = scenResponse.ok ? await scenResponse.json() : [];
+
+                // Load portal locations
+                const portalResponse = await fetch(`${apiUrl}/api/v1/earth2026/locations/portals`);
+                const portals = portalResponse.ok ? await portalResponse.json() : [];
+
+                const charName = charInfo?.name || localStorage.getItem('selected_char_name') || 'Unknown';
+                const currentLocation = charInfo?.earthLocation || 'San Diego, CA';
+                const xp = charInfo?.xp || 0;
+                const level = charInfo?.level || 1;
+
+                // Check if this is the first time entering Earth 2026
+                const isFirstTime = currentLocation === 'San Diego, CA' && !localStorage.getItem('earth2026_started_' + characterId);
+                
+                container.innerHTML = `
+                    <div style="margin-bottom:24px;">
+                        <button class="btn btn-secondary" onclick="navigateTo('characters')" style="margin-bottom:16px;">← Back to Characters</button>
+                        <h2 style="margin-bottom:8px;">🌍 Earth 2026 - ${charName}</h2>
+                        <p style="color:var(--text-secondary);">Location: <strong>${currentLocation}</strong> | Level: ${level} | XP: ${xp}</p>
+                    </div>
+
+                    ${isFirstTime ? `
+                    <div style="background:linear-gradient(135deg, #1a1f4e, #252b6e);border:2px solid #64ffda;border-radius:12px;padding:24px;margin-bottom:24px;text-align:center;">
+                        <h3 style="margin-bottom:12px;color:#64ffda;">🚀 Welcome to Earth 2026!</h3>
+                        <p style="color:var(--text-secondary);margin-bottom:16px;max-width:600px;margin-left:auto;margin-right:auto;">
+                            Your adventure begins at the San Diego Convention Center. Start the game to be transported to the starting location and begin your first mission.
+                        </p>
+                        <button class="btn" style="background:linear-gradient(135deg, #64ffda, #7c4dff);color:#0a0e27;font-weight:700;font-size:1.2rem;padding:16px 48px;border:none;border-radius:8px;cursor:pointer;" onclick="startGameAction(${characterId})">
+                            🎮 Start Game
+                        </button>
+                    </div>
+                    ` : `
+                    <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;padding:16px;margin-bottom:24px;">
+                        <p style="color:var(--text-secondary);">
+                            ${currentLocation === 'San Diego Convention Center' ? '📍 You are at the starting location. Choose a scenario below to begin your adventure.' : '📍 You are at ' + currentLocation + '. Move to a new location or start a scenario.'}
+                        </p>
+                    </div>
+                    `}
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                        <div class="card">
+                            <h3 class="card-title">📍 Available Locations (${locations.length})</h3>
+                            <div style="max-height:400px;overflow-y:auto;">
+                                ${locations.length > 0 ? locations.map(loc => `
+                                    <div class="session-item" style="cursor:pointer;" onclick="moveToLocation(${characterId}, '${(loc.name || '').replace(/'/g, "\\'")}')">
+                                        <div>
+                                            <strong>${loc.name || 'Unknown'}</strong>
+                                            <div style="font-size:0.85rem;color:var(--text-secondary);">${loc.region || ''} ${loc.hasPortal ? '· 🌀 Portal' : ''}</div>
+                                        </div>
+                                    </div>
+                                `).join('') : '<div class="corp-empty">No locations available.</div>'}
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3 class="card-title">🎯 Scenarios (${scenarios.length})</h3>
+                            <div style="max-height:400px;overflow-y:auto;">
+                                ${scenarios.length > 0 ? scenarios.map(scen => {
+                                    const status = scen.status || 'AVAILABLE';
+                                    let statusBadge, btnHtml;
+                                    if (status === 'AVAILABLE') {
+                                        statusBadge = '<span style="color:#64ffda;">● Available</span>';
+                                        btnHtml = '<button class="btn-sm btn-accept" onclick="startScenarioAction(${characterId}, ${scen.id})">Start</button>';
+                                    } else if (status === 'IN_PROGRESS') {
+                                        statusBadge = '<span style="color:#ffd700;">● In Progress</span>';
+                                        btnHtml = '<button class="btn-sm" style="background:#2a3070;color:#8892b0;cursor:not-allowed;" disabled>In Progress</button>';
+                                    } else if (status === 'COMPLETED') {
+                                        statusBadge = '<span style="color:#98c379;">● Completed</span>';
+                                        btnHtml = '<button class="btn-sm" onclick="resetScenarioAction(${scen.id})">Reset</button>';
+                                    } else if (status === 'FAILED') {
+                                        statusBadge = '<span style="color:#e06c75;">● Failed</span>';
+                                        btnHtml = '<button class="btn-sm btn-accept" onclick="resetScenarioAction(${scen.id})">Retry</button>';
+                                    } else {
+                                        statusBadge = '<span style="color:#8892b0;">● ' + status + '</span>';
+                                        btnHtml = '';
+                                    }
+                                    return `
+                                    <div class="session-item">
+                                        <div>
+                                            <strong>${scen.name || scen.title || 'Unknown'}</strong>
+                                            <div style="font-size:0.85rem;color:var(--text-secondary);">Level ${scen.minLevel || scen.level || 1} | XP: ${scen.xpReward || scen.xp || 0} | ${statusBadge}</div>
+                                        </div>
+                                        <div>
+                                            ${btnHtml}
+                                        </div>
+                                    </div>
+                                    `;
+                                }).join('') : '<div class="corp-empty">No scenarios available.</div>'}
+                            </div>
+                        </div>
+                    </div>
+
+                    ${portals.length > 0 ? `
+                    <div class="card" style="margin-top:20px;">
+                        <h3 class="card-title">🌀 Galaxy Portals (${portals.length})</h3>
+                        <p style="color:var(--text-secondary);margin-bottom:12px;">Reach level 10 and complete the required scenarios to unlock galaxy transitions.</p>
+                        <div style="display:flex;flex-wrap:wrap;gap:12px;">
+                            ${portals.map(p => `
+                                <div style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:8px;padding:12px 16px;">
+                                    <strong>${p.name || 'Unknown'}</strong>
+                                    <div style="font-size:0.85rem;color:var(--text-secondary);">→ ${p.portalGalaxy || 'Unknown Galaxy'}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                `;
+            } catch (error) {
+                console.error('Failed to load Earth 2026:', error);
+                container.innerHTML = '<div class="corp-empty">Failed to load Earth 2026 data.</div>';
+            }
+        }
+
+        async function startGameAction(characterId) {
+            try {
+                const response = await fetch(`${apiUrl}/api/v1/earth2026/characters/${characterId}/start-game`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
+                    }
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    // Mark as started
+                    localStorage.setItem('earth2026_started_' + characterId, 'true');
+                    // Show welcome message
+                    alert(result.message || 'Game started! Your adventure begins at the San Diego Convention Center.');
+                    // Reload the Earth 2026 page
+                    loadEarth2026(characterId);
+                } else {
+                    const err = await response.json().catch(() => ({}));
+                    alert(err.error || 'Failed to start game');
+                }
+            } catch (error) {
+                console.error('Failed to start game:', error);
+                alert('Failed to start game: ' + error.message);
+            }
+        }
+
+        async function moveToLocation(characterId, location) {
+            try {
+                await fetch(`${apiUrl}/api/v1/earth2026/characters/${characterId}/location`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
+                    },
+                    body: JSON.stringify({ location })
+                });
+                loadEarth2026(characterId);
+            } catch (error) {
+                console.error('Failed to move character:', error);
+            }
+        }
+
+        async function startScenarioAction(characterId, scenarioId) {
+            try {
+                const response = await fetch(`${apiUrl}/api/v1/earth2026/scenarios/${scenarioId}/start`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
+                    }
+                });
+                if (response.ok) {
+                    alert('Scenario started! The adventure begins...');
+                    loadEarth2026(characterId);
+                } else {
+                    const err = await response.json().catch(() => ({}));
+                    alert('Cannot start scenario: ' + (err.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Failed to start scenario:', error);
+                alert('Failed to start scenario: ' + error.message);
+            }
+        }
+
+        async function resetScenarioAction(scenarioId) {
+            try {
+                const response = await fetch(`${apiUrl}/api/v1/earth2026/scenarios/${scenarioId}/reset`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
+                    }
+                });
+                if (response.ok) {
+                    const charId = localStorage.getItem('selected_char_id');
+                    loadEarth2026(charId);
+                } else {
+                    alert('Failed to reset scenario');
+                }
+            } catch (error) {
+                console.error('Failed to reset scenario:', error);
+                alert('Failed to reset scenario: ' + error.message);
+            }
+        }
+
+        // Load character list from Earth2026
+        async function loadCharacters() {
+            try {
+                const response = await fetch(`${apiUrl}/api/v1/earth2026/characters`, {
+                    headers: authToken ? { 'Authorization': `Bearer ${authToken}` } : {}
+                });
+                if (response.ok) {
+                    const characters = await response.json();
+                    const charArray = Array.isArray(characters) ? characters : [characters];
+                    const list = document.getElementById('characterList');
+                    if (charArray.length === 0) {
+                        list.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;">No characters found. Create one to get started.</div>';
+                    } else {
+                        list.innerHTML = charArray.map(c => {
+                            const level = c.level || 1;
+                            const statusText = c.hasTransitioned ? 'GALAXY' : 'EARTH';
+                            const statusColor = c.hasTransitioned ? '#64ffda' : '#ffd700';
+                            return `
+                            <div class="session-item" style="cursor:pointer;" onclick="navigateToEarth2026(${c.id}, '${(c.name || '').replace(/'/g, "\\'")}')">
+                                <div>
+                                    <strong>${c.name || 'Unnamed'}</strong>
+                                    <div style="font-size:0.85rem;color:var(--text-secondary);">${c.occupation || 'Adventurer'} · <span style="color:${statusColor};">${statusText}</span> (Lv.${level})</div>
+                                </div>
+                                <div style="font-size:0.85rem;color:var(--text-secondary);">STR:${c.strScore || '-'}/DEX:${c.dexScore || '-'}/INT:${c.intScore || '-'} <span style="color:var(--accent-primary);">[Click to play]</span></div>
+                            </div>`;
+                        }).join('');
+                    }
+                } else {
+                    const list = document.getElementById('characterList');
+                    if (list) list.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;">Failed to load characters.</div>';
+                }
+            } catch (error) {
+                console.error('Failed to load characters:', error);
+                const list = document.getElementById('characterList');
+                if (list) list.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;">Error loading characters.</div>';
+            }
+        }
+
+        // Connect to event feed
+        function connectEventFeed() {
+            const eventSource = new EventSource(`${apiUrl}/api/v1/game/events`);
+            const feed = document.getElementById('eventFeed');
+            
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                const item = document.createElement('div');
+                item.className = 'event-item';
+                item.innerHTML = `
+                    <div>${data.message || 'New event'}</div>
+                    <div class="event-time">${new Date().toLocaleTimeString()}</div>
+                `;
+                feed.prepend(item);
+                
+                // Keep only last 50 events
+                while (feed.children.length > 50) {
+                    feed.removeChild(feed.lastChild);
+                }
+            };
+            
+            eventSource.onerror = () => {
+                console.error('Event feed disconnected');
+            };
+        }
+
+        // Create new session
+        async function createNewSession() {
+            try {
+                const response = await fetch(`${apiUrl}/api/v1/4x/sessions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ sessionName: 'New Game Session' })
+                });
+                
+                if (response.ok) {
+                    loadStats();
+                    alert('Session created!');
+                }
+            } catch (error) {
+                console.error('Failed to create session:', error);
+                alert('Failed to create session');
+            }
+        }
+
+        // Show character creation form
+        function showCreateCharacterForm() {
+            navigateTo('characters');
+            document.getElementById('characterCreateForm').style.display = 'block';
+            document.getElementById('charName').value = '';
+            document.getElementById('charAge').value = '25';
+            document.getElementById('charOccupation').value = '';
+            document.getElementById('charBackground').value = '';
+            document.getElementById('charName').focus();
+        }
+
+        // Cancel character creation
+        function cancelCreateCharacter() {
+            document.getElementById('characterCreateForm').style.display = 'none';
+        }
+
+        // Create new character via Earth2026 API
+        async function submitCreateCharacter() {
+            const name = document.getElementById('charName').value.trim();
+            const age = parseInt(document.getElementById('charAge').value) || 25;
+            const occupation = document.getElementById('charOccupation').value.trim() || null;
+            const background = document.getElementById('charBackground').value.trim() || null;
+
+            if (!name) {
+                showToast('Character name is required', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiUrl}/api/v1/earth2026/characters`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
+                    },
+                    body: JSON.stringify({
+                        name,
+                        age,
+                        occupation,
+                        background,
+                        playerId: playerId
+                    })
+                });
+
+                if (response.ok) {
+                    const character = await response.json();
+                    showToast(`Character "${name}" created! Click to play in Earth 2026.`, 'success');
+                    cancelCreateCharacter();
+                    loadCharacters();
+                } else {
+                    const error = await response.json().catch(() => ({}));
+                    showToast(`Failed to create character: ${error.error || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                console.error('Failed to create character:', error);
+                showToast('Failed to create character. Please try again.', 'error');
+            }
+        }
+
+        // Save settings
+        function saveSettings() {
+            const url = document.getElementById('apiUrlInput').value;
+            if (url) {
+                localStorage.setItem('doramcu_api_url', url);
+                apiUrl = url;
+                initializeClient();
+                alert('Settings saved!');
+            }
+        }
+
+        // Load saved settings
+        const savedUrl = localStorage.getItem('doramcu_api_url');
+        if (savedUrl) {
+            apiUrl = savedUrl;
+            document.getElementById('apiUrlInput').value = savedUrl;
+        }
+
+        // Register Service Worker for offline support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('../../sw.js').then((registration) => {
+                    console.log('Desktop Client: Service Worker registered with scope:', registration.scope);
+                }).catch((error) => {
+                    console.warn('Desktop Client: Service Worker registration failed:', error);
+                });
+            });
+        }
+
+        // ===================== CORPORATION FUNCTIONS =====================
+
+        // Show corporation sub-section
+        function showCorpSection(sectionId) {
+            document.querySelectorAll('.corp-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.corp-nav-btn').forEach(b => b.classList.remove('active'));
+            const section = document.getElementById(sectionId);
+            if (section) section.classList.add('active');
+            const btn = document.querySelector(`.corp-nav-btn[onclick="showCorpSection('${sectionId}')"]`);
+            if (btn) btn.classList.add('active');
+        }
+
+        // Show toast notification
+        function showCorpToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `corp-toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Load corporation dashboard stats
+        async function loadCorporationDashboard() {
+            try {
+                const state = await CorporationClient.getOfficeState();
+                document.getElementById('corpCredits').textContent = (state.creditBalance || 0).toLocaleString();
+                document.getElementById('corpSalary').textContent = (state.totalSalaryObligations || 0).toLocaleString();
+                document.getElementById('corpContractCount').textContent = (state.activeContracts && state.activeContracts.length) || 0;
+                document.getElementById('corpCrewCount').textContent = state.activeHireCount || 0;
+
+                if (state.isInsolvent) {
+                    document.getElementById('corpCredits').parentElement.classList.add('insolvent');
+                }
+            } catch (error) {
+                console.error('Failed to load corporation dashboard:', error);
+            }
+        }
+
+        // Difficulty number to text mapping
+        function getDifficultyText(d) {
+            const map = {1:'EASY', 2:'EASY', 3:'MEDIUM', 4:'HARD', 5:'HARD'};
+            return map[d] || 'MEDIUM';
+        }
+        function getDifficultyClass(d) {
+            const map = {1:'easy', 2:'easy', 3:'medium', 4:'hard', 5:'hard'};
+            return map[d] || 'medium';
+        }
+
+        // Load contracts
+        async function loadContracts() {
+            try {
+                const state = await CorporationClient.getOfficeState();
+                const availableEl = document.getElementById('availableContractList');
+                const activeEl = document.getElementById('activeContractList');
+
+                // Available contracts
+                if (state.availableContracts && state.availableContracts.length > 0) {
+                    availableEl.innerHTML = state.availableContracts.map(c => {
+                        const diffText = getDifficultyText(c.difficulty);
+                        const diffClass = getDifficultyClass(c.difficulty);
+                        return `
+                        <div class="contract-card">
+                            <div class="contract-info">
+                                <h4>${c.title || c.name || 'Unnamed Contract'}</h4>
+                                <div class="contract-meta">
+                                    <span class="contract-difficulty ${diffClass}">${diffText}</span>
+                                    ${c.type || ''} | Payment: ${c.payment || 0} credits | XP: ${c.xpReward || c.xp || 0}
+                                </div>
+                            </div>
+                            <div class="contract-actions">
+                                <button class="btn-sm btn-accept" onclick="acceptContractAction(${c.id})">Accept</button>
+                            </div>
+                        </div>`;
+                    }).join('');
+                } else {
+                    availableEl.innerHTML = '<div class="corp-empty">No available contracts. Generate new contracts to see opportunities.</div>';
+                }
+
+                // Active contracts
+                if (state.activeContracts && state.activeContracts.length > 0) {
+                    activeEl.innerHTML = state.activeContracts.map(c => `
+                        <div class="contract-card">
+                            <div class="contract-info">
+                                <h4>${c.title || c.name || 'Active Contract'}</h4>
+                                <div class="contract-meta">
+                                    Status: ${c.status || 'ACTIVE'} | Progress: ${c.progress || 0}%
+                                </div>
+                            </div>
+                            <div class="contract-actions">
+                                <button class="btn-sm btn-accept" onclick="completeContractAction(${c.id})">Complete</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    activeEl.innerHTML = '<div class="corp-empty">No active contracts.</div>';
+                }
+            } catch (error) {
+                console.error('Failed to load contracts:', error);
+                document.getElementById('availableContractList').innerHTML = '<div class="corp-empty">Failed to load contracts.</div>';
+                document.getElementById('activeContractList').innerHTML = '<div class="corp-empty">Failed to load active contracts.</div>';
+            }
+        }
+
+        // Load crew
+        async function loadCrew() {
+            try {
+                const state = await CorporationClient.getOfficeState();
+                const crewEl = document.getElementById('activeCrewList');
+                const selectEl = document.getElementById('hireCharacterSelect');
+
+                // Populate hire character dropdown from available AI characters
+                const available = state.availableAiCharacters || [];
+                if (available && Array.isArray(available) && available.length > 0) {
+                    selectEl.innerHTML = '<option value="">Select character...</option>' +
+                        available.map(c => `<option value="${c.id}">${c.name || 'Unknown'} (XP: ${c.totalExperience || 0})</option>`).join('');
+                } else {
+                    selectEl.innerHTML = '<option value="">No characters available</option>';
+                }
+
+                // Active crew list
+                if (state.activeHires && state.activeHires.length > 0) {
+                    crewEl.innerHTML = state.activeHires.map(h => `
+                        <div class="crew-card">
+                            <div class="crew-info">
+                                <h4>${h.aiCharacterName || h.name || 'Unknown'}</h4>
+                                <div class="crew-meta">
+                                    <span class="crew-position">${h.position || 'UNASSIGNED'}</span>
+                                    ${h.careerLevel || ''} | Salary: ${h.dailySalary || 0}/day | Performance: ${h.performanceRating || h.performance || 'N/A'}
+                                </div>
+                            </div>
+                            <div class="crew-actions">
+                                <button class="btn-sm btn-promote" onclick="promoteCrewAction(${h.id})">Promote</button>
+                                <button class="btn-sm btn-demote" onclick="demoteCrewAction(${h.id})">Demote</button>
+                                <button class="btn-sm btn-fire" onclick="fireCrewAction(${h.id})">Fire</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    crewEl.innerHTML = '<div class="corp-empty">No active crew members. Hire someone to get started!</div>';
+                }
+            } catch (error) {
+                console.error('Failed to load crew:', error);
+                document.getElementById('activeCrewList').innerHTML = '<div class="corp-empty">Failed to load crew.</div>';
+            }
+        }
+
+        // Load finance
+        async function loadFinance() {
+            try {
+                const report = await CorporationClient.getFinancialReport();
+                document.getElementById('finRevenue').textContent = (report.totalRevenue || 0).toLocaleString();
+                document.getElementById('finExpenses').textContent = (report.totalExpenses || 0).toLocaleString();
+                const profit = (report.netProfit !== undefined) ? report.netProfit : ((report.totalRevenue || 0) - (report.totalExpenses || 0));
+                document.getElementById('finProfit').textContent = profit.toLocaleString();
+
+                // Transactions
+                const transactions = await CorporationClient.getTransactions(0, 20);
+                const container = document.getElementById('transactionTableContainer');
+                if (transactions && transactions.length > 0) {
+                    container.innerHTML = `
+                        <table class="transaction-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${transactions.map(t => `
+                                    <tr>
+                                        <td>${t.date ? new Date(t.date).toLocaleDateString() : 'N/A'}</td>
+                                        <td>${t.description || 'Transaction'}</td>
+                                        <td>${t.type || 'UNKNOWN'}</td>
+                                        <td class="${(t.amount || 0) >= 0 ? 'credit' : 'debit'}">
+                                            ${(t.amount || 0) >= 0 ? '+' : ''}${(t.amount || 0).toLocaleString()}
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    container.innerHTML = '<div class="corp-empty">No transactions recorded.</div>';
+                }
+            } catch (error) {
+                console.error('Failed to load finance:', error);
+                document.getElementById('transactionTableContainer').innerHTML = '<div class="corp-empty">Failed to load financial data.</div>';
+            }
+        }
+
+        // Load AI actions
+        async function loadAiActions() {
+            try {
+                const actions = await CorporationClient.getAiActions(20);
+                const listEl = document.getElementById('aiActionList');
+                if (actions && actions.length > 0) {
+                    listEl.innerHTML = actions.map(a => `
+                        <div class="ai-action-item">
+                            <div class="action-info">
+                                <h4>${a.actionType || 'Unknown Action'}</h4>
+                                <div class="action-desc">${a.description || 'No description'}</div>
+                            </div>
+                            <span class="ai-result ${a.result ? a.result.toLowerCase() : 'pending'}">${a.result || 'PENDING'}</span>
+                            <span class="action-time">${a.timestamp ? new Date(a.timestamp).toLocaleString() : 'N/A'}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    listEl.innerHTML = '<div class="corp-empty">No AI actions recorded yet. Trigger an AI turn to get started.</div>';
+                }
+            } catch (error) {
+                console.error('Failed to load AI actions:', error);
+                document.getElementById('aiActionList').innerHTML = '<div class="corp-empty">Failed to load AI actions.</div>';
+            }
+        }
+
+        // Load character data
+        async function loadCharacterData() {
+            try {
+                const charId = CorporationClient.getCharacterId();
+
+                // Stats
+                const stats = await CorporationClient.getCharacterStats(charId);
+                const statsGrid = document.getElementById('characterStatsGrid');
+                if (stats && stats.stats) {
+                    statsGrid.innerHTML = Object.entries(stats.stats).map(([key, value]) => `
+                        <div class="char-stat-card">
+                            <div class="char-stat-value">${value}</div>
+                            <div class="char-stat-label">${key}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    statsGrid.innerHTML = '<div class="corp-empty">No character stats available.</div>';
+                }
+
+                // Career
+                const career = await CorporationClient.getCharacterCareer(charId);
+                const careerEl = document.getElementById('characterCareerList');
+                if (career && career.length > 0) {
+                    careerEl.innerHTML = career.map(c => `
+                        <div class="ai-action-item">
+                            <div class="action-info">
+                                <h4>${c.branch || 'Unknown Branch'}</h4>
+                                <div class="action-desc">Rank: ${c.rank || 'N/A'} | Duration: ${c.duration || 'N/A'}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    careerEl.innerHTML = '<div class="corp-empty">No career history.</div>';
+                }
+
+                // Assignments
+                const assignments = await CorporationClient.getCharacterAssignments(charId);
+                const assignEl = document.getElementById('characterAssignmentList');
+                if (assignments && assignments.length > 0) {
+                    assignEl.innerHTML = assignments.map(a => `
+                        <div class="ai-action-item">
+                            <div class="action-info">
+                                <h4>${a.contractName || 'Unknown Contract'}</h4>
+                                <div class="action-desc">Status: ${a.status || 'N/A'}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    assignEl.innerHTML = '<div class="corp-empty">No current assignments.</div>';
+                }
+            } catch (error) {
+                console.error('Failed to load character data:', error);
+                document.getElementById('characterStatsGrid').innerHTML = '<div class="corp-empty">Failed to load character data.</div>';
+                document.getElementById('characterCareerList').innerHTML = '<div class="corp-empty">Failed to load career history.</div>';
+                document.getElementById('characterAssignmentList').innerHTML = '<div class="corp-empty">Failed to load assignments.</div>';
+            }
+        }
+
+        // ---- Action Handlers ----
+
+        async function acceptContractAction(contractId) {
+            try {
+                await CorporationClient.acceptContract(contractId);
+                showCorpToast('Contract accepted!', 'success');
+                loadCorporationDashboard();
+                loadContracts();
+            } catch (error) {
+                console.error('Failed to accept contract:', error);
+                showCorpToast('Failed to accept contract: ' + error.message, 'error');
+            }
+        }
+
+        async function completeContractAction(contractId) {
+            try {
+                await CorporationClient.completeContract(contractId);
+                showCorpToast('Contract completed!', 'success');
+                loadCorporationDashboard();
+                loadContracts();
+            } catch (error) {
+                console.error('Failed to complete contract:', error);
+                showCorpToast('Failed to complete contract: ' + error.message, 'error');
+            }
+        }
+
+        async function generateNewContracts() {
+            try {
+                await CorporationClient.generateContracts();
+                showCorpToast('New contracts generated!', 'success');
+                loadContracts();
+            } catch (error) {
+                console.error('Failed to generate contracts:', error);
+                showCorpToast('Failed to generate contracts: ' + error.message, 'error');
+            }
+        }
+
+        async function hireCrewMember() {
+            const characterId = document.getElementById('hireCharacterSelect').value;
+            const position = document.getElementById('hirePositionSelect').value;
+            const salary = parseInt(document.getElementById('hireSalaryInput').value) || 100;
+
+            if (!characterId || !position) {
+                showCorpToast('Please select a character and position.', 'error');
+                return;
+            }
+
+            try {
+                await CorporationClient.hireAiCharacter(parseInt(characterId), position, salary);
+                showCorpToast('Crew member hired!', 'success');
+                loadCrew();
+                loadCorporationDashboard();
+            } catch (error) {
+                console.error('Failed to hire crew:', error);
+                showCorpToast('Failed to hire: ' + error.message, 'error');
+            }
+        }
+
+        async function fireCrewAction(hiringId) {
+            if (!confirm('Are you sure you want to fire this crew member?')) return;
+            try {
+                await CorporationClient.fireAiCharacter(hiringId);
+                showCorpToast('Crew member fired.', 'info');
+                loadCrew();
+                loadCorporationDashboard();
+            } catch (error) {
+                console.error('Failed to fire crew:', error);
+                showCorpToast('Failed to fire: ' + error.message, 'error');
+            }
+        }
+
+        async function promoteCrewAction(hiringId) {
+            try {
+                await CorporationClient.promoteCrew(hiringId);
+                showCorpToast('Crew member promoted!', 'success');
+                loadCrew();
+            } catch (error) {
+                console.error('Failed to promote crew:', error);
+                showCorpToast('Failed to promote: ' + error.message, 'error');
+            }
+        }
+
+        async function demoteCrewAction(hiringId) {
+            try {
+                await CorporationClient.demoteCrew(hiringId);
+                showCorpToast('Crew member demoted.', 'info');
+                loadCrew();
+            } catch (error) {
+                console.error('Failed to demote crew:', error);
+                showCorpToast('Failed to demote: ' + error.message, 'error');
+            }
+        }
+
+        async function triggerAiTurnAction() {
+            try {
+                const result = await CorporationClient.triggerAiTurn();
+                showCorpToast(`AI turn completed: ${result.actionsProcessed || 0} actions processed`, 'success');
+                loadAiActions();
+                loadCorporationDashboard();
+            } catch (error) {
+                console.error('Failed to trigger AI turn:', error);
+                showCorpToast('Failed to trigger AI turn: ' + error.message, 'error');
+            }
+        }
+
+        // Load all corporation data
+        async function loadAllCorporationData() {
+            await Promise.all([
+                loadCorporationDashboard(),
+                loadContracts(),
+                loadCrew(),
+                loadFinance(),
+                loadAiActions(),
+                loadCharacterData()
+            ]);
+        }
+
+        // Register corporation refresh callback for SSE events
+        window.corporationRefresh = loadAllCorporationData;
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeClient();
+        });
+    </script>
+</body>
+</html>

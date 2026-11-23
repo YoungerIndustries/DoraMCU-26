@@ -283,54 +283,10 @@
                 statusEl.textContent = 'Checking installation...';
                 const installStatus = await VersionChecker.checkInstallation(serverVersion);
 
-                // Step 5: Decide flow based on platform
+                // Step 5: All platforms -> show landing page promoting browser play
+                // Native client downloads are disabled for 0.9.0 Beta (placeholder files)
                 statusEl.textContent = 'Preparing your experience...';
-
-                // Desktop OS with native client support: auto-download and install
-                if (PlatformDetector.hasNativeClient(platform.os) && platform.tier === 'desktop') {
-                    // If already installed and up to date, try to open the app
-                    if (installStatus.installed && !installStatus.needsUpdate) {
-                        statusEl.textContent = 'Launching your app...';
-                        const opened = await VersionChecker.tryOpenDesktopClient();
-                        if (!opened) {
-                            // App didn't open, show landing with options
-                            showLandingPage(platform, config, serverVersion, installStatus);
-                            return;
-                        }
-                        // App opened - no need to show landing
-                        return;
-                    }
-
-                    // Not installed or needs update: auto-download the installer
-                    const downloadInfo = getDownloadInfoForOS(platform.os);
-                    statusEl.textContent = 'Downloading client for ' + downloadInfo.osName + '...';
-
-                    const downloadSuccess = await autoDownloadAndInstall(downloadInfo.downloadUrl, downloadInfo.filename, downloadInfo.osName, serverVersion);
-
-                    if (downloadSuccess) {
-                        statusEl.textContent = 'Client downloaded! Starting installation...';
-                        // After download, show a launch prompt
-                        showInstallCompletePage(platform, config, serverVersion, downloadInfo);
-                    } else {
-                        // Download failed, fall back to landing page
-                        showLandingPage(platform, config, serverVersion, installStatus);
-                    }
-                }
-                // Mobile/Tablet: go straight to web client
-                else if (platform.tier === 'mobile' || platform.tier === 'tablet') {
-                    statusEl.textContent = 'Redirecting to web client...';
-                    // Clear any stored game auth so the game page shows login fresh
-                    localStorage.removeItem('doramcu_game_state');
-                    const webClientUrl = ConfigManager.getWebClientUrl(platform.tier);
-                    setTimeout(() => {
-                        window.location.href = webClientUrl;
-                    }, 500);
-                    return;
-                }
-                // Low-end or unknown: show landing page
-                else {
-                    showLandingPage(platform, config, serverVersion, installStatus);
-                }
+                showLandingPage(platform, config, serverVersion, installStatus);
 
             } catch (error) {
                 console.error('Failed to initialize client:', error);
@@ -568,9 +524,8 @@
                         <div class="install-status-banner update-available">
                             <span class="status-icon">⚠️</span>
                             <span class="status-text">
-                                Update available (v${installStatus.installedVersion} → v${serverVersion})
+                                Update available (v${installStatus.installedVersion} → v${serverVersion}) - Play in Browser below
                             </span>
-                            <button class="status-action" onclick="handleUpdate('${primaryDownload}', '${primaryFilename}')">Update</button>
                         </div>
                     `;
                 } else {
@@ -580,16 +535,15 @@
                             <span class="status-text">
                                 ${getInstallTypeName(installStatus.installType)} installed (v${installStatus.installedVersion})
                             </span>
-                            <button class="status-action" onclick="handleOpenApp()">Open App</button>
                         </div>
                     `;
                 }
             } else {
                 html += `
                     <div class="install-status-banner not-installed">
-                        <span class="status-icon">📦</span>
+                        <span class="status-icon">🌐</span>
                         <span class="status-text">
-                            Desktop client not detected - download below
+                            Play directly in your browser — no download needed
                         </span>
                     </div>
                 `;
@@ -605,53 +559,20 @@
                 `;
             }
             
-            // Download buttons
-            html += `<div class="download-buttons">`;
-            
-            if (primaryDownload) {
-                const btnText = installStatus.installed && !installStatus.needsUpdate ? 'Reinstall Client' : primaryLabel;
-                html += `
-                    <button class="download-btn primary" onclick="handleDownload('${primaryDownload}', '${primaryFilename}', this)">
-                        <span class="icon">${primaryIcon}</span>
-                        <span>${btnText}</span>
-                    </button>
-                `;
-            }
-            
-            // Alternative downloads (only show if not the primary OS)
-            if (os !== 'windows') {
-                html += `
-                    <button class="download-btn" onclick="handleDownload('/api/v1/clients/download/unity/windows', 'DoraMCU-Unity-Setup.exe', this)">
-                        <span class="icon">🪟</span>
-                        <span>Windows</span>
-                    </button>
-                `;
-            }
-            if (os !== 'macos') {
-                html += `
-                    <button class="download-btn" onclick="handleDownload('/api/v1/clients/download/unity/macos', 'DoraMCU-Unity.dmg', this)">
-                        <span class="icon">🍎</span>
-                        <span>macOS</span>
-                    </button>
-                `;
-            }
-            if (os !== 'linux') {
-                html += `
-                    <button class="download-btn" onclick="handleDownload('/api/v1/clients/download/unity/linux', 'DoraMCU-Unity.AppImage', this)">
-                        <span class="icon">🐧</span>
-                        <span>Linux</span>
-                    </button>
-                `;
-            }
-            
-            html += `</div>`; // end download-buttons
-            
-            // Web client link - fallback option
+            // Play in Browser - primary CTA (native client downloads disabled for 0.9.0 Beta)
             const webClientUrl = ConfigManager.getWebClientUrl(tier);
             html += `
-                <a href="${webClientUrl}" class="web-client-link" onclick="clearGameAuth()">
-                    Or play in browser →
-                </a>
+                <div class="download-buttons">
+                    <a href="${webClientUrl}" class="download-btn primary" onclick="clearGameAuth()">
+                        <span class="icon">🌐</span>
+                        <span>Play in Browser</span>
+                    </a>
+                </div>
+            `;
+            html += `
+                <p class="landing-subtitle" style="margin-top: 16px; color: #8892b0; font-size: 0.9rem;">
+                    Native client downloads coming soon. Play directly in your browser for the best experience.
+                </p>
             `;
             
             // Device info
@@ -787,7 +708,7 @@
                 VersionChecker.registerInstallation('pwa', config.version);
                 location.reload();
             } else {
-                alert('Installation was cancelled. You can still use the browser client or download the native client.');
+                alert('Installation was cancelled. You can still play in the browser.');
             }
         }
 

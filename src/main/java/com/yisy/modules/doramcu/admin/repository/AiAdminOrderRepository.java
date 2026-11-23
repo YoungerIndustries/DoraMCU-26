@@ -25,6 +25,9 @@ public interface AiAdminOrderRepository extends JpaRepository<AiAdminOrder, Long
     /** Finds pending orders not yet assigned to an AI admin. */
     List<AiAdminOrder> findByStatusAndAssignedAiAdminIdIsNull(AiAdminOrder.OrderStatus status);
 
+    /** Finds pending unassigned orders sorted by priority (ascending) then creation time (ascending). */
+    List<AiAdminOrder> findByStatusAndAssignedAiAdminIdIsNullOrderByPriorityAscCreatedAtAsc(AiAdminOrder.OrderStatus status);
+
     /** Finds all orders assigned to a specific AI admin. */
     List<AiAdminOrder> findByAssignedAiAdminId(Long aiAdminId);
 

@@ -6,7 +6,7 @@ class MainView {
     constructor(app) {
         this.app = app;
         this.element = null;
-        this.activePanel = 'map';
+        this.activePanel = 'galaxy3d';
         this.renderedPanels = {};
     }
 
@@ -17,8 +17,11 @@ class MainView {
         this.element.innerHTML = `
             <div class="main-layout">
                 <div class="sidebar" id="main-sidebar">
-                    <div class="sidebar-item active" data-panel="map">
-                        <span>🗺️</span><span>Map</span>
+                    <div class="sidebar-item active" data-panel="galaxy3d">
+                        <span>🌌</span><span>3D Galaxy</span>
+                    </div>
+                    <div class="sidebar-item" data-panel="map">
+                        <span>🗺️</span><span>2D Map</span>
                     </div>
                     <div class="sidebar-item" data-panel="shipBuild">
                         <span>🚀</span><span>Ship Builder</span>
@@ -69,7 +72,7 @@ class MainView {
 
         // Pre-render all panels and hide them
         const contentEl = this.element.querySelector('#main-content');
-        const panels = ['map', 'shipBuild', 'inventory', 'menu', 'help'];
+        const panels = ['galaxy3d', 'map', 'shipBuild', 'inventory', 'menu', 'help'];
         panels.forEach(panelName => {
             const view = this.app.views[panelName];
             if (view && !this.renderedPanels[panelName]) {
@@ -80,8 +83,8 @@ class MainView {
             }
         });
 
-        // Switch to default panel
-        this._switchPanel('map');
+        // Switch to default panel - 3D Galaxy view
+        this._switchPanel('galaxy3d');
     }
 
     _switchPanel(panelName) {
@@ -92,9 +95,15 @@ class MainView {
             item.classList.toggle('active', item.dataset.panel === panelName);
         });
 
-        // Hide all panels
+        // Hide all panels and call hide() lifecycle
         Object.entries(this.renderedPanels).forEach(([name, el]) => {
             el.style.display = name === panelName ? 'block' : 'none';
+            if (name !== panelName) {
+                const view = this.app.views[name];
+                if (view && typeof view.hide === 'function') {
+                    view.hide();
+                }
+            }
         });
 
         // Call show() on the active view to refresh data

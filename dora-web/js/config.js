@@ -35,7 +35,7 @@ const ConfigManager = {
             }
             
             if (!this.config.version) {
-                this.config.version = '0.0.0';
+                this.config.version = '0.9.0';
             }
             
             console.log('DoraMCU Config loaded:', this.config);
@@ -55,7 +55,7 @@ const ConfigManager = {
     getDefaultConfig() {
         return {
             apiUrl: window.location.origin,
-            version: '0.0.0',
+            version: '0.9.0',
             clients: this.getDefaultClients()
         };
     },

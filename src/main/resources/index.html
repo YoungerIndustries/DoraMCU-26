@@ -1,0 +1,724 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DoraMCU - Multi-Platform Game Client">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>DoraMCU - Universal Game Client</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="manifest" href="manifest.json">
+    <noscript>
+        <style>
+            .noscript-notice {
+                display: block !important;
+                padding: 2rem;
+                text-align: center;
+                background: #2a2a4a;
+                color: #e0e0e0;
+                margin: 2rem;
+                border-radius: 8px;
+            }
+            .loading-container { display: none !important; }
+        </style>
+        <div class="noscript-notice">
+            <h2>JavaScript Required</h2>
+            <p>DoraMCU requires JavaScript to detect your platform and load the appropriate game client.</p>
+            <p>Please enable JavaScript in your browser settings and reload this page.</p>
+        </div>
+    </noscript>
+    <style>
+        /* Landing page styles */
+        .landing-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0e27 0%, #131842 50%, #1a1f4e 100%);
+            color: #e0e6ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+        .landing-title {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #64ffda, #7c4dff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .landing-subtitle {
+            font-size: 1.2rem;
+            color: #8892b0;
+            margin-bottom: 40px;
+        }
+        .download-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 30px;
+        }
+        .download-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            border: 2px solid #2a3070;
+            background: #1a1f4e;
+            color: #e0e6ff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .download-btn:hover {
+            background: #252b6e;
+            border-color: #64ffda;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(100, 255, 218, 0.2);
+        }
+        .download-btn.primary {
+            background: linear-gradient(135deg, #64ffda, #7c4dff);
+            color: #0a0e27;
+            border: none;
+            font-size: 1.3rem;
+            padding: 20px 24px;
+        }
+        .download-btn.primary:hover {
+            box-shadow: 0 6px 20px rgba(100, 255, 218, 0.4);
+        }
+        .download-btn .icon {
+            font-size: 1.5em;
+        }
+        .web-client-link {
+            display: inline-block;
+            padding: 14px 28px;
+            border-radius: 10px;
+            border: 1px solid #64ffda;
+            color: #64ffda;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+        .web-client-link:hover {
+            background: rgba(100, 255, 218, 0.1);
+        }
+        .device-info {
+            margin-top: 30px;
+            padding: 12px 20px;
+            background: rgba(42, 48, 112, 0.5);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #8892b0;
+        }
+        .download-status {
+            font-size: 0.85rem;
+            color: #ff6b6b;
+            margin-top: 6px;
+            min-height: 20px;
+        }
+        .download-status.success {
+            color: #64ffda;
+        }
+        .download-status.warning {
+            color: #ffd93d;
+        }
+        /* Hide loading container when showing landing */
+        .loading-container.hidden {
+            display: none !important;
+        }
+        /* Installation status banner */
+        .install-status-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 14px 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            font-size: 1rem;
+            font-weight: 500;
+            max-width: 400px;
+            width: 100%;
+        }
+        .install-status-banner.installed {
+            background: rgba(100, 255, 218, 0.1);
+            border: 1px solid #64ffda;
+            color: #64ffda;
+        }
+        .install-status-banner.update-available {
+            background: rgba(255, 217, 61, 0.1);
+            border: 1px solid #ffd93d;
+            color: #ffd93d;
+        }
+        .install-status-banner.not-installed {
+            background: rgba(136, 146, 176, 0.1);
+            border: 1px solid #8892b0;
+            color: #8892b0;
+        }
+        .install-status-banner .status-icon {
+            font-size: 1.3em;
+        }
+        .install-status-banner .status-text {
+            flex: 1;
+            text-align: left;
+        }
+        .install-status-banner .status-action {
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .install-status-banner.installed .status-action {
+            background: #64ffda;
+            color: #0a0e27;
+        }
+        .install-status-banner.update-available .status-action {
+            background: #ffd93d;
+            color: #0a0e27;
+        }
+        .install-status-banner .status-action:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        /* PWA install button */
+        .pwa-install-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 1px solid #7c4dff;
+            background: rgba(124, 77, 255, 0.15);
+            color: #b388ff;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            max-width: 400px;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+        .pwa-install-btn:hover {
+            background: rgba(124, 77, 255, 0.3);
+            border-color: #b388ff;
+        }
+        .pwa-install-btn .icon {
+            font-size: 1.3em;
+        }
+        /* Version badge */
+        .version-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(100, 255, 218, 0.15);
+            color: #64ffda;
+            margin-left: 6px;
+        }
+        .version-badge.outdated {
+            background: rgba(255, 217, 61, 0.15);
+            color: #ffd93d;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <h1 class="loading-title">DoraMCU</h1>
+        <p class="loading-subtitle">Detecting your platform...</p>
+        <p class="loading-status" id="status">Initializing...</p>
+    </div>
+
+    <div id="client-container" style="display: none;"></div>
+
+    <script src="js/config.js"></script>
+    <script src="js/platform-detect.js"></script>
+    <script src="js/client-loader.js"></script>
+    <script src="js/version-check.js"></script>
+    <script>
+        // Capture PWA install prompt
+        window['deferredPrompt'] = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            window['deferredPrompt'] = e;
+            console.log('PWA install prompt captured');
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const statusEl = document.getElementById('status');
+            const loadingContainer = document.querySelector('.loading-container');
+
+            try {
+                // Step 0: Register Service Worker for offline support (non-blocking)
+                registerServiceWorker().catch(console.warn);
+
+                // Step 1: Load server configuration
+                statusEl.textContent = 'Loading configuration...';
+                const config = await ConfigManager.loadConfig();
+
+                // Step 2: Detect platform
+                statusEl.textContent = 'Detecting your platform...';
+                const platform = PlatformDetector.detect();
+
+                // Step 3: Fetch server version
+                statusEl.textContent = 'Checking for updates...';
+                const serverVersion = await VersionChecker.fetchServerVersion();
+
+                // Step 4: Check installation status
+                statusEl.textContent = 'Checking installation...';
+                const installStatus = await VersionChecker.checkInstallation(serverVersion);
+
+                // Step 5: All platforms -> show landing page promoting browser play
+                // Native client downloads are disabled for 0.9.0 Beta (placeholder files)
+                statusEl.textContent = 'Preparing your experience...';
+                showLandingPage(platform, config, serverVersion, installStatus);
+
+            } catch (error) {
+                console.error('Failed to initialize client:', error);
+                statusEl.textContent = 'Error loading client. Please try again.';
+                statusEl.style.color = '#ff6b6b';
+            }
+        });
+
+        /**
+         * Get download info for a specific OS.
+         */
+        function getDownloadInfoForOS(os) {
+            switch (os) {
+                case 'windows':
+                    return {
+                        downloadUrl: '/api/v1/clients/download/unity/windows',
+                        filename: 'DoraMCU-Unity-Setup.exe',
+                        osName: 'Windows'
+                    };
+                case 'macos':
+                    return {
+                        downloadUrl: '/api/v1/clients/download/unity/macos',
+                        filename: 'DoraMCU-Unity.dmg',
+                        osName: 'macOS'
+                    };
+                case 'linux':
+                    return {
+                        downloadUrl: '/api/v1/clients/download/unity/linux',
+                        filename: 'DoraMCU-Unity.AppImage',
+                        osName: 'Linux'
+                    };
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * Auto-downloads the client installer and registers the installation.
+         * Returns true if the download succeeded.
+         */
+        async function autoDownloadAndInstall(url, filename, osName, version) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    console.warn('Download failed with status:', response.status);
+                    return false;
+                }
+
+                const blob = await response.blob();
+                const blobUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(blobUrl);
+
+                // Register the installation
+                VersionChecker.registerInstallation('unity', version);
+                console.log('Auto-download complete:', filename);
+                return true;
+            } catch (err) {
+                console.error('Auto-download failed:', err);
+                return false;
+            }
+        }
+
+        /**
+         * Shows a page after successful download, guiding the user to install and launch.
+         */
+        function showInstallCompletePage(platform, config, serverVersion, downloadInfo) {
+            const loadingContainer = document.querySelector('.loading-container');
+            const container = document.getElementById('client-container');
+
+            loadingContainer.classList.add('hidden');
+            container.style.display = 'block';
+
+            const installInstructions = getInstallInstructions(platform.os);
+            const webClientUrl = ConfigManager.getWebClientUrl(platform.tier);
+
+            let html = `<div class="landing-container">`;
+
+            html += `
+                <h1 class="landing-title">DoraMCU</h1>
+                <p class="landing-subtitle">
+                    Client Downloaded Successfully
+                    <span class="version-badge">v${serverVersion}</span>
+                </p>
+            `;
+
+            html += `
+                <div class="install-status-banner installed">
+                    <span class="status-icon">✅</span>
+                    <span class="status-text">
+                        ${downloadInfo.filename} downloaded - install to get started
+                    </span>
+                </div>
+            `;
+
+            html += `
+                <div style="max-width:400px; width:100%; text-align:left; background:rgba(42,48,112,0.5); border-radius:12px; padding:20px; margin-bottom:24px;">
+                    <h3 style="margin:0 0 12px 0; color:#64ffda; font-size:1rem;">Installation Steps:</h3>
+                    <ol style="margin:0; padding-left:20px; color:#8892b0; font-size:0.95rem; line-height:1.8;">
+                        ${installInstructions}
+                    </ol>
+                </div>
+            `;
+
+            html += `<div class="download-buttons">`;
+
+            html += `
+                <button class="download-btn primary" onclick="handleLaunchAfterInstall('${downloadInfo.filename}')">
+                    <span class="icon">🚀</span>
+                    <span>I've Installed the Client</span>
+                </button>
+            `;
+
+            html += `</div>`;
+
+            html += `
+                <a href="${webClientUrl}" class="web-client-link" onclick="clearGameAuth()">
+                    Or play in browser while you install →
+                </a>
+            `;
+
+            html += `
+                <div class="device-info">
+                    Detected: ${platform.os.charAt(0).toUpperCase() + platform.os.slice(1)} · ${platform.tier.charAt(0).toUpperCase() + platform.tier.slice(1)} · ${platform.cores} cores · ${platform.memory}GB RAM
+                </div>
+            `;
+
+            html += `</div>`;
+
+            container.innerHTML = html;
+        }
+
+        /**
+         * Get OS-specific installation instructions.
+         */
+        function getInstallInstructions(os) {
+            switch (os) {
+                case 'windows':
+                    return `
+                        <li>Open your <strong style="color:#e0e6ff">Downloads</strong> folder</li>
+                        <li>Double-click <strong style="color:#64ffda">DoraMCU-Unity-Setup.exe</strong></li>
+                        <li>If Windows SmartScreen warns you, click <strong style="color:#e0e6ff">More info</strong> then <strong style="color:#e0e6ff">Run anyway</strong></li>
+                        <li>Follow the installer prompts to complete installation</li>
+                        <li>Click <strong style="color:#64ffda">"I've Installed the Client"</strong> above to launch</li>
+                    `;
+                case 'macos':
+                    return `
+                        <li>Open your <strong style="color:#e0e6ff">Downloads</strong> folder</li>
+                        <li>Double-click <strong style="color:#64ffda">DoraMCU-Unity.dmg</strong></li>
+                        <li>Drag the app to your <strong style="color:#e0e6ff">Applications</strong> folder</li>
+                        <li>Open the app from Applications (may need to right-click → Open first time)</li>
+                        <li>Click <strong style="color:#64ffda">"I've Installed the Client"</strong> above to launch</li>
+                    `;
+                case 'linux':
+                    return `
+                        <li>Open your <strong style="color:#e0e6ff">Downloads</strong> folder</li>
+                        <li>Right-click <strong style="color:#64ffda">DoraMCU-Unity.AppImage</strong> and select <strong style="color:#e0e6ff">Properties</strong></li>
+                        <li>Check <strong style="color:#e0e6ff">Allow executing file as program</strong></li>
+                        <li>Double-click to run the AppImage</li>
+                        <li>Click <strong style="color:#64ffda">"I've Installed the Client"</strong> above to launch</li>
+                    `;
+                default:
+                    return `<li>Run the downloaded file and follow the installation prompts</li>`;
+            }
+        }
+
+        /**
+         * Handles launching the app after the user confirms installation.
+         */
+        async function handleLaunchAfterInstall(filename) {
+            // Try to open via custom protocol
+            const opened = await VersionChecker.tryOpenDesktopClient();
+            if (!opened) {
+                alert('The app could not be launched automatically. Please open it manually from your Start Menu (Windows), Applications folder (macOS), or file manager (Linux).');
+            }
+        }
+
+        /**
+         * Shows the landing page with download options, version info, and installation status.
+         */
+        function showLandingPage(platform, config, serverVersion, installStatus) {
+            const loadingContainer = document.querySelector('.loading-container');
+            const container = document.getElementById('client-container');
+            
+            // Hide loading, show landing
+            loadingContainer.classList.add('hidden');
+            container.style.display = 'block';
+            
+            const os = platform.os;
+            const tier = platform.tier;
+            
+            // Determine primary download based on OS
+            let primaryDownload = null;
+            let primaryLabel = '';
+            let primaryIcon = '';
+            let primaryFilename = '';
+            
+            if (os === 'windows') {
+                primaryDownload = '/api/v1/clients/download/unity/windows';
+                primaryLabel = 'Download for Windows';
+                primaryIcon = '🪟';
+                primaryFilename = 'DoraMCU-Unity-Setup.exe';
+            } else if (os === 'macos') {
+                primaryDownload = '/api/v1/clients/download/unity/macos';
+                primaryLabel = 'Download for macOS';
+                primaryIcon = '🍎';
+                primaryFilename = 'DoraMCU-Unity.dmg';
+            } else if (os === 'linux') {
+                primaryDownload = '/api/v1/clients/download/unity/linux';
+                primaryLabel = 'Download for Linux';
+                primaryIcon = '🐧';
+                primaryFilename = 'DoraMCU-Unity.AppImage';
+            }
+            
+            let html = `<div class="landing-container">`;
+            
+            // Title with version
+            html += `
+                <h1 class="landing-title">DoraMCU</h1>
+                <p class="landing-subtitle">
+                    Universal Game Client
+                    <span class="version-badge">v${serverVersion}</span>
+                </p>
+            `;
+            
+            // Installation status banner
+            if (installStatus.installed) {
+                if (installStatus.needsUpdate) {
+                    html += `
+                        <div class="install-status-banner update-available">
+                            <span class="status-icon">⚠️</span>
+                            <span class="status-text">
+                                Update available (v${installStatus.installedVersion} → v${serverVersion}) - Play in Browser below
+                            </span>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="install-status-banner installed">
+                            <span class="status-icon">✅</span>
+                            <span class="status-text">
+                                ${getInstallTypeName(installStatus.installType)} installed (v${installStatus.installedVersion})
+                            </span>
+                        </div>
+                    `;
+                }
+            } else {
+                html += `
+                    <div class="install-status-banner not-installed">
+                        <span class="status-icon">🌐</span>
+                        <span class="status-text">
+                            Play directly in your browser — no download needed
+                        </span>
+                    </div>
+                `;
+            }
+            
+            // PWA install button (only if not installed and PWA is available)
+            if (!installStatus.installed && installStatus.canInstallPWA) {
+                html += `
+                    <button class="pwa-install-btn" onclick="handlePWAInstall()">
+                        <span class="icon">📲</span>
+                        <span>Install on Desktop</span>
+                    </button>
+                `;
+            }
+            
+            // Play in Browser - primary CTA (native client downloads disabled for 0.9.0 Beta)
+            const webClientUrl = ConfigManager.getWebClientUrl(tier);
+            html += `
+                <div class="download-buttons">
+                    <a href="${webClientUrl}" class="download-btn primary" onclick="clearGameAuth()">
+                        <span class="icon">🌐</span>
+                        <span>Play in Browser</span>
+                    </a>
+                </div>
+            `;
+            html += `
+                <p class="landing-subtitle" style="margin-top: 16px; color: #8892b0; font-size: 0.9rem;">
+                    Native client downloads coming soon. Play directly in your browser for the best experience.
+                </p>
+            `;
+            
+            // Device info
+            html += `
+                <div class="device-info">
+                    Detected: ${os.charAt(0).toUpperCase() + os.slice(1)} · ${tier.charAt(0).toUpperCase() + tier.slice(1)} · ${platform.cores} cores · ${platform.memory}GB RAM
+                </div>
+            `;
+            
+            html += `</div>`; // end landing-container
+            
+            container.innerHTML = html;
+        }
+
+        /**
+         * Get human-readable name for install type.
+         */
+        function getInstallTypeName(type) {
+            switch (type) {
+                case 'pwa': return 'PWA';
+                case 'electron': return 'Electron Client';
+                case 'unity': return 'Unity Client';
+                default: return 'Client';
+            }
+        }
+
+        /**
+         * Handles the download button click with status feedback and installation registration.
+         */
+        async function handleDownload(url, filename, buttonEl) {
+            const statusEl = buttonEl.parentElement.querySelector('.download-status') || 
+                             document.createElement('div');
+            if (!buttonEl.parentElement.querySelector('.download-status')) {
+                statusEl.className = 'download-status';
+                buttonEl.parentElement.appendChild(statusEl);
+            }
+            
+            statusEl.className = 'download-status';
+            statusEl.textContent = 'Checking availability...';
+            
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    statusEl.className = 'download-status success';
+                    statusEl.textContent = 'Starting download...';
+                    
+                    // Trigger actual download
+                    const blob = await response.blob();
+                    const blobUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = blobUrl;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(blobUrl);
+                    
+                    // Register the installation after download
+                    const config = await ConfigManager.loadConfig();
+                    VersionChecker.registerInstallation('unity', config.version);
+                    
+                    statusEl.textContent = 'Download started! Install the client to get started.';
+                } else {
+                    const errorData = await response.json().catch(() => null);
+                    statusEl.textContent = errorData?.message || 'Client not available yet. Use the browser client below.';
+                }
+            } catch (err) {
+                statusEl.textContent = 'Network error. Please try again or use the browser client.';
+            }
+        }
+
+        /**
+         * Handles the update button click when an update is available.
+         */
+        async function handleUpdate(url, filename) {
+            if (url) {
+                // Trigger download of the updated client
+                const event = new MouseEvent('click', { bubbles: true, cancelable: true });
+                const buttons = document.querySelectorAll('.download-btn.primary');
+                if (buttons.length > 0) {
+                    const statusEl = buttons[0].parentElement.querySelector('.download-status') || 
+                                     document.createElement('div');
+                    statusEl.className = 'download-status warning';
+                    statusEl.textContent = 'Downloading update...';
+                    buttons[0].parentElement.appendChild(statusEl);
+                    
+                    try {
+                        const response = await fetch(url);
+                        if (response.ok) {
+                            const blob = await response.blob();
+                            const blobUrl = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = blobUrl;
+                            a.download = filename;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            window.URL.revokeObjectURL(blobUrl);
+                            statusEl.className = 'download-status success';
+                            statusEl.textContent = 'Update downloaded! Install to apply.';
+                        }
+                    } catch (err) {
+                        statusEl.textContent = 'Update download failed. Try again.';
+                    }
+                }
+            }
+        }
+
+        /**
+         * Handles opening the installed desktop app.
+         */
+        async function handleOpenApp() {
+            const opened = await VersionChecker.tryOpenDesktopClient();
+            if (!opened) {
+                // App didn't open - offer to reinstall or use web client
+                if (confirm('Desktop app could not be launched. Would you like to open the web client instead?')) {
+                    // Clear any stored game auth so the game page shows login fresh
+                    localStorage.removeItem('doramcu_game_state');
+                    const tier = PlatformDetector.detect().tier;
+                    const webClientUrl = ConfigManager.getWebClientUrl(tier);
+                    window.location.href = webClientUrl;
+                }
+            }
+        }
+
+        /**
+         * Handles PWA installation for desktop.
+         */
+        async function handlePWAInstall() {
+            const success = await VersionChecker.installPWA();
+            if (success) {
+                const config = await ConfigManager.loadConfig();
+                VersionChecker.registerInstallation('pwa', config.version);
+                location.reload();
+            } else {
+                alert('Installation was cancelled. You can still play in the browser.');
+            }
+        }
+
+        /**
+         * Clears stored game auth state so the game page shows the login screen fresh.
+         * Called before navigating to the web game client from the landing page.
+         */
+        function clearGameAuth() {
+            localStorage.removeItem('doramcu_game_state');
+        }
+    </script>
+</body>
+</html>

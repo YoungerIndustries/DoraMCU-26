@@ -71,7 +71,20 @@ public class AiAdminService {
      */
     @Transactional
     public AiAdminOrder submitOrder(String submittedBy, String orderText) {
-        return submitOrder(submittedBy, orderText, null, null, null, null);
+        return submitOrder(submittedBy, orderText, null, null, null, null, null);
+    }
+
+    /**
+     * Submits a new test order with a dispatch priority.
+     *
+     * @param submittedBy the admin username
+     * @param orderText the natural language order description
+     * @param priority dispatch priority (lower = higher priority)
+     * @return the saved order with PENDING status
+     */
+    @Transactional
+    public AiAdminOrder submitOrder(String submittedBy, String orderText, Integer priority) {
+        return submitOrder(submittedBy, orderText, null, null, null, null, null, priority);
     }
 
     /**
@@ -89,7 +102,7 @@ public class AiAdminService {
     @Transactional
     public AiAdminOrder submitOrder(String submittedBy, String orderText,
                                      String targetGalaxy, Double targetPosX, Double targetPosY, Double targetPosZ) {
-        return submitOrder(submittedBy, orderText, targetGalaxy, targetPosX, targetPosY, targetPosZ, null);
+        return submitOrder(submittedBy, orderText, targetGalaxy, targetPosX, targetPosY, targetPosZ, null, null);
     }
 
     /**
@@ -109,12 +122,25 @@ public class AiAdminService {
     public AiAdminOrder submitOrder(String submittedBy, String orderText,
                                      String targetGalaxy, Double targetPosX, Double targetPosY, Double targetPosZ,
                                      Long buildContractId) {
+        return submitOrder(submittedBy, orderText, targetGalaxy, targetPosX, targetPosY, targetPosZ, buildContractId, null);
+    }
+
+    /**
+     * Main submitOrder implementation with all parameters.
+     */
+    @Transactional
+    public AiAdminOrder submitOrder(String submittedBy, String orderText,
+                                     String targetGalaxy, Double targetPosX, Double targetPosY, Double targetPosZ,
+                                     Long buildContractId, Integer priority) {
         AiAdminOrder order = new AiAdminOrder(submittedBy, orderText);
         order.setTargetGalaxy(targetGalaxy);
         order.setTargetPosX(targetPosX);
         order.setTargetPosY(targetPosY);
         order.setTargetPosZ(targetPosZ);
         order.setBuildContractId(buildContractId);
+        if (priority != null) {
+            order.setPriority(priority);
+        }
         order = orderRepository.save(order);
         if (buildContractId != null) {
             log.info("Submitted production order {} by {}: {} -> build contract {} (target: {}, {}, {} in {})",

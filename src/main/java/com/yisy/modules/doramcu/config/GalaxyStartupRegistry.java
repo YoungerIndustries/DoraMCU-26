@@ -205,6 +205,23 @@ public class GalaxyStartupRegistry {
     }
 
     /**
+     * Looks up the startup priority for a galaxy by name.
+     * Returns 999 (lowest priority) if the galaxy is not found in the registry.
+     *
+     * @param galaxyName the name of the galaxy
+     * @return the startup priority (lower = higher priority), or 999 if not found
+     */
+    public static int getPriorityByGalaxyName(String galaxyName) {
+        if (galaxyName == null) return 999;
+        for (GalaxyRegistration reg : DEFAULT_REGISTRATIONS.values()) {
+            if (reg.getGalaxyName().equals(galaxyName)) {
+                return reg.getPriority();
+            }
+        }
+        return 999;
+    }
+
+    /**
      * Deletes any galaxies that are not registered in {@link #DEFAULT_REGISTRATIONS}.
      * This cleans up orphaned galaxies from old creation services (e.g., "Milky Way" from
      * the deprecated {@link com.yisy.modules.doramcu.hex.GalaxyFactory#GAME_GALAXY_NAME}).

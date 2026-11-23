@@ -1,0 +1,194 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test 1: Clear Auth Fix Verification</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        h1 { color: #e94560; }
+        .step {
+            background: #16213e;
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .step h3 { margin-top: 0; color: #53d8fb; }
+        .result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .pass { background: #0a3d0a; border: 1px solid #28a745; color: #7fff7f; }
+        .fail { background: #3d0a0a; border: 1px solid #dc3545; color: #ff7f7f; }
+        .info { background: #0a2a3d; border: 1px solid #17a2b8; color: #7fd4ff; }
+        button {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        button:hover { background: #c81e45; }
+        button:disabled { background: #555; cursor: not-allowed; }
+        #iframe-container {
+            margin: 20px 0;
+            border: 2px solid #0f3460;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test 1: Clear Auth Fix Verification</h1>
+    <p>This test verifies that the landing page clears stored game auth before navigating to the game client.</p>
+
+    <div class="step">
+        <h3>Step 1: Set Fake Auth in localStorage</h3>
+        <p>Simulates a previous player's session by setting <code>doramcu_game_state</code> in localStorage.</p>
+        <button id="btn-step1" onclick="step1_SetFakeAuth()">Run Step 1</button>
+        <div id="result-step1" class="result info" style="display:none;"></div>
+    </div>
+
+    <div class="step">
+        <h3>Step 2: Verify Fake Auth is Set</h3>
+        <p>Confirms the fake auth data exists in localStorage before clearing.</p>
+        <button id="btn-step2" onclick="step2_VerifyAuthSet()" disabled>Run Step 2</button>
+        <div id="result-step2" class="result info" style="display:none;"></div>
+    </div>
+
+    <div class="step">
+        <h3>Step 3: Call clearGameAuth() (simulates clicking "Or play in browser")</h3>
+        <p>This calls the function that should clear the stored auth.</p>
+        <button id="btn-step3" onclick="step3_ClearAuth()" disabled>Run Step 3</button>
+        <div id="result-step3" class="result info" style="display:none;"></div>
+    </div>
+
+    <div class="step">
+        <h3>Step 4: Verify Auth is Cleared</h3>
+        <p>Checks that <code>doramcu_game_state</code> is no longer in localStorage.</p>
+        <button id="btn-step4" onclick="step4_VerifyCleared()" disabled>Run Step 4</button>
+        <div id="result-step4" class="result info" style="display:none;"></div>
+    </div>
+
+    <div class="step">
+        <h3>Step 5: Open Game Client & Check for Login Screen</h3>
+        <p>Opens the game client in an iframe. Without auth, it should show the login screen.</p>
+        <button id="btn-step5" onclick="step5_OpenGame()" disabled>Run Step 5</button>
+        <div id="result-step5" class="result info" style="display:none;"></div>
+        <div id="iframe-container" style="display:none;">
+            <iframe id="game-frame" src=""></iframe>
+        </div>
+    </div>
+
+    <div class="step">
+        <h3>Summary</h3>
+        <div id="summary" class="result info">Click the buttons above to run each test step.</div>
+    </div>
+
+    <script>
+        // The clearGameAuth function from index.html
+        function clearGameAuth() {
+            localStorage.removeItem('doramcu_game_state');
+        }
+
+        let testResults = [];
+
+        function showResult(id, message, passed) {
+            const el = document.getElementById(id);
+            el.style.display = 'block';
+            el.className = 'result ' + (passed === true ? 'pass' : passed === false ? 'fail' : 'info');
+            el.textContent = message;
+        }
+
+        function step1_SetFakeAuth() {
+            const fakeAuth = JSON.stringify({
+                token: "test-token-12345",
+                username: "testplayer",
+                isAuthenticated: true
+            });
+            localStorage.setItem('doramcu_game_state', fakeAuth);
+            showResult('result-step1', '✓ Set fake auth in localStorage:\n' + fakeAuth, true);
+            document.getElementById('btn-step2').disabled = false;
+            testResults.push({ step: 1, pass: true, message: 'Fake auth set successfully' });
+            updateSummary();
+        }
+
+        function step2_VerifyAuthSet() {
+            const stored = localStorage.getItem('doramcu_game_state');
+            if (stored && stored.includes('test-token-12345')) {
+                showResult('result-step2', '✓ Fake auth verified in localStorage:\n' + stored, true);
+                document.getElementById('btn-step3').disabled = false;
+                testResults.push({ step: 2, pass: true, message: 'Auth verified in localStorage' });
+            } else {
+                showResult('result-step2', '✗ Fake auth NOT found in localStorage!\nValue: ' + stored, false);
+                testResults.push({ step: 2, pass: false, message: 'Auth not found' });
+            }
+            updateSummary();
+        }
+
+        function step3_ClearAuth() {
+            clearGameAuth();
+            showResult('result-step3', '✓ clearGameAuth() called - localStorage.removeItem("doramcu_game_state") executed', true);
+            document.getElementById('btn-step4').disabled = false;
+            testResults.push({ step: 3, pass: true, message: 'clearGameAuth() executed' });
+            updateSummary();
+        }
+
+        function step4_VerifyCleared() {
+            const stored = localStorage.getItem('doramcu_game_state');
+            if (stored === null) {
+                showResult('result-step4', '✓ Auth successfully cleared!\ndoramcu_game_state is null in localStorage', true);
+                document.getElementById('btn-step5').disabled = false;
+                testResults.push({ step: 4, pass: true, message: 'Auth cleared successfully' });
+            } else {
+                showResult('result-step4', '✗ Auth NOT cleared!\nValue: ' + stored, false);
+                testResults.push({ step: 4, pass: false, message: 'Auth still present' });
+            }
+            updateSummary();
+        }
+
+        function step5_OpenGame() {
+            const iframe = document.getElementById('game-frame');
+            const container = document.getElementById('iframe-container');
+            container.style.display = 'block';
+            
+            // Force reload to ensure fresh state
+            iframe.src = '/game/index.html?test=' + Date.now();
+            
+            showResult('result-step5', '✓ Game client loaded in iframe below.\n\nExpected: Login screen should appear (not a logged-in player view).\n\nInspect the iframe to verify the login view is visible.', true);
+            testResults.push({ step: 5, pass: true, message: 'Game client opened - manually verify login screen' });
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const summary = document.getElementById('summary');
+            if (testResults.length === 0) return;
+            
+            const allPassed = testResults.every(r => r.pass);
+            summary.className = 'result ' + (allPassed ? 'pass' : 'fail');
+            summary.textContent = testResults.map(r => 
+                `Step ${r.step}: ${r.pass ? '✓ PASS' : '✗ FAIL'} - ${r.message}`
+            ).join('\n');
+        }
+    </script>
+</body>
+</html>

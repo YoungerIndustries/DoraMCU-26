@@ -4,6 +4,7 @@ import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.admin.model.AiAdminIncident;
 import com.yisy.modules.doramcu.admin.service.AiAdminIncidentService;
 import com.yisy.modules.doramcu.admin.service.AiAdminService;
+import com.yisy.modules.doramcu.config.GalaxyStartupRegistry;
 import com.yisy.modules.doramcu.earth2026.model.E26GalaxyRules;
 import com.yisy.modules.doramcu.earth2026.model.E26PlanetRules;
 import com.yisy.modules.doramcu.earth2026.model.E26SystemRules;
@@ -947,7 +948,8 @@ public class GalaxyOverseerService {
             }
 
             String orderText = buildOrderText(galaxy.getName(), finding);
-            aiAdminService.submitOrder("GalaxyOverseer:" + galaxy.getName(), orderText);
+            int priority = GalaxyStartupRegistry.getPriorityByGalaxyName(galaxy.getName());
+            aiAdminService.submitOrder("GalaxyOverseer:" + galaxy.getName(), orderText, priority);
             ordersCreated.add(orderText);
             galaxyMetricsService.incrementWorkOrderCreated();
 
