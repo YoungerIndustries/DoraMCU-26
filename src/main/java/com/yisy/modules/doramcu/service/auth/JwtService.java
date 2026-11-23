@@ -21,7 +21,7 @@ public class JwtService {
 
     private static final String DEV_PROFILE = "dev";
 
-    @Value("${JWT_SECRET:}")
+    @Value("${JWT_SECRET:dev-default-secret-change-me-in-production-1234567890}")
     private String secret;
 
     @Value("${jwt.expiration:86400000}")

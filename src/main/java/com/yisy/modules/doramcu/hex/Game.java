@@ -656,16 +656,38 @@ public class Game implements GameContext, GameEngine {
      */
     public PlayerSetupResult setupPlayer(int playerId, String playerName, PlanetSize size,
                                          MineralQuality mineralQuality, StartingFacility... facilities) {
-        // 1. Create the player
-        Player player = createPlayer(playerId, playerName);
+        // 1. Find existing player or create a new one
+        Player player = getPlayer(playerId);
+        if (player == null) {
+            player = createPlayer(playerId, playerName);
+        } else {
+            // Update empire name if different
+            player.setEmpireName(playerName);
+        }
 
-        // 2. Assign a unique empire ID
-        int newEmpireId = getNextEmpireIdAndIncrement();
-        player.setEmpireId(newEmpireId);
-
-        // 3. Create and register an Empire for this player
-        Empire empire = new Empire(newEmpireId, playerName + " Empire", player.getId());
-        registerEmpire(empire);
+        // 2. Assign a unique empire ID (only if not already assigned)
+        Integer existingEmpireId = player.getEmpireId();
+        int newEmpireId;
+        Empire empire;
+        if (existingEmpireId != null && existingEmpireId > 0) {
+            Empire existingEmpire = getEmpire(existingEmpireId);
+            if (existingEmpire != null) {
+                // Player already has a valid empire — reuse it
+                newEmpireId = existingEmpireId;
+                empire = existingEmpire;
+            } else {
+                // Empire ID set but empire doesn't exist — create new one
+                newEmpireId = getNextEmpireIdAndIncrement();
+                player.setEmpireId(newEmpireId);
+                empire = new Empire(newEmpireId, playerName + " Empire", player.getId());
+                registerEmpire(empire);
+            }
+        } else {
+            newEmpireId = getNextEmpireIdAndIncrement();
+            player.setEmpireId(newEmpireId);
+            empire = new Empire(newEmpireId, playerName + " Empire", player.getId());
+            registerEmpire(empire);
+        }
 
         // 4. Set up home system with starting facilities
         Planet homePlanet = setupHomeSystem(player, size, mineralQuality, facilities);

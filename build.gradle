@@ -107,11 +107,10 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
-    maxHeapSize = '4G'
-    def jvmArgs = findProperty('app.jvm.args').toString().split() +
-                   findProperty('app.javacpp.args').toString().split()
-    jvmArgs = jvmArgs
-    
+    maxHeapSize = '8G'
+    jvmArgs(*(findProperty('app.jvm.args').toString().split() +
+               findProperty('app.javacpp.args').toString().split()))
+
     // Exclude heavy galaxy generation tests from default build to keep it fast
     exclude '**/GalaxyGeneratorTest.class'
     exclude '**/GalaxyConsolidationIntegrationTest.class'
@@ -139,8 +138,7 @@ tasks.register('heavyTests', Test) {
     
     useJUnitPlatform()
     maxHeapSize = '8G'
-    def jvmArgs = findProperty('app.javacpp.args').toString().split()
-    jvmArgs jvmArgs
+    jvmArgs(*(findProperty('app.javacpp.args').toString().split()))
     
     include '**/GalaxyGeneratorTest.class'
     include '**/GalaxyConsolidationIntegrationTest.class'
@@ -356,48 +354,8 @@ tasks.register('productionBuild') {
 }
 
 // ---- Per-Module JAR Tasks ----
-// Produce separate JARs for each universe module from the compiled classes
-def modulePackages = [
-    'module-traveller': 'com/yisy/modules/doramcu/traveller/',
-    'module-babylon5': 'com/yisy/modules/doramcu/babylon5/',
-    'module-starwars': 'com/yisy/modules/doramcu/starwars/',
-    'module-star_trek_4x': 'com/yisy/modules/doramcu/star_trek_4x/',
-    'module-dnd5e': 'com/yisy/modules/doramcu/dnd5e/',
-    'module-lord_of_the_rings': 'com/yisy/modules/doramcu/lord_of_the_rings/',
-    'module-warhammer40k': 'com/yisy/modules/doramcu/warhammer40k/',
-    'module-captainslog': 'com/yisy/modules/doramcu/captainslog/',
-    'module-mechwarrior': 'com/yisy/modules/doramcu/mechwarrior/',
-    'module-starshiptroopers': 'com/yisy/modules/doramcu/starshiptroopers/',
-    'module-fullthrust': 'com/yisy/modules/doramcu/fullthrust/',
-    'module-warcraft': 'com/yisy/modules/doramcu/warcraft/',
-    'module-zero_zero_seven': 'com/yisy/modules/doramcu/zero_zero_seven/',
-    'module-sfb': 'com/yisy/modules/doramcu/sfb/',
-    'module-everquest': 'com/yisy/modules/doramcu/everquest/',
-    'module-daoc': 'com/yisy/modules/doramcu/daoc/',
-    'module-facebook': 'com/yisy/modules/doramcu/facebook/',
-    'module-gamecreator': 'com/yisy/modules/doramcu/gamecreator/',
-    'module-celestial': 'com/yisy/modules/doramcu/celestial/',
-]
-
-modulePackages.each { name, pkgPath ->
-    tasks.register(name, Jar) {
-        description = "Builds ${name}.jar from compiled classes"
-        group = 'build'
-        archiveBaseName = name
-        archiveVersion = findProperty('app.version')
-        from sourceSets.main.output.classesDirs
-        include "${pkgPath}**"
-    }
-}
-
-tasks.register('buildAllModules') {
-    description = 'Builds all universe module JARs'
-    group = 'build'
-    dependsOn classes
-    modulePackages.each { name, pkgPath ->
-        dependsOn name
-    }
-}
+// Extracted to module-build.gradle for cleaner build configuration
+apply from: 'module-build.gradle'
 
 // Production JAR that excludes test dependencies and enables optimization
 tasks.named('bootJar') {

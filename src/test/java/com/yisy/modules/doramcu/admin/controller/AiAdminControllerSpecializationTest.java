@@ -1,6 +1,8 @@
 package com.yisy.modules.doramcu.admin.controller;
 
 import com.yisy.modules.doramcu.admin.model.AiAdminIncident;
+import com.yisy.modules.doramcu.admin.service.AiAdminCollaborationService;
+import com.yisy.modules.doramcu.admin.service.AiAdminIncidentService;
 import com.yisy.modules.doramcu.eve.model.AiCharacter;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 import com.yisy.modules.doramcu.model.players.Player;
@@ -26,9 +28,15 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@DisplayName("AiAdminController Specialization Tests")
+@DisplayName("AiAdminIncidentController Specialization Tests")
 @ExtendWith(MockitoExtension.class)
 class AiAdminControllerSpecializationTest {
+
+    @Mock
+    private AiAdminIncidentService incidentService;
+
+    @Mock
+    private AiAdminCollaborationService collaborationService;
 
     @Mock
     private AiCharacterRepository aiCharacterRepository;
@@ -40,7 +48,7 @@ class AiAdminControllerSpecializationTest {
     private UserRepository userRepository;
 
     @InjectMocks
-    private AiAdminController controller;
+    private AiAdminIncidentController controller;
 
     private Player testPlayer;
     private AiCharacter testAdmin;

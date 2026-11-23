@@ -8,9 +8,9 @@ namespace DoraMCU.Core
     /// Use this as a base class for managers that should exist globally.
     /// In Godot, singletons are registered as Autoloads in project.godot.
     /// </summary>
-    public abstract class Singleton : Node
+    public abstract partial class Singleton : Node
     {
-        protected override void _Ready()
+        public override void _Ready()
         {
             GD.Print($"[Singleton] {GetType().Name} initialized");
         }

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using DoraMCU.Client.Core;
+using DoraMCU.Client.Network;
 using UnityEngine.UI;
 
 namespace DoraMCU.Client.UI
@@ -11,7 +13,7 @@ namespace DoraMCU.Client.UI
     /// </summary>
     public class MenuManager : Singleton<MenuManager>
     {
-        public enum MenuState { Playing, Paused, MainMenu, Settings, GameSelect, Inventory, Map }
+        public enum MenuState { Playing, Paused, MainMenu, Settings, GameSelect, Inventory, Map, Login, CharacterCreation }
         
         private MenuState currentState = MenuState.Playing;
         public MenuState CurrentState => currentState;
@@ -36,6 +38,8 @@ namespace DoraMCU.Client.UI
         [SerializeField] private Slider sfxVolumeSlider;
         [SerializeField] private Dropdown graphicsQualityDropdown;
         [SerializeField] private Toggle fullscreenToggle;
+        [SerializeField] private InputField serverUrlInput;
+        [SerializeField] private Button applyServerUrlButton;
         [SerializeField] private Button applySettingsButton;
         [SerializeField] private Button backFromSettingsButton;
 
@@ -63,13 +67,34 @@ namespace DoraMCU.Client.UI
             EnsureUIElements();
             SetupButtons();
             HideAllMenus();
-            SetMenuState(MenuState.Playing);
+
+            // Delay login screen show to next frame so LoginScreen.Start() has run first
+            StartCoroutine(ShowLoginAfterFrame());
+        }
+
+        /// <summary>
+        /// Show login screen after one frame to ensure LoginScreen has initialized.
+        /// </summary>
+        private System.Collections.IEnumerator ShowLoginAfterFrame()
+        {
+            yield return null;
+            var loginScreen = LoginScreen.Instance;
+            if (loginScreen != null)
+            {
+                loginScreen.Show();
+                loginScreen.OnLoginSuccess += OnLoginSuccess;
+                SetMenuState(MenuState.Login);
+            }
+            else
+            {
+                SetMenuState(MenuState.Playing);
+            }
         }
 
         void Update()
         {
             // Toggle pause menu on Escape
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Escape))
             {
                 if (currentState == MenuState.Playing)
                 {
@@ -104,12 +129,31 @@ namespace DoraMCU.Client.UI
                 canvasGo.AddComponent<CanvasRenderer>();
                 canvasGo.AddComponent<GraphicRaycaster>();
 
-                var eventSystem = Object.FindObjectOfType<EventSystem>();
+                // Add CanvasScaler for proper UI scaling
+                var scaler = canvasGo.AddComponent<CanvasScaler>();
+                scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                scaler.referenceResolution = new Vector2(1920, 1080);
+                scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+                scaler.matchWidthOrHeight = 0.5f;
+
+                var eventSystem = UnityEngine.Object.FindObjectOfType<EventSystem>();
                 if (eventSystem == null)
                 {
                     var esGo = new GameObject("EventSystem");
                     esGo.AddComponent<EventSystem>();
                     esGo.AddComponent<StandaloneInputModule>();
+                }
+            }
+            else
+            {
+                // Ensure existing canvas has a CanvasScaler
+                if (canvas.GetComponent<CanvasScaler>() == null)
+                {
+                    var scaler = canvas.gameObject.AddComponent<CanvasScaler>();
+                    scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                    scaler.referenceResolution = new Vector2(1920, 1080);
+                    scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+                    scaler.matchWidthOrHeight = 0.5f;
                 }
             }
             menuCanvas = canvas;
@@ -120,15 +164,18 @@ namespace DoraMCU.Client.UI
                 pauseMenuGo = CreatePanel("PauseMenu", new Vector2(0, 0), new Vector2(Screen.width, Screen.height));
                 pauseMenuGo.SetActive(false);
 
-                var title = CreateText(null, "PauseTitle", pauseMenuGo.transform, "PAUSED", 48, new Vector2(0, Screen.height / 2 - 100));
-                if (title != null) title.fontStyle = FontStyle.Bold;
+                Text pauseTitleRef = null;
+                CreateText(ref pauseTitleRef, "PauseTitle", pauseMenuGo.transform, "PAUSED", 48, new Vector2(0, -100));
+                if (pauseTitleRef != null) pauseTitleRef.fontStyle = FontStyle.Bold;
 
-                resumeButton = CreateButton(pauseMenuGo.transform, "Resume", "RESUME", new Vector2(0, Screen.height / 2 - 30), OnResume);
-                settingsButton = CreateButton(pauseMenuGo.transform, "Settings", "SETTINGS", new Vector2(0, Screen.height / 2 - 70), OnSettings);
-                gameSelectButton = CreateButton(pauseMenuGo.transform, "GameSelect", "GAME SELECT", new Vector2(0, Screen.height / 2 - 110), OnGameSelect);
-                inventoryButton = CreateButton(pauseMenuGo.transform, "Inventory", "INVENTORY", new Vector2(0, Screen.height / 2 - 150), OnInventory);
-                mapButton = CreateButton(pauseMenuGo.transform, "Map", "GALAXY MAP", new Vector2(0, Screen.height / 2 - 190), OnMap);
-                quitButton = CreateButton(pauseMenuGo.transform, "Quit", "QUIT TO MAIN MENU", new Vector2(0, Screen.height / 2 - 230), OnQuitToMenu);
+                resumeButton = CreateButton(pauseMenuGo.transform, "Resume", "RESUME", new Vector2(0, -30), OnResume);
+                settingsButton = CreateButton(pauseMenuGo.transform, "Settings", "SETTINGS", new Vector2(0, -70), OnSettings);
+                gameSelectButton = CreateButton(pauseMenuGo.transform, "GameSelect", "GAME SELECT", new Vector2(0, -110), OnGameSelect);
+                inventoryButton = CreateButton(pauseMenuGo.transform, "Inventory", "INVENTORY", new Vector2(0, -150), OnInventory);
+                mapButton = CreateButton(pauseMenuGo.transform, "Map", "GALAXY MAP", new Vector2(0, -190), OnMap);
+                CreateButton(pauseMenuGo.transform, "ShipBuild", "SHIP BUILDER", new Vector2(0, -230), OnShipBuild);
+                CreateButton(pauseMenuGo.transform, "ScanSector", "SCAN SECTOR", new Vector2(0, -270), OnScanSector);
+                quitButton = CreateButton(pauseMenuGo.transform, "Quit", "QUIT TO LOGIN", new Vector2(0, -310), OnQuitToMenu);
             }
 
             // Create main menu
@@ -137,13 +184,14 @@ namespace DoraMCU.Client.UI
                 mainMenuGo = CreatePanel("MainMenu", new Vector2(0, 0), new Vector2(Screen.width, Screen.height));
                 mainMenuGo.SetActive(false);
 
-                var title = CreateText(null, "MainTitle", mainMenuGo.transform, "DoraMCU", 72, new Vector2(0, Screen.height / 2 + 50));
-                if (title != null) title.fontStyle = FontStyle.Bold;
+                Text mainTitleRef = null;
+                CreateText(ref mainTitleRef, "MainTitle", mainMenuGo.transform, "DoraMCU", 72, new Vector2(0, 50));
+                if (mainTitleRef != null) mainTitleRef.fontStyle = FontStyle.Bold;
 
-                CreateButton(mainMenuGo.transform, "NewGame", "NEW GAME", new Vector2(0, Screen.height / 2 - 20), OnNewGame);
-                CreateButton(mainMenuGo.transform, "Continue", "CONTINUE", new Vector2(0, Screen.height / 2 - 60), OnContinue);
-                CreateButton(mainMenuGo.transform, "MainSettings", "SETTINGS", new Vector2(0, Screen.height / 2 - 100), OnSettings);
-                CreateButton(mainMenuGo.transform, "MainQuit", "QUIT", new Vector2(0, Screen.height / 2 - 140), OnQuit);
+                CreateButton(mainMenuGo.transform, "NewGame", "NEW GAME", new Vector2(0, -20), OnNewGame);
+                CreateButton(mainMenuGo.transform, "Continue", "CONTINUE", new Vector2(0, -60), OnContinue);
+                CreateButton(mainMenuGo.transform, "MainSettings", "SETTINGS", new Vector2(0, -100), OnSettings);
+                CreateButton(mainMenuGo.transform, "MainQuit", "QUIT", new Vector2(0, -140), OnQuit);
             }
 
             // Create settings panel
@@ -152,19 +200,34 @@ namespace DoraMCU.Client.UI
                 settingsGo = CreatePanel("SettingsMenu", new Vector2(0, 0), new Vector2(Screen.width, Screen.height));
                 settingsGo.SetActive(false);
 
-                CreateText(null, "SettingsTitle", settingsGo.transform, "SETTINGS", 48, new Vector2(0, Screen.height / 2 + 150));
+                Text settingsTitleRef = null;
+                CreateText(ref settingsTitleRef, "SettingsTitle", settingsGo.transform, "SETTINGS", 48, new Vector2(0, 150));
 
                 // Audio settings
-                CreateSlider(settingsGo.transform, "MasterVolume", "Master Volume", ref masterVolumeSlider, new Vector2(-150, Screen.height / 2 + 80));
-                CreateSlider(settingsGo.transform, "MusicVolume", "Music Volume", ref musicVolumeSlider, new Vector2(-150, Screen.height / 2 + 30));
-                CreateSlider(settingsGo.transform, "SFXVolume", "SFX Volume", ref sfxVolumeSlider, new Vector2(-150, Screen.height / 2 - 20));
+                CreateSlider(settingsGo.transform, "MasterVolume", "Master Volume", ref masterVolumeSlider, new Vector2(-150, 80));
+                CreateSlider(settingsGo.transform, "MusicVolume", "Music Volume", ref musicVolumeSlider, new Vector2(-150, 30));
+                CreateSlider(settingsGo.transform, "SFXVolume", "SFX Volume", ref sfxVolumeSlider, new Vector2(-150, -20));
 
                 // Graphics settings
-                CreateDropdown(settingsGo.transform, "GraphicsQuality", "Graphics Quality", ref graphicsQualityDropdown, new Vector2(-150, Screen.height / 2 - 80));
-                CreateToggle(settingsGo.transform, "Fullscreen", "Fullscreen", ref fullscreenToggle, new Vector2(-150, Screen.height / 2 - 130));
+                CreateDropdown(settingsGo.transform, "GraphicsQuality", "Graphics Quality", ref graphicsQualityDropdown, new Vector2(-150, -80));
+                CreateToggle(settingsGo.transform, "Fullscreen", "Fullscreen", ref fullscreenToggle, new Vector2(-150, -130));
 
-                applySettingsButton = CreateButton(settingsGo.transform, "Apply", "APPLY", new Vector2(-100, Screen.height / 2 - 180), OnApplySettings);
-                backFromSettingsButton = CreateButton(settingsGo.transform, "BackSettings", "BACK", new Vector2(100, Screen.height / 2 - 180), OnBackFromSettings);
+                // Server URL field
+                Text serverLabelRef = null;
+                var serverLabel = CreateText(ref serverLabelRef, "ServerUrlLabel", settingsGo.transform, "Server URL", 14, new Vector2(-150, -170));
+                if (serverLabel != null) serverLabel.alignment = TextAnchor.UpperLeft;
+
+                serverUrlInput = CreateSettingsInputField(settingsGo.transform, "ServerUrlInput", new Vector2(-150, -190));
+                var sc = DoraMCU.Client.Core.ServerConfig.Instance;
+                if (sc != null && serverUrlInput != null)
+                {
+                    serverUrlInput.text = sc.ServerUrl;
+                }
+
+                applyServerUrlButton = CreateButton(settingsGo.transform, "ApplyServerUrl", "SAVE", new Vector2(100, -195), OnApplyServerUrl);
+
+                applySettingsButton = CreateButton(settingsGo.transform, "Apply", "APPLY SETTINGS", new Vector2(-100, -230), OnApplySettings);
+                backFromSettingsButton = CreateButton(settingsGo.transform, "BackSettings", "BACK", new Vector2(100, -230), OnBackFromSettings);
             }
 
             // Create game select panel
@@ -173,26 +236,30 @@ namespace DoraMCU.Client.UI
                 gameSelectGo = CreatePanel("GameSelectMenu", new Vector2(0, 0), new Vector2(Screen.width, Screen.height));
                 gameSelectGo.SetActive(false);
 
-                CreateText(null, "GameSelectTitle", gameSelectGo.transform, "SELECT GAME", 48, new Vector2(0, Screen.height / 2 + 150));
+                Text gameSelectTitleRef = null;
+                CreateText(ref gameSelectTitleRef, "GameSelectTitle", gameSelectGo.transform, "SELECT GAME", 48, new Vector2(0, 150));
 
                 // Game list scroll area
                 var scrollGo = new GameObject("GameListScroll");
-                scrollGo.transform.SetParent(gameSelectGo.transform);
-                scrollGo.transform.anchoredPosition = new Vector2(0, Screen.height / 2 - 20);
-                scrollGo.transform.localScale = Vector3.one;
+                var scrollRect2 = scrollGo.GetComponent<RectTransform>();
+                if (scrollRect2 == null) scrollRect2 = scrollGo.AddComponent<RectTransform>();
+                scrollRect2.SetParent(gameSelectGo.transform);
+                scrollRect2.anchoredPosition = new Vector2(0, -20);
+                scrollRect2.localScale = Vector3.one;
                 
                 var scrollRect = scrollGo.AddComponent<ScrollRect>();
                 var viewport = new GameObject("Viewport");
-                viewport.transform.SetParent(scrollGo.transform);
+                var vpRect = viewport.GetComponent<RectTransform>();
+                if (vpRect == null) vpRect = viewport.AddComponent<RectTransform>();
+                vpRect.SetParent(scrollGo.transform);
                 var viewportImage = viewport.AddComponent<Image>();
-                viewportImage.color = new Color(0, 0, 0, 0.5f);
-                var viewportRect = viewport.AddComponent<RectTransform>();
-                viewportRect.sizeDelta = new Vector2(400, 300);
-                scrollRect.viewport = viewportRect;
+                viewportImage.color = UIConfig.Instance.ScrollViewportBackground;
+                vpRect.sizeDelta = new Vector2(400, 300);
+                scrollRect.viewport = vpRect;
 
                 gameListScroll = scrollRect;
 
-                backFromGameSelectButton = CreateButton(gameSelectGo.transform, "BackGameSelect", "BACK", new Vector2(0, Screen.height / 2 - 200), OnBackFromGameSelect);
+                backFromGameSelectButton = CreateButton(gameSelectGo.transform, "BackGameSelect", "BACK", new Vector2(0, -200), OnBackFromGameSelect);
 
                 // Populate game list
                 PopulateGameList();
@@ -234,12 +301,13 @@ namespace DoraMCU.Client.UI
                     var text = btnGo.AddComponent<Text>();
                     text.text = game;
                     text.fontSize = 16;
-                    text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                    text.color = Color.white;
+                    text.font = FontLoader.Instance.DefaultFont;
+                    text.color = UIConfig.Instance.TextDefault;
                     text.alignment = TextAnchor.MiddleLeft;
                     
-                    var rect = btnGo.GetComponent<RectTransform>();
-                    rect.sizeDelta = new Vector2(380, 40);
+                    var btnRect2 = btnGo.GetComponent<RectTransform>();
+                    if (btnRect2 == null) btnRect2 = btnGo.AddComponent<RectTransform>();
+                    btnRect2.sizeDelta = new Vector2(380, 40);
                     
                     string gameName = game;
                     btn.onClick.AddListener(() => OnSelectGame(gameName));
@@ -260,6 +328,9 @@ namespace DoraMCU.Client.UI
                     Time.timeScale = 1f;
                     Cursor.lockState = CursorLockMode.Locked;
                     Cursor.visible = false;
+                    // Start gameplay systems
+                    var gm = GameManager.Instance;
+                    if (gm != null) gm.StartPlaying();
                     break;
 
                 case MenuState.Paused:
@@ -308,6 +379,24 @@ namespace DoraMCU.Client.UI
                     Time.timeScale = 0f;
                     Cursor.lockState = CursorLockMode.None;
                     Cursor.visible = true;
+                    break;
+
+                case MenuState.Login:
+                    HideAllMenus();
+                    Time.timeScale = 0f;
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
+                    var ls = LoginScreen.Instance;
+                    if (ls != null) ls.Show();
+                    break;
+
+                case MenuState.CharacterCreation:
+                    HideAllMenus();
+                    Time.timeScale = 0f;
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
+                    var cc = CharacterCreation.Instance;
+                    if (cc != null) cc.Show();
                     break;
             }
         }
@@ -359,9 +448,41 @@ namespace DoraMCU.Client.UI
             SetMenuState(MenuState.Map);
         }
 
+        private void OnShipBuild()
+        {
+            var sb = ShipBuildUI.Instance;
+            if (sb != null)
+            {
+                sb.Show();
+            }
+            // Keep pause menu active so ship build overlays it
+        }
+
+        private void OnScanSector()
+        {
+            var ea = ExploreAction.Instance;
+            if (ea != null)
+            {
+                ea.ScanCurrentSector();
+            }
+            ResumeGame();
+        }
+
         private void OnQuitToMenu()
         {
-            SetMenuState(MenuState.MainMenu);
+            // Show confirmation dialog before logging out
+            ModalDialog.Instance.ShowConfirm(
+                "Quit to Menu",
+                "Are you sure you want to quit to the menu? Unsaved progress will be lost.",
+                () =>
+                {
+                    var nm = DoraMCU.Client.Network.NetworkManager.Instance;
+                    if (nm != null) nm.Logout();
+                    ShowLogin();
+                    ToastNotification.Instance.ShowInfo("Returned to menu");
+                },
+                null
+            );
         }
 
         private void OnNewGame()
@@ -372,6 +493,11 @@ namespace DoraMCU.Client.UI
             if (nm != null && !nm.IsConnected)
             {
                 nm.Connect();
+            }
+            // Set default galaxy for AI admin polling
+            if (nm != null)
+            {
+                nm.SetCurrentGalaxy("Earth 2026");
             }
             SetMenuState(MenuState.Playing);
         }
@@ -384,7 +510,25 @@ namespace DoraMCU.Client.UI
 
         private void OnQuit()
         {
-            Application.Quit();
+            // Show confirmation dialog before quitting
+            ModalDialog.Instance.ShowConfirm(
+                "Quit Game",
+                "Are you sure you want to quit? Your game will be auto-saved.",
+                () =>
+                {
+                    // Auto-save before quitting
+                    var nm = NetworkManager.Instance;
+                    if (nm != null)
+                    {
+                        nm.SaveGame((success, error) =>
+                        {
+                            Debug.Log($"[MenuManager] Auto-save on quit: {(success ? "success" : error)}");
+                        });
+                    }
+                    Application.Quit();
+                },
+                null
+            );
         }
 
         private void OnApplySettings()
@@ -418,6 +562,19 @@ namespace DoraMCU.Client.UI
             SetMenuState(MenuState.Paused);
         }
 
+        private void OnApplyServerUrl()
+        {
+            if (serverUrlInput != null && !string.IsNullOrEmpty(serverUrlInput.text.Trim()))
+            {
+                var sc = DoraMCU.Client.Core.ServerConfig.Instance;
+                if (sc != null)
+                {
+                    sc.SetServerUrl(serverUrlInput.text.Trim());
+                    Debug.Log($"[MenuManager] Server URL updated to {sc.ServerUrl}");
+                }
+            }
+        }
+
         private void OnBackFromGameSelect()
         {
             SetMenuState(MenuState.Paused);
@@ -447,11 +604,139 @@ namespace DoraMCU.Client.UI
         public void ResumeGame()
         {
             SetMenuState(MenuState.Playing);
+            // Hide overlays that should not persist during gameplay
+            var sb = ShipBuildUI.Instance;
+            if (sb != null) sb.Hide();
         }
 
         public bool IsPaused()
         {
             return currentState != MenuState.Playing;
+        }
+
+        /// <summary>
+        /// Called when login succeeds. Checks for existing characters and routes accordingly.
+        /// </summary>
+        private void OnLoginSuccess(string username, string token)
+        {
+            Debug.Log($"[MenuManager] Login success for {username}, checking for existing characters");
+            var ls = LoginScreen.Instance;
+            if (ls != null)
+            {
+                ls.OnLoginSuccess -= OnLoginSuccess;
+                ls.Hide();
+            }
+
+            // Mark as authenticated so sync loop can start
+            var gm = GameManager.Instance;
+            if (gm != null) gm.SetAuthenticated(true);
+
+            // Show HUD now that login is complete
+            var hud = MainHUD.Instance;
+            if (hud != null)
+            {
+                hud.SetVisible(true);
+                Debug.Log("[MenuManager] HUD made visible after login");
+            }
+
+            // Update HUD with corporation info from login response
+            var nm = DoraMCU.Client.Network.NetworkManager.Instance;
+            if (nm != null && !string.IsNullOrEmpty(nm.CorporationName))
+            {
+                if (hud != null)
+                {
+                    hud.SetCorporationName(nm.CorporationName);
+                }
+                Debug.Log($"[MenuManager] Corporation set: {nm.CorporationName}");
+            }
+
+            // Check if the user has existing characters
+            if (nm != null)
+            {
+                nm.FetchOnboardingConfig((success, hasCharacters, error) =>
+                {
+                    if (success && !hasCharacters)
+                    {
+                        // No characters — show character creation
+                        Debug.Log("[MenuManager] No existing characters, showing character creation");
+                        ShowCharacterCreation();
+                    }
+                    else
+                    {
+                        // Has characters or error — go to main menu
+                        Debug.Log($"[MenuManager] Has characters or error, showing main menu");
+                        SetMenuState(MenuState.MainMenu);
+                    }
+                });
+            }
+            else
+            {
+                SetMenuState(MenuState.MainMenu);
+            }
+        }
+
+        /// <summary>
+        /// Show the login screen (e.g., from Quit to Main Menu).
+        /// </summary>
+        public void ShowLogin()
+        {
+            // Hide HUD when returning to login
+            var hud = MainHUD.Instance;
+            if (hud != null)
+            {
+                hud.SetVisible(false);
+            }
+
+            var ls = LoginScreen.Instance;
+            if (ls != null)
+            {
+                ls.OnLoginSuccess += OnLoginSuccess;
+                ls.Show();
+            }
+            SetMenuState(MenuState.Login);
+        }
+
+        /// <summary>
+        /// Show the character creation screen.
+        /// </summary>
+        public void ShowCharacterCreation()
+        {
+            var cc = CharacterCreation.Instance;
+            if (cc != null)
+            {
+                cc.OnCharacterCreated += OnCharacterCreated;
+                cc.Show();
+            }
+            SetMenuState(MenuState.CharacterCreation);
+        }
+
+        /// <summary>
+        /// Called when character creation completes. Transitions to Playing state.
+        /// </summary>
+        private void OnCharacterCreated(CharacterCreation.CharacterData data)
+        {
+            Debug.Log($"[MenuManager] Character created: {data.name} ({data.species} {data.career})");
+            var cc = CharacterCreation.Instance;
+            if (cc != null)
+            {
+                cc.OnCharacterCreated -= OnCharacterCreated;
+                cc.Hide();
+            }
+
+            // Show and update HUD with character info
+            var hud = MainHUD.Instance;
+            if (hud != null)
+            {
+                hud.SetVisible(true);
+                if (data.name != null)
+                {
+                    hud.SetCharacterName(data.name);
+                }
+                Debug.Log("[MenuManager] HUD made visible after character creation");
+            }
+
+            // Start the game
+            SetMenuState(MenuState.Playing);
         }
 
         #endregion
@@ -464,13 +749,24 @@ namespace DoraMCU.Client.UI
             panel.transform.SetParent(menuCanvas.transform);
             
             var rectTransform = panel.AddComponent<RectTransform>();
-            rectTransform.anchorMin = Vector2.zero;
-            rectTransform.anchorMax = Vector2.one;
-            rectTransform.anchoredPosition = position;
-            rectTransform.sizeDelta = -size;
+            
+            if (size.x >= Screen.width - 10 && size.y >= Screen.height - 10)
+            {
+                rectTransform.anchorMin = Vector2.zero;
+                rectTransform.anchorMax = Vector2.one;
+                rectTransform.anchoredPosition = Vector2.zero;
+                rectTransform.sizeDelta = Vector2.zero;
+            }
+            else
+            {
+                rectTransform.anchorMin = Vector2.zero;
+                rectTransform.anchorMax = Vector2.zero;
+                rectTransform.anchoredPosition = position;
+                rectTransform.sizeDelta = size;
+            }
 
             var image = panel.AddComponent<Image>();
-            image.color = new Color(0, 0, 0, 0.85f);
+            image.color = UIConfig.Instance.PanelBackground;
 
             return panel;
         }
@@ -479,15 +775,20 @@ namespace DoraMCU.Client.UI
         {
             var textGo = new GameObject(name);
             textGo.transform.SetParent(parent);
-            textGo.transform.anchoredPosition = position;
-            textGo.transform.localRotation = Quaternion.identity;
-            textGo.transform.localScale = Vector3.one;
+            var textRect = textGo.GetComponent<RectTransform>();
+            if (textRect == null) textRect = textGo.AddComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.zero;
+            textRect.anchoredPosition = position;
+            textRect.sizeDelta = new Vector2(400, 50);
+            textRect.localRotation = Quaternion.identity;
+            textRect.localScale = Vector3.one;
 
             textRef = textGo.AddComponent<Text>();
             textRef.text = defaultText;
             textRef.fontSize = fontSize;
-            textRef.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            textRef.color = Color.white;
+            textRef.font = FontLoader.Instance.DefaultFont;
+            textRef.color = UIConfig.Instance.TextDefault;
             textRef.horizontalOverflow = HorizontalWrapMode.Overflow;
             textRef.verticalOverflow = VerticalWrapMode.Overflow;
             textRef.alignment = TextAnchor.MiddleCenter;
@@ -499,35 +800,38 @@ namespace DoraMCU.Client.UI
         {
             var btnGo = new GameObject(name);
             btnGo.transform.SetParent(parent);
-            btnGo.transform.anchoredPosition = position;
-            btnGo.transform.localRotation = Quaternion.identity;
-            btnGo.transform.localScale = Vector3.one;
-
-            var rect = btnGo.GetComponent<RectTransform>();
-            if (rect == null) rect = btnGo.AddComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(200, 40);
+            var btnRect = btnGo.GetComponent<RectTransform>();
+            if (btnRect == null) btnRect = btnGo.AddComponent<RectTransform>();
+            btnRect.anchorMin = Vector2.zero;
+            btnRect.anchorMax = Vector2.zero;
+            btnRect.anchoredPosition = position;
+            btnRect.sizeDelta = new Vector2(200, 40);
+            btnRect.localRotation = Quaternion.identity;
+            btnRect.localScale = Vector3.one;
 
             var btn = btnGo.AddComponent<Button>();
             var image = btnGo.AddComponent<Image>();
-            image.color = new Color(0.1f, 0.1f, 0.3f, 0.8f);
+            image.color = UIConfig.Instance.ButtonBackground;
 
             var textGo = new GameObject("ButtonText");
             textGo.transform.SetParent(btnGo.transform);
-            textGo.transform.localPosition = Vector3.zero;
-            textGo.transform.localRotation = Quaternion.identity;
-            textGo.transform.localScale = Vector3.one;
+            var textRect = textGo.GetComponent<RectTransform>();
+            if (textRect == null) textRect = textGo.AddComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.anchoredPosition = Vector2.zero;
+            textRect.sizeDelta = Vector2.zero;
+            textRect.localRotation = Quaternion.identity;
+            textRect.localScale = Vector3.one;
 
             var text = textGo.AddComponent<Text>();
             text.text = buttonText;
             text.fontSize = 16;
-            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            text.color = Color.white;
+            text.font = FontLoader.Instance.DefaultFont;
+            text.color = UIConfig.Instance.TextDefault;
             text.alignment = TextAnchor.MiddleCenter;
 
-            var textRect = textGo.GetComponent<RectTransform>();
-            textRect.sizeDelta = new Vector2(200, 40);
-
-            btn.onClick.AddListener(onClick);
+            btn.onClick.AddListener(() => onClick());
             return btn;
         }
 
@@ -535,23 +839,29 @@ namespace DoraMCU.Client.UI
         {
             var sliderGo = new GameObject(name);
             sliderGo.transform.SetParent(parent);
-            sliderGo.transform.anchoredPosition = position;
-            sliderGo.transform.localRotation = Quaternion.identity;
-            sliderGo.transform.localScale = Vector3.one;
-
-            var rect = sliderGo.GetComponent<RectTransform>();
-            if (rect == null) rect = sliderGo.AddComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(300, 30);
+            var sliderRect = sliderGo.GetComponent<RectTransform>();
+            if (sliderRect == null) sliderRect = sliderGo.AddComponent<RectTransform>();
+            sliderRect.anchorMin = Vector2.zero;
+            sliderRect.anchorMax = Vector2.zero;
+            sliderRect.anchoredPosition = position;
+            sliderRect.sizeDelta = new Vector2(300, 30);
+            sliderRect.localRotation = Quaternion.identity;
+            sliderRect.localScale = Vector3.one;
 
             var labelGo = new GameObject("Label");
             labelGo.transform.SetParent(sliderGo.transform);
-            labelGo.transform.localPosition = new Vector3(-130, 20, 0);
+            var labelRect = labelGo.GetComponent<RectTransform>();
+            if (labelRect == null) labelRect = labelGo.AddComponent<RectTransform>();
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.zero;
+            labelRect.anchoredPosition = new Vector2(-130, 20);
+            labelRect.sizeDelta = new Vector2(100, 20);
             
             var labelText = labelGo.AddComponent<Text>();
             labelText.text = label;
             labelText.fontSize = 12;
-            labelText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            labelText.color = Color.white;
+            labelText.font = FontLoader.Instance.DefaultFont;
+            labelText.color = UIConfig.Instance.TextDefault;
 
             sliderRef = sliderGo.AddComponent<Slider>();
             sliderRef.minValue = 0;
@@ -563,23 +873,29 @@ namespace DoraMCU.Client.UI
         {
             var ddGo = new GameObject(name);
             ddGo.transform.SetParent(parent);
-            ddGo.transform.anchoredPosition = position;
-            ddGo.transform.localRotation = Quaternion.identity;
-            ddGo.transform.localScale = Vector3.one;
-
-            var rect = ddGo.GetComponent<RectTransform>();
-            if (rect == null) rect = ddGo.AddComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(200, 30);
+            var ddRect = ddGo.GetComponent<RectTransform>();
+            if (ddRect == null) ddRect = ddGo.AddComponent<RectTransform>();
+            ddRect.anchorMin = Vector2.zero;
+            ddRect.anchorMax = Vector2.zero;
+            ddRect.anchoredPosition = position;
+            ddRect.sizeDelta = new Vector2(200, 30);
+            ddRect.localRotation = Quaternion.identity;
+            ddRect.localScale = Vector3.one;
 
             var labelGo = new GameObject("Label");
             labelGo.transform.SetParent(ddGo.transform);
-            labelGo.transform.localPosition = new Vector3(0, 20, 0);
+            var labelRect = labelGo.GetComponent<RectTransform>();
+            if (labelRect == null) labelRect = labelGo.AddComponent<RectTransform>();
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.zero;
+            labelRect.anchoredPosition = new Vector2(0, 20);
+            labelRect.sizeDelta = new Vector2(200, 20);
             
             var labelText = labelGo.AddComponent<Text>();
             labelText.text = label;
             labelText.fontSize = 12;
-            labelText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            labelText.color = Color.white;
+            labelText.font = FontLoader.Instance.DefaultFont;
+            labelText.color = UIConfig.Instance.TextDefault;
 
             dropdownRef = ddGo.AddComponent<Dropdown>();
             dropdownRef.options.Add(new Dropdown.OptionData("Low"));
@@ -593,26 +909,54 @@ namespace DoraMCU.Client.UI
         {
             var togGo = new GameObject(name);
             togGo.transform.SetParent(parent);
-            togGo.transform.anchoredPosition = position;
-            togGo.transform.localRotation = Quaternion.identity;
-            togGo.transform.localScale = Vector3.one;
-
-            var rect = togGo.GetComponent<RectTransform>();
-            if (rect == null) rect = togGo.AddComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(200, 30);
+            var togRect = togGo.GetComponent<RectTransform>();
+            if (togRect == null) togRect = togGo.AddComponent<RectTransform>();
+            togRect.anchorMin = Vector2.zero;
+            togRect.anchorMax = Vector2.zero;
+            togRect.anchoredPosition = position;
+            togRect.sizeDelta = new Vector2(200, 30);
+            togRect.localRotation = Quaternion.identity;
+            togRect.localScale = Vector3.one;
 
             toggleRef = togGo.AddComponent<Toggle>();
             toggleRef.graphic = togGo.AddComponent<Image>();
 
             var labelGo = new GameObject("Label");
             labelGo.transform.SetParent(togGo.transform);
-            labelGo.transform.localPosition = new Vector3(20, 0, 0);
+            var labelRect = labelGo.GetComponent<RectTransform>();
+            if (labelRect == null) labelRect = labelGo.AddComponent<RectTransform>();
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.zero;
+            labelRect.anchoredPosition = new Vector2(20, 0);
+            labelRect.sizeDelta = new Vector2(150, 30);
             
             var labelText = labelGo.AddComponent<Text>();
             labelText.text = label;
             labelText.fontSize = 12;
-            labelText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            labelText.color = Color.white;
+            labelText.font = FontLoader.Instance.DefaultFont;
+            labelText.color = UIConfig.Instance.TextDefault;
+        }
+
+        private InputField CreateSettingsInputField(Transform parent, string name, Vector2 position)
+        {
+            var inputGo = new GameObject(name);
+            inputGo.transform.SetParent(parent);
+            var inputRect = inputGo.GetComponent<RectTransform>();
+            if (inputRect == null) inputRect = inputGo.AddComponent<RectTransform>();
+            inputRect.anchorMin = Vector2.zero;
+            inputRect.anchorMax = Vector2.zero;
+            inputRect.anchoredPosition = position;
+            inputRect.sizeDelta = new Vector2(300, 30);
+            inputRect.localRotation = Quaternion.identity;
+            inputRect.localScale = Vector3.one;
+
+            var inputField = inputGo.AddComponent<InputField>();
+            inputField.lineType = InputField.LineType.SingleLine;
+
+            var image = inputGo.AddComponent<Image>();
+            image.color = UIConfig.Instance.ButtonBackground;
+
+            return inputField;
         }
 
         #endregion

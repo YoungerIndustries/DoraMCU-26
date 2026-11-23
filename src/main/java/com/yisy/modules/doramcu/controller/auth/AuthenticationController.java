@@ -1,17 +1,23 @@
 package com.yisy.modules.doramcu.controller.auth;
 
 import com.yisy.modules.doramcu.config.MetricsConfig;
+import com.yisy.modules.doramcu.corporation.model.SilverCurrencyConstants;
+import com.yisy.modules.doramcu.corporation.service.TreasuryLoanService;
 import com.yisy.modules.doramcu.dto.auth.LoginRequest;
 import com.yisy.modules.doramcu.dto.auth.LoginResponse;
 import com.yisy.modules.doramcu.dto.auth.PinLoginRequest;
 import com.yisy.modules.doramcu.dto.players.PlayerSummaryDto;
 import com.yisy.modules.doramcu.dto.auth.RegisterRequest;
 import com.yisy.modules.doramcu.dto.misc.ServerInfoDto;
+import com.yisy.modules.doramcu.eve.model.AiCharacter;
+import com.yisy.modules.doramcu.eve.model.EveCorporation;
 import com.yisy.modules.doramcu.hex.GalaxyFactory;
 import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.model.user.User;
+import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 import com.yisy.modules.doramcu.repository.galaxy.GalaxyRepository;
+import com.yisy.modules.doramcu.repository.misc.EveCorporationRepository;
 import com.yisy.modules.doramcu.repository.players.PlayerRepository;
 import com.yisy.modules.doramcu.repository.user.UserRepository;
 import com.yisy.modules.doramcu.service.auth.JwtService;
@@ -55,13 +61,19 @@ public class AuthenticationController {
     private final PlayerService playerService;
     private final PlayerRepository playerRepository;
     private final GalaxyRepository galaxyRepository;
+    private final EveCorporationRepository eveCorporationRepository;
+    private final AiCharacterRepository aiCharacterRepository;
+    private final TreasuryLoanService treasuryLoanService;
 
     public AuthenticationController(AuthenticationManager authenticationManager, JwtService jwtService,
                                      MetricsConfig metricsConfig, UserRepository userRepository,
                                      PasswordEncoder passwordEncoder,
                                      ObjectProvider<PlayerService> playerServiceProvider,
                                      ObjectProvider<PlayerRepository> playerRepositoryProvider,
-                                     ObjectProvider<GalaxyRepository> galaxyRepositoryProvider) {
+                                     ObjectProvider<GalaxyRepository> galaxyRepositoryProvider,
+                                     ObjectProvider<EveCorporationRepository> eveCorporationRepositoryProvider,
+                                     ObjectProvider<AiCharacterRepository> aiCharacterRepositoryProvider,
+                                     TreasuryLoanService treasuryLoanService) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.metricsConfig = metricsConfig;
@@ -70,6 +82,9 @@ public class AuthenticationController {
         this.playerService = playerServiceProvider.getIfAvailable();
         this.playerRepository = playerRepositoryProvider.getIfAvailable();
         this.galaxyRepository = galaxyRepositoryProvider.getIfAvailable();
+        this.eveCorporationRepository = eveCorporationRepositoryProvider.getIfAvailable();
+        this.aiCharacterRepository = aiCharacterRepositoryProvider.getIfAvailable();
+        this.treasuryLoanService = treasuryLoanService;
     }
 
     @GetMapping("/server-info")
@@ -99,7 +114,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         log.debug("Login attempt for user: {}", request.getUsername());
         try {
             authenticationManager.authenticate(
@@ -108,7 +123,8 @@ public class AuthenticationController {
         } catch (BadCredentialsException e) {
             log.warn("Failed login attempt for user: {}", request.getUsername());
             metricsConfig.getLoginFailureCounter().increment();
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Invalid username or password"));
         }
 
         String token = jwtService.generateToken(request.getUsername());
@@ -118,6 +134,9 @@ public class AuthenticationController {
         String pin = null;
         String empireName = null;
         boolean isAdmin = false;
+        Long corporationId = null;
+        String corporationName = null;
+        String corporationTicker = null;
         if (playerRepository != null) {
             Optional<Player> pOpt = playerRepository.findByEmail(request.getUsername());
             if (pOpt.isEmpty()) {
@@ -134,11 +153,28 @@ public class AuthenticationController {
                 pin = pOpt.get().getLoginPin();
                 empireName = pOpt.get().getEmpireName();
                 isAdmin = pOpt.get().isAdmin();
+                // Look up corporation
+                if (eveCorporationRepository != null) {
+                    try {
+                        Optional<EveCorporation> corpOpt = eveCorporationRepository.findByCeoPlayerId(String.valueOf(pOpt.get().getId()));
+                        if (corpOpt.isPresent()) {
+                            EveCorporation corp = corpOpt.get();
+                            corporationId = corp.getId();
+                            corporationName = corp.getName();
+                            corporationTicker = corp.getTicker();
+                        }
+                    } catch (Exception e) {
+                        log.warn("Login: could not look up corporation for {}: {}", request.getUsername(), e.getMessage());
+                    }
+                }
             }
         }
 
         LoginResponse response = new LoginResponse(token, request.getUsername(), pin, empireName);
         response.setAdmin(isAdmin);
+        response.setCorporationId(corporationId);
+        response.setCorporationName(corporationName);
+        response.setCorporationTicker(corporationTicker);
         return ResponseEntity.ok(response);
     }
 
@@ -368,6 +404,97 @@ public class AuthenticationController {
             }
         }
 
+        // Create the player's corporation and AI VP as part of registration
+        if (playerRepository != null && eveCorporationRepository != null && aiCharacterRepository != null) {
+            try {
+                Optional<User> userOpt = userRepository.findByUsername(request.getUsername());
+                if (userOpt.isPresent()) {
+                    Optional<Player> playerOpt = playerRepository.findByUser(userOpt.get());
+                    if (playerOpt.isPresent()) {
+                        Long playerId = playerOpt.get().getId();
+                        String corpName = (request.getEmpireName() != null && !request.getEmpireName().trim().isEmpty())
+                                ? request.getEmpireName().trim() : request.getUsername() + " Industries";
+                        String tickerBase = corpName.replaceAll("[^A-Za-z]", "").substring(0, Math.min(corpName.replaceAll("[^A-Za-z]", "").length(), 4)).toUpperCase();
+                        String ticker = tickerBase;
+                        int suffix = 1;
+                        while (eveCorporationRepository.findByTicker(ticker).isPresent()) {
+                            ticker = tickerBase + suffix;
+                            suffix++;
+                        }
+
+                        EveCorporation corporation = new EveCorporation();
+                        corporation.setName(corpName);
+                        corporation.setTicker(ticker);
+                        corporation.setCeoName(request.getUsername());
+                        corporation.setCeoPlayerId(String.valueOf(playerId));
+                        corporation.setDescription("Corporation founded by " + request.getUsername() + ".");
+                        corporation.setCreditBalance(SilverCurrencyConstants.STARTING_CAPITAL_CREDITS);
+                        corporation = eveCorporationRepository.save(corporation);
+                        Long corporationId = corporation.getId();
+                        log.info("Registration: created corporation '{}' ({}) for user: {} with {} starting capital",
+                                corpName, ticker, request.getUsername(),
+                                SilverCurrencyConstants.formatCredits(SilverCurrencyConstants.STARTING_CAPITAL_CREDITS));
+
+                        // Create treasury loan
+                        try {
+                            treasuryLoanService.createStartupLoan(corporationId);
+                            log.info("Registration: created treasury loan for corporation {} ({})", corpName, ticker);
+                        } catch (Exception e) {
+                            log.error("Registration: failed to create treasury loan for corporation {}: {}", corpName, e.getMessage());
+                        }
+
+                        // Create AI VP
+                        String vpName = request.getUsername().trim().replace(" ", "") + " AI";
+                        AiCharacter aiVp = new AiCharacter();
+                        aiVp.setName(vpName);
+                        aiVp.setRole("VP");
+                        aiVp.setEmpireName(corpName);
+                        aiVp.setLinkedPlayerId(String.valueOf(playerId));
+                        aiVp.setActive(true);
+                        aiVp.setHirable(false);
+                        aiVp.setHiringStatus(AiCharacter.HiringStatus.UNAVAILABLE);
+                        aiVp.setTotalExperience(100);
+                        aiVp.setLeadershipRating(7);
+                        aiVp.setDescription("AI Vice President of " + corpName + ".");
+                        aiVp.setCharacterType(AiCharacter.CharacterType.HUMAN_LEADER);
+                        aiVp.setCanPromoteToCoServer(true);
+                        aiVp = aiCharacterRepository.save(aiVp);
+
+                        corporation.setVpName(vpName);
+                        corporation.setVpPlayerId(String.valueOf(aiVp.getId()));
+                        eveCorporationRepository.save(corporation);
+                        log.info("Registration: created AI VP '{}' for corporation '{}' (user: {})", vpName, corpName, request.getUsername());
+                    }
+                }
+            } catch (Exception e) {
+                log.warn("Registration: could not create corporation/AI VP for {}: {}", request.getUsername(), e.getMessage());
+            }
+        }
+
+        // Look up the created corporation and include in response
+        Long corporationId = null;
+        String corporationName = null;
+        String corporationTicker = null;
+        if (playerRepository != null && eveCorporationRepository != null) {
+            try {
+                Optional<User> userOpt = userRepository.findByUsername(request.getUsername());
+                if (userOpt.isPresent()) {
+                    Optional<Player> playerOpt = playerRepository.findByUser(userOpt.get());
+                    if (playerOpt.isPresent()) {
+                        Optional<EveCorporation> corpOpt = eveCorporationRepository.findByCeoPlayerId(String.valueOf(playerOpt.get().getId()));
+                        if (corpOpt.isPresent()) {
+                            EveCorporation corp = corpOpt.get();
+                            corporationId = corp.getId();
+                            corporationName = corp.getName();
+                            corporationTicker = corp.getTicker();
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                log.warn("Registration: could not look up corporation for {}: {}", request.getUsername(), e.getMessage());
+            }
+        }
+
         // Auto-login after registration
         String token = jwtService.generateToken(request.getUsername());
         String empireName = (request.getEmpireName() != null && !request.getEmpireName().trim().isEmpty())
@@ -387,6 +514,9 @@ public class AuthenticationController {
                 // ignore invalid ethos
             }
         }
+        response.setCorporationId(corporationId);
+        response.setCorporationName(corporationName);
+        response.setCorporationTicker(corporationTicker);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -404,6 +534,10 @@ public class AuthenticationController {
         String pin = null;
         String empireName = null;
         boolean isAdmin = false;
+        Long corporationId = null;
+        String corporationName = null;
+        String corporationTicker = null;
+
         if (playerRepository != null) {
             Optional<Player> pOpt = playerRepository.findByEmail(username);
             if (pOpt.isEmpty()) {
@@ -416,14 +550,84 @@ public class AuthenticationController {
                 }
             }
             if (pOpt.isPresent()) {
-                pin = pOpt.get().getLoginPin();
-                empireName = pOpt.get().getEmpireName();
-                isAdmin = pOpt.get().isAdmin();
+                Player player = pOpt.get();
+                pin = player.getLoginPin();
+                empireName = player.getEmpireName();
+                isAdmin = player.isAdmin();
+
+                // Ensure corporation exists for the dev player
+                if (eveCorporationRepository != null) {
+                    try {
+                        Optional<EveCorporation> corpOpt = eveCorporationRepository.findByCeoPlayerId(String.valueOf(player.getId()));
+                        if (corpOpt.isEmpty()) {
+                            // Create the YISY seed corporation
+                            log.info("[DEV] No corporation found for Butch Younger — creating YISY seed corporation");
+                            String corpName = "Younger Industries";
+                            String ticker = "YISY";
+
+                            EveCorporation corporation = new EveCorporation();
+                            corporation.setName(corpName);
+                            corporation.setTicker(ticker);
+                            corporation.setCeoName(username);
+                            corporation.setCeoPlayerId(String.valueOf(player.getId()));
+                            corporation.setDescription("Younger Industries — Seed corporation for DoraMCU.");
+                            corporation.setCreditBalance(SilverCurrencyConstants.STARTING_CAPITAL_CREDITS);
+                            corporation = eveCorporationRepository.save(corporation);
+                            corporationId = corporation.getId();
+                            corporationName = corporation.getName();
+                            corporationTicker = corporation.getTicker();
+
+                            // Create treasury loan
+                            try {
+                                treasuryLoanService.createStartupLoan(corporationId);
+                                log.info("[DEV] Created treasury loan for YISY");
+                            } catch (Exception e) {
+                                log.warn("[DEV] Failed to create treasury loan: {}", e.getMessage());
+                            }
+
+                            // Create AI VP
+                            if (aiCharacterRepository != null) {
+                                String vpName = "ButchYounger AI";
+                                AiCharacter aiVp = new AiCharacter();
+                                aiVp.setName(vpName);
+                                aiVp.setRole("VP");
+                                aiVp.setEmpireName(corpName);
+                                aiVp.setLinkedPlayerId(String.valueOf(player.getId()));
+                                aiVp.setActive(true);
+                                aiVp.setHirable(false);
+                                aiVp.setHiringStatus(AiCharacter.HiringStatus.UNAVAILABLE);
+                                aiVp.setTotalExperience(100);
+                                aiVp.setLeadershipRating(7);
+                                aiVp.setDescription("AI Vice President of " + corpName + ".");
+                                aiVp.setCharacterType(AiCharacter.CharacterType.HUMAN_LEADER);
+                                aiVp.setCanPromoteToCoServer(true);
+                                aiVp = aiCharacterRepository.save(aiVp);
+
+                                corporation.setVpName(vpName);
+                                corporation.setVpPlayerId(String.valueOf(aiVp.getId()));
+                                eveCorporationRepository.save(corporation);
+                                log.info("[DEV] Created AI VP '{}' for YISY", vpName);
+                            }
+
+                            log.info("[DEV] Created corporation '{}' ({}) for Butch Younger", corpName, ticker);
+                        } else {
+                            EveCorporation corp = corpOpt.get();
+                            corporationId = corp.getId();
+                            corporationName = corp.getName();
+                            corporationTicker = corp.getTicker();
+                        }
+                    } catch (Exception e) {
+                        log.warn("[DEV] Could not ensure corporation for Butch Younger: {}", e.getMessage());
+                    }
+                }
             }
         }
 
         LoginResponse response = new LoginResponse(token, username, pin, empireName);
         response.setAdmin(isAdmin);
+        response.setCorporationId(corporationId);
+        response.setCorporationName(corporationName);
+        response.setCorporationTicker(corporationTicker);
         return ResponseEntity.ok(response);
     }
 

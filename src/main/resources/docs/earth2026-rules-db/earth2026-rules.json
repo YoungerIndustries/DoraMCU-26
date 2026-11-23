@@ -685,7 +685,7 @@
     "earthGalaxySeed": 12345,
     "testGalaxySeed": 99999,
     "maxSectorsPerGalaxy": 100,
-    "maxSystemsPerSector": 10,
+    "maxSystemsPerSector": 200,
     "maxPlanetsPerSystem": 8,
     "maxMoonsPerPlanet": 5,
     "defaultTechLevel": 5,

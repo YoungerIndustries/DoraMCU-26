@@ -149,7 +149,7 @@ public enum GalaxyTemplate {
                     .blackHoleChance(0.0)
                     .cometChance(0.1)
                     .spaceStationChance(0.3)
-                    .hyperlaneDensity(0.0)
+                    .hyperlaneDensity(1.0)
                     .sectorSize(2)
                     .subSectorDimension(2)
                     .empireCount(1)

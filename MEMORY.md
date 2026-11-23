@@ -10,7 +10,7 @@
 
 ## Current State
 
-- **Last Updated:** 2026-11-23 12:54
+- **Last Updated:** 2026-11-23 13:05
 - **Current Version:** v0.8.20 (DNN Workforce & Players Fix)
   - **Server Status:**
     - Pi Brain Stem: ✅ v0.8.20 at 192.168.1.111:8080 — server running. Galaxy detail now shows all 12 AI agent roles individually and player population with AI/Human labels.
@@ -99,6 +99,31 @@
 ---
 
 ## Session Log
+
+### 2026-11-23 — IDE Plugin Conflict Resolved & STARTING_POINT.md Updated
+
+**Issue:** IntelliJ IDEA 2026.3 reported a plugin conflict: Native Build Tools (`com.intellij.clion`) incompatible with Kotlin Multiplatform (`com.jetbrains.kmm`).
+
+**Investigation:** Examined `idea.log` (line 35961) and the IDE plugin directory. Found that the conflicting plugins were already disabled — `clion.zip`, `clion-radler.zip`, and `nativeDebug-plugin.zip` all reside in `$env:LOCALAPPDATA\JetBrains\IntelliJIdea2026.3\plugins\disabled\`.
+
+**Secondary warnings in idea.log:**
+- `InstanceNotOverridableException` (3 occurrences) — internal IDE warning from Configuration Scripts / Gradle plugin interaction, harmless.
+- `Error-prone plugin is not resolved` — missing optional dependency, no impact.
+- `PluginException: 1172 ms to call on EDT AgentPromptContextUsageAction#presentation` — AI agent plugin performance warning, not a conflict.
+
+**Documentation update:** Added `### IDE` subsection to STARTING_POINT.md (Section 3, Technology Stack) documenting:
+- IntelliJ IDEA 2026.3 as the primary development IDE (build 263.7307.200)
+- Native Build Tools plugin disabled to avoid conflict with Kotlin Multiplatform
+- Plugin files moved to `plugins\disabled\` folder
+- Project location path
+
+**Files changed:**
+- `STARTING_POINT.md` — Added IDE subsection (lines 219–222)
+- `MEMORY.md` — This session log entry
+
+**Next action:** Restart IntelliJ IDEA to verify clean startup log without the Native Build Tools conflict warning.
+
+---
 
 ### 2026-11-23 — Em Dash Fix Across All Project HTML Files
 

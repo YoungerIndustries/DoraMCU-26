@@ -1058,7 +1058,7 @@ public class PortalController {
                  "          infoHtml += '<h4>📍 Sol System - Earth Landing</h4>';\n" +
                  "          infoHtml += '<p>You have arrived in the <b>Sol System</b> - Earth\\'s home solar system.</p>';\n" +
                  "          infoHtml += '<p>🌍 <b>Earth</b> is your landing target. San Diego, California awaits.</p>';\n" +
-                 "          infoHtml += '<p>You arrive at Younger Industries HQ in San Diego. Your apartment is ready and your first scenario awaits.</p>';\n" +
+                 "          infoHtml += '<p>You arrive at Younger Industries HQ in San Diego. Your office is ready and your first scenario awaits.</p>';\n" +
                  "        }\n" +
                  "        document.getElementById('earth2026-info').innerHTML = infoHtml;\n" +
                  "        // Locations\n" +
@@ -1133,7 +1133,7 @@ public class PortalController {
                  "        .then(function(data) {\n" +
                  "          console.log('[Dashboard] Character created:', data);\n" +
                  "          var msg = '<div style=\"color:#4caf50;\">✓ Character <b>' + escapeText(name) + '</b> created! ID: ' + (data.id || 'unknown') + '</div>';\n" +
-                 "          msg += '<div style=\"color:#9aa0a6;margin-top:8px;\">You have landed on Earth 2026 in San Diego, CA. Your apartment at Younger Industries HQ is ready.</div>';\n" +
+                 "          msg += '<div style=\"color:#9aa0a6;margin-top:8px;\">You have landed on Earth 2026. Your office at Younger Industries HQ is ready.</div>';\n" +
                  "          if (data.location) msg += '<div style=\"color:#00d4ff;margin-top:4px;\">Location: ' + escapeText(data.location) + '</div>';\n" +
                  "          resultDiv.innerHTML = msg;\n" +
                  "          // Try to start the game for this character\n" +

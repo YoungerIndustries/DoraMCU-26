@@ -6,7 +6,9 @@ import com.yisy.modules.doramcu.hex.GalaxyGenerationConfig;
 import com.yisy.modules.doramcu.hex.GalaxyTemplate;
 import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.service.galaxy.GalaxyCloneService;
+import com.yisy.modules.doramcu.service.galaxy.GalaxyOverseerService;
 import com.yisy.modules.doramcu.service.galaxy.GalaxyService;
+import com.yisy.modules.doramcu.service.galaxy.SolSystemInitializer;
 import com.yisy.modules.doramcu.service.game.OverlayBuilderRegistry;
 import com.yisy.modules.doramcu.gamecore.GameModule;
 import com.yisy.modules.doramcu.gamecore.GameModuleRegistry;
@@ -58,11 +60,17 @@ public class MultiGalaxyBuildQueue {
     private final GameModuleRegistry gameModuleRegistry;
     private final GameModeRegistry gameModeRegistry;
     private final OverlayBuilderRegistry overlayBuilderRegistry;
+    private final SolSystemInitializer solSystemInitializer;
+    private final com.yisy.modules.doramcu.service.galaxy.SectorBuilderService sectorBuilderService;
+    private final GalaxyOverseerService galaxyOverseerService;
 
     private final List<GalaxyStartupEntry> entries = new CopyOnWriteArrayList<>();
     private final AtomicBoolean processing = new AtomicBoolean(false);
     private final AtomicInteger successfulCount = new AtomicInteger(0);
     private final AtomicInteger failedCount = new AtomicInteger(0);
+
+    /** Whether to use lazy loading (structure-only at startup, build sectors on demand) */
+    private boolean lazyLoadingEnabled = true;
 
     /**
      * Listener interface for galaxy build progress events.
@@ -80,12 +88,29 @@ public class MultiGalaxyBuildQueue {
                                    GalaxyCloneService galaxyCloneService,
                                    GameModuleRegistry gameModuleRegistry,
                                    GameModeRegistry gameModeRegistry,
-                                   OverlayBuilderRegistry overlayBuilderRegistry) {
+                                   OverlayBuilderRegistry overlayBuilderRegistry,
+                                   SolSystemInitializer solSystemInitializer,
+                                   com.yisy.modules.doramcu.service.galaxy.SectorBuilderService sectorBuilderService,
+                                   GalaxyOverseerService galaxyOverseerService) {
         this.galaxyService = galaxyService;
         this.galaxyCloneService = galaxyCloneService;
         this.gameModuleRegistry = gameModuleRegistry;
         this.gameModeRegistry = gameModeRegistry;
         this.overlayBuilderRegistry = overlayBuilderRegistry;
+        this.solSystemInitializer = solSystemInitializer;
+        this.sectorBuilderService = sectorBuilderService;
+        this.galaxyOverseerService = galaxyOverseerService;
+    }
+
+    /**
+     * Enables or disables lazy loading for galaxy creation.
+     * When enabled, galaxies are created with structure only (sectors and subsectors)
+     * and solar systems are generated on-demand when fleets enter.
+     *
+     * @param enabled true to enable lazy loading (default)
+     */
+    public void setLazyLoadingEnabled(boolean enabled) {
+        this.lazyLoadingEnabled = enabled;
     }
 
     /**
@@ -219,9 +244,50 @@ public class MultiGalaxyBuildQueue {
 
         // Check if galaxy already exists
         if (galaxyService.getGalaxyByName(galaxyName).isPresent()) {
+            Galaxy existingGalaxy = galaxyService.getGalaxyByName(galaxyName).get();
             log.info("Galaxy '{}' already exists, initializing game modes and overlay", galaxyName);
             initializeAllGameModes(galaxyName, entry.getGameModes(), entry.getLoreSlug(), gameType);
             applyOverlay(galaxyName, gameType, template.getConfig());
+
+            // Initialize Sol system for existing galaxy (idempotent — skips if already present)
+            try {
+                solSystemInitializer.initializeSolSystem(existingGalaxy);
+            } catch (Exception e) {
+                log.warn("Failed to initialize Sol system in existing galaxy '{}': {}",
+                        galaxyName, e.getMessage());
+            }
+
+            // Apply metadata to existing galaxy if missing
+            boolean metadataChanged = false;
+            if (entry.getDifficulty() != null && !entry.getDifficulty().isBlank()
+                    && (existingGalaxy.getDifficultyLevel() == null || existingGalaxy.getDifficultyLevel().isBlank())) {
+                existingGalaxy.setDifficultyLevel(entry.getDifficulty());
+                metadataChanged = true;
+            }
+            if (entry.getTheme() != null && !entry.getTheme().isBlank()
+                    && (existingGalaxy.getTheme() == null || existingGalaxy.getTheme().isBlank())) {
+                existingGalaxy.setTheme(entry.getTheme());
+                metadataChanged = true;
+            }
+            if (entry.getDescription() != null && !entry.getDescription().isBlank()
+                    && (existingGalaxy.getDescription() == null || existingGalaxy.getDescription().isBlank())) {
+                existingGalaxy.setDescription(entry.getDescription());
+                metadataChanged = true;
+            }
+            if (metadataChanged) {
+                galaxyService.save(existingGalaxy);
+                log.info("Updated metadata for existing galaxy '{}'", galaxyName);
+            }
+
+            // Create Galaxy Overseer for existing galaxy (idempotent — reuses if already assigned)
+            try {
+                galaxyOverseerService.createOrGetGalaxyOverseer(existingGalaxy);
+                log.info("Ensured Galaxy Overseer exists for galaxy '{}'", galaxyName);
+            } catch (Exception e) {
+                log.warn("Failed to create Galaxy Overseer for existing galaxy '{}': {}",
+                        galaxyName, e.getMessage());
+            }
+
             return null;
         }
 
@@ -236,30 +302,44 @@ public class MultiGalaxyBuildQueue {
             seed = 1L;
         }
 
-        // Generate the galaxy with empires
-        Map<Integer, Empire> empires = new HashMap<>();
-        // Add default AI empires for the galaxy (Empire constructor: id, name, rulerPlayerId)
-        empires.put(1, new Empire(1, "AI Empire 1", 0));
-        empires.put(2, new Empire(2, "AI Empire 2", 0));
-        empires.put(3, new Empire(3, "AI Empire 3", 0));
+        GalaxyService.GalaxyGenerationResult result;
 
-        GalaxyService.GalaxyGenerationResult result = galaxyService.generateAndSaveGalaxyFromTemplate(
-                galaxyName,
-                empires,
-                gameType.name(),
-                entry.getLoreSlug(),
-                seed,
-                config.getSystemCount(),
-                config.getPlanetsPerSystem(),
-                config.getMoonChance(),
-                config.getAsteroidBeltChance(),
-                config.getGasGiantChance(),
-                config.getNebulaChance(),
-                config.getBlackHoleChance(),
-                config.getCometChance(),
-                config.getSpaceStationChance(),
-                config.getHyperlaneDensity()
-        );
+        // Choose generation mode: lazy loading (structure only) or full generation
+        if (lazyLoadingEnabled) {
+            log.info("Using lazy loading for galaxy '{}' — structure only, systems built on demand", galaxyName);
+            result = galaxyService.createGalaxyStructureOnly(
+                    galaxyName,
+                    null,  // empires assigned during first sector build
+                    gameType.name(),
+                    entry.getLoreSlug(),
+                    seed,
+                    config.getHyperlaneDensity()
+            );
+        } else {
+            // Generate the galaxy with empires (full generation)
+            Map<Integer, Empire> empires = new HashMap<>();
+            empires.put(1, new Empire(1, "AI Empire 1", 0));
+            empires.put(2, new Empire(2, "AI Empire 2", 0));
+            empires.put(3, new Empire(3, "AI Empire 3", 0));
+
+            result = galaxyService.generateAndSaveGalaxyFromTemplate(
+                    galaxyName,
+                    empires,
+                    gameType.name(),
+                    entry.getLoreSlug(),
+                    seed,
+                    config.getSystemCount(),
+                    config.getPlanetsPerSystem(),
+                    config.getMoonChance(),
+                    config.getAsteroidBeltChance(),
+                    config.getGasGiantChance(),
+                    config.getNebulaChance(),
+                    config.getBlackHoleChance(),
+                    config.getCometChance(),
+                    config.getSpaceStationChance(),
+                    config.getHyperlaneDensity()
+            );
+        }
 
         // Phase 1: Initialize ALL game modes for this galaxy
         initializeAllGameModes(galaxyName, entry.getGameModes(), entry.getLoreSlug(), gameType);
@@ -267,7 +347,39 @@ public class MultiGalaxyBuildQueue {
         // Phase 2: Apply game-specific overlay (themed empires, lore systems)
         applyOverlay(galaxyName, gameType, config);
 
-        return result.getDatabaseGalaxy();
+        // Phase 3: Initialize Sol system with Earth as the universal landing point
+        // This ensures every galaxy has a Sol solar system with Earth where players can land
+        // and access the Younger Industries HQ basement hub
+        try {
+            solSystemInitializer.initializeSolSystem(result.getDatabaseGalaxy());
+        } catch (Exception e) {
+            log.warn("Failed to initialize Sol system in galaxy '{}': {}",
+                    galaxyName, e.getMessage());
+        }
+
+        // Phase 4: Apply galaxy metadata (difficulty, theme, description)
+        com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy = result.getDatabaseGalaxy();
+        if (entry.getDifficulty() != null && !entry.getDifficulty().isBlank()) {
+            dbGalaxy.setDifficultyLevel(entry.getDifficulty());
+        }
+        if (entry.getTheme() != null && !entry.getTheme().isBlank()) {
+            dbGalaxy.setTheme(entry.getTheme());
+        }
+        if (entry.getDescription() != null && !entry.getDescription().isBlank()) {
+            dbGalaxy.setDescription(entry.getDescription());
+        }
+        galaxyService.save(dbGalaxy);
+
+        // Phase 5: Create Galaxy Overseer AI workforce for this galaxy
+        try {
+            galaxyOverseerService.createOrGetGalaxyOverseer(dbGalaxy);
+            log.info("Created Galaxy Overseer for galaxy '{}'", galaxyName);
+        } catch (Exception e) {
+            log.warn("Failed to create Galaxy Overseer for galaxy '{}': {}",
+                    galaxyName, e.getMessage());
+        }
+
+        return dbGalaxy;
     }
 
     /**

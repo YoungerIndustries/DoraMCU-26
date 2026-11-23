@@ -1110,12 +1110,22 @@ public class GalaxyAdminController {
         dto.setOverstaffed(workforce.isOverstaffed());
         dto.setWorkforceRecommendation(workforce.getRecommendation());
 
-        Map<String, Integer> byRole = new HashMap<>();
+        Map<String, Integer> byRole = new LinkedHashMap<>();
         byRole.put("GalaxyOverseer", workforce.getGalaxyOverseerCount());
         byRole.put("PlanetOverseer", workforce.getPlanetOverseerCount());
         byRole.put("Leader", workforce.getLeaderCount());
         byRole.put("Governor", workforce.getGovernorCount());
-        byRole.put("Other", workforce.getOtherCount());
+        byRole.put("EconomicManager", workforce.getEconomicManagerCount());
+        byRole.put("CombatManager", workforce.getCombatManagerCount());
+        byRole.put("ExplorationManager", workforce.getExplorationManagerCount());
+        byRole.put("LogisticsManager", workforce.getLogisticsManagerCount());
+        byRole.put("DiplomacyManager", workforce.getDiplomacyManagerCount());
+        byRole.put("IntelligenceManager", workforce.getIntelligenceManagerCount());
+        byRole.put("ScienceManager", workforce.getScienceManagerCount());
+        byRole.put("CultureManager", workforce.getCultureManagerCount());
+        if (workforce.getOtherCount() > 0) {
+            byRole.put("Other", workforce.getOtherCount());
+        }
         dto.setAiAgentsByRole(byRole);
 
         // ---- Work Orders Section ----

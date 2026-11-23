@@ -9,14 +9,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Disable caching for all static resources to prevent stale page issues.
+ * Disable caching for static resources (HTML, CSS, JS) to prevent stale page issues.
+ * API endpoints are excluded — they should use their own cache-control headers.
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new NoCacheInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(new NoCacheInterceptor())
+                .addPathPatterns("/**/*.html", "/**/*.css", "/**/*.js");
     }
 
     static class NoCacheInterceptor implements HandlerInterceptor {

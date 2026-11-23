@@ -17,7 +17,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(RateLimitFilter.class);
 
-    // Endpoints excluded from rate limiting (real-time 3D UI, WebSocket, static resources, auth)
+    // Endpoints excluded from rate limiting (real-time 3D UI, WebSocket, static resources, auth, news proxy)
     private static final String[] EXCLUDED_PREFIXES = {
             "/api/v1/4x/auth/",
             "/api/v1/galaxy-3d/",
@@ -26,6 +26,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
             "/api/v1/achievements/",
             "/api/v1/events/",
             "/api/v1/clients/",
+            "/api/v1/news/",
             "/ws/",
             "/css/",
             "/js/",

@@ -559,7 +559,8 @@ public class TurnManager {
         // Find the player for this empire
         Player owner = null;
         for (Player player : context.getPlayers()) {
-            if (player.getEmpireId() == empireId) {
+            Integer pEmpireId = player.getEmpireId();
+            if (pEmpireId != null && pEmpireId == empireId) {
                 owner = player;
                 break;
             }
@@ -601,14 +602,18 @@ public class TurnManager {
             if (player.isEliminated()) {
                 continue;
             }
-            ResourcePipelineManager pipeline = pipelineManagers.get(player.getEmpireId());
+            Integer turnEmpireId = player.getEmpireId();
+            if (turnEmpireId == null) {
+                continue;
+            }
+            ResourcePipelineManager pipeline = pipelineManagers.get(turnEmpireId);
             if (pipeline == null) {
                 continue;
             }
 
             // Process pipeline turn (mining, transport, processing, assembly)
             // Pass technology tree so alternative recipes can be unlocked
-            EconomicState economicState = economicStates.get(player.getEmpireId());
+            EconomicState economicState = economicStates.get(turnEmpireId);
             com.yisy.modules.doramcu.hex.manager.TechnologyTree technologyTree =
                     economicState != null ? economicState.getTechnologyTree() : null;
             pipeline.processTurn(technologyTree);
@@ -784,10 +789,13 @@ public class TurnManager {
                     // Create PlanetFacility entity with AI core and register as AI character
                     StartingFacility facility = order.getPlanetFacility();
                     if (facility != null) {
-                        Empire empire = context.getEmpire(player.getEmpireId());
-                        if (empire != null) {
-                            PlanetFacility pf = empire.getFacilities().buildFacility(planet.getId(), facility);
-                            registerFacilityAsAi(pf, player.getName());
+                        Integer pfEmpireId = player.getEmpireId();
+                        if (pfEmpireId != null) {
+                            Empire empire = context.getEmpire(pfEmpireId);
+                            if (empire != null) {
+                                PlanetFacility pf = empire.getFacilities().buildFacility(planet.getId(), facility);
+                                registerFacilityAsAi(pf, player.getName());
+                            }
                         }
                     }
                 }
@@ -804,7 +812,9 @@ public class TurnManager {
             if (player.isEliminated()) {
                 continue;
             }
-            ResourcePipelineManager pipeline = pipelineManagers.get(player.getEmpireId());
+            Integer maintEmpireId = player.getEmpireId();
+            if (maintEmpireId == null) continue;
+            ResourcePipelineManager pipeline = pipelineManagers.get(maintEmpireId);
             if (pipeline == null) {
                 continue;
             }
@@ -833,18 +843,20 @@ public class TurnManager {
             if (player.isEliminated()) {
                 continue;
             }
-            ResourcePipelineManager pipeline = pipelineManagers.get(player.getEmpireId());
+            Integer upkeepEmpireId = player.getEmpireId();
+            if (upkeepEmpireId == null) continue;
+            ResourcePipelineManager pipeline = pipelineManagers.get(upkeepEmpireId);
             if (pipeline == null) {
                 continue;
             }
 
             // Get EconomicState for this empire
-            EconomicState economicState = economicStates.get(player.getEmpireId());
+            EconomicState economicState = economicStates.get(upkeepEmpireId);
 
             // Collect all stations owned by this player
             List<SpaceStation> stations = new ArrayList<>();
             for (SpaceStation station : context.getSpaceStations()) {
-                if (station.getOwner() != null && station.getOwner().getEmpireId() == player.getEmpireId()) {
+                if (station.getOwner() != null && Integer.valueOf(upkeepEmpireId).equals(station.getOwner().getEmpireId())) {
                     stations.add(station);
                 }
             }

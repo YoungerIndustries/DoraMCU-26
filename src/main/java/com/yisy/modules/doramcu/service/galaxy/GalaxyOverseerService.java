@@ -15,12 +15,18 @@ import com.yisy.modules.doramcu.model.galaxy.Galaxy;
 import com.yisy.modules.doramcu.model.misc.Planet;
 import com.yisy.modules.doramcu.repository.ai.AiCharacterRepository;
 import com.yisy.modules.doramcu.repository.galaxy.GalaxyRepository;
+import com.yisy.modules.doramcu.repository.galaxy.SolarSystemRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -62,35 +68,132 @@ public class GalaxyOverseerService {
      */
     public static final String ROLE_GALAXY_OVERSEER = "Galaxy Overseer";
 
+    /**
+     * Role name for the planet-level overseer AI character.
+     */
+    public static final String ROLE_PLANET_OVERSEER = "Overseer";
+
+    /**
+     * Role name for the empire leader AI character.
+     */
+    public static final String ROLE_LEADER = "Leader";
+
+    /**
+     * Role name for the planet governor AI character.
+     */
+    public static final String ROLE_GOVERNOR = "Governor";
+
+    /**
+     * Role name for the economic manager AI character.
+     * Responsible for monitoring production facility coverage and creating work orders
+     * to ensure every item type has at least one production source.
+     */
+    public static final String ROLE_ECONOMIC_MANAGER = "Economic Manager";
+
+    /**
+     * Role name for the combat manager AI character.
+     * Responsible for monitoring fleet readiness, defense coverage, and military operations.
+     */
+    public static final String ROLE_COMBAT_MANAGER = "Combat Manager";
+
+    /**
+     * Role name for the exploration manager AI character.
+     * Responsible for monitoring unexplored sectors, scan coverage, and expansion opportunities.
+     */
+    public static final String ROLE_EXPLORATION_MANAGER = "Exploration Manager";
+
+    /**
+     * Role name for the logistics manager AI character.
+     * Responsible for monitoring resource distribution, transport efficiency, and supply chain health.
+     */
+    public static final String ROLE_LOGISTICS_MANAGER = "Logistics Manager";
+
+    /**
+     * Role name for the diplomacy manager AI character.
+     * Responsible for managing diplomatic relations between empires in the galaxy.
+     */
+    public static final String ROLE_DIPLOMACY_MANAGER = "Diplomacy Manager";
+
+    /**
+     * Role name for the intelligence manager AI character.
+     * Responsible for espionage, security, information gathering, and counter-intelligence.
+     */
+    public static final String ROLE_INTELLIGENCE_MANAGER = "Intelligence Manager";
+
+    /**
+     * Role name for the science manager AI character.
+     * Responsible for research and development, technology progression, and scientific infrastructure.
+     */
+    public static final String ROLE_SCIENCE_MANAGER = "Science Manager";
+
+    /**
+     * Role name for the culture manager AI character.
+     * Responsible for cultural identity, propaganda, morale, and cultural influence.
+     */
+    public static final String ROLE_CULTURE_MANAGER = "Culture Manager";
+
     private final GalaxyRepository galaxyRepository;
+    private final GalaxyService galaxyService;
+    private final SolarSystemRepository solarSystemRepository;
     private final AiCharacterRepository aiCharacterRepository;
     private final Earth2026RulesDatabaseService rulesDatabase;
     private final AiAdminService aiAdminService;
     private final AiAdminIncidentService incidentService;
     private final GalaxyEventService galaxyEventService;
     private final GalaxyMetricsService galaxyMetricsService;
+    private final EconomicManagerService economicManagerService;
+    private final CombatManagerService combatManagerService;
+    private final AiAdminExplorationService explorationService;
+    private final AiAdminLogisticsService logisticsService;
+    private final AiAdminDiplomacyService diplomacyService;
+    private final AiAdminIntelligenceService intelligenceService;
+    private final AiAdminScienceService scienceService;
+    private final AiAdminCultureService cultureService;
     private final java.util.concurrent.Executor galaxyHealthCheckExecutor;
+    private final PlatformTransactionManager transactionManager;
 
     // Tracks previous health scores for threshold-crossing detection
     private final Map<Long, Integer> previousHealthScores = new ConcurrentHashMap<>();
 
     public GalaxyOverseerService(GalaxyRepository galaxyRepository,
+                                   GalaxyService galaxyService,
+                                   SolarSystemRepository solarSystemRepository,
                                    AiCharacterRepository aiCharacterRepository,
                                    Earth2026RulesDatabaseService rulesDatabase,
                                    @Lazy AiAdminService aiAdminService,
                                    @Lazy AiAdminIncidentService incidentService,
                                    GalaxyEventService galaxyEventService,
                                    GalaxyMetricsService galaxyMetricsService,
+                                   @Lazy EconomicManagerService economicManagerService,
+                                   @Lazy CombatManagerService combatManagerService,
+                                   @Lazy AiAdminExplorationService explorationService,
+                                   @Lazy AiAdminLogisticsService logisticsService,
+                                   @Lazy AiAdminDiplomacyService diplomacyService,
+                                   @Lazy AiAdminIntelligenceService intelligenceService,
+                                   @Lazy AiAdminScienceService scienceService,
+                                   @Lazy AiAdminCultureService cultureService,
                                    @org.springframework.beans.factory.annotation.Qualifier("galaxyHealthCheckExecutor")
-                                   java.util.concurrent.Executor galaxyHealthCheckExecutor) {
+                                   java.util.concurrent.Executor galaxyHealthCheckExecutor,
+                                   PlatformTransactionManager transactionManager) {
         this.galaxyRepository = galaxyRepository;
+        this.galaxyService = galaxyService;
+        this.solarSystemRepository = solarSystemRepository;
         this.aiCharacterRepository = aiCharacterRepository;
         this.rulesDatabase = rulesDatabase;
         this.aiAdminService = aiAdminService;
         this.incidentService = incidentService;
         this.galaxyEventService = galaxyEventService;
         this.galaxyMetricsService = galaxyMetricsService;
+        this.economicManagerService = economicManagerService;
+        this.combatManagerService = combatManagerService;
+        this.explorationService = explorationService;
+        this.logisticsService = logisticsService;
+        this.diplomacyService = diplomacyService;
+        this.intelligenceService = intelligenceService;
+        this.scienceService = scienceService;
+        this.cultureService = cultureService;
         this.galaxyHealthCheckExecutor = galaxyHealthCheckExecutor;
+        this.transactionManager = transactionManager;
     }
 
     /**
@@ -106,29 +209,62 @@ public class GalaxyOverseerService {
      */
     @Transactional
     public AiCharacter createOrGetGalaxyOverseer(Galaxy galaxy) {
-        // If already assigned, return existing
+        // If already assigned, verify the overseer belongs to this galaxy (empireName matches)
         if (galaxy.getGalaxyOverseerId() != null) {
             Optional<AiCharacter> existing = aiCharacterRepository.findById(galaxy.getGalaxyOverseerId());
             if (existing.isPresent()) {
-                log.info("Galaxy '{}' already has Galaxy Overseer: {}", galaxy.getName(), existing.get().getName());
-                return existing.get();
+                AiCharacter overseer = existing.get();
+                // Fix: ensure the overseer's empireName matches this galaxy
+                if (!galaxy.getName().equals(overseer.getEmpireName())) {
+                    log.warn("Galaxy '{}' Galaxy Overseer {} has mismatched empireName '{}'. " +
+                            "This means the overseer is shared across galaxies. Creating a new one.",
+                            galaxy.getName(), overseer.getName(), overseer.getEmpireName());
+                    // Fall through to create a new overseer for this galaxy
+                } else {
+                    // Fix existing overseers that were created without positions
+                    if (!overseer.hasPosition()) {
+                        overseer.setPosX(0.0);
+                        overseer.setPosY(0.0);
+                        overseer.setPosZ(0.0);
+                        aiCharacterRepository.save(overseer);
+                        log.info("Galaxy '{}' Galaxy Overseer {} now has position set for dispatch",
+                                galaxy.getName(), overseer.getName());
+                    }
+                    log.info("Galaxy '{}' already has Galaxy Overseer: {}", galaxy.getName(), overseer.getName());
+                    return overseer;
+                }
             }
         }
 
         // Try to reuse an existing Galaxy Overseer from the pool
+        // Only reuse overseers that are NOT already assigned to another galaxy
         List<AiCharacter> pool = aiCharacterRepository.findByRoleAndActiveTrueOrderByTotalExperienceDesc(ROLE_GALAXY_OVERSEER);
-        if (!pool.isEmpty()) {
-            AiCharacter overseer = pool.get(0);
-            overseer.setEmpireName(galaxy.getName());
-            overseer.setDescription("Galaxy Overseer for " + galaxy.getName() +
-                    " â€” oversees the entire AI workforce across all planets in the galaxy.");
-            overseer.setAiAdmin(true);
-            overseer = aiCharacterRepository.save(overseer);
-            galaxy.setGalaxyOverseerId(overseer.getId());
+        AiCharacter reusableOverseer = null;
+        for (AiCharacter candidate : pool) {
+            // Skip if this overseer is already assigned to a different galaxy
+            if (candidate.getEmpireName() != null && !candidate.getEmpireName().equals(galaxy.getName())) {
+                continue; // Already belongs to another galaxy
+            }
+            reusableOverseer = candidate;
+            break;
+        }
+        if (reusableOverseer != null) {
+            reusableOverseer.setEmpireName(galaxy.getName());
+            reusableOverseer.setDescription("Galaxy Overseer for " + galaxy.getName() +
+                    " — oversees the entire AI workforce across all planets in the galaxy.");
+            reusableOverseer.setAiAdmin(true);
+            // Set default position if not already set (required for dispatch service to find the overseer)
+            if (!reusableOverseer.hasPosition()) {
+                reusableOverseer.setPosX(0.0);
+                reusableOverseer.setPosY(0.0);
+                reusableOverseer.setPosZ(0.0);
+            }
+            reusableOverseer = aiCharacterRepository.save(reusableOverseer);
+            galaxy.setGalaxyOverseerId(reusableOverseer.getId());
             galaxyRepository.save(galaxy);
             log.info("Galaxy '{}' assigned Galaxy Overseer (reused with experience): {} (xp={})",
-                    galaxy.getName(), overseer.getName(), overseer.getTotalExperience());
-            return overseer;
+                    galaxy.getName(), reusableOverseer.getName(), reusableOverseer.getTotalExperience());
+            return reusableOverseer;
         }
 
         // Create a new Galaxy Overseer
@@ -140,6 +276,10 @@ public class GalaxyOverseerService {
                 " â€” oversees the entire AI workforce across all planets in the galaxy.");
         overseer.setHirable(false);
         overseer.setDailySalary(1000);
+        // Set default position so the dispatch service can find and assign orders to this overseer
+        overseer.setPosX(0.0);
+        overseer.setPosY(0.0);
+        overseer.setPosZ(0.0);
         overseer = aiCharacterRepository.save(overseer);
 
         galaxy.setGalaxyOverseerId(overseer.getId());
@@ -147,7 +287,130 @@ public class GalaxyOverseerService {
 
         log.info("Galaxy '{}' assigned new Galaxy Overseer: {} (id={})", galaxy.getName(), overseer.getName(), overseer.getId());
         galaxyMetricsService.incrementAiAgentDeployed();
+        
+        // Create sub-managers for the galaxy after the overseer is assigned
+        createSubManagers(galaxy);
+        
         return overseer;
+    }
+
+    /**
+     * Creates the sub-manager AI agents for a galaxy: Planet Overseer, Leader, and Governor.
+     * <p>
+     * These sub-managers report to the Galaxy Overseer and handle specialized domains:
+     * <ul>
+     *   <li>Planet Overseer — monitors planet-level operations and resources</li>
+     *   <li>Leader — provides strategic direction and decision-making</li>
+     *   <li>Governor — manages planetary governance and citizen affairs</li>
+     * </ul>
+     * </p>
+     * <p>
+     * Only creates sub-managers that don't already exist for the galaxy.
+     * Safe to call multiple times — will not duplicate existing sub-managers.
+     * </p>
+     *
+     * @param galaxy the galaxy to create sub-managers for
+     * @return list of created or existing sub-manager AI characters
+     */
+    @Transactional
+    public List<AiCharacter> createSubManagers(Galaxy galaxy) {
+        List<AiCharacter> subManagers = new ArrayList<>();
+        
+        // Define the sub-manager roles to create
+        String[] subManagerRoles = {ROLE_PLANET_OVERSEER, ROLE_LEADER, ROLE_GOVERNOR,
+                                     ROLE_ECONOMIC_MANAGER, ROLE_COMBAT_MANAGER, ROLE_EXPLORATION_MANAGER,
+                                     ROLE_LOGISTICS_MANAGER, ROLE_DIPLOMACY_MANAGER, ROLE_INTELLIGENCE_MANAGER,
+                                     ROLE_SCIENCE_MANAGER, ROLE_CULTURE_MANAGER};
+        String[] subManagerDescriptions = {
+            "Planet Overseer for " + galaxy.getName() + " — monitors planet-level operations, resources, and infrastructure.",
+            "Leader for " + galaxy.getName() + " — provides strategic direction, decision-making, and empire-level coordination.",
+            "Governor for " + galaxy.getName() + " — manages planetary governance, citizen affairs, and local administration.",
+            "Economic Manager for " + galaxy.getName() + " — monitors production facility coverage, resource pipelines, and creates work orders for missing facilities.",
+            "Combat Manager for " + galaxy.getName() + " — monitors fleet readiness, defense coverage, and military operations.",
+            "Exploration Manager for " + galaxy.getName() + " — monitors unexplored sectors, scan coverage, and expansion opportunities.",
+            "Logistics Manager for " + galaxy.getName() + " — monitors resource distribution, transport efficiency, and supply chain health.",
+            "Diplomacy Manager for " + galaxy.getName() + " — manages diplomatic relations between empires, assesses compatibility, and creates diplomatic work orders.",
+            "Intelligence Manager for " + galaxy.getName() + " — manages espionage, security, information gathering, and counter-intelligence operations.",
+            "Science Manager for " + galaxy.getName() + " — manages research and development, technology progression, and scientific infrastructure.",
+            "Culture Manager for " + galaxy.getName() + " — manages cultural identity, propaganda, morale, and cultural influence."
+        };
+        
+        for (int i = 0; i < subManagerRoles.length; i++) {
+            String role = subManagerRoles[i];
+            String description = subManagerDescriptions[i];
+            
+            // Check if this sub-manager already exists for this galaxy
+            List<AiCharacter> existing = aiCharacterRepository.findByRoleAndActiveTrueAndEmpireName(role, galaxy.getName());
+            if (!existing.isEmpty()) {
+                subManagers.add(existing.get(0));
+                log.debug("Galaxy '{}' already has {}: {}", galaxy.getName(), role, existing.get(0).getName());
+                continue;
+            }
+            
+            // Create a new sub-manager
+            String name = role + " " + galaxy.getName();
+            AiCharacter subManager = new AiCharacter(name, role, galaxy.getName());
+            subManager.setActive(true);
+            subManager.setAiAdmin(true);
+            subManager.setDescription(description);
+            subManager.setPosX(0.0);
+            subManager.setPosY(0.0);
+            subManager.setPosZ(0.0);
+            subManager = aiCharacterRepository.save(subManager);
+            subManagers.add(subManager);
+            
+            galaxyMetricsService.incrementAiAgentDeployed();
+            log.info("Galaxy '{}' created {} sub-manager: {} (id={})", 
+                    galaxy.getName(), role, subManager.getName(), subManager.getId());
+        }
+        
+        log.info("Galaxy '{}' sub-managers complete: {} total agents (1 overseer + {} sub-managers)",
+                galaxy.getName(), subManagers.size() + 1, subManagers.size());
+        
+        return subManagers;
+    }
+
+    /**
+     * Ensures a galaxy has its full complement of sub-managers.
+     * Calls {@link #createSubManagers(Galaxy)} if the galaxy has a Galaxy Overseer but missing sub-managers.
+     * <p>
+     * Called by the scheduled health check to maintain workforce completeness.
+     * Note: does not use @Transactional because it is called within a programmatic transaction
+     * from the async health check method.
+     * </p>
+     *
+     * @param galaxyId the galaxy ID to check
+     */
+    public void ensureSubManagers(Long galaxyId) {
+        Optional<Galaxy> galaxyOpt = galaxyRepository.findById(galaxyId);
+        if (galaxyOpt.isEmpty()) {
+            return;
+        }
+        Galaxy galaxy = galaxyOpt.get();
+        
+        // Only proceed if the galaxy has a Galaxy Overseer
+        if (galaxy.getGalaxyOverseerId() == null) {
+            return;
+        }
+        
+        // Check current workforce
+        WorkforceReport report = monitorWorkforce(galaxyId);
+        boolean missingSubManagers = report.getPlanetOverseerCount() == 0 ||
+                                     report.getLeaderCount() == 0 ||
+                                     report.getGovernorCount() == 0 ||
+                                     report.getEconomicManagerCount() == 0 ||
+                                     report.getCombatManagerCount() == 0 ||
+                                     report.getExplorationManagerCount() == 0 ||
+                                     report.getLogisticsManagerCount() == 0 ||
+                                     report.getDiplomacyManagerCount() == 0 ||
+                                     report.getIntelligenceManagerCount() == 0 ||
+                                     report.getScienceManagerCount() == 0 ||
+                                     report.getCultureManagerCount() == 0;
+        
+        if (missingSubManagers) {
+            log.info("Galaxy '{}' is missing sub-managers. Creating now.", galaxy.getName());
+            createSubManagers(galaxy);
+        }
     }
 
     /**
@@ -202,6 +465,10 @@ public class GalaxyOverseerService {
             throw new IllegalArgumentException("Galaxy not found: " + galaxyId);
         }
         Galaxy galaxy = galaxyOpt.get();
+        // Force lazy load of solarSystems within this transaction
+        if (galaxy.getSolarSystems() != null) {
+            galaxy.getSolarSystems().size();
+        }
 
         // Count all AI admins associated with this galaxy by empire name
         List<AiCharacter> allAiAdmins = aiCharacterRepository.findByAiAdminTrueAndActiveTrueAndEmpireName(galaxy.getName());
@@ -212,6 +479,14 @@ public class GalaxyOverseerService {
         int planetOverseerCount = 0;
         int leaderCount = 0;
         int governorCount = 0;
+        int economicManagerCount = 0;
+        int combatManagerCount = 0;
+        int explorationManagerCount = 0;
+        int logisticsManagerCount = 0;
+        int diplomacyManagerCount = 0;
+        int intelligenceManagerCount = 0;
+        int scienceManagerCount = 0;
+        int cultureManagerCount = 0;
         int otherCount = 0;
 
         for (AiCharacter ai : allAiAdmins) {
@@ -228,6 +503,30 @@ public class GalaxyOverseerService {
                     break;
                 case "Governor":
                     governorCount++;
+                    break;
+                case ROLE_ECONOMIC_MANAGER:
+                    economicManagerCount++;
+                    break;
+                case ROLE_COMBAT_MANAGER:
+                    combatManagerCount++;
+                    break;
+                case ROLE_EXPLORATION_MANAGER:
+                    explorationManagerCount++;
+                    break;
+                case ROLE_LOGISTICS_MANAGER:
+                    logisticsManagerCount++;
+                    break;
+                case ROLE_DIPLOMACY_MANAGER:
+                    diplomacyManagerCount++;
+                    break;
+                case ROLE_INTELLIGENCE_MANAGER:
+                    intelligenceManagerCount++;
+                    break;
+                case ROLE_SCIENCE_MANAGER:
+                    scienceManagerCount++;
+                    break;
+                case ROLE_CULTURE_MANAGER:
+                    cultureManagerCount++;
                     break;
                 default:
                     otherCount++;
@@ -253,6 +552,14 @@ public class GalaxyOverseerService {
         report.setPlanetOverseerCount(planetOverseerCount);
         report.setLeaderCount(leaderCount);
         report.setGovernorCount(governorCount);
+        report.setEconomicManagerCount(economicManagerCount);
+        report.setCombatManagerCount(combatManagerCount);
+        report.setExplorationManagerCount(explorationManagerCount);
+        report.setLogisticsManagerCount(logisticsManagerCount);
+        report.setDiplomacyManagerCount(diplomacyManagerCount);
+        report.setIntelligenceManagerCount(intelligenceManagerCount);
+        report.setScienceManagerCount(scienceManagerCount);
+        report.setCultureManagerCount(cultureManagerCount);
         report.setOtherCount(otherCount);
         report.setEstimatedPlanets(estimatedPlanets);
         report.setRecommendedMaxAgents(recommendedMax);
@@ -292,7 +599,7 @@ public class GalaxyOverseerService {
      */
     @Transactional(readOnly = true)
     public GalaxyAssessment assessGalaxyNeeds(Galaxy galaxy) {
-        // Re-fetch from repository to attach to current session (avoids LazyInitializationException)
+        // Re-fetch from repository to get managed entity
         Galaxy managed = galaxyRepository.findById(galaxy.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Galaxy not found: " + galaxy.getId()));
         GalaxyAssessment assessment = new GalaxyAssessment();
@@ -303,11 +610,11 @@ public class GalaxyOverseerService {
         E26SystemRules systemRules = rulesDatabase.getSystemRules();
         E26PlanetRules planetRules = rulesDatabase.getPlanetRules();
 
-        // Check solar system count against rules
-        int systemCount = managed.getSolarSystems() != null ? managed.getSolarSystems().size() : 0;
-        int maxSystemsPerSector = galaxyRules.getMaxSystemsPerSector();
-        int maxSectors = galaxyRules.getMaxSectorsPerGalaxy();
-        int expectedMaxSystems = maxSectors * maxSystemsPerSector;
+        // Check solar system count against rules — use DB count to avoid lazy-loading the collection
+        int systemCount = (int) solarSystemRepository.countByGalaxyId(managed.getId());
+
+        // Determine expected max systems based on galaxy game type — use shared GalaxyService method
+        int expectedMaxSystems = galaxyService.getExpectedMaxSystemsForGameType(managed.getGameType());
 
         assessment.setSolarSystemCount(systemCount);
         assessment.setExpectedMaxSystems(expectedMaxSystems);
@@ -385,18 +692,95 @@ public class GalaxyOverseerService {
                     "Government type rules not loaded â€” planet politics may use defaults.");
         }
 
+        // Check economic facility coverage (Economic Manager responsibility)
+        try {
+            economicManagerService.assessEconomicNeeds(managed, assessment);
+        } catch (Exception e) {
+            log.warn("Economic assessment failed for galaxy '{}': {}", managed.getName(), e.getMessage());
+        }
+
+        // Check combat readiness (Combat Manager responsibility)
+        try {
+            combatManagerService.assessCombatNeeds(managed, assessment);
+        } catch (Exception e) {
+            log.warn("Combat assessment failed for galaxy '{}': {}", managed.getName(), e.getMessage());
+        }
+
+        // Check exploration status (Exploration Manager responsibility)
+        try {
+            explorationService.assessExplorationNeeds(managed, assessment);
+        } catch (Exception e) {
+            log.warn("Exploration assessment failed for galaxy '{}': {}", managed.getName(), e.getMessage());
+        }
+
+        // Check logistics health (Logistics Manager responsibility)
+        try {
+            // The logistics service assesses resource pipelines and fleet logistics.
+            // Since ResourcePipelineManager is per-empire and not directly accessible from Galaxy,
+            // we log the assessment skip for now — the logistics service is available for
+            // direct use when empire-level pipeline data is accessible.
+            log.debug("Logistics assessment for galaxy '{}' — service available for empire-level assessment",
+                    managed.getName());
+        } catch (Exception e) {
+            log.warn("Logistics assessment failed for galaxy '{}': {}", managed.getName(), e.getMessage());
+        }
+
+        // Check diplomatic relations (Diplomacy Manager responsibility)
+        try {
+            diplomacyService.assessDiplomaticNeeds(managed, assessment);
+        } catch (Exception e) {
+            log.warn("Diplomatic assessment failed for galaxy '{}': {}", managed.getName(), e.getMessage());
+        }
+
+        // Check intelligence posture (Intelligence Manager responsibility)
+        try {
+            intelligenceService.assessIntelligenceNeeds(managed, assessment);
+        } catch (Exception e) {
+            log.warn("Intelligence assessment failed for galaxy '{}': {}", managed.getName(), e.getMessage());
+        }
+
+        // Check science and technology status (Science Manager responsibility)
+        try {
+            scienceService.assessScienceNeeds(managed, assessment);
+        } catch (Exception e) {
+            log.warn("Science assessment failed for galaxy '{}': {}", managed.getName(), e.getMessage());
+        }
+
+        // Check cultural identity, propaganda, morale, and cultural influence (Culture Manager responsibility)
+        try {
+            cultureService.assessCultureNeeds(managed, assessment);
+        } catch (Exception e) {
+            log.warn("Culture assessment failed for galaxy '{}': {}", managed.getName(), e.getMessage());
+        }
+
         // Calculate overall health score (0-100)
-        int healthScore = 100;
+        // The score has two components:
+        // 1. Completion bonus (0-50 points): rewards galaxies that are closer to their expected system count
+        // 2. Finding deductions (0-50 points remaining): penalizes for issues found during assessment
+        // This prevents early-stage galaxies from showing DEAD just because they have expected findings.
+        int expectedMax = assessment.getExpectedMaxSystems();
+        int actualSystems = assessment.getSolarSystemCount();
+        int completionBonus;
+        if (expectedMax > 0 && actualSystems > 0) {
+            // Use ceiling for small ratios so that 1/200 gives at least 1 point
+            double ratio = (double) actualSystems / expectedMax;
+            completionBonus = Math.min(50, Math.max(1, (int) Math.ceil(ratio * 50)));
+        } else if (actualSystems > 0) {
+            completionBonus = 50; // unknown expected, give full bonus
+        } else {
+            completionBonus = 0;
+        }
+        int healthScore = 50 + completionBonus;
         for (GalaxyAssessment.Finding finding : assessment.getFindings()) {
             switch (finding.severity) {
-                case CRITICAL: healthScore -= 40; break;
-                case HIGH: healthScore -= 20; break;
-                case MEDIUM: healthScore -= 10; break;
-                case LOW: healthScore -= 5; break;
+                case CRITICAL: healthScore -= 5; break;
+                case HIGH: healthScore -= 3; break;
+                case MEDIUM: healthScore -= 1; break;
+                case LOW: break;
                 case INFO: break;
             }
         }
-        assessment.setHealthScore(Math.max(0, healthScore));
+        assessment.setHealthScore(Math.max(0, Math.min(100, healthScore)));
 
         log.info("Galaxy assessment for '{}': health={}, findings={}",
                 managed.getName(), assessment.getHealthScore(), assessment.getFindings().size());
@@ -417,11 +801,31 @@ public class GalaxyOverseerService {
         }
         previousHealthScores.put(managed.getId(), assessment.getHealthScore());
 
-        // Publish ASSESSMENT_COMPLETED event
+        // Count findings by severity for the event
+        long criticalCount = assessment.getFindings().stream()
+                .filter(f -> f.severity == GalaxyAssessment.Severity.CRITICAL).count();
+        long highCount = assessment.getFindings().stream()
+                .filter(f -> f.severity == GalaxyAssessment.Severity.HIGH).count();
+        long mediumCount = assessment.getFindings().stream()
+                .filter(f -> f.severity == GalaxyAssessment.Severity.MEDIUM).count();
+
+        // Build top recommendations string (first 3, semicolon-separated)
+        String topRecommendations = assessment.getRecommendations().stream()
+                .limit(3)
+                .collect(java.util.stream.Collectors.joining(" | "));
+
+        // Publish ASSESSMENT_COMPLETED event with full assessment data
         galaxyEventService.publish(GalaxyEventType.ASSESSMENT_COMPLETED, managed.getName(), managed.getId(),
                 "healthScore", String.valueOf(assessment.getHealthScore()),
                 "findingsCount", String.valueOf(assessment.getFindings().size()),
-                "recommendationsCount", String.valueOf(assessment.getRecommendations().size()));
+                "criticalFindings", String.valueOf(criticalCount),
+                "highFindings", String.valueOf(highCount),
+                "mediumFindings", String.valueOf(mediumCount),
+                "recommendationsCount", String.valueOf(assessment.getRecommendations().size()),
+                "topRecommendations", topRecommendations,
+                "solarSystemCount", String.valueOf(assessment.getSolarSystemCount()),
+                "expectedMaxSystems", String.valueOf(assessment.getExpectedMaxSystems()),
+                "aiAgentCount", String.valueOf(assessment.getAiAgentCount()));
 
         // Publish Prometheus metrics
         galaxyMetricsService.incrementAssessmentCompleted();
@@ -430,10 +834,7 @@ public class GalaxyOverseerService {
         galaxyMetricsService.setSystemCount(galaxy.getName(), assessment.getSolarSystemCount());
         galaxyMetricsService.setAiAgentCount(galaxy.getName(), assessment.getAiAgentCount());
 
-        // Count findings by severity
-        long criticalCount = assessment.getFindings().stream().filter(f -> f.severity == GalaxyAssessment.Severity.CRITICAL).count();
-        long highCount = assessment.getFindings().stream().filter(f -> f.severity == GalaxyAssessment.Severity.HIGH).count();
-        long mediumCount = assessment.getFindings().stream().filter(f -> f.severity == GalaxyAssessment.Severity.MEDIUM).count();
+        // Publish Prometheus metrics for findings severity (reuse counts from event)
         long lowCount = assessment.getFindings().stream().filter(f -> f.severity == GalaxyAssessment.Severity.LOW).count();
         galaxyMetricsService.setFindingCount(galaxy.getName(), "CRITICAL", (int) criticalCount);
         galaxyMetricsService.setFindingCount(galaxy.getName(), "HIGH", (int) highCount);
@@ -451,8 +852,73 @@ public class GalaxyOverseerService {
             return "HEALTHY";
         } else if (healthScore >= 50) {
             return "WARNING";
-        } else {
+        } else if (healthScore >= 20) {
             return "CRITICAL";
+        } else {
+            return "DEAD";
+        }
+    }
+
+    /**
+     * Returns the expected maximum number of solar systems for a galaxy based on its game type.
+     * Galaxies use lazy sector generation — sectors are created on-demand as players explore.
+     * The expected count is used only for health assessment completion percentage.
+     * <p>
+     * Tier 1 (Full galaxies): 200 systems (10 sectors * 20 systems) — reasonable target for health assessment
+     * Tier 2 (Modified galaxies): 50 systems — reduced scale
+     * Tier 3 (Single system): 5 systems — planetary focus
+     * Tier 4 (Earth hub): 10 systems — Sol + near-Earth
+     */
+    private int getExpectedMaxSystemsForGameType(String gameType, E26GalaxyRules galaxyRules) {
+        if (gameType == null || gameType.isBlank()) {
+            // Unknown game type — use a reasonable default, not the theoretical max
+            return 200;
+        }
+
+        switch (gameType.toUpperCase()) {
+            // Tier 4: Earth hub galaxy
+            case "EARTH_2026":
+                return 10; // Sol system + a few near-Earth systems
+
+            // Tier 1: Full space-faring galaxies
+            // These use lazy sector generation — 200 is a reasonable health assessment target
+            // (10 sectors * 20 systems), not the theoretical 20,000 (100 sectors * 200 systems)
+            case "TRAVELLER":
+            case "STAR_WARS":
+            case "STAR_TREK_4X":
+            case "WARHAMMER_40K":
+            case "BABYLON_5":
+            case "DORAMCU_4X":
+                return 200;
+
+            // Tier 2: Modified galaxies (reduced scale)
+            case "SFB":
+            case "MECHWARRIOR":
+            case "ZERO_ZERO_SEVEN":
+            case "CAPTAINS_LOG":
+                return 50;
+
+            // Tier 3: Single system galaxies (planetary focus)
+            case "DND_5E":
+            case "DUNGEONS_AND_DRAGONS":
+                return 5; // Fantasy galaxy, minimal systems
+            case "LORD_OF_THE_RINGS":
+            case "MIDDLE_EARTH":
+                return 5; // Middle-earth reimagined, minimal systems
+            case "STARSHIP_TROOPERS":
+                return 5; // Military sci-fi, single system focus
+
+            // Ground-based game types (no separate galaxy, but may appear in metadata)
+            case "THIRD_REICH":
+                return 3; // Ground combat, minimal space systems
+            case "FPS":
+                return 3; // FPS framework, minimal systems
+            case "TRANSPORT_TYCOON":
+                return 5; // Economic strategy, minimal systems
+
+            default:
+                // Unknown game type — use a reasonable default
+                return 200;
         }
     }
 
@@ -466,7 +932,6 @@ public class GalaxyOverseerService {
      * @param galaxy the galaxy to create work orders for
      * @return list of created order texts
      */
-    @Transactional
     public List<String> createWorkOrdersForGalaxy(Galaxy galaxy) {
         GalaxyAssessment assessment = assessGalaxyNeeds(galaxy);
         List<String> ordersCreated = new ArrayList<>();
@@ -566,9 +1031,10 @@ public class GalaxyOverseerService {
         log.info("Starting async health check for {} galaxies", galaxies.size());
 
         // Process each galaxy asynchronously using the dedicated health check executor
+        // Pass galaxy ID (not the entity) so the async method can re-fetch in its own session
         List<CompletableFuture<HealthCheckResult>> futures = galaxies.stream()
                 .map(galaxy -> CompletableFuture.supplyAsync(
-                        () -> assessSingleGalaxy(galaxy),
+                        () -> assessSingleGalaxy(galaxy.getId()),
                         galaxyHealthCheckExecutor
                 ))
                 .toList();
@@ -605,23 +1071,73 @@ public class GalaxyOverseerService {
     /**
      * Assesses a single galaxy and creates work orders if needed.
      * Runs asynchronously via the galaxyHealthCheckExecutor.
+     * Uses a programmatic transaction (TransactionTemplate) because @Transactional
+     * does not work with @Async in Spring's default proxy mode — the async proxy
+     * intercepts first, so the transactional proxy is never applied.
      */
     @Async("galaxyHealthCheckExecutor")
-    public HealthCheckResult assessSingleGalaxy(Galaxy galaxy) {
+    public HealthCheckResult assessSingleGalaxy(Long galaxyId) {
+        // Use programmatic transaction to ensure a Hibernate session on the async thread
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setName("GalaxyAssessment");
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        def.setReadOnly(true);
+        TransactionStatus status = transactionManager.getTransaction(def);
         try {
+            Galaxy galaxy = galaxyRepository.findById(galaxyId)
+                    .orElseThrow(() -> new IllegalArgumentException("Galaxy not found: " + galaxyId));
             GalaxyAssessment assessment = assessGalaxyNeeds(galaxy);
 
-            if (assessment.getHealthScore() < 90) {
-                List<String> newOrders = createWorkOrdersForGalaxy(galaxy);
-                log.debug("Galaxy '{}' health score: {}, created {} work orders",
-                        galaxy.getName(), assessment.getHealthScore(), newOrders.size());
-                return new HealthCheckResult(1, newOrders.size());
+            // Ensure sub-managers exist before checking health score
+            // This runs for every galaxy on every health check cycle
+            transactionManager.commit(status);
+            DefaultTransactionDefinition subManagerDef = new DefaultTransactionDefinition();
+            subManagerDef.setName("SubManagerCreation");
+            subManagerDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+            subManagerDef.setReadOnly(false);
+            TransactionStatus subManagerStatus = transactionManager.getTransaction(subManagerDef);
+            try {
+                ensureSubManagers(galaxyId);
+                transactionManager.commit(subManagerStatus);
+            } catch (Exception e) {
+                transactionManager.rollback(subManagerStatus);
+                log.warn("Failed to ensure sub-managers for galaxy '{}': {}", galaxy.getName(), e.getMessage());
+            }
+
+            // Re-assess after sub-manager creation to get updated workforce counts
+            DefaultTransactionDefinition reAssessDef = new DefaultTransactionDefinition();
+            reAssessDef.setName("GalaxyReAssessment");
+            reAssessDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+            reAssessDef.setReadOnly(true);
+            TransactionStatus reAssessStatus = transactionManager.getTransaction(reAssessDef);
+            GalaxyAssessment reAssessment = assessGalaxyNeeds(galaxy);
+            transactionManager.commit(reAssessStatus);
+
+            if (reAssessment.getHealthScore() < 90) {
+                // Use programmatic REQUIRES_NEW transaction because @Transactional proxy
+                // doesn't work for intra-class calls from within the async method
+                DefaultTransactionDefinition writeDef = new DefaultTransactionDefinition();
+                writeDef.setName("WorkOrderCreation");
+                writeDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+                writeDef.setReadOnly(false);
+                TransactionStatus writeStatus = transactionManager.getTransaction(writeDef);
+                try {
+                    List<String> newOrders = createWorkOrdersForGalaxy(galaxy);
+                    transactionManager.commit(writeStatus);
+                    log.debug("Galaxy '{}' health score: {}, created {} work orders",
+                            galaxy.getName(), reAssessment.getHealthScore(), newOrders.size());
+                    return new HealthCheckResult(1, newOrders.size());
+                } catch (Exception e) {
+                    transactionManager.rollback(writeStatus);
+                    throw e;
+                }
             } else {
-                log.debug("Galaxy '{}' is healthy (score: {})", galaxy.getName(), assessment.getHealthScore());
+                log.debug("Galaxy '{}' is healthy (score: {})", galaxy.getName(), reAssessment.getHealthScore());
                 return new HealthCheckResult(1, 0);
             }
         } catch (Exception e) {
-            log.warn("Failed to assess galaxy '{}': {}", galaxy.getName(), e.getMessage());
+            transactionManager.rollback(status);
+            log.warn("Failed to assess galaxy '{}': {}", galaxyId, e.getMessage());
             throw e;
         }
     }
@@ -657,6 +1173,14 @@ public class GalaxyOverseerService {
         private int planetOverseerCount;
         private int leaderCount;
         private int governorCount;
+        private int economicManagerCount;
+        private int combatManagerCount;
+        private int explorationManagerCount;
+        private int logisticsManagerCount;
+        private int diplomacyManagerCount;
+        private int intelligenceManagerCount;
+        private int scienceManagerCount;
+        private int cultureManagerCount;
         private int otherCount;
         private int estimatedPlanets;
         private int recommendedMaxAgents;
@@ -719,6 +1243,70 @@ public class GalaxyOverseerService {
 
         public void setGovernorCount(int governorCount) {
             this.governorCount = governorCount;
+        }
+
+        public int getEconomicManagerCount() {
+            return economicManagerCount;
+        }
+
+        public void setEconomicManagerCount(int economicManagerCount) {
+            this.economicManagerCount = economicManagerCount;
+        }
+
+        public int getCombatManagerCount() {
+            return combatManagerCount;
+        }
+
+        public void setCombatManagerCount(int combatManagerCount) {
+            this.combatManagerCount = combatManagerCount;
+        }
+
+        public int getExplorationManagerCount() {
+            return explorationManagerCount;
+        }
+
+        public void setExplorationManagerCount(int explorationManagerCount) {
+            this.explorationManagerCount = explorationManagerCount;
+        }
+
+        public int getLogisticsManagerCount() {
+            return logisticsManagerCount;
+        }
+
+        public void setLogisticsManagerCount(int logisticsManagerCount) {
+            this.logisticsManagerCount = logisticsManagerCount;
+        }
+
+        public int getDiplomacyManagerCount() {
+            return diplomacyManagerCount;
+        }
+
+        public void setDiplomacyManagerCount(int diplomacyManagerCount) {
+            this.diplomacyManagerCount = diplomacyManagerCount;
+        }
+
+        public int getIntelligenceManagerCount() {
+            return intelligenceManagerCount;
+        }
+
+        public void setIntelligenceManagerCount(int intelligenceManagerCount) {
+            this.intelligenceManagerCount = intelligenceManagerCount;
+        }
+
+        public int getScienceManagerCount() {
+            return scienceManagerCount;
+        }
+
+        public void setScienceManagerCount(int scienceManagerCount) {
+            this.scienceManagerCount = scienceManagerCount;
+        }
+
+        public int getCultureManagerCount() {
+            return cultureManagerCount;
+        }
+
+        public void setCultureManagerCount(int cultureManagerCount) {
+            this.cultureManagerCount = cultureManagerCount;
         }
 
         public int getOtherCount() {

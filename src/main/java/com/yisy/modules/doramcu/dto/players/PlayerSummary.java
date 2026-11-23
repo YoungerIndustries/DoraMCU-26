@@ -19,6 +19,8 @@ public class PlayerSummary {
 
     private Long id;
     private String name;
+    private Integer empireId;
+    private String empireName;
     private Map<String, Integer> resources;
     private int planetCount;
     private int fleetCount;
@@ -90,5 +92,21 @@ public class PlayerSummary {
 
     public void setFleetCount(int fleetCount) {
         this.fleetCount = fleetCount;
+    }
+
+    public Integer getEmpireId() {
+        return empireId;
+    }
+
+    public void setEmpireId(Integer empireId) {
+        this.empireId = empireId;
+    }
+
+    public String getEmpireName() {
+        return empireName;
+    }
+
+    public void setEmpireName(String empireName) {
+        this.empireName = empireName;
     }
 }

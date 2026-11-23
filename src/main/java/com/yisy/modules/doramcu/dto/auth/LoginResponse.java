@@ -10,6 +10,9 @@ public class LoginResponse {
     private String ethos;
     private boolean isAdmin;
     private String sessionId;
+    private Long corporationId;
+    private String corporationName;
+    private String corporationTicker;
 
     public LoginResponse() {
     }
@@ -88,5 +91,29 @@ public class LoginResponse {
 
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public Long getCorporationId() {
+        return corporationId;
+    }
+
+    public void setCorporationId(Long corporationId) {
+        this.corporationId = corporationId;
+    }
+
+    public String getCorporationName() {
+        return corporationName;
+    }
+
+    public void setCorporationName(String corporationName) {
+        this.corporationName = corporationName;
+    }
+
+    public String getCorporationTicker() {
+        return corporationTicker;
+    }
+
+    public void setCorporationTicker(String corporationTicker) {
+        this.corporationTicker = corporationTicker;
     }
 }

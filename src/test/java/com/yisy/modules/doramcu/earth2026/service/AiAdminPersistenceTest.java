@@ -91,6 +91,7 @@ class AiAdminPersistenceTest {
         familyService = mock(Earth2026FamilyService.class);
         connectionService = mock(Earth2026ConnectionService.class);
         organizationService = mock(Earth2026OrganizationService.class);
+        CharacterLandingService characterLandingService = mock(CharacterLandingService.class);
 
         earth2026Service = new Earth2026Service(
                 characterRepository, locationRepository, scenarioRepository, structureRepository,
@@ -98,7 +99,8 @@ class AiAdminPersistenceTest {
                 jobRepository, contractRepository, planetRepository, aiCharacterRepository,
                 rulesDatabaseService, aiPlayerService, aiPlayerServiceAdapter, gameSessionService, galaxyEventService,
                 galaxyMetricsService, planetBuilderBridge, economyBridge, transportBridge,
-                companionService, familyService, connectionService, organizationService
+                companionService, familyService, connectionService, organizationService,
+                characterLandingService
         );
     }
 

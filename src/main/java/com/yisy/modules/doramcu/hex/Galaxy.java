@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
  * A galaxy containing 100 2D sectors arranged in a 10x10 grid.
  * <p>
  * Each sector contains a 10x10 hex grid of subsectors. Each subsector is a
- * 3D hexmap of 10x10x10 dimensions containing 1-3 solar systems.
+ * 3D hexmap of 10x10x10 dimensions containing 15-35 solar systems (Traveller-style).
  * The galaxy hierarchy is:
  * Galaxy → Sector (10x10 grid) → SubSector (10x10 hex grid) → SolarSystem (3D hexmap) → SolarSystemEntity → Celestial Bodies.
  * <p>
@@ -25,8 +25,8 @@ public class Galaxy {
     public static final int TOTAL_SUBSECTORS_PER_SECTOR = 100;
     public static final int TOTAL_SUBSECTORS = TOTAL_SECTORS * TOTAL_SUBSECTORS_PER_SECTOR;
     public static final int SUBSECTOR_DIMENSION = 10;
-    public static final int MIN_SYSTEMS_PER_SUBSECTOR = 1;
-    public static final int MAX_SYSTEMS_PER_SUBSECTOR = 3;
+    public static final int MIN_SYSTEMS_PER_SUBSECTOR = 15;
+    public static final int MAX_SYSTEMS_PER_SUBSECTOR = 35;
     public static final double DEFAULT_HYPERLANE_DENSITY = 1.0;
 
     // SubSector, Hyperlane, and GalacticEntry are now standalone classes
@@ -47,6 +47,8 @@ public class Galaxy {
         private final Map<Integer, SolarSystem> allSystems;
         private Integer controllerPlayerId;
         private GalaxyGenerationProgress progressListener;
+        /** Whether this sector's solar systems have been generated (lazy loading) */
+        private boolean built;
 
         /**
          * Creates a new sector at the given grid position with 100 empty subsectors.
@@ -317,9 +319,50 @@ public class Galaxy {
         }
 
         /**
+         * @return true if this sector's solar systems have been generated
+         */
+        public boolean isBuilt() {
+            return built;
+        }
+
+        /**
+         * Marks this sector as built (systems generated).
+         */
+        public void markBuilt() {
+            this.built = true;
+        }
+
+        /**
          * Generates all 100 subsectors in this sector.
-         * Each subsector is populated with 1-3 solar systems with random positions and celestial bodies.
+         * Each subsector is populated with 15-35 solar systems (Traveller-style) with random positions and celestial bodies.
          * Already generated subsectors are skipped.
+         *
+         * @param random the random number generator for reproducibility
+         * @param starNames the star name database for naming stars
+         * @param planetNames the planet name database for naming planets
+         * @param enableUWP whether to generate UWP data for planets (Traveller-style galaxies)
+         * @return the total number of solar systems generated across all subsectors
+         */
+        public int generateAllSubSectors(Random random, StarNameDatabase starNames, PlanetNameDatabase planetNames, boolean enableUWP) {
+            int totalGenerated = 0;
+            for (int r = 0; r < SUBSECTOR_GRID_SIZE; r++) {
+                for (int c = 0; c < SUBSECTOR_GRID_SIZE; c++) {
+                    SubSector subSector = subGrid[r][c];
+                    subSector.setProgressListener(progressListener);
+                    List<SolarSystem> generated = subSector.generateSystems(random, starNames, planetNames, enableUWP);
+                    for (SolarSystem system : generated) {
+                        allSystems.put(system.getId(), system);
+                    }
+                    totalGenerated += generated.size();
+                }
+            }
+            this.built = true;
+            return totalGenerated;
+        }
+
+        /**
+         * Generates all 100 subsectors in this sector with UWP generation enabled by default.
+         * Convenience overload.
          *
          * @param random the random number generator for reproducibility
          * @param starNames the star name database for naming stars
@@ -327,19 +370,7 @@ public class Galaxy {
          * @return the total number of solar systems generated across all subsectors
          */
         public int generateAllSubSectors(Random random, StarNameDatabase starNames, PlanetNameDatabase planetNames) {
-            int totalGenerated = 0;
-            for (int r = 0; r < SUBSECTOR_GRID_SIZE; r++) {
-                for (int c = 0; c < SUBSECTOR_GRID_SIZE; c++) {
-                    SubSector subSector = subGrid[r][c];
-                    subSector.setProgressListener(progressListener);
-                    List<SolarSystem> generated = subSector.generateSystems(random, starNames, planetNames);
-                    for (SolarSystem system : generated) {
-                        allSystems.put(system.getId(), system);
-                    }
-                    totalGenerated += generated.size();
-                }
-            }
-            return totalGenerated;
+            return generateAllSubSectors(random, starNames, planetNames, true);
         }
 
         @Override

@@ -55,6 +55,13 @@ public class PersistedGameSession {
     @Column(name = "game_type", length = 50)
     private String gameType;
 
+    /**
+     * Number of periodic snapshots taken for this session.
+     * Incremented by {@link com.yisy.modules.doramcu.service.session.GameSnapshotScheduler}.
+     */
+    @Column(name = "snapshot_count", nullable = false)
+    private int snapshotCount = 0;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -145,5 +152,20 @@ public class PersistedGameSession {
 
     public void setGameType(String gameType) {
         this.gameType = gameType;
+    }
+
+    public int getSnapshotCount() {
+        return snapshotCount;
+    }
+
+    public void setSnapshotCount(int snapshotCount) {
+        this.snapshotCount = snapshotCount;
+    }
+
+    /**
+     * Increment the snapshot count by one.
+     */
+    public void incrementSnapshotCount() {
+        this.snapshotCount++;
     }
 }

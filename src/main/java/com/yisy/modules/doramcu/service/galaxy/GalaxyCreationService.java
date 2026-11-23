@@ -224,20 +224,21 @@ public class GalaxyCreationService {
      * @return map of empire ID to Empire instance
      */
     private Map<Integer, Empire> createAiControlledEmpires() {
-        log.info("Creating {} dynamic NPC empires for galaxy generation...", DEFAULT_NPC_EMPIRE_COUNT);
+        log.info("Creating {} G8/G20 country empires for galaxy generation...", DEFAULT_NPC_EMPIRE_COUNT);
 
-        String[] npcNames = {"Terran Republic", "Solar Imperium", "United Colonies",
-                "Stellar Hegemony", "Divine Theocracy", "Corporate Syndicate"};
+        // G8/G20 countries as empires
+        String[] countryNames = {"United States", "United Kingdom", "France",
+                "Germany", "Japan", "China"};
 
         Map<Integer, Empire> empires = new HashMap<>();
         for (int i = 0; i < DEFAULT_NPC_EMPIRE_COUNT; i++) {
             int empireId = i + 1;
-            String empireName = npcNames[i % npcNames.length];
+            String empireName = countryNames[i % countryNames.length];
             int aiRulerId = -1; // AI-controlled
 
             Empire empire = new Empire(empireId, empireName, aiRulerId);
             empires.put(empireId, empire);
-            log.info("Created AI-controlled empire: {} (id={}, ruler=AI)", empireName, empireId);
+            log.info("Created country empire: {} (id={}, ruler=AI)", empireName, empireId);
         }
 
         return empires;
@@ -254,29 +255,19 @@ public class GalaxyCreationService {
             return;
         }
 
-        log.info("Generating galaxy with {} AI-controlled empires...", empires.size());
+        log.info("Creating galaxy structure with {} AI-controlled empires (lazy loading enabled)...", empires.size());
 
-        // Set progress listener for SSE events
-        galaxyService.setProgressListener(galaxyProgressService);
-
-        // Generate and save galaxy with empires
-        galaxyService.generateAndSaveGalaxyWithEmpires(
+        // Use lazy loading: create structure only, systems generated on-demand
+        galaxyService.createGalaxyStructureOnly(
                 GalaxyFactory.GAME_GALAXY_NAME,
-                empires,
-                GalaxyFactory.gameGalaxyConfig().getSystemCount(),
-                GalaxyFactory.gameGalaxyConfig().getPlanetsPerSystem(),
-                GalaxyFactory.gameGalaxyConfig().getMoonChance(),
-                GalaxyFactory.gameGalaxyConfig().getAsteroidBeltChance(),
-                GalaxyFactory.gameGalaxyConfig().getGasGiantChance(),
-                GalaxyFactory.gameGalaxyConfig().getNebulaChance(),
-                GalaxyFactory.gameGalaxyConfig().getBlackHoleChance(),
-                GalaxyFactory.gameGalaxyConfig().getCometChance(),
-                GalaxyFactory.gameGalaxyConfig().getSpaceStationChance(),
-                GalaxyFactory.gameGalaxyConfig().getHyperlaneDensity(),
-                GalaxyFactory.GAME_GALAXY_SEED
+                null,  // empires assigned during first sector build
+                "4X_STRATEGY",
+                null,
+                GalaxyFactory.GAME_GALAXY_SEED,
+                GalaxyFactory.gameGalaxyConfig().getHyperlaneDensity()
         );
 
-        log.info("Galaxy '{}' generated and persisted with {} AI-controlled empires",
+        log.info("Galaxy '{}' structure created (lazy loading) with {} AI-controlled empires",
                 GalaxyFactory.GAME_GALAXY_NAME, empires.size());
     }
 

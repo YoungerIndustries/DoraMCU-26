@@ -3,7 +3,7 @@
 
 class AdminDashboardClient {
     constructor(baseUrl) {
-        this.baseUrl = baseUrl || 'http://localhost:8080';
+        this.baseUrl = baseUrl || window.location.origin;
         this.token = localStorage.getItem('doramcu_auth_token');
         this.ws = null;
         this.wsReconnectTimer = null;

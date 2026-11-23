@@ -192,7 +192,7 @@ public class GalaxyGenerator {
      * Generates solar systems for a single sector, distributing them across random subsectors.
      * <p>
      * Instead of generating all 100 subsectors, this method selects a subset of subsectors
-     * and populates each with 1-3 systems until the target count is reached.
+     * and populates each with 15-35 systems (Traveller-style) until the target count is reached.
      *
      * @param sector the sector to populate
      * @param targetSystems the number of systems to generate in this sector
@@ -224,7 +224,7 @@ public class GalaxyGenerator {
             SubSector subSector = sector.getSubSector(subRow, subCol);
             subSector.setProgressListener(progressListener);
 
-            // Generate 1-3 systems in this subsector
+            // Generate 15-35 systems in this subsector (Traveller-style)
             List<SolarSystem> generated = subSector.generateSystems(random, starNames, planetNames);
             
             // Copy generated systems to the sector's tracking map.

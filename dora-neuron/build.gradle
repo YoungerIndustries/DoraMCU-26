@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.YISY.modules'
-version = findProperty('app.version')
+version = findProperty('dora-neuron.version') ?: findProperty('app.version')
 description = 'DoraMCU Neuron — Satellite AI node and web gateway'
 
 java {

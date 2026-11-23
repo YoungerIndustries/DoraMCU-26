@@ -8,6 +8,7 @@
 [![Spring Boot 4.1.2](https://img.shields.io/badge/Spring%20Boot-4.1.2-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![License](https://img.shields.io/badge/license-All%20Rights%20Reserved-gray.svg)]()
 [![Dependabot](https://badgen.net/github/dependabot/YoungerIndustries/DoraMCU-26)](https://dependabot.com/)
+[![Version](https://img.shields.io/badge/version-0.6.3-brightgreen.svg)](CHANGELOG.md)
 
 ## Features
 
@@ -225,6 +226,10 @@ The project uses GitHub Actions for continuous integration and deployment:
 - **Release** (`release.yml`): Triggered by git tags (e.g., `v0.4.0`). Creates a GitHub Release with changelog, builds and pushes versioned Docker images.
 - **Deployment**: Automatic Kubernetes deployment using Kustomize overlays for dev/staging/production environments.
 - **Code Quality**: Qodana code quality checks and Dependabot for dependency updates.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a full list of changes in each release.
 
 ## Contributing
 

@@ -1,6 +1,7 @@
 package com.yisy.modules.doramcu.controller.session;
 import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.service.game.GameSaveService;
+import com.yisy.modules.doramcu.service.session.GameSnapshotScheduler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,9 +36,11 @@ public class GameSaveController {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private final GameSaveService gameSaveService;
+    private final GameSnapshotScheduler gameSnapshotScheduler;
 
-    public GameSaveController(GameSaveService gameSaveService) {
+    public GameSaveController(GameSaveService gameSaveService, GameSnapshotScheduler gameSnapshotScheduler) {
         this.gameSaveService = gameSaveService;
+        this.gameSnapshotScheduler = gameSnapshotScheduler;
     }
 
     /**
@@ -198,5 +201,53 @@ public class GameSaveController {
         ));
         
         return ResponseEntity.ok(format);
+    }
+
+    /**
+     * Trigger an immediate snapshot of all active game sessions.
+     * Requires authentication.
+     *
+     * @return snapshot results with counts and timestamp
+     */
+    @PostMapping("/snapshot/now")
+    public ResponseEntity<Map<String, Object>> snapshotNow() {
+        try {
+            Map<String, Object> result = gameSnapshotScheduler.snapshotNow();
+            result.put("success", true);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            log.error("Failed to trigger snapshot: {}", e.getMessage(), e);
+            Map<String, Object> error = new java.util.LinkedHashMap<>();
+            error.put("success", false);
+            error.put("error", "Failed to trigger snapshot: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(error);
+        }
+    }
+
+    /**
+     * Return snapshot status for all persisted sessions.
+     * Shows last activity time and snapshot count per session.
+     *
+     * @return list of session snapshot statuses
+     */
+    @GetMapping("/snapshot/status")
+    public ResponseEntity<java.util.List<Map<String, Object>>> getSnapshotStatus() {
+        try {
+            java.util.List<Map<String, Object>> allPersisted = gameSaveService.listSaveableSessions();
+            java.util.List<Map<String, Object>> statuses = new java.util.ArrayList<>();
+            for (Map<String, Object> session : allPersisted) {
+                Map<String, Object> status = new java.util.LinkedHashMap<>();
+                status.put("sessionId", session.get("sessionId"));
+                status.put("sessionName", session.get("sessionName"));
+                status.put("lastActivityAt", session.get("lastActivityAt"));
+                status.put("updatedAt", session.get("updatedAt"));
+                status.put("snapshotCount", session.get("snapshotCount"));
+                statuses.add(status);
+            }
+            return ResponseEntity.ok(statuses);
+        } catch (Exception e) {
+            log.error("Failed to get snapshot status: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().body(java.util.Collections.emptyList());
+        }
     }
 }

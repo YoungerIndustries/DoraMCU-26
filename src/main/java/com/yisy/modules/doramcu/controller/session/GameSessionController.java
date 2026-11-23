@@ -101,4 +101,16 @@ public class GameSessionController {
                     .body(Map.of("success", false, "error", "Session not found or no saved state"));
         }
     }
+
+    @DeleteMapping("/{sessionId}")
+    public ResponseEntity<Map<String, Object>> deleteSession(@PathVariable String sessionId) {
+        log.debug("Deleting session: {}", sessionId);
+        boolean deleted = gameSessionService.deleteSession(sessionId);
+        if (deleted) {
+            return ResponseEntity.ok(Map.of("success", true, "sessionId", sessionId));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "error", "Session not found"));
+        }
+    }
 }

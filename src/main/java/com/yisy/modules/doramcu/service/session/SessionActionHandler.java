@@ -252,7 +252,11 @@ public class SessionActionHandler {
                 }
             }
 
-            ResourcePipelineManager pipeline = game.getPipelineManager(player.getEmpireId());
+            Integer buildEmpireId = player.getEmpireId();
+            if (buildEmpireId == null) {
+                throw new IllegalStateException("Player has no empire");
+            }
+            ResourcePipelineManager pipeline = game.getPipelineManager(buildEmpireId);
             if (pipeline == null) {
                 log.warn("Player {} has no resource pipeline initialized", player.getName());
                 throw new IllegalStateException("Resource pipeline not initialized for player");
@@ -409,7 +413,11 @@ public class SessionActionHandler {
                 throw new IllegalArgumentException("Invalid station type: " + request.getStationType());
             }
 
-            if (!game.canBuildStation(player.getEmpireId(), stationType)) {
+            Integer stationEmpireId = player.getEmpireId();
+            if (stationEmpireId == null) {
+                throw new IllegalStateException("Player has no empire");
+            }
+            if (!game.canBuildStation(stationEmpireId, stationType)) {
                 throw new IllegalStateException("Insufficient resources to build " + stationType + " station");
             }
 
@@ -472,16 +480,20 @@ public class SessionActionHandler {
                 throw new IllegalArgumentException("Invalid facility type: " + request.getFacilityType());
             }
 
-            if (!game.canBuildPlanetFacility(player.getEmpireId(), facility)) {
+            Integer facilityEmpireId = player.getEmpireId();
+            if (facilityEmpireId == null) {
+                throw new IllegalStateException("Player has no empire");
+            }
+            if (!game.canBuildPlanetFacility(facilityEmpireId, facility)) {
                 throw new IllegalStateException("Insufficient resources to build " + facility.getDisplayName());
             }
 
-            boolean success = game.buildPlanetFacility(planet, facility, player.getEmpireId());
+            boolean success = game.buildPlanetFacility(planet, facility, facilityEmpireId);
             if (!success) {
                 throw new IllegalStateException("Failed to build facility on planet");
             }
 
-            Empire empire = game.getEmpire(player.getEmpireId());
+            Empire empire = game.getEmpire(facilityEmpireId);
             if (empire != null) {
                 PlanetFacility pf = empire.getFacilities().buildFacility(planet.getId(), facility);
                 registerFacilityAsAi(pf, empire.getName());
@@ -506,7 +518,8 @@ public class SessionActionHandler {
 
             Fleet fleet = game.createFleet(request.getFleetName(), player);
 
-            Empire empire = game.getEmpire(player.getEmpireId());
+            Integer fleetEmpireId = player.getEmpireId();
+            Empire empire = game.getEmpire(fleetEmpireId);
             if (empire != null) {
                 empire.getNavy().addFleet(fleet);
             }
@@ -538,7 +551,8 @@ public class SessionActionHandler {
                 throw new IllegalStateException("Failed to colonize planet");
             }
 
-            Empire empire = game.getEmpire(player.getEmpireId());
+            Integer colonizeEmpireId = player.getEmpireId();
+            Empire empire = game.getEmpire(colonizeEmpireId);
             if (empire != null) {
                 empire.claimPlanet(planet.getId());
             }
@@ -839,10 +853,13 @@ public class SessionActionHandler {
             owner.getOwnedFleetIds().remove(fleet.getId());
         }
 
-        if (owner != null && owner.getEmpireId() > 0) {
-            Empire empire = game.getEmpire(owner.getEmpireId());
-            if (empire != null) {
-                empire.getNavy().removeFleet(fleet);
+        if (owner != null) {
+            Integer removeEmpireId = owner.getEmpireId();
+            if (removeEmpireId != null && removeEmpireId > 0) {
+                Empire empire = game.getEmpire(removeEmpireId);
+                if (empire != null) {
+                    empire.getNavy().removeFleet(fleet);
+                }
             }
         }
 
@@ -886,14 +903,20 @@ public class SessionActionHandler {
 
             game.transferPlanet(planetId, attackerPlayer);
 
-            Empire attackerEmpire = game.getEmpire(attackerPlayer.getEmpireId());
-            if (attackerEmpire != null) {
-                attackerEmpire.claimPlanet(planetId);
+            Integer attackerEmpireId = attackerPlayer.getEmpireId();
+            if (attackerEmpireId != null) {
+                Empire attackerEmpire = game.getEmpire(attackerEmpireId);
+                if (attackerEmpire != null) {
+                    attackerEmpire.claimPlanet(planetId);
+                }
             }
 
-            Empire defenderEmpire = game.getEmpire(defenderPlayer.getEmpireId());
-            if (defenderEmpire != null) {
-                defenderEmpire.releasePlanet(planetId);
+            Integer defenderEmpireId = defenderPlayer.getEmpireId();
+            if (defenderEmpireId != null) {
+                Empire defenderEmpire = game.getEmpire(defenderEmpireId);
+                if (defenderEmpire != null) {
+                    defenderEmpire.releasePlanet(planetId);
+                }
             }
         }
     }

@@ -1,5 +1,4 @@
 package com.yisy.modules.doramcu.zero_zero_seven.integration;
-import com.yisy.modules.doramcu.techlevel.TechLevel;
 
 import com.yisy.modules.doramcu.hex.planet.military.GenericUnitType;
 import com.yisy.modules.doramcu.hex.planet.military.ModuleBattleAdapter;
@@ -12,7 +11,7 @@ import java.util.stream.Collectors;
 /**
  * 007 Espionage battle adapter — provides 007 units to universal battles.
  */
-@Component("zeroZeroSevenBattleAdapter_1")
+@Component("zeroZeroSevenBattleAdapter_0")
 public class ZeroZeroSevenBattleAdapter implements ModuleBattleAdapter {
 
     private static final Map<String, String> UNIT_TYPES = new HashMap<>();

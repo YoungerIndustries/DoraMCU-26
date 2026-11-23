@@ -41,6 +41,9 @@ import com.yisy.modules.doramcu.repository.galaxy.SolarSystemRepository;
 import com.yisy.modules.doramcu.repository.galaxy.SpaceStationRepository;
 import com.yisy.modules.doramcu.repository.galaxy.StarRepository;
 import com.yisy.modules.doramcu.repository.galaxy.SubSectorRepository;
+import com.yisy.modules.doramcu.earth2026.service.Earth2026RulesDatabaseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +60,8 @@ import java.util.*;
 @Service
 public class GalaxyService {
 
+    private static final Logger log = LoggerFactory.getLogger(GalaxyService.class);
+
     private final GalaxyRepository galaxyRepository;
     private final SectorRepository sectorRepository;
     private final SubSectorRepository subSectorRepository;
@@ -71,6 +76,7 @@ public class GalaxyService {
     private final CometRepository cometRepository;
     private final SpaceStationRepository spaceStationRepository;
     private final AsteroidRepository asteroidRepository;
+    private final Earth2026RulesDatabaseService rulesDatabase;
 
     private GalaxyGenerationProgress progressListener;
 
@@ -87,7 +93,8 @@ public class GalaxyService {
                          BlackHoleRepository blackHoleRepository,
                          CometRepository cometRepository,
                          SpaceStationRepository spaceStationRepository,
-                         AsteroidRepository asteroidRepository) {
+                         AsteroidRepository asteroidRepository,
+                         Earth2026RulesDatabaseService rulesDatabase) {
         this.galaxyRepository = galaxyRepository;
         this.sectorRepository = sectorRepository;
         this.subSectorRepository = subSectorRepository;
@@ -102,6 +109,7 @@ public class GalaxyService {
         this.cometRepository = cometRepository;
         this.spaceStationRepository = spaceStationRepository;
         this.asteroidRepository = asteroidRepository;
+        this.rulesDatabase = rulesDatabase;
     }
 
     /**
@@ -936,6 +944,137 @@ public class GalaxyService {
     }
 
     /**
+     * Creates a galaxy with structure only (sectors and subsectors) without generating solar systems.
+     * This is the entry point for lazy-loaded galaxy creation at startup.
+     * <p>
+     * The galaxy map is created with 100 sectors and 10,000 subsectors, but no solar systems.
+     * Systems are generated on-demand when a fleet enters a sector via SectorBuilderService.
+     * </p>
+     *
+     * @return the generation result with the database galaxy and in-memory galaxy
+     */
+    @Transactional
+    public GalaxyGenerationResult createGalaxyStructureOnly(
+            String name,
+            java.util.Map<Integer, com.yisy.modules.doramcu.hex.Empire> empires,
+            String gameType,
+            String loreSlug,
+            long seed,
+            Double hyperlaneDensity) {
+
+        // Create in-memory galaxy with structure only (no systems generated)
+        com.yisy.modules.doramcu.hex.Galaxy inMemoryGalaxy = new com.yisy.modules.doramcu.hex.Galaxy(1, name);
+        inMemoryGalaxy.setSeed(seed);
+        if (hyperlaneDensity != null) {
+            inMemoryGalaxy.setHyperlaneDensity(hyperlaneDensity);
+        }
+
+        // Persist galaxy structure (sectors and subsectors, no systems)
+        com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy = persistGalaxyStructureOnly(name, inMemoryGalaxy, hyperlaneDensity, gameType);
+        if (loreSlug != null) {
+            dbGalaxy.setLoreSlug(loreSlug);
+            dbGalaxy = galaxyRepository.save(dbGalaxy);
+        }
+
+        log.info("Created galaxy structure '{}': 100 sectors, 10000 subsectors, 0 systems (lazy loading enabled)", name);
+        return new GalaxyGenerationResult(dbGalaxy, inMemoryGalaxy);
+    }
+
+    /**
+     * Persists only the galaxy structure (galaxy, sectors, subsectors) without solar systems.
+     * Used for lazy-loaded galaxy creation at startup.
+     */
+    @Transactional
+    public com.yisy.modules.doramcu.model.galaxy.Galaxy persistGalaxyStructureOnly(String name,
+            com.yisy.modules.doramcu.hex.Galaxy inMemoryGalaxy,
+            Double hyperlaneDensity,
+            String gameType) {
+
+        com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy = new com.yisy.modules.doramcu.model.galaxy.Galaxy();
+        dbGalaxy.setName(name);
+        dbGalaxy.setHyperlaneDensity(hyperlaneDensity != null ? hyperlaneDensity : com.yisy.modules.doramcu.hex.Galaxy.DEFAULT_HYPERLANE_DENSITY);
+        if (gameType != null) {
+            dbGalaxy.setGameType(gameType);
+        }
+        dbGalaxy = galaxyRepository.save(dbGalaxy);
+
+        // Persist all sectors and subsectors (no systems)
+        for (com.yisy.modules.doramcu.hex.Galaxy.Sector sector : inMemoryGalaxy.getAllSectors()) {
+            com.yisy.modules.doramcu.model.galaxy.Sector dbSector = new com.yisy.modules.doramcu.model.galaxy.Sector();
+            dbSector.setGalaxy(dbGalaxy);
+            dbSector.setSectorRow(sector.getRow());
+            dbSector.setSectorCol(sector.getCol());
+            dbSector.setName(sector.getName());
+            dbSector.setTradeType(sector.getTradeType());
+            dbSector = sectorRepository.save(dbSector);
+
+            for (com.yisy.modules.doramcu.hex.SubSector subSector : sector.getAllSubSectors()) {
+                com.yisy.modules.doramcu.model.galaxy.SubSector dbSubSector = new com.yisy.modules.doramcu.model.galaxy.SubSector();
+                dbSubSector.setSector(dbSector);
+                dbSubSector.setSubSectorRow(subSector.getSubRow());
+                dbSubSector.setSubSectorCol(subSector.getSubCol());
+                dbSubSector.setName(subSector.getName());
+                subSectorRepository.save(dbSubSector);
+            }
+        }
+
+        return dbGalaxy;
+    }
+
+    /**
+     * Persists a newly built sector's solar systems to the database.
+     * Called after SectorBuilderService generates systems for a lazy-loaded sector.
+     */
+    @Transactional
+    public void persistSectorSystems(com.yisy.modules.doramcu.model.galaxy.Galaxy dbGalaxy,
+            com.yisy.modules.doramcu.hex.Galaxy.Sector sector) {
+
+        com.yisy.modules.doramcu.model.galaxy.Sector dbSector = sectorRepository
+                .findByGalaxyIdAndSectorRowAndSectorCol(dbGalaxy.getId(), sector.getRow(), sector.getCol());
+        if (dbSector == null) {
+            log.warn("Cannot persist sector systems: no DB sector found for ({}, {}) in galaxy '{}'",
+                    sector.getRow(), sector.getCol(), dbGalaxy.getName());
+            return;
+        }
+
+        int systemCount = 0;
+        for (com.yisy.modules.doramcu.hex.SubSector subSector : sector.getAllSubSectors()) {
+            for (com.yisy.modules.doramcu.hex.GalacticEntry entry : subSector.getAllEntries()) {
+                com.yisy.modules.doramcu.hex.SolarSystem inMemorySystem = entry.getSystem();
+
+                com.yisy.modules.doramcu.model.galaxy.SolarSystem dbSystem = new com.yisy.modules.doramcu.model.galaxy.SolarSystem();
+                dbSystem.setName("System-" + inMemorySystem.getId());
+                dbSystem.setGalaxy(dbGalaxy);
+                dbSystem.setSectorRow(sector.getRow());
+                dbSystem.setSectorCol(sector.getCol());
+                dbSystem.setSubSectorRow(subSector.getSubRow());
+                dbSystem.setSubSectorCol(subSector.getSubCol());
+                dbSystem.setPosX(entry.getX());
+                dbSystem.setPosY(entry.getY());
+                dbSystem.setPosZ(entry.getZ());
+                dbSystem = solarSystemRepository.save(dbSystem);
+
+                for (com.yisy.modules.doramcu.hex.SolarSystemEntity entity : inMemorySystem.getAllSystems().values()) {
+                    persistStar(entity, dbSystem);
+                    persistPlanet(entity, dbSystem);
+                    persistMoon(entity, dbSystem);
+                    persistAsteroidBelt(entity, dbSystem);
+                    persistAsteroid(entity, dbSystem);
+                    persistGasGiant(entity, dbSystem);
+                    persistNebula(entity, dbSystem);
+                    persistBlackHole(entity, dbSystem);
+                    persistComet(entity, dbSystem);
+                    persistSpaceStation(entity, dbSystem);
+                }
+                systemCount++;
+            }
+        }
+
+        log.info("Persisted {} systems for sector ({}, {}) in galaxy '{}'",
+                systemCount, sector.getRow(), sector.getCol(), dbGalaxy.getName());
+    }
+
+    /**
      * Generates remaining sectors in memory for an existing galaxy.
      */
     public void generateRemainingSectorsInMemory(com.yisy.modules.doramcu.hex.Galaxy galaxy, int sectorCount, long seed) {
@@ -962,6 +1101,14 @@ public class GalaxyService {
     }
 
     /**
+     * Save a Galaxy entity (delegates to repository).
+     */
+    @Transactional
+    public com.yisy.modules.doramcu.model.galaxy.Galaxy save(com.yisy.modules.doramcu.model.galaxy.Galaxy galaxy) {
+        return galaxyRepository.save(galaxy);
+    }
+
+    /**
      * Checks if a galaxy is playable.
      */
     public boolean isGalaxyPlayable(String name) {
@@ -970,13 +1117,99 @@ public class GalaxyService {
 
     /**
      * Returns the completion percentage for a galaxy.
+     * Calculates as: solarSystemCount / expectedMaxSystems * 100,
+     * where expectedMaxSystems varies by game type (Tier 1: 200, Tier 2: 50, Tier 3: 5, Earth 2026: 10).
+     * Uses a direct database count query to avoid lazy-loading the solarSystems collection.
      */
     @Transactional(readOnly = true)
     public int getGalaxyCompletionPercent(String name) {
         return getGalaxyByName(name)
-                .map(g -> g.getSolarSystems() != null ? g.getSolarSystems().size() : 0)
-                .map(size -> Math.min(100, size / 10))
+                .map(galaxy -> {
+                    long size = solarSystemRepository.countByGalaxyId(galaxy.getId());
+                    if (size == 0) return 0;
+                    int expectedMaxSystems = getExpectedMaxSystemsForGameType(galaxy.getGameType());
+                    if (expectedMaxSystems <= 0) return 100;
+                    return Math.min(100, (int) ((double) size / expectedMaxSystems * 100));
+                })
                 .orElse(0);
+    }
+
+    /**
+     * Returns the expected maximum number of solar systems for a galaxy
+     * based on its game type. Each galaxy type has a different expected count:
+     * <p>
+     * Tier 1 (Full galaxies): 200 systems — Traveller, Star Wars, Star Trek 4X, WH40K, Babylon 5, DoraMCU 4X
+     * Tier 2 (Modified galaxies): 50 systems — Star Frontiers, MechWarrior, 007, Captain's Log
+     * Tier 3 (Single system): 5 systems — D&D 5E, LOTR, Starship Troopers
+     * Earth 2026 (Hub): 10 systems — Sol + near-Earth
+     */
+    public int getExpectedMaxSystems(String name) {
+        return getGalaxyByName(name)
+                .map(galaxy -> getExpectedMaxSystemsForGameType(galaxy.getGameType()))
+                .orElse(200);
+    }
+
+    /**
+     * Returns the expected maximum number of solar systems for a galaxy based on its game type.
+     * Galaxies use lazy sector generation — sectors are created on-demand as players explore.
+     * The expected count is used only for health assessment completion percentage.
+     * <p>
+     * Tier 1 (Full galaxies): 200 systems (10 sectors * 20 systems) — reasonable target for health assessment
+     * Tier 2 (Modified galaxies): 50 systems — reduced scale
+     * Tier 3 (Single system): 5 systems — planetary focus
+     * Tier 4 (Earth hub): 10 systems — Sol + near-Earth
+     */
+    public int getExpectedMaxSystemsForGameType(String gameType) {
+        if (gameType == null || gameType.isBlank()) {
+            // Unknown game type — use a reasonable default, not the theoretical max
+            return 200;
+        }
+
+        switch (gameType.toUpperCase()) {
+            // Tier 4: Earth hub galaxy
+            case "EARTH_2026":
+                return 10; // Sol system + a few near-Earth systems
+
+            // Tier 1: Full space-faring galaxies
+            // These use lazy sector generation — 200 is a reasonable health assessment target
+            // (10 sectors * 20 systems), not the theoretical 20,000 (100 sectors * 200 systems)
+            case "TRAVELLER":
+            case "STAR_WARS":
+            case "STAR_TREK_4X":
+            case "WARHAMMER_40K":
+            case "BABYLON_5":
+            case "DORAMCU_4X":
+                return 200;
+
+            // Tier 2: Modified galaxies (reduced scale)
+            case "SFB":
+            case "MECHWARRIOR":
+            case "ZERO_ZERO_SEVEN":
+            case "CAPTAINS_LOG":
+                return 50;
+
+            // Tier 3: Single system galaxies (planetary focus)
+            case "DND_5E":
+            case "DUNGEONS_AND_DRAGONS":
+                return 5; // Fantasy galaxy, minimal systems
+            case "LORD_OF_THE_RINGS":
+            case "MIDDLE_EARTH":
+                return 5; // Middle-earth reimagined, minimal systems
+            case "STARSHIP_TROOPERS":
+                return 5; // Military sci-fi, single system focus
+
+            // Ground-based game types (no separate galaxy, but may appear in metadata)
+            case "THIRD_REICH":
+                return 3; // Ground combat, minimal space systems
+            case "FPS":
+                return 3; // FPS framework, minimal systems
+            case "TRANSPORT_TYCOON":
+                return 5; // Economic strategy, minimal systems
+
+            default:
+                // Unknown game type — use a reasonable default
+                return 200;
+        }
     }
 
     /**

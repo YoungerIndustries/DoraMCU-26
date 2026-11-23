@@ -435,11 +435,14 @@ public class GameStateBuilder {
         return game.getPlayers().stream().map(p -> {
             // Include pipeline module inventory in resources for the current player
             Map<String, Integer> resources = new HashMap<>();
-            ResourcePipelineManager pipeline = game.getPipelineManager(p.getEmpireId());
-            if (pipeline != null) {
-                resources.putAll(enumMapToStringMap(pipeline.getModuleStorage().getInventory()));
-                resources.putAll(enumMapToStringMap(pipeline.getRawStorage().getInventory()));
-                resources.putAll(enumMapToStringMap(pipeline.getRefinedStorage().getInventory()));
+            Integer empireId = p.getEmpireId();
+            if (empireId != null) {
+                ResourcePipelineManager pipeline = game.getPipelineManager(empireId);
+                if (pipeline != null) {
+                    resources.putAll(enumMapToStringMap(pipeline.getModuleStorage().getInventory()));
+                    resources.putAll(enumMapToStringMap(pipeline.getRawStorage().getInventory()));
+                    resources.putAll(enumMapToStringMap(pipeline.getRefinedStorage().getInventory()));
+                }
             }
             PlayerSummary summary = new PlayerSummary(
                     (long) p.getId(),
@@ -448,6 +451,15 @@ public class GameStateBuilder {
                     p.getOwnedPlanetIds().size(),
                     p.getOwnedFleetIds().size()
             );
+            // Set empire info
+            Integer pEmpireId = p.getEmpireId();
+            summary.setEmpireId(pEmpireId);
+            if (pEmpireId != null) {
+                Empire empire = game.getEmpire(pEmpireId);
+                if (empire != null) {
+                    summary.setEmpireName(empire.getName());
+                }
+            }
             // Check if this player is an AI player
             for (Long sessionPlayerId : session.getPlayerIds()) {
                 if (sessionPlayerId >= 1000 && session.isAiPlayer(sessionPlayerId)) {
@@ -520,6 +532,12 @@ public class GameStateBuilder {
 
     public List<SubSectorInfo> buildSubSectorInfo(Game game, boolean summary) {
         List<SubSectorInfo> result = new ArrayList<>();
+
+        // Warn if full mode is requested — it can produce 146MB+ responses on large galaxies
+        if (!summary) {
+            log.warn("buildSubSectorInfo called in FULL mode (summary=false) — this can produce 146MB+ responses. "
+                    + "Consider using summary=true for client-facing endpoints.");
+        }
 
         // First, try in-memory galaxy data — fast path that avoids expensive DB queries
         Galaxy galaxy = game.getGalaxy(0);
@@ -1418,27 +1436,29 @@ public class GameStateBuilder {
         final Integer[] playerEmpireIdHolder = new Integer[1];
         Player player = findPlayerBySessionId(game, session, playerId);
         if (player != null) {
-            playerEmpireIdHolder[0] = player.getEmpireId();
-            ResourcePipelineManager pipeline = game.getPipelineManager(player.getEmpireId());
-            if (pipeline != null) {
-                response.setPipelineSummary(buildPipelineSummary(pipeline));
-            }
-            response.setFleets(buildFleetList(player, game));
-            response.setEmpireSummary(buildEmpireSummary(player, game));
+            Integer playerEmpireId = player.getEmpireId();
+            playerEmpireIdHolder[0] = playerEmpireId;
+            if (playerEmpireId != null) {
+                ResourcePipelineManager pipeline = game.getPipelineManager(playerEmpireId);
+                if (pipeline != null) {
+                    response.setPipelineSummary(buildPipelineSummary(pipeline));
+                }
+                response.setFleets(buildFleetList(player, game));
+                response.setEmpireSummary(buildEmpireSummary(player, game));
 
-            // Populate Traveller RPG commander summary
-            com.yisy.modules.doramcu.traveller.TravellerCharacter commander = player.getCommander();
-            if (commander != null) {
-                response.setCommander(buildCommanderSummary(commander));
-            }
+                // Populate Traveller RPG commander summary
+                com.yisy.modules.doramcu.traveller.TravellerCharacter commander = player.getCommander();
+                if (commander != null) {
+                    response.setCommander(buildCommanderSummary(commander));
+                }
 
-            // Populate mercenary summary from empire army
-            int empireId = player.getEmpireId() != null ? player.getEmpireId() : 0;
-            Empire hexEmpire = game.getEmpire(empireId);
-            if (hexEmpire != null) {
-                com.yisy.modules.doramcu.hex.EmpireArmy army = hexEmpire.getArmy();
-                MercenarySummaryDto mercSummary = buildMercenarySummary(army);
-                response.getEmpireSummary().setMercenarySummary(mercSummary);
+                // Populate mercenary summary from empire army
+                Empire hexEmpire = game.getEmpire(playerEmpireId);
+                if (hexEmpire != null) {
+                    com.yisy.modules.doramcu.hex.EmpireArmy army = hexEmpire.getArmy();
+                    MercenarySummaryDto mercSummary = buildMercenarySummary(army);
+                    response.getEmpireSummary().setMercenarySummary(mercSummary);
+                }
             }
         }
 

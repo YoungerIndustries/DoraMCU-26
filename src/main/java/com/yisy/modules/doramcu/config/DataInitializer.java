@@ -16,6 +16,7 @@ import com.yisy.modules.doramcu.hex.GalaxyGenerationProgress;
 import com.yisy.modules.doramcu.service.galaxy.GalaxyCreationService;
 import com.yisy.modules.doramcu.service.galaxy.GalaxyProgressService;
 import com.yisy.modules.doramcu.service.galaxy.GalaxyService;
+import com.yisy.modules.doramcu.service.galaxy.SolSystemInitializer;
 import com.yisy.modules.doramcu.service.session.GameSessionService;
 import com.yisy.modules.doramcu.model.players.Player;
 import com.yisy.modules.doramcu.model.user.User;
@@ -267,19 +268,17 @@ public class DataInitializer {
     }
 
     /**
-     * First CommandLineRunner: generates the galaxy synchronously if it doesn't exist.
-     * Creates AI-controlled Empire instances BEFORE any players join, so planets
-     * can be assigned to empires with shipyard and industrial facilities.
-     * When players later join the game session, their empires are converted from
-     * AI-controlled to player-controlled.
-     * This runs BEFORE any other initialization, ensuring the galaxy is fully built
-     * and persisted before game sessions are created.
+     * First CommandLineRunner: DEPRECATED — replaced by GalaxyStartupRegistry multi-galaxy system.
+     * This runner created the "Milky Way" galaxy which is no longer needed.
+     * Kept for backward compatibility but disabled by default.
      */
     @Bean
     @ConditionalOnProperty(name = "doramcu.galaxy.auto-generate", havingValue = "true", matchIfMissing = false)
+    @ConditionalOnProperty(name = "doramcu.galaxy.auto-generate-legacy", havingValue = "true", matchIfMissing = false)
     CommandLineRunner initGalaxyFirst(GalaxyService galaxyService,
                                        GalaxyProgressService galaxyProgressService,
-                                       PlayerRepository playerRepository) {
+                                       PlayerRepository playerRepository,
+                                       SolSystemInitializer solSystemInitializer) {
         return args -> {
             // Set progress listener to broadcast SSE events to connected clients
             galaxyService.setProgressListener(galaxyProgressService);
@@ -317,6 +316,17 @@ public class DataInitializer {
                 log.info("Galaxy '{}' already exists in database. Skipping generation.", GalaxyFactory.GAME_GALAXY_NAME);
             }
 
+            // Initialize Sol system with Earth as the universal landing point
+            Optional<com.yisy.modules.doramcu.model.galaxy.Galaxy> galaxyOpt = galaxyService.getGalaxyByName(GalaxyFactory.GAME_GALAXY_NAME);
+            galaxyOpt.ifPresent(galaxy -> {
+                try {
+                    solSystemInitializer.initializeSolSystem(galaxy);
+                } catch (Exception e) {
+                    log.warn("Failed to initialize Sol system in galaxy '{}': {}",
+                            GalaxyFactory.GAME_GALAXY_NAME, e.getMessage());
+                }
+            });
+
             // Signal galaxy ready to all connected SSE clients so the frontend modal closes
             galaxyProgressService.finishAll();
             log.info("Galaxy ready signal broadcast to connected clients");
@@ -344,9 +354,11 @@ public class DataInitializer {
      * Second CommandLineRunner: creates the default game session after galaxy is ready.
      * Uses GalaxyCreationService to orchestrate the complete sequence:
      * galaxy creation → session creation → 3 AI players → ready for human players to join.
+     * Disabled by default — requires legacy auto-generate flag.
      */
     @Bean
     @ConditionalOnProperty(name = "doramcu.galaxy.auto-generate", havingValue = "true", matchIfMissing = false)
+    @ConditionalOnProperty(name = "doramcu.galaxy.auto-generate-legacy", havingValue = "true", matchIfMissing = false)
     CommandLineRunner initGameSessionAfterGalaxy(GalaxyCreationService galaxyCreationService,
                                                   GameSessionService gameSessionService) {
         return args -> {

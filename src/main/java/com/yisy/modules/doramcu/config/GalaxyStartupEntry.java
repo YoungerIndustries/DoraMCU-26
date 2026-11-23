@@ -59,14 +59,35 @@ public class GalaxyStartupEntry {
      */
     private final Set<GameMode> gameModes;
 
+    /**
+     * Difficulty level for the galaxy (e.g., "Easy", "Medium", "Hard", "Extreme").
+     */
+    private final String difficulty;
+
+    /**
+     * Theme description for the galaxy (e.g., "Space Opera", "Grimdark Warfare").
+     */
+    private final String theme;
+
+    /**
+     * Longer description of the galaxy setting.
+     */
+    private final String description;
+
     public GalaxyStartupEntry(int priority, String galaxyName, GalaxyTemplate template,
                                 GameType gameType, String loreSlug, boolean enabled) {
-        this(priority, galaxyName, template, gameType, loreSlug, enabled, null);
+        this(priority, galaxyName, template, gameType, loreSlug, enabled, null, null, null, null);
     }
 
     public GalaxyStartupEntry(int priority, String galaxyName, GalaxyTemplate template,
                                 GameType gameType, String loreSlug, boolean enabled,
                                 Set<GameMode> gameModes) {
+        this(priority, galaxyName, template, gameType, loreSlug, enabled, gameModes, null, null, null);
+    }
+
+    public GalaxyStartupEntry(int priority, String galaxyName, GalaxyTemplate template,
+                                GameType gameType, String loreSlug, boolean enabled,
+                                Set<GameMode> gameModes, String difficulty, String theme, String description) {
         this.priority = priority;
         this.galaxyName = galaxyName;
         this.template = template;
@@ -76,6 +97,9 @@ public class GalaxyStartupEntry {
         this.gameModes = (gameModes != null && !gameModes.isEmpty())
                 ? gameModes
                 : new HashSet<>(Arrays.asList(GameMode.values()));
+        this.difficulty = difficulty;
+        this.theme = theme;
+        this.description = description;
     }
 
     /**
@@ -100,7 +124,16 @@ public class GalaxyStartupEntry {
      */
     public static GalaxyStartupEntry of(int priority, String galaxyName, GalaxyTemplate template,
                                           GameType gameType, String loreSlug, Set<GameMode> gameModes) {
-        return new GalaxyStartupEntry(priority, galaxyName, template, gameType, loreSlug, true, gameModes);
+        return new GalaxyStartupEntry(priority, galaxyName, template, gameType, loreSlug, true, gameModes, null, null, null);
+    }
+
+    /**
+     * Creates an entry with metadata (difficulty, theme, description).
+     */
+    public static GalaxyStartupEntry of(int priority, String galaxyName, GalaxyTemplate template,
+                                          GameType gameType, String loreSlug,
+                                          String difficulty, String theme, String description) {
+        return new GalaxyStartupEntry(priority, galaxyName, template, gameType, loreSlug, true, null, difficulty, theme, description);
     }
 
     public int getPriority() {
@@ -129,6 +162,18 @@ public class GalaxyStartupEntry {
 
     public Set<GameMode> getGameModes() {
         return gameModes;
+    }
+
+    public String getDifficulty() {
+        return difficulty;
+    }
+
+    public String getTheme() {
+        return theme;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     @Override

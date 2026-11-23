@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using DoraMCU.Client.Core;
 
@@ -52,9 +53,9 @@ namespace DoraMCU.Client.Input
 
         void HandleMovement()
         {
-            float horizontal = Input.GetAxis("Horizontal");
-            float vertical = Input.GetAxis("Vertical");
-            float roll = Input.GetAxis("Mouse X") * 0.1f;
+            float horizontal = UnityEngine.Input.GetAxis("Horizontal");
+            float vertical = UnityEngine.Input.GetAxis("Vertical");
+            float roll = UnityEngine.Input.GetAxis("Mouse X") * 0.1f;
 
             Vector3 move = new Vector3(horizontal, roll, vertical).normalized;
 
@@ -76,8 +77,8 @@ namespace DoraMCU.Client.Input
         void HandleRotation()
         {
             // Mouse look
-            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+            float mouseX = UnityEngine.Input.GetAxis("Mouse X") * mouseSensitivity;
+            float mouseY = UnityEngine.Input.GetAxis("Mouse Y") * mouseSensitivity;
 
             currentYaw += mouseX;
             currentPitch -= mouseY;
@@ -89,25 +90,25 @@ namespace DoraMCU.Client.Input
         void HandleActions()
         {
             // Fire weapons
-            if (Input.GetMouseButton(0))
+            if (UnityEngine.Input.GetMouseButton(0))
             {
                 OnFire?.Invoke();
             }
 
             // Scan
-            if (Input.GetKeyDown(KeyCode.Q))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Q))
             {
                 OnScan?.Invoke();
             }
 
             // Interact
-            if (Input.GetKeyDown(KeyCode.E))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.E))
             {
                 OnInteract?.Invoke();
             }
 
             // Toggle cursor
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Escape))
             {
                 if (Cursor.lockState == CursorLockMode.Locked)
                 {
@@ -124,30 +125,30 @@ namespace DoraMCU.Client.Input
             // Navigate to system (number keys)
             for (int i = 1; i <= 9; i++)
             {
-                if (Input.GetKeyDown((KeyCode)(KeyCode.Alpha1 + (i - 1))))
+                if (UnityEngine.Input.GetKeyDown((KeyCode)(KeyCode.Alpha1 + (i - 1))))
                 {
                     OnNavigateToSystem?.Invoke(0, 0, 0, i);
                 }
             }
 
             // Enter battlefield mode (B key)
-            if (Input.GetKeyDown(KeyCode.B))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.B))
             {
                 OnNavigateToBattlefield?.Invoke(1, "WWII", "URBAN");
             }
 
             // Controller support
-            if (Input.GetButtonDown("Fire1"))
+            if (UnityEngine.Input.GetButtonDown("Fire1"))
             {
                 OnFire?.Invoke();
             }
 
-            if (Input.GetButtonDown("Submit"))
+            if (UnityEngine.Input.GetButtonDown("Submit"))
             {
                 OnInteract?.Invoke();
             }
 
-            if (Input.GetButtonDown("Start"))
+            if (UnityEngine.Input.GetButtonDown("Start"))
             {
                 OnScan?.Invoke();
             }
@@ -165,7 +166,4 @@ namespace DoraMCU.Client.Input
         public bool IsBraking => isBraking;
     }
 
-    // Action delegate
-    public delegate void Action<T>(T obj);
-    public delegate void Action();
 }

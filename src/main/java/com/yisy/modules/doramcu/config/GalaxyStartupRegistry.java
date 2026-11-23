@@ -10,12 +10,14 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Auto-discovers game modules and registers their galaxy entries with the
@@ -58,54 +60,99 @@ public class GalaxyStartupRegistry {
     /**
      * Default galaxy registration map: GameType -> registration function.
      * Defines which modules provide galaxies and their startup priority.
+     * <p>
+     * Galaxy templates are chosen based on game type structure:
+     * <ul>
+     *   <li>Tier 1 (Full galaxies): Traveller, Star Wars, Star Trek 4X, Warhammer 40K, Babylon 5, DoraMCU 4X</li>
+     *   <li>Tier 2 (Modified galaxies): Star Frontiers, MechWarrior, 007, Captain's Log</li>
+     *   <li>Tier 3 (Single system): D&D 5E, Lord of the Rings, Starship Troopers</li>
+     * </ul>
+     * <p>
+     * Tier 4 game types (Earth 2026, Third Reich, Transport Tycoon, FPS) do NOT have
+     * separate galaxies — they are layers on the Earth 2026 hub galaxy.
      */
     private static final Map<GameType, GalaxyRegistration> DEFAULT_REGISTRATIONS = Map.ofEntries(
-            Map.entry(GameType.EARTH_2026, new GalaxyRegistration(1, "Earth 2026", GalaxyTemplate.EARTH_2026_TEMPLATE, "earth-2026")),
-            Map.entry(GameType.TRAVELLER, new GalaxyRegistration(2, "Traveller Galaxy", GalaxyTemplate.TRAVELLER_CLASSIC, "traveller")),
-            Map.entry(GameType.DND_5E, new GalaxyRegistration(3, "Forgotten Realms", GalaxyTemplate.TRAVELLER_CLASSIC, "dnd-5e")),
-            Map.entry(GameType.STAR_TREK_4X, new GalaxyRegistration(4, "Star Trek Galaxy", GalaxyTemplate.STAR_TREK, "star-trek")),
-            Map.entry(GameType.BABYLON_5, new GalaxyRegistration(5, "Babylon 5 Galaxy", GalaxyTemplate.BABYLON5, "babylon5")),
-            Map.entry(GameType.STAR_WARS, new GalaxyRegistration(6, "Star Wars Galaxy", GalaxyTemplate.TRAVELLER_CLASSIC, "star-wars")),
-            Map.entry(GameType.DORAMCU_4X, new GalaxyRegistration(7, "DoraMCU 4X Galaxy", GalaxyTemplate.DORAMCU_4X_TEMPLATE, "doramcu-4x")),
-            Map.entry(GameType.WARHAMMER_40K, new GalaxyRegistration(8, "Warhammer 40K Galaxy", GalaxyTemplate.VOID, "warhammer-40k")),
-            Map.entry(GameType.CAPTAINS_LOG, new GalaxyRegistration(9, "Captain's Log Galaxy", GalaxyTemplate.STAR_TREK, "captains-log")),
-            Map.entry(GameType.SFB, new GalaxyRegistration(10, "Star Frontiers Galaxy", GalaxyTemplate.FRONTIER, "star-frontiers")),
-            Map.entry(GameType.MECHWARRIOR, new GalaxyRegistration(11, "MechWarrior Galaxy", GalaxyTemplate.FRONTIER, "mechwarrior")),
-            Map.entry(GameType.STARSHIP_TROOPERS, new GalaxyRegistration(12, "Starship Troopers Galaxy", GalaxyTemplate.FRONTIER, "starship-troopers")),
-            Map.entry(GameType.THIRD_REICH, new GalaxyRegistration(13, "Third Reich Galaxy", GalaxyTemplate.EARTH_2026_TEMPLATE, "third-reich")),
-            Map.entry(GameType.ZERO_ZERO_SEVEN, new GalaxyRegistration(14, "007 Espionage Galaxy", GalaxyTemplate.EARTH_2026_TEMPLATE, "007")),
-            Map.entry(GameType.TRANSPORT_TYCOON, new GalaxyRegistration(15, "Transport Tycoon Galaxy", GalaxyTemplate.DORAMCU_4X_TEMPLATE, "transport-tycoon")),
-            Map.entry(GameType.FPS, new GalaxyRegistration(16, "FPS Combat Galaxy", GalaxyTemplate.EARTH_2026_TEMPLATE, "fps-combat"))
+            // Tier 1: Full galaxy games (space-faring, multi-sector)
+            Map.entry(GameType.EARTH_2026, new GalaxyRegistration(1, "Earth 2026", GalaxyTemplate.EARTH_2026_TEMPLATE, "earth-2026",
+                    "Medium", "Near-Future Sci-Fi", "Modern Earth and near-space operations. Start at Younger Industries HQ in New York and explore the solar system.")),
+            Map.entry(GameType.TRAVELLER, new GalaxyRegistration(2, "Traveller Galaxy", GalaxyTemplate.TRAVELLER_CLASSIC, "traveller",
+                    "Hard", "Classic Space Opera", "The Third Imperium and beyond. Explore procedurally generated star systems in the tradition of classic tabletop space travel.")),
+            Map.entry(GameType.STAR_WARS, new GalaxyRegistration(3, "Star Wars Galaxy", GalaxyTemplate.TRAVELLER_CLASSIC, "star-wars",
+                    "Medium", "Space Fantasy", "A galaxy far, far away. Navigate the Outer Rim, Core Worlds, and everything between in the Star Wars universe.")),
+            Map.entry(GameType.STAR_TREK_4X, new GalaxyRegistration(4, "Star Trek Galaxy", GalaxyTemplate.STAR_TREK, "star-trek",
+                    "Medium", "Exploration Diplomacy", "The Alpha and Beta Quadrants await. Command starships, explore new worlds, and uphold the ideals of Starfleet.")),
+            Map.entry(GameType.WARHAMMER_40K, new GalaxyRegistration(5, "Warhammer 40K Galaxy", GalaxyTemplate.VOID, "warhammer-40k",
+                    "Extreme", "Grimdark Warfare", "In the grim darkness of the far future, there is only war. Survive the galactic conflicts of the 41st millennium.")),
+            Map.entry(GameType.BABYLON_5, new GalaxyRegistration(6, "Babylon 5 Galaxy", GalaxyTemplate.BABYLON5, "babylon5",
+                    "Medium", "Space Drama", "The Babylon 5 universe. Political intrigue, alien alliances, and the fate of humanity hang in the balance.")),
+            Map.entry(GameType.DORAMCU_4X, new GalaxyRegistration(7, "DoraMCU 4X Galaxy", GalaxyTemplate.DORAMCU_4X_TEMPLATE, "doramcu-4x",
+                    "Medium", "Grand Strategy", "The flagship DoraMCU 4X experience. Explore, expand, exploit, and exterminate across the stars.")),
+
+            // Tier 2: Modified galaxy games (space-faring, reduced scale)
+            Map.entry(GameType.SFB, new GalaxyRegistration(8, "Star Frontiers Galaxy", GalaxyTemplate.FRONTIER, "star-frontiers",
+                    "Hard", "Frontier Exploration", "The Vega Frontier. Pioneers, corporations, and alien threats in a classic 80s sci-fi setting.")),
+            Map.entry(GameType.MECHWARRIOR, new GalaxyRegistration(9, "MechWarrior Galaxy", GalaxyTemplate.FRONTIER, "mechwarrior",
+                    "Hard", "Mech Warfare", "The Succession Wars. Command BattleMechs across the Inner Sphere in epic armored combat.")),
+            Map.entry(GameType.ZERO_ZERO_SEVEN, new GalaxyRegistration(10, "007 Espionage", GalaxyTemplate.EARTH_2026_TEMPLATE, "007",
+                    "Medium", "Espionage Thriller", "International espionage and covert operations. Play as a secret agent in a modern-day thriller.")),
+            Map.entry(GameType.CAPTAINS_LOG, new GalaxyRegistration(11, "Captain's Log", GalaxyTemplate.SUBSECTOR_RPG, "captains-log",
+                    "Easy", "Space Adventure", "Chart your course through uncharted space. A captain's adventure of exploration and discovery.")),
+
+            // Tier 3: Single system games (planetary focus)
+            Map.entry(GameType.DND_5E, new GalaxyRegistration(12, "Forgotten Realms", GalaxyTemplate.SINGLE_SYSTEM_RPG, "dnd-5e",
+                    "Medium", "High Fantasy", "The Forgotten Realms campaign setting. Classic D&D 5E adventure with dragons, dungeons, and divine magic.")),
+            Map.entry(GameType.LORD_OF_THE_RINGS, new GalaxyRegistration(13, "Middle-earth", GalaxyTemplate.SINGLE_SYSTEM_RPG, "lotr",
+                    "Medium", "Epic Fantasy", "J.R.R. Tolkien's Middle-earth. From the Shire to Mordor, embark on the quest to save the world.")),
+            Map.entry(GameType.STARSHIP_TROOPERS, new GalaxyRegistration(14, "Starship Troopers", GalaxyTemplate.SINGLE_SYSTEM_RPG, "starship-troopers",
+                    "Hard", "Military Sci-Fi", "The Federated Solar Systems fight for survival against the Bug menace. Serve in the Mobile Infantry."))
     );
 
     private final MultiGalaxyBuildQueue buildQueue;
     private final GameModuleRegistry gameModuleRegistry;
+    private final ThreadPoolTaskExecutor taskExecutor;
+    private final com.yisy.modules.doramcu.service.galaxy.GalaxyService galaxyService;
 
     public GalaxyStartupRegistry(MultiGalaxyBuildQueue buildQueue,
-                                  GameModuleRegistry gameModuleRegistry) {
+                                  GameModuleRegistry gameModuleRegistry,
+                                  ThreadPoolTaskExecutor taskExecutor,
+                                  com.yisy.modules.doramcu.service.galaxy.GalaxyService galaxyService) {
         this.buildQueue = buildQueue;
         this.gameModuleRegistry = gameModuleRegistry;
+        this.taskExecutor = taskExecutor;
+        this.galaxyService = galaxyService;
     }
 
     /**
      * Registers all galaxy entries with the build queue and processes them.
      * Uses ApplicationReadyEvent with LOWEST_VALUE order to ensure it fires
      * AFTER all game modules have registered themselves (they use default order).
+     * Runs asynchronously so Tomcat can start immediately without waiting
+     * for all galaxies to initialize.
      */
     @EventListener(ApplicationReadyEvent.class)
     @Order(Integer.MAX_VALUE)
     public void registerAndProcessGalaxies() {
-        log.info("All application components ready — registering and processing multi-galaxy build queue");
-        registerGalaxyEntries();
-        MultiGalaxyBuildQueue.Result result = buildQueue.processAll();
-        log.info("Multi-galaxy build queue completed: {} successful, {} failed",
-                result.getSuccessfulCount(), result.getFailedCount());
-        for (String galaxyName : result.getSuccessfulGalaxies()) {
-            log.info("  ✓ Galaxy '{}' is ready for gameplay", galaxyName);
-        }
-        if (!result.getFailedGalaxies().isEmpty()) {
-            log.warn("  Failed galaxies: {}", result.getFailedGalaxies());
-        }
+        log.info("All application components ready — submitting multi-galaxy build queue asynchronously");
+        taskExecutor.submit(() -> {
+            try {
+                log.info("Starting multi-galaxy build queue in background thread");
+                registerGalaxyEntries();
+                MultiGalaxyBuildQueue.Result result = buildQueue.processAll();
+                log.info("Multi-galaxy build queue completed: {} successful, {} failed",
+                        result.getSuccessfulCount(), result.getFailedCount());
+                for (String galaxyName : result.getSuccessfulGalaxies()) {
+                    log.info("  ✓ Galaxy '{}' is ready for gameplay", galaxyName);
+                }
+                if (!result.getFailedGalaxies().isEmpty()) {
+                    log.warn("  Failed galaxies: {}", result.getFailedGalaxies());
+                }
+                
+                // Clean up orphaned galaxies not in the registry
+                cleanupOrphanedGalaxies();
+            } catch (Exception e) {
+                log.error("Multi-galaxy build queue failed: {}", e.getMessage(), e);
+            }
+        });
     }
 
     /**
@@ -133,7 +180,10 @@ public class GalaxyStartupRegistry {
                     registration.galaxyName,
                     registration.template,
                     gameType,
-                    registration.loreSlug
+                    registration.loreSlug,
+                    registration.difficulty,
+                    registration.theme,
+                    registration.description
             );
 
             entries.add(startupEntry);
@@ -155,6 +205,42 @@ public class GalaxyStartupRegistry {
     }
 
     /**
+     * Deletes any galaxies that are not registered in {@link #DEFAULT_REGISTRATIONS}.
+     * This cleans up orphaned galaxies from old creation services (e.g., "Milky Way" from
+     * the deprecated {@link com.yisy.modules.doramcu.hex.GalaxyFactory#GAME_GALAXY_NAME}).
+     * <p>
+     * Called after the multi-galaxy build queue completes to ensure only registered
+     * galaxies remain in the database.
+     */
+    public void cleanupOrphanedGalaxies() {
+        Set<String> registeredNames = DEFAULT_REGISTRATIONS.values().stream()
+                .map(GalaxyRegistration::getGalaxyName)
+                .collect(Collectors.toSet());
+
+        log.info("Checking for orphaned galaxies... (registered: {})", registeredNames);
+
+        List<com.yisy.modules.doramcu.model.galaxy.Galaxy> allGalaxies = galaxyService.getAllGalaxies();
+        int deleted = 0;
+        for (com.yisy.modules.doramcu.model.galaxy.Galaxy galaxy : allGalaxies) {
+            if (!registeredNames.contains(galaxy.getName())) {
+                log.warn("Deleting orphaned galaxy '{}' (id={}) — not in GalaxyStartupRegistry", galaxy.getName(), galaxy.getId());
+                try {
+                    galaxyService.deleteGalaxy(galaxy.getName());
+                    deleted++;
+                } catch (Exception e) {
+                    log.error("Failed to delete orphaned galaxy '{}': {}", galaxy.getName(), e.getMessage());
+                }
+            }
+        }
+        
+        if (deleted > 0) {
+            log.info("Cleaned up {} orphaned galaxy(ies). Remaining: {} registered galaxies.", deleted, registeredNames.size());
+        } else {
+            log.info("No orphaned galaxies found. All {} galaxies are registered.", allGalaxies.size());
+        }
+    }
+
+    /**
      * Defines a galaxy registration for a game module.
      */
     public static class GalaxyRegistration {
@@ -162,13 +248,20 @@ public class GalaxyStartupRegistry {
         private final String galaxyName;
         private final GalaxyTemplate template;
         private final String loreSlug;
+        private final String difficulty;
+        private final String theme;
+        private final String description;
 
         public GalaxyRegistration(int priority, String galaxyName,
-                                   GalaxyTemplate template, String loreSlug) {
+                                   GalaxyTemplate template, String loreSlug,
+                                   String difficulty, String theme, String description) {
             this.priority = priority;
             this.galaxyName = galaxyName;
             this.template = template;
             this.loreSlug = loreSlug;
+            this.difficulty = difficulty;
+            this.theme = theme;
+            this.description = description;
         }
 
         public int getPriority() {
@@ -185,6 +278,18 @@ public class GalaxyStartupRegistry {
 
         public String getLoreSlug() {
             return loreSlug;
+        }
+
+        public String getDifficulty() {
+            return difficulty;
+        }
+
+        public String getTheme() {
+            return theme;
+        }
+
+        public String getDescription() {
+            return description;
         }
     }
 }

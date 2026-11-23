@@ -1,17 +1,15 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using DoraMCU.Client.Core;
 using DoraMCU.Client.Network;
-using DoraMCU.Client.Procedural;
 using DoraMCU.Client.Input;
-using DoraMCU.Client.Battlefield;
+using DoraMCU.Client.UI;
 
 namespace DoraMCU.Client.Core
 {
     /// <summary>
-    /// Main game manager that coordinates all systems.
-    /// Handles state synchronization between server and client.
+    /// Thin game coordinator — delegates scene rendering to SceneRenderer,
+    /// network calls to NetworkManager, and input to InputHandler.
     /// </summary>
     public class GameManager : Singleton<GameManager>
     {
@@ -22,35 +20,26 @@ namespace DoraMCU.Client.Core
 
         [Header("Sync Settings")]
         [SerializeField] private float stateSyncInterval = 5f;
-        [SerializeField] private float interestCheckInterval = 2f;
 
-        private PlanetGenerator planetGenerator;
-        private ShipGenerator shipGenerator;
-        private StationGenerator stationGenerator;
+        private SceneRenderer sceneRenderer;
         private InterestManager interestManager;
 
         private enum GameMode { Space, Battlefield }
         private GameMode currentMode = GameMode.Space;
 
-        private Dictionary<long, GameObject> planetObjects = new();
-        private Dictionary<long, GameObject> shipObjects = new();
-        private Dictionary<long, GameObject> stationObjects = new();
-        private Dictionary<int, GameObject> sectorObjects = new();
-
         private NetworkManager.GameState currentState;
         private Coroutine syncCoroutine;
+        private bool isAuthenticated = false;
 
         protected override void Awake()
         {
             base.Awake();
             DontDestroyOnLoad(gameObject);
 
-            planetGenerator = new PlanetGenerator();
-            shipGenerator = new ShipGenerator();
-            stationGenerator = new StationGenerator();
             interestManager = new InterestManager();
+            sceneRenderer = new SceneRenderer();
 
-            // Setup parents
+            // Setup parent transforms
             if (solarSystemParent == null)
             {
                 var go = new GameObject("SolarSystems");
@@ -58,14 +47,16 @@ namespace DoraMCU.Client.Core
             }
             if (fleetParent == null)
             {
-                go = new GameObject("Fleets");
-                fleetParent = go.transform;
+                var fleetGo = new GameObject("Fleets");
+                fleetParent = fleetGo.transform;
             }
             if (stationParent == null)
             {
-                go = new GameObject("Stations");
-                stationParent = go.transform;
+                var stationGo = new GameObject("Stations");
+                stationParent = stationGo.transform;
             }
+
+            sceneRenderer.Initialize(solarSystemParent, fleetParent, stationParent);
         }
 
         void Start()
@@ -80,8 +71,51 @@ namespace DoraMCU.Client.Core
             InputHandler.Instance.OnScan += OnScan;
             InputHandler.Instance.OnNavigateToBattlefield += OnNavigateToBattlefield;
 
-            // Start periodic sync
-            syncCoroutine = StartCoroutine(SyncLoop());
+            // Subscribe to UI events
+            var explore = ExploreAction.Instance;
+            if (explore != null)
+            {
+                explore.OnSectorScanned += OnSectorScanned;
+            }
+
+            var shipBuild = ShipBuildUI.Instance;
+            if (shipBuild != null)
+            {
+                shipBuild.OnShipBuilt += OnShipBuilt;
+            }
+        }
+
+        void Update()
+        {
+            // Keyboard shortcuts for gameplay actions
+            if (UnityEngine.Input.GetKeyDown(KeyCode.V))
+            {
+                var sb = ShipBuildUI.Instance;
+                if (sb != null) sb.Toggle();
+            }
+            if (UnityEngine.Input.GetKeyDown(KeyCode.X))
+            {
+                var ea = ExploreAction.Instance;
+                if (ea != null) ea.ScanCurrentSector();
+            }
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Tab))
+            {
+                var map = MapUI.Instance;
+                if (map != null)
+                {
+                    bool isVisible = map.gameObject != null && map.gameObject.activeSelf;
+                    map.SetVisible(!isVisible);
+                }
+            }
+            if (UnityEngine.Input.GetKeyDown(KeyCode.I))
+            {
+                var inv = InventoryUI.Instance;
+                if (inv != null)
+                {
+                    bool isVisible = inv.gameObject != null && inv.gameObject.activeSelf;
+                    inv.SetVisible(!isVisible);
+                }
+            }
         }
 
         void OnDestroy()
@@ -102,12 +136,46 @@ namespace DoraMCU.Client.Core
         }
 
         /// <summary>
+        /// Start playing after character creation or main menu.
+        /// </summary>
+        public void StartPlaying()
+        {
+            Debug.Log("[GameManager] Starting gameplay");
+
+            var hud = MainHUD.Instance;
+            if (hud != null)
+            {
+                hud.SetVisible(true);
+            }
+
+            FetchInitialState();
+
+            var nm = NetworkManager.Instance;
+            if (nm != null)
+            {
+                nm.StartAiAdminPolling();
+            }
+        }
+
+        /// <summary>
+        /// Called after successful login to enable sync loop.
+        /// </summary>
+        public void SetAuthenticated(bool authenticated)
+        {
+            isAuthenticated = authenticated;
+            if (authenticated && syncCoroutine == null)
+            {
+                syncCoroutine = StartCoroutine(SyncLoop());
+            }
+        }
+
+        /// <summary>
         /// Handle state synchronization from server.
         /// </summary>
         private void OnStateSync(string sessionId, NetworkManager.GameState state)
         {
             currentState = state;
-            UpdateSceneFromState(state);
+            sceneRenderer.UpdateSceneFromState(state);
         }
 
         /// <summary>
@@ -131,260 +199,22 @@ namespace DoraMCU.Client.Core
             yield return NetworkManager.Instance.FetchGameState((state) =>
             {
                 currentState = state;
-                UpdateSceneFromState(state);
+                sceneRenderer.UpdateSceneFromState(state);
             });
         }
 
         /// <summary>
-        /// Update the 3D scene based on game state.
-        /// </summary>
-        private void UpdateSceneFromState(NetworkManager.GameState state)
-        {
-            if (state == null) return;
-
-            // Update galaxy sectors
-            if (state.Galaxy != null && state.Galaxy.sectors != null)
-            {
-                UpdateSectors(state.Galaxy.sectors);
-            }
-
-            // Update player's planets
-            if (state.Player != null && state.Player.planets != null)
-            {
-                UpdatePlanets(state.Player.planets);
-            }
-
-            // Update player's ships
-            if (state.Player != null && state.Player.ships != null)
-            {
-                UpdateShips(state.Player.ships);
-            }
-
-            // Update player's fleets
-            if (state.Player != null && state.Player.fleets != null)
-            {
-                UpdateFleets(state.Player.fleets);
-            }
-        }
-
-        private void UpdateSectors(NetworkManager.SectorInfo[] sectors)
-        {
-            foreach (var sector in sectors)
-            {
-                int sectorKey = sector.row * 10 + sector.col;
-
-                if (!sectorObjects.ContainsKey(sectorKey))
-                {
-                    var go = new GameObject($"Sector_{sector.row}_{sector.col}")
-                    {
-                        transform = { parent = solarSystemParent }
-                    };
-                    go.transform.localPosition = new Vector3(sector.col * 100f, 0, sector.row * 100f);
-                    sectorObjects[sectorKey] = go;
-                }
-
-                // Update sub-sectors
-                if (sector.subSectors != null)
-                {
-                    foreach (var subSector in sector.subSectors)
-                    {
-                        if (subSector.solarSystem != null)
-                        {
-                            UpdateSolarSystem(subSector.solarSystem, sectorObjects[sectorKey].transform);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void UpdateSolarSystem(NetworkManager.SolarSystemInfo system, Transform parent)
-        {
-            string systemKey = $"System_{system.id}";
-            GameObject systemGo;
-
-            if (!parent.Find(systemKey))
-            {
-                systemGo = new GameObject(systemKey)
-                {
-                    transform = { parent = parent }
-                };
-
-                // Generate star
-                if (system.star != null)
-                {
-                    GenerateStar(systemGo.transform, system.star);
-                }
-
-                // Generate planets
-                if (system.planets != null)
-                {
-                    foreach (var planet in system.planets)
-                    {
-                        GeneratePlanetFromInfo(systemGo.transform, planet);
-                    }
-                }
-
-                // Generate stations
-                if (system.stations != null)
-                {
-                    foreach (var station in system.stations)
-                    {
-                        GenerateStationFromInfo(systemGo.transform, station);
-                    }
-                }
-            }
-        }
-
-        private void GenerateStar(Transform parent, NetworkManager.StarInfo star)
-        {
-            var starGo = new GameObject("Star")
-            {
-                transform = { parent = parent, position = Vector3.zero }
-            };
-
-            float radius = star.radius * 2f;
-            var mesh = UnityEngine.Mesh.CreateSphere(radius, 16, 16);
-            var mf = starGo.AddComponent<MeshFilter>();
-            mf.mesh = mesh;
-
-            var mr = starGo.AddComponent<MeshRenderer>();
-            var mat = new Material(Shader.Find("Particles/Alpha Blended"))
-            {
-                color = GetStarColor(star.spectralClass)
-            };
-            mr.material = mat;
-            mat.EnableKeyword("_EMISSION");
-            mat.SetColor("_EmissionColor", mat.color);
-
-            // Add light
-            var light = starGo.AddComponent<Light>();
-            light.type = LightType.Point;
-            light.intensity = 2f;
-            light.range = radius * 10f;
-        }
-
-        private Color GetStarColor(string spectralClass)
-        {
-            return spectralClass[0] switch
-            {
-                'O' => new Color(0.5f, 0.7f, 1f), // Blue
-                'B' => new Color(0.6f, 0.8f, 1f), // Blue-white
-                'A' => new Color(0.8f, 0.85f, 1f), // White
-                'F' => new Color(0.9f, 0.95f, 1f), // Yellow-white
-                'G' => new Color(1f, 1f, 0.8f), // Yellow (Sun)
-                'K' => new Color(1f, 0.8f, 0.5f), // Orange
-                'M' => new Color(1f, 0.4f, 0.2f), // Red
-                _ => new Color(1f, 1f, 0.9f)
-            };
-        }
-
-        private void GeneratePlanetFromInfo(Transform parent, NetworkManager.PlanetInfo planet)
-        {
-            var data = new PlanetGenerator.PlanetData
-            {
-                Name = planet.name,
-                Type = planet.type != null ? planet.type[0] : 'U',
-                Size = planet.size,
-                Atmosphere = planet.atmosphere,
-                Temperature = planet.temperature,
-                Hydrographics = planet.hydrographics,
-                OrbitRadius = planet.orbitRadius,
-                OrbitAngle = planet.orbitAngle,
-                RotationPeriod = planet.rotationPeriod,
-                AxialTilt = planet.axialTilt
-            };
-
-            var go = planetGenerator.GeneratePlanet(data, parent);
-            planetObjects[planet.id] = go;
-        }
-
-        private void GenerateStationFromInfo(Transform parent, NetworkManager.StationInfo station)
-        {
-            var data = new StationGenerator.StationData
-            {
-                Name = station.name,
-                Type = station.type,
-                Size = 5,
-                Fuel = station.fuel,
-                Repair = station.repair
-            };
-
-            var go = stationGenerator.GenerateStation(data, parent);
-            stationObjects[station.id] = go;
-        }
-
-        private void UpdatePlanets(NetworkManager.PlanetInfo[] planets)
-        {
-            foreach (var planet in planets)
-            {
-                if (!planetObjects.ContainsKey(planet.id))
-                {
-                    // Planet already generated in solar system
-                }
-                else
-                {
-                    // Update existing planet
-                }
-            }
-        }
-
-        private void UpdateShips(NetworkManager.ShipInfo[] ships)
-        {
-            foreach (var ship in ships)
-            {
-                if (!shipObjects.ContainsKey(ship.id))
-                {
-                    var data = new ShipGenerator.ShipData
-                    {
-                        Name = ship.name,
-                        Design = ship.design,
-                        Hull = ship.hull,
-                        Drives = ship.drives,
-                        Cargo = ship.cargo,
-                        Fuel = ship.fuel,
-                        Weapons = ship.combat?.weapons ?? 0,
-                        Armor = ship.combat?.armor ?? 0,
-                        Shields = ship.combat?.shields ?? 0
-                    };
-
-                    var go = shipGenerator.GenerateShip(data, fleetParent);
-                    shipObjects[ship.id] = go;
-                }
-            }
-        }
-
-        private void UpdateFleets(NetworkManager.FleetInfo[] fleets)
-        {
-            foreach (var fleet in fleets)
-            {
-                // Update fleet positions
-                if (fleet.ships != null)
-                {
-                    foreach (var ship in fleet.ships)
-                    {
-                        if (shipObjects.ContainsKey(ship.id))
-                        {
-                            var go = shipObjects[ship.id];
-                            go.transform.position = new Vector3(
-                                fleet.sectorCol * 10f + ship.sectorCol,
-                                0,
-                                fleet.sectorRow * 10f + ship.sectorRow
-                            );
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Periodic state sync loop.
+        /// Periodic state sync loop — only runs after authentication.
         /// </summary>
         private IEnumerator SyncLoop()
         {
             while (true)
             {
                 yield return new WaitForSeconds(stateSyncInterval);
-                FetchInitialState();
+                if (isAuthenticated)
+                {
+                    FetchInitialState();
+                }
             }
         }
 
@@ -394,7 +224,11 @@ namespace DoraMCU.Client.Core
         private void OnNavigateToSystem(int sectorRow, int sectorCol, int subSectorRow, int subSectorCol)
         {
             Debug.Log($"[GameManager] Navigating to {sectorRow},{sectorCol},{subSectorRow},{subSectorCol}");
-            // Camera transition to target system
+            var ea = ExploreAction.Instance;
+            if (ea != null)
+            {
+                ea.SetCurrentSector(sectorRow, sectorCol);
+            }
         }
 
         /// <summary>
@@ -403,7 +237,29 @@ namespace DoraMCU.Client.Core
         private void OnScan()
         {
             Debug.Log("[GameManager] Scanning...");
-            // Trigger scan of nearby objects
+            var ea = ExploreAction.Instance;
+            if (ea != null)
+            {
+                ea.ScanCurrentSector();
+            }
+        }
+
+        /// <summary>
+        /// Handle sector scanned event.
+        /// </summary>
+        private void OnSectorScanned(int row, int col)
+        {
+            Debug.Log($"[GameManager] Sector {row},{col} scanned, refreshing game state");
+            FetchInitialState();
+        }
+
+        /// <summary>
+        /// Handle ship built event.
+        /// </summary>
+        private void OnShipBuilt(string shipType)
+        {
+            Debug.Log($"[GameManager] Ship built: {shipType}, refreshing game state");
+            FetchInitialState();
         }
 
         /// <summary>
@@ -423,14 +279,7 @@ namespace DoraMCU.Client.Core
             currentMode = GameMode.Battlefield;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-
-            var renderer = BattlefieldRenderer.Instance;
-            if (renderer != null)
-            {
-                renderer.CreateAndLoadBattlefield(locationId, timePeriod, terrain, "CLEAR", 5, 5);
-            }
-
-            Debug.Log("[GameManager] Battlefield mode active");
+            Debug.Log("[GameManager] Battlefield mode active (renderer disabled)");
         }
 
         /// <summary>
@@ -443,19 +292,6 @@ namespace DoraMCU.Client.Core
                 currentMode = GameMode.Space;
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
-
-                var renderer = BattlefieldRenderer.Instance;
-                if (renderer != null)
-                {
-                    renderer.ClearBattlefield();
-                }
-
-                var service = BattlefieldService.Instance;
-                if (service != null)
-                {
-                    service.StopPolling();
-                }
-
                 Debug.Log("[GameManager] Returned to space mode");
             }
         }
@@ -468,13 +304,11 @@ namespace DoraMCU.Client.Core
         public void SwitchGame(string gameName)
         {
             Debug.Log($"[GameManager] Switching to game: {gameName}");
-            // Notify network manager of game change
             var nm = NetworkManager.Instance;
             if (nm != null && nm.IsConnected)
             {
                 nm.SendRequest($"/game/switch?game={gameName}", null);
             }
-            // Reset scene for new game
             FetchInitialState();
         }
 

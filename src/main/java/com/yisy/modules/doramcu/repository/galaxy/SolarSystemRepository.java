@@ -50,6 +50,8 @@ public interface SolarSystemRepository extends JpaRepository<SolarSystem, Long> 
 
     long countByGalaxyId(Long galaxyId);
 
+    java.util.Optional<SolarSystem> findByGalaxyIdAndName(Long galaxyId, String name);
+
     long countBySectorRowAndSectorCol(int sectorRow, int sectorCol);
 
     long countBySectorRowAndSectorColAndSubSectorRowAndSubSectorCol(

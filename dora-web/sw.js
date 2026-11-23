@@ -5,8 +5,8 @@
  * Supports cache versioning and update detection.
  */
 
-const CACHE_NAME = 'doramcu-v1';
-const API_CACHE_NAME = 'doramcu-api-v1';
+const CACHE_NAME = 'doramcu-v8';
+const API_CACHE_NAME = 'doramcu-api-v8';
 
 // Static assets to pre-cache (relative to scope)
 const PRECACHE_ASSETS = [
@@ -89,9 +89,48 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
+    // JavaScript files: network-first to avoid stale code after deployments
+    if (url.pathname.endsWith('.js')) {
+        event.respondWith(handleNetworkFirstRequest(request));
+        return;
+    }
+
     // Static assets: cache-first with network fallback
     event.respondWith(handleStaticRequest(request));
 });
+
+// ---- Network-first handler for JS files: always fetch fresh code ----
+
+async function handleNetworkFirstRequest(request) {
+    // Try network first
+    try {
+        const response = await fetch(request);
+        if (response && response.ok) {
+            // Update cache with fresh version
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+                cache.put(request, responseToCache);
+            });
+            return response;
+        }
+    } catch (error) {
+        // Network failed — fall back to cache
+        console.warn('Service Worker: network failed for JS, using cache for', request.url);
+    }
+
+    // Return cached version if available
+    const cachedResponse = await caches.match(request);
+    if (cachedResponse) {
+        return cachedResponse;
+    }
+
+    // No network, no cache
+    return new Response('Network error — no cached version available', {
+        status: 503,
+        statusText: 'Service Unavailable',
+        headers: new Headers({ 'Content-Type': 'text/plain' })
+    });
+}
 
 // ---- Static asset handler: cache-first strategy ----
 

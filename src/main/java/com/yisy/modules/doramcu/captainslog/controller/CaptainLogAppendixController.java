@@ -119,41 +119,7 @@ public class CaptainLogAppendixController {
         return ResponseEntity.ok(result);
     }
 
-    /**
-     * Generates a complete NPC profile.
-     * <p>
-     * Combines an ally/adversary with a role and motivation.
-     * </p>
-     */
-    @GetMapping("/oracle/npc")
-    public ResponseEntity<Map<String, String>> generateNpc() {
-        log.debug("GET /api/v1/captains-log/oracle/npc");
-        ProbabilityMatrixService.Adversary adversary =
-                captainLogService.getProbabilityMatrixService().rollAdversary();
-        Map<String, String> profile = new java.util.LinkedHashMap<>();
-        profile.put("type", adversary.name());
-        profile.put("description", adversary.getDescription());
-        return ResponseEntity.ok(profile);
-    }
-
     // ---- Appendix III: Locations and Starships ----
-
-    /**
-     * Rolls for a random location.
-     * <p>
-     * Returns a location type from the Appendix III table.
-     * </p>
-     */
-    @GetMapping("/oracle/location")
-    public ResponseEntity<Map<String, String>> rollLocation() {
-        log.debug("GET /api/v1/captains-log/oracle/location");
-        ProbabilityMatrixService.LocationType location =
-                captainLogService.getProbabilityMatrixService().rollLocationType();
-        Map<String, String> result = new java.util.LinkedHashMap<>();
-        result.put("location", location.name());
-        result.put("description", location.getDescription());
-        return ResponseEntity.ok(result);
-    }
 
     /**
      * Rolls for a random starship type.

@@ -105,6 +105,7 @@ public class Earth2026Service implements PlanetService {
     private final Earth2026FamilyService familyService;
     private final Earth2026ConnectionService connectionService;
     private final Earth2026OrganizationService organizationService;
+    private final CharacterLandingService characterLandingService;
 
     public Earth2026Service(Earth2026CharacterRepository characterRepository,
                             Earth2026LocationRepository locationRepository,
@@ -129,7 +130,8 @@ public class Earth2026Service implements PlanetService {
                             Earth2026CompanionService companionService,
                             Earth2026FamilyService familyService,
                             Earth2026ConnectionService connectionService,
-                            Earth2026OrganizationService organizationService) {
+                            Earth2026OrganizationService organizationService,
+                            CharacterLandingService characterLandingService) {
         this.characterRepository = characterRepository;
         this.locationRepository = locationRepository;
         this.scenarioRepository = scenarioRepository;
@@ -154,6 +156,7 @@ public class Earth2026Service implements PlanetService {
         this.familyService = familyService;
         this.connectionService = connectionService;
         this.organizationService = organizationService;
+        this.characterLandingService = characterLandingService;
     }
 
     /**
@@ -171,45 +174,20 @@ public class Earth2026Service implements PlanetService {
         character.setPlayerId(playerId);
         character.setCreatedAt(LocalDateTime.now());
         character.setUpdatedAt(LocalDateTime.now());
-        character.setEarthLocation("San Diego, CA");
+        character.setEarthLocation("Younger Industries HQ");
         character = characterRepository.save(character);
 
-        // Assign a home apartment structure in San Diego
+        // Land character at Younger Industries HQ and assign their first office for free
         try {
-            // Find the first available apartment structure in San Diego (location 1 = San Diego Convention Center area)
-            Optional<Earth2026Structure> apartment = structureRepository
-                    .findByLocationIdAndStructureType(1L, "Apartment")
-                    .stream()
-                    .filter(s -> s.getCurrentCapacity() < s.getMaxCapacity())
-                    .findFirst();
-
-            if (apartment.isPresent()) {
-                Earth2026Structure struct = apartment.get();
-                struct.setCurrentCapacity(struct.getCurrentCapacity() + 1);
-                structureRepository.save(struct);
-                character.setHomeStructureId(struct.getId());
-                character = characterRepository.save(character);
-                log.info("Assigned home structure: {} (capacity {}/{} ) to character: {}", 
-                        struct.getName(), struct.getCurrentCapacity(), struct.getMaxCapacity(), name);
+            com.yisy.modules.doramcu.earth2026.model.OfficeUnit office = characterLandingService.landCharacterAtHQ(character.getId());
+            if (office != null) {
+                log.info("Landed character {} at Younger Industries HQ, assigned office: {}-{}", 
+                        name, office.getFloorLevel(), office.getUnitNumber());
             } else {
-                // If no apartment available, create a default one
-                Earth2026Structure newApartment = new Earth2026Structure(
-                        name + "'s Apartment", 1L, "Apartment", 5);
-                newApartment.setDefenseRating(20);
-                newApartment.setMaxCapacity(5);
-                newApartment.setCurrentCapacity(1);
-                newApartment.setProvidesCover(true);
-                newApartment.setCoverBonus(2);
-                newApartment.setStrategic(false);
-                newApartment.setDescription("A modest apartment in San Diego, CA. Home for " + name + ".");
-                newApartment.setActive(true);
-                newApartment = structureRepository.save(newApartment);
-                character.setHomeStructureId(newApartment.getId());
-                character = characterRepository.save(character);
-                log.info("Created new home structure: {} for character: {}", newApartment.getName(), name);
+                log.warn("Could not assign office at HQ for character {}: no available offices", name);
             }
         } catch (Exception e) {
-            log.warn("Could not assign home structure to character {}: {}", name, e.getMessage());
+            log.warn("Could not land character {} at HQ: {}", name, e.getMessage());
         }
 
         log.info("Created Earth 2026 character: {} (age={}, occupation={}, playerId={})", name, age, occupation, playerId);
@@ -585,8 +563,10 @@ public class Earth2026Service implements PlanetService {
     public Optional<Map<String, Object>> startGame(Long characterId) {
         return characterRepository.findById(characterId)
                 .map(character -> {
-                    // Move character to the starting location
-                    String startingLocation = "San Diego Convention Center";
+                    // Move character to the starting location at Younger Industries HQ
+                    String startingLocation = character.getEarthLocation() != null && !character.getEarthLocation().isEmpty()
+                            ? character.getEarthLocation()
+                            : "Younger Industries HQ";
                     character.setEarthLocation(startingLocation);
                     character.setUpdatedAt(LocalDateTime.now());
                     character = characterRepository.save(character);
@@ -618,7 +598,7 @@ public class Earth2026Service implements PlanetService {
      */
     public Optional<Earth2026Location> getStartingLocation() {
         return locationRepository.findAll().stream()
-                .filter(loc -> "San Diego Convention Center".equals(loc.getName()))
+                .filter(loc -> loc.getName() != null && loc.getName().contains("Younger Industries HQ"))
                 .findFirst();
     }
 

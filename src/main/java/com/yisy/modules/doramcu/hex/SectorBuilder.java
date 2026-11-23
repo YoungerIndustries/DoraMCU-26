@@ -589,7 +589,7 @@ public class SectorBuilder {
      * Calculates the recommended total number of solar systems for a galaxy.
      * Each subsector gets approximately (MIN + MAX) / 2 systems.
      *
-     * @return the recommended total system count (20000 for default settings)
+     * @return the recommended total system count (250000 for Traveller-style settings: 15-35 per subsector)
      */
     public static int recommendedSystemCount() {
         int averagePerSubSector = (MIN_SYSTEMS_PER_SUBSECTOR + MAX_SYSTEMS_PER_SUBSECTOR) / 2;
@@ -600,7 +600,7 @@ public class SectorBuilder {
      * Calculates the minimum total number of solar systems required to fill
      * all subsectors with at least MIN_SYSTEMS_PER_SUBSECTOR systems.
      *
-     * @return the minimum system count (10000 for default settings)
+     * @return the minimum system count (150000 for Traveller-style settings)
      */
     public static int minimumSystemCount() {
         return Galaxy.TOTAL_SUBSECTORS * MIN_SYSTEMS_PER_SUBSECTOR;
@@ -610,7 +610,7 @@ public class SectorBuilder {
      * Calculates the maximum total number of solar systems that can be distributed
      * without exceeding MAX_SYSTEMS_PER_SUBSECTOR in any subsector.
      *
-     * @return the maximum system count (30000 for default settings)
+     * @return the maximum system count (350000 for Traveller-style settings)
      */
     public static int maximumSystemCount() {
         return Galaxy.TOTAL_SUBSECTORS * MAX_SYSTEMS_PER_SUBSECTOR;

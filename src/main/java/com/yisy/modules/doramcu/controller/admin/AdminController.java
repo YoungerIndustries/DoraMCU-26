@@ -68,6 +68,7 @@ public class AdminController {
     private final boolean isDlEnabled;
     private final com.yisy.modules.doramcu.service.admin.PromoCodeService promoCodeService;
     private final AiCharacterRepository aiCharacterRepository;
+    private final com.yisy.modules.doramcu.service.admin.ResetService resetService;
 
     @Value("${server.port:8080}")
     private int serverPort;
@@ -86,7 +87,8 @@ public class AdminController {
                            GameSessionService gameSessionService,
                            @Autowired(required = false) DoraAiLearningService doraAiLearningService,
                            com.yisy.modules.doramcu.service.admin.PromoCodeService promoCodeService,
-                           AiCharacterRepository aiCharacterRepository) {
+                           AiCharacterRepository aiCharacterRepository,
+                           com.yisy.modules.doramcu.service.admin.ResetService resetService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.galaxyRepository = galaxyRepository;
@@ -100,6 +102,7 @@ public class AdminController {
         this.doraAiLearningService = doraAiLearningService;
         this.promoCodeService = promoCodeService;
         this.aiCharacterRepository = aiCharacterRepository;
+        this.resetService = resetService;
         this.isDlEnabled = (doraAiLearningService != null);
     }
 
@@ -999,6 +1002,84 @@ public class AdminController {
         summary.put("dlService", dlInfo);
 
         return summary;
+    }
+
+    /**
+     * Initialize an existing player's empire (creates empire, home planet, starting fleets).
+     * Used when a player was added to the session without going through the join flow.
+     */
+    @PostMapping("/sessions/{sessionId}/players/{playerId}/init-empire")
+    public ResponseEntity<Map<String, Object>> initializePlayerEmpire(
+            @PathVariable String sessionId,
+            @PathVariable Long playerId) {
+        log.info("Admin request: initialize empire for player {} in session {}", playerId, sessionId);
+        try {
+            Map<String, Object> result = gameSessionService.initializePlayerEmpire(playerId, sessionId);
+            return ResponseEntity.ok(result);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "error", e.getMessage()));
+        } catch (Exception e) {
+            log.error("Failed to initialize player empire", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false, "error", e.getMessage()));
+        }
+    }
+
+    /**
+     * POST /api/v1/4x/admin/reset/full
+     * Executes a full game data reset: truncates all game state tables and repopulates seed data.
+     * After calling this endpoint, restart the server to trigger galaxy rebuild via GalaxyStartupRegistry.
+     */
+    @PostMapping("/reset/full")
+    public ResponseEntity<Map<String, Object>> executeFullReset() {
+        log.warn("Admin request: FULL GAME DATA RESET");
+        try {
+            com.yisy.modules.doramcu.service.admin.ResetService.ResetResult result = resetService.executeFullReset();
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", result.isSuccess());
+            response.put("message", result.getMessage());
+            response.put("tablesCleaned", result.getTablesCleaned().size());
+            response.put("entitiesRepopulated", result.getEntitiesRepopulated().size());
+            response.put("tableNames", result.getTablesCleaned());
+            response.put("entityNames", result.getEntitiesRepopulated());
+            if (!result.getErrors().isEmpty()) {
+                response.put("errors", result.getErrors());
+            }
+            response.put("note", "Restart the server to trigger galaxy rebuild via GalaxyStartupRegistry");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Full reset failed", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false, "error", e.getMessage()));
+        }
+    }
+
+    /**
+     * POST /api/v1/4x/admin/reset/galaxy
+     * Executes a galaxy-only reset: clears galaxy data and AI admin state but retains players and characters.
+     */
+    @PostMapping("/reset/galaxy")
+    public ResponseEntity<Map<String, Object>> executeGalaxyReset() {
+        log.warn("Admin request: GALAXY-ONLY RESET");
+        try {
+            com.yisy.modules.doramcu.service.admin.ResetService.ResetResult result = resetService.executeGalaxyReset();
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", result.isSuccess());
+            response.put("message", result.getMessage());
+            response.put("tablesCleaned", result.getTablesCleaned().size());
+            response.put("entitiesRepopulated", result.getEntitiesRepopulated().size());
+            response.put("tableNames", result.getTablesCleaned());
+            response.put("entityNames", result.getEntitiesRepopulated());
+            if (!result.getErrors().isEmpty()) {
+                response.put("errors", result.getErrors());
+            }
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Galaxy reset failed", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false, "error", e.getMessage()));
+        }
     }
 
     @PutMapping("/promo-codes/{code}")

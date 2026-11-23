@@ -286,7 +286,9 @@ public class TaxManager {
         for (Player player : context.getPlayers()) {
             if (player.isEliminated()) continue;
 
-            int empireId = player.getEmpireId();
+            Integer empireIdObj = player.getEmpireId();
+            if (empireIdObj == null) continue;
+            int empireId = empireIdObj;
             long taxIncome = collectTax(empireId);
 
             // Record in history

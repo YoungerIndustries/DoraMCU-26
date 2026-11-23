@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using DoraMCU.Client.Core;
 using UnityEngine.UI;
 
@@ -134,7 +135,7 @@ namespace DoraMCU.Client.UI
                 var titleText = titleGo.AddComponent<Text>();
                 titleText.text = "INVENTORY";
                 titleText.fontSize = 24;
-                titleText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                titleText.font = FontLoader.Instance.DefaultFont;
                 titleText.color = Color.cyan;
                 titleText.fontStyle = FontStyle.Bold;
                 titleText.alignment = TextAnchor.MiddleCenter;
@@ -161,7 +162,7 @@ namespace DoraMCU.Client.UI
                 detailsRect.sizeDelta = Vector2.zero;
 
                 var detailsBg = detailsPanelGo.AddComponent<Image>();
-                detailsBg.color = new Color(0.1f, 0.1f, 0.2f, 0.8f);
+                detailsBg.color = UIConfig.Instance.ButtonBackground;
 
                 // Item name
                 var nameGo = new GameObject("ItemName");
@@ -175,7 +176,7 @@ namespace DoraMCU.Client.UI
                 itemNameText = nameGo.AddComponent<Text>();
                 itemNameText.text = "Item Name";
                 itemNameText.fontSize = 18;
-                itemNameText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                itemNameText.font = FontLoader.Instance.DefaultFont;
                 itemNameText.color = Color.cyan;
                 itemNameText.fontStyle = FontStyle.Bold;
                 itemNameText.horizontalOverflow = HorizontalWrapMode.Overflow;
@@ -192,7 +193,7 @@ namespace DoraMCU.Client.UI
                 itemTypeText = typeGo.AddComponent<Text>();
                 itemTypeText.text = "Type";
                 itemTypeText.fontSize = 12;
-                itemTypeText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                itemTypeText.font = FontLoader.Instance.DefaultFont;
                 itemTypeText.color = Color.gray;
                 itemTypeText.horizontalOverflow = HorizontalWrapMode.Overflow;
 
@@ -208,8 +209,8 @@ namespace DoraMCU.Client.UI
                 itemDescriptionText = descGo.AddComponent<Text>();
                 itemDescriptionText.text = "Description";
                 itemDescriptionText.fontSize = 12;
-                itemDescriptionText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                itemDescriptionText.color = Color.white;
+                itemDescriptionText.font = FontLoader.Instance.DefaultFont;
+                itemDescriptionText.color = UIConfig.Instance.TextDefault;
                 itemDescriptionText.horizontalOverflow = HorizontalWrapMode.Overflow;
                 itemDescriptionText.verticalOverflow = VerticalWrapMode.Overflow;
 
@@ -225,13 +226,13 @@ namespace DoraMCU.Client.UI
                 itemQuantityText = qtyGo.AddComponent<Text>();
                 itemQuantityText.text = "Quantity: 1";
                 itemQuantityText.fontSize = 12;
-                itemQuantityText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                itemQuantityText.color = Color.white;
+                itemQuantityText.font = FontLoader.Instance.DefaultFont;
+                itemQuantityText.color = UIConfig.Instance.TextDefault;
                 itemQuantityText.horizontalOverflow = HorizontalWrapMode.Overflow;
 
                 // Action buttons
-                var btnY = 0;
-                var btnHeight = 0.08f;
+                float btnY = 0f;
+                float btnHeight = 0.08f;
 
                 equipButton = CreateDetailButton(detailsPanelGo.transform, "Equip", "EQUIP", new Vector2(0, btnY), new Vector2(0.45f, btnY + btnHeight), OnEquip);
                 btnY += btnHeight + 0.02f;
@@ -276,7 +277,7 @@ namespace DoraMCU.Client.UI
                     iconRect.sizeDelta = new Vector2(-4, -4);
 
                     var iconImg = iconGo.AddComponent<Image>();
-                    iconImg.color = new Color(0.3f, 0.3f, 0.4f, 0.5f);
+                    iconImg.color = UIConfig.Instance.TextDisabled;
 
                     // Quantity text
                     var qtyGo = new GameObject("Quantity");
@@ -289,8 +290,8 @@ namespace DoraMCU.Client.UI
                     var qtyText = qtyGo.AddComponent<Text>();
                     qtyText.text = "";
                     qtyText.fontSize = 10;
-                    qtyText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                    qtyText.color = Color.white;
+                    qtyText.font = FontLoader.Instance.DefaultFont;
+                    qtyText.color = UIConfig.Instance.TextDefault;
                     qtyText.alignment = TextAnchor.LowerRight;
                 }
             }
@@ -432,12 +433,12 @@ namespace DoraMCU.Client.UI
         {
             switch (type.ToLower())
             {
-                case "weapon": return Color.red;
-                case "armor": return Color.blue;
-                case "resource": return Color.yellow;
-                case "module": return Color.magenta;
-                case "consumable": return Color.green;
-                default: return Color.gray;
+                case "weapon": return UIConfig.Instance.TextError;
+                case "armor": return new Color(0.25f, 0.41f, 0.88f);
+                case "resource": return UIConfig.Instance.TextWarning;
+                case "module": return new Color(0.8f, 0.2f, 0.8f);
+                case "consumable": return UIConfig.Instance.TextSuccess;
+                default: return UIConfig.Instance.TextDisabled;
             }
         }
 
@@ -599,23 +600,24 @@ namespace DoraMCU.Client.UI
 
             var btn = btnGo.AddComponent<Button>();
             var img = btnGo.AddComponent<Image>();
-            img.color = new Color(0.1f, 0.1f, 0.3f, 0.8f);
+            img.color = UIConfig.Instance.ButtonBackground;
 
             var textGo = new GameObject("Text");
             textGo.transform.SetParent(btnGo.transform);
             var textRect = textGo.AddComponent<RectTransform>();
             textRect.anchorMin = Vector2.zero;
             textRect.anchorMax = Vector2.one;
+            textRect.anchoredPosition = Vector2.zero;
             textRect.sizeDelta = Vector2.zero;
 
             var t = textGo.AddComponent<Text>();
             t.text = text;
             t.fontSize = 12;
-            t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            t.color = Color.white;
+            t.font = FontLoader.Instance.DefaultFont;
+            t.color = UIConfig.Instance.TextDefault;
             t.alignment = TextAnchor.MiddleCenter;
 
-            btn.onClick.AddListener(onClick);
+            btn.onClick.AddListener(() => onClick());
             return btn;
         }
 

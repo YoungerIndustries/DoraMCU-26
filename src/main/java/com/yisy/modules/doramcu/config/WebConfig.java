@@ -21,6 +21,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -28,14 +30,28 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${doramcu.web-ui.external:false}")
     private boolean webUiExternal;
 
+    @Value("${doramcu.web.static-dir:}")
+    private String webStaticDir;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // When web-ui.external=true, skip static resource handling (API-only mode)
         // The external web server (nginx/CDN) serves the dora-web/ static files
         if (!webUiExternal) {
+            List<String> locations = new ArrayList<>();
+            // Support external static directory (e.g., /opt/doramcu/web/ on Pi)
+            // Place it FIRST so it takes precedence over classpath resources
+            if (webStaticDir != null && !webStaticDir.isEmpty()) {
+                String dir = webStaticDir;
+                if (!dir.endsWith("/")) {
+                    dir += "/";
+                }
+                locations.add("file:" + dir);
+            }
+            locations.add("classpath:/static/");
             // Disable caching for static resources in development to ensure updated files are always served
             registry.addResourceHandler("/**")
-                    .addResourceLocations("classpath:/static/")
+                    .addResourceLocations(locations.toArray(new String[0]))
                     .setCachePeriod(0);
         }
     }

@@ -105,19 +105,19 @@ const ConfigManager = {
                 name: 'DoraMCU Web',
                 description: 'Browser-based game client',
                 platforms: ['all'],
-                url: '/clients/desktop/'
+                url: '/game/index.html'
             },
             mobile: {
                 name: 'DoraMCU Mobile',
                 description: 'Lightweight PWA game client',
                 platforms: ['android', 'ios'],
-                url: '/clients/mobile/'
+                url: '/game/index.html'
             },
             tablet: {
                 name: 'DoraMCU Tablet',
                 description: 'Tablet-optimized game client',
                 platforms: ['android', 'ios'],
-                url: '/clients/tablet/'
+                url: '/game/index.html'
             }
         };
     },
@@ -170,12 +170,12 @@ const ConfigManager = {
         
         // Fallback URLs
         const fallbacks = {
-            'desktop': '/clients/desktop/',
-            'tablet': '/clients/tablet/',
-            'mobile': '/clients/mobile/',
-            'low-end': '/clients/mobile/'
+            'desktop': '/game/index.html',
+            'tablet': '/game/index.html',
+            'mobile': '/game/index.html',
+            'low-end': '/game/index.html'
         };
         
-        return fallbacks[tier] || '/clients/mobile/';
+        return fallbacks[tier] || '/game/index.html';
     }
 };

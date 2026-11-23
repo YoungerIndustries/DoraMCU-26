@@ -255,6 +255,7 @@ public class GameSessionService {
             map.put("createdAt", pgs.getCreatedAt());
             map.put("updatedAt", pgs.getUpdatedAt());
             map.put("lastActivityAt", pgs.getLastActivityAt());
+            map.put("snapshotCount", pgs.getSnapshotCount());
             map.put("isLoaded", sessions.containsKey(pgs.getSessionId()));
             result.add(map);
         }
@@ -359,6 +360,65 @@ public class GameSessionService {
         return new JoinSessionResponse(sessionId, session.getName(), playerId, playerName);
     }
 
+    /**
+     * Initializes an existing player's empire if it was never set up.
+     * Used when a player was added to the session without going through joinSession's setupPlayer flow.
+     *
+     * @param playerId the player ID to initialize
+     * @param sessionId the session ID
+     * @return the empire ID that was assigned
+     */
+    @Transactional
+    public Map<String, Object> initializePlayerEmpire(Long playerId, String sessionId) {
+        GameSession session = sessions.get(sessionId);
+        if (session == null) {
+            log.warn("Session not found: {}", sessionId);
+            throw new NoSuchElementException("Session not found: " + sessionId);
+        }
+
+        Game game = (Game) session.getGame();
+        session.getLock().writeLock().lock();
+        try {
+            // Find the existing player in the game
+            com.yisy.modules.doramcu.hex.Player existingPlayer = game.getPlayer(playerId.intValue());
+            if (existingPlayer == null) {
+                log.warn("Player {} not found in game for session {}", playerId, sessionId);
+                throw new NoSuchElementException("Player not found in game: " + playerId);
+            }
+
+            Integer existingEmpireId = existingPlayer.getEmpireId();
+            if (existingEmpireId != null && existingEmpireId > 0) {
+                Empire existingEmpire = game.getEmpire(existingEmpireId);
+                if (existingEmpire != null) {
+                    log.info("Player {} already has empire {} ({})", playerId, existingEmpireId, existingEmpire.getName());
+                    return Map.of(
+                            "success", true,
+                            "message", "Player already has an empire",
+                            "empireId", existingEmpireId,
+                            "empireName", existingEmpire.getName()
+                    );
+                }
+            }
+
+            // Set up the complete player: empire, home system, fleets, navy sync
+            String playerName = existingPlayer.getName();
+            Game.PlayerSetupResult setup = game.setupPlayer(playerId.intValue(), playerName);
+            log.info("Initialized player {} (id={}) with empire id={}", playerName, playerId, setup.getEmpire().getId());
+
+            return Map.of(
+                    "success", true,
+                    "message", "Player empire initialized",
+                    "playerId", playerId,
+                    "playerName", playerName,
+                    "empireId", setup.getEmpire().getId(),
+                    "empireName", setup.getEmpire().getName(),
+                    "fleetCount", setup.getStartingFleets().size()
+            );
+        } finally {
+            session.getLock().writeLock().unlock();
+        }
+    }
+
     @Transactional
     public void leaveSession(Long playerId, String sessionId) {
         GameSession session = sessions.get(sessionId);
@@ -397,6 +457,33 @@ public class GameSessionService {
             info.put("players", session.getPlayerIds());
             return info;
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * Deletes a session by ID (removes from memory and persisted storage).
+     *
+     * @param sessionId the session ID to delete
+     * @return true if the session was found and deleted
+     */
+    @Transactional
+    public boolean deleteSession(String sessionId) {
+        log.info("Deleting session: {}", sessionId);
+        boolean deleted = false;
+        // Remove from in-memory sessions
+        GameSession session = sessions.remove(sessionId);
+        if (session != null) {
+            globalClockService.removeClock(sessionId);
+            deleted = true;
+        }
+        // Remove from persisted storage
+        if (persistedGameSessionRepository != null) {
+            deleted = persistedGameSessionRepository.findBySessionId(sessionId).isPresent() || deleted;
+            persistedGameSessionRepository.findBySessionId(sessionId).ifPresent(persistedGameSessionRepository::delete);
+        }
+        if (deleted) {
+            log.info("Session {} deleted successfully", sessionId);
+        }
+        return deleted;
     }
 
     /**
@@ -1260,16 +1347,49 @@ public class GameSessionService {
     public GameStateResponse getGameState(Long playerId, String sessionId, boolean summary) {
         GameSession session = sessions.get(sessionId);
         if (session == null) {
-            log.warn("Session not found: {}", sessionId);
-            throw new NoSuchElementException("Session not found: " + sessionId);
+            // Try to restore from database if session exists there
+            log.info("Session {} not in memory, attempting to restore from database", sessionId);
+            if (persistedGameSessionRepository != null) {
+                Optional<PersistedGameSession> persisted = persistedGameSessionRepository.findBySessionId(sessionId);
+                if (persisted.isPresent() && persisted.get().getGameState() != null && !persisted.get().getGameState().isBlank()) {
+                    try {
+                        boolean restored = restoreSession(sessionId);
+                        if (restored) {
+                            log.info("Successfully restored session {} from database", sessionId);
+                            session = sessions.get(sessionId);
+                        } else {
+                            log.warn("Failed to restore session {} from database", sessionId);
+                            throw new NoSuchElementException("Session not found: " + sessionId);
+                        }
+                    } catch (Exception e) {
+                        log.error("Exception restoring session {}: {}", sessionId, e.getMessage(), e);
+                        throw new NoSuchElementException("Session not found: " + sessionId);
+                    }
+                } else {
+                    log.warn("Session {} not found in memory or database", sessionId);
+                    throw new NoSuchElementException("Session not found: " + sessionId);
+                }
+            } else {
+                log.warn("Session {} not found: {}", sessionId, sessionId);
+                throw new NoSuchElementException("Session not found: " + sessionId);
+            }
         }
 
         updateSessionActivity(sessionId);
         session.getLock().readLock().lock();
         try {
             return gameStateBuilder.buildGameStateResponse(session, playerId, summary);
-        } finally {
+        } catch (Exception e) {
             session.getLock().readLock().unlock();
+            log.error("Failed to build game state response for session {}: {}", sessionId, e.getMessage(), e);
+            throw new RuntimeException("Failed to build game state: " + e.getMessage(), e);
+        } finally {
+            // Only unlock if not already unlocked in the catch block
+            try {
+                session.getLock().readLock().unlock();
+            } catch (IllegalMonitorStateException ignore) {
+                // Already unlocked in catch block
+            }
         }
     }
 

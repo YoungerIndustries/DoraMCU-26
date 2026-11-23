@@ -12,7 +12,9 @@ public class GameModuleDto {
 
     private String id;
     private String name;
+    private String version;
     private boolean enabled;
+    private String health;
     private Set<String> mechanics;
     private List<String> availableServices;
 
@@ -65,5 +67,21 @@ public class GameModuleDto {
 
     public void setAvailableServices(List<String> availableServices) {
         this.availableServices = availableServices;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getHealth() {
+        return health;
+    }
+
+    public void setHealth(String health) {
+        this.health = health;
     }
 }

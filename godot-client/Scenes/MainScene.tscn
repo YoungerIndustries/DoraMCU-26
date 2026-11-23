@@ -1,4 +1,16 @@
-[gd_scene load_steps=3 format=3 uid="uid://doramcu_main_scene"]
+[gd_scene load_steps=12 format=3 uid="uid://doramcu_main_scene"]
+
+[ext_resource type="Script" path="res://Scripts/Core/DemoModeManager.cs" id="1"]
+[ext_resource type="Script" path="res://Scripts/UI/LoginScreen.cs" id="2"]
+[ext_resource type="Script" path="res://Scripts/UI/CharacterCreation.cs" id="3"]
+[ext_resource type="Script" path="res://Scripts/UI/MenuManager.cs" id="4"]
+[ext_resource type="Script" path="res://Scripts/UI/MainHUD.cs" id="5"]
+[ext_resource type="Script" path="res://Scripts/UI/ShipBuildUI.cs" id="6"]
+[ext_resource type="Script" path="res://Scripts/UI/ExploreAction.cs" id="7"]
+[ext_resource type="Script" path="res://Scripts/UI/HelpOverlay.cs" id="8"]
+[ext_resource type="Script" path="res://Scripts/UI/InventoryUI.cs" id="9"]
+[ext_resource type="Script" path="res://Scripts/UI/MapUI.cs" id="10"]
+[ext_resource type="Script" path="res://Scripts/Core/DoraMCUInitializer.cs" id="11"]
 
 [node name="MainScene" type="Node3D"]
 
@@ -7,3 +19,38 @@ transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 50, 0)
 
 [node name="DirectionalLight" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.707107, 0, 0.707107, 0, 0, -1, -0.707107, 0, 0.707107, 0, 10, 0)
+
+[node name="DemoModeManager" type="Node3D" parent="."]
+script = ExtResource("1")
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="LoginScreen" type="Control" parent="UILayer"]
+script = ExtResource("2")
+
+[node name="CharacterCreation" type="Control" parent="UILayer"]
+script = ExtResource("3")
+
+[node name="MenuManager" type="Control" parent="UILayer"]
+script = ExtResource("4")
+
+[node name="MainHUD" type="Control" parent="UILayer"]
+script = ExtResource("5")
+
+[node name="ShipBuildUI" type="Control" parent="UILayer"]
+script = ExtResource("6")
+
+[node name="ExploreAction" type="Control" parent="UILayer"]
+script = ExtResource("7")
+
+[node name="HelpOverlay" type="Control" parent="UILayer"]
+script = ExtResource("8")
+
+[node name="InventoryUI" type="Control" parent="UILayer"]
+script = ExtResource("9")
+
+[node name="MapUI" type="Control" parent="UILayer"]
+script = ExtResource("10")
+
+[node name="Initializer" type="Node" parent="."]
+script = ExtResource("11")

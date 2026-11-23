@@ -1,18 +1,26 @@
 package com.yisy.modules.doramcu.hex;
 
+import com.yisy.modules.doramcu.traveller.SectorGenerator;
+import com.yisy.modules.doramcu.traveller.TradeCode;
+import com.yisy.modules.doramcu.traveller.UniversalWorldProfile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * A subsector within a galaxy sector.
  * <p>
- * Each subsector is a 3D hexmap of 10x10x10 dimensions containing 1-3 solar systems.
+ * Each subsector is a 3D hexmap of 10x10x10 dimensions containing 15-35 solar systems (Traveller-style).
  * Subsectors are arranged in a 10x10 hex grid within each sector.
  * <p>
  * Based on design patterns from Stellaris (subsectors) and
  * Galactic Civilizations IV (galactic core, strategic locations).
  */
 public class SubSector {
+    private static final Logger log = LoggerFactory.getLogger(SubSector.class);
+
     private final int id;
     private final int subRow;
     private final int subCol;
@@ -21,6 +29,9 @@ public class SubSector {
     private final Map<String, GalacticEntry> positionIndex;
     private boolean generated;
     private GalaxyGenerationProgress progressListener;
+    
+    /** The planet ID of the capital world (highest population habitable planet). Null if not yet determined. */
+    private Integer capitalWorldId;
 
     /**
      * Creates a new subsector at the given grid position.
@@ -47,6 +58,7 @@ public class SubSector {
         this.systems = new HashMap<>();
         this.positionIndex = new HashMap<>();
         this.generated = false;
+        this.capitalWorldId = null;
     }
 
     /**
@@ -97,6 +109,24 @@ public class SubSector {
      */
     public void setProgressListener(GalaxyGenerationProgress listener) {
         this.progressListener = listener;
+    }
+
+    /**
+     * Returns the ID of the capital world (highest population habitable planet).
+     *
+     * @return the capital world planet ID, or null if not yet determined
+     */
+    public Integer getCapitalWorldId() {
+        return capitalWorldId;
+    }
+
+    /**
+     * Sets the capital world ID for this subsector.
+     *
+     * @param capitalWorldId the planet ID of the capital world
+     */
+    public void setCapitalWorldId(Integer capitalWorldId) {
+        this.capitalWorldId = capitalWorldId;
     }
 
     /**
@@ -231,15 +261,19 @@ public class SubSector {
 
     /**
      * Generates solar systems in this subsector if not already generated.
-     * Creates 1-3 solar systems with random positions and celestial bodies.
+     * Creates 15-35 solar systems (Traveller-style) with random positions and celestial bodies.
+     * Each planet receives UWP data (atmosphere, gravity, starport, population, government, law)
+     * and trade codes derived from the UWP. The most populous habitable planet is designated
+     * as the capital world.
      * This method is typically called when a fleet enters the subsector.
      *
      * @param random the random number generator for reproducibility
      * @param starNames the star name database for naming stars
      * @param planetNames the planet name database for naming planets
+     * @param enableUWP whether to generate UWP data for planets (Traveller-style galaxies)
      * @return the list of generated solar systems
      */
-    public List<SolarSystem> generateSystems(Random random, StarNameDatabase starNames, PlanetNameDatabase planetNames) {
+    public List<SolarSystem> generateSystems(Random random, StarNameDatabase starNames, PlanetNameDatabase planetNames, boolean enableUWP) {
         if (generated) {
             return new ArrayList<>(systems.values());
         }
@@ -249,6 +283,12 @@ public class SubSector {
         int entityIdCounter = id * 100000 + 1;
         int starIdCounter = id * 10000 + 1;
         int planetIdCounter = id * 10000 + 1000;
+
+        // Track the most populous habitable planet for capital world designation
+        Integer bestCapitalPlanetId = null;
+        int bestCapitalPopulation = -1;
+        SectorGenerator sectorGenerator = enableUWP ? new SectorGenerator() : null;
+
         for (int i = 0; i < systemCount; i++) {
             SolarSystem system = new SolarSystem(id * 1000 + i + 1);
             // Generate star at origin
@@ -266,6 +306,35 @@ public class SubSector {
                 if (planetNames != null) {
                     planetNames.assignName(planet);
                 }
+
+                // Generate UWP data for this planet
+                if (enableUWP && sectorGenerator != null) {
+                    UniversalWorldProfile uwp = sectorGenerator.generateRandomUwp();
+                    planet.setUwpAtmosphere(uwp.getAtmosphere());
+                    planet.setUwpGravity(uwp.getGravity());
+                    planet.setUwpStarport(uwp.getStarport());
+                    planet.setUwpPopulationLevel(uwp.getPopulation());
+                    planet.setUwpGovernmentType(uwp.getGovernment());
+                    planet.setUwpLawLevel(uwp.getLawLevel());
+
+                    // Derive and add trade codes from UWP
+                    TradeCode tradeCode = uwp.derivePrimaryTradeCode();
+                    if (tradeCode != null) {
+                        planet.addTradeCode(tradeCode);
+                    }
+
+                    // Track habitable planets for capital world designation
+                    // Habitable: atmosphere 1-7, gravity 0-8, population > 0
+                    if (uwp.getAtmosphere() >= 1 && uwp.getAtmosphere() <= 7
+                            && uwp.getGravity() >= 0 && uwp.getGravity() <= 8
+                            && uwp.getPopulation() > 0) {
+                        if (uwp.getPopulation() > bestCapitalPopulation) {
+                            bestCapitalPopulation = uwp.getPopulation();
+                            bestCapitalPlanetId = planet.getId();
+                        }
+                    }
+                }
+
                 // Planet position within the solar system uses Hex3D (x+y+z=0)
                 Hex3D planetPos = generateRandomHex3D(random);
                 SolarSystemEntity planetEntity = new SolarSystemEntity(entityIdCounter++);
@@ -285,7 +354,27 @@ public class SubSector {
             }
 
         }
+
+        // Designate the capital world
+        if (bestCapitalPlanetId != null) {
+            capitalWorldId = bestCapitalPlanetId;
+            log.debug("SubSector {} capital world designated: planet {} (population level {})", id, bestCapitalPlanetId, bestCapitalPopulation);
+        }
+
         return generatedSystems;
+    }
+
+    /**
+     * Generates solar systems in this subsector if not already generated.
+     * Convenience overload that defaults UWP generation to true.
+     *
+     * @param random the random number generator for reproducibility
+     * @param starNames the star name database for naming stars
+     * @param planetNames the planet name database for naming planets
+     * @return the list of generated solar systems
+     */
+    public List<SolarSystem> generateSystems(Random random, StarNameDatabase starNames, PlanetNameDatabase planetNames) {
+        return generateSystems(random, starNames, planetNames, true);
     }
 
     /**

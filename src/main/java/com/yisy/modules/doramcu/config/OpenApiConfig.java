@@ -9,6 +9,7 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.v3.oas.models.tags.Tag;
 
 import java.util.List;
 
@@ -27,12 +28,15 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("DoraMCU API")
-                        .version("1.0.0")
+                        .version("2.0.0")
                         .description("Multi-game platform API supporting Traveller, Star Trek 4X, Babylon 5, " +
                                 "Star Fleet Battles, D&D 5E, MechWarrior, Star Wars, Starship Troopers, " +
                                 "Third Reich, 007, Earth 2026, and more. Features include galaxy generation, " +
                                 "game sessions, deep learning, real-time communication, modding support, " +
-                                "and community server hosting.")
+                                "and community server hosting.\n\n" +
+                                "**API Versioning:** This API uses URI-based versioning (`/api/v1/`, `/api/v2/`). " +
+                                "Current version is v2. v1 is deprecated and will be sunset on 2027-12-31. " +
+                                "Call `GET /api/version` to discover available versions.")
                         .contact(new Contact()
                                 .name("DoraMCU Team")
                                 .url("https://github.com/YISY/DoraMCU"))
@@ -42,11 +46,23 @@ public class OpenApiConfig {
                 .servers(List.of(
                         new Server().url("http://localhost:8080").description("Local development"),
                         new Server().url("https://api.doramcu.local").description("Production")
+                ))
+                .tags(List.of(
+                        new Tag().name("API Versioning")
+                                .description("Discover available API versions and their status")
                 ));
     }
 
     // --- API Group Definitions ---
     // Each group exposes a subset of controllers for organized documentation
+
+    @Bean
+    public GroupedOpenApi apiVersioningApi() {
+        return GroupedOpenApi.builder()
+                .group("0-api-versioning")
+                .pathsToMatch("/api/version")
+                .build();
+    }
 
     @Bean
     public GroupedOpenApi corePlatformApi() {

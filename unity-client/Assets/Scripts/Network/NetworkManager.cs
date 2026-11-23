@@ -9,23 +9,35 @@ using UnityEngine.Networking;
 namespace DoraMCU.Client.Network
 {
     /// <summary>
-    /// Manages network communication with the Spring Boot game server.
-    /// Handles HTTP REST calls and SSE event streaming.
+    /// Central network coordinator — thin facade that delegates to focused services.
+    /// Handles connection state, shared infrastructure, and DTOs.
     /// </summary>
     public class NetworkManager : Singleton<NetworkManager>
     {
         [Header("Server Configuration")]
-        [SerializeField] private string serverUrl = "http://localhost:8080";
         [SerializeField] private float reconnectDelay = 5f;
         [SerializeField] private int maxReconnectAttempts = 10;
+
+        [Header("AI Admin Configuration")]
+        [SerializeField] private float aiAdminPollInterval = 30f;
 
         private string sessionId;
         private string playerId;
         private bool isConnected;
         private int reconnectAttempts;
         private Coroutine reconnectCoroutine;
+        private Coroutine aiAdminPollCoroutine;
         private readonly Queue<Action<UnityWebRequest>> requestQueue = new();
         private bool isProcessingQueue;
+
+        // Services
+        private AuthService authService;
+        private OnboardingService onboardingService;
+        private ExplorationService explorationService;
+        private ShipBuildService shipBuildService;
+        private CombatService combatService;
+        private SaveLoadService saveLoadService;
+        private GalaxyService galaxyService;
 
         // Events
         public event Action<string> OnConnected;
@@ -35,26 +47,55 @@ namespace DoraMCU.Client.Network
         public event Action<string> OnError;
         public event Action<List<AiAdminData>> OnAiAdminsFetched;
 
-        // AI Admin polling
-        [Header("AI Admin Configuration")]
-        [SerializeField] private float aiAdminPollInterval = 30f;
-        private Coroutine aiAdminPollCoroutine;
-        private string currentGalaxyName;
-
         public string SessionId => sessionId;
         public string PlayerId => playerId;
         public bool IsConnected => isConnected;
-        public string ServerUrl => serverUrl;
+        public string ServerUrl => GetServerUrl();
+
+        // Auth state delegates (forwarded from AuthService)
+        public string JwtToken => authService?.JwtToken;
+        public string LoggedInUsername => authService?.LoggedInUsername;
+        public string PlayerPin => authService?.PlayerPin;
+        public string EmpireName => authService?.EmpireName;
+        public long CorporationId => authService?.CorporationId ?? 0;
+        public string CorporationName => authService?.CorporationName;
+        public string CorporationTicker => authService?.CorporationTicker;
+        public bool IsAuthenticated => authService?.IsAuthenticated ?? false;
+
+        /// <summary>
+        /// Get the server URL from ServerConfig if available, otherwise use the default.
+        /// </summary>
+        private string GetServerUrl()
+        {
+            var sc = ServerConfig.Instance;
+            if (sc != null && !string.IsNullOrEmpty(sc.ServerUrl))
+            {
+                return sc.ServerUrl;
+            }
+            return "http://192.168.1.111:8080";
+        }
 
         protected override void Awake()
         {
             base.Awake();
             DontDestroyOnLoad(gameObject);
+
+            string url = GetServerUrl();
+            Func<IEnumerator, Coroutine> runner = StartCoroutine;
+
+            authService = new AuthService(url, runner);
+            onboardingService = new OnboardingService(url, () => authService?.JwtToken, () => authService?.LoggedInUsername, runner);
+            explorationService = new ExplorationService(url, () => authService?.JwtToken, runner);
+            shipBuildService = new ShipBuildService(url, () => authService?.JwtToken, runner);
+            combatService = new CombatService(url, () => authService?.JwtToken, runner);
+            saveLoadService = new SaveLoadService(url, () => authService?.JwtToken, runner);
+            galaxyService = new GalaxyService(url, () => authService?.JwtToken, runner, _ => { });
+            galaxyService.OnAiAdminsFetched += (admins) => OnAiAdminsFetched?.Invoke(admins);
         }
 
         void Start()
         {
-            Connect();
+            // Don't auto-connect on start; wait for login
         }
 
         void OnDestroy()
@@ -68,7 +109,7 @@ namespace DoraMCU.Client.Network
         /// </summary>
         public void SetCurrentGalaxy(string galaxyName)
         {
-            currentGalaxyName = galaxyName;
+            galaxyService?.SetCurrentGalaxy(galaxyName);
         }
 
         /// <summary>
@@ -76,8 +117,7 @@ namespace DoraMCU.Client.Network
         /// </summary>
         public void StartAiAdminPolling()
         {
-            if (aiAdminPollCoroutine != null || string.IsNullOrEmpty(currentGalaxyName)) return;
-            aiAdminPollCoroutine = StartCoroutine(PollAiAdminsCoroutine());
+            galaxyService?.StartAiAdminPolling(aiAdminPollInterval);
         }
 
         /// <summary>
@@ -85,26 +125,7 @@ namespace DoraMCU.Client.Network
         /// </summary>
         public void StopAiAdminPolling()
         {
-            if (aiAdminPollCoroutine != null)
-            {
-                StopCoroutine(aiAdminPollCoroutine);
-                aiAdminPollCoroutine = null;
-            }
-        }
-
-        /// <summary>
-        /// Polling coroutine that fetches AI admin positions at regular intervals.
-        /// </summary>
-        private IEnumerator PollAiAdminsCoroutine()
-        {
-            while (isConnected && !string.IsNullOrEmpty(currentGalaxyName))
-            {
-                FetchAiAdminsForGalaxy(currentGalaxyName, (admins) =>
-                {
-                    OnAiAdminsFetched?.Invoke(admins);
-                });
-                yield return new WaitForSeconds(aiAdminPollInterval);
-            }
+            // Handled by galaxy service
         }
 
         /// <summary>
@@ -112,56 +133,205 @@ namespace DoraMCU.Client.Network
         /// </summary>
         public void FetchAiAdminsForGalaxy(string galaxyName, Action<List<AiAdminData>> callback)
         {
-            StartCoroutine(FetchAiAdminsCoroutine(galaxyName, callback));
+            galaxyService?.FetchAiAdminsForGalaxy(galaxyName, callback);
         }
 
         /// <summary>
-        /// Coroutine to fetch AI admin positions from the server.
+        /// Connect to the game server (ping check only, no auth required).
         /// </summary>
-        private IEnumerator FetchAiAdminsCoroutine(string galaxyName, Action<List<AiAdminData>> callback)
+        public void Connect()
         {
-            string url = $"{serverUrl}/api/v1/galaxy-3d/galaxy/{Uri.EscapeDataString(galaxyName)}/ai-admins";
+            if (isConnected) return;
+            StartCoroutine(ConnectCoroutine());
+        }
+
+        #region Auth Delegation
+
+        /// <summary>
+        /// Login callback: (token, username, pin, empireName, corporationId, corporationName, success, error)
+        /// </summary>
+        public delegate void AuthCallback(string token, string username, string pin, string empireName,
+            long corporationId, string corporationName, bool success, string error);
+
+        public void Login(string username, string password, AuthCallback callback)
+        {
+            authService?.Login(username, password, callback);
+        }
+
+        public void Register(string username, string password, AuthCallback callback)
+        {
+            authService?.Register(username, password, callback);
+        }
+
+        public void DevLogin(AuthCallback callback)
+        {
+            authService?.DevLogin(callback);
+        }
+
+        public void Logout()
+        {
+            authService?.Logout();
+            isConnected = false;
+        }
+
+        #endregion
+
+        #region Onboarding Delegation
+
+        /// <summary>
+        /// Character creation callback: (success, error, characterId)
+        /// </summary>
+        public delegate void CharacterCallback(bool success, string error, long? characterId);
+
+        public void FetchOnboardingConfig(Action<bool, bool, string> callback)
+        {
+            onboardingService?.FetchOnboardingConfig(callback);
+        }
+
+        public void CreateCharacter(string characterName, int age, string occupation, CharacterCallback callback)
+        {
+            onboardingService?.CreateCharacter(characterName, age, occupation, callback);
+        }
+
+        public void FetchEarthLanding(Action<bool, string> callback)
+        {
+            onboardingService?.FetchEarthLanding(callback);
+        }
+
+        public void FetchCurrentUser(Action<long?, string> callback)
+        {
+            onboardingService?.FetchCurrentUser(callback);
+        }
+
+        #endregion
+
+        #region Exploration Delegation
+
+        /// <summary>
+        /// Scan sector callback: (success, error, systemsFound)
+        /// </summary>
+        public delegate void ScanCallback(bool success, string error, int systemsFound);
+
+        public void ScanSector(int row, int col, ScanCallback callback)
+        {
+            explorationService?.ScanSector(row, col, callback);
+        }
+
+        public void FetchResources(Action<Dictionary<string, long>, bool> callback)
+        {
+            explorationService?.FetchResources(callback);
+        }
+
+        public void FetchPlayerStats(Action<string, bool> callback)
+        {
+            explorationService?.FetchPlayerStats(callback);
+        }
+
+        #endregion
+
+        #region Ship Build Delegation
+
+        public void BuildShip(string shipType, List<string> modules, Action<bool, string> callback)
+        {
+            shipBuildService?.BuildShip(shipType, modules, callback);
+        }
+
+        public void FetchShipDesigns(Action<string, bool> callback)
+        {
+            shipBuildService?.FetchShipDesigns(callback);
+        }
+
+        #endregion
+
+        #region Combat Delegation
+
+        public void StartBattle(long fleetId, long targetId, Action<bool, string> callback)
+        {
+            combatService?.StartBattle(fleetId, targetId, callback);
+        }
+
+        public void ResolveCombat(string action, Action<string, bool> callback)
+        {
+            combatService?.ResolveCombat(action, callback);
+        }
+
+        #endregion
+
+        #region Save/Load Delegation
+
+        public void SaveGame(Action<bool, string> callback)
+        {
+            saveLoadService?.SaveGame(callback);
+        }
+
+        public void LoadGame(string sessionId, Action<GameState, bool> callback)
+        {
+            saveLoadService?.LoadGame(sessionId, callback);
+        }
+
+        #endregion
+
+        #region Shared Infrastructure
+
+        /// <summary>
+        /// Send an authenticated GET request with JWT token.
+        /// </summary>
+        public IEnumerator AuthenticatedGet(string endpoint, Action<string, bool> callback)
+        {
+            string url = $"{GetServerUrl()}{endpoint}";
+            string token = authService?.JwtToken;
             using (var request = UnityWebRequest.Get(url))
             {
+                if (!string.IsNullOrEmpty(token))
+                {
+                    request.SetRequestHeader("Authorization", $"Bearer {token}");
+                }
+
                 yield return request.SendWebRequest();
 
                 if (request.result == UnityWebRequest.Result.Success)
                 {
-                    var response = JsonUtility.FromJson<AiAdminResponse>(request.downloadHandler.text);
-                    if (response != null && response.admins != null)
-                    {
-                        callback?.Invoke(response.admins);
-                    }
-                    else
-                    {
-                        callback?.Invoke(new List<AiAdminData>());
-                    }
+                    callback?.Invoke(request.downloadHandler.text, true);
                 }
                 else
                 {
-                    Debug.LogError($"Fetch AI admins failed: {request.error}");
-                    callback?.Invoke(new List<AiAdminData>());
+                    Debug.LogError($"[NetworkManager] Authenticated GET {endpoint} failed: {request.error}");
+                    callback?.Invoke(null, false);
                 }
             }
         }
 
         /// <summary>
-        /// Response wrapper for AI admin API.
+        /// Send an authenticated POST request with JWT token.
         /// </summary>
-        [Serializable]
-        public class AiAdminResponse
+        public IEnumerator AuthenticatedPost(string endpoint, string jsonBody, Action<string, bool> callback)
         {
-            public AiAdminData[] admins;
-        }
+            string url = $"{GetServerUrl()}{endpoint}";
+            string token = authService?.JwtToken;
+            using (var request = new UnityWebRequest(url, "POST"))
+            {
+                byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonBody);
+                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Content-Type", "application/json");
 
-        /// <summary>
-        /// Connect to the game server.
-        /// </summary>
-        public void Connect()
-        {
-            if (isConnected) return;
+                if (!string.IsNullOrEmpty(token))
+                {
+                    request.SetRequestHeader("Authorization", $"Bearer {token}");
+                }
 
-            StartCoroutine(ConnectCoroutine());
+                yield return request.SendWebRequest();
+
+                if (request.result == UnityWebRequest.Result.Success)
+                {
+                    callback?.Invoke(request.downloadHandler.text, true);
+                }
+                else
+                {
+                    Debug.LogError($"[NetworkManager] Authenticated POST {endpoint} failed: {request.error}");
+                    callback?.Invoke(null, false);
+                }
+            }
         }
 
         /// <summary>
@@ -199,7 +369,7 @@ namespace DoraMCU.Client.Network
         /// </summary>
         public IEnumerator GetRequest(string endpoint, Action<string, bool> callback)
         {
-            string url = $"{serverUrl}/api/v1/game{endpoint}";
+            string url = $"{GetServerUrl()}/api/v1/game{endpoint}";
             using (var request = UnityWebRequest.Get(url))
             {
                 yield return request.SendWebRequest();
@@ -221,7 +391,7 @@ namespace DoraMCU.Client.Network
         /// </summary>
         public IEnumerator PostRequest(string endpoint, Dictionary<string, string> parameters, Action<string, bool> callback)
         {
-            string url = $"{serverUrl}/api/v1/game{endpoint}";
+            string url = $"{GetServerUrl()}/api/v1/game{endpoint}";
             if (parameters != null && parameters.Count > 0)
             {
                 var queryBuilder = new StringBuilder();
@@ -258,7 +428,6 @@ namespace DoraMCU.Client.Network
         {
             var state = new GameState();
 
-            // Fetch tick
             string tickJson = null;
             var tickRequest = GetRequest("/tick", (json, success) => tickJson = json);
             yield return StartCoroutine(tickRequest);
@@ -267,7 +436,6 @@ namespace DoraMCU.Client.Network
                 state.Tick = JsonUtility.FromJson<TickInfo>(tickJson);
             }
 
-            // Fetch player
             string playerJson = null;
             var playerRequest = GetRequest("/player/me", (json, success) => playerJson = json);
             yield return StartCoroutine(playerRequest);
@@ -276,7 +444,6 @@ namespace DoraMCU.Client.Network
                 state.Player = JsonUtility.FromJson<PlayerInfo>(playerJson);
             }
 
-            // Fetch galaxy
             string galaxyJson = null;
             var galaxyRequest = GetRequest("/galaxy", (json, success) => galaxyJson = json);
             yield return StartCoroutine(galaxyRequest);
@@ -285,7 +452,6 @@ namespace DoraMCU.Client.Network
                 state.Galaxy = JsonUtility.FromJson<GalaxyInfo>(galaxyJson);
             }
 
-            // Fetch characters
             string charsJson = null;
             var charsRequest = GetRequest("/characters", (json, success) => charsJson = json);
             yield return StartCoroutine(charsRequest);
@@ -295,8 +461,7 @@ namespace DoraMCU.Client.Network
 
         private IEnumerator ConnectCoroutine()
         {
-            // Connect to MMOG engine
-            string url = $"{serverUrl}/api/v1/mmog/connect?clientType=native";
+            string url = $"{GetServerUrl()}/api/v1/mmog/connect?clientType=native";
             using (var request = UnityWebRequest.Get(url))
             {
                 yield return request.SendWebRequest();
@@ -346,6 +511,10 @@ namespace DoraMCU.Client.Network
             }
             isProcessingQueue = false;
         }
+
+        #endregion
+
+        #region DTOs
 
         [Serializable]
         public class TickInfo
@@ -557,5 +726,7 @@ namespace DoraMCU.Client.Network
             public PlayerInfo Player;
             public GalaxyInfo Galaxy;
         }
+
+        #endregion
     }
 }

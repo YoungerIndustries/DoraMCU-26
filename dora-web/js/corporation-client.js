@@ -54,7 +54,7 @@ const CorporationClient = (function() {
   // ---- HTTP Helper ----
 
   async function request(path, options = {}) {
-    const apiUrl = window.apiUrl || 'http://localhost:8080';
+    const apiUrl = window.apiUrl || window.location.origin;
     const token = localStorage.getItem('doramcu_auth_token');
     const headers = {
       'Content-Type': 'application/json',
@@ -232,7 +232,7 @@ const CorporationClient = (function() {
   // ---- SSE Events ----
 
   function subscribeToEvents(callback) {
-    const apiUrl = window.apiUrl || 'http://localhost:8080';
+    const apiUrl = window.apiUrl || window.location.origin;
     const eventSource = new EventSource(`${apiUrl}/api/v1/game/events?corporation=true`);
 
     eventSource.onmessage = (event) => {

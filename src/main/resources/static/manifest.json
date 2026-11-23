@@ -1,8 +1,8 @@
 {
-    "name": "DoraMCU - Multi-Platform Game Client",
+    "name": "DoraMCU - Web Game Client",
     "short_name": "DoraMCU",
-    "description": "Universal game client for desktop, tablet, and mobile",
-    "start_url": "/?source=pwa",
+    "description": "Web-based 4X strategy game client. Login, explore galaxies, build ships, and engage in combat.",
+    "start_url": "/game/index.html",
     "display": "standalone",
     "background_color": "#0a0e27",
     "theme_color": "#1a1a2e",
@@ -24,5 +24,11 @@
             "type": "image/png",
             "purpose": "any maskable"
         }
-    ]
+    ],
+    "game_node": {
+        "local_game_logic": true,
+        "local_ai_inference": true,
+        "offline_support": true,
+        "sync_protocol": "websocket"
+    }
 }

@@ -118,8 +118,8 @@ public class ResetService {
         List<String> entitiesRepopulated = new ArrayList<>();
         List<String> errors = new ArrayList<>();
 
-        // Phase 1 â€” Truncate all game data tables
-        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+        // Phase 1 — Truncate all game data tables
+        entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY FALSE").executeUpdate();
 
         try {
             // Character data (Captain's Log)
@@ -142,18 +142,54 @@ public class ResetService {
 
             // Gameplay state
             String[] gameplayTables = {
-                "game_sessions_persisted", "treasuries", "eve_corporations",
+                "persisted_game_sessions", "treasuries", "eve_corporations",
                 "ai_characters", "devices", "players"
             };
             for (String table : gameplayTables) {
                 truncateTable(table, tablesCleaned, errors);
             }
 
+            // AI Admin tables (v0.8.0+ manager system) — leaf tables first
+            String[] aiAdminTables = {
+                // Quest sub-tables (depend on ai_admin_quests)
+                "ai_admin_quest_steps", "ai_admin_quest_rewards",
+                // Incident sub-tables (depend on ai_admin_incidents)
+                "ai_admin_incident_collaborators", "ai_admin_collaboration_notes",
+                // Test sub-tables (depend on ai_admin_test_reports)
+                "ai_admin_test_cases",
+                // Training sub-tables (depend on ai_admin_training_scenarios)
+                "ai_admin_training_sessions",
+                // Shift sub-tables (depend on ai_admin_schedules)
+                "ai_admin_shift_handovers",
+                // Order sub-tables (depend on ai_admin_orders)
+                "order_progress",
+                // Main AI admin tables
+                "ai_admin_orders", "ai_admin_quests", "ai_admin_test_reports",
+                "ai_admin_health_reports", "ai_admin_incidents",
+                "ai_admin_notifications", "ai_admin_schedules",
+                "ai_admin_training_scenarios"
+            };
+            for (String table : aiAdminTables) {
+                truncateTable(table, tablesCleaned, errors);
+            }
+
+            // Hex/Production tables (v0.8.0+ production system) — leaf tables first
+            String[] hexProductionTables = {
+                "production_chain_tracking", "crew_member_skills", "hull_modules",
+                "build_contracts"
+            };
+            for (String table : hexProductionTables) {
+                truncateTable(table, tablesCleaned, errors);
+            }
+
+            // Earth 2026 characters
+            truncateTable("earth_2026_characters", tablesCleaned, errors);
+
             // Galaxy data (leaf entities first)
             String[] galaxyTables = {
                 "wormholes", "space_stations", "comets", "black_holes",
-                "nebulas", "gas_giants", "asteroid_belts", "asteroids", "moons", "planets",
-                "stars", "solar_systems", "sub_sectors", "sectors", "galaxies"
+                "nebulae", "gas_giants", "asteroid_belts", "asteroids", "moons", "planets",
+                "stars", "solar_systems", "subsectors", "sectors", "galaxies"
             };
             for (String table : galaxyTables) {
                 truncateTable(table, tablesCleaned, errors);
@@ -179,7 +215,7 @@ public class ResetService {
             return new ResetResult(true, message, tablesCleaned, entitiesRepopulated, errors);
 
         } finally {
-            entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+            entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY TRUE").executeUpdate();
         }
     }
 
@@ -316,14 +352,49 @@ public class ResetService {
         List<String> entitiesRepopulated = new ArrayList<>();
         List<String> errors = new ArrayList<>();
 
-        // Phase 1 â€” Truncate only galaxy-related tables (leaf entities first)
-        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+        // Phase 1 — Truncate only galaxy-related tables (leaf entities first)
+        entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY FALSE").executeUpdate();
 
         try {
+            // AI Admin tables (v0.8.0+ manager system) — leaf tables first
+            // These are galaxy-specific state and should be cleared on galaxy reset
+            String[] aiAdminTables = {
+                // Quest sub-tables (depend on ai_admin_quests)
+                "ai_admin_quest_steps", "ai_admin_quest_rewards",
+                // Incident sub-tables (depend on ai_admin_incidents)
+                "ai_admin_incident_collaborators", "ai_admin_collaboration_notes",
+                // Test sub-tables (depend on ai_admin_test_reports)
+                "ai_admin_test_cases",
+                // Training sub-tables (depend on ai_admin_training_scenarios)
+                "ai_admin_training_sessions",
+                // Shift sub-tables (depend on ai_admin_schedules)
+                "ai_admin_shift_handovers",
+                // Order sub-tables (depend on ai_admin_orders)
+                "order_progress",
+                // Main AI admin tables
+                "ai_admin_orders", "ai_admin_quests", "ai_admin_test_reports",
+                "ai_admin_health_reports", "ai_admin_incidents",
+                "ai_admin_notifications", "ai_admin_schedules",
+                "ai_admin_training_scenarios"
+            };
+            for (String table : aiAdminTables) {
+                truncateTable(table, tablesCleaned, errors);
+            }
+
+            // Hex/Production tables (v0.8.0+ production system) — leaf tables first
+            // These are galaxy-specific state and should be cleared on galaxy reset
+            String[] hexProductionTables = {
+                "production_chain_tracking", "crew_member_skills", "hull_modules",
+                "build_contracts"
+            };
+            for (String table : hexProductionTables) {
+                truncateTable(table, tablesCleaned, errors);
+            }
+
             String[] galaxyTables = {
                 "wormholes", "space_stations", "comets", "black_holes",
-                "nebulas", "gas_giants", "asteroid_belts", "asteroids", "moons", "planets",
-                "stars", "solar_systems", "sub_sectors", "sectors", "galaxies"
+                "nebulae", "gas_giants", "asteroid_belts", "asteroids", "moons", "planets",
+                "stars", "solar_systems", "subsectors", "sectors", "galaxies"
             };
             for (String table : galaxyTables) {
                 truncateTable(table, tablesCleaned, errors);
@@ -346,7 +417,7 @@ public class ResetService {
             return new ResetResult(true, message, tablesCleaned, entitiesRepopulated, errors);
 
         } finally {
-            entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+            entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY TRUE").executeUpdate();
         }
     }
 

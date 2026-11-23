@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using DoraMCU.Client.Core;
 using UnityEngine.UI;
 
@@ -16,6 +17,7 @@ namespace DoraMCU.Client.UI
         [SerializeField] private Text playerNameText;
         [SerializeField] private Text playerSpeciesText;
         [SerializeField] private Text playerCareerText;
+        [SerializeField] private Text playerCorporationText;
         [SerializeField] private Text playerStatusText;
         [SerializeField] private Text playerLocationText;
         [SerializeField] private Slider playerHealthBar;
@@ -30,6 +32,8 @@ namespace DoraMCU.Client.UI
         [SerializeField] private Text shipsText;
         [SerializeField] private Text planetsText;
         [SerializeField] private GameObject fleetPanel;
+        [SerializeField] private ScrollRect fleetScroll;
+        [SerializeField] private Transform fleetContent;
 
         [Header("Connection Panel")]
         [SerializeField] private Text connectionStatusText;
@@ -43,8 +47,8 @@ namespace DoraMCU.Client.UI
 
         [Header("Settings")]
         [SerializeField] private float hudUpdateInterval = 2f;
-        [SerializeField] private Color connectedColor = Color.green;
-        [SerializeField] private Color disconnectedColor = Color.red;
+        [SerializeField] private Color connectedColor; // Initialized from UIConfig
+        [SerializeField] private Color disconnectedColor; // Initialized from UIConfig
 
         private GameObject playerStatsPanelGo;
         private GameObject resourcesPanelGo;
@@ -58,12 +62,16 @@ namespace DoraMCU.Client.UI
         {
             base.Awake();
             DontDestroyOnLoad(gameObject);
+            Debug.Log("[MainHUD] Awake() called");
         }
 
         void Start()
         {
+            Debug.Log("[MainHUD] Start() called");
             EnsureUIElements();
             SubscribeToEvents();
+            // Hide HUD initially — show only after login
+            SetVisible(false);
             updateCoroutine = StartCoroutine(PeriodicUpdate());
         }
 
@@ -104,15 +112,21 @@ namespace DoraMCU.Client.UI
             // Create player stats panel (top-left)
             if (playerStatsPanel == null)
             {
-                playerStatsPanelGo = CreatePanel("PlayerStatsPanel", new Vector2(10, Screen.height - 10), new Vector2(280, 160));
-                CreateText(ref playerNameText, "PlayerNameText", playerStatsPanelGo.transform, "Player Name", 18, new Vector2(10, 140));
-                CreateText(ref playerSpeciesText, "PlayerSpeciesText", playerStatsPanelGo.transform, "Species", 12, new Vector2(10, 120));
-                CreateText(ref playerCareerText, "PlayerCareerText", playerStatsPanelGo.transform, "Career", 12, new Vector2(10, 100));
-                CreateText(ref playerStatusText, "PlayerStatusText", playerStatsPanelGo.transform, "Status", 12, new Vector2(10, 80));
-                CreateText(ref playerLocationText, "PlayerLocationText", playerStatsPanelGo.transform, "Location", 12, new Vector2(10, 60));
+                var uiCfg = UIConfig.Instance;
+                playerStatsPanelGo = CreatePanel("PlayerStatsPanel", new Vector2(10, Screen.height - 10), uiCfg.PlayerStatsPanelSize);
+                CreateText(ref playerNameText, "PlayerNameText", playerStatsPanelGo.transform, "Player Name", uiCfg.FontSizeHeading, new Vector2(10, 140));
+                CreateText(ref playerSpeciesText, "PlayerSpeciesText", playerStatsPanelGo.transform, "Species", uiCfg.FontSizeSmall, new Vector2(10, 120));
+                CreateText(ref playerCareerText, "PlayerCareerText", playerStatsPanelGo.transform, "Career", uiCfg.FontSizeSmall, new Vector2(10, 100));
+                CreateText(ref playerCorporationText, "PlayerCorporationText", playerStatsPanelGo.transform, "Corporation", uiCfg.FontSizeSmall, new Vector2(10, 80));
+                CreateText(ref playerStatusText, "PlayerStatusText", playerStatsPanelGo.transform, "Status", uiCfg.FontSizeSmall, new Vector2(10, 60));
+                CreateText(ref playerLocationText, "PlayerLocationText", playerStatsPanelGo.transform, "Location", uiCfg.FontSizeSmall, new Vector2(10, 40));
 
                 // Health bar
-                var barGo = new GameObject("HealthBar") { transform = { parent = playerStatsPanelGo.transform, anchoredPosition = new Vector2(10, 30), localScale = Vector3.one } };
+                var barGo = new GameObject("HealthBar");
+                var barRect = barGo.AddComponent<RectTransform>();
+                barRect.SetParent(playerStatsPanelGo.transform);
+                barRect.anchoredPosition = new Vector2(10, 30);
+                barRect.localScale = Vector3.one;
                 playerHealthBar = barGo.AddComponent<Slider>();
                 playerHealthBar.minValue = 0;
                 playerHealthBar.maxValue = 1;
@@ -123,30 +137,93 @@ namespace DoraMCU.Client.UI
             // Create resources panel (top-right)
             if (resourcesPanel == null)
             {
-                resourcesPanelGo = CreatePanel("ResourcesPanel", new Vector2(Screen.width - 210, Screen.height - 10), new Vector2(200, 150));
-                CreateText(ref resourcesText, "ResourcesText", resourcesPanelGo.transform, "Resources", 14, new Vector2(10, 130));
+                var uiCfg2 = UIConfig.Instance;
+                resourcesPanelGo = CreatePanel("ResourcesPanel", new Vector2(Screen.width - 210, Screen.height - 10), uiCfg2.ResourcesPanelSize);
+                CreateText(ref resourcesText, "ResourcesText", resourcesPanelGo.transform, "Resources", uiCfg2.FontSizeNormal, new Vector2(10, 130));
             }
 
-            // Create fleet panel (bottom-left)
+            // Create fleet panel (bottom-left) with scroll support
             if (fleetPanel == null)
             {
-                fleetPanelGo = CreatePanel("FleetPanel", new Vector2(10, 10), new Vector2(250, 100));
-                CreateText(ref fleetText, "FleetText", fleetPanelGo.transform, "Fleets", 14, new Vector2(10, 80));
-                CreateText(ref shipsText, "ShipsText", fleetPanelGo.transform, "Ships", 12, new Vector2(10, 60));
-                CreateText(ref planetsText, "PlanetsText", fleetPanelGo.transform, "Planets", 12, new Vector2(10, 40));
+                var uiCfg3 = UIConfig.Instance;
+                fleetPanelGo = CreatePanel("FleetPanel", new Vector2(10, 10), new Vector2(uiCfg3.FleetPanelSize.x, 200));
+                
+                // Title text at top
+                CreateText(ref fleetText, "FleetText", fleetPanelGo.transform, "Fleets", uiCfg3.FontSizeNormal, new Vector2(10, 180));
+                
+                // Scrollable content area for fleet items
+                var scrollGo = new GameObject("FleetScroll");
+                var scrollRect = scrollGo.AddComponent<RectTransform>();
+                scrollRect.SetParent(fleetPanelGo.transform);
+                scrollRect.anchorMin = Vector2.zero;
+                scrollRect.anchorMax = Vector2.one;
+                scrollRect.anchoredPosition = Vector2.zero;
+                scrollRect.sizeDelta = new Vector2(-20, -40); // Padding from edges
+                scrollRect.localScale = Vector3.one;
+                
+                var scrollRectComp = scrollGo.AddComponent<ScrollRect>();
+                
+                // Viewport
+                var viewport = new GameObject("Viewport");
+                var vpRect = viewport.AddComponent<RectTransform>();
+                vpRect.SetParent(scrollGo.transform);
+                vpRect.anchorMin = Vector2.zero;
+                vpRect.anchorMax = Vector2.one;
+                vpRect.anchoredPosition = Vector2.zero;
+                vpRect.sizeDelta = Vector2.zero;
+                vpRect.localScale = Vector3.one;
+                var viewportImage = viewport.AddComponent<Image>();
+                viewportImage.color = UIConfig.Instance.ScrollViewportBackground;
+                scrollRectComp.viewport = vpRect;
+                
+                // Content area
+                var contentGo = new GameObject("Content");
+                var contentRect = contentGo.AddComponent<RectTransform>();
+                contentRect.SetParent(vpRect);
+                contentRect.anchorMin = new Vector2(0.5f, 1);
+                contentRect.anchorMax = new Vector2(0.5f, 1);
+                contentRect.anchoredPosition = new Vector2(0, 0);
+                contentRect.sizeDelta = new Vector2(vpRect.sizeDelta.x, 0);
+                contentRect.localScale = Vector3.one;
+                contentGo.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+                
+                scrollRectComp.content = contentRect;
+                fleetContent = contentRect;
+                
+                // Vertical scrollbar
+                var scrollbarGo = new GameObject("Scrollbar");
+                var sbRect = scrollbarGo.AddComponent<RectTransform>();
+                sbRect.SetParent(scrollGo.transform);
+                sbRect.anchorMin = new Vector2(1, 0);
+                sbRect.anchorMax = new Vector2(1, 1);
+                sbRect.anchoredPosition = Vector2.zero;
+                sbRect.sizeDelta = new Vector2(8, 0);
+                sbRect.localScale = Vector3.one;
+                var scrollbar = scrollbarGo.AddComponent<Scrollbar>();
+                scrollbar.direction = Scrollbar.Direction.TopToBottom;
+                scrollRectComp.scrollbar = scrollbar;
+                
+                fleetScroll = scrollRectComp;
+                
+                // Summary texts at bottom
+                CreateText(ref shipsText, "ShipsText", fleetPanelGo.transform, "Ships: 0", uiCfg3.FontSizeSmall, new Vector2(10, 20));
+                CreateText(ref planetsText, "PlanetsText", fleetPanelGo.transform, "Planets: 0", uiCfg3.FontSizeSmall, new Vector2(10, 5));
             }
 
             // Create connection panel (top-center)
             if (connectionPanel == null)
             {
-                connectionPanelGo = CreatePanel("ConnectionPanel", new Vector2(Screen.width / 2 - 100, Screen.height - 10), new Vector2(200, 40));
-                CreateText(ref connectionStatusText, "ConnectionStatusText", connectionPanelGo.transform, "Connecting...", 12, new Vector2(0, 10));
-                CreateText(ref tickInfoText, "TickInfoText", connectionPanelGo.transform, "Tick", 10, new Vector2(0, -10));
+                var uiCfg4 = UIConfig.Instance;
+                connectionPanelGo = CreatePanel("ConnectionPanel", new Vector2(Screen.width / 2 - 100, Screen.height - 10), uiCfg4.ConnectionPanelSize);
+                CreateText(ref connectionStatusText, "ConnectionStatusText", connectionPanelGo.transform, "Connecting...", uiCfg4.FontSizeSmall, new Vector2(0, 10));
+                CreateText(ref tickInfoText, "TickInfoText", connectionPanelGo.transform, "Tick", uiCfg4.FontSizeTiny, new Vector2(0, -10));
             }
 
             // Create minimap panel (bottom-right)
             if (minimapPanel == null)
             {
+                var uiCfg5 = UIConfig.Instance;
+                minimapSize = uiCfg5.MinimapSize;
                 minimapPanelGo = CreatePanel("MinimapPanel", new Vector2(Screen.width - minimapSize - 10, 10), new Vector2(minimapSize, minimapSize));
                 
                 // Minimap texture
@@ -155,7 +232,11 @@ namespace DoraMCU.Client.UI
                 
                 if (minimapImage == null)
                 {
-                    var imgGo = new GameObject("MinimapImage") { transform = { parent = minimapPanelGo.transform, anchoredPosition = Vector2.zero, localScale = Vector3.one } };
+                    var imgGo = new GameObject("MinimapImage");
+                    var imgRect = imgGo.AddComponent<RectTransform>();
+                    imgRect.SetParent(minimapPanelGo.transform);
+                    imgRect.anchoredPosition = Vector2.zero;
+                    imgRect.localScale = Vector3.one;
                     minimapImage = imgGo.AddComponent<RawImage>();
                     minimapImage.texture = minimapTexture;
                     minimapImage.rectTransform.sizeDelta = new Vector2(minimapSize, minimapSize);
@@ -218,6 +299,28 @@ namespace DoraMCU.Client.UI
         }
 
         /// <summary>
+        /// Set the character name directly (e.g., after character creation).
+        /// </summary>
+        public void SetCharacterName(string name)
+        {
+            if (playerNameText != null && !string.IsNullOrEmpty(name))
+            {
+                playerNameText.text = $"Commander: {name}";
+            }
+        }
+
+        /// <summary>
+        /// Set the corporation name directly (e.g., after login/registration).
+        /// </summary>
+        public void SetCorporationName(string name)
+        {
+            if (playerCorporationText != null && !string.IsNullOrEmpty(name))
+            {
+                playerCorporationText.text = $"Corporation: {name}";
+            }
+        }
+
+        /// <summary>
         /// Update player character stats display.
         /// </summary>
         public void UpdatePlayerStats(DoraMCU.Client.Network.NetworkManager.PlayerInfo player)
@@ -229,10 +332,16 @@ namespace DoraMCU.Client.UI
                 if (playerNameText != null) playerNameText.text = $"Commander: {player.commander.name}";
                 if (playerSpeciesText != null) playerSpeciesText.text = $"Species: {player.commander.species}";
                 if (playerCareerText != null) playerCareerText.text = $"Career: {player.commander.currentCareer}";
+                // Show corporation from NetworkManager if available
+                var nm = DoraMCU.Client.Network.NetworkManager.Instance;
+                if (playerCorporationText != null && nm != null && !string.IsNullOrEmpty(nm.CorporationName))
+                {
+                    playerCorporationText.text = $"Corporation: {nm.CorporationName}";
+                }
                 if (playerStatusText != null)
                 {
                     playerStatusText.text = $"Status: {(player.commander.alive ? "Alive" : "Deceased")}";
-                    playerStatusText.color = player.commander.alive ? Color.white : Color.red;
+                    playerStatusText.color = player.commander.alive ? UIConfig.Instance.StatusAlive : UIConfig.Instance.StatusDead;
                 }
                 if (playerLocationText != null) playerLocationText.text = $"Location: {player.commander.location}";
             }
@@ -280,28 +389,85 @@ namespace DoraMCU.Client.UI
         }
 
         /// <summary>
-        /// Update fleet and asset information.
+        /// Update fleet and asset information with scrollable fleet items.
         /// </summary>
         public void UpdateFleetInfo(DoraMCU.Client.Network.NetworkManager.PlayerInfo player)
         {
             if (player == null) return;
 
+            var fleetCount = player.fleets?.Length ?? 0;
+            var shipCount = player.ships?.Length ?? 0;
+            var planetCount = player.planets?.Length ?? 0;
+
             if (fleetText != null)
             {
-                var fleetCount = player.fleets?.Length ?? 0;
                 fleetText.text = $"Fleets: {fleetCount}";
             }
 
             if (shipsText != null)
             {
-                var shipCount = player.ships?.Length ?? 0;
                 shipsText.text = $"Ships: {shipCount}";
             }
 
             if (planetsText != null)
             {
-                var planetCount = player.planets?.Length ?? 0;
                 planetsText.text = $"Planets: {planetCount}";
+            }
+
+            // Update scrollable fleet items
+            if (fleetContent != null)
+            {
+                // Clear existing fleet items
+                foreach (Transform child in fleetContent)
+                {
+                    Object.Destroy(child.gameObject);
+                }
+
+                // Add fleet items to scroll content
+                if (player.fleets != null)
+                {
+                    foreach (var fleet in player.fleets)
+                    {
+                        var itemGo = new GameObject("FleetItem");
+                        var itemRect = itemGo.AddComponent<RectTransform>();
+                        itemRect.SetParent(fleetContent);
+                        itemRect.anchorMin = new Vector2(0, 1);
+                        itemRect.anchorMax = new Vector2(1, 1);
+                        itemRect.anchoredPosition = Vector2.zero;
+                        itemRect.sizeDelta = new Vector2(0, 20);
+                        itemRect.localScale = Vector3.one;
+
+                        var itemText = itemGo.AddComponent<Text>();
+                        itemText.text = fleet.name ?? "Unnamed Fleet";
+                        itemText.fontSize = UIConfig.Instance.FontSizeSmall;
+                        itemText.font = FontLoader.Instance.DefaultFont;
+                        itemText.color = UIConfig.Instance.TextDefault;
+                        itemText.horizontalOverflow = HorizontalWrapMode.Overflow;
+                    }
+                }
+
+                // Add ship items to scroll content
+                if (player.ships != null)
+                {
+                    foreach (var ship in player.ships)
+                    {
+                        var itemGo = new GameObject("ShipItem");
+                        var itemRect = itemGo.AddComponent<RectTransform>();
+                        itemRect.SetParent(fleetContent);
+                        itemRect.anchorMin = new Vector2(0, 1);
+                        itemRect.anchorMax = new Vector2(1, 1);
+                        itemRect.anchoredPosition = Vector2.zero;
+                        itemRect.sizeDelta = new Vector2(0, 20);
+                        itemRect.localScale = Vector3.one;
+
+                        var itemText = itemGo.AddComponent<Text>();
+                        itemText.text = $"  {ship.name ?? "Unnamed Ship"}";
+                        itemText.fontSize = UIConfig.Instance.FontSizeTiny;
+                        itemText.font = FontLoader.Instance.DefaultFont;
+                        itemText.color = UIConfig.Instance.TextLoading;
+                        itemText.horizontalOverflow = HorizontalWrapMode.Overflow;
+                    }
+                }
             }
         }
 
@@ -323,7 +489,7 @@ namespace DoraMCU.Client.UI
             if (connectionStatusText != null)
             {
                 connectionStatusText.text = "Connected";
-                connectionStatusText.color = connectedColor;
+                connectionStatusText.color = UIConfig.Instance.TextSuccess;
             }
             Debug.Log($"[MainHUD] Connected: {sessionId}");
         }
@@ -336,7 +502,7 @@ namespace DoraMCU.Client.UI
             if (connectionStatusText != null)
             {
                 connectionStatusText.text = "Disconnected";
-                connectionStatusText.color = disconnectedColor;
+                connectionStatusText.color = UIConfig.Instance.TextError;
             }
         }
 
@@ -348,7 +514,7 @@ namespace DoraMCU.Client.UI
             if (connectionStatusText != null)
             {
                 connectionStatusText.text = $"Error: {error}";
-                connectionStatusText.color = Color.yellow;
+                connectionStatusText.color = UIConfig.Instance.TextWarning;
             }
         }
 
@@ -373,16 +539,12 @@ namespace DoraMCU.Client.UI
             
             var rectTransform = panel.AddComponent<RectTransform>();
             rectTransform.anchorMin = Vector2.zero;
-            rectTransform.anchorMax = Vector2.one;
+            rectTransform.anchorMax = Vector2.zero;
             rectTransform.anchoredPosition = position;
-            rectTransform.sizeDelta = -size;
+            rectTransform.sizeDelta = size;
 
             var image = panel.AddComponent<Image>();
-            image.color = new Color(0, 0, 0, 0.7f);
-
-            var outline = panel.AddComponent<Outline>();
-            outline.effectColor = Color.cyan;
-            outline.effectDistance = new Vector2(2, 2);
+            image.color = UIConfig.Instance.PanelBackground;
 
             return panel;
         }
@@ -391,15 +553,20 @@ namespace DoraMCU.Client.UI
         {
             var textGo = new GameObject(name);
             textGo.transform.SetParent(parent);
-            textGo.transform.anchoredPosition = position;
-            textGo.transform.localRotation = Quaternion.identity;
-            textGo.transform.localScale = Vector3.one;
+            var textRect = textGo.GetComponent<RectTransform>();
+            if (textRect == null) textRect = textGo.AddComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.zero;
+            textRect.anchoredPosition = position;
+            textRect.sizeDelta = new Vector2(200, 30);
+            textRect.localRotation = Quaternion.identity;
+            textRect.localScale = Vector3.one;
 
             textRef = textGo.AddComponent<Text>();
             textRef.text = defaultText;
             textRef.fontSize = fontSize;
-            textRef.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            textRef.color = Color.white;
+            textRef.font = FontLoader.Instance.DefaultFont;
+            textRef.color = UIConfig.Instance.TextDefault;
             textRef.horizontalOverflow = HorizontalWrapMode.Overflow;
             textRef.verticalOverflow = VerticalWrapMode.Overflow;
         }

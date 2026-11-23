@@ -527,7 +527,7 @@ class MissionServiceTest {
         @Test
         @DisplayName("should abandon mission")
         void abandonMission_shouldAbandon() {
-            Mission mission = missionService.getAvailableMissions().get(0);
+            Mission mission = missionService.getMissionsByType(Mission.MissionType.ASSAULT).get(0);
             assertTrue(missionService.acceptMission("pilot1", mission.getId()));
 
             missionService.abandonMission("pilot1", mission.getId());

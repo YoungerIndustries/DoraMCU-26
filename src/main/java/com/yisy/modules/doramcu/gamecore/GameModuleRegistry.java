@@ -47,6 +47,11 @@ public class GameModuleRegistry {
     @SuppressWarnings("SpringAutowiredFieldsWarningInspection_2")
     private MechanicRegistry mechanicRegistry;
 
+    // Package-private setter for testing
+    void setMechanicRegistry(MechanicRegistry mechanicRegistry) {
+        this.mechanicRegistry = mechanicRegistry;
+    }
+
     @Autowired(required = false)
     @SuppressWarnings("SpringAutowiredFieldsWarningInspection_2")
     private ThirdReichRulesEngine thirdReichRulesEngine;
@@ -359,5 +364,68 @@ public class GameModuleRegistry {
      */
     public Optional<RulesEngine> getThirdReichRulesEngine() {
         return Optional.ofNullable(thirdReichRulesEngine);
+    }
+
+    // ========== Hot-Swap Lifecycle Methods ==========
+
+    /**
+     * Unregister a module from the registry.
+     * <p>
+     * Called when a module is being unloaded or reloaded.
+     * Removes the module from the map and rebuilds the mechanic index.
+     * </p>
+     *
+     * @param gameType the game type to unregister
+     */
+    public void unregisterModule(GameType gameType) {
+        GameModule removed = modules.remove(gameType);
+        if (removed != null) {
+            log.info("Unregistered game module: {} ({})", removed.getModuleName(), gameType);
+            // Rebuild mechanic index without this module
+            if (mechanicRegistry != null) {
+                mechanicRegistry.rebuildIndex();
+            }
+        }
+    }
+
+    /**
+     * Reload a module by replacing its instance in the registry.
+     * <p>
+     * Called when a module has been reloaded with new code.
+     * Replaces the old instance and rebuilds the mechanic index.
+     * </p>
+     *
+     * @param gameType the game type
+     * @param newModule the new module instance
+     */
+    public void reloadModule(GameType gameType, GameModule newModule) {
+        modules.put(gameType, newModule);
+        log.info("Reloaded game module: {} ({}) with mechanics: {}",
+                newModule.getModuleName(), gameType, newModule.getMechanics());
+        if (mechanicRegistry != null) {
+            mechanicRegistry.rebuildIndex();
+        }
+    }
+
+    /**
+     * Toggle a module's enabled state.
+     *
+     * @param gameType the game type
+     * @param enabled the new enabled state
+     */
+    public void enableModule(GameType gameType, boolean enabled) {
+        GameModule module = modules.get(gameType);
+        if (module != null) {
+            log.info("Module {} {} ({})", gameType, enabled ? "enabled" : "disabled", module.getModuleName());
+        }
+    }
+
+    /**
+     * Get the internal modules map for iteration.
+     *
+     * @return the modules map
+     */
+    public Map<GameType, GameModule> getModulesMap() {
+        return modules;
     }
 }

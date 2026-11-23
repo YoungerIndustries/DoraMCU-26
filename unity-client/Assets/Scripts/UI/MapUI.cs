@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using DoraMCU.Client.Core;
 using UnityEngine.UI;
 
@@ -74,7 +75,7 @@ namespace DoraMCU.Client.UI
         void Update()
         {
             // Close map with Escape
-            if (Input.GetKeyDown(KeyCode.Escape) && IsVisible())
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Escape) && IsVisible())
             {
                 HideMap();
                 var menu = MenuManager.Instance;
@@ -121,7 +122,7 @@ namespace DoraMCU.Client.UI
                 rect.sizeDelta = new Vector2(-100, -100);
 
                 var bg = mapPanelGo.AddComponent<Image>();
-                bg.color = new Color(0, 0, 0, 0.9f);
+                bg.color = UIConfig.Instance.PanelBackground;
 
                 // Title
                 var titleGo = new GameObject("Title");
@@ -135,7 +136,7 @@ namespace DoraMCU.Client.UI
                 var titleText = titleGo.AddComponent<Text>();
                 titleText.text = "GALAXY MAP";
                 titleText.fontSize = 28;
-                titleText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                titleText.font = FontLoader.Instance.DefaultFont;
                 titleText.color = Color.cyan;
                 titleText.fontStyle = FontStyle.Bold;
                 titleText.alignment = TextAnchor.MiddleCenter;
@@ -152,8 +153,8 @@ namespace DoraMCU.Client.UI
                 sectorInfoText = sectorInfoGo.AddComponent<Text>();
                 sectorInfoText.text = "Sector: ---";
                 sectorInfoText.fontSize = 14;
-                sectorInfoText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                sectorInfoText.color = Color.white;
+                sectorInfoText.font = FontLoader.Instance.DefaultFont;
+                sectorInfoText.color = UIConfig.Instance.TextDefault;
                 sectorInfoText.horizontalOverflow = HorizontalWrapMode.Overflow;
 
                 // System info
@@ -168,8 +169,8 @@ namespace DoraMCU.Client.UI
                 systemInfoText = systemInfoGo.AddComponent<Text>();
                 systemInfoText.text = "System: ---";
                 systemInfoText.fontSize = 14;
-                systemInfoText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                systemInfoText.color = Color.white;
+                systemInfoText.font = FontLoader.Instance.DefaultFont;
+                systemInfoText.color = UIConfig.Instance.TextDefault;
                 systemInfoText.horizontalOverflow = HorizontalWrapMode.Overflow;
                 systemInfoText.alignment = TextAnchor.MiddleRight;
 
@@ -183,7 +184,7 @@ namespace DoraMCU.Client.UI
                 mapRect.sizeDelta = Vector2.zero;
 
                 var mapBg = mapContent.AddComponent<Image>();
-                mapBg.color = new Color(0.05f, 0.05f, 0.1f, 1f);
+                mapBg.color = UIConfig.Instance.DarkPanelBackground;
 
                 // Create sectors grid
                 CreateSectorsGrid();
@@ -198,9 +199,10 @@ namespace DoraMCU.Client.UI
                 legendRect.sizeDelta = Vector2.zero;
 
                 var legendBg = legendPanelGo.AddComponent<Image>();
-                legendBg.color = new Color(0.1f, 0.1f, 0.2f, 0.8f);
+                legendBg.color = UIConfig.Instance.ButtonBackground;
 
-                var legendTitle = CreateText(null, "LegendTitle", legendPanelGo.transform, "LEGEND", 16, new Vector2(0, 0.9f));
+                Text legendTitleRef = null;
+                var legendTitle = CreateText(ref legendTitleRef, "LegendTitle", legendPanelGo.transform, "LEGEND", 16, new Vector2(0, 0.9f));
                 if (legendTitle != null) legendTitle.fontStyle = FontStyle.Bold;
 
                 var legendLines = new[]
@@ -216,7 +218,8 @@ namespace DoraMCU.Client.UI
                 for (int i = 0; i < legendLines.Length; i++)
                 {
                     float y = 0.7f - (i * 0.1f);
-                    CreateText(null, $"Legend_{i}", legendPanelGo.transform, legendLines[i], 12, new Vector2(0, y));
+                    Text legendRef = null;
+                    CreateText(ref legendRef, $"Legend_{i}", legendPanelGo.transform, legendLines[i], 12, new Vector2(0, y));
                 }
 
                 // Navigation buttons
@@ -273,8 +276,8 @@ namespace DoraMCU.Client.UI
                     var label = labelGo.AddComponent<Text>();
                     label.text = $"{row},{col}";
                     label.fontSize = 8;
-                    label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                    label.color = new Color(1, 1, 1, 0.5f);
+                    label.font = FontLoader.Instance.DefaultFont;
+                    label.color = UIConfig.Instance.TextDisabled;
                     label.alignment = TextAnchor.MiddleCenter;
 
                     sectorMarkers[sectorId] = sectorGo;
@@ -345,7 +348,7 @@ namespace DoraMCU.Client.UI
                         var label = marker.GetComponentInChildren<Text>();
                         if (label != null && !string.IsNullOrEmpty(sector.tradeType))
                         {
-                            label.text = sector.tradeType.Substring(0, Math.Min(3, sector.tradeType.Length));
+                            label.text = sector.tradeType.Substring(0, System.Math.Min(3, sector.tradeType.Length));
                         }
                     }
 
@@ -384,13 +387,13 @@ namespace DoraMCU.Client.UI
             systemGo.transform.SetParent(mapContent.transform);
 
             var rect = systemGo.AddComponent<RectTransform>();
-            float x = (sectorCol * sectorSize) + (system.sectorCol ?? 0) * (sectorSize / 4) - (20 * sectorSize) / 2;
-            float y = -((sectorRow * sectorSize) + (system.sectorRow ?? 0) * (sectorSize / 4)) + (20 * sectorSize) / 2;
+            float x = (sectorCol * sectorSize) - (20 * sectorSize) / 2;
+            float y = -((sectorRow * sectorSize)) + (20 * sectorSize) / 2;
             rect.anchoredPosition = new Vector2(x, y);
             rect.sizeDelta = new Vector2(systemSize, systemSize);
 
             var img = systemGo.AddComponent<Image>();
-            img.color = system.explored ? systemColor : new Color(0.5f, 0.5f, 0.5f, 0.5f);
+            img.color = system.explored ? systemColor : UIConfig.Instance.TextDisabled;
             img.type = Image.Type.Filled;
             img.fillMethod = Image.FillMethod.Radial360;
             img.fillAmount = 1f;
@@ -431,7 +434,7 @@ namespace DoraMCU.Client.UI
             var label = labelGo.AddComponent<Text>();
             label.text = fleet.name?.Substring(0, 1) ?? "?";
             label.fontSize = 8;
-            label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            label.font = FontLoader.Instance.DefaultFont;
             label.color = Color.black;
             label.alignment = TextAnchor.MiddleCenter;
 
@@ -564,8 +567,8 @@ namespace DoraMCU.Client.UI
             textRef = textGo.AddComponent<Text>();
             textRef.text = defaultText;
             textRef.fontSize = fontSize;
-            textRef.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            textRef.color = Color.white;
+            textRef.font = FontLoader.Instance.DefaultFont;
+            textRef.color = UIConfig.Instance.TextDefault;
             textRef.horizontalOverflow = HorizontalWrapMode.Overflow;
 
             return textRef;
@@ -583,23 +586,24 @@ namespace DoraMCU.Client.UI
 
             var btn = btnGo.AddComponent<Button>();
             var img = btnGo.AddComponent<Image>();
-            img.color = new Color(0.1f, 0.1f, 0.3f, 0.8f);
+            img.color = UIConfig.Instance.ButtonBackground;
 
             var textGo = new GameObject("Text");
             textGo.transform.SetParent(btnGo.transform);
             var textRect = textGo.AddComponent<RectTransform>();
             textRect.anchorMin = Vector2.zero;
             textRect.anchorMax = Vector2.one;
+            textRect.anchoredPosition = Vector2.zero;
             textRect.sizeDelta = Vector2.zero;
 
             var t = textGo.AddComponent<Text>();
             t.text = text;
             t.fontSize = 12;
-            t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            t.color = Color.white;
+            t.font = FontLoader.Instance.DefaultFont;
+            t.color = UIConfig.Instance.TextDefault;
             t.alignment = TextAnchor.MiddleCenter;
 
-            btn.onClick.AddListener(onClick);
+            btn.onClick.AddListener(() => onClick());
             return btn;
         }
 

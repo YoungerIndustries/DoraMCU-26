@@ -128,8 +128,8 @@ public class AiAdminDispatchService {
             List<AiAdminOrder> unassignedPending = orderRepository
                     .findByStatusAndAssignedAiAdminIdIsNull(AiAdminOrder.OrderStatus.PENDING);
 
+            log.info("Dispatch scan: found {} unassigned pending orders", unassignedPending.size());
             if (!unassignedPending.isEmpty()) {
-                log.info("Dispatch scan: found {} unassigned pending orders", unassignedPending.size());
                 for (AiAdminOrder order : unassignedPending) {
                     dispatchSingleOrder(order);
                 }
@@ -317,6 +317,7 @@ public class AiAdminDispatchService {
         // and try to find the Galaxy Overseer for that galaxy
         Optional<AiCharacter> galaxyOverseer = findGalaxyOverseerForOrder(submittedBy);
         if (galaxyOverseer.isPresent() && isAvailable(galaxyOverseer.get())) {
+            log.info("Dispatch: selected Galaxy Overseer '{}' for order {}", galaxyOverseer.get().getName(), order.getId());
             return galaxyOverseer;
         }
 
@@ -329,6 +330,7 @@ public class AiAdminDispatchService {
                     .filter(this::isAvailable)
                     .min(Comparator.comparingInt(AiCharacter::getActiveOrderCount));
             if (best.isPresent()) {
+                log.info("Dispatch: selected empire admin '{}' for order {}", best.get().getName(), order.getId());
                 return best;
             }
         }
@@ -336,6 +338,7 @@ public class AiAdminDispatchService {
         // Strategy 3: Any available AI admin across all empires
         List<AiCharacter> allAvailable = aiCharacterRepository
                 .findByAiAdminTrueAndActiveTrueAndCurrentOrderIdIsNull();
+        log.info("Dispatch: Strategy 3 found {} available AI admins across all empires for order {}", allAvailable.size(), order.getId());
         return allAvailable.stream()
                 .filter(this::isAvailable)
                 .min(Comparator.comparingInt(AiCharacter::getActiveOrderCount));

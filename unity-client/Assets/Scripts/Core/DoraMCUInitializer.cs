@@ -2,25 +2,22 @@ using UnityEngine;
 using DoraMCU.Client.Core;
 using DoraMCU.Client.Network;
 using DoraMCU.Client.Input;
-using DoraMCU.Client.Battlefield;
+// using DoraMCU.Client.Battlefield; // Disabled for build
+using DoraMCU.Client.UI;
 
 namespace DoraMCU.Client.Core
 {
     /// <summary>
     /// Auto-initializes all DoraMCU systems when the game starts.
-    /// <para>
-    /// Creates the main camera, lighting, and all Singleton managers
-    /// (GameManager, NetworkManager, InputHandler, BattlefieldRenderer, BattlefieldService).
-    /// Runs automatically via RuntimeInitializeLoadType before scene loading.
-    /// No need to place this in a scene.
-    /// </para>
+    /// Creates the main camera, lighting, and all Singleton managers.
+    /// Uses AfterSceneLoad to ensure Unity's game loop is running.
     /// </summary>
-    public class DoraMCUInitializer
+    public class DoraMCUInitializer : MonoBehaviour
     {
         private static bool isInitialized = false;
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void InitializeOnLoad()
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void InitializeAfterScene()
         {
             if (isInitialized)
             {
@@ -28,12 +25,33 @@ namespace DoraMCU.Client.Core
                 return;
             }
 
+            // Create a bootstrap GameObject that will run in the game loop
+            var bootstrap = new GameObject("DoraMCUBootstrap");
+            bootstrap.AddComponent<DoraMCUInitializer>();
+            Object.DontDestroyOnLoad(bootstrap);
+        }
+
+        void Awake()
+        {
+            Debug.Log("[DoraMCUInitializer] Bootstrap Awake() — creating systems");
             InitializeCamera();
             InitializeLighting();
             InitializeSingletons();
 
             isInitialized = true;
             Debug.Log("[DoraMCUInitializer] All systems initialized");
+            Debug.Log("[DoraMCUInitializer] MainHUD.Instance null: " + (MainHUD.Instance == null));
+            Debug.Log("[DoraMCUInitializer] MenuManager.Instance null: " + (MenuManager.Instance == null));
+        }
+
+        void Start()
+        {
+            Debug.Log("[DoraMCUInitializer] Bootstrap Start() — game loop is running");
+        }
+
+        void Update()
+        {
+            // Keep the bootstrap alive; game loop is confirmed running
         }
 
         /// <summary>
@@ -61,8 +79,7 @@ namespace DoraMCU.Client.Core
             camera.fieldOfView = 60f;
             camera.clearFlags = CameraClearFlags.Skybox;
 
-            // Add BattlefieldCamera controller
-            cameraGo.AddComponent<BattlefieldCamera>();
+            // BattlefieldCamera disabled for build
 
             // Position camera above the battlefield
             cameraGo.transform.position = new Vector3(0f, 200f, -300f);
@@ -137,22 +154,121 @@ namespace DoraMCU.Client.Core
                 Debug.Log("[DoraMCUInitializer] InputHandler created");
             }
 
-            // BattlefieldRenderer
-            if (BattlefieldRenderer.Instance == null)
+            // BattlefieldRenderer - disabled for build
+            // if (BattlefieldRenderer.Instance == null)
+            // {
+            //     var go = new GameObject("BattlefieldRenderer");
+            //     Object.DontDestroyOnLoad(go);
+            //     go.AddComponent<BattlefieldRenderer>();
+            //     Debug.Log("[DoraMCUInitializer] BattlefieldRenderer created");
+            // }
+
+            // BattlefieldService - disabled for build
+            // if (BattlefieldService.Instance == null)
+            // {
+            //     var go = new GameObject("BattlefieldService");
+            //     Object.DontDestroyOnLoad(go);
+            //     go.AddComponent<BattlefieldService>();
+            //     Debug.Log("[DoraMCUInitializer] BattlefieldService created");
+            // }
+
+            // FontLoader (must be before UI components)
+            if (FontLoader.Instance == null)
             {
-                var go = new GameObject("BattlefieldRenderer");
+                var go = new GameObject("FontLoader");
                 Object.DontDestroyOnLoad(go);
-                go.AddComponent<BattlefieldRenderer>();
-                Debug.Log("[DoraMCUInitializer] BattlefieldRenderer created");
+                go.AddComponent<FontLoader>();
+                Debug.Log("[DoraMCUInitializer] FontLoader created");
             }
 
-            // BattlefieldService
-            if (BattlefieldService.Instance == null)
+            // ServerConfig
+            if (ServerConfig.Instance == null)
             {
-                var go = new GameObject("BattlefieldService");
+                var go = new GameObject("ServerConfig");
                 Object.DontDestroyOnLoad(go);
-                go.AddComponent<BattlefieldService>();
-                Debug.Log("[DoraMCUInitializer] BattlefieldService created");
+                go.AddComponent<ServerConfig>();
+                Debug.Log("[DoraMCUInitializer] ServerConfig created");
+            }
+
+            // MainHUD
+            if (MainHUD.Instance == null)
+            {
+                var go = new GameObject("MainHUD");
+                Object.DontDestroyOnLoad(go);
+                go.AddComponent<MainHUD>();
+                Debug.Log("[DoraMCUInitializer] MainHUD created");
+            }
+
+            // MenuManager
+            if (MenuManager.Instance == null)
+            {
+                var go = new GameObject("MenuManager");
+                Object.DontDestroyOnLoad(go);
+                go.AddComponent<MenuManager>();
+                Debug.Log("[DoraMCUInitializer] MenuManager created");
+            }
+
+            // LoginScreen
+            if (LoginScreen.Instance == null)
+            {
+                var go = new GameObject("LoginScreen");
+                Object.DontDestroyOnLoad(go);
+                go.AddComponent<LoginScreen>();
+                Debug.Log("[DoraMCUInitializer] LoginScreen created");
+            }
+
+            // CharacterCreation
+            if (CharacterCreation.Instance == null)
+            {
+                var go = new GameObject("CharacterCreation");
+                Object.DontDestroyOnLoad(go);
+                go.AddComponent<CharacterCreation>();
+                Debug.Log("[DoraMCUInitializer] CharacterCreation created");
+            }
+
+            // ShipBuildUI
+            if (ShipBuildUI.Instance == null)
+            {
+                var go = new GameObject("ShipBuildUI");
+                Object.DontDestroyOnLoad(go);
+                go.AddComponent<ShipBuildUI>();
+                Debug.Log("[DoraMCUInitializer] ShipBuildUI created");
+            }
+
+            // ExploreAction
+            if (ExploreAction.Instance == null)
+            {
+                var go = new GameObject("ExploreAction");
+                Object.DontDestroyOnLoad(go);
+                go.AddComponent<ExploreAction>();
+                Debug.Log("[DoraMCUInitializer] ExploreAction created");
+            }
+
+            // InventoryUI
+            if (InventoryUI.Instance == null)
+            {
+                var go = new GameObject("InventoryUI");
+                Object.DontDestroyOnLoad(go);
+                go.AddComponent<InventoryUI>();
+                Debug.Log("[DoraMCUInitializer] InventoryUI created");
+            }
+
+            // MapUI
+            if (MapUI.Instance == null)
+            {
+                var go = new GameObject("MapUI");
+                Object.DontDestroyOnLoad(go);
+                go.AddComponent<MapUI>();
+                Debug.Log("[DoraMCUInitializer] MapUI created");
+            }
+
+            // HelpOverlay
+            if (HelpOverlay.Instance == null)
+            {
+                var go = new GameObject("HelpOverlay");
+                Object.DontDestroyOnLoad(go);
+                go.AddComponent<HelpOverlay>();
+                Debug.Log("[DoraMCUInitializer] HelpOverlay created");
             }
         }
     }

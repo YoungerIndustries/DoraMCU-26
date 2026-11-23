@@ -4,6 +4,7 @@ import com.yisy.modules.doramcu.gamecore.GameType;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -38,8 +39,14 @@ public class MechanicRegistry {
     private static final Logger log = LoggerFactory.getLogger(MechanicRegistry.class);
 
     @Resource
+    @Lazy
     private GameModuleRegistry gameModuleRegistry;
     private final Map<MechanicType, List<GameModule>> mechanicToModules = new ConcurrentHashMap<>();
+
+    // Package-private setter for testing
+    void setGameModuleRegistry(GameModuleRegistry gameModuleRegistry) {
+        this.gameModuleRegistry = gameModuleRegistry;
+    }
 
     /**
      * Rebuilds the mechanic index from all currently registered modules.
@@ -136,5 +143,53 @@ public class MechanicRegistry {
             summary.put(entry.getKey(), moduleNames);
         }
         return Collections.unmodifiableMap(summary);
+    }
+
+    // ========== Hot-Swap Dynamic Indexing Methods ==========
+
+    /**
+     * Add a single module to the mechanic index.
+     * <p>
+     * Called when a module is dynamically registered at runtime.
+     * </p>
+     *
+     * @param module the module to index
+     */
+    public void indexModule(GameModule module) {
+        Set<MechanicType> mechanics = module.getMechanics();
+        if (mechanics != null) {
+            for (MechanicType mechanic : mechanics) {
+                mechanicToModules.computeIfAbsent(mechanic, k -> new ArrayList<>()).add(module);
+                log.debug("Indexed module {} for mechanic {}", module.getModuleName(), mechanic);
+            }
+        }
+        log.info("Module indexed: {} with {} mechanics", module.getModuleName(),
+                mechanics != null ? mechanics.size() : 0);
+    }
+
+    /**
+     * Remove a single module from the mechanic index.
+     * <p>
+     * Called when a module is dynamically unregistered at runtime.
+     * </p>
+     *
+     * @param module the module to unindex
+     */
+    public void unindexModule(GameModule module) {
+        if (module == null) return;
+        Set<MechanicType> mechanics = module.getMechanics();
+        if (mechanics != null) {
+            for (MechanicType mechanic : mechanics) {
+                List<GameModule> modules = mechanicToModules.get(mechanic);
+                if (modules != null) {
+                    modules.remove(module);
+                    if (modules.isEmpty()) {
+                        mechanicToModules.remove(mechanic);
+                    }
+                    log.debug("Unindexed module {} from mechanic {}", module.getModuleName(), mechanic);
+                }
+            }
+        }
+        log.info("Module unindexed: {}", module.getModuleName());
     }
 }

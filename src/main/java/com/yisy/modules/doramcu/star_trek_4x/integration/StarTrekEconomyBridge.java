@@ -1,5 +1,5 @@
 package com.yisy.modules.doramcu.star_trek_4x.integration;
-import com.yisy.modules.doramcu.model.misc.Planet;
+
 import com.yisy.modules.doramcu.fourx.FourxEconomyService;
 import com.yisy.modules.doramcu.fourx.FourxColony;
 import com.yisy.modules.doramcu.fourx.FourxTradeRoute;
@@ -14,7 +14,7 @@ import java.util.*;
  * planet development, trade routes, and resource management to the 4X system.
  * </p>
  */
-@Component("starTrekEconomyBridge_star_trek_4x_integration_StarTrekEconomyBridge")
+@Component
 public class StarTrekEconomyBridge implements FourxEconomyService {
 
     private final Map<String, FourxColony> colonies = new HashMap<>();

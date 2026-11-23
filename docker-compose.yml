@@ -1,24 +1,18 @@
 # =============================================================================
-# DoraMCU Docker Compose — Unified Configuration
+# DoraMCU Docker Compose — Base Configuration (Development Defaults)
 # =============================================================================
-# All-in-one compose file with profiles for different environments.
+# Base services with dev defaults. Override files extend this for prod/pi.
 #
 # Usage:
 #   Dev (default):    docker compose up -d
-#   Production:       docker compose --profile prod up -d
-#   Raspberry Pi:     docker compose --profile pi up -d
+#   Production:       docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#   Raspberry Pi:     docker compose -f docker-compose.yml -f docker-compose.pi.yml up -d
 #   Debug (OpenHands): docker compose --profile debug up -d
-#
-# Profiles:
-#   (none)  — Development stack with all services
-#   prod    — Production overrides (pre-built images, logging, security)
-#   pi      — Raspberry Pi overrides (reduced resources, ARM64 images)
-#   debug   — OpenHands AI coding assistant (dev-only)
 # =============================================================================
 
 services:
   # ─────────────────────────────────────────────────────────────────────────────
-  # Nginx reverse proxy — Development (default)
+  # Nginx reverse proxy
   # ─────────────────────────────────────────────────────────────────────────────
   nginx:
     build:
@@ -37,57 +31,7 @@ services:
     restart: unless-stopped
 
   # ─────────────────────────────────────────────────────────────────────────────
-  # Nginx — Production override
-  # ─────────────────────────────────────────────────────────────────────────────
-  nginx-prod:
-    image: doramcu/web:0.4.0
-    container_name: doramcu-nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    restart: always
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          memory: 512M
-          cpus: '0.5'
-        reservations:
-          memory: 256M
-          cpus: '0.25'
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-    profiles:
-      - prod
-
-  # ─────────────────────────────────────────────────────────────────────────────
-  # Nginx — Raspberry Pi override
-  # ─────────────────────────────────────────────────────────────────────────────
-  nginx-pi:
-    build:
-      context: .
-      dockerfile: Dockerfile.web
-      args:
-        WEB_ENV: prod
-        WEB_API_URL: http://app:8080
-    container_name: doramcu-nginx
-    ports:
-      - "80:80"
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          memory: 128M
-        reservations:
-          memory: 64M
-    profiles:
-      - pi
-
-  # ─────────────────────────────────────────────────────────────────────────────
-  # DoraMCU Neuron — Development (default)
+  # DoraMCU Neuron (AI inference)
   # ─────────────────────────────────────────────────────────────────────────────
   neuron:
     build:
@@ -112,70 +56,7 @@ services:
           memory: 256M
 
   # ─────────────────────────────────────────────────────────────────────────────
-  # Neuron — Production override
-  # ─────────────────────────────────────────────────────────────────────────────
-  neuron-prod:
-    image: doramcu/neuron:0.4.0
-    container_name: doramcu-neuron
-    ports:
-      - "8090:8090"
-    environment:
-      - NEURON_COORDINATOR_URL=http://app:8080
-      - NEURON_GAME_SERVER_URL=http://app:8080
-      - NEURON_SECURITY_JWT_SECRET=${NEURON_SECURITY_JWT_SECRET}
-      - NEURON_SECURITY_JWT_ENABLED=true
-      - NEURON_SECURITY_MODEL_SIGNATURE_ENABLED=true
-      - JVM_XMX=-Xmx512m
-    restart: always
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          memory: 1G
-          cpus: '0.5'
-        reservations:
-          memory: 256M
-          cpus: '0.25'
-    logging:
-      driver: json-file
-      options:
-        max-size: "5m"
-        max-file: "3"
-    profiles:
-      - prod
-
-  # ─────────────────────────────────────────────────────────────────────────────
-  # Neuron — Raspberry Pi override (edge-optimized, ARM64)
-  # ─────────────────────────────────────────────────────────────────────────────
-  neuron-pi:
-    build:
-      context: .
-      dockerfile: Dockerfile.neuron
-      args:
-        BASE_IMAGE: eclipse-temurin:27-jre-alpine
-    container_name: doramcu-neuron
-    ports:
-      - "8090:8090"
-    environment:
-      - NEURON_COORDINATOR_URL=http://app:8080
-      - NEURON_GAME_SERVER_URL=http://app:8080
-      - NEURON_SECURITY_JWT_SECRET=${NEURON_SECURITY_JWT_SECRET:-}
-      - NEURON_EDGE_FORCED_PROFILE=EDGE
-      - JAVA_OPTS=-Xms128m -Xmx256m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Xss256k -Djava.security.egd=file:/dev/./urandom -Dneuron.edge.auto-optimize=true
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: '0.5'
-        reservations:
-          memory: 256M
-          cpus: '0.25'
-    profiles:
-      - pi
-
-  # ─────────────────────────────────────────────────────────────────────────────
-  # DoraMCU App — Development (default)
+  # DoraMCU App (Spring Boot server)
   # ─────────────────────────────────────────────────────────────────────────────
   app:
     build:
@@ -207,92 +88,7 @@ services:
           memory: 512M
 
   # ─────────────────────────────────────────────────────────────────────────────
-  # App — Production override
-  # ─────────────────────────────────────────────────────────────────────────────
-  app-prod:
-    image: doramcu/app:0.4.0
-    container_name: doramcu
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker,production
-      - DB_PASSWORD=${DB_PASSWORD}
-      - JWT_SECRET=${JWT_SECRET}
-      - DL_MODE=rest
-      - JVM_XMX=-Xmx1G
-      - SERVER_FORWARD_HEADERS_STRATEGY=framework
-      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,metrics,prometheus
-      - LOGGING_LEVEL_ROOT=WARN
-      - LOGGING_LEVEL_COM_YISY_MODULES_DORAMCU=INFO
-    depends_on:
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      dl:
-        condition: service_started
-    restart: always
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          memory: 2G
-          cpus: '1'
-        reservations:
-          memory: 512M
-          cpus: '0.5'
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 5s
-      start_period: 120s
-      retries: 5
-    profiles:
-      - prod
-
-  # ─────────────────────────────────────────────────────────────────────────────
-  # App — Raspberry Pi override
-  # ─────────────────────────────────────────────────────────────────────────────
-  app-pi:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: doramcu
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker,production
-      - DB_PASSWORD=${DB_PASSWORD:-root}
-      - JWT_SECRET=${JWT_SECRET:-}
-      - DL_MODE=rest
-      - DEBUG=${DEBUG:-}
-      - JVM_XMX=-Xmx1G
-    depends_on:
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      dl:
-        condition: service_started
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-          cpus: '1.5'
-        reservations:
-          memory: 512M
-          cpus: '0.5'
-    profiles:
-      - pi
-
-  # ─────────────────────────────────────────────────────────────────────────────
-  # MySQL — Development (default)
+  # MySQL database
   # ─────────────────────────────────────────────────────────────────────────────
   mysql:
     image: mysql:8.4
@@ -320,87 +116,7 @@ services:
           cpus: '0.25'
 
   # ─────────────────────────────────────────────────────────────────────────────
-  # MySQL — Production override
-  # ─────────────────────────────────────────────────────────────────────────────
-  mysql-prod:
-    image: mysql:8.4
-    container_name: doramcu-mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
-      - MYSQL_DATABASE=doramcu
-      - MYSQL_INNODB_BUFFER_POOL_SIZE=1G
-      - MYSQL_MAX_CONNECTIONS=200
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
-      - ./backups:/backups
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: always
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-          cpus: '0.5'
-        reservations:
-          memory: 512M
-          cpus: '0.25'
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-    profiles:
-      - prod
-
-  # ─────────────────────────────────────────────────────────────────────────────
-  # MySQL — Raspberry Pi override
-  # ─────────────────────────────────────────────────────────────────────────────
-  mysql-pi:
-    image: mysql:8.4
-    container_name: doramcu-mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-root}
-      - MYSQL_DATABASE=doramcu
-    command: >
-      --default-authentication-plugin=mysql_native_password
-      --innodb-buffer-pool-size=256M
-      --innodb-log-file-size=64M
-      --max-connections=50
-      --thread-cache-size=8
-      --key-buffer-size=16M
-      --sort-buffer-size=256K
-      --read-buffer-size=256K
-      --read-rnd-buffer-size=512K
-      --tmp-table-size=16M
-      --max-heap-table-size=16M
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: '0.5'
-        reservations:
-          memory: 256M
-          cpus: '0.25'
-    profiles:
-      - pi
-
-  # ─────────────────────────────────────────────────────────────────────────────
-  # DL Python service — Development (default)
+  # DL Python service (Deep Learning)
   # ─────────────────────────────────────────────────────────────────────────────
   dl:
     build:
@@ -426,69 +142,7 @@ services:
           cpus: '0.25'
 
   # ─────────────────────────────────────────────────────────────────────────────
-  # DL — Production override
-  # ─────────────────────────────────────────────────────────────────────────────
-  dl-prod:
-    build:
-      context: ./dora-dl-python
-      dockerfile: Dockerfile.dl
-    container_name: doramcu-dl
-    ports:
-      - "8083:8083"
-    volumes:
-      - dl-models:/app/dl-models
-    environment:
-      - DORA_DL_PORT=8083
-      - DL_MODEL_DIR=/app/dl-models
-      - DL_BLEND_FACTOR=0.5
-    restart: always
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-          cpus: '1'
-        reservations:
-          memory: 256M
-          cpus: '0.25'
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-    profiles:
-      - prod
-
-  # ─────────────────────────────────────────────────────────────────────────────
-  # DL — Raspberry Pi override (ARM64 CPU-only PyTorch)
-  # ─────────────────────────────────────────────────────────────────────────────
-  dl-pi:
-    build:
-      context: .
-      dockerfile: Dockerfile.dl.arm64
-    container_name: doramcu-dl
-    ports:
-      - "8083:8083"
-    volumes:
-      - ./dl-models:/app/dl-models
-    environment:
-      - DORA_DL_PORT=8083
-      - DL_MODEL_DIR=/app/dl-models
-      - DL_BLEND_FACTOR=0.5
-      - DL_CPU_ONLY=true
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: '0.5'
-        reservations:
-          memory: 256M
-          cpus: '0.25'
-    profiles:
-      - pi
-
-  # ─────────────────────────────────────────────────────────────────────────────
-  # Redis — Development (default)
+  # Redis cache
   # ─────────────────────────────────────────────────────────────────────────────
   redis:
     image: redis:7-alpine
@@ -514,54 +168,19 @@ services:
           cpus: '0.1'
 
   # ─────────────────────────────────────────────────────────────────────────────
-  # Redis — Production override
+  # Dora News Network (standalone proxy + frontend for news API)
   # ─────────────────────────────────────────────────────────────────────────────
-  redis-prod:
-    image: redis:7-alpine
-    container_name: doramcu-redis
+  news-network:
+    build:
+      context: ./dora-news-network
+      dockerfile: Dockerfile.simpler
+    container_name: doramcu-news-network
     ports:
-      - "6379:6379"
-    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
-    volumes:
-      - redis-data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: always
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-          cpus: '0.5'
-        reservations:
-          memory: 512M
-          cpus: '0.25'
-    logging:
-      driver: json-file
-      options:
-        max-size: "5m"
-        max-file: "3"
-    profiles:
-      - prod
-
-  # ─────────────────────────────────────────────────────────────────────────────
-  # Redis — Raspberry Pi override
-  # ─────────────────────────────────────────────────────────────────────────────
-  redis-pi:
-    image: redis:7-alpine
-    container_name: doramcu-redis
-    ports:
-      - "6379:6379"
-    command: redis-server --appendonly yes --maxmemory 128mb --maxmemory-policy allkeys-lru
-    volumes:
-      - redis-data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - "8084:8084"
+    environment:
+      - DORA_MCU_SERVER_URL=http://app:8080
+    depends_on:
+      - app
     restart: unless-stopped
     deploy:
       resources:
@@ -571,8 +190,6 @@ services:
         reservations:
           memory: 128M
           cpus: '0.1'
-    profiles:
-      - pi
 
   # ─────────────────────────────────────────────────────────────────────────────
   # OpenHands AI — Debug profile only (development-only service)

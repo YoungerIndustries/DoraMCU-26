@@ -127,8 +127,8 @@ public class OnboardingController {
         door.put("subtitle", "Step through the door and begin your journey across the DoraMCU Universe.");
         door.put("description", "Create your account, define your corporation, and land on Earth 2026 to start your adventure.");
         door.put("galaxyName", GalaxyFactory.EARTH_2026_GALAXY_NAME);
-        door.put("landingLocation", "San Diego, CA, USA");
-        door.put("homeType", "Apartment");
+        door.put("landingLocation", "Younger Industries HQ, San Diego");
+        door.put("homeType", "Office");
 
         // Include recent news events if available
         if (galaxyEventService != null) {
@@ -172,9 +172,100 @@ public class OnboardingController {
                     Long playerId = playerOpt.get().getId();
                     config.put("playerId", playerId);
                     
+                    // Ensure the player has a corporation — create one if missing
+                    Long corporationId = null;
+                    if (eveCorporationRepository != null) {
+                        try {
+                            Optional<EveCorporation> existingCorp = eveCorporationRepository.findByCeoPlayerId(String.valueOf(playerId));
+                            if (existingCorp.isPresent()) {
+                                corporationId = existingCorp.get().getId();
+                                log.info("Onboarding config: player {} has existing corporation {}", playerId, corporationId);
+                            } else {
+                                // Create a corporation for this player
+                                String corpName = username.trim() + " Industries";
+                                String tickerBase = corpName.replaceAll("[^A-Za-z]", "").substring(0, Math.min(corpName.replaceAll("[^A-Za-z]", "").length(), 4)).toUpperCase();
+                                String ticker = tickerBase;
+                                int suffix = 1;
+                                while (eveCorporationRepository.findByTicker(ticker).isPresent()) {
+                                    ticker = tickerBase + suffix;
+                                    suffix++;
+                                }
+
+                                EveCorporation corporation = new EveCorporation();
+                                corporation.setName(corpName);
+                                corporation.setTicker(ticker);
+                                corporation.setCeoName(username.trim());
+                                corporation.setCeoPlayerId(String.valueOf(playerId));
+                                corporation.setDescription("Corporation founded by " + username.trim() + ".");
+                                corporation.setCreditBalance(SilverCurrencyConstants.STARTING_CAPITAL_CREDITS);
+                                corporation = eveCorporationRepository.save(corporation);
+                                corporationId = corporation.getId();
+                                log.info("Onboarding config: created corporation '{}' ({}) for player {}", corpName, ticker, playerId);
+
+                                // Create the treasury loan for the remaining $495 USD
+                                try {
+                                    treasuryLoanService.createStartupLoan(corporationId);
+                                    log.info("Onboarding config: created treasury loan for corporation {}", corpName);
+                                } catch (Exception e) {
+                                    log.error("Onboarding config: failed to create treasury loan for corporation {}: {}",
+                                            corpName, e.getMessage());
+                                }
+
+                                // Create the AI VP for the corporation
+                                if (aiCharacterRepository != null) {
+                                    String vpName = username.trim().replace(" ", "") + " AI";
+                                    AiCharacter aiVp = new AiCharacter();
+                                    aiVp.setName(vpName);
+                                    aiVp.setRole("VP");
+                                    aiVp.setEmpireName(corpName);
+                                    aiVp.setLinkedPlayerId(String.valueOf(playerId));
+                                    aiVp.setActive(true);
+                                    aiVp.setHirable(false);
+                                    aiVp.setHiringStatus(AiCharacter.HiringStatus.UNAVAILABLE);
+                                    aiVp.setTotalExperience(100);
+                                    aiVp.setLeadershipRating(7);
+                                    aiVp.setDescription("AI Vice President of " + corpName + ". " +
+                                            "Serves as the intelligent operations manager and strategic advisor. " +
+                                            "Can assume the CEO role when the founder is unavailable.");
+                                    aiVp.setCharacterType(AiCharacter.CharacterType.HUMAN_LEADER);
+                                    aiVp.setCanPromoteToCoServer(true);
+                                    aiVp = aiCharacterRepository.save(aiVp);
+
+                                    corporation.setVpName(vpName);
+                                    corporation.setVpPlayerId(String.valueOf(aiVp.getId()));
+                                    eveCorporationRepository.save(corporation);
+                                    log.info("Onboarding config: created AI VP '{}' for corporation '{}'", vpName, corpName);
+                                }
+                            }
+                        } catch (Exception e) {
+                            log.warn("Onboarding config: could not ensure corporation for {}: {}", username, e.getMessage());
+                        }
+                    }
+                    config.put("corporationId", corporationId);
+
                     // Check if the player already has characters on Earth
                     if (earth2026Service != null) {
                         List<Earth2026Character> characters = earth2026Service.getCharactersByPlayer(playerId);
+                        
+                        // Ensure every character has a corporation — link to the player's corporation if missing
+                        if (corporationId != null && !characters.isEmpty()) {
+                            boolean hadMissingCorp = false;
+                            for (Earth2026Character ch : characters) {
+                                if (ch.getCorporationId() == null) {
+                                    ch.setCorporationId(corporationId);
+                                    ch.setIsOwner(true);
+                                    earth2026CharacterRepository.save(ch);
+                                    hadMissingCorp = true;
+                                    log.info("Onboarding config: linked character '{}' to corporation {} for player {}",
+                                            ch.getName(), corporationId, playerId);
+                                }
+                            }
+                            if (hadMissingCorp) {
+                                // Refresh the character list after updates
+                                characters = earth2026Service.getCharactersByPlayer(playerId);
+                            }
+                        }
+                        
                         config.put("existingCharacters", characters);
                         config.put("hasCharacters", !characters.isEmpty());
                     }
@@ -673,7 +764,86 @@ public class OnboardingController {
                     .body(Map.of("error", "Earth 2026 service not available"));
         }
 
-        Earth2026Character character = earth2026Service.createCharacter(characterName.trim(), age, occupation, playerId);
+        // Ensure the player has a corporation — create one if missing
+        Long corporationId = null;
+        if (playerId != null && eveCorporationRepository != null && aiCharacterRepository != null) {
+            // Check if the player already has a corporation (as CEO)
+            Optional<EveCorporation> existingCorp = eveCorporationRepository.findByCeoPlayerId(String.valueOf(playerId));
+            if (existingCorp.isPresent()) {
+                corporationId = existingCorp.get().getId();
+                log.info("Onboarding: character creation reusing existing corporation {} for player {}", corporationId, playerId);
+            } else {
+                // Create a new corporation for this player
+                try {
+                    String corpName = username.trim() + " Industries";
+                    String tickerBase = corpName.replaceAll("[^A-Za-z]", "").substring(0, Math.min(corpName.replaceAll("[^A-Za-z]", "").length(), 4)).toUpperCase();
+                    String ticker = tickerBase;
+                    int suffix = 1;
+                    while (eveCorporationRepository.findByTicker(ticker).isPresent()) {
+                        ticker = tickerBase + suffix;
+                        suffix++;
+                    }
+
+                    EveCorporation corporation = new EveCorporation();
+                    corporation.setName(corpName);
+                    corporation.setTicker(ticker);
+                    corporation.setCeoName(username.trim());
+                    corporation.setCeoPlayerId(String.valueOf(playerId));
+                    corporation.setDescription("Corporation founded by " + username.trim() + ".");
+                    corporation.setCreditBalance(SilverCurrencyConstants.STARTING_CAPITAL_CREDITS);
+                    corporation = eveCorporationRepository.save(corporation);
+                    corporationId = corporation.getId();
+                    log.info("Onboarding: created corporation '{}' ({}) for character creation (user: {})",
+                            corpName, ticker, username);
+
+                    // Create the treasury loan for the remaining $495 USD
+                    try {
+                        treasuryLoanService.createStartupLoan(corporationId);
+                        log.info("Onboarding: created treasury loan for corporation {} ({})", corpName, ticker);
+                    } catch (Exception e) {
+                        log.error("Onboarding: failed to create treasury loan for corporation {}: {}",
+                                corpName, e.getMessage());
+                    }
+
+                    // Create the AI VP for the corporation
+                    String vpName = username.trim().replace(" ", "") + " AI";
+                    AiCharacter aiVp = new AiCharacter();
+                    aiVp.setName(vpName);
+                    aiVp.setRole("VP");
+                    aiVp.setEmpireName(corpName);
+                    aiVp.setLinkedPlayerId(String.valueOf(playerId));
+                    aiVp.setActive(true);
+                    aiVp.setHirable(false);
+                    aiVp.setHiringStatus(AiCharacter.HiringStatus.UNAVAILABLE);
+                    aiVp.setTotalExperience(100);
+                    aiVp.setLeadershipRating(7);
+                    aiVp.setDescription("AI Vice President of " + corpName + ". " +
+                            "Serves as the intelligent operations manager and strategic advisor. " +
+                            "Can assume the CEO role when the founder is unavailable.");
+                    aiVp.setCharacterType(AiCharacter.CharacterType.HUMAN_LEADER);
+                    aiVp.setCanPromoteToCoServer(true);
+                    aiVp = aiCharacterRepository.save(aiVp);
+
+                    corporation.setVpName(vpName);
+                    corporation.setVpPlayerId(String.valueOf(aiVp.getId()));
+                    eveCorporationRepository.save(corporation);
+                    log.info("Onboarding: created AI VP '{}' for corporation '{}' (user: {})", vpName, corpName, username);
+
+                } catch (Exception e) {
+                    log.warn("Onboarding: could not create corporation for {}: {}", username, e.getMessage());
+                }
+            }
+        }
+
+        Earth2026Character character;
+        if (corporationId != null) {
+            // Create the character as an employee/owner of the corporation
+            character = earth2026Service.createCharacterAsEmployee(
+                    characterName.trim(), age, occupation, playerId, corporationId, true, "EARTH_2026");
+        } else {
+            // Fallback: create without corporation linkage
+            character = earth2026Service.createCharacter(characterName.trim(), age, occupation, playerId);
+        }
 
         // Generate a CHARACTER-type promo code for this character
         String characterPromoCode = null;
@@ -717,7 +887,7 @@ public class OnboardingController {
         Map<String, Object> response = new HashMap<>();
         response.put("galaxy", GalaxyFactory.EARTH_2026_GALAXY_NAME);
         response.put("location", "Earth 2026");
-        response.put("landingCity", "San Diego, CA, USA");
+        response.put("landingCity", "Younger Industries HQ, San Diego");
 
         if (earth2026Service != null) {
             response.put("locations", earth2026Service.getAllLocations());
@@ -725,7 +895,7 @@ public class OnboardingController {
             response.put("characters", earth2026Service.getCharactersOnEarth());
         }
 
-        response.put("message", "You have arrived on Earth 2026 in San Diego, CA. Your apartment is ready. Choose your first scenario to begin.");
+        response.put("message", "You have arrived at Younger Industries HQ on Earth 2026. Your office is ready. Choose your first scenario to begin.");
         return ResponseEntity.ok(response);
     }
 

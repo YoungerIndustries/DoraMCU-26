@@ -76,6 +76,12 @@ public interface AiCharacterRepository extends JpaRepository<AiCharacter, Long> 
      */
     List<AiCharacter> findByRoleAndActiveTrueOrderByTotalExperienceDesc(String role);
 
+    /**
+     * Find AI characters by role, active status, and empire name.
+     * Used to check if a sub-manager already exists for a specific galaxy.
+     */
+    List<AiCharacter> findByRoleAndActiveTrueAndEmpireName(String role, String empireName);
+
     // --- Entity-linked AI character queries ---
 
     /**

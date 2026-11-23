@@ -23,10 +23,10 @@ const ConfigManager = {
             
             this.config = await response.json();
             
-            // Validate required fields
+            // Validate required fields — use page origin if apiUrl is empty or missing
             if (!this.config.apiUrl) {
-                console.warn('Config missing apiUrl, using default');
-                this.config.apiUrl = 'http://localhost:8080';
+                console.log('Config apiUrl is empty, using page origin:', window.location.origin);
+                this.config.apiUrl = window.location.origin;
             }
             
             if (!this.config.clients) {
@@ -54,7 +54,7 @@ const ConfigManager = {
     // Get default configuration
     getDefaultConfig() {
         return {
-            apiUrl: 'http://localhost:8080',
+            apiUrl: window.location.origin,
             version: '0.0.0',
             clients: this.getDefaultClients()
         };
@@ -105,26 +105,26 @@ const ConfigManager = {
                 name: 'DoraMCU Web',
                 description: 'Browser-based game client',
                 platforms: ['all'],
-                url: '/clients/desktop/'
+                url: '/game/index.html'
             },
             mobile: {
                 name: 'DoraMCU Mobile',
                 description: 'Lightweight PWA game client',
                 platforms: ['android', 'ios'],
-                url: '/clients/mobile/'
+                url: '/game/index.html'
             },
             tablet: {
                 name: 'DoraMCU Tablet',
                 description: 'Tablet-optimized game client',
                 platforms: ['android', 'ios'],
-                url: '/clients/tablet/'
+                url: '/game/index.html'
             }
         };
     },
     
     // Get API URL for backend requests
     getApiUrl() {
-        return this.config?.apiUrl || 'http://localhost:8080';
+        return this.config?.apiUrl || window.location.origin;
     },
     
     // Get available clients for a specific platform
@@ -170,12 +170,12 @@ const ConfigManager = {
         
         // Fallback URLs
         const fallbacks = {
-            'desktop': '/clients/desktop/',
-            'tablet': '/clients/tablet/',
-            'mobile': '/clients/mobile/',
-            'low-end': '/clients/mobile/'
+            'desktop': '/game/index.html',
+            'tablet': '/game/index.html',
+            'mobile': '/game/index.html',
+            'low-end': '/game/index.html'
         };
         
-        return fallbacks[tier] || '/clients/mobile/';
+        return fallbacks[tier] || '/game/index.html';
     }
 };

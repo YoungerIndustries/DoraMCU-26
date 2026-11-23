@@ -40,7 +40,7 @@ namespace DoraMCU.Core
         {
             if (@event is InputEventKey keyEvent && keyEvent.Pressed && !keyEvent.Echo)
             {
-                if (keyEvent.KeyCode == Key.D)
+                if (keyEvent.Keycode == Key.D)
                 {
                     ToggleDemo();
                 }
@@ -94,10 +94,10 @@ namespace DoraMCU.Core
             var sphere = new SphereMesh
             {
                 Radius = 5.0f,
-                RadiusSegments = 32,
-                HeightSegments = 16
+                RadialSegments = 32,
+                Rings = 16
             };
-            sun.SetMesh(sphere);
+            sun.Mesh = sphere;
 
             var material = new StandardMaterial3D
             {
@@ -111,12 +111,7 @@ namespace DoraMCU.Core
             _demoObjects.Add(sun);
 
             // Add point light for the sun
-            var light = new PointLight3D
-            {
-                Color = Colors.Yellow,
-                Energy = 5.0f,
-                OmniRange = 100.0f
-            };
+            var light = new OmniLight3D { LightColor = Colors.Yellow, OmniRange = 100.0f };
             sun.AddChild(light);
         }
 
@@ -131,11 +126,11 @@ namespace DoraMCU.Core
 
                 var sphere = new SphereMesh
                 {
-                    Radius = 0.1f + _random.NextDouble() * 0.2f,
-                    RadiusSegments = 8,
-                    HeightSegments = 4
+                    Radius = 0.1f + (float)(float)_random.NextDouble() * 0.2f,
+                    RadialSegments = 8,
+                    Rings = 4
                 };
-                star.SetMesh(sphere);
+                star.Mesh = sphere;
 
                 var material = new StandardMaterial3D
                 {
@@ -146,8 +141,8 @@ namespace DoraMCU.Core
                 star.MaterialOverride = material;
 
                 // Random position on a large sphere
-                var theta = _random.NextDouble() * MathF.PI * 2;
-                var phi = MathF.Acos(2.0f * (float)_random.NextDouble() - 1.0f);
+                var theta = (float)_random.NextDouble() * MathF.PI * 2;
+                var phi = MathF.Acos(2.0f * (float)(float)_random.NextDouble() - 1.0f);
                 var radius = 200.0f;
 
                 star.Position = new Vector3(
@@ -170,11 +165,11 @@ namespace DoraMCU.Core
 
             // Random position for sector
             var angle = (sectorIndex * 137.508f) * MathF.PI / 180f; // Golden angle
-            var distance = 20.0f + _random.NextDouble() * 60.0f;
+            var distance = 20.0f + (float)_random.NextDouble() * 60.0f;
 
             sector.Position = new Vector3(
                 MathF.Cos(angle) * distance,
-                (_random.NextDouble() - 0.5f) * 20.0f,
+                ((float)_random.NextDouble() - 0.5f) * 20.0f,
                 MathF.Sin(angle) * distance
             );
 
@@ -196,9 +191,9 @@ namespace DoraMCU.Core
             };
 
             star.Position = new Vector3(
-                (_random.NextDouble() - 0.5f) * 10.0f,
-                (_random.NextDouble() - 0.5f) * 5.0f,
-                (_random.NextDouble() - 0.5f) * 10.0f
+                ((float)_random.NextDouble() - 0.5f) * 10.0f,
+                ((float)_random.NextDouble() - 0.5f) * 5.0f,
+                ((float)_random.NextDouble() - 0.5f) * 10.0f
             );
 
             parent.AddChild(star);
@@ -211,11 +206,11 @@ namespace DoraMCU.Core
 
             var sphere = new SphereMesh
             {
-                Radius = 1.0f + _random.NextDouble() * 1.5f,
-                RadiusSegments = 16,
-                HeightSegments = 8
+                Radius = 1.0f + (float)(float)_random.NextDouble() * 1.5f,
+                RadialSegments = 16,
+                Rings = 8
             };
-            starMesh.SetMesh(sphere);
+            starMesh.Mesh = sphere;
 
             // Random star color
             var colors = new Color[] { Colors.White, Colors.Yellow, Colors.Orange, Colors.Blue, Colors.Cyan };
@@ -233,12 +228,7 @@ namespace DoraMCU.Core
             _demoObjects.Add(starMesh);
 
             // Point light
-            var light = new PointLight3D
-            {
-                Color = starColor,
-                Energy = 2.0f,
-                OmniRange = 15.0f
-            };
+            var light = new OmniLight3D { LightColor = starColor, OmniRange = 15.0f };
             star.AddChild(light);
 
             // Create orbiting planets
@@ -261,14 +251,14 @@ namespace DoraMCU.Core
                 Name = $"Planet_{planetIndex}"
             };
 
-            var radius = 0.3f + _random.NextDouble() * 0.5f;
+            var radius = 0.3f + (float)(float)_random.NextDouble() * 0.5f;
             var sphere = new SphereMesh
             {
                 Radius = radius,
-                RadiusSegments = 16,
-                HeightSegments = 8
+                RadialSegments = 16,
+                Rings = 8
             };
-            planet.SetMesh(sphere);
+            planet.Mesh = sphere;
 
             // Random planet color based on biome
             var biomeColors = new Color[]
@@ -289,11 +279,11 @@ namespace DoraMCU.Core
 
             // Orbit position
             var orbitRadius = 3.0f + planetIndex * 1.5f;
-            var orbitAngle = _random.NextDouble() * MathF.PI * 2;
+            var orbitAngle = (float)_random.NextDouble() * MathF.PI * 2;
 
             planet.Position = new Vector3(
                 MathF.Cos(orbitAngle) * orbitRadius,
-                (_random.NextDouble() - 0.5f) * 0.5f,
+                ((float)_random.NextDouble() - 0.5f) * 0.5f,
                 MathF.Sin(orbitAngle) * orbitRadius
             );
 
@@ -313,7 +303,7 @@ namespace DoraMCU.Core
             {
                 Size = new Vector3(0.5f, 0.2f, 1.0f)
             };
-            ship.SetMesh(box);
+            ship.Mesh = box;
 
             var material = new StandardMaterial3D
             {
@@ -323,15 +313,15 @@ namespace DoraMCU.Core
 
             // Random position near star
             ship.Position = new Vector3(
-                (_random.NextDouble() - 0.5f) * 8.0f,
-                (_random.NextDouble() - 0.5f) * 3.0f,
-                (_random.NextDouble() - 0.5f) * 8.0f
+                ((float)_random.NextDouble() - 0.5f) * 8.0f,
+                ((float)_random.NextDouble() - 0.5f) * 3.0f,
+                ((float)_random.NextDouble() - 0.5f) * 8.0f
             );
 
             ship.Rotation = new Vector3(
-                (_random.NextDouble() - 0.5f) * MathF.PI,
-                _random.NextDouble() * MathF.PI * 2,
-                (_random.NextDouble() - 0.5f) * MathF.PI
+                ((float)_random.NextDouble() - 0.5f) * MathF.PI,
+                (float)_random.NextDouble() * MathF.PI * 2,
+                ((float)_random.NextDouble() - 0.5f) * MathF.PI
             );
 
             parent.AddChild(ship);
